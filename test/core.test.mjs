@@ -241,24 +241,46 @@ for (const room of dg.rooms) {
   const cy = room.y + Math.floor(room.h / 2);
   assert.equal(dungeonSolid(dmap, cx, cy), false, `sala ${room.id} tem chão`);
 }
+function reachable(map, from, to) {
+  const seen = new Uint8Array(map.W * map.H);
+  const queue = [[from.x, from.y]];
+  seen[from.y * map.W + from.x] = 1;
+  while (queue.length) {
+    const [x, y] = queue.shift();
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+      const nx = x + dx;
+      const ny = y + dy;
+      if (dungeonSolid(map, nx, ny)) continue;
+      const i = ny * map.W + nx;
+      if (seen[i]) continue;
+      seen[i] = 1;
+      queue.push([nx, ny]);
+    }
+  }
+  return seen[to.y * map.W + to.x] === 1;
+}
+const center = (room) => ({ x: room.x + Math.floor(room.w / 2), y: room.y + Math.floor(room.h / 2) });
 const entrance = dg.rooms.find((r) => r.kind === "entrance");
 const city = dg.rooms.find((r) => r.kind === "city");
-const seen = new Uint8Array(dmap.W * dmap.H);
-const queue = [[entrance.x + Math.floor(entrance.w / 2), entrance.y + Math.floor(entrance.h / 2)]];
-seen[queue[0][1] * dmap.W + queue[0][0]] = 1;
-while (queue.length) {
-  const [x, y] = queue.shift();
-  for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
-    const nx = x + dx;
-    const ny = y + dy;
-    if (dungeonSolid(dmap, nx, ny)) continue;
-    const i = ny * dmap.W + nx;
-    if (seen[i]) continue;
-    seen[i] = 1;
-    queue.push([nx, ny]);
-  }
+assert.equal(reachable(dmap, center(entrance), center(city)), true, "entrada chega à cidade");
+for (const room of dg.rooms) {
+  assert.equal(reachable(dmap, center(entrance), center(room)), true, `sala ${room.id} alcançável`);
 }
-assert.equal(seen[(city.y + Math.floor(city.h / 2)) * dmap.W + city.x + Math.floor(city.w / 2)], 1, "entrada chega à cidade");
+// as cavernas espelhadas usam a mesma planta com as salas laterais trocadas
+const mirrorDef = DUNGEONS.find((d) => d.continent === "math");
+const mmap = buildDungeonMap(mirrorDef);
+for (const room of mirrorDef.rooms) {
+  assert.equal(dungeonSolid(mmap, center(room).x, center(room).y), false, `sala espelhada ${room.id} tem chão`);
+}
+const mirrorEntrance = center(mirrorDef.rooms.find((r) => r.kind === "entrance"));
+assert.equal(
+  reachable(mmap, mirrorEntrance, center(mirrorDef.rooms.find((r) => r.kind === "city"))),
+  true,
+  "caverna espelhada também liga entrada e cidade",
+);
+for (const room of mirrorDef.rooms) {
+  assert.equal(reachable(mmap, mirrorEntrance, center(room)), true, `sala espelhada ${room.id} alcançável`);
+}
 assert.equal(dungeonLineOfSight(dmap, 3, 24, 13, 24), false, "parede corta a linha de visão");
 const roomA = dg.rooms.find((r) => r.id === "a");
 assert.equal(
@@ -271,7 +293,7 @@ assert.equal(
 assert.equal(rpg.bossAlive({ id: "dungeon-teste", dungeon: true }), true, "chefe de caverna sem alavanca");
 assert.equal(rpg.bossAlive({ id: "caçada-teste" }), false, "chefe de superfície pede alavanca");
 store.clear();
-rpg.data = { hp: null, skills: {}, items: {}, monsters: {}, bosses: {}, levers: {} };
+rpg.data = { hp: null, skills: {}, items: {}, monsters: {}, bosses: {}, levers: {}, enchants: {}, buffs: {}, pet: { bond: 0 } };
 rpg.addItem("ferro", 2);
 rpg.addItem("madeira", 1);
 const made = rpg.craft("chave");
@@ -284,5 +306,33 @@ rpg.addItem("veio", 1);
 assert.equal(rpg.craft("bomba").ok, true, "forja faz a bomba");
 assert.equal(rpg.useItem("bomba").bomb, true, "bomba é item de uso");
 assert.equal(rpg.itemCount("bomba"), 0, "bomba some ao usar");
+
+// encantamento permanente, comida com efeito, bicho e pergunta do fundo
+rpg.addItem("veio", 4);
+rpg.addItem("erva", 4);
+assert.equal(rpg.enchant("vigor").ok, true, "encanto de vigor");
+assert.equal(rpg.hpMax(), 40, "vigor soma 10 de vida");
+assert.equal(rpg.enchantsView().find((e) => e.id === "vigor").owned, true);
+assert.equal(rpg.enchant("vigor").ok, false, "encanto não repete");
+rpg.addItem("erva", 2);
+rpg.addItem("veio", 1);
+assert.equal(rpg.craft("doce").ok, true, "cozinha o doce");
+assert.equal(rpg.useItem("doce").ok, true, "doce se usa de vida cheia");
+assert.equal(rpg.buffActive("maxhp"), true, "doce dá vida extra");
+assert.equal(rpg.hpMax(), 45, "buff soma 5 de vida");
+rpg.addItem("racao", 3);
+assert.equal(rpg.feedPet().ok, true);
+assert.equal(rpg.feedPet().ok, true);
+const pet = rpg.feedPet();
+assert.equal(pet.tamed, true, "bicho fica manso");
+assert.equal(rpg.hpMax(), 50, "bicho soma 5 de vida");
+rpg.addItem("erva", 1);
+rpg.addItem("pocao", 1);
+assert.equal(rpg.craft("cafe").ok, true, "cozinha o café");
+rpg.useItem("cafe");
+assert.equal(rpg.speedMult(), 1.3, "café acelera");
+const deepDeck = rpg.buildDeck("cs", [3], "algoritmos");
+assert.equal(deepDeck.length, 4, "pergunta do fundo entrou no baralho");
+assert.ok(deepDeck[0].q.includes("escalonador"), "tema da sala puxa a pergunta certa");
 
 console.log("ok missões, persistência, canais, RPG, interpolação, colisão e caverna");

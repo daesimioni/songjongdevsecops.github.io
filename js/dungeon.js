@@ -340,26 +340,105 @@ function drawKeeper(ctx, x, y, t, accent) {
   ctx.restore();
 }
 
-function drawGarden(ctx, x, y, t, accent, ready) {
+function drawPlot(ctx, x, y, t, accent, planted, ready) {
   ctx.save();
   ctx.translate(x, y);
   ctx.fillStyle = "#2a2116";
-  ctx.fillRect(-12, -8, 24, 8);
+  ctx.fillRect(-10, -7, 20, 7);
   ctx.fillStyle = "#1a2a1c";
-  ctx.fillRect(-11, -7, 6, 2);
-  ctx.fillRect(-3, -7, 6, 2);
-  ctx.fillRect(5, -7, 6, 2);
+  ctx.fillRect(-9, -6, 18, 1);
   for (let i = 0; i < 3; i++) {
     const sway = Math.sin(t * 0.003 + i * 1.4) * 0.7;
     if (ready) {
       ctx.fillStyle = accent;
-      ctx.fillRect(-9 + i * 8, -12 + sway, 2, 5);
-      ctx.fillRect(-6 + i * 8, -11 - sway, 2, 4);
+      ctx.fillRect(-7 + i * 6, -13 + sway, 2, 6);
+      ctx.fillRect(-4 + i * 6, -11 - sway, 2, 5);
+    } else if (planted) {
+      ctx.fillStyle = "#4a7a4e";
+      ctx.fillRect(-7 + i * 6, -8, 2, 2);
     } else {
-      ctx.fillStyle = "#31452f";
-      ctx.fillRect(-9 + i * 8, -9, 2, 2);
+      ctx.fillStyle = "#3a2f22";
+      ctx.fillRect(-6 + i * 6, -5, 2, 1);
     }
   }
+  ctx.restore();
+}
+
+function drawVein(ctx, x, y, t, accent, charges) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.fillStyle = "rgba(0,0,0,0.35)";
+  ctx.beginPath();
+  ctx.ellipse(0, 0, 11, 3.5, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = "#2c2b3e";
+  ctx.fillRect(-10, -9, 20, 9);
+  ctx.fillRect(-7, -14, 14, 6);
+  if (charges > 0) {
+    const glow = 0.5 + Math.sin(t * 0.004) * 0.25;
+    ctx.globalAlpha = glow;
+    ctx.fillStyle = accent;
+    ctx.fillRect(-6, -12, 3, 5);
+    ctx.fillRect(1, -13, 3, 7);
+    ctx.fillRect(5, -10, 2, 3);
+    ctx.globalAlpha = 1;
+  } else {
+    ctx.fillStyle = "#4c4a58";
+    ctx.fillRect(-6, -11, 2, 3);
+    ctx.fillRect(2, -12, 2, 4);
+  }
+  ctx.restore();
+}
+
+function drawPet(ctx, x, y, t, accent, tamed) {
+  const bob = Math.sin(t * 0.006) * 0.8;
+  ctx.save();
+  ctx.translate(x, y + bob);
+  ctx.fillStyle = "rgba(0,0,0,0.35)";
+  ctx.beginPath();
+  ctx.ellipse(0, 1, 6, 2.2, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = "#8b5a3c";
+  ctx.fillRect(-5, -7, 10, 6);
+  ctx.fillStyle = "#a86f4a";
+  ctx.fillRect(-4, -11, 8, 5);
+  ctx.fillStyle = "#8b5a3c";
+  ctx.fillRect(-5, -13, 2, 4);
+  ctx.fillRect(3, -13, 2, 4);
+  ctx.fillStyle = "#f4e2c8";
+  ctx.fillRect(-2, -9, 1, 1);
+  ctx.fillRect(1, -9, 1, 1);
+  if (tamed) {
+    ctx.fillStyle = accent;
+    ctx.fillRect(-4, -6, 8, 1);
+  }
+  ctx.fillStyle = "#7a4a30";
+  ctx.fillRect(4, -5, 1, 4);
+  ctx.fillRect(5, -2 + Math.sin(t * 0.01), 1, 2);
+  ctx.restore();
+}
+
+function drawEnchanter(ctx, x, y, t, accent) {
+  const glow = 0.35 + Math.sin(t * 0.004) * 0.18;
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.fillStyle = "rgba(0,0,0,0.35)";
+  ctx.beginPath();
+  ctx.ellipse(0, 0, 12, 4, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = "#2d3048";
+  ctx.fillRect(-11, -9, 22, 9);
+  ctx.fillStyle = "#3f4468";
+  ctx.fillRect(-9, -13, 18, 4);
+  ctx.globalAlpha = glow;
+  ctx.strokeStyle = accent;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.arc(0, -12, 7, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+  ctx.fillStyle = accent;
+  ctx.fillRect(-1, -22 + Math.sin(t * 0.005) * 1.2, 2, 6);
   ctx.restore();
 }
 
@@ -404,6 +483,8 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
     chests: [],
     props: [],
     solids: [],
+    seen: null,
+    minimapAt: 0,
     path: null,
     pending: null,
     keys: new Set(),
@@ -568,9 +649,34 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
       props.push({ kind: "forge", x: city.x + city.w - 3.2, y: city.y + city.h - 3.4, label: "forja do subsolo", interact: true });
       props.push({ kind: "waystone", x: city.x + city.w / 2 + 3, y: city.y + 2.6, label: "pedra de retorno", interact: true });
       props.push({ kind: "keeper", x: city.x + city.w / 2 - 3, y: city.y + city.h - 3.4, label: "conversar com a mestra", interact: true });
-      props.push({ kind: "garden", x: city.x + city.w / 2 + 1.5, y: city.y + city.h - 3.4, label: "colher a horta de ervas", interact: true, readyAt: 0 });
+      props.push({ kind: "enchanter", x: city.x + city.w / 2, y: city.y + 3.2, label: "mesa de encantamento", interact: true });
+      props.push({ kind: "pet", x: city.x + 4.5, y: city.y + 4.2, label: "oferecer ração ao bicho", interact: true });
+      for (let i = 0; i < 3; i++) {
+        props.push({
+          kind: "plot",
+          x: city.x + 8.5 + i * 1.5,
+          y: city.y + city.h - 3.4,
+          planted: i === 0,
+          readyAt: 0,
+          interact: true,
+          label: "horta de ervas",
+        });
+      }
       props.push({ kind: "building", x: city.x + 1.2, y: city.y + 1.2, w: 26, h: 22, solid: true });
       props.push({ kind: "building", x: city.x + city.w - 4.8, y: city.y + 1.2, w: 30, h: 22, solid: true });
+    }
+    // veios de cristal: mineração de verdade, com picareta
+    for (const id of ["a", "c", "e"]) {
+      const room = def.rooms.find((r) => r.id === id);
+      if (!room) continue;
+      props.push({
+        kind: "vein",
+        x: room.x + room.w - 2,
+        y: room.y + room.h - 2.4,
+        charges: 3,
+        interact: true,
+        label: "minerar o veio",
+      });
     }
     return props;
   }
@@ -588,6 +694,8 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
     if (!def || !canvas || !ctx) return false;
     state.def = def;
     state.map = buildDungeonMap(def);
+    state.seen = new Uint8Array(state.map.W * state.map.H);
+    state.minimapAt = 0;
     state.ground = groundFor(def);
     state.monsters = spawnMonsters(def);
     state.boss = rpg.bossAlive(state.ground) ? spawnBoss(def) : null;
@@ -596,6 +704,18 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
     // o que ocupa espaço de verdade dentro da sala: prédios e baús
     state.solids = [];
     for (const p of state.props) {
+      if (p.kind === "plot") {
+        state.solids.push({ x: p.x, y: p.y, hw: 0.55, hh: 0.3 });
+        continue;
+      }
+      if (p.kind === "vein") {
+        state.solids.push({ x: p.x, y: p.y, hw: 0.55, hh: 0.35 });
+        continue;
+      }
+      if (p.kind === "enchanter") {
+        state.solids.push({ x: p.x, y: p.y, hw: 0.6, hh: 0.35 });
+        continue;
+      }
       if (!p.solid) continue;
       const hw = p.w / TILE / 2;
       const hh = p.h / TILE / 2;
@@ -690,8 +810,60 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
       if (n > 0) parts.push(`${label} ${n}`);
     }
     setText("dg-bag", parts.length ? `materiais ${parts.join(" · ")}` : "materiais vazios");
+    const buffs = rpg.buffView();
+    setText("dg-buffs", buffs.length ? `efeitos ${buffs.map((b) => `${b.name} ${b.left}s`).join(" · ")}` : "");
+    const buffNode = $("dg-buffs");
+    if (buffNode) buffNode.hidden = buffs.length === 0;
     const room = state.map ? state.map.rooms[state.roomIndex] : null;
     setText("dg-room", room ? room.name : "");
+  }
+
+  function markSeen(t) {
+    if (!state.map || !state.seen || t - state.minimapAt < 120) return;
+    state.minimapAt = t;
+    const cx = Math.floor(state.player.x);
+    const cy = Math.floor(state.player.y);
+    for (let dy = -4; dy <= 4; dy++) {
+      for (let dx = -4; dx <= 4; dx++) {
+        if (dx * dx + dy * dy > 18) continue;
+        const tx = cx + dx;
+        const ty = cy + dy;
+        if (dungeonSolid(state.map, tx, ty)) continue;
+        state.seen[ty * state.map.W + tx] = 1;
+      }
+    }
+    drawMinimap();
+  }
+
+  function drawMinimap() {
+    const c = $("dg-map");
+    if (!c || !c.offsetWidth || !state.map || !state.seen) return;
+    const g = c.getContext("2d");
+    const W = state.map.W;
+    g.clearRect(0, 0, c.width, c.height);
+    g.fillStyle = "rgba(5,8,20,0.86)";
+    g.fillRect(0, 0, c.width, c.height);
+    for (let y = 0; y < state.map.H; y++) {
+      for (let x = 0; x < W; x++) {
+        if (!state.seen[y * W + x]) continue;
+        const room = state.map.roomGrid[y * W + x] >= 0;
+        g.globalAlpha = room ? 0.55 : 0.3;
+        g.fillStyle = room ? state.def.palette.accent : "#8ea0c0";
+        g.fillRect(x * 2, y * 2, 2, 2);
+      }
+    }
+    g.globalAlpha = 1;
+    for (const ch of state.chests) {
+      if (!state.seen[Math.floor(ch.y) * W + Math.floor(ch.x)]) continue;
+      g.fillStyle = "#ffc857";
+      g.fillRect(Math.floor(ch.x) * 2 - 1, Math.floor(ch.y) * 2 - 1, 3, 3);
+    }
+    if (state.boss?.alive && state.seen[Math.floor(state.boss.y) * W + Math.floor(state.boss.x)]) {
+      g.fillStyle = "#ff7aa8";
+      g.fillRect(Math.floor(state.boss.x) * 2 - 1, Math.floor(state.boss.y) * 2 - 1, 3, 3);
+    }
+    g.fillStyle = "#fff";
+    g.fillRect(Math.floor(state.player.x) * 2 - 1, Math.floor(state.player.y) * 2 - 1, 3, 3);
   }
 
   // ---- colisão e caminhada ----
@@ -707,7 +879,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
     }
     dx /= len;
     dy /= len;
-    const step = SPEED * (state.sprint ? SPRINT : 1) * dt;
+    const step = SPEED * (state.sprint ? SPRINT : 1) * rpg.speedMult() * dt;
     const p = state.player;
     const ox = p.x;
     const oy = p.y;
@@ -749,7 +921,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
       state.path = null;
       return;
     }
-    const stepLen = SPEED * (state.sprint ? SPRINT : 1) * dt * 1.05;
+    const stepLen = SPEED * (state.sprint ? SPRINT : 1) * rpg.speedMult() * dt * 1.05;
     const target = path[0];
     const dx = target.x - state.player.x;
     const dy = target.y - state.player.y;
@@ -880,23 +1052,89 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
         "Todo bicho daqui é uma pergunta que ainda não foi respondida.",
         "Baú fundo pede chave. Chave pede ferro e madeira. A mina dá os dois.",
         "Se a vida apertar, o altar do outro lado da praça escuta.",
-        "A horta cresce sozinha. Erva colhida vira caldo, e caldo segura a queda.",
+        "Semente na horta, picareta no veio, ração para o bicho. A cidade cobra em trabalho.",
+        "A mesa de encantamento grava um efeito para sempre. Custou caro a quem a trouxe.",
       ];
       state.keeperLine = (state.keeperLine + 1) % lines.length;
       say(lines[state.keeperLine], 4500);
       return;
     }
-    if (obj.kind === "garden") {
+    if (obj.kind === "plot") {
+      if (!obj.planted) {
+        if (rpg.itemCount("semente") <= 0) {
+          say("A horta está vazia e falta semente. A forja faz semente de erva.");
+          audio.error?.();
+          return;
+        }
+        rpg.data.items.semente--;
+        if (rpg.data.items.semente <= 0) delete rpg.data.items.semente;
+        rpg.save();
+        obj.planted = true;
+        obj.readyAt = clock() + 45000;
+        say("Semente plantada. Em 45 segundos tem erva.", 3200);
+        audio.blip();
+        updateHud();
+        return;
+      }
       if (clock() < obj.readyAt) {
         say(`A horta ainda está crescendo. Faltam ${Math.ceil((obj.readyAt - clock()) / 1000)}s.`);
         return;
       }
-      const qty = 1 + Math.floor(Math.random() * 2);
+      const qty = 2 + Math.floor(Math.random() * 2);
       rpg.addItem("erva", qty);
-      obj.readyAt = clock() + 45000;
-      say(`Colheu ${qty} erva(s) da horta. A terra devolve.`, 3400);
+      const seed = Math.random() < 0.5;
+      if (seed) rpg.addItem("semente", 1);
+      obj.planted = false;
+      obj.readyAt = 0;
+      say(`Colheu ${qty} erva(s)${seed ? " e uma semente" : ""}. A terra devolve.`, 3400);
       audio.blip();
       updateHud();
+      return;
+    }
+    if (obj.kind === "vein") {
+      if (obj.charges <= 0) {
+        say("O veio está vazio. Outra caverna, outra veia.");
+        return;
+      }
+      if (rpg.itemCount("picareta") <= 0) {
+        say("O cristal está preso na pedra. Uma picareta de veio abre o veio.");
+        audio.error?.();
+        return;
+      }
+      obj.charges--;
+      const qty = 1 + Math.floor(Math.random() * 2);
+      rpg.addItem("veio", qty);
+      const extra = Math.random() < 0.45;
+      if (extra) rpg.addItem(state.def.material, 1);
+      say(`Picareta na pedra: ${qty} cristal(is) de veio${extra ? ` e ${ITEMS[state.def.material]?.name || "material"}` : ""}.`, 3400);
+      audio.chime();
+      updateHud();
+      return;
+    }
+    if (obj.kind === "pet") {
+      if (rpg.petTamed()) {
+        say("O bicho já anda com você. Agora é companhia, não fome.");
+        return;
+      }
+      const res = rpg.feedPet();
+      if (!res.ok) {
+        say(res.reason);
+        audio.error?.();
+        return;
+      }
+      if (res.tamed) {
+        say("O bicho aceitou a última ração e agora segue você. +5 de vida e mais luz.", 4200);
+        audio.chime();
+      } else {
+        say(`O bicho comeu. Afeição ${res.bond}/3.`, 3000);
+        audio.blip();
+      }
+      updateHud();
+      return;
+    }
+    if (obj.kind === "enchanter") {
+      say("A mesa de encantamento. Grava um efeito permanente na sua lanterna.", 3000);
+      onSheet?.();
       return;
     }
   }
@@ -1044,6 +1282,8 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
       return;
     }
 
+    markSeen(t);
+
     const ri = roomIndexAt(state.map, p.x, p.y);
     if (ri !== state.roomIndex) {
       state.roomIndex = ri;
@@ -1061,7 +1301,16 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
     const near = nearestInteractable(p.x, p.y, 1.7);
     const prompt = $("dg-prompt");
     if (prompt) {
-      const label = near?.kind === "chest" && near.opened ? "baú vazio" : near?.label || "";
+      let label = near?.label || "";
+      if (near?.kind === "chest" && near.opened) label = "baú vazio";
+      if (near?.kind === "plot") {
+        label = !near.planted
+          ? "plantar semente"
+          : near.readyAt > clock()
+            ? `horta crescendo (${Math.ceil((near.readyAt - clock()) / 1000)}s)`
+            : "colher erva";
+      }
+      if (near?.kind === "vein") label = near.charges > 0 ? `minerar o veio (${near.charges})` : "veio vazio";
       prompt.hidden = !near;
       const span = prompt.querySelector("span");
       if (span && span.textContent !== label) span.textContent = label;
@@ -1182,9 +1431,12 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
           else if (prop.kind === "forge") drawForge(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent);
           else if (prop.kind === "waystone") drawWaystone(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent);
           else if (prop.kind === "keeper") drawKeeper(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent);
-          else if (prop.kind === "garden") {
-            drawGarden(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent, t >= prop.readyAt);
+          else if (prop.kind === "enchanter") drawEnchanter(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent);
+          else if (prop.kind === "pet") drawPet(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent, rpg.petTamed());
+          else if (prop.kind === "plot") {
+            drawPlot(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent, prop.planted, prop.planted && t >= prop.readyAt);
           }
+          else if (prop.kind === "vein") drawVein(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent, prop.charges);
           else if (prop.kind === "building") {
             drawBuilding(ctx, prop.x * TILE, prop.y * TILE, prop.w, prop.h, palette, palette.accent);
           }
@@ -1203,6 +1455,12 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
         drawables.push({ y: trail.y, draw: () => drawCat(ctx, trail.x * TILE, trail.y * TILE, t) });
       }
     }
+    if (rpg.petTamed() && state.history.length > 26) {
+      const trail = state.history[state.history.length - 26];
+      if (Math.hypot(trail.x - state.player.x, trail.y - state.player.y) < 6) {
+        drawables.push({ y: trail.y, draw: () => drawPet(ctx, trail.x * TILE, trail.y * TILE, t, palette.accent, true) });
+      }
+    }
     drawables.push({
       y: state.player.y,
       draw: () => drawAdventurer(ctx, state.player.x * TILE, state.player.y * TILE, state.player.dir, state.player.moving, t, palette.accent),
@@ -1216,7 +1474,8 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
     const sx = (state.player.x * TILE - camX) * scale;
     const sy = (state.player.y * TILE - camY) * scale;
     const inCity = cityIndex >= 0 && state.roomIndex === cityIndex;
-    const radius = (inCity ? CITY_LIGHT : state.torchUntil > clock() ? 11 : 7.2) * TILE * scale;
+    const lightBonus = rpg.lightBonus();
+    const radius = ((inCity ? CITY_LIGHT : state.torchUntil > clock() ? 11 : 7.2) + lightBonus) * TILE * scale;
     const grad = ctx.createRadialGradient(sx, sy, 0, sx, sy, radius);
     grad.addColorStop(0, "rgba(3,5,12,0)");
     grad.addColorStop(0.55, "rgba(3,5,12,0.14)");

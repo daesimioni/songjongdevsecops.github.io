@@ -94,10 +94,10 @@ do boneco cobre o corpo dele em vez de ficar sempre atrás.
 ## As cavernas
 
 Ao lado de cada clareira de caça existe uma boca de caverna; no minimapa ela
-aparece como um quadradinho vazado. `F` nela entra
-num mapa próprio, em tela cheia: salas ligadas por túneis de três tiles que se
-cruzam em anel, entrada embaixo, cidade no fundo. São seis temas, um por
-continente, com paleta, nomes de sala e bichos próprios.
+aparece como um quadradinho vazado. `F` nela entra num mapa próprio, em tela
+cheia: salas ligadas por túneis de três tiles que se cruzam em anel, entrada
+embaixo, cidade no fundo. São seis temas, um por continente, com paleta, nomes de
+sala e bichos próprios; metade delas tem as salas laterais espelhadas.
 
 Lá embaixo valem as mesmas regras do mundo, com uma diferença: o bicho que vê
 você começa a batalha sozinho. Ele anda em volta do ninho, tem um raio de visão
@@ -108,15 +108,22 @@ o chefe fica no último beco, sem alavanca. Ele responde com perguntas médias e
 difíceis e deixa a relíquia do continente.
 
 Cada sala tem baú. Baú fundo é selado e pede uma **Chave de Caverna**, que se
-faz na forja. A caverna dá os materiais da forja: ferro, erva, cristal de veio e
-madeira. Na cidade subterrânea há uma forja (abre a Ficha), um altar que devolve
-a vida a cada 45 segundos, uma horta de ervas que rebrota e uma pedra de retorno.
-A receita é curta e honesta: poção, tocha, chave, bomba e caldo.
+faz na forja. A caverna dá ferro, erva, cristal de veio e madeira; os **veios de
+cristal** presos nas salas só se abrem com uma **picareta**, que também se forja.
+
+Na cidade subterrânea há forja, altar que devolve vida, três canteiros de erva,
+mesa de encantamento, um bicho e a pedra de retorno. A horta se planta com
+semente e cresce em 45 segundos. A mesa grava três encantos permanentes: mais
+vida, mais dano ou mais luz. O bicho aceita três rações e passa a seguir você,
+somando vida e luz. A forja faz picareta, semente, ração, comida, tocha, chave e
+bomba.
 
 A **tocha** acende por dois minutos e aumenta a luz; a **bomba** espanta os
-bichos num raio de três tiles, sem XP e sem saque. `C` abre a Ficha em qualquer
-lugar, `Esc` sobe de volta para a boca da caverna. Monstros e chefe guardam o
-tempo de respawn de sempre; os baús se reabrem a cada descida.
+bichos num raio de três tiles, sem XP e sem saque. O **café** acelera os passos,
+o **assado** aumenta o dano e o **doce** aumenta a vida máxima; o caldo é o cura
+grande. `C` abre a Ficha em qualquer lugar, `Esc` sobe de volta para a boca da
+caverna. Monstros e chefe guardam o tempo de respawn de sempre; os baús e os
+veios se reabrem a cada descida.
 
 ## A Rede
 
@@ -157,7 +164,8 @@ node test/core.test.mjs
 Ela cobre o progresso e a persistência das missões, o filtro que mantém
 conteúdo de fora fora dos canais, o ciclo de duelo, dano, alavanca e chefe, a
 interpolação dos outros jogadores e a caverna: salas com chão, ligação da
-entrada até a cidade, linha de visão, chefe sem alavanca e a forja.
+entrada até a cidade, linha de visão, chefe sem alavanca, a forja, os
+encantamentos, a comida com efeito, o bicho e a pergunta que casa com o tema.
 
 ## Rodar na mão
 
@@ -183,9 +191,9 @@ Depois abra `http://localhost:8000`.
 | `js/nostr.js` | conta, canais, DMs NIP-17, perfis e presença Nostr |
 | `js/quests.js` | missões, progresso, XP e títulos |
 | `js/path.js` | caminho A* do clique até o destino |
-| `js/rpg.js` | vida, perícias, itens, forja, monstros, alavancas e duelo |
-| `js/rpg-data.js` | caçadas, monstros, itens, receitas e as 54 perguntas |
-| `js/dungeon.js` | a caverna em tela cheia: mapa, visão, batalha por encontro e desenho |
+| `js/rpg.js` | vida, perícias, itens, forja, encantos, buffs, bicho, monstros e duelo |
+| `js/rpg-data.js` | caçadas, monstros, itens, receitas, encantos e as 60 perguntas |
+| `js/dungeon.js` | a caverna em tela cheia: mapa, minimapa, visão, veios, horta, bicho e desenho |
 | `js/dungeon-data.js` | as seis cavernas: salas, temas, monstros e chefes |
 | `js/creature.js` | desenho dos monstros no mapa e no duelo |
 | `js/sheet.js` | a ficha de aventureiro |

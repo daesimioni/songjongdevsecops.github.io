@@ -42,6 +42,18 @@ export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onUs
     top.append(id, vitals);
     body.appendChild(top);
 
+    const buffs = rpg.buffView();
+    if (buffs.length) {
+      body.appendChild(el("p", "sheet-buffs", `efeitos: ${buffs.map((b) => `${b.name} ${b.left}s`).join(" · ")}`));
+    }
+    body.appendChild(el(
+      "p",
+      "sheet-pet",
+      rpg.petTamed()
+        ? "bicho companheiro: +5 de vida e +1 de luz na caverna."
+        : `bicho da cidade: afeição ${rpg.data.pet.bond}/3, dê ração na praça subterrânea.`,
+    ));
+
     body.appendChild(el("h3", "sheet-sec", "Perícias"));
     const grid = el("div", "sheet-skills");
     for (const s of rpg.skillsView()) {
@@ -80,7 +92,10 @@ export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onUs
             const res = rpg.useItem(item.id);
             if (!res.ok) { toast(res.reason, 3200); return; }
             const accepted = onUse?.(item.id, res) !== false;
-            if (res.healed) toast(`+${res.healed} de vida.`, 2400);
+            const bits = [];
+            if (res.healed) bits.push(`+${res.healed} de vida`);
+            if (res.buff) bits.push(`${res.buff.name} ${Math.round(res.buff.ms / 1000)}s`);
+            if (bits.length) toast(bits.join(" · "), 3000);
             else if ((res.light || res.bomb) && accepted) {
               toast(res.light ? "A tocha acende." : "A bomba estoura.", 2400);
             }
@@ -120,8 +135,38 @@ export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onUs
     }
     body.appendChild(recipes);
 
+    body.appendChild(el("h3", "sheet-sec", "Encantamentos"));
+    const enchants = el("div", "sheet-recipes");
+    for (const enchant of rpg.enchantsView()) {
+      const card = el("div", "recipe-card enchant-card");
+      const need = Object.entries(enchant.need)
+        .map(([id, n]) => `${ITEMS[id]?.name || id} ${rpg.itemCount(id)}/${n}`)
+        .join(" · ");
+      card.append(
+        el("b", "", enchant.name),
+        el("span", "", `${enchant.desc} ${enchant.owned ? "já gravado." : need}`),
+      );
+      const make = el("button", "item-use", enchant.owned ? "ativo" : "encantar");
+      make.type = "button";
+      make.disabled = enchant.owned;
+      make.addEventListener("click", () => {
+        const res = rpg.enchant(enchant.id);
+        if (!res.ok) {
+          toast(res.reason, 3200);
+          audio.error?.();
+          return;
+        }
+        toast(`${res.enchant.name} gravado.`, 3000);
+        audio.chime();
+        render();
+      });
+      card.appendChild(make);
+      enchants.appendChild(card);
+    }
+    body.appendChild(enchants);
+
     const note = el("p", "sheet-note");
-    note.textContent = "Responder certo nas caçadas sobe a perícia do continente, que aumenta o dano contra os monstros. A caverna dá ferro, erva, cristal e madeira: a forja transforma em poção, tocha e chave. Tocha acesa aumenta a luz no subsolo por dois minutos.";
+    note.textContent = "Responder certo nas caçadas sobe a perícia do continente, que aumenta o dano. A caverna dá ferro, erva, cristal e madeira; a forja faz ferramentas, comida, tocha, chave e bomba. Os veios de cristal pedem picareta, a horta pede semente e o bicho da cidade pede ração. Encantamentos ficam para sempre.";
     body.appendChild(note);
   }
 

@@ -93,7 +93,9 @@
         <span id="dg-keys"></span>
         <span id="dg-torch"></span>
         <span id="dg-bag"></span>
+        <span id="dg-buffs" hidden></span>
       </div>
+      <canvas id="dg-map" width="128" height="96" aria-label="Minimapa da caverna, com o que já foi andado"></canvas>
       <p id="dg-msg" class="dg-msg" role="status" aria-live="polite"></p>
       <div id="dg-prompt" class="dg-prompt" hidden><kbd>F</kbd> <span></span></div>
       <p id="dg-help" class="dg-help">WASD ou clique para andar · <kbd>F</kbd> interage · <kbd>C</kbd> ficha · <kbd>Espaço</kbd> corre · <kbd>Esc</kbd> sobe</p>
@@ -219,7 +221,8 @@
       <p class="help-note">Clique no chão para o boneco andar até ali. Clique numa estação, NPC, monstro ou alavanca para ir até perto e interagir sozinho.</p>
       <p class="help-note">Os NPCs têm missões. Aperte <kbd>F</kbd> perto deles para aceitar, responder e entregar. O Diário (<kbd>Z</kbd>) lista o que está em andamento e quanto falta.</p>
       <p class="help-note">Nas clareiras com bandeira acontecem as <strong>caçadas</strong>. Cada monstro abre uma prova: acertar tira vida dele, errar tira a sua. Derrube os três guardiões, puxe a alavanca e enfrente o chefe. A vitória dá XP, item e perícia do continente. A <strong>Ficha</strong> (<kbd>C</kbd>) mostra vida, perícias e mochila.</p>
-      <p class="help-note">Ao lado de cada clareira há uma <strong>boca de caverna</strong>. Lá dentro o bicho que vê você começa a batalha sozinho, e quanto mais fundo, mais forte. O chão dá ferro, erva, cristal e madeira; a forja da cidade subterrânea faz poção, tocha, chave, bomba e caldo. Baú fundo pede chave. <kbd>Esc</kbd> sobe de volta.</p>
+      <p class="help-note">Na cidade subterrânea: a forja abre a Ficha, a mesa grava encantos permanentes, a horta quer semente e o bicho quer ração. Veios de cristal pedem picareta.</p>
+      <p class="help-note">Ao lado de cada clareira há uma <strong>boca de caverna</strong>. Lá dentro o bicho que vê você começa a batalha sozinho, e quanto mais fundo, mais forte. O chão dá ferro, erva, cristal e madeira; a forja da cidade subterrânea faz ferramentas, comida, tocha, chave e bomba. Baú fundo pede chave. <kbd>Esc</kbd> sobe de volta.</p>
       <p class="help-note">A <strong>Rede</strong> é a conversa do mundo: canais por continente, DMs privadas e a lista de quem está por perto. Sua conta é uma chave Nostr criada e guardada neste navegador, sem cadastro e sem servidor meu. Só conteúdo marcado pelo jogo aparece ali.</p>
       <p class="help-note">Este site é estático. A presença no mapa usa um broker MQTT público por WebSocket; a Rede usa relays Nostr públicos. Se o sinal falhar, o mundo continua funcionando sozinho.</p>
     </div>

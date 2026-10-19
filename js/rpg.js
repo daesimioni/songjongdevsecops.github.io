@@ -2,12 +2,53 @@
 // perguntas. Tudo vive no localStorage; o mundo compartilhado continua sendo
 // só posição e conversa.
 import { STORAGE } from "./config.js";
-import { SKILLS, TIERS, ITEMS, QUESTIONS, RECIPES } from "./rpg-data.js";
+import { SKILLS, TIERS, ITEMS, QUESTIONS, RECIPES, ENCHANTS, DEEP_QUESTIONS } from "./rpg-data.js";
 
 const RESPAWN_MS = 5 * 60 * 1000;
 const BOSS_RESPAWN_MS = 20 * 60 * 1000;
 const MAX_SKILL_XP = 50;
 const SKILL_STEP = 5;
+const BUFF_NAMES = { speed: "passos rápidos", damage: "dano extra", maxhp: "vida extra" };
+
+// Palavras que aproximam a pergunta do tema da sala. O tema vem do mapa; a
+// pergunta não precisa citar a palavra exata para puxar assunto.
+const THEME_WORDS = {
+  circuitos: ["circuito", "fio", "transistor", "porta", "sinal"],
+  lógica: ["lógica", "booleano", "proposição", "porta", "verdade"],
+  memória: ["memória", "cache", "registrador", "ram", "guardar"],
+  tempo: ["clock", "frequência", "ciclo", "tempo", "atraso"],
+  algoritmos: ["algoritmo", "complexidade", "ordena", "busca", "passo", "escalonador", "processo", "núcleo"],
+  dados: ["dado", "tabela", "amostra", "estatística", "probabilidade"],
+  primos: ["primo", "divisível", "fator", "divisão", "número"],
+  geometria: ["triângulo", "ângulo", "geometria", "forma", "distância"],
+  limites: ["limite", "derivada", "integral", "contínu", "tende"],
+  infinito: ["infinito", "hilbert", "cardinal", "cantor", "enumerável"],
+  axiomas: ["axioma", "teorema", "prova", "lema", "demonstra"],
+  fractais: ["fractal", "autossemelhante", "iteração", "dimensão", "recurs"],
+  pêndulo: ["pêndulo", "oscila", "período", "gravidade", "amplitude"],
+  ondas: ["onda", "frequência", "comprimento", "ressonância", "som"],
+  calor: ["calor", "temperatura", "entropia", "energia", "térmic"],
+  luz: ["luz", "fóton", "prisma", "cor", "óptica"],
+  órbita: ["órbita", "gravidade", "satélite", "kepler", "escape"],
+  gravidade: ["gravidade", "massa", "queda", "newton", "peso"],
+  elementos: ["elemento", "tabela", "átomo", "próton", "elétron"],
+  ácidos: ["ácido", "ph", "base", "reação", "neutraliza"],
+  energia: ["energia", "ativação", "reação", "calor", "entalpia"],
+  equilíbrio: ["equilíbrio", "concentração", "reação", "tampão", "desloca"],
+  cristais: ["cristal", "rede", "sal", "estrutura", "sólido"],
+  ligações: ["ligação", "molécula", "átomo", "valência", "química"],
+  ritmo: ["ritmo", "compasso", "tempo", "batida", "pulso"],
+  harmonia: ["harmonia", "acorde", "intervalo", "tom", "consonância"],
+  silêncio: ["silêncio", "pausa", "som", "ruído", "repouso"],
+  timbre: ["timbre", "harmônico", "instrumento", "som", "voz"],
+  razões: ["razão", "oitava", "frequência", "proporção", "quinta"],
+  escalas: ["escala", "tom", "semitom", "modo", "afinação"],
+  pesos: ["peso", "sinapse", "treino", "rede", "neurônio"],
+  gradiente: ["gradiente", "descida", "erro", "aprendizado", "derivada"],
+  atenção: ["atenção", "token", "contexto", "transformer", "consulta"],
+  vetores: ["vetor", "embedding", "dimensão", "espaço", "distância"],
+  tokens: ["token", "texto", "vocabulário", "modelo", "palavra"],
+};
 
 const now = () => Date.now();
 const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
@@ -20,6 +61,9 @@ function emptyData() {
     monsters: {},
     bosses: {},
     levers: {},
+    enchants: {},
+    buffs: {},
+    pet: { bond: 0 },
   };
 }
 
@@ -45,6 +89,13 @@ function readData() {
     for (const [id, on] of Object.entries(obj.levers || {})) {
       if (on) data.levers[id] = true;
     }
+    for (const enchant of ENCHANTS) {
+      if (obj.enchants?.[enchant.id]) data.enchants[enchant.id] = true;
+    }
+    for (const [id, at] of Object.entries(obj.buffs || {})) {
+      if (BUFF_NAMES[id] && Number.isFinite(at) && at > now()) data.buffs[id] = at;
+    }
+    data.pet.bond = clamp(Number(obj.pet?.bond) || 0, 0, 3);
     return data;
   } catch {
     return emptyData();
@@ -64,6 +115,10 @@ const QUESTION_INDEX = new Map();
 function indexQuestions() {
   for (const [continent, tiers] of Object.entries(QUESTIONS)) {
     QUESTION_INDEX.set(continent, tiers);
+  }
+  for (const [continent, q] of Object.entries(DEEP_QUESTIONS)) {
+    const tiers = QUESTION_INDEX.get(continent);
+    if (tiers?.[3]) tiers[3].push(q);
   }
 }
 indexQuestions();
@@ -99,7 +154,43 @@ export class RPG {
   }
 
   hpMax() {
-    return 30 + (Math.max(1, this.getLevel()) - 1) * 4 + this.relics() * 5;
+    let max = 30 + (Math.max(1, this.getLevel()) - 1) * 4 + this.relics() * 5;
+    if (this.data.enchants.vigor) max += 10;
+    if (this.buffActive("maxhp")) max += 5;
+    if (this.data.pet.bond >= 3) max += 5;
+    return max;
+  }
+
+  buffActive(id) {
+    return Number.isFinite(this.data.buffs[id]) && this.data.buffs[id] > now();
+  }
+
+  speedMult() {
+    return this.buffActive("speed") ? 1.3 : 1;
+  }
+
+  lightBonus() {
+    return (this.data.enchants.luz ? 3 : 0) + (this.data.pet.bond >= 3 ? 1 : 0);
+  }
+
+  buffView() {
+    return Object.entries(this.data.buffs)
+      .filter(([id, at]) => BUFF_NAMES[id] && at > now())
+      .map(([id, at]) => ({ id, name: BUFF_NAMES[id], left: Math.ceil((at - now()) / 1000) }));
+  }
+
+  petTamed() {
+    return this.data.pet.bond >= 3;
+  }
+
+  feedPet() {
+    if (this.petTamed()) return { ok: false, reason: "O bicho já segue você." };
+    if (this.itemCount("racao") <= 0) return { ok: false, reason: "Falta ração de caverna." };
+    this.data.items.racao--;
+    if (this.data.items.racao <= 0) delete this.data.items.racao;
+    this.data.pet.bond = clamp(this.data.pet.bond + 1, 0, 3);
+    this.save();
+    return { ok: true, bond: this.data.pet.bond, tamed: this.petTamed() };
   }
 
   hp() {
@@ -152,9 +243,10 @@ export class RPG {
 
   damageFor(id) {
     const skill = this.skillLevel(id);
-    if (skill >= 10) return 3;
-    if (skill >= 6) return 2;
-    return 1;
+    let damage = skill >= 10 ? 3 : skill >= 6 ? 2 : 1;
+    if (this.data.enchants.furor) damage++;
+    if (this.buffActive("damage")) damage++;
+    return damage;
   }
 
   // ---------- itens ----------
@@ -170,7 +262,9 @@ export class RPG {
 
   useItem(id) {
     const item = ITEMS[id];
-    if (!item || !["pocao", "tocha", "bomba", "caldo"].includes(id)) return { ok: false, reason: "Este item não se usa agora." };
+    if (!item || !["pocao", "tocha", "bomba", "caldo", "cafe", "assado", "doce"].includes(id)) {
+      return { ok: false, reason: "Este item não se usa agora." };
+    }
     if (this.itemCount(id) <= 0) return { ok: false, reason: `Você não tem ${item.name}.` };
     if (id === "tocha") {
       this.data.items[id]--;
@@ -184,12 +278,47 @@ export class RPG {
       this.save();
       return { ok: true, bomb: true, name: item.name };
     }
-    if (this.hp() >= this.hpMax()) return { ok: false, reason: "Sua vida já está cheia." };
+    // comida com efeito pode ser usada de vida cheia: o buff ainda vale
+    if (!item.buff && this.hp() >= this.hpMax()) return { ok: false, reason: "Sua vida já está cheia." };
     this.data.items[id]--;
     if (this.data.items[id] <= 0) delete this.data.items[id];
-    const healed = this.heal(item.heal || 15);
+    const healed = this.heal(item.heal || 0);
+    if (item.buff) this.data.buffs[item.buff.id] = now() + item.buff.ms;
     this.save();
-    return { ok: true, healed };
+    return {
+      ok: true,
+      healed,
+      buff: item.buff ? { id: item.buff.id, name: BUFF_NAMES[item.buff.id] || item.buff.id, ms: item.buff.ms } : null,
+    };
+  }
+
+  enchantsView() {
+    return ENCHANTS.map((e) => {
+      const owned = !!this.data.enchants[e.id];
+      let can = true;
+      for (const [id, need] of Object.entries(e.need)) {
+        if (this.itemCount(id) < need) can = false;
+      }
+      return { ...e, owned, can };
+    });
+  }
+
+  enchant(id) {
+    const enchant = ENCHANTS.find((e) => e.id === id);
+    if (!enchant) return { ok: false, reason: "Este encanto não existe." };
+    if (this.data.enchants[id]) return { ok: false, reason: "Este encanto já está na sua lanterna." };
+    for (const [itemId, need] of Object.entries(enchant.need)) {
+      if (this.itemCount(itemId) < need) {
+        return { ok: false, reason: `Falta ${ITEMS[itemId]?.name || itemId}.` };
+      }
+    }
+    for (const [itemId, need] of Object.entries(enchant.need)) {
+      this.data.items[itemId] -= need;
+      if (this.data.items[itemId] <= 0) delete this.data.items[itemId];
+    }
+    this.data.enchants[id] = true;
+    this.save();
+    return { ok: true, enchant };
   }
 
   craft(recipeId) {
@@ -286,9 +415,10 @@ export class RPG {
   themeScore(text, hint) {
     if (!hint) return 0;
     const body = String(text).toLowerCase();
-    const words = String(hint).toLowerCase().split(/[^a-zà-ú0-9]+/i).filter((w) => w.length >= 4);
+    const theme = String(hint).toLowerCase();
+    const words = [theme, ...(THEME_WORDS[theme] || [])];
     let score = 0;
-    for (const w of words) if (body.includes(w)) score += 3;
+    for (const w of words) if (w.length >= 3 && body.includes(w)) score += 3;
     return score;
   }
 

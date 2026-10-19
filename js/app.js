@@ -1067,7 +1067,7 @@ function walkStep(dx, dy, dt) {
   if (!len) { player.moving = false; return false; }
   dx /= len; dy /= len;
   const sprinting = state.sprint;
-  const step = PLAYER_SPEED * (sprinting ? SPRINT_MULT : 1) * dt;
+  const step = PLAYER_SPEED * (sprinting ? SPRINT_MULT : 1) * rpg.speedMult() * dt;
   const oldX = player.x, oldY = player.y;
   const nx = player.x + dx * step;
   const ny = player.y + dy * step;
@@ -1125,7 +1125,7 @@ function setPathTo(x, y, pending = null) {
 function updateAutoWalk(dt) {
   const path = state.path;
   if (!path || !path.length) return false;
-  const stepLen = PLAYER_SPEED * (state.sprint ? SPRINT_MULT : 1) * dt;
+  const stepLen = PLAYER_SPEED * (state.sprint ? SPRINT_MULT : 1) * rpg.speedMult() * dt;
   let target = path[0];
   let dx = target.x - player.x;
   let dy = target.y - player.y;

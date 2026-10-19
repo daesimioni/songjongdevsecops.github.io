@@ -52,6 +52,12 @@ export const ITEMS = {
   tocha: { name: "Tocha de Veio", continent: "hub", use: "light", desc: "Acesa, aumenta a luz da caverna por dois minutos." },
   bomba: { name: "Bomba de Ferro", continent: "hub", use: "bomb", desc: "Estoura perto de você e espanta os bichos num raio curto. Não dá XP nem saque." },
   caldo: { name: "Caldo de Caverna", continent: "hub", heal: 35, desc: "Culinária de fundo de mina: cura 35. Erva, café e paciência." },
+  cafe: { name: "Café da Madrugada", continent: "hub", heal: 5, buff: { id: "speed", ms: 90000 }, desc: "Cura 5 e acelera os passos por 90 segundos. Gosto de pedra molhada." },
+  assado: { name: "Assado de Fundo de Mina", continent: "hub", heal: 45, buff: { id: "damage", ms: 180000 }, desc: "Cura 45 e dá +1 de dano por 3 minutos. Cozinha de expedição." },
+  doce: { name: "Doce de Erva", continent: "hub", heal: 15, buff: { id: "maxhp", ms: 180000 }, desc: "Cura 15 e dá +5 de vida máxima por 3 minutos. Sobremesa de caverna." },
+  picareta: { name: "Picareta de Veio", continent: "hub", desc: "Ferramenta de mineração. Com ela, os veios de cristal das cavernas se abrem." },
+  semente: { name: "Semente de Erva", continent: "hub", desc: "Planta na horta da cidade subterrânea. Cresce em 45 segundos." },
+  racao: { name: "Ração de Caverna", continent: "hub", desc: "A comida do bicho da cidade. Três rações e ele passa a seguir você." },
 };
 
 export const RECIPES = [
@@ -60,6 +66,18 @@ export const RECIPES = [
   { id: "chave", name: "Chave de Caverna", out: "chave", qty: 1, need: { ferro: 2, madeira: 1 } },
   { id: "bomba", name: "Bomba de Ferro", out: "bomba", qty: 1, need: { ferro: 1, veio: 1 } },
   { id: "caldo", name: "Caldo de Caverna", out: "caldo", qty: 1, need: { erva: 2, pocao: 1 } },
+  { id: "picareta", name: "Picareta de Veio", out: "picareta", qty: 1, need: { ferro: 3, madeira: 2 } },
+  { id: "semente", name: "Sementes de Erva", out: "semente", qty: 2, need: { erva: 1 } },
+  { id: "racao", name: "Ração de Caverna", out: "racao", qty: 2, need: { erva: 1, veio: 1 } },
+  { id: "cafe", name: "Café da Madrugada", out: "cafe", qty: 1, need: { erva: 1, pocao: 1 } },
+  { id: "assado", name: "Assado de Fundo de Mina", out: "assado", qty: 1, need: { caldo: 1, madeira: 1 } },
+  { id: "doce", name: "Doce de Erva", out: "doce", qty: 1, need: { erva: 2, veio: 1 } },
+];
+
+export const ENCHANTS = [
+  { id: "vigor", name: "Encanto de Vigor", desc: "+10 de vida máxima.", need: { veio: 4, erva: 4 } },
+  { id: "furor", name: "Encanto de Furor", desc: "+1 de dano em cada resposta certa.", need: { veio: 5, ferro: 5 } },
+  { id: "luz", name: "Encanto de Luz", desc: "A lanterna da caverna enxerga mais longe.", need: { veio: 3, madeira: 3 } },
 ];
 
 const GROUNDS_RAW = [
@@ -284,5 +302,46 @@ export const QUESTIONS = {
       { q: "Um modelo simples demais tende a...", options: ["Subajustar", "Sobreajustar", "Nunca errar"], a: 0, why: "Ele não captura a estrutura dos dados. O complexo demais tende ao sobreajuste." },
       { q: "Alinhamento de IA pergunta...", options: ["Como fazer o objetivo da máquina coincidir com o humano", "Como acelerar a rede", "Como reduzir tokens"], a: 0, why: "Um sistema pode maximizar a métrica errada. Alinhar é fazer a métrica representar o que realmente queremos." },
     ],
+  },
+};
+
+// Perguntas que puxam o assunto das salas do fundo da caverna: entram no
+// baralho difícil de cada continente e o tema da sala as coloca na frente.
+export const DEEP_QUESTIONS = {
+  cs: {
+    q: "Um escalonador de processos decide o quê?",
+    options: ["Qual instrução roda em cada núcleo agora", "Qual é o IP da máquina", "Quanto custa um byte"],
+    a: 0,
+    why: "O escalonador escolhe a ordem e o núcleo de cada processo. O IP é da rede e o byte é unidade de memória.",
+  },
+  math: {
+    q: "O que o teorema de Cantor mostra sobre o conjunto das partes de um conjunto?",
+    options: ["Ele é sempre maior que o conjunto original", "Ele é sempre igual", "Ele é sempre vazio"],
+    a: 0,
+    why: "Não existe correspondência um a um entre um conjunto e o conjunto de todos os seus subconjuntos.",
+  },
+  physics: {
+    q: "Por que a luz de uma estrela se curva perto do Sol?",
+    options: ["A massa curva o espaço-tempo por onde a luz passa", "O ar do espaço empurra a luz", "A luz tem massa de repouso"],
+    a: 0,
+    why: "Na relatividade geral a gravidade é a geometria do espaço-tempo, e a luz segue essa geometria.",
+  },
+  chem: {
+    q: "O que uma solução tampão faz quando recebe um ácido?",
+    options: ["Resiste à mudança de pH", "Vira uma base forte", "Evapora mais rápido"],
+    a: 0,
+    why: "O tampão consome o ácido adicionado com sua base conjugada e mantém o pH quase estável.",
+  },
+  music: {
+    q: "O que o timbre de um instrumento descreve?",
+    options: ["A mistura de harmônicos que dá a cor do som", "A altura da nota apenas", "O volume máximo"],
+    a: 0,
+    why: "Dois instrumentos na mesma nota soam diferentes porque os harmônicos e seus envelopes mudam.",
+  },
+  ai: {
+    q: "O que a atenção faz numa rede neural?",
+    options: ["Pondera quais partes da entrada importam mais", "Apaga os pesos antigos", "Aumenta a resolução da tela"],
+    a: 0,
+    why: "A atenção calcula pesos para cada token ou posição, em vez de tratar toda a entrada do mesmo jeito.",
   },
 };
