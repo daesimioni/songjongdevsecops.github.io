@@ -568,6 +568,7 @@ function startNet() {
 
 function startGame() {
   state.started = true;
+  document.activeElement?.blur?.();
   rede.setName(player.name);
   $("intro").hidden = true;
   $("minimap").hidden = false;
@@ -590,7 +591,7 @@ function startGame() {
     document.querySelector("#prompt kbd").textContent = "A";
     setTimeout(() => toast("toque no chão para andar, segure Turbo para voar baixo, A para interagir.", 4800), 800);
   } else {
-    setTimeout(() => toast("WASD ou clique no chão anda, Shift acende a nave, E interage, C é a ficha.", 5200), 800);
+    setTimeout(() => toast("WASD/QEZC ou clique no chão anda, Espaço acende a nave, Enter interage, F é a ficha.", 5400), 800);
   }
 }
 
@@ -995,7 +996,8 @@ function walkStep(dx, dy, dt) {
   player.x = Math.max(0.5, Math.min(MAP_W - 0.5, player.x));
   player.y = Math.max(0.5, Math.min(MAP_H - 0.5, player.y));
   const moved = player.x !== oldX || player.y !== oldY;
-  if (Math.abs(dx) > Math.abs(dy)) player.dir = dx > 0 ? 2 : 1;
+  if (dx !== 0 && dy !== 0) player.dir = dx > 0 ? 2 : 1;
+  else if (Math.abs(dx) > Math.abs(dy)) player.dir = dx > 0 ? 2 : 1;
   else player.dir = dy > 0 ? 0 : 3;
   player.moving = moved;
   if (!moved) return false;
@@ -1014,6 +1016,10 @@ function updateMovement(dt) {
   if (keys.has("d") || keys.has("arrowright") || state.touch.right) dx += 1;
   if (keys.has("w") || keys.has("arrowup") || state.touch.up) dy -= 1;
   if (keys.has("s") || keys.has("arrowdown") || state.touch.down) dy += 1;
+  if (keys.has("q")) { dx -= 1; dy -= 1; }
+  if (keys.has("e")) { dx += 1; dy -= 1; }
+  if (keys.has("z")) { dx -= 1; dy += 1; }
+  if (keys.has("c")) { dx += 1; dy += 1; }
   if (dx === 0 && dy === 0) { player.moving = false; return; }
   walkStep(dx, dy, dt);
 }
@@ -1052,7 +1058,8 @@ function updateAutoWalk(dt) {
     player.x = target.x;
     player.y = target.y;
     player.moving = true;
-    if (Math.abs(dx) > Math.abs(dy)) player.dir = dx > 0 ? 2 : 1;
+    if (dx !== 0 && dy !== 0) player.dir = dx > 0 ? 2 : 1;
+    else if (Math.abs(dx) > Math.abs(dy)) player.dir = dx > 0 ? 2 : 1;
     else player.dir = dy > 0 ? 0 : 3;
     path.shift();
     if (!path.length) {
@@ -1216,26 +1223,30 @@ window.addEventListener("keydown", (e) => {
     return;
   }
   if (state.panelOpen || state.modal) return;
-  if (k === "shift") {
+  if (k === " " || e.code === "Space") {
     if (!state.sprint) { state.sprint = true; audio.boost(); }
     return;
   }
-  if (k === "e" || k === "enter") { interact(); return; }
+  if (k === "enter") {
+    e.preventDefault();
+    interact();
+    return;
+  }
   if (k === "j") { openJournal(); return; }
-  if (k === "c") { openSheet(); return; }
+  if (k === "f") { openSheet(); return; }
   if (k === "r") { openRede(); return; }
   if (k === "t") {
     e.preventDefault();
     openChat();
     return;
   }
-  if (["w", "a", "s", "d", "arrowup", "arrowdown", "arrowleft", "arrowright"].includes(k)) clearPath();
+  if (["w", "a", "s", "d", "q", "e", "z", "c", "arrowup", "arrowdown", "arrowleft", "arrowright"].includes(k)) clearPath();
   state.keys.add(k);
 });
 window.addEventListener("keyup", (e) => {
   const k = e.key.toLowerCase();
   state.keys.delete(k);
-  if (k === "shift") state.sprint = false;
+  if (k === " " || e.code === "Space") state.sprint = false;
 });
 window.addEventListener("blur", () => {
   state.keys.clear();

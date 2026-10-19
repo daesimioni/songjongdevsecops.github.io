@@ -23,9 +23,13 @@ central. O minimapa começa coberto por névoa e revela o que você anda. Cada
 estação descoberta vira um fragmento no diário e soma experiência. As Pedras do
 Porto, nas docas, abrem a viagem rápida entre os continentes já visitados.
 
-Segure `Shift` para acender a nave e cruzar o mapa mais rápido; no celular,
+Segure `Espaço` para acender a nave e cruzar o mapa mais rápido; no celular,
 segure o botão **Turbo**. A nave é um pequeno skiff que flutua, balança e deixa
 rastro, mas não atravessa água: as pontes continuam sendo caminho.
+
+No teclado: `WASD`, `QEZC` ou setas andam, com `Q`/`E`/`Z`/`C` nas diagonais.
+`Espaço` liga a nave, `Enter` interage, `F` abre a ficha, `J` o diário, `T` a
+conversa e `R` a Rede.
 
 A praça compartilhada mostra outras pessoas na mesma sala. Não existe servidor
 próprio: o site é estático e o sinal usa um broker MQTT público por WebSocket.
@@ -42,7 +46,7 @@ sessão do navegador por sala. Enter envia; Esc fecha.
 ## Missões
 
 Os sete NPCs do mapa dão missões. Um `!` flutuante marca quem tem missão para
-dar; quando o objetivo está cumprido, ele vira `?`. Aperte `E` perto deles para
+dar; quando o objetivo está cumprido, ele vira `?`. Aperte `Enter` perto deles para
 aceitar, responder e entregar. São três tipos:
 
 - **caminhada**: abrir estações, acender os sete faróis, mexer em oito
@@ -61,8 +65,8 @@ e o botão de concluir quando o objetivo está cumprido.
 Clique no chão e o boneco anda até ali sozinho, contornando água, parede e
 árvore. Clique também no minimapa, desde que o ponto já esteja revelado. Clique
 numa estação, NPC, monstro ou alavanca para ele ir até perto e interagir. Se a
-conversa estiver aberta, o clique no mundo fecha a conversa e anda. WASD cancela
-o caminho.
+conversa estiver aberta, o clique no mundo fecha a conversa e anda. WASD, QEZC ou
+as setas cancelam o caminho.
 
 Cada continente tem uma clareira de caça com três guardiões e uma alavanca. Cada
 monstro abre uma prova de perguntas:
@@ -78,7 +82,7 @@ item raro. Cada vitória dá XP e item; os monstros voltam depois de cinco minut
 o chefe depois de vinte. O item do chefe é uma relíquia: cada uma soma 5 de vida
 máxima.
 
-A **Ficha** (`C`) mostra vida, nível, perícias e mochila. A vida volta devagar
+A **Ficha** (`F`) mostra vida, nível, perícias e mochila. A vida volta devagar
 fora de duelo; a Poção de Café cura na hora. Cair num duelo não perde item nem
 XP: o boneco acorda no Porto com a vida cheia.
 
