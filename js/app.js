@@ -1108,7 +1108,11 @@ window.addEventListener("keydown", (e) => {
   if (k === "j") { openJournal(); return; }
   if (k === "c") { openSheet(); return; }
   if (k === "r") { openRede(); return; }
-  if (k === "t") { openChat(); return; }
+  if (k === "t") {
+    e.preventDefault();
+    openChat();
+    return;
+  }
   if (["w", "a", "s", "d", "arrowup", "arrowdown", "arrowleft", "arrowright"].includes(k)) clearPath();
   state.keys.add(k);
 });
