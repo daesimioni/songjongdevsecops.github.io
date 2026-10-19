@@ -31,6 +31,10 @@ A praça compartilhada mostra outras pessoas na mesma sala. Não existe servidor
 próprio: o site é estático e o sinal usa um broker MQTT público por WebSocket.
 Se o sinal falhar, o mundo continua funcionando sozinho.
 
+A conversa da sala tem um histórico curto no próprio campo de fala: as mensagens
+novas entram embaixo, as antigas sobem e somem, e o que sobra fica guardado na
+sessão do navegador por sala. Enter envia; Esc fecha.
+
 ## Missões
 
 Os sete NPCs do mapa dão missões. Um `!` flutuante marca quem tem missão para

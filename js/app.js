@@ -89,6 +89,7 @@ const state = {
   panelCleanup: null,
   currentPost: null,
   chatOpen: false,
+  chatLog: [],
   modal: null,
   peers: [],
   net: null,
@@ -543,7 +544,10 @@ function startNet() {
     color: player.color,
     onPeers: setPeers,
     onStatus: setNetStatus,
-    onChat: () => { audio.blip(); },
+    onChat: (peer, text) => {
+      audio.blip();
+      pushChatMessage(peer.name, text, peer.color);
+    },
     onError: () => {},
   });
   state.net.connect();
@@ -560,6 +564,7 @@ function startGame() {
   if (saved.sound) setSound(true); else setSound(false);
   history.replaceState(null, "", `#sala=${state.room}`);
   $("room-label").textContent = `sala ${state.room}`;
+  loadChatLog();
   player.continentId = "hub";
   if ($("intro-net").checked) { startNet(); bootSocial(); } else setNetStatus({ state: "solo", count: 1 });
   const first = !state.docks.has("hub");
@@ -810,6 +815,81 @@ function closePanel() {
   audio.close();
 }
 
+const CHAT_HISTORY_MAX = 30;
+const CHAT_HISTORY_SHOW = 24;
+
+function chatLogKey() {
+  return `${STORAGE.chat}:${state.room}`;
+}
+
+function loadChatLog() {
+  state.chatLog = [];
+  try {
+    const raw = sessionStorage.getItem(chatLogKey());
+    const list = raw ? JSON.parse(raw) : null;
+    if (!Array.isArray(list)) return;
+    for (const m of list) {
+      if (!m || typeof m.text !== "string" || !m.text) continue;
+      state.chatLog.push({
+        name: String(m.name || "viajante").replace(/[<>\u0000-\u001f]/g, "").slice(0, 24),
+        text: String(m.text).slice(0, 160),
+        color: /^#[0-9a-f]{6}$/i.test(m.color) ? m.color : "#61f4c0",
+        mine: !!m.mine,
+        at: Number(m.at) || 0,
+      });
+    }
+    state.chatLog = state.chatLog.slice(-CHAT_HISTORY_MAX);
+  } catch { /* sem sessão */ }
+}
+
+function saveChatLog() {
+  try {
+    sessionStorage.setItem(chatLogKey(), JSON.stringify(state.chatLog.slice(-CHAT_HISTORY_MAX)));
+  } catch { /* sem sessão */ }
+}
+
+function pushChatMessage(name, text, color, mine = false) {
+  const clean = String(text || "").replace(/[<> -]/g, " ").replace(/\s+/g, " ").trim().slice(0, 160);
+  if (!clean) return;
+  state.chatLog.push({
+    name: mine ? player.name : String(name || "viajante").slice(0, 24),
+    text: clean,
+    color: /^#[0-9a-f]{6}$/i.test(color) ? color : "#61f4c0",
+    mine: !!mine,
+    at: Date.now(),
+  });
+  if (state.chatLog.length > CHAT_HISTORY_MAX) state.chatLog.shift();
+  saveChatLog();
+  if (state.chatOpen) renderChatLog();
+}
+
+function renderChatLog(forceBottom = false) {
+  const log = $("chat-log");
+  if (!log) return;
+  const near = log.scrollHeight - log.scrollTop - log.clientHeight < 28;
+  log.textContent = "";
+  if (!state.chatLog.length) {
+    const empty = document.createElement("p");
+    empty.className = "chat-log-empty";
+    empty.textContent = "ninguém falou nesta sala ainda";
+    log.appendChild(empty);
+    return;
+  }
+  const list = state.chatLog.slice(-CHAT_HISTORY_SHOW);
+  list.forEach((m, i) => {
+    const line = document.createElement("div");
+    line.className = "chat-line" + (m.mine ? " mine" : "") + (i < list.length - 6 ? " old" : "");
+    const who = document.createElement("b");
+    who.textContent = m.mine ? "você" : m.name;
+    who.style.color = m.color;
+    const body = document.createElement("span");
+    body.textContent = m.text;
+    line.append(who, body);
+    log.appendChild(line);
+  });
+  if (forceBottom || near) log.scrollTop = log.scrollHeight;
+}
+
 function openChat() {
   if (!state.started || state.panelOpen || state.modal) return;
   stopSprint();
@@ -821,6 +901,7 @@ function openChat() {
   document.body.classList.add("chatting");
   $("chatbar").hidden = false;
   $("prompt").hidden = true;
+  renderChatLog(true);
   $("chat-input").value = "";
   $("chat-input").focus();
 }
@@ -1235,12 +1316,18 @@ $("chat-form").addEventListener("submit", (e) => {
   if (!text) return;
   if (state.net && state.net.sendChat(text)) {
     player.bubble = { text, until: performance.now() + 6500 };
+    pushChatMessage(player.name, text, player.color, true);
     $("chat-input").value = "";
   } else {
     toast("a mensagem não saiu. Veja se o sinal está de pé.");
   }
 });
 $("chat-cancel").addEventListener("click", closeChat);
+$("chat-input").addEventListener("keydown", (e) => {
+  if (e.key !== "Enter" || e.isComposing) return;
+  e.preventDefault();
+  $("chat-form").requestSubmit();
+});
 
 $("intro-form").addEventListener("submit", (e) => {
   e.preventDefault();
