@@ -149,11 +149,13 @@
         <div><kbd>setas</kbd><span>andar</span></div>
         <div><kbd>E</kbd><span>interagir</span></div>
         <div><kbd>J</kbd><span>diário</span></div>
+        <div><kbd>Shift</kbd><span>acender a nave</span></div>
         <div><kbd>T</kbd><span>conversar na sala</span></div>
         <div><kbd>R</kbd><span>abrir a Rede</span></div>
         <div><kbd>Esc</kbd><span>fechar</span></div>
       </div>
-      <p class="help-note">No celular, use o direcional e o botão A. A praça é pública: quem estiver na mesma sala vê seu apelido, seu boneco e suas mensagens. Use um apelido, não seu nome completo.</p>
+      <p class="help-note">Segure <kbd>Shift</kbd> para acender a nave e cruzar o mapa mais rápido; no celular, segure o botão <strong>Turbo</strong>. A nave não atravessa água: as pontes continuam sendo caminho.</p>
+      <p class="help-note">No celular, use o direcional, o botão A e o Turbo. A praça é pública: quem estiver na mesma sala vê seu apelido, seu boneco e suas mensagens. Use um apelido, não seu nome completo.</p>
       <p class="help-note">As <strong>Pedras do Porto</strong>, os monólitos brilhantes nas docas, abrem a viagem rápida para os continentes que você já visitou. As pontes também funcionam a pé.</p>
       <p class="help-note">Os NPCs têm missões. Aperte <kbd>E</kbd> perto deles para aceitar, responder e entregar. O Diário lista o que está em andamento e quanto falta.</p>
       <p class="help-note">A <strong>Rede</strong> é a conversa do mundo: canais por continente, DMs privadas e a lista de quem está por perto. Sua conta é uma chave Nostr criada e guardada neste navegador, sem cadastro e sem servidor meu. Só conteúdo marcado pelo jogo aparece ali.</p>
@@ -165,7 +167,7 @@
     <div class="intro-card">
       <p class="intro-eyebrow">um blog jogável · edição 2026</p>
       <h1 id="intro-title">MUNDO<br>DE SONG</h1>
-      <p class="intro-lead">Seis continentes, 32 fragmentos. Cada estação é uma página com um instrumento para mexer: lógica, circuitos, processadores, infinito, cálculo, pêndulos, luz, átomos, harmonia, ritmo, redes neurais e mais. Os NPCs dão missões, e a Rede liga você aos outros jogadores por canais e DMs. Ande, descubra e acenda os faróis.</p>
+      <p class="intro-lead">Seis continentes, 32 fragmentos. Cada estação é uma página com um instrumento para mexer: lógica, circuitos, processadores, infinito, cálculo, pêndulos, luz, átomos, harmonia, ritmo, redes neurais e mais. Os NPCs dão missões, e a Rede liga você aos outros jogadores por canais e DMs. Ande, segure Shift para acender a nave e cruze o mapa voando baixo.</p>
       <form id="intro-form" autocomplete="off">
         <label for="intro-name">seu apelido</label>
         <input id="intro-name" name="mundo-apelido" maxlength="16" placeholder="viajante" autocomplete="off" required>
@@ -178,7 +180,7 @@
         <button type="submit" class="start">entrar no mundo</button>
       </form>
       <p class="intro-note">A sala é pública. Quem estiver nela vê seu apelido e sua posição. Sem servidor meu: presença por broker público, conversa por relays Nostr. Sua chave da Rede nasce neste navegador e nunca sai dele sem você mandar.</p>
-      <p class="intro-controls"><kbd>WASD</kbd> andar · <kbd>E</kbd> interagir · <kbd>J</kbd> diário · <kbd>T</kbd> conversar · <kbd>R</kbd> Rede · <kbd>E</kbd> nas Pedras do Porto viaja</p>
+      <p class="intro-controls"><kbd>WASD</kbd> andar · <kbd>Shift</kbd> nave · <kbd>E</kbd> interagir · <kbd>J</kbd> diário · <kbd>T</kbd> conversar · <kbd>R</kbd> Rede</p>
     </div>
   </div>
 
@@ -189,7 +191,10 @@
       <button type="button" data-dir="down" aria-label="baixo">▼</button>
       <button type="button" data-dir="right" aria-label="direita">▶</button>
     </div>
-    <button type="button" id="touch-action" class="touch-action" aria-label="interagir">A</button>
+    <div class="touch-right">
+      <button type="button" id="touch-sprint" class="touch-sprint" aria-label="acender a nave">TURBO</button>
+      <button type="button" id="touch-action" class="touch-action" aria-label="interagir">A</button>
+    </div>
   </div>
 
   <div id="minimap" class="minimap" hidden>

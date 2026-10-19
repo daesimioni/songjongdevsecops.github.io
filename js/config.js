@@ -6,6 +6,7 @@ export const WORLD_H = MAP_H * TILE;
 
 // posições e tamanhos de gente são em tiles (1 tile = 16 unidades de mundo)
 export const PLAYER_SPEED = 82 / 16;
+export const SPRINT_MULT = 2.2;
 export const PLAYER_W = 9 / 16;
 export const PLAYER_H = 6 / 16;
 export const INTERACT_RADIUS = 30 / 16;

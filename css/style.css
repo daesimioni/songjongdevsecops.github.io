@@ -555,7 +555,7 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
   gap: 4px;
   pointer-events: auto;
 }
-.dpad button, .touch-action {
+.dpad button, .touch-action, .touch-sprint {
   border: 1px solid var(--line-strong);
   border-radius: 8px;
   background: rgba(9, 13, 30, 0.82);
@@ -565,11 +565,19 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
   backdrop-filter: blur(6px);
   touch-action: none;
 }
-.dpad button:active, .touch-action:active { background: rgba(255, 200, 87, 0.25); }
+.dpad button:active, .touch-action:active, .touch-sprint:active,
+.touch-sprint.active { background: rgba(107, 213, 255, 0.28); }
 .dpad button[data-dir="up"] { grid-column: 2; grid-row: 1; }
 .dpad button[data-dir="left"] { grid-column: 1; grid-row: 2; }
 .dpad button[data-dir="down"] { grid-column: 2; grid-row: 3; }
 .dpad button[data-dir="right"] { grid-column: 3; grid-row: 2; }
+.touch-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  pointer-events: none;
+}
 .touch-action {
   width: 64px;
   height: 64px;
@@ -578,6 +586,23 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
   color: var(--amber);
   font-size: 16px;
   border-color: rgba(255, 200, 87, 0.55);
+}
+.touch-sprint {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  pointer-events: auto;
+  color: var(--cyan);
+  font-family: var(--pixel);
+  font-size: 7px;
+  letter-spacing: 0.04em;
+  border-color: rgba(107, 213, 255, 0.55);
+  box-shadow: 0 0 18px rgba(107, 213, 255, 0.12);
+}
+.touch-sprint.active {
+  color: var(--ink);
+  border-color: var(--cyan);
+  box-shadow: 0 0 22px rgba(107, 213, 255, 0.35);
 }
 
 .minimap {

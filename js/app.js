@@ -1,6 +1,6 @@
 import {
   CONTINENTS, CONTINENT_ORDER, SITES, WAYSTONES, SPAWN,
-  PLAYER_SPEED, PLAYER_W, PLAYER_H, INTERACT_RADIUS, PLAYER_COLORS,
+  PLAYER_SPEED, SPRINT_MULT, PLAYER_W, PLAYER_H, INTERACT_RADIUS, PLAYER_COLORS,
   STORAGE, NET, MAP_W, MAP_H,
 } from "./config.js";
 import { createWorld } from "./world.js";
@@ -73,6 +73,7 @@ const player = {
   name: saved.name || "viajante",
   colorIndex: Math.floor(Math.random() * PLAYER_COLORS.length),
   bubble: null,
+  boost: 0,
 };
 player.color = PLAYER_COLORS[player.colorIndex].shirt;
 
@@ -98,6 +99,7 @@ const state = {
   touch: { up: false, down: false, left: false, right: false },
   fogDirty: false,
   fogSavedAt: 0,
+  sprint: false,
 };
 
 for (const cid of CONTINENT_ORDER) {
@@ -475,9 +477,9 @@ function startGame() {
   const coarse = window.matchMedia("(pointer: coarse)").matches;
   if (coarse) {
     document.querySelector("#prompt kbd").textContent = "A";
-    setTimeout(() => toast("direcional para andar, A para interagir, Falar para conversar.", 4400), 800);
+    setTimeout(() => toast("direcional para andar, segure Turbo para voar baixo, A para interagir.", 4600), 800);
   } else {
-    setTimeout(() => toast("WASD anda, E interage, J abre o diário, T conversa.", 4400), 800);
+    setTimeout(() => toast("WASD anda, Shift acende a nave, E interage, J diário, T conversa.", 4800), 800);
   }
 }
 
@@ -496,7 +498,13 @@ function showZoneCard(continent, first) {
   if (first) { renderer.kick(0.7); audio.chime(); }
 }
 
+function stopSprint() {
+  state.sprint = false;
+  $("touch-sprint")?.classList.remove("active");
+}
+
 function openJournal() {
+  stopSprint();
   if (state.panelOpen) closePanel();
   closeChat();
   buildJournal();
@@ -551,6 +559,7 @@ function buildJournal() {
 }
 
 function openTravel() {
+  stopSprint();
   if (state.panelOpen) closePanel();
   closeChat();
   buildTravel();
@@ -615,6 +624,7 @@ function travelTo(cid) {
 }
 
 function openModal(name) {
+  stopSprint();
   closeModal(state.modal);
   state.modal = name;
   $(name).hidden = false;
@@ -631,6 +641,7 @@ function closeModal(name) {
 }
 
 async function openPost(id, site) {
+  stopSprint();
   const post = POSTS[id];
   if (!post) {
     toast("Esta página ainda está sendo escrita.");
@@ -706,6 +717,7 @@ function closePanel() {
 
 function openChat() {
   if (!state.started || state.panelOpen || state.modal) return;
+  stopSprint();
   if (!state.net) {
     toast("esta sessão é solo. Recarregue e entre na praça compartilhada para conversar.");
     return;
@@ -773,7 +785,14 @@ function updatePrompt() {
   $("prompt").hidden = false;
 }
 
+function updateBoost(dt, active) {
+  const target = active && state.sprint ? 1 : 0;
+  player.boost += (target - player.boost) * Math.min(1, dt * 8);
+  if (player.boost < 0.01) player.boost = 0;
+}
+
 function updateMovement(dt) {
+  const sprinting = state.sprint;
   const keys = state.keys;
   let dx = 0, dy = 0;
   if (keys.has("a") || keys.has("arrowleft") || state.touch.left) dx -= 1;
@@ -783,7 +802,7 @@ function updateMovement(dt) {
   if (dx === 0 && dy === 0) { player.moving = false; return; }
   const len = Math.hypot(dx, dy);
   dx /= len; dy /= len;
-  const step = PLAYER_SPEED * dt;
+  const step = PLAYER_SPEED * (sprinting ? SPRINT_MULT : 1) * dt;
   const oldX = player.x, oldY = player.y;
   const nx = player.x + dx * step;
   const ny = player.y + dy * step;
@@ -797,9 +816,9 @@ function updateMovement(dt) {
   player.moving = moved;
   if (!moved) return;
   const now = performance.now();
-  if (now - state.footstepAt > 340) {
+  if (now - state.footstepAt > (sprinting ? 155 : 340)) {
     state.footstepAt = now;
-    audio.footstep();
+    if (sprinting) audio.hover(); else audio.footstep();
   }
 }
 
@@ -836,7 +855,9 @@ function loop(now) {
   try {
     const dt = Math.min(0.05, (now - (loop.last || now)) / 1000);
     loop.last = now;
-    if (state.started && !state.panelOpen && !state.modal && !state.chatOpen) {
+    const active = state.started && !state.panelOpen && !state.modal && !state.chatOpen;
+    updateBoost(dt, active);
+    if (active) {
       updateMovement(dt);
       updateZone();
     } else {
@@ -851,7 +872,7 @@ function loop(now) {
     for (const n of world.npcs) n.questMark = quests.markFor(n.id);
     renderer.draw(now, player, state.peers, world.npcs, world.cat, player.moving);
     updatePrompt();
-    if (state.net) state.net.setLocal(player.x, player.y, player.dir);
+    if (state.net) state.net.setLocal(player.x, player.y, player.dir, player.boost);
   } catch (e) {
     console.error("[loop] erro", e);
     if (!loop.warned) { loop.warned = true; toast("ops, o mundo tropeçou. Abra o console."); }
@@ -901,15 +922,24 @@ window.addEventListener("keydown", (e) => {
     return;
   }
   if (state.panelOpen || state.modal) return;
+  if (k === "shift") {
+    if (!state.sprint) { state.sprint = true; audio.boost(); }
+    return;
+  }
   if (k === "e" || k === "enter") { interact(); return; }
   if (k === "j") { openJournal(); return; }
   if (k === "r") { openRede(); return; }
   if (k === "t") { openChat(); return; }
   state.keys.add(k);
 });
-window.addEventListener("keyup", (e) => { state.keys.delete(e.key.toLowerCase()); });
+window.addEventListener("keyup", (e) => {
+  const k = e.key.toLowerCase();
+  state.keys.delete(k);
+  if (k === "shift") state.sprint = false;
+});
 window.addEventListener("blur", () => {
   state.keys.clear();
+  state.sprint = false;
   state.touch.up = state.touch.down = state.touch.left = state.touch.right = false;
 });
 
@@ -923,6 +953,20 @@ for (const btn of document.querySelectorAll(".dpad button")) {
   btn.addEventListener("pointercancel", off);
 }
 $("touch-action").addEventListener("click", interact);
+const sprintBtn = $("touch-sprint");
+function touchSprint(on) {
+  return (e) => {
+    e.preventDefault();
+    if (!state.started) return;
+    if (on && !state.sprint) { state.sprint = true; audio.boost(); }
+    if (!on) state.sprint = false;
+    sprintBtn.classList.toggle("active", on);
+  };
+}
+sprintBtn.addEventListener("pointerdown", touchSprint(true));
+sprintBtn.addEventListener("pointerup", touchSprint(false));
+sprintBtn.addEventListener("pointerleave", touchSprint(false));
+sprintBtn.addEventListener("pointercancel", touchSprint(false));
 
 $("world").addEventListener("pointerdown", (e) => {
   if (!state.started || state.panelOpen || state.modal || state.chatOpen) return;
@@ -1017,9 +1061,9 @@ window.addEventListener("beforeunload", () => {
   const coarse = window.matchMedia("(pointer: coarse)").matches;
   if (coarse) {
     const lead = document.querySelector(".intro-lead");
-    if (lead) lead.innerHTML = "Cada continente é uma página. Ande com o direcional, toque em <kbd>A</kbd> nas estações e descubra 32 fragmentos de computação, matemática, física, química, música e inteligência artificial.";
+    if (lead) lead.innerHTML = "Cada continente é uma página. Ande com o direcional, segure <strong>Turbo</strong> para acelerar e toque em <kbd>A</kbd> nas estações para descobrir 32 fragmentos de computação, matemática, física, química, música e inteligência artificial.";
     const controls = document.querySelector(".intro-controls");
-    if (controls) controls.innerHTML = "direcional para andar · <kbd>A</kbd> para interagir · Falar abre a conversa";
+    if (controls) controls.innerHTML = "direcional para andar · <strong>Turbo</strong> para acelerar · <kbd>A</kbd> para interagir · Falar abre a conversa";
     const canvas = $("world");
     if (canvas) canvas.setAttribute("aria-label", "Mapa do mundo, em pixel art. Ande com o direcional e interaja com A.");
   }

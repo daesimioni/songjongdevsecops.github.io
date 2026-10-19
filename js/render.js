@@ -22,6 +22,7 @@ export function createRenderer(canvas, world) {
   let dpr = 1, vw = 0, vh = 0, zoom = 3;
   let camX = 0, camY = 0, shake = 0;
   let rendererReady = false;
+  let trail = [];
   const motes = Array.from({ length: 90 }, () => ({
     x: Math.random() * WORLD_W,
     y: Math.random() * WORLD_H,
@@ -914,6 +915,78 @@ export function createRenderer(canvas, world) {
     }
   }
 
+  function skiffRear(dir) {
+    return {
+      x: dir === 1 ? -1 : dir === 2 ? 1 : 0,
+      y: dir === 3 ? -1 : dir === 0 ? 1 : 0,
+    };
+  }
+
+  function drawSkiff(px, py, dir, time, boost = 1, moving = false) {
+    if (boost <= 0.01) return;
+    const bob = Math.sin(time * 0.007) * 1.1;
+    const by = py - 2 + bob;
+    const rear = skiffRear(dir);
+    const vx = -rear.x;
+    const vy = -rear.y;
+    ctx.save();
+    ctx.globalAlpha = Math.min(1, boost);
+
+    // sombra e halo
+    ctx.fillStyle = "rgba(2, 4, 10, 0.32)";
+    ctx.beginPath();
+    ctx.ellipse(px, py + 4, 12, 3.2, 0, 0, Math.PI * 2);
+    ctx.fill();
+    const pulse = 0.5 + Math.sin(time * 0.018) * 0.5;
+    const gx = px + rear.x * 9;
+    const gy = by + rear.y * 5;
+    const glow = ctx.createRadialGradient(gx, gy, 1, gx, gy, 19);
+    glow.addColorStop(0, `rgba(107, 213, 255, ${0.18 + pulse * 0.14})`);
+    glow.addColorStop(1, "rgba(107, 213, 255, 0)");
+    ctx.fillStyle = glow;
+    ctx.fillRect(px - 26, by - 20, 52, 40);
+
+    // casco em degraus
+    ctx.fillStyle = "#0b2438";
+    ctx.fillRect(px - 11, by - 1, 22, 4);
+    ctx.fillRect(px - 8, by - 3, 16, 2);
+    ctx.fillRect(px - 8, by + 3, 16, 2);
+    ctx.fillStyle = "#1d6280";
+    ctx.fillRect(px - 10, by, 20, 2);
+    ctx.fillRect(px - 7, by - 2, 14, 2);
+    ctx.fillStyle = "#61f4c0";
+    ctx.fillRect(px - 9, by, 18, 1);
+    // convés
+    ctx.fillStyle = "#122a4a";
+    ctx.fillRect(px - 6, by - 2, 12, 2);
+    ctx.fillStyle = "#ffc857";
+    ctx.fillRect(px - 2, by - 2, 4, 2);
+    // aletas
+    ctx.fillStyle = "#2f8fae";
+    ctx.fillRect(px - 13, by, 3, 3);
+    ctx.fillRect(px + 10, by, 3, 3);
+    // motor
+    ctx.fillStyle = "#ffb26b";
+    ctx.fillRect(px + rear.x * 9 - 2, by + rear.y * 6 - 1, 4, 3);
+    ctx.fillStyle = "#fff3d1";
+    ctx.fillRect(px + rear.x * 9 - 1, by + rear.y * 6, 2, 1);
+
+    if (moving) {
+      ctx.strokeStyle = "rgba(223, 245, 255, 0.42)";
+      ctx.lineWidth = 1;
+      for (let i = 0; i < 3; i++) {
+        const d = 16 + i * 7;
+        const ox = -vy * (i - 1) * 3;
+        const oy = vx * (i - 1) * 3;
+        ctx.beginPath();
+        ctx.moveTo(px + rear.x * d + ox, by + rear.y * d + oy);
+        ctx.lineTo(px + rear.x * (d + 8) + ox, by + rear.y * (d + 8) + oy);
+        ctx.stroke();
+      }
+    }
+    ctx.restore();
+  }
+
   function drawHuman(px, py, dir, moving, time, colors, name, scale = 1) {
     const s = scale;
     const step = moving ? Math.sin(time * 0.016) : 0;
@@ -1069,7 +1142,8 @@ export function createRenderer(canvas, world) {
     ty = Math.max(0, Math.min(WORLD_H - viewH, ty));
     if (WORLD_W < viewW) tx = (WORLD_W - viewW) / 2;
     if (WORLD_H < viewH) ty = (WORLD_H - viewH) / 2;
-    const k = 1 - Math.exp(-0.012 * 16);
+    const follow = player.boost > 0.35 ? 0.03 : 0.012;
+    const k = 1 - Math.exp(-follow * 16);
     if (!rendererReady) { camX = tx; camY = ty; rendererReady = true; }
     camX += (tx - camX) * k;
     camY += (ty - camY) * k;
@@ -1106,6 +1180,29 @@ export function createRenderer(canvas, world) {
       drawDecor(d, time);
     }
 
+    if (player.boost > 0.4 && moving) {
+      const rear = skiffRear(player.dir);
+      for (let i = 0; i < 2; i++) {
+        trail.push({
+          x: player.x * TILE + rear.x * (8 + Math.random() * 4) + (Math.random() - 0.5) * 6,
+          y: player.y * TILE - 2 + rear.y * (5 + Math.random() * 3) + (Math.random() - 0.5) * 4,
+          life: 0.75 + Math.random() * 0.25,
+        });
+      }
+      if (trail.length > 60) trail.shift();
+    }
+    for (const t of trail) {
+      t.life -= 0.028;
+      if (t.life <= 0) continue;
+      if (t.x < camX - 20 || t.x > camX + viewW + 20 || t.y < camY - 20 || t.y > camY + viewH + 20) continue;
+      const s = 1 + t.life * 3.4;
+      ctx.fillStyle = `rgba(107, 213, 255, ${(t.life * 0.32).toFixed(3)})`;
+      ctx.fillRect(t.x - s / 2, t.y - s / 2, s, s);
+      ctx.fillStyle = `rgba(255, 200, 87, ${(t.life * 0.14).toFixed(3)})`;
+      ctx.fillRect(t.x - s / 4, t.y - s / 4, s / 2, s / 2);
+    }
+    trail = trail.filter((t) => t.life > 0);
+
     const drawables = [];
     for (const w of world.waystones) {
       drawables.push({ y: w.y * TILE, fn: () => drawWaystone(w, time) });
@@ -1124,10 +1221,12 @@ export function createRenderer(canvas, world) {
       drawables.push({
         y: p.y * TILE,
         fn: () => {
-          drawHuman(p.x * TILE, p.y * TILE, p.dir || 0, p.moving, time, peerColors, null, 1);
-          drawNameTag(p.name, p.x * TILE, p.y * TILE - 26, p.color);
+          const lift = p.mount ? 5 : 0;
+          if (p.mount) drawSkiff(p.x * TILE, p.y * TILE, p.dir || 0, time, 1, p.moving);
+          drawHuman(p.x * TILE, p.y * TILE - lift, p.dir || 0, p.moving, time, peerColors, null, 1);
+          drawNameTag(p.name, p.x * TILE, p.y * TILE - 26 - lift, p.color);
           if (p.bubble && p.bubble.until > now) {
-            drawBubble(p.bubble.text, p.x * TILE, p.y * TILE, p.color);
+            drawBubble(p.bubble.text, p.x * TILE, p.y * TILE - lift, p.color);
           }
         },
       });
@@ -1135,11 +1234,14 @@ export function createRenderer(canvas, world) {
     drawables.push({
       y: player.y * TILE,
       fn: () => {
-        drawHuman(player.x * TILE, player.y * TILE, player.dir, moving, time,
+        const lift = 5 * player.boost;
+        const bob = Math.sin(time * 0.007) * 1.1 * player.boost;
+        if (player.boost > 0.01) drawSkiff(player.x * TILE, player.y * TILE, player.dir, time, player.boost, moving);
+        drawHuman(player.x * TILE, player.y * TILE - lift + bob, player.dir, moving, time,
           PLAYER_COLORS[player.colorIndex % PLAYER_COLORS.length], null, 1);
-        drawNameTag(player.name, player.x * TILE, player.y * TILE - 26, player.color);
+        drawNameTag(player.name, player.x * TILE, player.y * TILE - 26 - lift, player.color);
         if (player.bubble && player.bubble.until > now) {
-          drawBubble(player.bubble.text, player.x * TILE, player.y * TILE, player.color);
+          drawBubble(player.bubble.text, player.x * TILE, player.y * TILE - lift, player.color);
         }
       },
     });

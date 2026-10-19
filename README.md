@@ -23,6 +23,10 @@ central. O minimapa começa coberto por névoa e revela o que você anda. Cada
 estação descoberta vira um fragmento no diário e soma experiência. As Pedras do
 Porto, nas docas, abrem a viagem rápida entre os continentes já visitados.
 
+Segure `Shift` para acender a nave e cruzar o mapa mais rápido; no celular,
+segure o botão **Turbo**. A nave é um pequeno skiff que flutua, balança e deixa
+rastro, mas não atravessa água: as pontes continuam sendo caminho.
+
 A praça compartilhada mostra outras pessoas na mesma sala. Não existe servidor
 próprio: o site é estático e o sinal usa um broker MQTT público por WebSocket.
 Se o sinal falhar, o mundo continua funcionando sozinho.

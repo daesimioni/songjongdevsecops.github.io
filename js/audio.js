@@ -106,6 +106,13 @@ export function createAudio() {
   function footstep() {
     tone({ freq: 90, type: "sine", dur: 0.05, vol: 0.025, slideTo: 60 });
   }
+  function boost() {
+    tone({ freq: 120, type: "sawtooth", dur: 0.3, vol: 0.05, slideTo: 520, release: 0.2 });
+    setTimeout(() => tone({ freq: 92, type: "sine", dur: 0.34, vol: 0.06, slideTo: 44 }), 25);
+  }
+  function hover() {
+    tone({ freq: 190, type: "sine", dur: 0.035, vol: 0.012, slideTo: 150 });
+  }
   function error() {
     tone({ freq: 140, type: "sawtooth", dur: 0.12, vol: 0.05 });
   }
@@ -175,7 +182,7 @@ export function createAudio() {
   }
 
   return {
-    unlock, setEnabled, isEnabled, chime, blip, open, close, footstep, error,
+    unlock, setEnabled, isEnabled, chime, blip, open, close, footstep, error, boost, hover,
     startSequencer, stopSequencer,
     get ctx() { return ctx; },
   };

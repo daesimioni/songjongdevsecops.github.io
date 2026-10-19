@@ -36,7 +36,7 @@ export class Net {
     this.sendEvery = null;
     this.pruneEvery = null;
     this.closed = false;
-    this.state = { x: 24, y: 19.5, dir: 0 };
+    this.state = { x: 24, y: 19.5, dir: 0, m: 0 };
     this.connected = false;
     this.msgCount = 0;
     this.pubkey = "";
@@ -142,6 +142,7 @@ export class Net {
         name,
         color,
         x, y, dir,
+        mount: msg.m === 1 || msg.m === true,
         pubkey,
         moving,
         lastSeen: now,
@@ -186,8 +187,8 @@ export class Net {
     });
   }
 
-  setLocal(x, y, dir) {
-    this.state = { x, y, dir };
+  setLocal(x, y, dir, boost = 0) {
+    this.state = { x, y, dir, m: boost > 0.35 ? 1 : 0 };
   }
 
   setIdentity(pubkey) {
@@ -207,6 +208,7 @@ export class Net {
       x: Number(this.state.x.toFixed(2)),
       y: Number(this.state.y.toFixed(2)),
       d: this.state.dir,
+      m: this.state.m || undefined,
       k: this.pubkey || undefined,
     }), { qos: 0 });
     if (force) this.emitPeers();
