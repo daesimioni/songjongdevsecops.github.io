@@ -38,6 +38,7 @@
     </div>
     <div class="hud-actions">
       <button type="button" id="net-pill" class="pill" title="Estado da praça compartilhada"><i></i><b id="online">solo</b></button>
+      <span id="progress" class="pill pill-progress" title="Fragmentos descobertos e nível"><span>✦</span><b id="progress-text">0/22</b><span class="sep">·</span><b id="level-text">Nv 1</b></span>
       <button id="btn-chat" class="hud-btn" type="button">Falar <kbd>T</kbd></button>
       <button id="btn-journal" class="hud-btn" type="button">Diário <kbd>J</kbd></button>
       <button id="btn-sound" class="hud-btn" type="button" aria-pressed="false">Som</button>
@@ -94,6 +95,17 @@
     </div>
   </div>
 
+  <div id="travel" class="modal" role="dialog" aria-modal="true" aria-labelledby="travel-title" hidden>
+    <div class="modal-card">
+      <div class="modal-head">
+        <h2 id="travel-title">Pedras do Porto</h2>
+        <button type="button" class="hud-btn" data-close="travel">fechar <kbd>Esc</kbd></button>
+      </div>
+      <p class="travel-lead">Os faróis que você já acendeu podem ser alcançados num piscar. Os outros continuam escondidos na névoa.</p>
+      <div id="travel-list" class="travel-list"></div>
+    </div>
+  </div>
+
   <div id="help" class="modal" role="dialog" aria-modal="true" aria-labelledby="help-title" hidden>
     <div class="modal-card">
       <div class="modal-head">
@@ -109,6 +121,7 @@
         <div><kbd>Esc</kbd><span>fechar</span></div>
       </div>
       <p class="help-note">No celular, use o direcional e o botão A. A praça é pública: quem estiver na mesma sala vê seu apelido, seu boneco e suas mensagens. Use um apelido, não seu nome completo.</p>
+      <p class="help-note">As <strong>Pedras do Porto</strong>, os monólitos brilhantes nas docas, abrem a viagem rápida para os continentes que você já visitou. As pontes também funcionam a pé.</p>
       <p class="help-note">Este site é estático, sem servidor meu. O multiplayer usa um broker MQTT público por WebSocket. Se o sinal falhar, o mundo continua funcionando sozinho.</p>
     </div>
   </div>
@@ -117,7 +130,7 @@
     <div class="intro-card">
       <p class="intro-eyebrow">um blog jogável · edição 2026</p>
       <h1 id="intro-title">MUNDO<br>DE SONG</h1>
-      <p class="intro-lead">Cada canto deste mapa é uma página. Ande até lá, aperte <kbd>E</kbd> e mexa no que encontrar: portas lógicas, fractais, Fourier, um sólido em 3D, um sequenciador.</p>
+      <p class="intro-lead">Quatro continentes, 22 fragmentos. Cada estação é uma página com um instrumento para mexer: lógica, circuitos, processadores, infinito, cálculo, pêndulos, luz, átomos e mais. Ande, descubra e acenda os faróis.</p>
       <form id="intro-form" autocomplete="off">
         <label for="intro-name">seu apelido</label>
         <input id="intro-name" name="mundo-apelido" maxlength="16" placeholder="viajante" autocomplete="off" required>
@@ -130,7 +143,7 @@
         <button type="submit" class="start">entrar no mundo</button>
       </form>
       <p class="intro-note">A sala é pública. Quem estiver nela vê seu apelido e sua posição. Sem servidor meu: o sinal é um broker público e o resto acontece no seu navegador.</p>
-      <p class="intro-controls"><kbd>WASD</kbd> andar · <kbd>E</kbd> interagir · <kbd>J</kbd> diário · <kbd>T</kbd> conversar</p>
+      <p class="intro-controls"><kbd>WASD</kbd> andar · <kbd>E</kbd> interagir · <kbd>J</kbd> diário · <kbd>T</kbd> conversar · <kbd>E</kbd> nas Pedras do Porto viaja</p>
     </div>
   </div>
 
@@ -145,7 +158,7 @@
   </div>
 
   <div id="minimap" class="minimap" hidden>
-    <canvas id="minimap-canvas" width="96" height="72" aria-label="Minimapa"></canvas>
+    <canvas id="minimap-canvas" width="288" height="200" aria-label="Minimapa"></canvas>
     <span id="room-label">sala praca</span>
   </div>
 

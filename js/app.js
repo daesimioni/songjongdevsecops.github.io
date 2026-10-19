@@ -1,6 +1,7 @@
 import {
-  ZONES, PLAYER_SPEED, PLAYER_W, PLAYER_H, INTERACT_RADIUS, PLAYER_COLORS,
-  STORAGE, NET,
+  CONTINENTS, CONTINENT_ORDER, SITES, WAYSTONES, SPAWN,
+  PLAYER_SPEED, PLAYER_W, PLAYER_H, INTERACT_RADIUS, PLAYER_COLORS,
+  STORAGE, NET, MAP_W, MAP_H,
 } from "./config.js";
 import { createWorld } from "./world.js";
 import { createRenderer } from "./render.js";
@@ -16,6 +17,22 @@ const LIVE = {
   fourier: () => import("./zones/fourier.js"),
   solid: () => import("./zones/solid.js"),
   echo: () => import("./zones/echo.js"),
+  adder: { load: () => import("./zones/cs.js"), variant: "adder" },
+  state: { load: () => import("./zones/cs.js"), variant: "state" },
+  cpu: { load: () => import("./zones/cs.js"), variant: "cpu" },
+  history: { load: () => import("./zones/cs.js"), variant: "timeline" },
+  infinity: { load: () => import("./zones/math.js"), variant: "infinity" },
+  calculus: { load: () => import("./zones/math.js"), variant: "calculus" },
+  probability: { load: () => import("./zones/math.js"), variant: "galton" },
+  motion: { load: () => import("./zones/physics.js"), variant: "pendulum" },
+  thermo: { load: () => import("./zones/physics.js"), variant: "thermo" },
+  optics: { load: () => import("./zones/physics.js"), variant: "optics" },
+  gravity: { load: () => import("./zones/physics.js"), variant: "gravity" },
+  periodic: { load: () => import("./zones/chem.js"), variant: "periodic" },
+  bonds: () => import("./zones/molecule.js"),
+  titration: { load: () => import("./zones/chem.js"), variant: "titration" },
+  energy: { load: () => import("./zones/chem.js"), variant: "energy" },
+  balance: { load: () => import("./zones/chem.js"), variant: "balance" },
 };
 
 const world = createWorld();
@@ -23,16 +40,21 @@ const renderer = createRenderer($("world"), world);
 const audio = createAudio();
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+const SITE_BY_POST = new Map(SITES.map((s) => [s.post, s]));
+const TOTAL = SITES.length;
+
 const saved = {
   name: readJSON(STORAGE.name, ""),
   room: readJSON(STORAGE.room, NET.defaultRoom),
   sound: readJSON(STORAGE.sound, false),
-  visited: new Set(Array.isArray(readJSON(STORAGE.visits, [])) ? readJSON(STORAGE.visits, []) : []),
+  cards: new Set(arrayOf(readJSON(STORAGE.cards, []))),
+  docks: new Set(arrayOf(readJSON(STORAGE.docks, []))),
+  xp: Number(readJSON(STORAGE.xp, 0)) || 0,
 };
 
 const player = {
-  x: ZONES.plaza.spawn.x,
-  y: ZONES.plaza.spawn.y,
+  x: SPAWN.x,
+  y: SPAWN.y,
   dir: 0,
   moving: false,
   name: saved.name || "viajante",
@@ -52,15 +74,22 @@ const state = {
   net: null,
   nearest: null,
   room: sanitizeRoom(saved.room),
-  lastZone: null,
+  lastContinent: null,
   zoneTimer: null,
   footstepAt: 0,
-  opened: new Set(saved.visited),
+  cards: saved.cards,
+  docks: saved.docks,
+  xp: saved.xp,
+  completed: new Set(),
   keys: new Set(),
   touch: { up: false, down: false, left: false, right: false },
   fogDirty: false,
   fogSavedAt: 0,
 };
+
+for (const cid of CONTINENT_ORDER) {
+  if (continentComplete(cid)) state.completed.add(cid);
+}
 
 function readJSON(key, fallback) {
   try {
@@ -68,34 +97,10 @@ function readJSON(key, fallback) {
     return raw ? JSON.parse(raw) : fallback;
   } catch { return fallback; }
 }
+function arrayOf(v) { return Array.isArray(v) ? v : []; }
 function writeJSON(key, value) {
   try { localStorage.setItem(key, JSON.stringify(value)); } catch { /* sem storage */ }
 }
-function loadFog() {
-  try {
-    const raw = localStorage.getItem(STORAGE.explored);
-    if (!raw) return;
-    const bin = atob(raw);
-    if (bin.length !== 48 * 36) return;
-    const bytes = new Uint8Array(bin.length);
-    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-    world.setExplored(bytes);
-  } catch { /* sem storage ou lixo */ }
-}
-
-function saveFog() {
-  if (!state.fogDirty) return;
-  try {
-    const bytes = world.exploredBytes;
-    let s = "";
-    for (let i = 0; i < bytes.length; i += 4096) {
-      s += String.fromCharCode(...bytes.subarray(i, i + 4096));
-    }
-    localStorage.setItem(STORAGE.explored, btoa(s));
-    state.fogDirty = false;
-  } catch { /* sem storage */ }
-}
-
 function sanitizeRoom(value) {
   const r = String(value || "").toLowerCase().replace(/[^a-z0-9-]/g, "").slice(0, 24);
   return r || NET.defaultRoom;
@@ -103,6 +108,20 @@ function sanitizeRoom(value) {
 function hashRoom() {
   const m = location.hash.match(/(?:^#|&)sala=([a-z0-9-]{1,24})/i);
   return m ? m[1].toLowerCase() : null;
+}
+function level() { return 1 + Math.floor(state.xp / 60); }
+function openedCount() {
+  let n = 0;
+  for (const s of SITES) if (state.cards.has(s.post)) n++;
+  return n;
+}
+function sitesOf(cid) { return SITES.filter((s) => s.continent === cid); }
+function continentOpened(cid) {
+  return sitesOf(cid).filter((s) => state.cards.has(s.post)).length;
+}
+function continentComplete(cid) {
+  const sites = sitesOf(cid);
+  return sites.length > 0 && sites.every((s) => state.cards.has(s.post));
 }
 
 function toast(message, ms = 2600) {
@@ -113,18 +132,72 @@ function toast(message, ms = 2600) {
   toast._t = setTimeout(() => { el.hidden = true; }, ms);
 }
 
+function saveCards() { writeJSON(STORAGE.cards, Array.from(state.cards)); }
+function saveDocks() { writeJSON(STORAGE.docks, Array.from(state.docks)); }
+function saveXp() { writeJSON(STORAGE.xp, state.xp); }
+
+function updateProgress() {
+  $("progress-text").textContent = `${openedCount()}/${TOTAL}`;
+  $("level-text").textContent = `Nv ${level()}`;
+}
+
+function gainXp(n) {
+  const before = level();
+  state.xp += n;
+  saveXp();
+  updateProgress();
+  const after = level();
+  if (after > before) {
+    setTimeout(() => {
+      toast(`Nível ${after}. Você está ficando bom nisso.`, 3200);
+      audio.chime();
+      renderer.kick(0.55);
+    }, 900);
+  }
+}
+
+function markCard(postId) {
+  if (!postId || state.cards.has(postId)) return false;
+  state.cards.add(postId);
+  saveCards();
+  updateProgress();
+  audio.blip();
+  const site = SITE_BY_POST.get(postId);
+  const cid = site?.continent;
+  toast(`+12 XP · fragmento ${openedCount()}/${TOTAL}`, 2200);
+  gainXp(12);
+  if (cid) checkContinent(cid);
+  return true;
+}
+
+function checkContinent(cid) {
+  if (state.completed.has(cid) || !continentComplete(cid)) return;
+  state.completed.add(cid);
+  gainXp(30);
+  const c = CONTINENTS[cid];
+  setTimeout(() => {
+    toast(`${c.name} concluído. +30 XP · todos os fragmentos do continente.`, 4800);
+    audio.chime();
+    renderer.kick(0.8);
+  }, 500);
+  updateProgress();
+}
+
+function markDock(cid) {
+  if (!cid || state.docks.has(cid)) return false;
+  state.docks.add(cid);
+  saveDocks();
+  return true;
+}
+
 function setSound(on) {
   saved.sound = on;
   writeJSON(STORAGE.sound, on);
   const btn = $("btn-sound");
   btn.setAttribute("aria-pressed", on ? "true" : "false");
   btn.textContent = on ? "Som on" : "Som off";
-  if (on) {
-    audio.setEnabled(true);
-    audio.unlock();
-  } else {
-    audio.setEnabled(false);
-  }
+  if (on) { audio.setEnabled(true); audio.unlock(); }
+  else audio.setEnabled(false);
 }
 
 function setNetStatus({ state: s, count }) {
@@ -145,37 +218,24 @@ function setNetStatus({ state: s, count }) {
     pill.title = "Modo solo. Recarregue para tentar a praça compartilhada.";
   }
 }
-
 function updateOnlineCount() {
   if (!state.net) return;
-  const pill = $("net-pill");
-  if (pill.classList.contains("on")) {
+  if ($("net-pill").classList.contains("on")) {
     $("online").textContent = state.peers.length > 0
       ? `${state.peers.length + 1} na praça` : "praça vazia";
   }
 }
-
-function setPeers(peers) {
-  state.peers = peers;
-  updateOnlineCount();
-}
-
+function setPeers(peers) { state.peers = peers; updateOnlineCount(); }
 function startNet() {
   if (state.net) return;
-  const room = state.room;
-  $("room-label").textContent = `sala ${room}`;
+  $("room-label").textContent = `sala ${state.room}`;
   state.net = new Net({
-    room,
+    room: state.room,
     name: player.name,
     color: player.color,
     onPeers: setPeers,
     onStatus: setNetStatus,
-    onChat: (peer, text) => {
-      audio.blip();
-      if (state.chatOpen) {
-        // a conversa aparece nas bolhas; aqui só evitamos perder o foco
-      }
-    },
+    onChat: () => { audio.blip(); },
     onError: () => {},
   });
   state.net.connect();
@@ -188,50 +248,37 @@ function startGame() {
   document.body.classList.add("playing");
   if (window.matchMedia("(pointer: coarse)").matches) $("touch").hidden = false;
   audio.unlock();
-  if (saved.sound) setSound(true);
-  else setSound(false);
+  if (saved.sound) setSound(true); else setSound(false);
   history.replaceState(null, "", `#sala=${state.room}`);
   $("room-label").textContent = `sala ${state.room}`;
-  if ($("intro-net").checked) startNet();
-  else setNetStatus({ state: "solo", count: 1 });
-  showZoneCard(ZONES.plaza, true);
+  if ($("intro-net").checked) startNet(); else setNetStatus({ state: "solo", count: 1 });
+  const first = !state.docks.has("hub");
+  markDock("hub");
+  state.lastContinent = "hub";
+  showZoneCard(CONTINENTS.hub, first);
+  updateProgress();
   const coarse = window.matchMedia("(pointer: coarse)").matches;
   if (coarse) {
     document.querySelector("#prompt kbd").textContent = "A";
-    setTimeout(() => toast("use o direcional para andar e A para interagir.", 4200), 700);
+    setTimeout(() => toast("direcional para andar, A para interagir, Falar para conversar.", 4400), 800);
   } else {
-    setTimeout(() => toast("ande com WASD ou setas. E interage, J abre o diário.", 4200), 700);
+    setTimeout(() => toast("WASD anda, E interage, J abre o diário, T conversa.", 4400), 800);
   }
 }
 
-function showZoneCard(zone, first) {
-  if (!zone) return;
+function showZoneCard(continent, first) {
+  if (!continent) return;
   const card = $("zone-card");
-  $("zone-eyebrow").textContent = first ? "nova região descoberta" : "de volta ao";
-  $("zone-name").textContent = zone.name;
-  $("zone-sub").textContent = zone.sub;
+  $("zone-eyebrow").textContent = first ? "novo continente descoberto" : "de volta ao";
+  $("zone-name").textContent = continent.name;
+  $("zone-sub").textContent = continent.sub;
+  card.style.setProperty("--zone", continent.accent);
   card.hidden = true;
   void card.offsetWidth;
   card.hidden = false;
   clearTimeout(state.zoneTimer);
   state.zoneTimer = setTimeout(() => { card.hidden = true; }, 4800);
-  if (first) {
-    renderer.kick(0.7);
-    audio.chime();
-    markVisited(zone.id);
-  }
-}
-
-function markVisited(zoneId) {
-  const key = `zone:${zoneId}`;
-  if (state.opened.has(key)) return;
-  state.opened.add(key);
-  writeJSON(STORAGE.visits, Array.from(state.opened));
-  toast(`descoberta registrada: ${ZONES[zoneId]?.name || zoneId}`, 2400);
-}
-
-function isUnlocked(post) {
-  return state.opened.has(`zone:${post.zone}`) || state.opened.has(`post:${post.zone}`);
+  if (first) { renderer.kick(0.7); audio.chime(); }
 }
 
 function openJournal() {
@@ -245,33 +292,109 @@ function openJournal() {
 function buildJournal() {
   const list = $("journal-list");
   list.textContent = "";
-  const entries = Object.entries(POSTS);
-  const unlocked = entries.filter(([, p]) => isUnlocked(p)).length;
+  const found = openedCount();
   $("journal-progress").textContent =
-    `${unlocked} de ${entries.length} páginas liberadas. Cada canto do mapa esconde uma.`;
-  for (const [id, post] of entries) {
-    const unlockedHere = isUnlocked(post);
+    `${found} de ${TOTAL} fragmentos · Nível ${level()} · ${state.xp} XP. Cada estação do arquipélago esconde uma página.`;
+  for (const cid of CONTINENT_ORDER) {
+    const continent = CONTINENTS[cid];
+    const sites = sitesOf(cid);
+    if (!sites.length) continue;
+    const opened = continentOpened(cid);
+    const done = opened === sites.length;
+    const head = document.createElement("div");
+    head.className = "journal-continent";
+    head.innerHTML = `<h3>${continent.name} <span class="${done ? "done" : ""}">${opened}/${sites.length}${done ? " · selo" : ""}</span></h3>`;
+    list.appendChild(head);
+    for (const site of sites) {
+      const unlocked = state.cards.has(site.post);
+      const post = POSTS[site.post];
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "journal-item";
+      btn.disabled = !unlocked;
+      const left = document.createElement("span");
+      const b = document.createElement("b");
+      b.textContent = unlocked ? (post?.title || site.name) : "???";
+      const sub = document.createElement("span");
+      sub.textContent = unlocked
+        ? `${site.name} · ${post?.read || ""} · ${site.label}`
+        : `${site.name} · ainda não aberto`;
+      left.append(b, sub);
+      const right = document.createElement("em");
+      right.textContent = unlocked ? "abrir" : "selado";
+      btn.append(left, right);
+      if (unlocked) {
+        btn.addEventListener("click", () => {
+          closeModal("journal");
+          openPost(site.post, site);
+        });
+      }
+      list.appendChild(btn);
+    }
+  }
+}
+
+function openTravel() {
+  if (state.panelOpen) closePanel();
+  closeChat();
+  buildTravel();
+  openModal("travel");
+  audio.open();
+}
+
+function buildTravel() {
+  const list = $("travel-list");
+  list.textContent = "";
+  for (const cid of CONTINENT_ORDER) {
+    const c = CONTINENTS[cid];
+    const stone = WAYSTONES.find((w) => w.continent === cid);
+    if (!stone) continue;
+    const known = cid === "hub" || state.docks.has(cid);
+    const sites = sitesOf(cid);
+    const opened = continentOpened(cid);
     const btn = document.createElement("button");
     btn.type = "button";
-    btn.className = "journal-item";
-    btn.disabled = !unlockedHere;
+    btn.className = "travel-item";
+    btn.disabled = !known;
     const left = document.createElement("span");
     const b = document.createElement("b");
-    b.textContent = unlockedHere ? post.title : "???";
+    b.textContent = c.name;
     const s = document.createElement("span");
-    s.textContent = unlockedHere
-      ? `${post.kicker} · ${post.read} · ${post.date.split("-").reverse().join("/")}`
-      : `num canto do mapa (${ZONES[post.zone]?.name || "?"})`;
+    s.textContent = known
+      ? `${sites.length ? `${opened}/${sites.length} fragmentos · ` : ""}${stone.name}`
+      : "na névoa, siga a pé até lá";
     left.append(b, s);
     const right = document.createElement("em");
-    right.textContent = state.opened.has(`post:${id}`) ? "lida" : unlockedHere ? "abrir" : "trancada";
+    right.textContent = known ? "viajar" : "trancado";
     btn.append(left, right);
-    if (unlockedHere) btn.addEventListener("click", () => {
-      closeModal("journal");
-      openPost(id);
-    });
+    if (known) {
+      btn.addEventListener("click", () => travelTo(cid));
+    }
     list.appendChild(btn);
   }
+}
+
+function travelTo(cid) {
+  const stone = WAYSTONES.find((w) => w.continent === cid);
+  if (!stone) return;
+  const spots = [
+    [stone.x, stone.y + 1.8], [stone.x, stone.y - 1.8],
+    [stone.x + 1.8, stone.y], [stone.x - 1.8, stone.y],
+    [stone.x, stone.y + 2.6], [stone.x + 2.6, stone.y],
+  ];
+  let target = spots[0];
+  for (const [x, y] of spots) {
+    if (!world.boxCollides(x, y, PLAYER_W, PLAYER_H)) { target = [x, y]; break; }
+  }
+  player.x = target[0];
+  player.y = target[1];
+  player.moving = false;
+  state.lastContinent = null;
+  markDock(cid);
+  closeModal("travel");
+  audio.chime();
+  renderer.kick(0.5);
+  toast(`viajando para ${CONTINENTS[cid].name}`, 2200);
 }
 
 function openModal(name) {
@@ -282,29 +405,30 @@ function openModal(name) {
   const focusable = $(name).querySelector("button, input");
   focusable?.focus();
 }
-
 function closeModal(name) {
   if (name && $(name)) $(name).hidden = true;
   if (state.modal === name) state.modal = null;
   if (!state.modal && !state.panelOpen) $("scrim").hidden = true;
 }
 
-async function openPost(id) {
+async function openPost(id, site) {
   const post = POSTS[id];
-  if (!post) return;
+  if (!post) {
+    toast("Esta página ainda está sendo escrita.");
+    return;
+  }
   closeModal(state.modal);
   closeChat();
   if (state.panelOpen) closePanel();
   state.panelOpen = true;
   state.currentPost = id;
-  state.opened.add(`post:${id}`);
-  writeJSON(STORAGE.visits, Array.from(state.opened));
+  markCard(id);
 
-  $("panel-kicker").textContent = post.kicker;
+  $("panel-kicker").textContent = post.kicker || CONTINENTS[post.continent]?.name || "";
   $("panel-title").textContent = post.title;
   $("panel-meta").textContent =
-    `${post.date.split("-").reverse().join("/")} · ${post.read} · ${post.tags.map((t) => `#${t}`).join(" ")}`;
-  $("panel-body").innerHTML = post.body;
+    `${post.date.split("-").reverse().join("/")} · ${post.read} · ${(post.tags || []).map((t) => `#${t}`).join(" ")}`;
+  $("panel-body").innerHTML = post.body || "";
   const live = $("panel-live");
   live.textContent = "";
   $("panel").hidden = false;
@@ -313,13 +437,16 @@ async function openPost(id) {
   $("panel-close").focus();
   audio.open();
 
-  if (post.live && LIVE[post.live]) {
+  if (post.lab && LIVE[post.lab]) {
+    const entry = LIVE[post.lab];
+    const loader = typeof entry === "function" ? entry : entry.load;
+    const variant = typeof entry === "function" ? null : entry.variant;
     const loading = document.createElement("div");
     loading.className = "widget-loading";
-    loading.textContent = "acendendo os circuitos...";
+    loading.textContent = "acendendo os instrumentos...";
     live.appendChild(loading);
     try {
-      const mod = await LIVE[post.live]();
+      const mod = await loader();
       if (!state.panelOpen || state.currentPost !== id) return;
       live.textContent = "";
       const cleanup = await mod.mount(live, {
@@ -328,16 +455,16 @@ async function openPost(id) {
         reducedMotion,
         enableSound: () => setSound(true),
         onOpenZone: (zoneId) => {
-          const z = ZONES[zoneId];
-          if (z) toast(`${z.name}: ${z.sub}`, 2600);
+          const c = CONTINENTS[zoneId];
+          if (c) toast(`${c.name}: ${c.sub}`, 2600);
         },
-      });
+      }, variant);
       state.panelCleanup = typeof cleanup === "function" ? cleanup : null;
     } catch (e) {
       live.textContent = "";
       const err = document.createElement("p");
       err.className = "widget-fail";
-      err.textContent = "O interativo não carregou agora. O texto continua aqui; recarregue e tente de novo.";
+      err.textContent = "O instrumento não carregou agora. O texto continua aqui; recarregue e tente de novo.";
       live.appendChild(err);
       console.error("[mundo]", e);
     }
@@ -371,7 +498,6 @@ function openChat() {
   $("chat-input").value = "";
   $("chat-input").focus();
 }
-
 function closeChat() {
   state.chatOpen = false;
   document.body.classList.remove("chatting");
@@ -383,9 +509,9 @@ function interact() {
   if (!state.started || state.panelOpen || state.modal) return;
   const target = state.nearest;
   if (!target) return;
-  if (target.kind === "station") {
-    openPost(target.station.post);
-  } else if (target.kind === "npc") {
+  if (target.kind === "station") openPost(target.station.post, target.station);
+  else if (target.kind === "waystone") openTravel();
+  else if (target.kind === "npc") {
     const npc = target.npc;
     const lines = NPCS[npc.id]?.lines || ["..."];
     npc.lineIndex = ((npc.lineIndex || 0) + 1) % lines.length;
@@ -400,6 +526,10 @@ function findNearest() {
   for (const s of world.stations) {
     const d = Math.hypot(s.x - player.x, s.y - player.y);
     if (d < bestD) { bestD = d; best = { kind: "station", station: s }; }
+  }
+  for (const w of world.waystones) {
+    const d = Math.hypot(w.x - player.x, w.y - player.y);
+    if (d < bestD) { bestD = d; best = { kind: "waystone", waystone: w }; }
   }
   for (const n of world.npcs) {
     const d = Math.hypot(n.x - player.x, n.y - player.y);
@@ -416,7 +546,10 @@ function updatePrompt() {
   const near = findNearest();
   state.nearest = near;
   if (!near) { $("prompt").hidden = true; return; }
-  const label = near.kind === "station" ? near.station.label : `falar com ${NPCS[near.npc.id]?.name || "alguém"}`;
+  let label;
+  if (near.kind === "station") label = near.station.label;
+  else if (near.kind === "waystone") label = near.waystone.name;
+  else label = `falar com ${NPCS[near.npc.id]?.name || "alguém"}`;
   if ($("prompt-label").textContent !== label) $("prompt-label").textContent = label;
   $("prompt").hidden = false;
 }
@@ -437,9 +570,9 @@ function updateMovement(dt) {
   const ny = player.y + dy * step;
   if (!world.boxCollides(nx, player.y, PLAYER_W, PLAYER_H)) player.x = nx;
   if (!world.boxCollides(player.x, ny, PLAYER_W, PLAYER_H)) player.y = ny;
+  player.x = Math.max(0.5, Math.min(MAP_W - 0.5, player.x));
+  player.y = Math.max(0.5, Math.min(MAP_H - 0.5, player.y));
   const moved = player.x !== oldX || player.y !== oldY;
-  player.x = Math.max(0.5, Math.min(47.5, player.x));
-  player.y = Math.max(0.5, Math.min(35.5, player.y));
   if (Math.abs(dx) > Math.abs(dy)) player.dir = dx > 0 ? 2 : 1;
   else player.dir = dy > 0 ? 0 : 3;
   player.moving = moved;
@@ -453,9 +586,7 @@ function updateMovement(dt) {
 
 function updateCat(dt) {
   const cat = world.cat;
-  const behind = [
-    [0, -0.9], [0.9, 0], [-0.9, 0], [0, 0.9],
-  ][player.dir] || [0, -0.9];
+  const behind = [[0, -0.9], [0.9, 0], [-0.9, 0], [0, 0.9]][player.dir] || [0, -0.9];
   const behindX = player.x + behind[0];
   const behindY = player.y + behind[1];
   const d = Math.hypot(behindX - cat.x, behindY - cat.y);
@@ -472,15 +603,12 @@ function updateCat(dt) {
 
 function updateZone() {
   if (!state.started) return;
-  const id = world.zoneAt(player.x, player.y);
-  if (id === state.lastZone) return;
-  state.lastZone = id;
-  if (!id) return;
-  const first = !state.opened.has(`zone:${id}`);
-  if (first) showZoneCard(ZONES[id], true);
-  else {
-    toast(ZONES[id].name, 1500);
-  }
+  const cid = world.continentAt(player.x, player.y);
+  if (!cid || cid === state.lastContinent) return;
+  state.lastContinent = cid;
+  const first = !state.docks.has(cid);
+  markDock(cid);
+  showZoneCard(CONTINENTS[cid], first);
 }
 
 function loop(now) {
@@ -488,7 +616,6 @@ function loop(now) {
   try {
     const dt = Math.min(0.05, (now - (loop.last || now)) / 1000);
     loop.last = now;
-    state.frames = (state.frames || 0) + 1;
     if (state.started && !state.panelOpen && !state.modal && !state.chatOpen) {
       updateMovement(dt);
       updateZone();
@@ -496,7 +623,7 @@ function loop(now) {
       player.moving = false;
     }
     updateCat(dt);
-    if (world.markExplored(player.x, player.y, 4.6)) state.fogDirty = true;
+    if (world.markExplored(player.x, player.y)) state.fogDirty = true;
     if (state.fogDirty && now - state.fogSavedAt > 1500) {
       state.fogSavedAt = now;
       saveFog();
@@ -506,16 +633,41 @@ function loop(now) {
     if (state.net) state.net.setLocal(player.x, player.y, player.dir);
   } catch (e) {
     console.error("[loop] erro", e);
-    if (!loop.warned) { loop.warned = true; toast("ops, o laço tropeçou. Veja o console."); }
+    if (!loop.warned) { loop.warned = true; toast("ops, o mundo tropeçou. Abra o console."); }
   }
 }
 
-// ---------- eventos ----------
+// ---------- névoa persistida ----------
+function loadFog() {
+  try {
+    const raw = localStorage.getItem(STORAGE.explored);
+    if (!raw) return;
+    const bin = atob(raw);
+    const size = world.exploredBytes.length;
+    if (bin.length !== size) return;
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    world.setExplored(bytes);
+  } catch { /* sem storage */ }
+}
+function saveFog() {
+  if (!state.fogDirty) return;
+  try {
+    const bytes = world.exploredBytes;
+    let s = "";
+    for (let i = 0; i < bytes.length; i += 4096) {
+      s += String.fromCharCode(...bytes.subarray(i, i + 4096));
+    }
+    localStorage.setItem(STORAGE.explored, btoa(s));
+    state.fogDirty = false;
+  } catch { /* sem storage */ }
+}
 
+// ---------- eventos ----------
 window.addEventListener("keydown", (e) => {
   const tag = (e.target.tagName || "").toLowerCase();
   if (tag === "input" || tag === "textarea") {
-    if (e.key === "Escape") { closeChat(); }
+    if (e.key === "Escape") closeChat();
     return;
   }
   const k = e.key.toLowerCase();
@@ -533,17 +685,12 @@ window.addEventListener("keydown", (e) => {
   if (k === "t") { openChat(); return; }
   state.keys.add(k);
 });
-
-window.addEventListener("keyup", (e) => {
-  state.keys.delete(e.key.toLowerCase());
-});
-
+window.addEventListener("keyup", (e) => { state.keys.delete(e.key.toLowerCase()); });
 window.addEventListener("blur", () => {
   state.keys.clear();
   state.touch.up = state.touch.down = state.touch.left = state.touch.right = false;
 });
 
-// controles de toque
 for (const btn of document.querySelectorAll(".dpad button")) {
   const dir = btn.dataset.dir;
   const on = (e) => { e.preventDefault(); state.touch[dir] = true; };
@@ -555,7 +702,6 @@ for (const btn of document.querySelectorAll(".dpad button")) {
 }
 $("touch-action").addEventListener("click", interact);
 
-// clique em estação próxima
 $("world").addEventListener("pointerdown", (e) => {
   if (!state.started || state.panelOpen || state.modal || state.chatOpen) return;
   const rect = $("world").getBoundingClientRect();
@@ -566,7 +712,14 @@ $("world").addEventListener("pointerdown", (e) => {
   for (const s of world.stations) {
     if (Math.hypot(s.x - wx, s.y - wy) < 1.4 &&
         Math.hypot(s.x - player.x, s.y - player.y) < INTERACT_RADIUS + 0.6) {
-      openPost(s.post);
+      openPost(s.post, s);
+      return;
+    }
+  }
+  for (const w of world.waystones) {
+    if (Math.hypot(w.x - wx, w.y - wy) < 1.4 &&
+        Math.hypot(w.x - player.x, w.y - player.y) < INTERACT_RADIUS + 0.6) {
+      openTravel();
       return;
     }
   }
@@ -581,11 +734,8 @@ $("net-pill").addEventListener("click", async () => {
   try {
     await navigator.clipboard.writeText(url);
     toast("convite copiado. Mande para quem quiser entrar nesta sala.");
-  } catch {
-    toast(url, 6000);
-  }
+  } catch { toast(url, 6000); }
 });
-
 for (const btn of document.querySelectorAll("[data-close]")) {
   btn.addEventListener("click", () => closeModal(btn.dataset.close));
 }
@@ -609,7 +759,7 @@ $("chat-form").addEventListener("submit", (e) => {
 });
 $("chat-cancel").addEventListener("click", closeChat);
 
-$("intro-form").addEventListener("submit", async (e) => {
+$("intro-form").addEventListener("submit", (e) => {
   e.preventDefault();
   const name = $("intro-name").value.trim().replace(/[<>\u0000-\u001f]/g, "").slice(0, 16);
   if (!name) { $("intro-name").focus(); return; }
@@ -621,35 +771,33 @@ $("intro-form").addEventListener("submit", async (e) => {
   startGame();
 });
 
-if (new URLSearchParams(location.search).has("debug")) {
-  window.__mundo = { player, state, world, renderer, audio };
-}
-
 window.addEventListener("beforeunload", () => {
   saveFog();
   if (state.net) state.net.destroy();
 });
 
-// boot
+// ---------- boot ----------
 (function boot() {
+  const coarse = window.matchMedia("(pointer: coarse)").matches;
+  if (coarse) {
+    const lead = document.querySelector(".intro-lead");
+    if (lead) lead.innerHTML = "Cada continente é uma página. Ande com o direcional, toque em <kbd>A</kbd> nas estações e descubra 22 fragmentos de computação, matemática, física e química.";
+    const controls = document.querySelector(".intro-controls");
+    if (controls) controls.innerHTML = "direcional para andar · <kbd>A</kbd> para interagir · Falar abre a conversa";
+    const canvas = $("world");
+    if (canvas) canvas.setAttribute("aria-label", "Mapa do mundo, em pixel art. Ande com o direcional e interaja com A.");
+  }
   const roomFromHash = hashRoom();
   if (roomFromHash) state.room = roomFromHash;
   $("intro-name").value = saved.name || "";
   $("intro-room").value = state.room;
-  const coarse = window.matchMedia("(pointer: coarse)").matches;
-  if (coarse) {
-    const lead = document.querySelector(".intro-lead");
-    if (lead) lead.innerHTML = "Cada canto deste mapa é uma página. Ande até lá com o direcional, toque em <kbd>A</kbd> e mexa no que encontrar: portas lógicas, fractais, Fourier, um sólido em 3D, um sequenciador.";
-    const controls = document.querySelector(".intro-controls");
-    if (controls) controls.innerHTML = "direcional para andar · <kbd>A</kbd> para interagir · Falar abre a conversa";
-    const canvas = document.getElementById("world");
-    if (canvas) canvas.setAttribute("aria-label", "Mapa do mundo, em pixel art. Ande com o direcional e interaja com A.");
-  }
   loadFog();
-  world.markExplored(player.x, player.y, 4.6);
-  $("net-pill").classList.remove("on");
-  $("online").textContent = "solo";
+  world.markExplored(player.x, player.y);
+  updateProgress();
   setSound(false);
   setNetStatus({ state: "solo", count: 1 });
   requestAnimationFrame(loop);
+  if (new URLSearchParams(location.search).has("debug")) {
+    window.__mundo = { player, state, world, renderer, audio };
+  }
 })();

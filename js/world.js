@@ -1,10 +1,9 @@
 import {
-  MAP_W, MAP_H, TILE, TILE_KIND as K, SOLID, ZONES, STATIONS,
-  NPC_SPAWNS, CAT_SPAWN,
+  MAP_W, MAP_H, TILE, TILE_KIND as K, SOLID, CONTINENTS, SITES,
+  WAYSTONES, NPC_SPAWNS, CAT_SPAWN, REVEAL_RADIUS,
 } from "./config.js";
 
-const { GRASS, PATH, STONE, WATER, TREE, WALL, FLOWER, SAND,
-  LOGIC, MOSS, STAR, CRYSTAL, VOID } = K;
+const { WATER, SAND, GRASS, PATH, TREE, FLOWER, BRIDGE, PLAZA } = K;
 
 function mulberry32(seed) {
   let a = seed >>> 0;
@@ -24,160 +23,218 @@ function hash2(x, y) {
 
 export function createWorld() {
   const rand = mulberry32(20261019);
-  const tiles = new Uint8Array(MAP_W * MAP_H).fill(GRASS);
+  const tiles = new Uint8Array(MAP_W * MAP_H).fill(WATER);
   const decor = [];
   const at = (x, y) => y * MAP_W + x;
   const set = (x, y, v) => {
     if (x >= 0 && y >= 0 && x < MAP_W && y < MAP_H) tiles[at(x, y)] = v;
   };
   const get = (x, y) => {
-    if (x < 0 || y < 0 || x >= MAP_W || y >= MAP_H) return VOID;
+    if (x < 0 || y < 0 || x >= MAP_W || y >= MAP_H) return WATER;
     return tiles[at(x, y)];
   };
   const rect = (x, y, w, h, v) => {
-    for (let yy = y; yy < y + h; yy++) for (let xx = x; xx < x + w; xx++) set(xx, yy, v);
+    for (let yy = y; yy < y + h; yy++) {
+      for (let xx = x; xx < x + w; xx++) set(xx, yy, v);
+    }
   };
-  const hpath = (y, x0, x1) => rect(x0, y, x1 - x0 + 1, 2, PATH);
-  const vpath = (x, y0, y1) => rect(x, y0, 2, y1 - y0 + 1, PATH);
 
-  // borda do mundo
-  rect(0, 0, MAP_W, 2, VOID);
-  rect(0, MAP_H - 2, MAP_W, 2, VOID);
-  rect(0, 0, 2, MAP_H, VOID);
-  rect(MAP_W - 2, 0, 2, MAP_H, VOID);
+  function continentAtTile(tx, ty) {
+    for (const c of Object.values(CONTINENTS)) {
+      const r = c.rect;
+      if (tx >= r.x && tx < r.x + r.w && ty >= r.y && ty < r.y + r.h) return c.id;
+    }
+    return null;
+  }
+  function continentAt(x, y) { return continentAtTile(Math.floor(x), Math.floor(y)); }
 
-  // chão das regiões
-  rect(17, 13, 14, 10, STONE);
-  rect(3, 3, 12, 9, LOGIC);
-  rect(3, 24, 13, 9, MOSS);
-  rect(33, 3, 12, 9, STAR);
-  rect(33, 24, 12, 9, CRYSTAL);
-
-  // lago e areia
-  for (let y = 25; y <= 33; y++) {
-    for (let x = 20; x <= 31; x++) {
-      const dx = (x - 25.5) / 5.4;
-      const dy = (y - 29) / 3.6;
-      const d = dx * dx + dy * dy;
-      if (d < 1) set(x, y, WATER);
-      else if (d < 1.35) set(x, y, SAND);
+  // 1. massas de terra com costa irregular
+  for (const c of Object.values(CONTINENTS)) {
+    const { cx, cy, rx, ry } = c.land;
+    const r = c.rect;
+    for (let y = Math.max(1, r.y); y < Math.min(MAP_H - 1, r.y + r.h); y++) {
+      for (let x = Math.max(1, r.x); x < Math.min(MAP_W - 1, r.x + r.w); x++) {
+        const nx = (x + 0.5 - cx) / rx;
+        const ny = (y + 0.5 - cy) / ry;
+        const d = Math.pow(Math.abs(nx), 4) + Math.pow(Math.abs(ny), 4);
+        const edge = 1 + (hash2(x * 3 + 11, y * 5 + 7) - 0.5) * 0.22;
+        if (d < edge) set(x, y, c.base);
+      }
     }
   }
 
-  // caminhos principais
-  vpath(8, 11, 19);
-  hpath(18, 8, 17);
-  vpath(18, 22, 28);
-  hpath(28, 9, 19);
-  vpath(24, 8, 12);
-  hpath(8, 24, 39);
-  hpath(20, 30, 36);
-  vpath(36, 20, 29);
-  hpath(28, 33, 39);
-
-  // ruínas do observatório
-  for (const [x, y] of [[34, 4], [43, 4], [34, 10], [43, 10]]) set(x, y, WALL);
-
-  const zoneRects = Object.values(ZONES).map((z) => z.rect);
-  const walkableFloor = new Set([GRASS, FLOWER, PATH, STONE, LOGIC, MOSS, STAR, CRYSTAL, SAND]);
-  const nearPath = (x, y) => {
-    for (let yy = y - 1; yy <= y + 1; yy++) {
-      for (let xx = x - 1; xx <= x + 1; xx++) {
-        if (get(xx, yy) === PATH) return true;
+  // 2. praias: terra encostada na água vira areia
+  const landCopy = tiles.slice();
+  const isLandTile = (x, y) => {
+    const t = landCopy[at(x, y)];
+    return t !== WATER && t !== BRIDGE;
+  };
+  for (let y = 1; y < MAP_H - 1; y++) {
+    for (let x = 1; x < MAP_W - 1; x++) {
+      if (!isLandTile(x, y)) continue;
+      if (!isLandTile(x + 1, y) || !isLandTile(x - 1, y) ||
+          !isLandTile(x, y + 1) || !isLandTile(x, y - 1)) {
+        const t = get(x, y);
+        if (t !== PATH && t !== BRIDGE) set(x, y, SAND);
       }
+    }
+  }
+
+  // 3. clareiras das estações
+  for (const site of SITES) {
+    const c = CONTINENTS[site.continent];
+    rect(Math.round(site.x) - 4, Math.round(site.y) - 4, 9, 9, c.floor);
+  }
+
+  // 4. caminhos internos: da pedra do porto até cada estação
+  function hpath(y, x0, x1, tile) {
+    const a = Math.min(x0, x1), b = Math.max(x0, x1);
+    for (let x = a; x <= b; x++) {
+      set(x, y, tile); set(x, y + 1, tile);
+    }
+  }
+  function vpath(x, y0, y1, tile) {
+    const a = Math.min(y0, y1), b = Math.max(y0, y1);
+    for (let y = a; y <= b; y++) {
+      set(x, y, tile); set(x + 1, y, tile);
+    }
+  }
+  function connect(a, b, tile) {
+    if (Math.abs(b.x - a.x) > Math.abs(b.y - a.y)) {
+      hpath(Math.round(a.y), Math.round(a.x), Math.round(b.x), tile);
+      vpath(Math.round(b.x), Math.round(a.y), Math.round(b.y), tile);
+    } else {
+      vpath(Math.round(a.x), Math.round(a.y), Math.round(b.y), tile);
+      hpath(Math.round(b.y), Math.round(a.x), Math.round(b.x), tile);
+    }
+  }
+
+  for (const stone of WAYSTONES) {
+    const c = CONTINENTS[stone.continent];
+    for (const site of SITES.filter((s) => s.continent === stone.continent)) {
+      connect(stone, site, c.path);
+    }
+  }
+
+  // ligação do porto com as pontes
+  hpath(32, 72, 78, CONTINENTS.cs.path);
+  hpath(68, 72, 78, CONTINENTS.physics.path);
+  vpath(104, 50, 54, CONTINENTS.math.path);
+  vpath(40, 46, 50, CONTINENTS.chem.path);
+
+  // 5. pontes sobre o mar
+  rect(71, 34, 4, 5, BRIDGE);
+  rect(71, 62, 4, 5, BRIDGE);
+  rect(90, 49, 13, 4, BRIDGE);
+  rect(42, 49, 13, 4, BRIDGE);
+  // encontros de ponte com terra
+  rect(71, 33, 4, 2, CONTINENTS.cs.path);
+  rect(71, 66, 4, 2, CONTINENTS.physics.path);
+  rect(101, 49, 3, 4, CONTINENTS.math.path);
+  rect(40, 49, 3, 4, CONTINENTS.chem.path);
+  rect(88, 49, 4, 4, CONTINENTS.hub.floor);
+  rect(53, 49, 3, 4, CONTINENTS.hub.floor);
+  rect(71, 38, 4, 3, CONTINENTS.hub.floor);
+  rect(71, 60, 4, 3, CONTINENTS.hub.floor);
+
+  // 6. praça e caminhos do porto
+  rect(69, 48, 7, 4, PLAZA);
+  rect(64, 47, 18, 9, PLAZA);
+  hpath(50, 72, 78, PATH);
+  vpath(66, 50, 54, PATH);
+  hpath(54, 66, 72, PATH);
+  set(72, 50, PLAZA);
+  set(72, 52, PATH);
+  set(72, 53, PATH);
+
+  // 7. decoração
+  const used = new Set();
+  const key = (x, y) => `${x},${y}`;
+  for (const site of SITES) used.add(key(Math.round(site.x), Math.round(site.y)));
+  for (const stone of WAYSTONES) {
+    for (let y = -1; y <= 1; y++) for (let x = -1; x <= 1; x++) {
+      set(Math.round(stone.x) + x, Math.round(stone.y) + y, CONTINENTS[stone.continent].floor);
+    }
+    used.add(key(Math.round(stone.x), Math.round(stone.y)));
+  }
+  for (const n of NPC_SPAWNS) used.add(key(Math.round(n.x), Math.round(n.y)));
+
+  const nearUsed = (x, y, r) => {
+    for (const s of used) {
+      const [ux, uy] = s.split(",").map(Number);
+      if (Math.hypot(ux - x, uy - y) < r) return true;
     }
     return false;
   };
-  const nearStation = (x, y, r) => STATIONS.some((s) =>
-    Math.hypot((s.x + 0.5) - (x + 0.5), (s.y + 0.5) - (y + 0.5)) < r);
-  const nearNpc = (x, y, r) => NPC_SPAWNS.some((n) =>
-    Math.hypot(n.x - (x + 0.5), n.y - (y + 0.5)) < r);
 
-  const inZone = (x, y, zone) => {
-    const r = zone.rect;
-    return x >= r.x && x < r.x + r.w && y >= r.y && y < r.y + r.h;
+  const decoFor = {
+    hub: ["tree", "tree", "flower", "bench", "lamp", "star"],
+    cs: ["terminal", "node", "lamp", "terminal", "crystal"],
+    math: ["pillar", "book", "star", "pillar", "lamp"],
+    physics: ["crystal", "orb", "lamp", "pillar", "star"],
+    chem: ["mushroom", "flask", "bubble", "mushroom", "lamp"],
   };
 
-  // árvores: densas no bosque, esparsas no resto
   for (let y = 2; y < MAP_H - 2; y++) {
     for (let x = 2; x < MAP_W - 2; x++) {
       const t = get(x, y);
-      if (!walkableFloor.has(t)) continue;
-      if (nearPath(x, y) || nearStation(x, y, 2.6) || nearNpc(x, y, 2.2)) continue;
-      if (inZone(x, y, ZONES.plaza)) continue;
-      if (inZone(x, y, ZONES.logic) || inZone(x, y, ZONES.observatory) ||
-          inZone(x, y, ZONES.rift)) {
-        if (rand() < 0.035) set(x, y, TREE);
+      if (![GRASS, K.CIRCUIT, K.GOLD, K.BASALT, K.MOSS, SAND, FLOWER].includes(t)) continue;
+      if (nearUsed(x + 0.5, y + 0.5, 2.4)) continue;
+      if (hash2(x, y) > 0.055) continue;
+      const c = continentAtTile(x, y);
+      if (!c) continue;
+      const kinds = decoFor[c];
+      const kind = kinds[Math.floor(hash2(x * 7, y * 11) * kinds.length)];
+      if (kind === "tree") {
+        if (t === SAND) continue;
+        set(x, y, TREE);
         continue;
       }
-      const forest = inZone(x, y, ZONES.fractal);
-      const border = x < 5 || x > MAP_W - 6 || y < 5 || y > MAP_H - 6;
-      const chance = forest ? 0.16 : border ? 0.14 : 0.035;
-      if (rand() < chance) set(x, y, TREE);
+      if (kind === "flower") {
+        if (t !== GRASS) continue;
+        set(x, y, FLOWER);
+        continue;
+      }
+      decor.push({ type: kind, x: x + 0.5, y: y + 0.5, accent: CONTINENTS[c].accent, hue: hash2(x, y) });
     }
   }
 
-  // flores espalhadas
-  for (let y = 2; y < MAP_H - 2; y++) {
-    for (let x = 2; x < MAP_W - 2; x++) {
-      if (get(x, y) !== GRASS) continue;
-      if (nearPath(x, y) || nearStation(x, y, 2.2)) continue;
-      if (rand() < 0.045) set(x, y, FLOWER);
+  // lâmpadas nas esquinas de cada estação
+  for (const site of SITES) {
+    const c = CONTINENTS[site.continent];
+    for (const [dx, dy] of [[-3, -3], [3, -3], [-3, 3], [3, 3]]) {
+      decor.push({ type: "lamp", x: site.x + dx, y: site.y + dy, accent: c.accent });
     }
   }
 
-  // decoração fixa
-  const lamps = [
-    [18.2, 14.2], [29.8, 14.2], [18.2, 21.8], [29.8, 21.8],
-    [8.8, 13.6], [24.8, 10.4], [36.8, 18.8], [9.0, 27.4],
-  ];
-  for (const [x, y] of lamps) decor.push({ type: "lamp", x, y });
+  // placas nas docas
+  for (const stone of WAYSTONES) {
+    if (stone.continent === "hub") continue;
+    decor.push({
+      type: "sign", x: stone.x + 2.4, y: stone.y + 1.2,
+      text: CONTINENTS[stone.continent].name, accent: CONTINENTS[stone.continent].accent,
+    });
+  }
 
-  const signs = [
-    { type: "sign", x: 8.5, y: 12.2, text: "VALE DA LÓGICA", accent: "#61f4c0" },
-    { type: "sign", x: 19.2, y: 23.2, text: "BOSQUE DOS FRACTAIS", accent: "#6bd5ff" },
-    { type: "sign", x: 32.6, y: 8.6, text: "OBSERVATÓRIO", accent: "#b48cff" },
-    { type: "sign", x: 32.6, y: 29.2, text: "FENDA 3D", accent: "#ff7aa8" },
-  ];
-  decor.push(...signs);
-  decor.push(
-    { type: "bench", x: 20.2, y: 16.4 },
-    { type: "bench", x: 27.8, y: 16.4 },
-    { type: "bench", x: 27.6, y: 20.4 },
-  );
-
-  // detalhes por região
-  for (let i = 0; i < 26; i++) {
-    const x = 3 + rand() * 13, y = 24 + rand() * 9;
-    if (!isSolidTileWorld(get, x, y)) decor.push({ type: "mushroom", x, y, hue: rand() });
-  }
-  for (let i = 0; i < 22; i++) {
-    const x = 33 + rand() * 12, y = 24 + rand() * 9;
-    if (!isSolidTileWorld(get, x, y)) decor.push({ type: "shard", x, y, hue: rand() });
-  }
-  for (let i = 0; i < 20; i++) {
-    const x = 33 + rand() * 12, y = 3 + rand() * 9;
-    if (!isSolidTileWorld(get, x, y)) decor.push({ type: "star", x, y, hue: rand() });
-  }
-  for (let i = 0; i < 22; i++) {
-    const x = 3 + rand() * 12, y = 3 + rand() * 9;
-    if (!isSolidTileWorld(get, x, y)) decor.push({ type: "node", x, y, hue: rand() });
-  }
-  for (let i = 0; i < 16; i++) {
-    const x = 17 + rand() * 14, y = 13 + rand() * 10;
-    if (get(Math.floor(x), Math.floor(y)) === STONE) {
-      decor.push({ type: "petal", x, y, hue: rand() });
+  // ilhas solitárias no oceano
+  const islands = [[20, 8], [124, 8], [20, 92], [124, 92], [9, 9], [135, 91], [8, 91], [136, 8]];
+  for (const [ix, iy] of islands) {
+    for (let y = -1; y <= 1; y++) for (let x = -1; x <= 1; x++) {
+      set(ix + x, iy + y, SAND);
     }
+    set(ix, iy, TREE);
+    set(ix + 2, iy + 1, SAND);
   }
 
-  const stations = STATIONS.map((s) => ({ ...s }));
+  // 8. estado de jogo
+  const stations = SITES.map((s) => ({ ...s }));
+  const waystones = WAYSTONES.map((w) => ({ ...w }));
   const npcs = NPC_SPAWNS.map((n) => ({ ...n, bob: rand() * Math.PI * 2 }));
 
-  // névoa do minimapa: começa tudo escuro e vai revelando em volta do passo
+  // névoa do minimapa
   const explored = new Uint8Array(MAP_W * MAP_H);
   let exploredVersion = 0;
-  function markExplored(cx, cy, radius) {
-    const r = Math.ceil(radius);
+  function markExplored(cx, cy, radius = REVEAL_RADIUS) {
     const x0 = Math.max(0, Math.floor(cx - radius));
     const x1 = Math.min(MAP_W - 1, Math.ceil(cx + radius));
     const y0 = Math.max(0, Math.floor(cy - radius));
@@ -203,16 +260,8 @@ export function createWorld() {
     exploredVersion++;
   }
 
-  function isSolidTile(tx, ty) {
-    return SOLID.has(get(tx, ty));
-  }
-
-  function isSolidTileWorld(getter, x, y) {
-    return isSolidTile(Math.floor(x), Math.floor(y));
-  }
-
+  function isSolidTile(tx, ty) { return SOLID.has(get(tx, ty)); }
   function boxCollides(x, y, w, h) {
-    // x, y, w, h em tiles
     const x0 = Math.floor(x - w / 2);
     const x1 = Math.floor(x + w / 2 - 0.001);
     const y0 = Math.floor(y - h / 2);
@@ -225,18 +274,11 @@ export function createWorld() {
     return false;
   }
 
-  function zoneAt(x, y) {
-    for (const zone of Object.values(ZONES)) {
-      const r = zone.rect;
-      if (x >= r.x && x < r.x + r.w && y >= r.y && y < r.y + r.h) return zone.id;
-    }
-    return null;
-  }
-
   return {
-    tiles, decor, stations, npcs,
-    cat: { ...CAT_SPAWN, x: CAT_SPAWN.x, y: CAT_SPAWN.y, facing: 1, t: 0 },
-    get, set, isSolidTile, boxCollides, zoneAt,
+    tiles, decor, stations, waystones, npcs,
+    cat: { ...CAT_SPAWN, facing: 1, t: 0, moving: false },
+    get, set, isSolidTile, boxCollides,
+    continentAt, continentAtTile,
     markExplored, isExplored, setExplored,
     get exploredVersion() { return exploredVersion; },
     get exploredBytes() { return explored; },
