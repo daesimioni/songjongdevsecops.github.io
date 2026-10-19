@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mundo de Song</title>
+<meta name="description" content="Um blog pessoal que se atravessa a pé: um mundo em pixel art com lógica, fractais, Fourier, 3D, som e outros exploradores.">
+<meta name="theme-color" content="#070b18">
+<meta property="og:title" content="Mundo de Song">
+<meta property="og:description" content="Um blog pessoal que se atravessa a pé. Entre no mapa, ande até cada cenário e mexa nas coisas.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://songjongdevsecops.github.io/">
+<meta property="og:site_name" content="Mundo de Song">
+<meta property="og:image" content="https://songjongdevsecops.github.io/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Mundo de Song">
+<meta name="twitter:description" content="Um blog pessoal que se atravessa a pé. Ande pelo mapa, mexa nas coisas, encontre outros exploradores.">
+<meta name="twitter:image" content="https://songjongdevsecops.github.io/assets/og.png">
+<link rel="canonical" href="https://songjongdevsecops.github.io/">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+  <canvas id="world" aria-label="Mapa do mundo, em pixel art. Ande com WASD ou setas e interaja com E." role="img"></canvas>
+  <div class="vignette" aria-hidden="true"></div>
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <header class="hud hud-top">
+    <div class="brand">
+      <span class="brand-title">MUNDO DE SONG</span>
+      <span class="brand-sub">um blog que se atravessa a pé</span>
+    </div>
+    <div class="hud-actions">
+      <button type="button" id="net-pill" class="pill" title="Estado da praça compartilhada"><i></i><b id="online">solo</b></button>
+      <button id="btn-chat" class="hud-btn" type="button">Falar <kbd>T</kbd></button>
+      <button id="btn-journal" class="hud-btn" type="button">Diário <kbd>J</kbd></button>
+      <button id="btn-sound" class="hud-btn" type="button" aria-pressed="false">Som</button>
+      <button id="btn-help" class="hud-btn hud-btn-icon" type="button" aria-label="Ajuda">?</button>
+    </div>
+  </header>
+
+  <div id="zone-card" class="zone-card" hidden aria-live="polite">
+    <p id="zone-eyebrow"></p>
+    <h2 id="zone-name"></h2>
+    <p id="zone-sub"></p>
+  </div>
+
+  <div id="prompt" class="prompt" hidden>
+    <kbd>E</kbd>
+    <span id="prompt-label"></span>
+  </div>
+
+  <div id="toast" class="toast" role="status" hidden></div>
+
+  <div id="chatbar" class="chatbar" hidden>
+    <form id="chat-form">
+      <label for="chat-input">diga algo</label>
+      <input id="chat-input" maxlength="120" autocomplete="off" spellcheck="false" placeholder="aparece para quem está na mesma sala">
+      <button type="submit">enviar</button>
+      <button type="button" id="chat-cancel">sair</button>
+    </form>
+  </div>
+
+  <div id="scrim" class="scrim" hidden></div>
+
+  <aside id="panel" class="panel" role="dialog" aria-modal="true" aria-labelledby="panel-title" hidden>
+    <div class="panel-head">
+      <span id="panel-kicker"></span>
+      <button id="panel-close" type="button" class="hud-btn">fechar <kbd>Esc</kbd></button>
+    </div>
+    <div class="panel-scroll">
+      <h1 id="panel-title"></h1>
+      <p id="panel-meta" class="panel-meta"></p>
+      <div id="panel-body" class="panel-body"></div>
+      <div id="panel-live" class="panel-live"></div>
+      <p class="panel-foot">mexa nas coisas, saia pelo mapa. <button type="button" class="linkish" id="panel-back">voltar ao mundo</button></p>
+    </div>
+  </aside>
+
+  <div id="journal" class="modal" role="dialog" aria-modal="true" aria-labelledby="journal-title" hidden>
+    <div class="modal-card journal-card">
+      <div class="modal-head">
+        <h2 id="journal-title">Diário de bordo</h2>
+        <button type="button" class="hud-btn" data-close="journal">fechar <kbd>Esc</kbd></button>
+      </div>
+      <p id="journal-progress" class="journal-progress"></p>
+      <div id="journal-list" class="journal-list"></div>
+    </div>
+  </div>
+
+  <div id="help" class="modal" role="dialog" aria-modal="true" aria-labelledby="help-title" hidden>
+    <div class="modal-card">
+      <div class="modal-head">
+        <h2 id="help-title">Como jogar</h2>
+        <button type="button" class="hud-btn" data-close="help">fechar <kbd>Esc</kbd></button>
+      </div>
+      <div class="help-grid">
+        <div><kbd>W A S D</kbd><span>andar</span></div>
+        <div><kbd>setas</kbd><span>andar</span></div>
+        <div><kbd>E</kbd><span>interagir</span></div>
+        <div><kbd>J</kbd><span>diário</span></div>
+        <div><kbd>T</kbd><span>conversar</span></div>
+        <div><kbd>Esc</kbd><span>fechar</span></div>
+      </div>
+      <p class="help-note">No celular, use o direcional e o botão A. A praça é pública: quem estiver na mesma sala vê seu apelido, seu boneco e suas mensagens. Use um apelido, não seu nome completo.</p>
+      <p class="help-note">Este site é estático, sem servidor meu. O multiplayer usa um broker MQTT público por WebSocket. Se o sinal falhar, o mundo continua funcionando sozinho.</p>
+    </div>
+  </div>
+
+  <div id="intro" class="modal intro" role="dialog" aria-modal="true" aria-labelledby="intro-title">
+    <div class="intro-card">
+      <p class="intro-eyebrow">um blog jogável · edição 2026</p>
+      <h1 id="intro-title">MUNDO<br>DE SONG</h1>
+      <p class="intro-lead">Cada canto deste mapa é uma página. Ande até lá, aperte <kbd>E</kbd> e mexa no que encontrar: portas lógicas, fractais, Fourier, um sólido em 3D, um sequenciador.</p>
+      <form id="intro-form" autocomplete="off">
+        <label for="intro-name">seu apelido</label>
+        <input id="intro-name" name="mundo-apelido" maxlength="16" placeholder="viajante" autocomplete="off" required>
+        <label for="intro-room">sala</label>
+        <input id="intro-room" maxlength="24" placeholder="praca" value="praca">
+        <label class="check">
+          <input type="checkbox" id="intro-net" checked>
+          <span>entrar na praça compartilhada</span>
+        </label>
+        <button type="submit" class="start">entrar no mundo</button>
+      </form>
+      <p class="intro-note">A sala é pública. Quem estiver nela vê seu apelido e sua posição. Sem servidor meu: o sinal é um broker público e o resto acontece no seu navegador.</p>
+      <p class="intro-controls"><kbd>WASD</kbd> andar · <kbd>E</kbd> interagir · <kbd>J</kbd> diário · <kbd>T</kbd> conversar</p>
+    </div>
+  </div>
+
+  <div id="touch" class="touch" hidden aria-label="Controles de toque">
+    <div class="dpad">
+      <button type="button" data-dir="up" aria-label="cima">▲</button>
+      <button type="button" data-dir="left" aria-label="esquerda">◀</button>
+      <button type="button" data-dir="down" aria-label="baixo">▼</button>
+      <button type="button" data-dir="right" aria-label="direita">▶</button>
+    </div>
+    <button type="button" id="touch-action" class="touch-action" aria-label="interagir">A</button>
+  </div>
+
+  <div id="minimap" class="minimap" hidden>
+    <canvas id="minimap-canvas" width="96" height="72" aria-label="Minimapa"></canvas>
+    <span id="room-label">sala praca</span>
+  </div>
+
+  <noscript><p class="noscript">Este mundo precisa de JavaScript para andar. O texto dos posts continua aqui, mas sem o mapa.</p></noscript>
+</div>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
