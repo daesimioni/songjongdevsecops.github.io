@@ -7,7 +7,7 @@ export const POSTS = {
     title: "Um arquipélago que se atravessa a pé",
     date: "2026-10-19",
     read: "4 min",
-    tags: ["meta", "começo"],
+    tags: ["meta", "começo", "rede", "missões"],
     continent: "hub",
     lab: null,
     body: `
@@ -15,7 +15,8 @@ export const POSTS = {
       <p>São seis continentes. <em>Computaria</em> conta como saímos de interruptores e areia até processadores. <em>Matemática</em> visita o infinito, as formas, a mudança e o acaso. <em>Física</em> testa pêndulos, ondas, calor, luz e órbitas. <em>Química</em> abre a tabela periódica, as ligações, as reações e o equilíbrio. <em>Música</em> mostra a matemática escondida no som. <em>Inteligência Artificial</em> abre os dados, as redes, a linguagem e os limites. Ao todo, 32 fragmentos para descobrir.</p>
       <p>Cada estação abre uma página e soma experiência. O <strong>Diário</strong> guarda o que você já encontrou. As <strong>Pedras do Porto</strong>, os monólitos brilhantes nas docas, levam você de volta a qualquer continente já visitado. A névoa do minimapa só some onde você anda.</p>
       <blockquote>Não tem pressa. O mapa é grande, mas o caminho é seu.</blockquote>
-      <p>Se encontrar outra pessoa na praça, acene. O mundo é compartilhado, sem servidor meu, e cada visitante tem um boneco.</p>
+      <p>Os <strong>NPCs</strong> têm missões. Aperte E perto deles: tem caminhada, pergunta e conversa. Cada missão paga experiência e um título, e o Diário mostra quanto falta para a próxima.</p>
+      <p>A <strong>Rede</strong>, na tecla R, liga você aos outros jogadores: canais por continente, DMs privadas e a lista de quem está no mundo agora. Sua conta é uma chave criada no seu navegador, sem cadastro. Se encontrar outra pessoa na praça, acene.</p>
     `,
   },
   echo: {

@@ -1,0 +1,8 @@
+{
+  "name": "mundo-de-song",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node test/core.test.mjs"
+  }
+}

@@ -894,6 +894,20 @@ export function createRenderer(canvas, world) {
     ctx.fill();
     ctx.fillStyle = "#cfc9e6";
     ctx.fillText(label, px, py - 19);
+    if (npc.questMark) {
+      const ready = npc.questMark === "ready";
+      const color = ready ? "#61f4c0" : "#ffc857";
+      const lift = Math.sin(time * 0.006 + npc.bob) * 1.4;
+      ctx.fillStyle = "rgba(8,10,20,0.9)";
+      ctx.fillRect(px - 4, py - 42 + lift, 8, 10);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1;
+      ctx.strokeRect(px - 4.5, py - 42.5 + lift, 9, 11);
+      ctx.fillStyle = color;
+      ctx.font = "bold 8px ui-monospace, monospace";
+      ctx.fillText(ready ? "?" : "!", px, py - 34 + lift);
+      ctx.font = "5px ui-monospace, monospace";
+    }
     ctx.textAlign = "left";
     if (npc.bubble && npc.bubble.until > time) {
       drawBubble(npc.bubble.text, px, py, npc.accent || "#ffc857");

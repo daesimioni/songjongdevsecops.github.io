@@ -27,6 +27,33 @@ export const STORAGE = {
   name: "mundo-song:name:v1",
   sound: "mundo-song:sound:v1",
   room: "mundo-song:room:v1",
+  quests: "mundo-song:quests:v1",
+  nostr: "mundo-song:nostr:v1",
+};
+
+// A rede do mundo: relays públicos, canais do jogo e DMs privadas (NIP-17).
+// Tudo que entra na tela passa por estes dois selos, então nenhum conteúdo
+// de fora do jogo aparece aqui.
+export const NOSTR = {
+  relays: [
+    "wss://relay.damus.io",
+    "wss://nos.lol",
+    "wss://relay.nostr.band",
+    "wss://relay.primal.net",
+  ],
+  tag: "mundo-song",
+  // versão do namespace dos canais: subir isto começa uma conversa limpa
+  namespace: "mundo-song:v3",
+  client: "mundo-song",
+  channels: [
+    { id: "geral", name: "Praça do Mundo", sub: "a conversa de todo mundo" },
+    { id: "cs", name: "Computaria", sub: "fios, portas e processadores" },
+    { id: "math", name: "Matemática", sub: "formas, infinito e acaso" },
+    { id: "physics", name: "Física", sub: "pêndulos, luz e órbitas" },
+    { id: "chem", name: "Química", sub: "átomos trocando de roupa" },
+    { id: "music", name: "Música", sub: "som organizado em números" },
+    { id: "ai", name: "Inteligência Artificial", sub: "redes, linguagem e limites" },
+  ],
 };
 
 // coordenadas do coração de cada continente: superelipse (4) para a costa

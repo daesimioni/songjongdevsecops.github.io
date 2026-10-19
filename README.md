@@ -27,6 +27,61 @@ A praça compartilhada mostra outras pessoas na mesma sala. Não existe servidor
 próprio: o site é estático e o sinal usa um broker MQTT público por WebSocket.
 Se o sinal falhar, o mundo continua funcionando sozinho.
 
+## Missões
+
+Os sete NPCs do mapa dão missões. Um `!` flutuante marca quem tem missão para
+dar; quando o objetivo está cumprido, ele vira `?`. Aperte `E` perto deles para
+aceitar, responder e entregar. São três tipos:
+
+- **caminhada**: abrir estações, acender os sete faróis, mexer em oito
+  instrumentos diferentes.
+- **pergunta**: um enigma por NPC, com explicação depois da resposta. Errar não
+  custa nada, tentar de novo é o ponto.
+- **rede**: falar no canal público e mandar uma DM para alguém.
+
+Cada missão dá XP e um título. O Diário (`J`) mostra o que está em andamento,
+quanto falta e o que já foi concluído. O cartão do NPC mostra o mesmo progresso
+e o botão de concluir quando o objetivo está cumprido.
+
+## A Rede
+
+A conta do jogador é uma chave Nostr criada e guardada no próprio navegador.
+Não tem cadastro, e-mail nem servidor nosso. A chave pública (`npub`) identifica
+a pessoa; a privada (`nsec`) fica no `localStorage` e pode ser exportada ou
+trocada na aba **Conta** da Rede. Quem tiver a nsec controla a conta.
+
+A janela **Rede** (`R`) tem quatro abas:
+
+| aba | o que faz |
+|---|---|
+| **Mundo** | canais públicos, um geral e um por continente |
+| **DMs** | conversas privadas com NIP-17, com selo e cópia local |
+| **Pessoas** | quem está no mundo agora e quem está na sua sala |
+| **Conta** | chave, perfil público, relays e recomeço de identidade |
+
+Os relays são públicos (`relay.damus.io`, `nos.lol`, `relay.nostr.band` e
+`relay.primal.net`). Mensagens de canal são eventos Nostr com os selos
+`client=mundo-song` e `game=mundo-song` e um tag de canal
+`mundo-song:v3:<canal>`; só eventos com esses selos entram na tela, então
+nenhum conteúdo de fora do jogo aparece ali. As DMs usam NIP-17
+(gift wrap), então o relay não lê o texto. A presença é um evento efêmero com o
+continente em que a pessoa está.
+
+O [nostr-tools](https://github.com/nbd-wtf/nostr-tools) vem de ESM.sh e é
+carregado só quando a Rede liga. Se os relays não responderem, o jogo continua
+a pé e a Rede avisa.
+
+## Conferir
+
+A parte que não depende do navegador tem uma conferência só:
+
+```bash
+node test/core.test.mjs
+```
+
+Ela cobre o progresso e a persistência das missões e o filtro que mantém
+conteúdo de fora fora dos canais.
+
 ## Rodar na mão
 
 Não tem build. Basta servir a pasta como arquivo estático:
@@ -41,12 +96,15 @@ Depois abra `http://localhost:8000`.
 
 | caminho | o que é |
 |---|---|
-| `index.html` | casca da página: mapa, HUD, painéis, modais, viagem |
+| `index.html` | casca da página: mapa, HUD, painéis, modais, viagem, Rede e missões |
 | `css/style.css` | o visual, do mundo aos widgets |
 | `js/app.js` | laço do jogo, entrada, diário, XP, viagem e estado |
 | `js/world.js` | geração do arquipélago, caminhos, pontes, colisão e névoa |
 | `js/render.js` | desenho do mundo, das estações, dos bonecos e do minimapa |
 | `js/net.js` | sala compartilhada por MQTT sobre WebSocket |
+| `js/nostr.js` | conta, canais, DMs NIP-17, perfis e presença Nostr |
+| `js/quests.js` | missões, progresso, XP e títulos |
+| `js/social.js` | janela da Rede: canais, DMs, pessoas e conta |
 | `js/audio.js` | síntese, ambiente e sequenciador |
 | `js/content.js` | os 32 textos e as falas dos NPCs |
 | `js/config.js` | mapa, continentes, estações, pedras e cores |
@@ -54,6 +112,7 @@ Depois abra `http://localhost:8000`.
 | `js/zones/` | os instrumentos interativos de cada região |
 | `wasm/julia.wat` | fonte do módulo WebAssembly do conjunto de Julia |
 | `wasm/julia.wasm` | o módulo compilado, de 296 bytes |
+| `test/core.test.mjs` | conferência de missões e do filtro dos canais |
 
 O módulo wasm é gerado com `wat2wasm`:
 
@@ -72,8 +131,8 @@ wat2wasm wasm/julia.wat -o wasm/julia.wasm
 
 ## Créditos
 
-Three.js, p5.js, MathJax, Plotly e MQTT.js vêm de CDN. O resto é JavaScript de
-navegador, canvas, WebGL, Web Audio e WebAssembly. A fonte de pixel é do Google
-Fonts, com queda para monoespaçada do sistema.
+Three.js, p5.js, MathJax, Plotly, MQTT.js e nostr-tools vêm de CDN. O resto é
+JavaScript de navegador, canvas, WebGL, Web Audio e WebAssembly. A fonte de
+pixel é do Google Fonts, com queda para monoespaçada do sistema.
 
 Feito por Song Jong, para brincar.

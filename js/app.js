@@ -8,6 +8,9 @@ import { createRenderer } from "./render.js";
 import { createAudio } from "./audio.js";
 import { POSTS, NPCS } from "./content.js";
 import { Net } from "./net.js";
+import { Rede } from "./nostr.js";
+import { Quests } from "./quests.js";
+import { createSocial } from "./social.js";
 
 const $ = (id) => document.getElementById(id);
 
@@ -101,6 +104,17 @@ for (const cid of CONTINENT_ORDER) {
   if (continentComplete(cid)) state.completed.add(cid);
 }
 
+const rede = new Rede({ name: player.name });
+let social = null;
+const quests = new Quests({
+  getCards: () => state.cards,
+  getDocks: () => state.docks,
+  gainXp,
+  toast,
+  onReady: () => { audio.blip(); renderer.kick(0.35); },
+  onChange: () => { if (state.modal === "journal") buildJournal(); },
+});
+
 function readJSON(key, fallback) {
   try {
     const raw = localStorage.getItem(key);
@@ -134,12 +148,199 @@ function continentComplete(cid) {
   return sites.length > 0 && sites.every((s) => state.cards.has(s.post));
 }
 
+const toastQueue = [];
 function toast(message, ms = 2600) {
+  if (toastQueue.length >= 3) toastQueue.shift();
+  toastQueue.push({ message, ms });
+  if (!toast._busy) pumpToast();
+}
+function pumpToast() {
   const el = $("toast");
-  el.textContent = message;
+  const item = toastQueue.shift();
+  if (!item) { toast._busy = false; return; }
+  toast._busy = true;
+  el.textContent = item.message;
   el.hidden = false;
   clearTimeout(toast._t);
-  toast._t = setTimeout(() => { el.hidden = true; }, ms);
+  toast._t = setTimeout(() => {
+    el.hidden = true;
+    toast._t = setTimeout(pumpToast, 240);
+  }, item.ms);
+}
+
+function el(tag, cls, text) {
+  const node = document.createElement(tag);
+  if (cls) node.className = cls;
+  if (text != null) node.textContent = text;
+  return node;
+}
+
+function adoptName(name) {
+  const clean = String(name || "").replace(/[<>\u0000-\u001f]/g, "").trim().slice(0, 16);
+  if (!clean) return;
+  player.name = clean;
+  writeJSON(STORAGE.name, clean);
+  rede.setName(clean);
+  if (state.net) state.net.setName(clean);
+  $("intro-name").value = clean;
+}
+
+function bootSocial() {
+  if (social) return;
+  social = createSocial({
+    rede,
+    quests,
+    player,
+    getPeers: () => state.peers,
+    getLevel: level,
+    getTitle: () => quests.title,
+    setName: adoptName,
+    toast,
+    audio,
+  });
+  social.connect();
+  rede.init()
+    .then(() => { if (state.net) state.net.setIdentity(rede.pk); })
+    .catch(() => {});
+}
+
+function openRede() {
+  if (!state.started) return;
+  if (state.panelOpen) closePanel();
+  closeChat();
+  bootSocial();
+  social.open();
+  openModal("rede");
+  audio.open();
+}
+
+function buildJournalQuests() {
+  const box = $("journal-quests");
+  if (!box) return;
+  box.textContent = "";
+  const active = quests.active();
+  const done = quests.done();
+  if (!active.length && !done.length) {
+    box.appendChild(el("p", "quest-empty", "Nenhuma missão ainda. Procure os NPCs perto das estações: eles têm o que pedir."));
+    return;
+  }
+  for (const q of active) {
+    const { have, need } = quests.progress(q);
+    const card = el("div", "quest-card");
+    const head = el("div", "quest-head");
+    head.append(el("b", "", q.title), el("span", "quest-giver", q.giver));
+    const bar = el("div", "quest-bar");
+    const fill = el("i");
+    fill.style.width = `${need ? Math.round((have / need) * 100) : 0}%`;
+    bar.appendChild(fill);
+    const foot = el("div", "quest-foot");
+    foot.append(el("span", "", `${have}/${need}`), el("span", "", quests.ready(q) ? `volte a ${q.giver}` : "em andamento"));
+    card.append(head, el("p", "quest-brief", q.brief), bar, foot);
+    box.appendChild(card);
+  }
+  for (const q of done) {
+    const card = el("div", "quest-card done");
+    const head = el("div", "quest-head");
+    head.append(el("b", "", q.title), el("span", "quest-giver", q.giver));
+    card.append(head, el("p", "quest-brief", "concluída."));
+    box.appendChild(card);
+  }
+}
+
+function questCard(q, npc) {
+  const card = el("div", `quest-card${quests.isDone(q.id) ? " done" : ""}`);
+  const head = el("div", "quest-head");
+  head.append(el("b", "", q.title), el("span", "quest-giver", q.giver));
+  card.appendChild(head);
+  card.appendChild(el("p", "quest-brief", q.brief));
+  if (quests.isDone(q.id)) {
+    card.appendChild(el("p", "quest-note", "concluída. O título é seu."));
+    return card;
+  }
+  if (!quests.isAccepted(q.id)) {
+    const btn = el("button", "quest-btn", "aceitar missão");
+    btn.type = "button";
+    btn.addEventListener("click", () => {
+      if (quests.accept(q.id)) { audio.blip(); buildNpc(npc); }
+    });
+    card.appendChild(btn);
+    return card;
+  }
+  const { have, need } = quests.progress(q);
+  const bar = el("div", "quest-bar");
+  const fill = el("i");
+  fill.style.width = `${need ? Math.round((have / need) * 100) : 0}%`;
+  bar.appendChild(fill);
+  card.appendChild(bar);
+  card.appendChild(el("div", "quest-foot", `${have}/${need}`));
+
+  if (q.quiz && !quests.data.quiz[q.id]) {
+    const box = el("div", "quest-quiz");
+    box.appendChild(el("p", "quest-question", q.quiz.question));
+    q.quiz.options.forEach((opt, i) => {
+      const b = el("button", "quest-option", opt);
+      b.type = "button";
+      b.addEventListener("click", () => {
+        const res = quests.answer(q.id, i);
+        state.npcFeedback = { id: q.id, correct: res.correct, why: res.why };
+        if (res.correct) audio.chime(); else audio.blip();
+        buildNpc(npc);
+      });
+      box.appendChild(b);
+    });
+    card.appendChild(box);
+  }
+
+  const fb = state.npcFeedback;
+  if (fb && fb.id === q.id) {
+    card.appendChild(el("p", `quest-note ${fb.correct ? "good" : "bad"}`,
+      fb.correct ? `certo. ${fb.why}` : "não é essa. Leia de novo e tente outra."));
+  }
+
+  if (quests.ready(q)) {
+    const btn = el("button", "quest-btn ready", `concluir · +${q.reward?.xp || 0} XP`);
+    btn.type = "button";
+    btn.addEventListener("click", () => {
+      const res = quests.complete(q.id);
+      if (!res.ok) return;
+      toast(`Missão concluída: ${q.title}. +${res.xp} XP${res.title ? ` · título ${res.title}` : ""}`, 5200);
+      audio.chime();
+      renderer.kick(0.5);
+      buildNpc(npc);
+    });
+    card.appendChild(btn);
+  } else if (!q.quiz) {
+    card.appendChild(el("p", "quest-note", "em andamento."));
+  }
+  return card;
+}
+
+function buildNpc(npc) {
+  const data = NPCS[npc.id];
+  $("npc-title").textContent = data?.name || "Alguém do mundo";
+  const body = $("npc-body");
+  body.textContent = "";
+  const lines = data?.lines || [];
+  if (lines.length) {
+    body.appendChild(el("p", "npc-line", lines[(npc.lineIndex || 0) % lines.length]));
+  }
+  const offers = quests.offersFor(npc.id);
+  if (!offers.length) {
+    body.appendChild(el("p", "npc-muted", "Este viajante só tem histórias por enquanto."));
+    return;
+  }
+  body.appendChild(el("h3", "npc-sec", "missões"));
+  for (const q of offers) body.appendChild(questCard(q, npc));
+}
+
+function openNpc(npc) {
+  if (state.panelOpen) closePanel();
+  closeChat();
+  state.npc = npc;
+  state.npcFeedback = null;
+  buildNpc(npc);
+  openModal("npc");
+  audio.open();
 }
 
 function saveCards() { writeJSON(STORAGE.cards, Array.from(state.cards)); }
@@ -177,6 +378,7 @@ function markCard(postId) {
   toast(`+12 XP · fragmento ${openedCount()}/${TOTAL}`, 2200);
   gainXp(12);
   if (cid) checkContinent(cid);
+  quests.report("card", postId);
   return true;
 }
 
@@ -197,6 +399,7 @@ function markDock(cid) {
   if (!cid || state.docks.has(cid)) return false;
   state.docks.add(cid);
   saveDocks();
+  quests.report("dock", cid);
   return true;
 }
 
@@ -253,6 +456,7 @@ function startNet() {
 
 function startGame() {
   state.started = true;
+  rede.setName(player.name);
   $("intro").hidden = true;
   $("minimap").hidden = false;
   document.body.classList.add("playing");
@@ -261,7 +465,8 @@ function startGame() {
   if (saved.sound) setSound(true); else setSound(false);
   history.replaceState(null, "", `#sala=${state.room}`);
   $("room-label").textContent = `sala ${state.room}`;
-  if ($("intro-net").checked) startNet(); else setNetStatus({ state: "solo", count: 1 });
+  player.continentId = "hub";
+  if ($("intro-net").checked) { startNet(); bootSocial(); } else setNetStatus({ state: "solo", count: 1 });
   const first = !state.docks.has("hub");
   markDock("hub");
   state.lastContinent = "hub";
@@ -304,7 +509,7 @@ function buildJournal() {
   list.textContent = "";
   const found = openedCount();
   $("journal-progress").textContent =
-    `${found} de ${TOTAL} fragmentos · Nível ${level()} · ${state.xp} XP. Cada estação do arquipélago esconde uma página.`;
+    `${found} de ${TOTAL} fragmentos · Nível ${level()} · ${state.xp} XP${quests.title ? ` · título ${quests.title}` : ""}. Cada estação do arquipélago esconde uma página.`;
   for (const cid of CONTINENT_ORDER) {
     const continent = CONTINENTS[cid];
     const sites = sitesOf(cid);
@@ -342,6 +547,7 @@ function buildJournal() {
       list.appendChild(btn);
     }
   }
+  buildJournalQuests();
 }
 
 function openTravel() {
@@ -399,6 +605,7 @@ function travelTo(cid) {
   player.x = target[0];
   player.y = target[1];
   player.moving = false;
+  player.continentId = cid;
   state.lastContinent = null;
   markDock(cid);
   closeModal("travel");
@@ -417,6 +624,8 @@ function openModal(name) {
 }
 function closeModal(name) {
   if (name && $(name)) $(name).hidden = true;
+  if (name === "rede") social?.close();
+  if (name === "npc") state.npc = null;
   if (state.modal === name) state.modal = null;
   if (!state.modal && !state.panelOpen) $("scrim").hidden = true;
 }
@@ -526,7 +735,7 @@ function interact() {
     const lines = NPCS[npc.id]?.lines || ["..."];
     npc.lineIndex = ((npc.lineIndex || 0) + 1) % lines.length;
     npc.bubble = { text: lines[npc.lineIndex], until: performance.now() + 6500 };
-    audio.blip();
+    openNpc(npc);
   }
 }
 
@@ -616,6 +825,7 @@ function updateZone() {
   const cid = world.continentAt(player.x, player.y);
   if (!cid || cid === state.lastContinent) return;
   state.lastContinent = cid;
+  player.continentId = cid;
   const first = !state.docks.has(cid);
   markDock(cid);
   showZoneCard(CONTINENTS[cid], first);
@@ -638,6 +848,7 @@ function loop(now) {
       state.fogSavedAt = now;
       saveFog();
     }
+    for (const n of world.npcs) n.questMark = quests.markFor(n.id);
     renderer.draw(now, player, state.peers, world.npcs, world.cat, player.moving);
     updatePrompt();
     if (state.net) state.net.setLocal(player.x, player.y, player.dir);
@@ -692,6 +903,7 @@ window.addEventListener("keydown", (e) => {
   if (state.panelOpen || state.modal) return;
   if (k === "e" || k === "enter") { interact(); return; }
   if (k === "j") { openJournal(); return; }
+  if (k === "r") { openRede(); return; }
   if (k === "t") { openChat(); return; }
   state.keys.add(k);
 });
@@ -733,9 +945,21 @@ $("world").addEventListener("pointerdown", (e) => {
       return;
     }
   }
+  for (const n of world.npcs) {
+    if (Math.hypot(n.x - wx, n.y - wy) < 1.3 &&
+        Math.hypot(n.x - player.x, n.y - player.y) < INTERACT_RADIUS + 0.6) {
+      n.lineIndex = ((n.lineIndex || 0) + 1) % (NPCS[n.id]?.lines?.length || 1);
+      openNpc(n);
+      return;
+    }
+  }
 });
 
 $("btn-chat").addEventListener("click", openChat);
+$("btn-rede").addEventListener("click", openRede);
+$("panel-live").addEventListener("pointerdown", () => {
+  if (state.currentPost) quests.report("lab", state.currentPost);
+}, { passive: true });
 $("btn-journal").addEventListener("click", openJournal);
 $("btn-help").addEventListener("click", () => { openModal("help"); audio.open(); });
 $("btn-sound").addEventListener("click", () => setSound(!saved.sound));
@@ -784,6 +1008,8 @@ $("intro-form").addEventListener("submit", (e) => {
 window.addEventListener("beforeunload", () => {
   saveFog();
   if (state.net) state.net.destroy();
+  social?.close();
+  rede.destroy();
 });
 
 // ---------- boot ----------
@@ -808,6 +1034,6 @@ window.addEventListener("beforeunload", () => {
   setNetStatus({ state: "solo", count: 1 });
   requestAnimationFrame(loop);
   if (new URLSearchParams(location.search).has("debug")) {
-    window.__mundo = { player, state, world, renderer, audio };
+    window.__mundo = { player, state, world, renderer, audio, quests, rede };
   }
 })();

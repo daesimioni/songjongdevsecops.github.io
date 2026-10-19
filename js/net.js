@@ -39,6 +39,7 @@ export class Net {
     this.state = { x: 24, y: 19.5, dir: 0 };
     this.connected = false;
     this.msgCount = 0;
+    this.pubkey = "";
   }
 
   topic(kind) { return `${NET.prefix}/${this.room}/${kind}`; }
@@ -135,11 +136,13 @@ export class Net {
       const color = validColor(msg.c);
       const old = this.peers.get(msg.id);
       const moving = old ? Math.hypot(old.x - x, old.y - y) > 0.015 : false;
+      const pubkey = typeof msg.k === "string" && /^[0-9a-f]{64}$/i.test(msg.k) ? msg.k.toLowerCase() : "";
       const peer = {
         id: msg.id,
         name,
         color,
         x, y, dir,
+        pubkey,
         moving,
         lastSeen: now,
         bubble: old?.bubble || null,
@@ -187,6 +190,16 @@ export class Net {
     this.state = { x, y, dir };
   }
 
+  setIdentity(pubkey) {
+    this.pubkey = typeof pubkey === "string" && /^[0-9a-f]{64}$/i.test(pubkey) ? pubkey.toLowerCase() : "";
+    this.publishState(true);
+  }
+
+  setName(name) {
+    this.name = clean(name, 16) || "viajante";
+    this.publishState(true);
+  }
+
   publishState(force) {
     if (!this.connected || !this.client) return;
     this.client.publish(this.topic("state"), JSON.stringify({
@@ -194,6 +207,7 @@ export class Net {
       x: Number(this.state.x.toFixed(2)),
       y: Number(this.state.y.toFixed(2)),
       d: this.state.dir,
+      k: this.pubkey || undefined,
     }), { qos: 0 });
     if (force) this.emitPeers();
   }
