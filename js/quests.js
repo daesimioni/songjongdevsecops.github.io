@@ -35,7 +35,7 @@ export const QUESTS = [
     npc: "guia",
     giver: "Dona Zefa",
     title: "Caçador de perguntas",
-    brief: "Derrube três monstros nas clareiras de caça. Cada um guarda uma pergunta e deixa um item.",
+    brief: "Desça numa caverna e derrube três monstros. Cada um guarda uma pergunta e deixa um item.",
     goal: { type: "hunts", count: 3 },
     reward: { xp: 45, title: "Caçador" },
   },

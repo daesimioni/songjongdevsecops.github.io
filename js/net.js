@@ -21,7 +21,7 @@ function validColor(c) {
 }
 
 export class Net {
-  constructor({ room, name, color, onPeers, onStatus, onChat, onError }) {
+  constructor({ room, name, color, onPeers, onStatus, onChat, onPvp, onError }) {
     this.room = room;
     this.name = clean(name, 16) || "viajante";
     this.color = validColor(color);
@@ -29,7 +29,10 @@ export class Net {
     this.onPeers = onPeers;
     this.onStatus = onStatus;
     this.onChat = onChat;
+    this.onPvp = onPvp;
     this.onError = onError;
+    this.lastPvp = 0;
+    this.lastPvpSend = 0;
     this.client = null;
     this.peers = new Map();
     this.lastChat = 0;
@@ -77,6 +80,7 @@ export class Net {
         client.subscribe([
           this.topic("state"),
           this.topic("chat"),
+          this.topic("pvp"),
           this.topic("bye"),
         ], { qos: 0 }, (err, granted) => {
           if (err) { this.fail("sem sinal"); if (!settled) { settled = true; resolve(false); } return; }
@@ -158,6 +162,30 @@ export class Net {
       return;
     }
 
+    if (topic.endsWith("/pvp")) {
+      if (now - this.lastPvp < 120) return;
+      if (msg.to !== this.id) return;
+      const kind = msg.kind;
+      if (!["challenge", "accept", "decline", "attack", "defend", "end"].includes(kind)) return;
+      if (kind === "attack") {
+        const q = msg.question;
+        const ok = q && typeof q.q === "string" && q.q.length >= 4 && q.q.length <= 400
+          && Array.isArray(q.options) && q.options.length === 3
+          && q.options.every((o) => typeof o === "string" && o.length >= 1 && o.length <= 200)
+          && Number.isInteger(q.answer) && q.answer >= 0 && q.answer <= 2
+          && typeof q.why === "string" && q.why.length <= 500
+          && Number.isInteger(msg.damage) && msg.damage >= 1 && msg.damage <= 12
+          && typeof msg.nonce === "string" && msg.nonce.length >= 1 && msg.nonce.length <= 40;
+        if (!ok) return;
+      }
+      if (kind === "defend" && (typeof msg.correct !== "boolean" || typeof msg.nonce !== "string")) return;
+      if (kind === "end" && typeof msg.winner !== "string") return;
+      this.lastPvp = now;
+      const peer = this.peers.get(msg.id) || { id: msg.id, name: clean(msg.n, 16) || "viajante" };
+      this.onPvp?.(peer, msg);
+      return;
+    }
+
     if (topic.endsWith("/chat")) {
       const peer = this.peers.get(msg.id);
       if (!peer) return;
@@ -219,6 +247,19 @@ export class Net {
       k: this.pubkey || undefined,
     }), { qos: 0 });
     if (force) this.emitPeers();
+  }
+
+  sendPvp(payload) {
+    if (!this.connected || !this.client || !payload || typeof payload !== "object") return false;
+    const kind = payload.kind;
+    if (!["challenge", "accept", "decline", "attack", "defend", "end"].includes(kind)) return false;
+    const now = Date.now();
+    if (now - this.lastPvpSend < 150) return false;
+    this.lastPvpSend = now;
+    this.client.publish(this.topic("pvp"), JSON.stringify({
+      id: this.id, n: this.name, ...payload,
+    }), { qos: 0 });
+    return true;
   }
 
   sendChat(text) {

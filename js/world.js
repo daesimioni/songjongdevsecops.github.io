@@ -263,7 +263,36 @@ export function createWorld() {
   // 8. estado de jogo
   const stations = SITES.map((s) => ({ ...s }));
   const waystones = WAYSTONES.map((w) => ({ ...w }));
-  const npcs = NPC_SPAWNS.map((n) => ({ ...n, bob: rand() * Math.PI * 2 }));
+
+  // A superfície é sala de aula: sem bicho selvagem. Cada clareira vira uma
+  // arena de treino com um instrutor, e o bicho de verdade mora na caverna.
+  const hunters = GROUNDS.map((g) => {
+    const accent = CONTINENTS[g.continent]?.accent || "#ffc857";
+    return {
+      id: g.id,
+      continent: g.continent,
+      name: g.name,
+      center: g.center,
+      accent,
+      banner: { ...g.bannerPos, accent },
+      loot: g.loot,
+      bossLoot: g.bossLoot,
+    };
+  });
+  const trainerNpcs = hunters.map((h) => ({
+    id: `trainer-${h.continent}`,
+    continent: h.continent,
+    x: h.center.x,
+    y: h.center.y,
+    accent: h.accent,
+    trainer: true,
+    ground: h,
+    bob: rand() * Math.PI * 2,
+  }));
+  const npcs = [
+    ...NPC_SPAWNS.map((n) => ({ ...n, bob: rand() * Math.PI * 2 })),
+    ...trainerNpcs,
+  ];
 
   // névoa do minimapa
   const explored = new Uint8Array(MAP_W * MAP_H);
@@ -318,23 +347,7 @@ export function createWorld() {
     props.push({ x, y, hw, hh, active });
   }
 
-  const hunters = GROUNDS.map((g) => {
-    const accent = CONTINENTS[g.continent]?.accent || "#ffc857";
-    return {
-      ...g,
-      accent,
-      banner: { ...g.bannerPos, accent },
-      lever: { ...g.lever, accent, pulled: false },
-      monsters: g.monsters.map((m) => ({ ...m, accent, groundId: g.id, continent: g.continent })),
-      boss: { ...g.boss, accent, groundId: g.id, continent: g.continent, alive: false },
-    };
-  });
-  const monsters = hunters.flatMap((h) => h.monsters);
-  for (const h of hunters) {
-    for (const m of h.monsters) m.ground = h;
-    h.boss.ground = h;
-    h.lever.ground = h;
-  }
+  const monsters = [];
 
   // coisas que ocupam espaço no chão. Monstros e chefes são dinâmicos: a
   // colisão some quando eles caem e volta quando renascem.
@@ -353,14 +366,6 @@ export function createWorld() {
   for (const d of decor) {
     const size = decorSize[d.type];
     if (size) addProp(d.x, d.y, size[0], size[1]);
-  }
-  for (const h of hunters) {
-    addProp(h.lever.x, h.lever.y, 0.25, 0.2);
-    for (const m of h.monsters) {
-      addProp(m.x, m.y, m.tier === 3 ? 0.45 : 0.38, m.tier === 3 ? 0.35 : 0.28,
-        () => m.alive !== false);
-    }
-    addProp(h.boss.x, h.boss.y, 0.7, 0.5, () => h.boss.alive === true);
   }
 
   // A boca da caverna fica ao lado do acampamento de caça. O lugar é escolhido
@@ -383,10 +388,8 @@ export function createWorld() {
           const cy = Math.round(h.center.y + dy);
           if (cx < 2 || cy < 2 || cx > MAP_W - 2 || cy > MAP_H - 2) continue;
           if (!freeSpot(cx, cy)) continue;
-          if (Math.hypot(cx - h.boss.x, cy - h.boss.y) < 3.5) continue;
-          if (Math.hypot(cx - h.lever.x, cy - h.lever.y) < 3.2) continue;
+          if (Math.hypot(cx - h.center.x, cy - h.center.y) < 3.2) continue;
           if (Math.hypot(cx - h.banner.x, cy - h.banner.y) < 2.5) continue;
-          if (h.monsters.some((m) => Math.hypot(cx - m.x, cy - m.y) < 2.6)) continue;
           spot = { x: cx, y: cy };
           found = true;
         }

@@ -72,6 +72,18 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
     lastPick = null;
   }
 
+  function openTraining(continent, tier, theme, monster) {
+    const res = rpg.startTraining(continent, tier, theme, monster);
+    if (!res.ok) {
+      toast(res.reason || "O treino não abriu agora.", 3200);
+      return false;
+    }
+    lastPick = null;
+    render();
+    startSprite();
+    return true;
+  }
+
   function bar(label, value, max, cls) {
     const wrap = el("div", `duel-bar ${cls}`);
     const head = el("div", "duel-bar-head");
@@ -92,9 +104,20 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
       return;
     }
     const tier = TIERS[d.tier];
-    $("duel-kicker").textContent = `${d.ground.name} · ${d.boss ? "chefe" : tier.name}`;
+    const continent = CONTINENTS[d.ground.continent]?.name || d.ground.name;
+    $("duel-kicker").textContent = d.training
+      ? `TREINO · ${continent}`
+      : `${d.ground.name} · ${d.boss ? "chefe" : tier.name}`;
+    const risk = $("duel-risk");
+    if (risk) {
+      risk.textContent = d.training
+        ? " · treino, sem dano"
+        : ` · risco ${Math.round(rpg.fleeRisk(d.monster) * 100)}%`;
+    }
     $("duel-name").textContent = d.monster.name;
-    $("duel-sub").textContent = `nível ${d.monster.level} · ${tier.stars} · ${d.boss ? "pergunta final" : "duelo de perguntas"}`;
+    $("duel-sub").textContent = d.training
+      ? `nível ${d.monster.level} · ${tier.stars} · treino sem dano e sem loot`
+      : `nível ${d.monster.level} · ${tier.stars} · ${d.boss ? "pergunta final" : "duelo de perguntas"}`;
     const meta = $("duel-meta");
     meta.textContent = "";
     meta.append(
@@ -131,7 +154,10 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
     if (d.phase === "feedback") {
       const fb = d.feedback;
       const box = el("div", `duel-feedback ${fb.correct ? "good" : "bad"}`);
-      box.appendChild(el("b", "", fb.correct ? "Acertou." : `Errou. Você levou ${fb.damage} de dano.`));
+      const wrong = fb.training
+        ? `Errou. Na caverna isso tiraria ${fb.damage} de vida.`
+        : `Errou. Você levou ${fb.damage} de dano.`;
+      box.appendChild(el("b", "", fb.correct ? "Acertou." : wrong));
       box.appendChild(el("span", "", fb.why));
       body.appendChild(box);
       const next = el("button", "duel-next", "continuar");
@@ -147,8 +173,12 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
   function renderEnd(body, d) {
     const win = d.phase === "victory";
     const box = el("div", `duel-end ${win ? "win" : "lose"}`);
-    box.appendChild(el("h3", "", win ? "Monstro derrotado" : "Você caiu"));
-    if (win && d.result) {
+    box.appendChild(el("h3", "", d.training ? (win ? "Treino concluído" : "Treino encerrado") : (win ? "Monstro derrotado" : "Você caiu")));
+    if (d.training) {
+      box.appendChild(el("p", "", win
+        ? "Sem dano, sem loot. A perícia do continente subiu e a pergunta volta no caderno."
+        : "Sem dano. O treino é para errar aqui, não na caverna."));
+    } else if (win && d.result) {
       box.appendChild(el("p", "", `+${d.result.xp} XP · perícia de ${CONTINENTS[d.ground.continent]?.name || "continente"} subiu.`));
       const loot = el("div", "duel-loot");
       for (const item of d.result.loot) {
@@ -173,7 +203,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
     else audio.error?.();
     if (rpg.duel.phase === "victory") {
       audio.chime();
-      onVictory?.();
+      if (!rpg.duel.training) onVictory?.();
     }
     render();
   }
@@ -191,5 +221,5 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
     if (res?.phase === "question") render();
   }
 
-  return { open, close, answer, advance, render, drawSprite };
+  return { open, openTraining, close, answer, advance, render, drawSprite };
 }

@@ -51,7 +51,7 @@ async function copyText(text) {
   }
 }
 
-export function createSocial({ rede, quests, player, getPeers, getLevel, getTitle, setName, toast, audio }) {
+export function createSocial({ rede, quests, player, getPeers, getLevel, getTitle, setName, toast, audio, onChallenge }) {
   const ui = {
     open: false,
     tab: "mundo",
@@ -419,6 +419,15 @@ export function createSocial({ rede, quests, player, getPeers, getLevel, getTitl
       const sub = p.pubkey ? "com chave" : "sem chave da Rede";
       const row = personRow(p.name || "viajante", sub, p.pubkey || "");
       if (!p.pubkey) row.querySelector("button")?.remove();
+      const duel = el("button", "rede-mini", "desafiar");
+      duel.type = "button";
+      duel.title = "duelo de perguntas, sem perder vida";
+      duel.addEventListener("click", () => {
+        if (!onChallenge) return;
+        onChallenge({ id: p.id, name: p.name });
+        close();
+      });
+      row.appendChild(duel);
       room.appendChild(row);
     }
     wrap.appendChild(room);

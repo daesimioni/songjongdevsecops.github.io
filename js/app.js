@@ -11,12 +11,14 @@ import { Net } from "./net.js";
 import { Rede } from "./nostr.js";
 import { Quests } from "./quests.js";
 import { createSocial } from "./social.js";
+import { createPvp } from "./pvp.js";
 import { findPath, nearestWalkable } from "./path.js";
 import { feedPeer, peerRenderPosition } from "./interp.js";
 import { RPG } from "./rpg.js";
 import { createSheet } from "./sheet.js";
 import { createDuel } from "./duel.js";
 import { createDungeon } from "./dungeon.js";
+import { dungeonById } from "./dungeon-data.js";
 
 const $ = (id) => document.getElementById(id);
 let dungeon = null;
@@ -114,6 +116,9 @@ const state = {
   pending: null,
   lastHp: -1,
   lastHpMax: -1,
+  trainingNpc: null,
+  pvpDownUntil: 0,
+  pvpDownTimer: null,
 };
 
 for (const cid of CONTINENT_ORDER) {
@@ -191,6 +196,18 @@ duelUi = createDuel({
   onVictory: () => quests.report("hunts"),
 });
 
+const pvpUi = createPvp({
+  rpg,
+  toast,
+  audio,
+  player,
+  getNet: () => state.net,
+  isBusy: () => !!(state.panelOpen || state.chatOpen || dungeon?.isOpen() || (state.modal && state.modal !== "pvp")),
+  openPanel: () => openModal("pvp"),
+  closePanel: () => closeModal("pvp"),
+  onDown: (ms) => knockDown(ms),
+});
+
 dungeon = createDungeon({
   rpg,
   audio,
@@ -200,6 +217,7 @@ dungeon = createDungeon({
     return !!rpg.duel;
   },
   onSheet: () => openSheet(),
+  avatar: PLAYER_COLORS[player.colorIndex] || null,
   onExit: ({ kind, dungeon: def }) => {
     if (kind === "death") return;
     const cave = world.caves.find((c) => c.continent === def?.continent);
@@ -306,6 +324,10 @@ function bootSocial() {
     setName: adoptName,
     toast,
     audio,
+    onChallenge: (peer) => {
+      closeModal("rede");
+      pvpUi.challenge(peer);
+    },
   });
   social.connect();
   rede.init()
@@ -329,17 +351,34 @@ function openDuel(monster, ground, boss = false) {
   audio.open();
 }
 
-function pullLever(ground) {
-  const res = rpg.pullLever(ground);
-  if (!res.ok) {
-    toast(res.reason, 3600);
-    audio.error();
-    return;
-  }
-  toast("O selo se abriu. O chefe da caçada acordou.", 4600);
-  audio.chime();
-  renderer.kick(0.6);
+function openTraining(npc) {
+  state.trainingNpc = npc;
+  const name = NPCS[npc.id]?.name || "o instrutor";
+  const continent = CONTINENTS[npc.continent]?.name || "o continente";
+  $("training-title").textContent = `Treino com ${name}`;
+  $("training-sub").textContent = `Aqui você erra sem perder vida. O bicho de verdade espera na caverna de ${continent}.`;
+  openModal("training");
+  audio.open();
 }
+
+function startTraining(tier) {
+  const npc = state.trainingNpc;
+  if (!npc || !duelUi) return;
+  const def = dungeonById(`dungeon-${npc.continent}`);
+  const names = def?.monsters || ["Bicho de Treino"];
+  const rooms = (def?.rooms || []).filter((r) => r.kind !== "entrance" && r.kind !== "city");
+  const theme = rooms[Math.floor(Math.random() * rooms.length)]?.theme || "";
+  const monster = {
+    name: names[Math.floor(Math.random() * names.length)],
+    kind: tier >= 3 ? "golem" : tier === 2 ? "eye" : "slime",
+    tier,
+    level: tier * 3,
+  };
+  if (!duelUi.openTraining(npc.continent, tier, theme, monster)) return;
+  openModal("duel");
+  audio.open();
+}
+
 
 function enterCave(cave) {
   if (!state.started) return;
@@ -366,11 +405,9 @@ function interactTarget(target) {
     const lines = NPCS[npc.id]?.lines || ["..."];
     npc.lineIndex = ((npc.lineIndex || 0) + 1) % lines.length;
     npc.bubble = { text: lines[npc.lineIndex], until: performance.now() + 6500 };
-    openNpc(npc);
+    if (npc.trainer) openTraining(npc);
+    else openNpc(npc);
   }
-  else if (target.kind === "monster") openDuel(target.obj, target.ground);
-  else if (target.kind === "boss") openDuel(target.ground.boss, target.ground, true);
-  else if (target.kind === "lever") pullLever(target.ground);
   else if (target.kind === "cave") enterCave(target.obj);
 }
 
@@ -635,6 +672,7 @@ function startNet() {
       audio.blip();
       pushChatMessage(peer.name, text, peer.color);
     },
+    onPvp: (peer, msg) => pvpUi.handle(peer, msg),
     onError: () => {},
   });
   state.net.connect();
@@ -682,6 +720,19 @@ function showZoneCard(continent, first) {
   clearTimeout(state.zoneTimer);
   state.zoneTimer = setTimeout(() => { card.hidden = true; }, 4800);
   if (first) { renderer.kick(0.7); audio.chime(); }
+}
+
+function knockDown(ms) {
+  stopSprint();
+  clearPath();
+  state.pvpDownUntil = performance.now() + ms;
+  document.body.classList.add("pvp-down");
+  clearTimeout(state.pvpDownTimer);
+  state.pvpDownTimer = setTimeout(() => {
+    state.pvpDownUntil = 0;
+    document.body.classList.remove("pvp-down");
+    toast("Você voltou. Ande quando quiser.", 2400);
+  }, ms);
 }
 
 function stopSprint() {
@@ -812,7 +863,7 @@ function travelTo(cid) {
 
 function openModal(name) {
   stopSprint();
-  closeModal(state.modal);
+  if (state.modal !== name) closeModal(state.modal);
   state.modal = name;
   $(name).hidden = false;
   $("scrim").hidden = false;
@@ -823,6 +874,7 @@ function closeModal(name) {
   if (name && $(name)) $(name).hidden = true;
   if (name === "rede") social?.close();
   if (name === "duel") { duelUi?.close(); dungeon?.onDuelClosed(); }
+  if (name === "pvp") pvpUi?.abort();
   if (name === "npc") state.npc = null;
   if (state.modal === name) state.modal = null;
   if (!state.modal && !state.panelOpen) $("scrim").hidden = true;
@@ -1006,6 +1058,7 @@ function closeChat() {
 
 function interact() {
   if (!state.started || state.panelOpen || state.modal) return;
+  if (performance.now() < state.pvpDownUntil) { toast("Você ainda está desativado.", 2000); return; }
   clearPath();
   const target = state.nearest;
   if (!target) return;
@@ -1025,19 +1078,12 @@ function findNearest() {
   for (const s of world.stations) near("station", s);
   for (const w of world.waystones) near("waystone", w);
   for (const n of world.npcs) near("npc", n);
-  for (const m of world.monsters) {
-    if (m.alive) near("monster", m, m.ground, 2.1);
-  }
-  for (const h of world.hunters) {
-    if (h.boss.alive) near("boss", h.boss, h, 2.2);
-    near("lever", h.lever, h, 1.9);
-  }
   for (const c of world.caves) near("cave", c, null, 1.8);
   return best;
 }
 
 function updatePrompt() {
-  if (!state.started || state.panelOpen || state.modal || state.chatOpen) {
+  if (!state.started || state.panelOpen || state.modal || state.chatOpen || performance.now() < state.pvpDownUntil) {
     $("prompt").hidden = true;
     return;
   }
@@ -1047,11 +1093,12 @@ function updatePrompt() {
   let label;
   if (near.kind === "station") label = near.obj.label;
   else if (near.kind === "waystone") label = near.obj.name;
-  else if (near.kind === "npc") label = `falar com ${NPCS[near.obj.id]?.name || "alguém"}`;
-  else if (near.kind === "monster") label = `desafiar ${near.obj.name}`;
-  else if (near.kind === "boss") label = `enfrentar ${near.obj.name}`;
+  else if (near.kind === "npc") {
+    label = near.obj.trainer
+      ? `treinar com ${NPCS[near.obj.id]?.name || "o instrutor"}`
+      : `falar com ${NPCS[near.obj.id]?.name || "alguém"}`;
+  }
   else if (near.kind === "cave") label = `descer em ${near.obj.name}`;
-  else label = near.obj.pulled ? "passagem aberta" : "puxar a alavanca";
   if ($("prompt-label").textContent !== label) $("prompt-label").textContent = label;
   $("prompt").hidden = false;
 }
@@ -1189,7 +1236,7 @@ function loop(now) {
   try {
     const dt = Math.min(0.05, (now - (loop.last || now)) / 1000);
     loop.last = now;
-    const active = state.started && !state.panelOpen && !state.modal && !state.chatOpen;
+    const active = state.started && !state.panelOpen && !state.modal && !state.chatOpen && now >= state.pvpDownUntil;
     updateBoost(dt, active);
     rpg.tick();
     if (dungeon?.isOpen()) {
@@ -1239,13 +1286,6 @@ function loop(now) {
           p.ry = pos.y;
         }
       }
-    }
-    for (const m of world.monsters) m.alive = rpg.monsterAlive(m.id);
-    for (const h of world.hunters) {
-      h.ready = rpg.leverReady(h);
-      h.lever.pulled = rpg.leverPulled(h.id);
-      h.lever.ready = h.ready;
-      h.boss.alive = rpg.bossAlive(h);
     }
     renderer.draw(now, player, state.peers, world.npcs, world.cat, player.moving);
     updatePrompt();
@@ -1344,6 +1384,9 @@ for (const btn of document.querySelectorAll(".dpad button")) {
   btn.addEventListener("pointerleave", off);
   btn.addEventListener("pointercancel", off);
 }
+for (const btn of document.querySelectorAll("#training [data-tier]")) {
+  btn.addEventListener("click", () => startTraining(Number(btn.dataset.tier)));
+}
 $("touch-action").addEventListener("click", interact);
 const sprintBtn = $("touch-sprint");
 function touchSprint(on) {
@@ -1373,19 +1416,13 @@ function entityAt(wx, wy) {
   for (const s of world.stations) hit("station", s);
   for (const w of world.waystones) hit("waystone", w);
   for (const n of world.npcs) hit("npc", n, null, 1.4);
-  for (const m of world.monsters) {
-    if (m.alive) hit("monster", m, m.ground, 1.5);
-  }
-  for (const h of world.hunters) {
-    if (h.boss.alive) hit("boss", h.boss, h, 1.7);
-    hit("lever", h.lever, h, 1.3);
-  }
   for (const c of world.caves) hit("cave", c, null, 1.4);
   return best;
 }
 
 $("world").addEventListener("pointerdown", (e) => {
   if (!state.started || state.panelOpen || state.modal) return;
+  if (performance.now() < state.pvpDownUntil) { toast("Você ainda está desativado.", 2000); return; }
   if (e.button !== undefined && e.button !== 0) return;
   if (state.chatOpen) closeChat();
   const rect = $("world").getBoundingClientRect();
@@ -1520,6 +1557,6 @@ window.addEventListener("beforeunload", () => {
   setNetStatus({ state: "solo", count: 1 });
   requestAnimationFrame(loop);
   if (new URLSearchParams(location.search).has("debug")) {
-    window.__mundo = { player, state, world, renderer, audio, quests, rede, rpg, sheetUi, duelUi, dungeon };
+    window.__mundo = { player, state, world, renderer, audio, quests, rede, rpg, sheetUi, duelUi, dungeon, pvpUi, knockDown, social };
   }
 })();

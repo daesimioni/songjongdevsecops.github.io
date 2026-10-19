@@ -209,16 +209,18 @@ assert.ok(Math.abs(peerRenderPosition(sp, 1300, 200).x - 20) < 0.001, "teleporte
 const w = createWorld();
 assert.equal(w.boxCollides(90, 60, PLAYER_W, PLAYER_H), true, "fonte barra passagem");
 assert.equal(w.boxCollides(SPAWN.x, SPAWN.y, PLAYER_W, PLAYER_H), false, "spawn é livre");
-const pm = w.monsters[0];
-pm.alive = true;
-assert.equal(w.boxCollides(pm.x, pm.y, PLAYER_W, PLAYER_H), true, "monstro vivo barra");
-pm.alive = false;
-assert.equal(w.boxCollides(pm.x, pm.y, PLAYER_W, PLAYER_H), false, "monstro morto libera");
-const ph = w.hunters[0];
-ph.boss.alive = false;
-assert.equal(w.boxCollides(ph.boss.x, ph.boss.y, PLAYER_W, PLAYER_H), false, "chefe ausente não barra");
-ph.boss.alive = true;
-assert.equal(w.boxCollides(ph.boss.x, ph.boss.y, PLAYER_W, PLAYER_H), true, "chefe presente barra");
+// a superfície virou sala de aula: sem monstro solto, sem chefe, sem alavanca
+assert.equal(w.monsters.length, 0, "superfície sem monstro");
+assert.equal(w.hunters.every((h) => !h.boss && !(h.monsters || []).length), true, "caçada sem chefe e sem bicho");
+assert.equal(w.hunters.every((h) => !h.lever), true, "superfície sem alavanca");
+const instructors = w.npcs.filter((n) => n.trainer);
+assert.equal(instructors.length, w.hunters.length, "um instrutor por caçada");
+for (const h of w.hunters) {
+  const npc = instructors.find((n) => n.continent === h.continent);
+  assert.ok(npc, `instrutor de ${h.continent}`);
+  assert.ok(Math.hypot(npc.x - h.center.x, npc.y - h.center.y) < 2.5, `instrutor no centro de ${h.continent}`);
+  assert.equal(w.boxCollides(npc.x, npc.y, PLAYER_W, PLAYER_H), true, `instrutor de ${h.continent} ocupa espaço`);
+}
 assert.ok(w.props.length > 20, "props de cenário existem");
 for (const stone of w.waystones) {
   const spots = [[0, 1.8], [0, -1.8], [1.8, 0], [-1.8, 0], [0, 2.6], [2.6, 0]];
@@ -291,7 +293,7 @@ assert.equal(
 
 // o chefe da caverna não depende de alavanca, e a forja consome e devolve
 assert.equal(rpg.bossAlive({ id: "dungeon-teste", dungeon: true }), true, "chefe de caverna sem alavanca");
-assert.equal(rpg.bossAlive({ id: "caçada-teste" }), false, "chefe de superfície pede alavanca");
+assert.equal(rpg.bossAlive({ id: "caçada-teste" }), false, "chefe de outro tipo pede alavanca");
 store.clear();
 rpg.data = { hp: null, skills: {}, items: {}, monsters: {}, bosses: {}, levers: {}, enchants: {}, buffs: {}, pet: { bond: 0 } };
 rpg.addItem("ferro", 2);
@@ -335,4 +337,55 @@ const deepDeck = rpg.buildDeck("cs", [3], "algoritmos");
 assert.equal(deepDeck.length, 4, "pergunta do fundo entrou no baralho");
 assert.ok(deepDeck[0].q.includes("escalonador"), "tema da sala puxa a pergunta certa");
 
-console.log("ok missões, persistência, canais, RPG, interpolação, colisão e caverna");
+// fuga sempre arrisca, e o risco cresce com a dificuldade do bicho
+const flee = (tier, boss = false) => rpg.fleeRisk({ tier, boss });
+assert.ok(flee(1) > 0, "fugir do fraco ainda arrisca");
+assert.ok(flee(2) > flee(1) && flee(3) > flee(2), "risco cresce por andar");
+assert.ok(flee(1, true) > flee(3), "chefe é o pior para escapar");
+assert.ok(flee(3, true) <= 0.9, "risco tem teto");
+rpg.data.buffs = { speed: Date.now() + 60000 };
+assert.ok(Math.abs(flee(3) - 0.45) < 0.001, "café ajuda a escapar");
+rpg.data.buffs = {};
+
+// dano direto da fuga: tira vida e zera no respawn
+rpg.data.hp = 8;
+const hit = rpg.takeDamage(5);
+assert.equal(hit.lost, 5);
+assert.equal(rpg.hp(), 3);
+const kill = rpg.takeDamage(99);
+assert.equal(kill.dead, true, "dano alto derruba");
+assert.equal(rpg.hp(), rpg.hpMax(), "respawn devolve a vida");
+
+// treino: erra sem perder vida, vence sem loot nem xp
+const train = new RPG({ getLevel: () => 1, gainXp: (n) => { xpGanho += n; }, toast: () => {}, audio: {} });
+assert.equal(train.startTraining("cs", 1, "fonte", { name: "Bicho de Treino" }).ok, true, "treino abre");
+const hpTrain = train.hp();
+const wrongTrain = (train.duel.question.answer + 1) % train.duel.question.options.length;
+train.answer(wrongTrain);
+assert.equal(train.hp(), hpTrain, "treino não tira vida");
+assert.equal(train.duel.feedback.training, true, "feedback avisa que é treino");
+for (let i = 0; i < 20 && train.duel?.phase !== "victory"; i++) {
+  if (train.duel.phase === "question") train.answer(train.duel.question.answer);
+  else train.next();
+}
+assert.equal(train.duel.phase, "victory");
+const trainWin = train.next();
+assert.equal(trainWin.result.training, true, "treino não distribui vitória de caçada");
+assert.deepEqual(trainWin.result.loot, [], "treino não dá loot");
+
+// duelo entre jogadores: cinco perguntas, uma por dificuldade, dano crescente
+const pvpCards = rpg.pvpQuestions("cs");
+assert.equal(pvpCards.length, 5, "cinco cartas de duelo");
+assert.deepEqual(pvpCards.map((c) => c.difficulty), [1, 2, 3, 4, 5], "uma por dificuldade");
+assert.deepEqual(pvpCards.map((c) => c.damage), [1, 2, 3, 4, 5], "dano acompanha a dificuldade");
+for (const c of pvpCards) {
+  assert.equal(c.options.length, 3, "três alternativas");
+  assert.ok(c.answer >= 0 && c.answer < 3, "resposta dentro das alternativas");
+  assert.equal(new Set(c.options).size, 3, "sem alternativa repetida");
+  assert.ok(c.q.length >= 4 && c.why.length > 0, "pergunta e explicação vêm juntas");
+}
+const dmgBefore = pvpCards[4].damage;
+rpg.addItem("amuleto", 1);
+assert.ok(rpg.pvpQuestions("cs")[4].damage >= dmgBefore, "item não reduz o dano");
+
+console.log("ok missões, persistência, canais, RPG, interpolação, colisão, caverna, treino, fuga e duelo");

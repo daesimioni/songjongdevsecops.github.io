@@ -179,11 +179,47 @@
     </div>
   </div>
 
+  <div id="training" class="modal" role="dialog" aria-modal="true" aria-labelledby="training-title" hidden>
+    <div class="modal-card">
+      <div class="modal-head">
+        <h2 id="training-title">Treino</h2>
+        <button type="button" class="hud-btn" data-close="training">fechar <kbd>Esc</kbd></button>
+      </div>
+      <p id="training-sub" class="training-sub"></p>
+      <div class="training-grid">
+        <button type="button" class="training-card" data-tier="1">
+          <b>fácil</b>
+          <span>duas perguntas, sem dano, para aquecer.</span>
+        </button>
+        <button type="button" class="training-card" data-tier="2">
+          <b>médio</b>
+          <span>três perguntas, o mesmo tema da caverna.</span>
+        </button>
+        <button type="button" class="training-card" data-tier="3">
+          <b>difícil</b>
+          <span>três perguntas, sem rede de proteção.</span>
+        </button>
+      </div>
+      <p class="training-note">O treino não tira vida e não dá loot. A perícia do continente sobe; o bicho de verdade só cai na caverna.</p>
+    </div>
+  </div>
+
+  <div id="pvp" class="modal" role="dialog" aria-modal="true" aria-labelledby="pvp-title" hidden>
+    <div class="modal-card pvp-card">
+      <div class="modal-head">
+        <h2 id="pvp-title">Duelo de perguntas</h2>
+        <button type="button" class="hud-btn" data-close="pvp">fechar <kbd>Esc</kbd></button>
+      </div>
+      <p id="pvp-sub" class="pvp-sub"></p>
+      <div id="pvp-body"></div>
+    </div>
+  </div>
+
   <div id="duel" class="modal duel-modal" role="dialog" aria-modal="true" aria-labelledby="duel-name" hidden>
     <div class="modal-card duel-card">
       <div class="duel-head">
         <span id="duel-kicker"></span>
-        <button type="button" class="hud-btn" data-close="duel">fugir <kbd>Esc</kbd></button>
+        <button type="button" id="duel-flee" class="hud-btn" data-close="duel">fugir <kbd>Esc</kbd><span id="duel-risk"></span></button>
       </div>
       <div class="duel-top">
         <canvas id="duel-sprite" width="200" height="200" aria-hidden="true"></canvas>
@@ -218,9 +254,11 @@
       <p class="help-note"><kbd>Enter</kbd> também abre a conversa; com ela aberta, <kbd>Enter</kbd> envia e fecha.</p>
       <p class="help-note">No celular, use o direcional, o botão A e o Turbo. A praça é pública: quem estiver na mesma sala vê seu apelido, seu boneco e suas mensagens. Use um apelido, não seu nome completo.</p>
       <p class="help-note">As <strong>Pedras do Porto</strong>, os monólitos brilhantes nas docas, abrem a viagem rápida para os continentes que você já visitou. As pontes também funcionam a pé.</p>
-      <p class="help-note">Clique no chão para o boneco andar até ali. Clique numa estação, NPC, monstro ou alavanca para ir até perto e interagir sozinho.</p>
+      <p class="help-note">Clique no chão para o boneco andar até ali. Clique numa estação, NPC ou boca de caverna para ir até perto e interagir sozinho.</p>
       <p class="help-note">Os NPCs têm missões. Aperte <kbd>F</kbd> perto deles para aceitar, responder e entregar. O Diário (<kbd>Z</kbd>) lista o que está em andamento e quanto falta.</p>
-      <p class="help-note">Nas clareiras com bandeira acontecem as <strong>caçadas</strong>. Cada monstro abre uma prova: acertar tira vida dele, errar tira a sua. Derrube os três guardiões, puxe a alavanca e enfrente o chefe. A vitória dá XP, item e perícia do continente. A <strong>Ficha</strong> (<kbd>C</kbd>) mostra vida, perícias e mochila.</p>
+      <p class="help-note">A superfície é sala de aula: nas clareiras com bandeira fica um <strong>instrutor</strong>. Fale com ele para treinar o mesmo tema da caverna, em três dificuldades, <strong>sem perder vida e sem loot</strong>. A <strong>Ficha</strong> (<kbd>C</kbd>) mostra vida, perícias e mochila.</p>
+      <p class="help-note">Quem dá XP, item e perícia é o bicho da <strong>caverna</strong>: acertar tira vida dele, errar tira a sua. Fugir nunca é de graça: a chance de levar um golpe na fuga cresce com a dificuldade do monstro (o chefe é o pior) e o café da horta reduz esse risco por um tempo.</p>
+      <p class="help-note">Na <strong>Rede</strong> dá para <strong>desafiar</strong> outro jogador para um duelo de perguntas: você escolhe uma carta (muito fácil a muito difícil), ele responde para se defender. Errar custa compostura, não vida nem item. Quem chega a zero fica 10 segundos desativado.</p>
       <p class="help-note">Na cidade subterrânea: a forja abre a Ficha, a mesa grava encantos permanentes, a horta quer semente e o bicho quer ração. Veios de cristal pedem picareta.</p>
       <p class="help-note">Ao lado de cada clareira há uma <strong>boca de caverna</strong>. Lá dentro o bicho que vê você começa a batalha sozinho, e quanto mais fundo, mais forte. O chão dá ferro, erva, cristal e madeira; a forja da cidade subterrânea faz ferramentas, comida, tocha, chave e bomba. Baú fundo pede chave. <kbd>Esc</kbd> sobe de volta.</p>
       <p class="help-note">A <strong>Rede</strong> é a conversa do mundo: canais por continente, DMs privadas e a lista de quem está por perto. Sua conta é uma chave Nostr criada e guardada neste navegador, sem cadastro e sem servidor meu. Só conteúdo marcado pelo jogo aparece ali.</p>

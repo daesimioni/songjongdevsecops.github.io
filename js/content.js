@@ -16,7 +16,8 @@ export const POSTS = {
       <p>Cada estação abre uma página e soma experiência. O <strong>Diário</strong> guarda o que você já encontrou. As <strong>Pedras do Porto</strong>, os monólitos brilhantes nas docas, levam você de volta a qualquer continente já visitado. A névoa do minimapa só some onde você anda.</p>
       <blockquote>Não tem pressa. O mapa é grande, mas o caminho é seu.</blockquote>
       <p>Os <strong>NPCs</strong> têm missões. Aperte F perto deles: tem caminhada, pergunta e conversa. Cada missão paga experiência e um título, e o Diário mostra quanto falta para a próxima.</p>
-      <p>Clique no chão e o boneco vai até ali sozinho. Nas clareiras com bandeira, os monstros abrem uma prova: acertar tira vida deles, errar tira a sua. Derrube os três guardiões, puxe a alavanca e o chefe aparece. A vitória dá experiência, item e perícia do continente. A <strong>Ficha</strong>, na tecla C, mostra tudo.</p>
+      <p>Clique no chão e o boneco vai até ali sozinho. Nas clareiras com bandeira fica um instrutor: com ele você treina o tema da caverna sem perder vida e sem levar item. O bicho de verdade mora na caverna ao lado, e é lá que a prova paga experiência, item e perícia. Fugir também custa: a chance de levar um golpe cresce com o monstro, e café reduz o risco por um tempo. A <strong>Ficha</strong>, na tecla C, mostra tudo.</p>
+      <p>Na <strong>Rede</strong> você desafia outro jogador: escolhe uma pergunta de muito fácil a muito difícil e ele responde para se defender. Quem erra perde compostura, não vida, e quem zera fica dez segundos desativado. Nada é perdido além do orgulho.</p>
       <p>A <strong>Rede</strong>, na tecla E, liga você aos outros jogadores: canais por continente, DMs privadas e a lista de quem está no mundo agora. Sua conta é uma chave criada no seu navegador, sem cadastro. Se encontrar outra pessoa na praça, acene.</p>
     `,
   },
@@ -531,6 +532,54 @@ export const NPCS = {
       "Eu deixei buracos na tabela e apostei que eles seriam ocupados. Dois foram. A natureza me devia essa.",
       "Se você entende por que uma coluna se parece por dentro, já entende metade da química.",
       "A mina tem cristal de veio. A forja da cidade subterrânea transforma o veio em chave.",
+    ],
+  },
+  "trainer-cs": {
+    name: "Técnica Lúcia",
+    lines: [
+      "A superfície é sala de aula. O bicho de verdade mora na caverna; aqui a gente erra sem perder vida.",
+      "Treine o que a ilha ensina: lógica, memória, tempo e algoritmo. A pergunta que você acerta aqui é a que você revê lá embaixo.",
+      "Quando estiver pronto, desça pela boca ao lado. O treino não dá loot, mas dá consciência.",
+    ],
+  },
+  "trainer-math": {
+    name: "Mestre Vetor",
+    lines: [
+      "Um treino de matemática não é decorar a resposta: é reconhecer a forma da pergunta.",
+      "Aqui você pode errar à vontade. A caverna dos números é logo ali, e ela não perdoa pressa.",
+      "Primos, limites, geometria e infinito. Escolha o que dói menos e comece por ele.",
+    ],
+  },
+  "trainer-physics": {
+    name: "Instrutora Íris",
+    lines: [
+      "A luz, o calor e a queda não têm pressa. Você também não precisa ter.",
+      "Treine a unidade antes do número. A maioria dos erros mora aí.",
+      "Lá embaixo o campo é mais denso. Suba de nível aqui primeiro.",
+    ],
+  },
+  "trainer-chem": {
+    name: "Mestre Alquimista",
+    lines: [
+      "Reação é conversa: alguém cede, alguém recebe, alguém muda de cor.",
+      "O treino é o cadinho. Erre aqui, acerte na mina.",
+      "A mina cobra equilíbrio e paciência; a forja cobra material.",
+    ],
+  },
+  "trainer-music": {
+    name: "Maestro Tom",
+    lines: [
+      "Ritmo é expectativa. Você aprende quando o pé bate antes de você pensar.",
+      "O conservatório afundou, mas o compasso continua. Treine o ouvido aqui.",
+      "Intervalo, escala, timbre. A dissonância lá embaixo é só uma pergunta mal resolvida.",
+    ],
+  },
+  "trainer-ai": {
+    name: "Operadora Nara",
+    lines: [
+      "A máquina aprende com o erro. Você também. A diferença é que ela não sente vergonha.",
+      "Atenção, gradiente, tokens. Treine o vocabulário antes de descer.",
+      "A Caixa Preta usa o seu caderno. Quanto melhor você treinar, menos ela tem para usar.",
     ],
   },
 };

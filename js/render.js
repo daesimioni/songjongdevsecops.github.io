@@ -1347,11 +1347,6 @@ export function createRenderer(canvas, world) {
     }
     for (const h of world.hunters) {
       drawables.push({ y: h.banner.y * TILE + 8, fn: () => drawBanner(h, time) });
-      drawables.push({ y: h.lever.y * TILE + 4, fn: () => drawLever(h.lever, time) });
-      for (const m of h.monsters) {
-        if (m.alive) drawables.push({ y: m.y * TILE, fn: () => drawMonster(m, time, false) });
-      }
-      if (h.boss.alive) drawables.push({ y: h.boss.y * TILE, fn: () => drawMonster(h.boss, time, true) });
     }
     for (const w of world.waystones) {
       drawables.push({ y: w.y * TILE + 8, fn: () => drawWaystone(w, time) });
@@ -1458,7 +1453,7 @@ export function createRenderer(canvas, world) {
       const my = Math.round(h.center.y * 2);
       mctx.fillStyle = "#0a0c18";
       mctx.fillRect(mx - 2, my - 2, 5, 5);
-      mctx.fillStyle = h.boss.alive ? "#ff7aa8" : (h.ready ? "#ffc857" : h.accent);
+      mctx.fillStyle = h.accent;
       mctx.fillRect(mx - 1, my - 1, 3, 3);
     }
     for (const c of world.caves || []) {

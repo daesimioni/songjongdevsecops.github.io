@@ -206,6 +206,25 @@ export class RPG {
     return this.data.hp - before;
   }
 
+  takeDamage(n) {
+    const before = this.hp();
+    const lost = Math.min(before, Math.max(0, Math.floor(n)));
+    this.data.hp = before - lost;
+    const dead = this.data.hp <= 0;
+    if (dead) this.data.hp = this.hpMax();
+    this.save();
+    if (dead) this.onRespawn?.();
+    return { lost, dead, hp: this.data.hp, max: this.hpMax() };
+  }
+
+  fleeRisk(monster) {
+    if (!monster) return 0;
+    const tier = monster.boss ? 4 : clamp(Number(monster.tier) || 1, 1, 3);
+    const base = [0, 0.2, 0.38, 0.55, 0.72][tier] || 0.5;
+    const speed = this.buffActive("speed") ? 0.1 : 0;
+    return clamp(base - speed, 0.05, 0.9);
+  }
+
   tick(ts = now()) {
     if (this.duel) return;
     if (ts - this.lastRegen < 9000) return;
@@ -471,6 +490,89 @@ export class RPG {
     return this.duel?.question || null;
   }
 
+  pvpQuestions(continent = "cs") {
+    const pool = QUESTION_INDEX.get(continent) || QUESTION_INDEX.get("cs");
+    if (!pool) return [];
+    const used = new Set();
+    const buckets = {
+      1: shuffle(pool[1] || []),
+      2: shuffle(pool[2] || []),
+      3: shuffle(pool[3] || []),
+    };
+    const all = shuffle([...(pool[1] || []), ...(pool[2] || []), ...(pool[3] || [])]);
+    const pick = (tier) => {
+      const bucket = buckets[tier] || [];
+      while (bucket.length) {
+        const q = bucket.pop();
+        if (!used.has(q.q)) { used.add(q.q); return q; }
+      }
+      while (all.length) {
+        const q = all.pop();
+        if (!used.has(q.q)) { used.add(q.q); return q; }
+      }
+      return null;
+    };
+    const itemBonus = Math.min(2, this.relics());
+    const specs = [[1, 1, 1], [1, 2, 2], [2, 3, 3], [3, 4, 4], [3, 5, 5]];
+    const list = [];
+    for (const [tier, difficulty, base] of specs) {
+      const q = pick(tier);
+      if (!q) continue;
+      const options = q.options.map((text, i) => ({ text, ok: i === q.a }));
+      const mixed = shuffle(options);
+      list.push({
+        q: q.q,
+        options: mixed.map((o) => o.text),
+        answer: mixed.findIndex((o) => o.ok),
+        why: q.why,
+        tier,
+        difficulty,
+        base,
+        damage: base + itemBonus,
+      });
+    }
+    return list;
+  }
+
+  startTraining(continent, tier, theme = "", monster = null) {
+    const level = clamp(Number(tier) || 1, 1, 3);
+    const deck = this.buildDeck(continent, [level], theme);
+    if (!deck.length) return { ok: false, reason: "As perguntas deste continente ainda não foram escritas." };
+    const hp = TIERS[level].hp;
+    const dummy = {
+      id: `training-${continent}-${level}`,
+      name: monster?.name || "Boneco de Treino",
+      kind: monster?.kind || (level >= 3 ? "golem" : level === 2 ? "eye" : "slime"),
+      tier: level,
+      level: level * 3,
+      theme,
+    };
+    this.duel = {
+      monster: dummy,
+      ground: {
+        id: "training",
+        continent,
+        name: `Treino de ${continent}`,
+        training: true,
+        loot: [],
+        bossLoot: null,
+      },
+      boss: false,
+      training: true,
+      tier: level,
+      deck,
+      deckIndex: 0,
+      question: deck[0],
+      monsterHp: hp,
+      monsterHpMax: hp,
+      phase: "question",
+      feedback: null,
+      result: null,
+    };
+    return { ok: true, duel: this.duel };
+  }
+
+
   answer(index) {
     const d = this.duel;
     if (!d || d.phase !== "question") return { ok: false };
@@ -489,6 +591,11 @@ export class RPG {
       }
     } else {
       const damage = TIERS[d.tier].damage;
+      if (d.training) {
+        d.feedback = { correct: false, why: d.question.why, damage, training: true };
+        d.phase = "feedback";
+        return { ok: true, correct, phase: d.phase, feedback: d.feedback, duel: d };
+      }
       this.data.hp = Math.max(0, this.hp() - damage);
       d.feedback = { correct: false, why: d.question.why, damage };
       if (this.data.hp <= 0) {
@@ -505,6 +612,7 @@ export class RPG {
   }
 
   victory(d) {
+    if (d.training) return { training: true, xp: 0, loot: [] };
     const ground = d.ground;
     const monster = d.monster;
     const tier = d.boss ? 4 : monster.tier;
