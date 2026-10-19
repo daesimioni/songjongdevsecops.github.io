@@ -116,36 +116,65 @@ export function createWorld() {
     }
   }
 
-  // ligação do porto com as pontes
-  hpath(32, 72, 78, CONTINENTS.cs.path);
-  hpath(68, 72, 78, CONTINENTS.physics.path);
-  vpath(104, 50, 54, CONTINENTS.math.path);
-  vpath(40, 46, 50, CONTINENTS.chem.path);
+  // ligações das pedras do porto com as pontes
+  hpath(28, 90, 96, CONTINENTS.cs.path);
+  vpath(90, 29, 33, CONTINENTS.cs.path);
+  hpath(89, 90, 96, CONTINENTS.physics.path);
+  vpath(142, 63, 65, CONTINENTS.math.path);
+  hpath(64, 38, 44, CONTINENTS.chem.path);
+  hpath(32, 58, 60, CONTINENTS.music.path);
+  vpath(60, 33, 37, CONTINENTS.music.path);
+  hpath(32, 120, 122, CONTINENTS.ai.path);
+  vpath(120, 33, 37, CONTINENTS.ai.path);
 
-  // 5. pontes sobre o mar
-  rect(71, 34, 4, 5, BRIDGE);
-  rect(71, 62, 4, 5, BRIDGE);
-  rect(90, 49, 13, 4, BRIDGE);
-  rect(42, 49, 13, 4, BRIDGE);
+  function bridgeLine(x0, y0, x1, y1, width, tile) {
+    const steps = Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0));
+    for (let i = 0; i <= steps; i++) {
+      const t = i / steps;
+      const x = Math.round(x0 + (x1 - x0) * t);
+      const y = Math.round(y0 + (y1 - y0) * t);
+      rect(x - 1, y - 1, width, width, tile);
+    }
+  }
+
+  // pontes cardeais
+  rect(89, 30, 4, 19, BRIDGE);
+  rect(89, 72, 4, 19, BRIDGE);
+  rect(107, 63, 36, 4, BRIDGE);
+  rect(42, 63, 32, 4, BRIDGE);
+  // pontes diagonais
+  bridgeLine(78, 49, 60, 36, 3, BRIDGE);
+  bridgeLine(102, 49, 120, 36, 3, BRIDGE);
   // encontros de ponte com terra
-  rect(71, 33, 4, 2, CONTINENTS.cs.path);
-  rect(71, 66, 4, 2, CONTINENTS.physics.path);
-  rect(101, 49, 3, 4, CONTINENTS.math.path);
-  rect(40, 49, 3, 4, CONTINENTS.chem.path);
-  rect(88, 49, 4, 4, CONTINENTS.hub.floor);
-  rect(53, 49, 3, 4, CONTINENTS.hub.floor);
-  rect(71, 38, 4, 3, CONTINENTS.hub.floor);
-  rect(71, 60, 4, 3, CONTINENTS.hub.floor);
+  rect(88, 30, 5, 4, CONTINENTS.cs.path);
+  rect(88, 88, 5, 4, CONTINENTS.physics.path);
+  rect(140, 62, 4, 5, CONTINENTS.math.path);
+  rect(40, 62, 4, 5, CONTINENTS.chem.path);
+  rect(58, 33, 4, 4, CONTINENTS.music.path);
+  rect(120, 33, 4, 4, CONTINENTS.ai.path);
+  rect(88, 46, 5, 4, CONTINENTS.hub.floor);
+  rect(88, 71, 5, 4, CONTINENTS.hub.floor);
+  rect(105, 62, 4, 5, CONTINENTS.hub.floor);
+  rect(72, 62, 4, 5, CONTINENTS.hub.floor);
+  rect(76, 47, 4, 4, CONTINENTS.hub.floor);
+  rect(101, 47, 4, 4, CONTINENTS.hub.floor);
 
   // 6. praça e caminhos do porto
-  rect(69, 48, 7, 4, PLAZA);
-  rect(64, 47, 18, 9, PLAZA);
-  hpath(50, 72, 78, PATH);
-  vpath(66, 50, 54, PATH);
-  hpath(54, 66, 72, PATH);
-  set(72, 50, PLAZA);
-  set(72, 52, PATH);
-  set(72, 53, PATH);
+  rect(82, 54, 18, 13, PLAZA);
+  rect(87, 58, 12, 8, PLAZA);
+  hpath(60, 90, 98, PATH);
+  hpath(64, 84, 98, PATH);
+  vpath(90, 48, 60, PATH);
+  vpath(90, 60, 72, PATH);
+  vpath(98, 60, 64, PATH);
+  hpath(64, 99, 107, PATH);
+  hpath(64, 73, 82, PATH);
+  vpath(78, 49, 54, PATH);
+  vpath(102, 49, 54, PATH);
+  set(90, 60, PLAZA);
+  set(91, 61, PATH);
+  set(91, 62, PATH);
+  set(98, 64, PLAZA);
 
   // 7. decoração
   const used = new Set();
@@ -173,12 +202,14 @@ export function createWorld() {
     math: ["pillar", "book", "star", "pillar", "lamp"],
     physics: ["crystal", "orb", "lamp", "pillar", "star"],
     chem: ["mushroom", "flask", "bubble", "mushroom", "lamp"],
+    music: ["note", "note", "speaker", "lamp", "star", "wave"],
+    ai: ["node", "terminal", "orb", "lamp", "synapse", "star"],
   };
 
   for (let y = 2; y < MAP_H - 2; y++) {
     for (let x = 2; x < MAP_W - 2; x++) {
       const t = get(x, y);
-      if (![GRASS, K.CIRCUIT, K.GOLD, K.BASALT, K.MOSS, SAND, FLOWER].includes(t)) continue;
+      if (![GRASS, K.CIRCUIT, K.GOLD, K.BASALT, K.MOSS, K.SONIC, K.NEURAL, SAND, FLOWER].includes(t)) continue;
       if (nearUsed(x + 0.5, y + 0.5, 2.4)) continue;
       if (hash2(x, y) > 0.055) continue;
       const c = continentAtTile(x, y);
@@ -217,7 +248,7 @@ export function createWorld() {
   }
 
   // ilhas solitárias no oceano
-  const islands = [[20, 8], [124, 8], [20, 92], [124, 92], [9, 9], [135, 91], [8, 91], [136, 8]];
+  const islands = [[10, 10], [170, 10], [10, 110], [170, 110]];
   for (const [ix, iy] of islands) {
     for (let y = -1; y <= 1; y++) for (let x = -1; x <= 1; x++) {
       set(ix + x, iy + y, SAND);

@@ -33,6 +33,16 @@ const LIVE = {
   titration: { load: () => import("./zones/chem.js"), variant: "titration" },
   energy: { load: () => import("./zones/chem.js"), variant: "energy" },
   balance: { load: () => import("./zones/chem.js"), variant: "balance" },
+  rhythm: { load: () => import("./zones/music.js"), variant: "rhythm" },
+  harmony: { load: () => import("./zones/music.js"), variant: "harmony" },
+  scales: { load: () => import("./zones/music.js"), variant: "scales" },
+  timbre: { load: () => import("./zones/music.js"), variant: "timbre" },
+  generative: { load: () => import("./zones/music.js"), variant: "generative" },
+  learning: { load: () => import("./zones/ai.js"), variant: "learning" },
+  neural: { load: () => import("./zones/ai.js"), variant: "neural" },
+  language: { load: () => import("./zones/ai.js"), variant: "language" },
+  vision: { load: () => import("./zones/ai.js"), variant: "vision" },
+  ethics: { load: () => import("./zones/ai.js"), variant: "ethics" },
 };
 
 const world = createWorld();
@@ -781,7 +791,7 @@ window.addEventListener("beforeunload", () => {
   const coarse = window.matchMedia("(pointer: coarse)").matches;
   if (coarse) {
     const lead = document.querySelector(".intro-lead");
-    if (lead) lead.innerHTML = "Cada continente é uma página. Ande com o direcional, toque em <kbd>A</kbd> nas estações e descubra 22 fragmentos de computação, matemática, física e química.";
+    if (lead) lead.innerHTML = "Cada continente é uma página. Ande com o direcional, toque em <kbd>A</kbd> nas estações e descubra 32 fragmentos de computação, matemática, física, química, música e inteligência artificial.";
     const controls = document.querySelector(".intro-controls");
     if (controls) controls.innerHTML = "direcional para andar · <kbd>A</kbd> para interagir · Falar abre a conversa";
     const canvas = $("world");

@@ -12,7 +12,7 @@ export const POSTS = {
     lab: null,
     body: `
       <p>Este blog não tem índice. Tem <strong>mapa</strong>. Você entra com um boneco, atravessa pontes e escolhe por qual continente começar. Cada estação que encontra é uma página: um texto curto e um instrumento para mexer com as mãos.</p>
-      <p>São quatro continentes. <em>Computaria</em> conta como saímos de interruptores e areia até processadores. <em>Matemática</em> visita o infinito, as formas, a mudança e o acaso. <em>Física</em> testa pêndulos, ondas, calor, luz e órbitas. <em>Química</em> abre a tabela periódica, as ligações, as reações e o equilíbrio. Ao todo, 22 fragmentos para descobrir.</p>
+      <p>São seis continentes. <em>Computaria</em> conta como saímos de interruptores e areia até processadores. <em>Matemática</em> visita o infinito, as formas, a mudança e o acaso. <em>Física</em> testa pêndulos, ondas, calor, luz e órbitas. <em>Química</em> abre a tabela periódica, as ligações, as reações e o equilíbrio. <em>Música</em> mostra a matemática escondida no som. <em>Inteligência Artificial</em> abre os dados, as redes, a linguagem e os limites. Ao todo, 32 fragmentos para descobrir.</p>
       <p>Cada estação abre uma página e soma experiência. O <strong>Diário</strong> guarda o que você já encontrou. As <strong>Pedras do Porto</strong>, os monólitos brilhantes nas docas, levam você de volta a qualquer continente já visitado. A névoa do minimapa só some onde você anda.</p>
       <blockquote>Não tem pressa. O mapa é grande, mas o caminho é seu.</blockquote>
       <p>Se encontrar outra pessoa na praça, acene. O mundo é compartilhado, sem servidor meu, e cada visitante tem um boneco.</p>
@@ -326,13 +326,157 @@ export const POSTS = {
       <p>A <strong>estequiometria</strong> transforma coeficientes em quantidades reais. Dois moles de hidrogênio com um de oxigênio dão dois de água, e não uma quantidade aleatória. Com essas proporções dá para prever rendimento, limitar reagentes e descobrir quanto de produto vai sobrar.</p>
     `,
   },
+  // ---------------- Música ----------------
+  rhythm: {
+    kicker: "música · relógio dos ritmos",
+    title: "O tempo também é fração",
+    date: "2026-03-24",
+    read: "5 min",
+    tags: ["ritmo", "fração", "polirritmia"],
+    continent: "music",
+    lab: "rhythm",
+    body: `
+      <p>Uma batida não é um instante: é uma divisão do tempo. Quatro batidas por compasso, cada uma dividida em duas, três ou quatro partes. Quando duas divisões diferentes tocam juntas, nasce a <strong>polirritmia</strong>: um ciclo de três contra um ciclo de quatro só volta a coincidir depois de doze pulsos.</p>
+      <p>O mínimo múltiplo comum é o maestro invisível. 3 e 4 se encontram em 12. 4 e 5 se encontram em 20. A partitura escrita é uma forma de registrar essas frações para que outras pessoas as reproduzam séculos depois.</p>
+      <p>O relógio da estação deixa você ouvir dois ou três ciclos ao mesmo tempo. Não existe batida "errada": existe batida que não fecha. A graça é perceber quando o encontro acontece.</p>
+    `,
+  },
+  harmony: {
+    kicker: "música · círculo das razões",
+    title: "Por que dó e sol combinam",
+    date: "2026-03-17",
+    read: "6 min",
+    tags: ["harmonia", "razão", "frequência"],
+    continent: "music",
+    lab: "harmony",
+    body: `
+      <p>Quando duas notas soam juntas, os ouvidos comparam frequências. Uma oitava é uma razão de 2 para 1. Uma quinta é 3 para 2. Uma quarta é 4 para 3. Essas razões pequenas fazem os ciclos das ondas se alinharem com frequência, e o cérebro lê isso como <em>consonância</em>.</p>
+      <p>Não é uma lei da estética, é uma combinação de física e cultura. O <strong>timbre</strong> de cada instrumento já contém uma pilha de harmônicos, e a batida entre frequências próximas cria o <em>batimento</em> que ouvimos como aspereza. Afinar bem é negociar essas batidas até elas sumirem.</p>
+      <p>A estação toca pares de notas e mostra a razão. Aumente a diferença em <em>cents</em>, a unidade logarítmica usada para medir desvios de afinação, e veja o batimento aparecer.</p>
+    `,
+  },
+  scales: {
+    kicker: "música · escada das escalas",
+    title: "A escala é uma negociação",
+    date: "2026-03-10",
+    read: "6 min",
+    tags: ["escala", "temperamento", "afinação"],
+    continent: "music",
+    lab: "scales",
+    body: `
+      <p>Dividir a oitava em doze semitons iguais é uma escolha relativamente recente. O <strong>temperamento igual</strong> desafina ligeiramente as quintas para que todas as tonalidades funcionem no mesmo instrumento. A vantagem é poder modular para qualquer tom sem retocar as cordas.</p>
+      <p>Os sistemas anteriores, como a afinação pitagórica ou a justa, tinham razões mais puras em algumas notas e intervalos mais ásperos em outras. A <em>comma</em> pitagórica é o resto que sobra quando você empilha doze quintas e espera cair na mesma oitava. A matemática não fecha perfeitamente, e cada cultura decidiu onde esconder o resto.</p>
+      <p>Toque a escada e compare doze semitons iguais com uma escala de razões simples. A diferença é pequena em cents, mas o ouvido treinado percebe. Escala é acordo, não descoberta.</p>
+    `,
+  },
+  timbre: {
+    kicker: "música · oficina dos timbres",
+    title: "O mesmo dó, outra voz",
+    date: "2026-03-03",
+    read: "5 min",
+    tags: ["timbre", "harmônicos", "fourier"],
+    continent: "music",
+    lab: "timbre",
+    body: `
+      <p>Um violino e uma flauta podem tocar a mesma nota na mesma altura e ainda assim soar completamente diferentes. A diferença está no <strong>timbre</strong>: a receita de harmônicos que acompanha a frequência fundamental. O violino tem muitos harmônicos e um ataque rápido; a flauta tem poucos e um sopro mais redondo.</p>
+      <p>Fourier mostrou que qualquer som periódico é uma soma de senos em múltiplos inteiros da frequência fundamental. O que chamamos de "voz" de um instrumento é o peso relativo de cada um desses senos. Mude os pesos e você muda o instrumento sem mudar a nota.</p>
+      <p>Na oficina, ligue e desligue harmônicos e ouça o mesmo dó virar órgão, clarinete ou algo que não existe. O ouvido reconhece o padrão, mesmo quando a nota é a mesma.</p>
+    `,
+  },
+  generative: {
+    kicker: "música · máquina de compor",
+    title: "Música que se joga",
+    date: "2026-02-24",
+    read: "5 min",
+    tags: ["algoritmos", "markov", "composição"],
+    continent: "music",
+    lab: "generative",
+    body: `
+      <p>Compor com regras não é novidade. Bach escreveu variações sobre padrões, Mozart propôs jogos musicais com dados e a música algorítmica do século XX virou campo de experimentação. A regra pode ser uma escala, uma simetria, uma cadeia de Markov ou uma gramática.</p>
+      <p>Uma <strong>cadeia de Markov</strong> escolhe a próxima nota olhando apenas a nota atual e uma tabela de probabilidades. Não existe plano global, mas o resultado pode parecer intencional. É o mesmo princípio de um gerador de texto estatístico: o passado recente vira a única memória.</p>
+      <p>A máquina desta estação tem uma tabela pequena e uma semente. Toque, mude a semente e veja o que muda. O compositor continua sendo você, mesmo quando delega a escolha.</p>
+    `,
+  },
+
+  // ---------------- Inteligência Artificial ----------------
+  learning: {
+    kicker: "ia · praça dos dados",
+    title: "A máquina que ajusta a reta",
+    date: "2026-02-17",
+    read: "6 min",
+    tags: ["aprendizado", "regressão", "gradiente"],
+    continent: "ai",
+    lab: "learning",
+    body: `
+      <p>A forma mais simples de aprender é ajustar uma reta. Dados espalhados no plano, uma reta candidata e uma pergunta: quanto ela erra? A soma dos erros ao quadrado vira a <strong>função de perda</strong>. Aprender é mexer nos parâmetros para deixar essa perda menor.</p>
+      <p>O <strong>gradiente descendente</strong> faz isso aos poucos. Calcula a inclinação do erro em relação a cada parâmetro e dá um passo na direção que diminui o erro. A taxa de aprendizado decide o tamanho do passo. Passo grande demais diverge; pequeno demais demora.</p>
+      <p>Na praça, arraste os pontos ou deixe a máquina treinar. O objetivo não é decorar os pontos: é encontrar uma regra que também funcione para pontos que você ainda não viu. Essa diferença entre decorar e generalizar é o coração do aprendizado de máquina.</p>
+    `,
+  },
+  neural: {
+    kicker: "ia · torre das camadas",
+    title: "Camadas de bolinhas",
+    date: "2026-02-10",
+    read: "6 min",
+    tags: ["redes neurais", "backpropagation", "classificação"],
+    continent: "ai",
+    lab: "neural",
+    body: `
+      <p>Um neurônio artificial é uma soma ponderada seguida de uma decisão. Recebe números, multiplica por <strong>pesos</strong>, soma e passa o resultado por uma função de ativação. Sozinho, ele só desenha uma reta. Empilhado em camadas, passa a desenhar curvas e regiões.</p>
+      <p>O treino compara a saída com a resposta certa, calcula o erro e usa o <strong>retropropagação</strong> para descobrir quanto cada peso contribuiu para o erro. O ajuste é pequeno e repetido. Não há mágica: há derivadas, muitas vezes derivadas de funções simples.</p>
+      <p>A rede desta estação aprende a separar duas classes de pontos. Ela começa errando quase tudo e vai torcendo a fronteira. Quando acerta o treino mas erra o que nunca viu, temos overfitting: decorou a paisagem em vez de aprender o caminho.</p>
+    `,
+  },
+  language: {
+    kicker: "ia · fonte das palavras",
+    title: "Palavras viram números",
+    date: "2026-02-03",
+    read: "6 min",
+    tags: ["linguagem", "tokens", "llm"],
+    continent: "ai",
+    lab: "language",
+    body: `
+      <p>Um modelo de linguagem não lê letras como você. Ele corta o texto em <strong>tokens</strong>, pedaços de palavra ou de sílaba, e transforma cada token num vetor de números. A posição de cada vetor no espaço carrega relações de uso: "rei" fica perto de "rainha" de um jeito que "banana" não fica.</p>
+      <p>Gerar texto é prever o próximo token. O modelo calcula uma distribuição de probabilidades sobre o vocabulário e escolhe uma continuação. Repetido muitas vezes, isso produz parágrafos que parecem intencionais. Não existe uma consulta a um banco de fatos: existe um padrão estatístico aprendido em textos.</p>
+      <p>É por isso que modelos de linguagem podem alucinar com tanta segurança. A fonte desta estação mostra tokens e uma tabela de continuações de brinquedo. A lição é olhar a probabilidade, não a certeza.</p>
+    `,
+  },
+  vision: {
+    kicker: "ia · olho da máquina",
+    title: "A imagem é uma grade",
+    date: "2026-01-27",
+    read: "5 min",
+    tags: ["visão", "convolução", "imagem"],
+    continent: "ai",
+    lab: "vision",
+    body: `
+      <p>Para a máquina, uma imagem é uma grade de números. Cada pixel tem três canais: vermelho, verde e azul. A primeira camada de uma rede de visão não olha a imagem inteira de uma vez; ela desliza pequenos filtros pela grade, procurando bordas, cantos e texturas. Essa operação é a <strong>convolução</strong>.</p>
+      <p>Um filtro de borda responde onde a intensidade muda de repente. Um filtro de desfoque média a vizinhança. Um filtro de nitidez realça a diferença entre um pixel e os vizinhos. Com camadas suficientes, o modelo combina bordas em olhos, olhos em rostos, rostos em objetos.</p>
+      <p>Mude o kernel no olho da máquina e veja a mesma grade virar outra coisa. Visão computacional é isso: transformar pixels em features, e features em decisões.</p>
+    `,
+  },
+  ethics: {
+    kicker: "ia · sala do juízo",
+    title: "O que a IA não sabe que não sabe",
+    date: "2026-01-20",
+    read: "6 min",
+    tags: ["ética", "viés", "limites"],
+    continent: "ai",
+    lab: "ethics",
+    body: `
+      <p>Um modelo aprende com o que recebe. Se os dados carregam um preconceito, o modelo aprende o preconceito e o devolve com aparência de objetividade. Não é maldade da máquina: é o desenho do experimento, a escolha do conjunto de treino e a pergunta que foi feita.</p>
+      <p>Há limites de outro tipo. Modelos de linguagem inventam com confiança, porque foram treinados para continuar texto plausível, não para consultar a verdade. Sistemas de recomendação otimizam engajamento, não bem-estar. E treinar modelos grandes consome energia, água e trabalho humano invisível na cadeia de dados.</p>
+      <p>A sala do juízo propõe casos para você decidir onde está o problema: nos dados, no objetivo, na métrica ou na forma como a resposta é usada. Tecnologia não toma decisões morais sozinha. Alguém escolhe as perguntas.</p>
+    `,
+  },
+
 };
 
 export const NPCS = {
   guia: {
     name: "Dona Zefa",
     lines: [
-      "Bem-vindo ao Porto. Quatro continentes, mais terra do que os olhos acreditam.",
+      "Bem-vindo ao Porto. Seis continentes, mais terra do que os olhos acreditam.",
       "Cada farol da doca acende uma Pedra do Porto. Aperte E nas pedras para voltar rápido.",
       "O diário guarda o que você já viu. Não precisa decorar nada.",
     ],
@@ -356,6 +500,20 @@ export const NPCS = {
     lines: [
       "Mude a velocidade de lançamento e veja o corpo cair ou escapar. A órbita mora num intervalo muito estreito.",
       "Uma medida é sempre uma conversa entre o mundo e o instrumento. O instrumento nunca é mudo.",
+    ],
+  },
+  pythagoras: {
+    name: "Pitágoras",
+    lines: [
+      "O som é número se movendo. Razões pequenas soam bem porque as ondas se encontram com frequência.",
+      "Uma oitava é 2 para 1. Não inventei isso: o ar já sabia.",
+    ],
+  },
+  turing: {
+    name: "Turing",
+    lines: [
+      "A pergunta interessante não é se a máquina pensa. É o que ela consegue fazer com o que recebeu.",
+      "Dados ruins produzem confiança boa. É a combinação mais perigosa que existe.",
     ],
   },
   mendeleev: {

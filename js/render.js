@@ -70,6 +70,10 @@ export function createRenderer(canvas, world) {
       case K.ACID: return "#183a24";
       case K.BRIDGE: return "#4a3524";
       case K.PLAZA: return "#343a55";
+      case K.SONIC: return "#19132e";
+      case K.SCORE: return "#2a1c45";
+      case K.NEURAL: return "#0a2030";
+      case K.SYNAPSE: return "#103848";
       default: return "#173225";
     }
   }
@@ -94,6 +98,10 @@ export function createRenderer(canvas, world) {
         else if (t === K.ACID) c = "#1f4a2c";
         else if (t === K.BRIDGE) c = "#5a412c";
         else if (t === K.PLAZA) c = "#343a55";
+        else if (t === K.SONIC) c = "#2b1f4a";
+        else if (t === K.SCORE) c = "#3a2a5c";
+        else if (t === K.NEURAL) c = "#103048";
+        else if (t === K.SYNAPSE) c = "#175062";
         else if (t === K.TREE) c = "#0c1d15";
         else if (t === K.WALL) c = "#3b3352";
         g.fillStyle = c;
@@ -249,6 +257,53 @@ export function createRenderer(canvas, world) {
       ctx.fillStyle = "#2b1f16";
       ctx.fillRect(px + 6, py + 6, 1, 1);
       ctx.fillRect(px + 12, py + 12, 1, 1);
+    } else if (t === K.SONIC) {
+      ctx.fillStyle = "#21183a";
+      ctx.fillRect(px, py, TILE, 2);
+      ctx.strokeStyle = "rgba(255,178,107,0.16)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      for (let i = 0; i <= 14; i += 2) {
+        const yy = py + 8 + Math.sin((i + x * 3) * 0.7) * 2;
+        if (i === 0) ctx.moveTo(px + i, yy); else ctx.lineTo(px + i, yy);
+      }
+      ctx.stroke();
+      if (h > 0.82) {
+        ctx.fillStyle = "rgba(255,209,102,0.55)";
+        ctx.fillRect(px + 4 + Math.floor(h * 7), py + 3, 1, 1);
+      }
+    } else if (t === K.SCORE) {
+      ctx.fillStyle = "#332452";
+      ctx.fillRect(px, py, TILE, 2);
+      ctx.strokeStyle = "rgba(255,209,102,0.22)";
+      for (let i = 0; i < 4; i++) {
+        ctx.beginPath(); ctx.moveTo(px + 1, py + 5 + i * 3); ctx.lineTo(px + 15, py + 5 + i * 3); ctx.stroke();
+      }
+      if (h > 0.6) {
+        ctx.fillStyle = "rgba(255,178,107,0.65)";
+        ctx.fillRect(px + 5 + Math.floor(h * 6), py + 6, 2, 2);
+        ctx.fillRect(px + 7 + Math.floor(h * 6), py + 3, 1, 4);
+      }
+    } else if (t === K.NEURAL) {
+      ctx.fillStyle = "#0d2638";
+      ctx.fillRect(px, py, TILE, 2);
+      ctx.strokeStyle = "rgba(107,213,255,0.14)";
+      ctx.beginPath();
+      ctx.moveTo(px + 3, py + 12); ctx.lineTo(px + 8, py + 5); ctx.lineTo(px + 13, py + 9);
+      ctx.stroke();
+      ctx.fillStyle = "rgba(107,213,255,0.45)";
+      ctx.fillRect(px + 7, py + 4, 1, 1);
+      ctx.fillRect(px + 12, py + 8, 1, 1);
+    } else if (t === K.SYNAPSE) {
+      ctx.fillStyle = "#154657";
+      ctx.fillRect(px, py, TILE, 2);
+      ctx.strokeStyle = "rgba(97,244,192,0.24)";
+      ctx.beginPath();
+      ctx.moveTo(px + 2, py + 10); ctx.lineTo(px + 7, py + 5); ctx.lineTo(px + 14, py + 7);
+      ctx.stroke();
+      ctx.fillStyle = "rgba(97,244,192,0.7)";
+      ctx.fillRect(px + 6, py + 4, 2, 2);
+      ctx.fillRect(px + 13, py + 6, 1, 1);
     } else if (t === K.WALL) {
       ctx.fillStyle = "#241f38";
       ctx.fillRect(px, py, TILE, TILE);
@@ -461,6 +516,48 @@ export function createRenderer(canvas, world) {
       ctx.lineWidth = 1;
       ctx.beginPath(); ctx.arc(px, py + bob, 3, 0, Math.PI * 2); ctx.stroke();
       ctx.beginPath(); ctx.arc(px + 4, py - 5 + bob, 1.6, 0, Math.PI * 2); ctx.stroke();
+    } else if (d.type === "note") {
+      const a = d.accent || "#ffb26b";
+      const bob = Math.sin(time * 0.002 + d.x * 3) * 3;
+      ctx.fillStyle = hexA(a, 0.18);
+      ctx.beginPath(); ctx.arc(px, py + bob, 10, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = a;
+      ctx.beginPath(); ctx.ellipse(px - 2, py + 5 + bob, 4, 3, -0.3, 0, Math.PI * 2); ctx.fill();
+      ctx.fillRect(px + 1, py - 10 + bob, 2, 16);
+      ctx.fillRect(px + 1, py - 10 + bob, 6, 2);
+    } else if (d.type === "speaker") {
+      const a = d.accent || "#ffb26b";
+      ctx.fillStyle = "#2a2038";
+      ctx.fillRect(px - 7, py - 6, 7, 12);
+      ctx.fillStyle = "#4a3a5c";
+      ctx.beginPath();
+      ctx.moveTo(px, py - 6); ctx.lineTo(px + 7, py - 11);
+      ctx.lineTo(px + 7, py + 11); ctx.lineTo(px, py + 6); ctx.closePath(); ctx.fill();
+      const pulse = 0.3 + Math.sin(time * 0.003 + d.x) * 0.2;
+      ctx.strokeStyle = hexA(a, pulse);
+      ctx.beginPath(); ctx.arc(px + 8, py, 9, -0.7, 0.7); ctx.stroke();
+      ctx.beginPath(); ctx.arc(px + 8, py, 15, -0.6, 0.6); ctx.stroke();
+    } else if (d.type === "synapse") {
+      const a = d.accent || "#6bd5ff";
+      const pulse = 0.35 + Math.sin(time * 0.002 + d.x * 4) * 0.25;
+      ctx.strokeStyle = hexA(a, pulse);
+      ctx.beginPath();
+      ctx.moveTo(px - 8, py + 6); ctx.lineTo(px, py - 6); ctx.lineTo(px + 8, py + 6);
+      ctx.stroke();
+      ctx.fillStyle = hexA(a, 0.8);
+      ctx.beginPath(); ctx.arc(px - 8, py + 6, 2, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(px, py - 6, 2, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(px + 8, py + 6, 2, 0, Math.PI * 2); ctx.fill();
+    } else if (d.type === "wave") {
+      const a = d.accent || "#ffb26b";
+      ctx.strokeStyle = hexA(a, 0.45);
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      for (let i = -8; i <= 8; i += 2) {
+        const yy = py + Math.sin(i * 0.8 + time * 0.003) * 3;
+        if (i === -8) ctx.moveTo(px + i, yy); else ctx.lineTo(px + i, yy);
+      }
+      ctx.stroke();
     }
   }
 
@@ -703,6 +800,51 @@ export function createRenderer(canvas, world) {
       ctx.beginPath(); ctx.arc(-9, -1, 4, 0, Math.PI); ctx.stroke();
       ctx.beginPath(); ctx.arc(9, -1, 4, 0, Math.PI); ctx.stroke();
       ctx.fillRect(-5, 7, 10, 2);
+    } else if (icon === "note") {
+      ctx.beginPath(); ctx.ellipse(-3, 5, 4.5, 3.2, -0.35, 0, Math.PI * 2); ctx.fill();
+      ctx.fillRect(1, -10, 2, 17);
+      ctx.fillRect(1, -10, 7, 2);
+      ctx.beginPath(); ctx.ellipse(7, -3, 3.2, 2.4, -0.35, 0, Math.PI * 2); ctx.fill();
+    } else if (icon === "piano") {
+      ctx.strokeRect(-10, -7, 20, 15);
+      for (let i = -7; i <= 7; i += 3.5) {
+        ctx.beginPath(); ctx.moveTo(i, -7); ctx.lineTo(i, 8); ctx.stroke();
+      }
+      ctx.fillStyle = "#0b1024";
+      ctx.fillRect(-5.5, -7, 2, 7);
+      ctx.fillRect(1.3, -7, 2, 7);
+    } else if (icon === "speaker") {
+      ctx.fillRect(-9, -5, 6, 10);
+      ctx.beginPath();
+      ctx.moveTo(-3, -5); ctx.lineTo(4, -10); ctx.lineTo(4, 10); ctx.lineTo(-3, 5);
+      ctx.closePath(); ctx.fill();
+      ctx.beginPath(); ctx.arc(5, 0, 7, -0.7, 0.7); ctx.stroke();
+      ctx.beginPath(); ctx.arc(5, 0, 12, -0.6, 0.6); ctx.stroke();
+    } else if (icon === "chart") {
+      ctx.beginPath(); ctx.moveTo(-9, 8); ctx.lineTo(-9, -9); ctx.moveTo(-9, 8); ctx.lineTo(9, 8); ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(-6, 4); ctx.lineTo(-2, 0); ctx.lineTo(2, 3); ctx.lineTo(7, -6); ctx.stroke();
+      ctx.fillRect(-3, -1, 2, 2);
+      ctx.fillRect(1, 2, 2, 2);
+      ctx.fillRect(6, -7, 2, 2);
+    } else if (icon === "network") {
+      const pts = [[0, -8], [-8, 5], [8, 5], [0, 1]];
+      ctx.beginPath();
+      ctx.moveTo(0, -8); ctx.lineTo(-8, 5);
+      ctx.moveTo(0, -8); ctx.lineTo(8, 5);
+      ctx.moveTo(-8, 5); ctx.lineTo(8, 5);
+      ctx.stroke();
+      for (const [x, y] of pts) { ctx.beginPath(); ctx.arc(x, y, 2.5, 0, Math.PI * 2); ctx.fill(); }
+    } else if (icon === "text") {
+      ctx.strokeRect(-9, -8, 18, 16);
+      for (let i = 0; i < 4; i++) {
+        ctx.beginPath(); ctx.moveTo(-6, -4 + i * 3.2); ctx.lineTo(6 - (i === 3 ? 5 : 0), -4 + i * 3.2); ctx.stroke();
+      }
+    } else if (icon === "eye") {
+      ctx.beginPath(); ctx.moveTo(-10, 0); ctx.quadraticCurveTo(0, -10, 10, 0); ctx.quadraticCurveTo(0, 10, -10, 0); ctx.stroke();
+      ctx.beginPath(); ctx.arc(0, 0, 3.5, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#0b1024";
+      ctx.beginPath(); ctx.arc(0, 0, 1.4, 0, Math.PI * 2); ctx.fill();
     } else {
       ctx.beginPath();
       ctx.moveTo(0, -9); ctx.lineTo(8, 0); ctx.lineTo(0, 9); ctx.lineTo(-8, 0);

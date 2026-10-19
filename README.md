@@ -3,7 +3,7 @@
 No ar em <https://songjongdevsecops.github.io/>.
 
 Um blog pessoal que se atravessa a pé. O site é um arquipélago em pixel art:
-você entra com um boneco, cruza pontes e encontra 22 estações. Cada estação é
+você entra com um boneco, cruza pontes e encontra 32 estações. Cada estação é
 uma página com um texto curto e um instrumento interativo.
 
 ## O arquipélago
@@ -15,8 +15,10 @@ uma página com um texto curto e um instrumento interativo.
 | **Matemática** | paradoxos do infinito, sólidos platônicos em 3D, derivada e integral, máquina de Galton e fractais |
 | **Física** | pêndulo, série de Fourier, gás ideal, prisma de Newton e órbitas gravitacionais |
 | **Química** | tabela periódica interativa, moléculas em 3D, titulação, energia de reação e balanceamento |
+| **Música** | polirritmia, intervalos e razões, temperamento e escalas, timbre aditivo e música generativa |
+| **Inteligência Artificial** | regressão linear, rede neural que aprende um círculo, tokens e predição, convolução de imagem e ética |
 
-O mapa tem 144 por 100 tiles, quatro continentes, ilhas, pontes e um porto
+O mapa tem 180 por 120 tiles, seis continentes, ilhas, pontes e um porto
 central. O minimapa começa coberto por névoa e revela o que você anda. Cada
 estação descoberta vira um fragmento no diário e soma experiência. As Pedras do
 Porto, nas docas, abrem a viagem rápida entre os continentes já visitados.
@@ -46,7 +48,7 @@ Depois abra `http://localhost:8000`.
 | `js/render.js` | desenho do mundo, das estações, dos bonecos e do minimapa |
 | `js/net.js` | sala compartilhada por MQTT sobre WebSocket |
 | `js/audio.js` | síntese, ambiente e sequenciador |
-| `js/content.js` | os 22 textos e as falas dos NPCs |
+| `js/content.js` | os 32 textos e as falas dos NPCs |
 | `js/config.js` | mapa, continentes, estações, pedras e cores |
 | `js/data/elements.js` | os 36 elementos da tabela periódica |
 | `js/zones/` | os instrumentos interativos de cada região |
@@ -64,14 +66,14 @@ wat2wasm wasm/julia.wat -o wasm/julia.wasm
 - Textos e falas: `js/content.js`.
 - Posição e nome das estações: `js/config.js`, no array `SITES`.
 - Elementos da tabela: `js/data/elements.js`.
-- Instrumentos: `js/zones/`. Os laboratórios de computação, matemática, física
-  e química ficam em `cs.js`, `math.js`, `physics.js` e `chem.js`; as moléculas
-  em 3D ficam em `molecule.js`.
+- Instrumentos: `js/zones/`. Computação, matemática, física e química ficam em
+  `cs.js`, `math.js`, `physics.js` e `chem.js`; música em `music.js`; IA em
+  `ai.js`; as moléculas em 3D em `molecule.js`.
 
 ## Créditos
 
 Three.js, p5.js, MathJax, Plotly e MQTT.js vêm de CDN. O resto é JavaScript de
-navegador, canvas, WebGL e WebAssembly. A fonte de pixel é do Google Fonts, com
-queda para monoespaçada do sistema.
+navegador, canvas, WebGL, Web Audio e WebAssembly. A fonte de pixel é do Google
+Fonts, com queda para monoespaçada do sistema.
 
 Feito por Song Jong, para brincar.
