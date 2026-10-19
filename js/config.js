@@ -16,8 +16,9 @@ export const NET = {
   broker: "wss://broker.emqx.io:8084/mqtt",
   prefix: "mundo-song/v2",
   defaultRoom: "praca",
-  stateEvery: 180,
+  stateEvery: 100,
   peerTimeout: 6500,
+  interpDelay: 200,
 };
 
 export const STORAGE = {

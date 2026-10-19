@@ -40,6 +40,7 @@ export class Net {
     this.connected = false;
     this.msgCount = 0;
     this.pubkey = "";
+    this.seq = 0;
   }
 
   topic(kind) { return `${NET.prefix}/${this.room}/${kind}`; }
@@ -137,17 +138,21 @@ export class Net {
       const old = this.peers.get(msg.id);
       const moving = old ? Math.hypot(old.x - x, old.y - y) > 0.015 : false;
       const pubkey = typeof msg.k === "string" && /^[0-9a-f]{64}$/i.test(msg.k) ? msg.k.toLowerCase() : "";
-      const peer = {
+      // Reaproveita o mesmo objeto: a interpolação guarda amostras e posição
+      // renderizada nele, e recriar a cada pacote jogaria isso no lixo.
+      const peer = old || {};
+      if (!old) peer.bubble = null;
+      Object.assign(peer, {
         id: msg.id,
         name,
         color,
         x, y, dir,
         mount: msg.m === 1 || msg.m === true,
+        seq: Number(msg.s) || 0,
         pubkey,
         moving,
         lastSeen: now,
-        bubble: old?.bubble || null,
-      };
+      });
       this.peers.set(msg.id, peer);
       this.emitPeers();
       return;
@@ -203,11 +208,13 @@ export class Net {
 
   publishState(force) {
     if (!this.connected || !this.client) return;
+    this.seq = (this.seq + 1) % 1000000000;
     this.client.publish(this.topic("state"), JSON.stringify({
       id: this.id, n: this.name, c: this.color,
       x: Number(this.state.x.toFixed(2)),
       y: Number(this.state.y.toFixed(2)),
       d: this.state.dir,
+      s: this.seq,
       m: this.state.m || undefined,
       k: this.pubkey || undefined,
     }), { qos: 0 });

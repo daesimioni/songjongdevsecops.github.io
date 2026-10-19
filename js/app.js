@@ -12,6 +12,7 @@ import { Rede } from "./nostr.js";
 import { Quests } from "./quests.js";
 import { createSocial } from "./social.js";
 import { findPath, nearestWalkable } from "./path.js";
+import { feedPeer, peerRenderPosition } from "./interp.js";
 import { RPG } from "./rpg.js";
 import { createSheet } from "./sheet.js";
 import { createDuel } from "./duel.js";
@@ -534,7 +535,19 @@ function updateOnlineCount() {
       ? `${state.peers.length + 1} na praça` : "praça vazia";
   }
 }
-function setPeers(peers) { state.peers = peers; updateOnlineCount(); }
+function setPeers(peers) {
+  const now = performance.now();
+  for (const peer of peers) {
+    if (!peer.samples) {
+      peer.samples = [];
+      peer.rx = peer.x;
+      peer.ry = peer.y;
+    }
+    feedPeer(peer, now, NET.stateEvery, NET.interpDelay);
+  }
+  state.peers = peers;
+  updateOnlineCount();
+}
 function startNet() {
   if (state.net) return;
   $("room-label").textContent = `sala ${state.room}`;
@@ -1118,6 +1131,28 @@ function loop(now) {
       if (hpEl) hpEl.textContent = `❤ ${hpNow}/${hpMaxNow}`;
     }
     for (const n of world.npcs) n.questMark = quests.markFor(n.id);
+    const peerStep = PLAYER_SPEED * SPRINT_MULT * 1.1 * dt;
+    for (const p of state.peers) {
+      const pos = peerRenderPosition(p, now, NET.interpDelay);
+      if (!Number.isFinite(p.rx)) {
+        p.rx = pos.x;
+        p.ry = pos.y;
+      } else {
+        const dx = pos.x - p.rx;
+        const dy = pos.y - p.ry;
+        const dist = Math.hypot(dx, dy);
+        if (dist > 8) {
+          p.rx = pos.x;
+          p.ry = pos.y;
+        } else if (dist > peerStep) {
+          p.rx += (dx / dist) * peerStep;
+          p.ry += (dy / dist) * peerStep;
+        } else {
+          p.rx = pos.x;
+          p.ry = pos.y;
+        }
+      }
+    }
     for (const m of world.monsters) m.alive = rpg.monsterAlive(m.id);
     for (const h of world.hunters) {
       h.ready = rpg.leverReady(h);

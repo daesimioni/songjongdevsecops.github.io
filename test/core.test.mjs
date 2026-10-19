@@ -15,6 +15,7 @@ const { Rede } = await import("../js/nostr.js");
 const { NOSTR } = await import("../js/config.js");
 const { RPG } = await import("../js/rpg.js");
 const { GROUNDS } = await import("../js/rpg-data.js");
+const { addPeerSample, feedPeer, peerRenderPosition } = await import("../js/interp.js");
 
 const quest = (id) => QUESTS.find((q) => q.id === id);
 const cards = new Set();
@@ -168,4 +169,35 @@ const againRpg = new RPG({ getLevel: () => 1, gainXp: () => {}, toast: () => {},
 assert.equal(againRpg.monsterAlive(easy.id), false, "monstro derrotado persiste");
 assert.equal(againRpg.inventoryList().length > 0, true, "item persiste");
 
-console.log("ok missões, persistência, filtro dos canais e RPG");
+// interpolação dos outros jogadores
+const peer = { x: 0, y: 0, samples: [] };
+for (let i = 0; i < 6; i++) addPeerSample(peer, i * 0.5, 0, 1000 + i * 100);
+const at = (now) => peerRenderPosition(peer, now, 200);
+assert.ok(Math.abs(at(1250).x - 0.25) < 0.001, "interpola entre duas amostras");
+assert.ok(Math.abs(at(1300).x - 0.5) < 0.001);
+assert.ok(Math.abs(at(1400).x - 1.0) < 0.001);
+let prev = at(1200).x;
+let maxStep = 0;
+for (let t = 1216; t <= 1600; t += 16) {
+  const cur = at(t).x;
+  maxStep = Math.max(maxStep, Math.abs(cur - prev));
+  prev = cur;
+}
+assert.ok(maxStep < 0.2, "movimento interpolado não dá pulo");
+addPeerSample(peer, 40, 0, 1600);
+assert.ok(Math.abs(at(1700).x - 40) < 0.001, "teleporte não desliza pelo mapa");
+
+// sequência de rede: pacotes que chegam juntos não viram salto
+const sp = { x: 0, y: 0, seq: 1 };
+feedPeer(sp, 1000, 100, 200);
+assert.equal(sp.samples.length, 1);
+assert.ok(Math.abs(sp.samples[0].t - 800) < 0.001, "primeira amostra entra no buffer");
+sp.x = 0.5; sp.seq = 2; feedPeer(sp, 1010, 100, 200);
+sp.x = 1.0; sp.seq = 3; feedPeer(sp, 1020, 100, 200);
+assert.deepEqual(sp.samples.map((s) => s.t), [800, 900, 1000], "amostras usam o relógio do envio");
+assert.ok(Math.abs(peerRenderPosition(sp, 1100, 200).x - 0.5) < 0.001);
+assert.ok(Math.abs(peerRenderPosition(sp, 1200, 200).x - 1.0) < 0.001);
+sp.x = 20; sp.seq = 4; feedPeer(sp, 1300, 100, 200);
+assert.ok(Math.abs(peerRenderPosition(sp, 1300, 200).x - 20) < 0.001, "teleporte com sequência nova aparece na hora");
+
+console.log("ok missões, persistência, filtro dos canais, RPG e interpolação");

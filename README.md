@@ -31,6 +31,10 @@ A praça compartilhada mostra outras pessoas na mesma sala. Não existe servidor
 próprio: o site é estático e o sinal usa um broker MQTT público por WebSocket.
 Se o sinal falhar, o mundo continua funcionando sozinho.
 
+O estado de cada jogador vai a 10 Hz, com número de sequência. O desenho guarda
+um pequeno buffer e interpola entre pacotes, então os outros bonecos caminham
+contínuos em vez de dar pulinhos; o custo é cerca de 200 ms de atraso visual.
+
 A conversa da sala tem um histórico curto no próprio campo de fala: as mensagens
 novas entram embaixo, as antigas sobem e somem, e o que sobra fica guardado na
 sessão do navegador por sala. Enter envia; Esc fecha.
@@ -113,7 +117,8 @@ node test/core.test.mjs
 ```
 
 Ela cobre o progresso e a persistência das missões, o filtro que mantém
-conteúdo de fora fora dos canais e o ciclo de duelo, dano, alavanca e chefe.
+conteúdo de fora fora dos canais, o ciclo de duelo, dano, alavanca e chefe e a
+interpolação dos outros jogadores.
 
 ## Rodar na mão
 
@@ -135,6 +140,7 @@ Depois abra `http://localhost:8000`.
 | `js/world.js` | geração do arquipélago, caminhos, pontes, colisão e névoa |
 | `js/render.js` | desenho do mundo, das estações, dos bonecos e do minimapa |
 | `js/net.js` | sala compartilhada por MQTT sobre WebSocket |
+| `js/interp.js` | buffer e interpolação da posição dos outros jogadores |
 | `js/nostr.js` | conta, canais, DMs NIP-17, perfis e presença Nostr |
 | `js/quests.js` | missões, progresso, XP e títulos |
 | `js/path.js` | caminho A* do clique até o destino |

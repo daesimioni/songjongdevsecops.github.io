@@ -1336,16 +1336,18 @@ export function createRenderer(canvas, world) {
       drawables.push({ y: cat.y * TILE, fn: () => drawCat(cat, cat.moving, time) });
     }
     for (const p of peers) {
+      const px = (p.rx ?? p.x) * TILE;
+      const py = (p.ry ?? p.y) * TILE;
       const peerColors = { skin: "#e8b98c", hair: "#2a2438", shirt: p.color, pants: "#2f2c45", accent: "#fff3d1" };
       drawables.push({
-        y: p.y * TILE,
+        y: py,
         fn: () => {
           const lift = p.mount ? 5 : 0;
-          if (p.mount) drawSkiff(p.x * TILE, p.y * TILE, p.dir || 0, time, 1, p.moving);
-          drawHuman(p.x * TILE, p.y * TILE - lift, p.dir || 0, p.moving, time, peerColors, null, 1);
-          drawNameTag(p.name, p.x * TILE, p.y * TILE - 26 - lift, p.color);
+          if (p.mount) drawSkiff(px, py, p.dir || 0, time, 1, p.moving);
+          drawHuman(px, py - lift, p.dir || 0, p.moving, time, peerColors, null, 1);
+          drawNameTag(p.name, px, py - 26 - lift, p.color);
           if (p.bubble && p.bubble.until > now) {
-            drawBubble(p.bubble.text, p.x * TILE, p.y * TILE - lift, p.color);
+            drawBubble(p.bubble.text, px, py - lift, p.color);
           }
         },
       });
@@ -1415,7 +1417,7 @@ export function createRenderer(canvas, world) {
     mctx.drawImage(mmFog, 0, 0);
     for (const p of peers) {
       mctx.fillStyle = p.color || "#61f4c0";
-      mctx.fillRect(Math.round(p.x * 2) - 1, Math.round(p.y * 2) - 1, 3, 3);
+      mctx.fillRect(Math.round((p.rx ?? p.x) * 2) - 1, Math.round((p.ry ?? p.y) * 2) - 1, 3, 3);
     }
     for (const h of world.hunters) {
       if (!world.isExplored(Math.floor(h.center.x), Math.floor(h.center.y))) continue;
