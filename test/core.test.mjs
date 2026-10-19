@@ -16,6 +16,8 @@ const { NOSTR } = await import("../js/config.js");
 const { RPG } = await import("../js/rpg.js");
 const { GROUNDS } = await import("../js/rpg-data.js");
 const { addPeerSample, feedPeer, peerRenderPosition } = await import("../js/interp.js");
+const { createWorld } = await import("../js/world.js");
+const { PLAYER_W, PLAYER_H, SPAWN } = await import("../js/config.js");
 
 const quest = (id) => QUESTS.find((q) => q.id === id);
 const cards = new Set();
@@ -200,4 +202,25 @@ assert.ok(Math.abs(peerRenderPosition(sp, 1200, 200).x - 1.0) < 0.001);
 sp.x = 20; sp.seq = 4; feedPeer(sp, 1300, 100, 200);
 assert.ok(Math.abs(peerRenderPosition(sp, 1300, 200).x - 20) < 0.001, "teleporte com sequência nova aparece na hora");
 
-console.log("ok missões, persistência, filtro dos canais, RPG e interpolação");
+// colisão de cenário: estação, spawn, monstro e chefe
+const w = createWorld();
+assert.equal(w.boxCollides(90, 60, PLAYER_W, PLAYER_H), true, "fonte barra passagem");
+assert.equal(w.boxCollides(SPAWN.x, SPAWN.y, PLAYER_W, PLAYER_H), false, "spawn é livre");
+const pm = w.monsters[0];
+pm.alive = true;
+assert.equal(w.boxCollides(pm.x, pm.y, PLAYER_W, PLAYER_H), true, "monstro vivo barra");
+pm.alive = false;
+assert.equal(w.boxCollides(pm.x, pm.y, PLAYER_W, PLAYER_H), false, "monstro morto libera");
+const ph = w.hunters[0];
+ph.boss.alive = false;
+assert.equal(w.boxCollides(ph.boss.x, ph.boss.y, PLAYER_W, PLAYER_H), false, "chefe ausente não barra");
+ph.boss.alive = true;
+assert.equal(w.boxCollides(ph.boss.x, ph.boss.y, PLAYER_W, PLAYER_H), true, "chefe presente barra");
+assert.ok(w.props.length > 20, "props de cenário existem");
+for (const stone of w.waystones) {
+  const spots = [[0, 1.8], [0, -1.8], [1.8, 0], [-1.8, 0], [0, 2.6], [2.6, 0]];
+  const free = spots.some(([dx, dy]) => !w.boxCollides(stone.x + dx, stone.y + dy, PLAYER_W, PLAYER_H));
+  assert.equal(free, true, `viagem livre perto de ${stone.name}`);
+}
+
+console.log("ok missões, persistência, canais, RPG, interpolação e colisão");

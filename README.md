@@ -80,6 +80,10 @@ A **Ficha** (`C`) mostra vida, nível, perícias e mochila. A vida volta devagar
 fora de duelo; a Poção de Café cura na hora. Cair num duelo não perde item nem
 XP: o boneco acorda no Porto com a vida cheia.
 
+Estações, pedras, NPCs, monstros, alavancas e mobília barram a passagem. O
+desenho é ordenado por profundidade, então uma fonte, árvore ou parede na frente
+do boneco cobre o corpo dele em vez de ficar sempre atrás.
+
 ## A Rede
 
 A conta do jogador é uma chave Nostr criada e guardada no próprio navegador.

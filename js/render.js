@@ -1272,21 +1272,6 @@ export function createRenderer(canvas, world) {
       }
     }
 
-    // árvores e paredes
-    for (let y = y0; y <= y1; y++) {
-      for (let x = x0; x <= x1; x++) {
-        const t = world.get(x, y);
-        if (t === K.TREE) drawTree(x, y, time);
-        else if (t === K.WALL) drawWall(x, y);
-      }
-    }
-
-    for (const d of world.decor) {
-      if (d.x * TILE < camX - 40 || d.x * TILE > camX + viewW + 40 ||
-          d.y * TILE < camY - 40 || d.y * TILE > camY + viewH + 40) continue;
-      drawDecor(d, time);
-    }
-
     for (const h of world.hunters) drawHunterRing(h, time);
     if (player.pathLine && player.pathLine.length) drawPathLine(player.pathLine);
     if (player.pathGoal) drawPathGoal(player.pathGoal, time);
@@ -1315,19 +1300,31 @@ export function createRenderer(canvas, world) {
     trail = trail.filter((t) => t.life > 0);
 
     const drawables = [];
+    for (let y = y0; y <= y1; y++) {
+      for (let x = x0; x <= x1; x++) {
+        const t = world.get(x, y);
+        if (t === K.TREE) drawables.push({ y: (y + 1) * TILE, fn: () => drawTree(x, y, time) });
+        else if (t === K.WALL) drawables.push({ y: (y + 1) * TILE, fn: () => drawWall(x, y) });
+      }
+    }
+    for (const d of world.decor) {
+      if (d.x * TILE < camX - 40 || d.x * TILE > camX + viewW + 40 ||
+          d.y * TILE < camY - 40 || d.y * TILE > camY + viewH + 40) continue;
+      drawables.push({ y: d.y * TILE + 14, fn: () => drawDecor(d, time) });
+    }
     for (const h of world.hunters) {
-      drawables.push({ y: h.banner.y * TILE, fn: () => drawBanner(h, time) });
-      drawables.push({ y: h.lever.y * TILE, fn: () => drawLever(h.lever, time) });
+      drawables.push({ y: h.banner.y * TILE + 8, fn: () => drawBanner(h, time) });
+      drawables.push({ y: h.lever.y * TILE + 4, fn: () => drawLever(h.lever, time) });
       for (const m of h.monsters) {
         if (m.alive) drawables.push({ y: m.y * TILE, fn: () => drawMonster(m, time, false) });
       }
       if (h.boss.alive) drawables.push({ y: h.boss.y * TILE, fn: () => drawMonster(h.boss, time, true) });
     }
     for (const w of world.waystones) {
-      drawables.push({ y: w.y * TILE, fn: () => drawWaystone(w, time) });
+      drawables.push({ y: w.y * TILE + 8, fn: () => drawWaystone(w, time) });
     }
     for (const s of world.stations) {
-      drawables.push({ y: s.y * TILE, fn: () => drawStation(s, time) });
+      drawables.push({ y: s.y * TILE + 6, fn: () => drawStation(s, time) });
     }
     for (const n of npcs) {
       drawables.push({ y: n.y * TILE, fn: () => drawNpc(n, time) });

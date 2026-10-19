@@ -26,6 +26,7 @@ export function createWorld() {
   const rand = mulberry32(20261019);
   const tiles = new Uint8Array(MAP_W * MAP_H).fill(WATER);
   const decor = [];
+  const props = [];
   const at = (x, y) => y * MAP_W + x;
   const set = (x, y, v) => {
     if (x >= 0 && y >= 0 && x < MAP_W && y < MAP_H) tiles[at(x, y)] = v;
@@ -303,7 +304,17 @@ export function createWorld() {
         if (isSolidTile(tx, ty)) return true;
       }
     }
+    const hw = w / 2;
+    const hh = h / 2;
+    for (const p of props) {
+      if (p.active && !p.active()) continue;
+      if (Math.abs(x - p.x) < hw + p.hw && Math.abs(y - p.y) < hh + p.hh) return true;
+    }
     return false;
+  }
+
+  function addProp(x, y, hw, hh, active = null) {
+    props.push({ x, y, hw, hh, active });
   }
 
   const hunters = GROUNDS.map((g) => {
@@ -324,8 +335,35 @@ export function createWorld() {
     h.lever.ground = h;
   }
 
+  // coisas que ocupam espaço no chão. Monstros e chefes são dinâmicos: a
+  // colisão some quando eles caem e volta quando renascem.
+  for (const s of stations) {
+    const fountain = s.icon === "fountain";
+    addProp(s.x, s.y, fountain ? 0.9 : 0.7, fountain ? 0.5 : 0.45);
+  }
+  for (const w of waystones) addProp(w.x, w.y, 0.45, 0.3);
+  for (const n of npcs) addProp(n.x, n.y, 0.28, 0.22);
+  const decorSize = {
+    lamp: [0.12, 0.12], sign: [0.3, 0.12], bench: [0.55, 0.18],
+    terminal: [0.35, 0.25], pillar: [0.3, 0.25], book: [0.2, 0.15],
+    orb: [0.2, 0.2], crystal: [0.25, 0.25], flask: [0.2, 0.2],
+    speaker: [0.22, 0.2],
+  };
+  for (const d of decor) {
+    const size = decorSize[d.type];
+    if (size) addProp(d.x, d.y, size[0], size[1]);
+  }
+  for (const h of hunters) {
+    addProp(h.lever.x, h.lever.y, 0.25, 0.2);
+    for (const m of h.monsters) {
+      addProp(m.x, m.y, m.tier === 3 ? 0.45 : 0.38, m.tier === 3 ? 0.35 : 0.28,
+        () => m.alive !== false);
+    }
+    addProp(h.boss.x, h.boss.y, 0.7, 0.5, () => h.boss.alive === true);
+  }
+
   return {
-    tiles, decor, stations, waystones, npcs, hunters, monsters,
+    tiles, decor, props, stations, waystones, npcs, hunters, monsters,
     cat: { ...CAT_SPAWN, facing: 1, t: 0, moving: false },
     get, set, isSolidTile, boxCollides,
     continentAt, continentAtTile,

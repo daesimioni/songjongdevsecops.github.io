@@ -7,20 +7,25 @@ const DIRS = [
   [1, 1, Math.SQRT2], [1, -1, Math.SQRT2], [-1, 1, Math.SQRT2], [-1, -1, Math.SQRT2],
 ];
 
-export function tileWalkable(world, tx, ty) {
+// O caminho usa uma folga maior que o corpo. Sem isso ele pode passar por um
+// centro de tile que é válido no papel, mas roça na quina de uma estação ou
+// monstro e trava no meio da caminhada.
+const PATH_PAD = 0.16;
+
+export function tileWalkable(world, tx, ty, pad = 0) {
   if (tx < 0 || ty < 0 || tx >= MAP_W || ty >= MAP_H) return false;
-  return !world.boxCollides(tx + 0.5, ty + 0.5, PLAYER_W, PLAYER_H);
+  return !world.boxCollides(tx + 0.5, ty + 0.5, PLAYER_W + pad, PLAYER_H + pad);
 }
 
-export function nearestWalkable(world, x, y, maxR = 3) {
+export function nearestWalkable(world, x, y, maxR = 3, pad = 0) {
   const cx = Math.floor(x);
   const cy = Math.floor(y);
-  if (tileWalkable(world, cx, cy)) return { x: cx + 0.5, y: cy + 0.5 };
+  if (tileWalkable(world, cx, cy, pad)) return { x: cx + 0.5, y: cy + 0.5 };
   for (let r = 1; r <= maxR; r++) {
     for (let dy = -r; dy <= r; dy++) {
       for (let dx = -r; dx <= r; dx++) {
         if (Math.max(Math.abs(dx), Math.abs(dy)) !== r) continue;
-        if (tileWalkable(world, cx + dx, cy + dy)) {
+        if (tileWalkable(world, cx + dx, cy + dy, pad)) {
           return { x: cx + dx + 0.5, y: cy + dy + 0.5 };
         }
       }
@@ -68,7 +73,7 @@ class Heap {
 export function findPath(world, from, to, maxNodes = 16000) {
   const start = nearestWalkable(world, from.x, from.y, 0);
   if (!start) return null;
-  let goal = nearestWalkable(world, to.x, to.y, 2);
+  let goal = nearestWalkable(world, to.x, to.y, 2, PATH_PAD);
   if (!goal) return null;
   const sx = Math.floor(start.x), sy = Math.floor(start.y);
   const tx = Math.floor(goal.x), ty = Math.floor(goal.y);
@@ -109,10 +114,10 @@ export function findPath(world, from, to, maxNodes = 16000) {
     for (const [dx, dy, cost] of DIRS) {
       const nx = node.x + dx;
       const ny = node.y + dy;
-      if (!tileWalkable(world, nx, ny)) continue;
+      if (!tileWalkable(world, nx, ny, PATH_PAD)) continue;
       if (dx !== 0 && dy !== 0) {
-        if (!tileWalkable(world, node.x + dx, node.y)) continue;
-        if (!tileWalkable(world, node.x, node.y + dy)) continue;
+        if (!tileWalkable(world, node.x + dx, node.y, PATH_PAD)) continue;
+        if (!tileWalkable(world, node.x, node.y + dy, PATH_PAD)) continue;
       }
       const ni = idx(nx, ny);
       if (closed[ni]) continue;
