@@ -28,8 +28,8 @@ segure o botão **Turbo**. A nave é um pequeno skiff que flutua, balança e dei
 rastro, mas não atravessa água: as pontes continuam sendo caminho.
 
 No teclado: `WASD` ou setas andam; segure duas direções para andar na diagonal.
-`Espaço` liga a nave, `E` interage, `Enter` abre a conversa, `F` a ficha, `J` o
-diário e `R` a Rede. A tecla `T` continua abrindo a conversa como atalho.
+`Espaço` liga a nave, `F` interage, `Q` abre a conversa, `E` a Rede, `Z` o
+diário e `C` a ficha. `Enter` também abre a conversa.
 
 A praça compartilhada mostra outras pessoas na mesma sala. Não existe servidor
 próprio: o site é estático e o sinal usa um broker MQTT público por WebSocket.
@@ -41,13 +41,13 @@ contínuos em vez de dar pulinhos; o custo é cerca de 200 ms de atraso visual.
 
 A conversa da sala tem um histórico curto no próprio campo de fala: as mensagens
 novas entram embaixo, as antigas sobem e somem, e o que sobra fica guardado na
-sessão do navegador por sala. `Enter` abre a conversa; dentro dela, `Enter`
-envia e fecha, e `Enter` de novo abre. Esc fecha sem enviar.
+sessão do navegador por sala. `Q` ou `Enter` abrem a conversa; dentro dela, `Enter`
+envia e fecha, e `Enter` ou `Q` de novo abrem. Esc fecha sem enviar.
 
 ## Missões
 
 Os sete NPCs do mapa dão missões. Um `!` flutuante marca quem tem missão para
-dar; quando o objetivo está cumprido, ele vira `?`. Aperte `E` perto deles para
+dar; quando o objetivo está cumprido, ele vira `?`. Aperte `F` perto deles para
 aceitar, responder e entregar. São três tipos:
 
 - **caminhada**: abrir estações, acender os sete faróis, mexer em oito
@@ -57,7 +57,7 @@ aceitar, responder e entregar. São três tipos:
 - **rede**: falar no canal público e mandar uma DM para alguém.
 - **caçada**: derrubar três monstros nas clareiras.
 
-Cada missão dá XP e um título. O Diário (`J`) mostra o que está em andamento,
+Cada missão dá XP e um título. O Diário (`Z`) mostra o que está em andamento,
 quanto falta e o que já foi concluído. O cartão do NPC mostra o mesmo progresso
 e o botão de concluir quando o objetivo está cumprido.
 
@@ -83,7 +83,7 @@ item raro. Cada vitória dá XP e item; os monstros voltam depois de cinco minut
 o chefe depois de vinte. O item do chefe é uma relíquia: cada uma soma 5 de vida
 máxima.
 
-A **Ficha** (`F`) mostra vida, nível, perícias, mochila e a forja. A vida volta
+A **Ficha** (`C`) mostra vida, nível, perícias, mochila e a forja. A vida volta
 devagar fora de duelo; a Poção de Café cura 18, o Caldo de Caverna cura 35.
 Cair num duelo não perde item nem XP: o boneco acorda no Porto com a vida cheia.
 
@@ -93,7 +93,7 @@ do boneco cobre o corpo dele em vez de ficar sempre atrás.
 
 ## As cavernas
 
-Ao lado de cada clareira de caça existe uma boca de caverna. `E` nela entra
+Ao lado de cada clareira de caça existe uma boca de caverna. `F` nela entra
 num mapa próprio, em tela cheia: salas ligadas por túneis de três tiles que se
 cruzam em anel, entrada embaixo, cidade no fundo. São seis temas, um por
 continente, com paleta, nomes de sala e bichos próprios.
@@ -113,7 +113,7 @@ a vida a cada 45 segundos, uma horta de ervas que rebrota e uma pedra de retorno
 A receita é curta e honesta: poção, tocha, chave, bomba e caldo.
 
 A **tocha** acende por dois minutos e aumenta a luz; a **bomba** espanta os
-bichos num raio de três tiles, sem XP e sem saque. `F` abre a Ficha em qualquer
+bichos num raio de três tiles, sem XP e sem saque. `C` abre a Ficha em qualquer
 lugar, `Esc` sobe de volta para a boca da caverna. Monstros e chefe guardam o
 tempo de respawn de sempre; os baús se reabrem a cada descida.
 
@@ -124,7 +124,7 @@ Não tem cadastro, e-mail nem servidor nosso. A chave pública (`npub`) identifi
 a pessoa; a privada (`nsec`) fica no `localStorage` e pode ser exportada ou
 trocada na aba **Conta** da Rede. Quem tiver a nsec controla a conta.
 
-A janela **Rede** (`R`) tem quatro abas:
+A janela **Rede** (`E`) tem quatro abas:
 
 | aba | o que faz |
 |---|---|

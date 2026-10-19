@@ -39,10 +39,10 @@
     <div class="hud-actions">
       <button type="button" id="net-pill" class="pill" title="Estado da praça compartilhada"><i></i><b id="online">solo</b></button>
       <span id="progress" class="pill pill-progress" title="Fragmentos descobertos e nível"><span>✦</span><b id="progress-text">0/32</b><span class="sep">·</span><b id="level-text">Nv 1</b><span class="sep">·</span><b id="hp-hud">❤ 30</b></span>
-      <button id="btn-chat" class="hud-btn" type="button">Falar <kbd>Enter</kbd></button>
-      <button id="btn-rede" class="hud-btn" type="button">Rede <kbd>R</kbd><i id="rede-dot" class="rede-dot" hidden></i></button>
-      <button id="btn-journal" class="hud-btn" type="button">Diário <kbd>J</kbd></button>
-      <button id="btn-sheet" class="hud-btn" type="button">Ficha <kbd>F</kbd></button>
+      <button id="btn-chat" class="hud-btn" type="button">Falar <kbd>Q</kbd></button>
+      <button id="btn-rede" class="hud-btn" type="button">Rede <kbd>E</kbd><i id="rede-dot" class="rede-dot" hidden></i></button>
+      <button id="btn-journal" class="hud-btn" type="button">Diário <kbd>Z</kbd></button>
+      <button id="btn-sheet" class="hud-btn" type="button">Ficha <kbd>C</kbd></button>
       <button id="btn-sound" class="hud-btn" type="button" aria-pressed="false">Som</button>
       <button id="btn-help" class="hud-btn hud-btn-icon" type="button" aria-label="Ajuda">?</button>
     </div>
@@ -55,7 +55,7 @@
   </div>
 
   <div id="prompt" class="prompt" hidden>
-    <kbd>E</kbd>
+    <kbd>F</kbd>
     <span id="prompt-label"></span>
   </div>
 
@@ -74,7 +74,7 @@
   <div id="scrim" class="scrim" hidden></div>
 
   <div id="dungeon" class="dungeon" hidden aria-label="Caverna no subsolo">
-    <canvas id="dungeon-canvas" aria-label="Mapa da caverna, em pixel art. Ande com WASD ou clique, interaja com E e saia com Esc."></canvas>
+    <canvas id="dungeon-canvas" aria-label="Mapa da caverna, em pixel art. Ande com WASD ou clique, interaja com F e saia com Esc."></canvas>
     <div class="dungeon-hud">
       <div class="dg-head">
         <div class="dg-title-wrap">
@@ -83,7 +83,7 @@
           <p id="dg-sub" class="dg-sub"></p>
         </div>
         <div class="dg-actions">
-          <button id="dg-sheet" class="dg-exit" type="button">ficha <kbd>F</kbd></button>
+          <button id="dg-sheet" class="dg-exit" type="button">ficha <kbd>C</kbd></button>
           <button id="dg-exit" class="dg-exit" type="button">sair <kbd>Esc</kbd></button>
         </div>
       </div>
@@ -95,8 +95,8 @@
         <span id="dg-bag"></span>
       </div>
       <p id="dg-msg" class="dg-msg"></p>
-      <div id="dg-prompt" class="dg-prompt" hidden><kbd>E</kbd> <span></span></div>
-      <p class="dg-help">WASD ou clique para andar · <kbd>E</kbd> interage · <kbd>Espaço</kbd> corre · <kbd>Esc</kbd> sobe</p>
+      <div id="dg-prompt" class="dg-prompt" hidden><kbd>F</kbd> <span></span></div>
+      <p class="dg-help">WASD ou clique para andar · <kbd>F</kbd> interage · <kbd>C</kbd> ficha · <kbd>Espaço</kbd> corre · <kbd>Esc</kbd> sobe</p>
     </div>
   </div>
 
@@ -205,19 +205,20 @@
         <div><kbd>W A S D</kbd><span>andar</span></div>
         <div><kbd>setas</kbd><span>andar</span></div>
         <div><kbd>Espaço</kbd><span>acender a nave</span></div>
-        <div><kbd>E</kbd><span>interagir</span></div>
-        <div><kbd>Enter</kbd><span>abrir a conversa</span></div>
-        <div><kbd>J</kbd><span>diário</span></div>
-        <div><kbd>F</kbd><span>ficha</span></div>
-        <div><kbd>R</kbd><span>abrir a Rede</span></div>
+        <div><kbd>F</kbd><span>interagir</span></div>
+        <div><kbd>Q</kbd><span>abrir a conversa</span></div>
+        <div><kbd>E</kbd><span>abrir a Rede</span></div>
+        <div><kbd>Z</kbd><span>diário</span></div>
+        <div><kbd>C</kbd><span>ficha</span></div>
         <div><kbd>Esc</kbd><span>fechar</span></div>
       </div>
       <p class="help-note">Segure <kbd>Espaço</kbd> para acender a nave e cruzar o mapa mais rápido; no celular, segure o botão <strong>Turbo</strong>. A nave não atravessa água: as pontes continuam sendo caminho.</p>
+      <p class="help-note"><kbd>Enter</kbd> também abre a conversa; com ela aberta, <kbd>Enter</kbd> envia e fecha.</p>
       <p class="help-note">No celular, use o direcional, o botão A e o Turbo. A praça é pública: quem estiver na mesma sala vê seu apelido, seu boneco e suas mensagens. Use um apelido, não seu nome completo.</p>
       <p class="help-note">As <strong>Pedras do Porto</strong>, os monólitos brilhantes nas docas, abrem a viagem rápida para os continentes que você já visitou. As pontes também funcionam a pé.</p>
       <p class="help-note">Clique no chão para o boneco andar até ali. Clique numa estação, NPC, monstro ou alavanca para ir até perto e interagir sozinho.</p>
-      <p class="help-note">Os NPCs têm missões. Aperte <kbd>E</kbd> perto deles para aceitar, responder e entregar. O Diário lista o que está em andamento e quanto falta.</p>
-      <p class="help-note">Nas clareiras com bandeira acontecem as <strong>caçadas</strong>. Cada monstro abre uma prova: acertar tira vida dele, errar tira a sua. Derrube os três guardiões, puxe a alavanca e enfrente o chefe. A vitória dá XP, item e perícia do continente. A <strong>Ficha</strong> (<kbd>F</kbd>) mostra vida, perícias e mochila.</p>
+      <p class="help-note">Os NPCs têm missões. Aperte <kbd>F</kbd> perto deles para aceitar, responder e entregar. O Diário (<kbd>Z</kbd>) lista o que está em andamento e quanto falta.</p>
+      <p class="help-note">Nas clareiras com bandeira acontecem as <strong>caçadas</strong>. Cada monstro abre uma prova: acertar tira vida dele, errar tira a sua. Derrube os três guardiões, puxe a alavanca e enfrente o chefe. A vitória dá XP, item e perícia do continente. A <strong>Ficha</strong> (<kbd>C</kbd>) mostra vida, perícias e mochila.</p>
       <p class="help-note">Ao lado de cada clareira há uma <strong>boca de caverna</strong>. Lá dentro o bicho que vê você começa a batalha sozinho, e quanto mais fundo, mais forte. O chão dá ferro, erva, cristal e madeira; a forja da cidade subterrânea faz poção, tocha, chave, bomba e caldo. Baú fundo pede chave. <kbd>Esc</kbd> sobe de volta.</p>
       <p class="help-note">A <strong>Rede</strong> é a conversa do mundo: canais por continente, DMs privadas e a lista de quem está por perto. Sua conta é uma chave Nostr criada e guardada neste navegador, sem cadastro e sem servidor meu. Só conteúdo marcado pelo jogo aparece ali.</p>
       <p class="help-note">Este site é estático. A presença no mapa usa um broker MQTT público por WebSocket; a Rede usa relays Nostr públicos. Se o sinal falhar, o mundo continua funcionando sozinho.</p>
@@ -241,7 +242,7 @@
         <button type="submit" class="start">entrar no mundo</button>
       </form>
       <p class="intro-note">A sala é pública. Quem estiver nela vê seu apelido e sua posição. Sem servidor meu: presença por broker público, conversa por relays Nostr. Sua chave da Rede nasce neste navegador e nunca sai dele sem você mandar.</p>
-      <p class="intro-controls"><kbd>WASD</kbd> andar · clique no chão · <kbd>Espaço</kbd> nave · <kbd>E</kbd> interagir · <kbd>Enter</kbd> falar · <kbd>J</kbd> diário · <kbd>F</kbd> ficha · <kbd>R</kbd> Rede</p>
+      <p class="intro-controls"><kbd>WASD</kbd> andar · clique no chão · <kbd>Espaço</kbd> nave · <kbd>F</kbd> interagir · <kbd>Q</kbd> falar · <kbd>E</kbd> Rede · <kbd>Z</kbd> diário · <kbd>C</kbd> ficha</p>
     </div>
   </div>
 

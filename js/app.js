@@ -663,7 +663,7 @@ function startGame() {
     document.querySelector("#prompt kbd").textContent = "A";
     setTimeout(() => toast("toque no chão para andar, segure Turbo para voar baixo, A para interagir.", 4800), 800);
   } else {
-    setTimeout(() => toast("WASD ou clique no chão anda, Espaço acende a nave, E interage, Enter fala, F é a ficha.", 5400), 800);
+    setTimeout(() => toast("WASD ou clique no chão anda, Espaço acende a nave, F interage, Q fala, E Rede, Z diário, C ficha.", 5400), 800);
   }
 }
 
@@ -1306,22 +1306,17 @@ window.addEventListener("keydown", (e) => {
     if (!state.sprint) { state.sprint = true; audio.boost(); }
     return;
   }
-  if (k === "enter") {
+  if (k === "enter" || k === "q") {
     e.preventDefault();
     openChat();
     return;
   }
-  if (k === "e") {
+  if (k === "e") { openRede(); return; }
+  if (k === "z") { openJournal(); return; }
+  if (k === "c") { openSheet(); return; }
+  if (k === "f") {
     e.preventDefault();
     interact();
-    return;
-  }
-  if (k === "j") { openJournal(); return; }
-  if (k === "f") { openSheet(); return; }
-  if (k === "r") { openRede(); return; }
-  if (k === "t") {
-    e.preventDefault();
-    openChat();
     return;
   }
   if (["w", "a", "s", "d", "arrowup", "arrowdown", "arrowleft", "arrowright"].includes(k)) clearPath();

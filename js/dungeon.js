@@ -1257,12 +1257,12 @@ export function createDungeon({ rpg, toast, audio, onEncounter, onForge, onSheet
       state.sprint = true;
       return;
     }
-    if (k === "e") {
+    if (k === "f") {
       e.preventDefault();
       interact();
       return;
     }
-    if (k === "f") {
+    if (k === "c") {
       onSheet?.();
       return;
     }

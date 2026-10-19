@@ -15,9 +15,9 @@ export const POSTS = {
       <p>São seis continentes. <em>Computaria</em> conta como saímos de interruptores e areia até processadores. <em>Matemática</em> visita o infinito, as formas, a mudança e o acaso. <em>Física</em> testa pêndulos, ondas, calor, luz e órbitas. <em>Química</em> abre a tabela periódica, as ligações, as reações e o equilíbrio. <em>Música</em> mostra a matemática escondida no som. <em>Inteligência Artificial</em> abre os dados, as redes, a linguagem e os limites. Ao todo, 32 fragmentos para descobrir.</p>
       <p>Cada estação abre uma página e soma experiência. O <strong>Diário</strong> guarda o que você já encontrou. As <strong>Pedras do Porto</strong>, os monólitos brilhantes nas docas, levam você de volta a qualquer continente já visitado. A névoa do minimapa só some onde você anda.</p>
       <blockquote>Não tem pressa. O mapa é grande, mas o caminho é seu.</blockquote>
-      <p>Os <strong>NPCs</strong> têm missões. Aperte E perto deles: tem caminhada, pergunta e conversa. Cada missão paga experiência e um título, e o Diário mostra quanto falta para a próxima.</p>
+      <p>Os <strong>NPCs</strong> têm missões. Aperte F perto deles: tem caminhada, pergunta e conversa. Cada missão paga experiência e um título, e o Diário mostra quanto falta para a próxima.</p>
       <p>Clique no chão e o boneco vai até ali sozinho. Nas clareiras com bandeira, os monstros abrem uma prova: acertar tira vida deles, errar tira a sua. Derrube os três guardiões, puxe a alavanca e o chefe aparece. A vitória dá experiência, item e perícia do continente. A <strong>Ficha</strong>, na tecla C, mostra tudo.</p>
-      <p>A <strong>Rede</strong>, na tecla R, liga você aos outros jogadores: canais por continente, DMs privadas e a lista de quem está no mundo agora. Sua conta é uma chave criada no seu navegador, sem cadastro. Se encontrar outra pessoa na praça, acene.</p>
+      <p>A <strong>Rede</strong>, na tecla E, liga você aos outros jogadores: canais por continente, DMs privadas e a lista de quem está no mundo agora. Sua conta é uma chave criada no seu navegador, sem cadastro. Se encontrar outra pessoa na praça, acene.</p>
     `,
   },
   echo: {
@@ -479,9 +479,9 @@ export const NPCS = {
     name: "Dona Zefa",
     lines: [
       "Bem-vindo ao Porto. Seis continentes, mais terra do que os olhos acreditam.",
-      "Cada farol da doca acende uma Pedra do Porto. Aperte E nas pedras para voltar rápido.",
+      "Cada farol da doca acende uma Pedra do Porto. Aperte F nas pedras para voltar rápido.",
       "O diário guarda o que você já viu. Não precisa decorar nada.",
-      "Ao lado de cada acampamento de caça tem uma boca de caverna. Lá embaixo o bicho não espera você apertar E: ele vê primeiro.",
+      "Ao lado de cada acampamento de caça tem uma boca de caverna. Lá embaixo o bicho não espera você apertar F: ele vê primeiro.",
     ],
   },
   ada: {
@@ -489,7 +489,7 @@ export const NPCS = {
     lines: [
       "Um somador é só uma frase feita de fios. Aprenda a ler a frase e o processador inteiro começa a fazer sentido.",
       "A memória do circuito é o que separa contar de lembrar.",
-      "A boca de pedra ao lado do acampamento desce fundo. Lá embaixo o Bit não espera você apertar E: ele sente primeiro.",
+      "A boca de pedra ao lado do acampamento desce fundo. Lá embaixo o Bit não espera você apertar F: ele sente primeiro.",
     ],
   },
   hypatia: {
