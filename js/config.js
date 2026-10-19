@@ -30,6 +30,7 @@ export const STORAGE = {
   room: "mundo-song:room:v1",
   quests: "mundo-song:quests:v1",
   nostr: "mundo-song:nostr:v1",
+  rpg: "mundo-song:rpg:v1",
 };
 
 // A rede do mundo: relays públicos, canais do jogo e DMs privadas (NIP-17).

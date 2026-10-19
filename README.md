@@ -42,10 +42,35 @@ aceitar, responder e entregar. São três tipos:
 - **pergunta**: um enigma por NPC, com explicação depois da resposta. Errar não
   custa nada, tentar de novo é o ponto.
 - **rede**: falar no canal público e mandar uma DM para alguém.
+- **caçada**: derrubar três monstros nas clareiras.
 
 Cada missão dá XP e um título. O Diário (`J`) mostra o que está em andamento,
 quanto falta e o que já foi concluído. O cartão do NPC mostra o mesmo progresso
 e o botão de concluir quando o objetivo está cumprido.
+
+## Caçadas e ficha
+
+Clique no chão e o boneco anda até ali sozinho, contornando água, parede e
+árvore. Clique numa estação, NPC, monstro ou alavanca para ele ir até perto e
+interagir. WASD cancela o caminho.
+
+Cada continente tem uma clareira de caça com três guardiões e uma alavanca. Cada
+monstro abre uma prova de perguntas:
+
+- **fácil**: duas respostas certas derrubam, errar tira 2 de vida.
+- **médio**: três certas, errar tira 3.
+- **difícil**: três certas, errar tira 4.
+
+Acertar também sobe a perícia do continente (Lógica, Abstração, Mecânica,
+Reação, Harmonia, Inferência). A perícia aumenta o dano. Derrubar os três
+guardiões acende a alavanca e libera o chefe, que faz quatro perguntas e deixa o
+item raro. Cada vitória dá XP e item; os monstros voltam depois de cinco minutos,
+o chefe depois de vinte. O item do chefe é uma relíquia: cada uma soma 5 de vida
+máxima.
+
+A **Ficha** (`C`) mostra vida, nível, perícias e mochila. A vida volta devagar
+fora de duelo; a Poção de Café cura na hora. Cair num duelo não perde item nem
+XP: o boneco acorda no Porto com a vida cheia.
 
 ## A Rede
 
@@ -83,8 +108,8 @@ A parte que não depende do navegador tem uma conferência só:
 node test/core.test.mjs
 ```
 
-Ela cobre o progresso e a persistência das missões e o filtro que mantém
-conteúdo de fora fora dos canais.
+Ela cobre o progresso e a persistência das missões, o filtro que mantém
+conteúdo de fora fora dos canais e o ciclo de duelo, dano, alavanca e chefe.
 
 ## Rodar na mão
 
@@ -108,6 +133,12 @@ Depois abra `http://localhost:8000`.
 | `js/net.js` | sala compartilhada por MQTT sobre WebSocket |
 | `js/nostr.js` | conta, canais, DMs NIP-17, perfis e presença Nostr |
 | `js/quests.js` | missões, progresso, XP e títulos |
+| `js/path.js` | caminho A* do clique até o destino |
+| `js/rpg.js` | vida, perícias, itens, monstros, alavancas e duelo |
+| `js/rpg-data.js` | caçadas, monstros, itens e as 54 perguntas |
+| `js/creature.js` | desenho dos monstros no mapa e no duelo |
+| `js/sheet.js` | a ficha de aventureiro |
+| `js/duel.js` | a janela de prova contra cada monstro |
 | `js/social.js` | janela da Rede: canais, DMs, pessoas e conta |
 | `js/audio.js` | síntese, ambiente e sequenciador |
 | `js/content.js` | os 32 textos e as falas dos NPCs |

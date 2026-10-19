@@ -16,6 +16,7 @@ export const POSTS = {
       <p>Cada estação abre uma página e soma experiência. O <strong>Diário</strong> guarda o que você já encontrou. As <strong>Pedras do Porto</strong>, os monólitos brilhantes nas docas, levam você de volta a qualquer continente já visitado. A névoa do minimapa só some onde você anda.</p>
       <blockquote>Não tem pressa. O mapa é grande, mas o caminho é seu.</blockquote>
       <p>Os <strong>NPCs</strong> têm missões. Aperte E perto deles: tem caminhada, pergunta e conversa. Cada missão paga experiência e um título, e o Diário mostra quanto falta para a próxima.</p>
+      <p>Clique no chão e o boneco vai até ali sozinho. Nas clareiras com bandeira, os monstros abrem uma prova: acertar tira vida deles, errar tira a sua. Derrube os três guardiões, puxe a alavanca e o chefe aparece. A vitória dá experiência, item e perícia do continente. A <strong>Ficha</strong>, na tecla C, mostra tudo.</p>
       <p>A <strong>Rede</strong>, na tecla R, liga você aos outros jogadores: canais por continente, DMs privadas e a lista de quem está no mundo agora. Sua conta é uma chave criada no seu navegador, sem cadastro. Se encontrar outra pessoa na praça, acene.</p>
     `,
   },

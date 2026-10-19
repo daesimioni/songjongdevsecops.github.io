@@ -31,6 +31,15 @@ export const QUESTS = [
     reward: { xp: 45, title: "Curioso perigoso" },
   },
   {
+    id: "cacador",
+    npc: "guia",
+    giver: "Dona Zefa",
+    title: "Caçador de perguntas",
+    brief: "Derrube três monstros nas clareiras de caça. Cada um guarda uma pergunta e deixa um item.",
+    goal: { type: "hunts", count: 3 },
+    reward: { xp: 45, title: "Caçador" },
+  },
+  {
     id: "voz-do-mundo",
     npc: "guia",
     giver: "Dona Zefa",
@@ -269,6 +278,9 @@ export class Quests {
     } else if (goal.type === "labs") {
       need = goal.count;
       have = this.data.stats.labs.length;
+    } else if (goal.type === "hunts") {
+      need = goal.count;
+      have = Number(this.data.stats.hunts || 0);
     } else if (goal.type === "social") {
       need = goal.keys.length;
       have = goal.keys.filter((k) => Number(this.data.stats[k] || 0) > 0).length;

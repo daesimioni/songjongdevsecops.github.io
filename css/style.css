@@ -634,6 +634,15 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
   font-family: var(--mono);
 }
 
+@media (max-width: 980px) {
+  .hud { flex-wrap: wrap; gap: 8px; }
+  .brand { flex: 1 1 100%; }
+  .hud-actions { width: 100%; justify-content: flex-end; }
+  .hud-btn { font-size: 11px; padding: 6px 8px; }
+  .hud-btn kbd { display: none; }
+  .pill-progress { display: none; }
+}
+
 @media (max-width: 720px) {
   .hud { padding: 10px 12px; flex-wrap: wrap; gap: 8px; }
   .pill-progress { display: none; }
@@ -1431,4 +1440,218 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
   .rede-msgs { max-height: 34vh; }
   .rede-dm-left span { max-width: 180px; }
   .hud-actions { flex-wrap: wrap; }
+}
+
+/* ---------- ficha e caçadas ---------- */
+.sheet-card {
+  width: min(680px, 94vw);
+  max-height: min(88vh, 820px);
+}
+.sheet-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.022);
+}
+.sheet-id b { display: block; font-family: var(--pixel); font-size: 11px; color: var(--amber); line-height: 1.6; }
+.sheet-id span { display: block; margin-top: 5px; font-family: var(--mono); font-size: 10.5px; color: var(--muted); }
+.sheet-vitals { width: 210px; flex: none; }
+.sheet-hp-label { display: flex; justify-content: space-between; gap: 8px; font-family: var(--mono); font-size: 10px; color: var(--muted); margin-bottom: 5px; }
+.sheet-hp-label b { color: var(--rose); }
+.sheet-bar { height: 6px; overflow: hidden; border-radius: 4px; background: rgba(255, 255, 255, 0.07); }
+.sheet-bar i { display: block; height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--rose), var(--amber)); transition: width 0.2s; }
+.sheet-sec {
+  margin: 20px 0 9px;
+  font-family: var(--pixel);
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--amber);
+}
+.sheet-skills { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.skill-card {
+  padding: 10px 11px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.022);
+}
+.skill-head { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; margin-bottom: 6px; }
+.skill-head b { font-family: var(--mono); font-size: 12px; color: var(--c); }
+.skill-head span { font-family: var(--mono); font-size: 10px; color: var(--muted); }
+.skill-card .sheet-bar i { background: var(--c); }
+.skill-foot { display: flex; justify-content: space-between; gap: 8px; margin-top: 6px; font-family: var(--mono); font-size: 9.5px; line-height: 1.4; color: var(--muted); }
+.skill-foot span:last-child { color: var(--ink); white-space: nowrap; }
+.sheet-items { display: grid; gap: 7px; }
+.item-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.022);
+}
+.item-icon {
+  width: 30px;
+  height: 30px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--c);
+  border-radius: 5px;
+  background: color-mix(in srgb, var(--c) 12%, transparent);
+  color: var(--c);
+  font-family: var(--pixel);
+  font-size: 10px;
+}
+.item-text { flex: 1; min-width: 0; }
+.item-text b { display: block; font-family: var(--mono); font-size: 11.5px; color: var(--ink); margin-bottom: 2px; }
+.item-text span { display: block; font-family: var(--mono); font-size: 10px; line-height: 1.45; color: var(--muted); }
+.item-use {
+  flex: none;
+  padding: 6px 9px;
+  border: 1px solid rgba(97, 244, 192, 0.45);
+  border-radius: 6px;
+  background: rgba(97, 244, 192, 0.08);
+  color: var(--mint);
+  font-family: var(--mono);
+  font-size: 10px;
+}
+.sheet-empty { font-family: var(--mono); font-size: 11px; line-height: 1.6; color: var(--muted); margin: 0; }
+.sheet-note {
+  margin: 18px 0 0;
+  padding-top: 12px;
+  border-top: 1px dashed var(--line);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+.duel-card {
+  width: min(640px, 94vw);
+  max-height: min(90vh, 840px);
+}
+.duel-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 12px; }
+#duel-kicker {
+  font-family: var(--pixel);
+  font-size: 7px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--amber);
+}
+.duel-top { display: flex; gap: 16px; align-items: center; margin-bottom: 10px; }
+#duel-sprite {
+  width: 132px;
+  height: 132px;
+  flex: none;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: radial-gradient(70% 70% at 50% 45%, rgba(180, 140, 255, 0.12), rgba(5, 8, 20, 0.4));
+  image-rendering: pixelated;
+}
+.duel-meta { flex: 1; min-width: 0; }
+.duel-meta h2 { margin: 0 0 5px; font-family: var(--pixel); font-size: 13px; line-height: 1.5; color: var(--ink); }
+#duel-sub { margin: 0 0 10px; font-family: var(--mono); font-size: 10.5px; color: var(--muted); }
+.duel-bar + .duel-bar { margin-top: 7px; }
+.duel-bar-head { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 4px; font-family: var(--mono); font-size: 9.5px; color: var(--muted); }
+.duel-bar-head b { color: var(--ink); }
+.duel-bar-track { height: 6px; overflow: hidden; border-radius: 4px; background: rgba(255, 255, 255, 0.07); }
+.duel-bar-track i { display: block; height: 100%; border-radius: 4px; transition: width 0.2s; }
+.duel-bar.enemy .duel-bar-track i { background: linear-gradient(90deg, var(--rose), var(--amber)); }
+.duel-bar.self .duel-bar-track i { background: linear-gradient(90deg, var(--mint), var(--cyan)); }
+.duel-question { margin: 10px 0 12px; font-size: 15px; line-height: 1.55; color: var(--ink); }
+.duel-options { display: grid; gap: 7px; }
+.duel-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.03);
+  color: #d9d3ee;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.45;
+  text-align: left;
+}
+.duel-option kbd {
+  flex: none;
+  min-width: 18px;
+  padding: 2px 4px;
+  text-align: center;
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+  color: var(--amber);
+  font-size: 7px;
+}
+.duel-option:hover:not(:disabled) { border-color: var(--line-strong); background: rgba(180, 140, 255, 0.07); }
+.duel-option.right { border-color: rgba(97, 244, 192, 0.7); background: rgba(97, 244, 192, 0.1); color: var(--ink); }
+.duel-option.wrong { border-color: rgba(255, 122, 168, 0.65); background: rgba(255, 122, 168, 0.08); }
+.duel-option:disabled { cursor: default; }
+.duel-feedback {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-left: 2px solid var(--line-strong);
+  background: rgba(255, 255, 255, 0.03);
+  font-family: var(--mono);
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+.duel-feedback b { display: block; margin-bottom: 4px; }
+.duel-feedback.good { border-color: var(--mint); }
+.duel-feedback.good b { color: var(--mint); }
+.duel-feedback.bad { border-color: var(--rose); }
+.duel-feedback.bad b { color: var(--rose); }
+.duel-next {
+  width: 100%;
+  margin-top: 12px;
+  padding: 11px 12px;
+  border: 1px solid rgba(97, 244, 192, 0.5);
+  border-radius: 7px;
+  background: rgba(97, 244, 192, 0.09);
+  color: var(--mint);
+  font-family: var(--mono);
+  font-size: 12px;
+}
+.duel-next:hover { background: rgba(97, 244, 192, 0.16); }
+.duel-hint { margin: 10px 0 0; font-family: var(--mono); font-size: 10px; line-height: 1.5; color: var(--muted); }
+.duel-end {
+  margin-top: 8px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.025);
+}
+.duel-end h3 { margin: 0 0 8px; font-family: var(--pixel); font-size: 11px; line-height: 1.5; }
+.duel-end.win h3 { color: var(--mint); }
+.duel-end.lose h3 { color: var(--rose); }
+.duel-end p { margin: 0; font-family: var(--mono); font-size: 11px; line-height: 1.6; color: var(--muted); }
+.duel-loot { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-top: 10px; }
+.loot-chip {
+  padding: 4px 8px;
+  border: 1px solid rgba(255, 200, 87, 0.35);
+  border-radius: 999px;
+  background: rgba(255, 200, 87, 0.07);
+  color: var(--amber);
+  font-family: var(--mono);
+  font-size: 10px;
+}
+
+@media (max-width: 720px) {
+  .sheet-top { flex-direction: column; align-items: stretch; gap: 10px; }
+  .sheet-vitals { width: 100%; }
+  .sheet-skills { grid-template-columns: 1fr; }
+  .duel-top { flex-direction: column; align-items: stretch; gap: 10px; }
+  #duel-sprite { width: 96px; height: 96px; align-self: center; }
+  .duel-meta h2 { font-size: 11px; }
+  .duel-question { font-size: 14px; }
 }

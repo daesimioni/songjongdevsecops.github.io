@@ -2,6 +2,7 @@ import {
   MAP_W, MAP_H, TILE, TILE_KIND as K, SOLID, CONTINENTS, SITES,
   WAYSTONES, NPC_SPAWNS, CAT_SPAWN, REVEAL_RADIUS,
 } from "./config.js";
+import { GROUNDS } from "./rpg-data.js";
 
 const { WATER, SAND, GRASS, PATH, TREE, FLOWER, BRIDGE, PLAZA } = K;
 
@@ -305,8 +306,26 @@ export function createWorld() {
     return false;
   }
 
+  const hunters = GROUNDS.map((g) => {
+    const accent = CONTINENTS[g.continent]?.accent || "#ffc857";
+    return {
+      ...g,
+      accent,
+      banner: { ...g.bannerPos, accent },
+      lever: { ...g.lever, accent, pulled: false },
+      monsters: g.monsters.map((m) => ({ ...m, accent, groundId: g.id, continent: g.continent })),
+      boss: { ...g.boss, accent, groundId: g.id, continent: g.continent, alive: false },
+    };
+  });
+  const monsters = hunters.flatMap((h) => h.monsters);
+  for (const h of hunters) {
+    for (const m of h.monsters) m.ground = h;
+    h.boss.ground = h;
+    h.lever.ground = h;
+  }
+
   return {
-    tiles, decor, stations, waystones, npcs,
+    tiles, decor, stations, waystones, npcs, hunters, monsters,
     cat: { ...CAT_SPAWN, facing: 1, t: 0, moving: false },
     get, set, isSolidTile, boxCollides,
     continentAt, continentAtTile,

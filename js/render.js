@@ -3,6 +3,7 @@ import {
 } from "./config.js";
 import { hash2 } from "./world.js";
 import { NPCS } from "./content.js";
+import { drawCreature } from "./creature.js";
 
 const BODY_W = 12;
 const BODY_H = 17;
@@ -881,6 +882,112 @@ export function createRenderer(canvas, world) {
     ctx.fillRect(px - 1, py - 11, 2, 6);
   }
 
+  function drawHunterRing(h, time) {
+    const px = h.center.x * TILE;
+    const py = h.center.y * TILE;
+    const pulse = 0.5 + Math.sin(time * 0.002 + h.center.x) * 0.5;
+    ctx.save();
+    ctx.fillStyle = hexA(h.accent, h.ready ? 0.1 : 0.055);
+    ctx.beginPath();
+    ctx.ellipse(px, py, TILE * 3.1, TILE * 2.8, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.setLineDash([5, 6]);
+    ctx.lineWidth = 1.4;
+    ctx.strokeStyle = hexA(h.accent, 0.3 + pulse * 0.18);
+    ctx.beginPath();
+    ctx.ellipse(px, py, TILE * 3.6, TILE * 3.2, 0, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    for (let i = 0; i < 8; i++) {
+      const a = (i / 8) * Math.PI * 2;
+      ctx.fillStyle = hexA(h.accent, 0.35 + pulse * 0.2);
+      ctx.fillRect(px + Math.cos(a) * TILE * 3.6 - 1, py + Math.sin(a) * TILE * 3.2 - 1, 2, 2);
+    }
+    ctx.restore();
+  }
+
+  function drawBanner(h, time) {
+    const px = h.banner.x * TILE;
+    const py = h.banner.y * TILE;
+    ctx.fillStyle = "#141827";
+    ctx.fillRect(px - 2, py - 28, 3, 28);
+    ctx.fillStyle = hexA(h.accent, 0.9);
+    ctx.fillRect(px + 1, py - 27, 12, 8);
+    ctx.fillStyle = "rgba(8,10,20,0.85)";
+    ctx.fillRect(px + 3, py - 25, 2, 2);
+    ctx.fillRect(px + 8, py - 25, 2, 2);
+    const glow = 0.5 + Math.sin(time * 0.004) * 0.5;
+    ctx.fillStyle = hexA(h.accent, 0.25 + glow * 0.2);
+    ctx.fillRect(px - 4, py - 31, 7, 2);
+  }
+
+  function drawLever(lever, time) {
+    const px = lever.x * TILE;
+    const py = lever.y * TILE;
+    ctx.fillStyle = "#141827";
+    ctx.fillRect(px - 7, py - 5, 14, 5);
+    ctx.fillStyle = "#3a3f5c";
+    ctx.fillRect(px - 5, py - 10, 10, 5);
+    ctx.fillStyle = "#22263a";
+    ctx.fillRect(px - 2, py - 24, 4, 14);
+    const angle = lever.pulled ? 0.95 : -0.65;
+    const hx = px + Math.sin(angle) * 13;
+    const hy = py - 23 - Math.cos(angle) * 5;
+    ctx.strokeStyle = lever.pulled ? "#7ee787" : "#b48cff";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(px, py - 22);
+    ctx.lineTo(hx, hy);
+    ctx.stroke();
+    ctx.fillStyle = lever.ready ? "#ffc857" : (lever.pulled ? "#7ee787" : "#8b84ad");
+    ctx.fillRect(hx - 3, hy - 3, 6, 6);
+    if (lever.ready) {
+      const glow = 0.5 + Math.sin(time * 0.005) * 0.5;
+      ctx.fillStyle = `rgba(255, 200, 87, ${0.18 + glow * 0.2})`;
+      ctx.beginPath();
+      ctx.ellipse(px, py - 12, 10, 12, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  function drawMonster(m, time, boss) {
+    const px = m.x * TILE;
+    const py = m.y * TILE;
+    ctx.save();
+    ctx.translate(px, py);
+    drawCreature(ctx, boss ? "boss" : m.kind, m.accent, time, boss ? 1.15 : 1);
+    ctx.restore();
+    const label = boss ? `CHEFE · ${m.name}` : `${m.name} · nv ${m.level}`;
+    drawNameTag(label, px, py - (boss ? 42 : 30), m.accent);
+  }
+
+  function drawPathLine(points) {
+    ctx.save();
+    ctx.fillStyle = "rgba(255, 200, 87, 0.32)";
+    for (let i = 1; i < points.length; i += 2) {
+      const p = points[i];
+      if (p.x * TILE < camX || p.x * TILE > camX + vw / zoom) continue;
+      if (p.y * TILE < camY || p.y * TILE > camY + vh / zoom) continue;
+      ctx.fillRect(p.x * TILE - 1, p.y * TILE - 1, 2, 2);
+    }
+    ctx.restore();
+  }
+
+  function drawPathGoal(goal, time) {
+    const px = goal.x * TILE;
+    const py = goal.y * TILE;
+    const pulse = 0.5 + Math.sin(time * 0.008) * 0.5;
+    ctx.save();
+    ctx.strokeStyle = `rgba(255, 200, 87, ${0.35 + pulse * 0.35})`;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.ellipse(px, py, 9 + pulse * 3, 5 + pulse * 2, 0, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.fillStyle = `rgba(255, 200, 87, ${0.4 + pulse * 0.3})`;
+    ctx.fillRect(px - 1, py - 9, 2, 5);
+    ctx.restore();
+  }
+
   function drawNpc(npc, time) {
     const px = npc.x * TILE, py = npc.y * TILE;
     const bob = Math.sin(time * 0.002 + npc.bob) * 1.2;
@@ -1180,6 +1287,10 @@ export function createRenderer(canvas, world) {
       drawDecor(d, time);
     }
 
+    for (const h of world.hunters) drawHunterRing(h, time);
+    if (player.pathLine && player.pathLine.length) drawPathLine(player.pathLine);
+    if (player.pathGoal) drawPathGoal(player.pathGoal, time);
+
     if (player.boost > 0.4 && moving) {
       const rear = skiffRear(player.dir);
       for (let i = 0; i < 2; i++) {
@@ -1204,6 +1315,14 @@ export function createRenderer(canvas, world) {
     trail = trail.filter((t) => t.life > 0);
 
     const drawables = [];
+    for (const h of world.hunters) {
+      drawables.push({ y: h.banner.y * TILE, fn: () => drawBanner(h, time) });
+      drawables.push({ y: h.lever.y * TILE, fn: () => drawLever(h.lever, time) });
+      for (const m of h.monsters) {
+        if (m.alive) drawables.push({ y: m.y * TILE, fn: () => drawMonster(m, time, false) });
+      }
+      if (h.boss.alive) drawables.push({ y: h.boss.y * TILE, fn: () => drawMonster(h.boss, time, true) });
+    }
     for (const w of world.waystones) {
       drawables.push({ y: w.y * TILE, fn: () => drawWaystone(w, time) });
     }
@@ -1297,6 +1416,15 @@ export function createRenderer(canvas, world) {
     for (const p of peers) {
       mctx.fillStyle = p.color || "#61f4c0";
       mctx.fillRect(Math.round(p.x * 2) - 1, Math.round(p.y * 2) - 1, 3, 3);
+    }
+    for (const h of world.hunters) {
+      if (!world.isExplored(Math.floor(h.center.x), Math.floor(h.center.y))) continue;
+      const mx = Math.round(h.center.x * 2);
+      const my = Math.round(h.center.y * 2);
+      mctx.fillStyle = "#0a0c18";
+      mctx.fillRect(mx - 2, my - 2, 5, 5);
+      mctx.fillStyle = h.boss.alive ? "#ff7aa8" : (h.ready ? "#ffc857" : h.accent);
+      mctx.fillRect(mx - 1, my - 1, 3, 3);
     }
     mctx.fillStyle = "#fff";
     mctx.fillRect(Math.round(player.x * 2) - 1, Math.round(player.y * 2) - 1, 3, 3);

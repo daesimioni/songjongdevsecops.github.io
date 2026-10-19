@@ -11,6 +11,10 @@ import { Net } from "./net.js";
 import { Rede } from "./nostr.js";
 import { Quests } from "./quests.js";
 import { createSocial } from "./social.js";
+import { findPath, nearestWalkable } from "./path.js";
+import { RPG } from "./rpg.js";
+import { createSheet } from "./sheet.js";
+import { createDuel } from "./duel.js";
 
 const $ = (id) => document.getElementById(id);
 
@@ -74,6 +78,8 @@ const player = {
   colorIndex: Math.floor(Math.random() * PLAYER_COLORS.length),
   bubble: null,
   boost: 0,
+  pathLine: null,
+  pathGoal: null,
 };
 player.color = PLAYER_COLORS[player.colorIndex].shirt;
 
@@ -100,6 +106,10 @@ const state = {
   fogDirty: false,
   fogSavedAt: 0,
   sprint: false,
+  path: null,
+  pending: null,
+  lastHp: -1,
+  lastHpMax: -1,
 };
 
 for (const cid of CONTINENT_ORDER) {
@@ -115,6 +125,44 @@ const quests = new Quests({
   toast,
   onReady: () => { audio.blip(); renderer.kick(0.35); },
   onChange: () => { if (state.modal === "journal") buildJournal(); },
+});
+
+const rpg = new RPG({
+  gainXp,
+  toast,
+  audio,
+  getLevel: level,
+  onRespawn: () => {
+    player.x = SPAWN.x;
+    player.y = SPAWN.y;
+    player.moving = false;
+    player.continentId = "hub";
+    state.path = null;
+    state.pending = null;
+    player.pathLine = null;
+    player.pathGoal = null;
+    state.lastContinent = "hub";
+    showZoneCard(CONTINENTS.hub, false);
+    renderer.kick(0.7);
+    audio.error();
+    toast("Você acordou no Porto do Início. A vida voltou cheia.", 5200);
+  },
+});
+const sheetUi = createSheet({
+  rpg,
+  getLevel: level,
+  getXp: () => state.xp,
+  getTitle: () => quests.title,
+  toast,
+  audio,
+});
+let duelUi = null;
+duelUi = createDuel({
+  rpg,
+  toast,
+  audio,
+  onClose: () => closeModal("duel"),
+  onVictory: () => quests.report("hunts"),
 });
 
 function readJSON(key, fallback) {
@@ -204,6 +252,50 @@ function bootSocial() {
   rede.init()
     .then(() => { if (state.net) state.net.setIdentity(rede.pk); })
     .catch(() => {});
+}
+
+function openSheet() {
+  if (!state.started) return;
+  stopSprint();
+  if (state.panelOpen) closePanel();
+  closeChat();
+  sheetUi.render();
+  openModal("sheet");
+  audio.open();
+}
+
+function openDuel(monster, ground, boss = false) {
+  if (!duelUi.open(monster, ground, boss)) return;
+  openModal("duel");
+  audio.open();
+}
+
+function pullLever(ground) {
+  const res = rpg.pullLever(ground);
+  if (!res.ok) {
+    toast(res.reason, 3600);
+    audio.error();
+    return;
+  }
+  toast("O selo se abriu. O chefe da caçada acordou.", 4600);
+  audio.chime();
+  renderer.kick(0.6);
+}
+
+function interactTarget(target) {
+  if (!target) return;
+  if (target.kind === "station") openPost(target.obj.post, target.obj);
+  else if (target.kind === "waystone") openTravel();
+  else if (target.kind === "npc") {
+    const npc = target.obj;
+    const lines = NPCS[npc.id]?.lines || ["..."];
+    npc.lineIndex = ((npc.lineIndex || 0) + 1) % lines.length;
+    npc.bubble = { text: lines[npc.lineIndex], until: performance.now() + 6500 };
+    openNpc(npc);
+  }
+  else if (target.kind === "monster") openDuel(target.obj, target.ground);
+  else if (target.kind === "boss") openDuel(target.ground.boss, target.ground, true);
+  else if (target.kind === "lever") pullLever(target.ground);
 }
 
 function openRede() {
@@ -361,6 +453,7 @@ function gainXp(n) {
   updateProgress();
   const after = level();
   if (after > before) {
+    rpg.heal((after - before) * 4);
     setTimeout(() => {
       toast(`Nível ${after}. Você está ficando bom nisso.`, 3200);
       audio.chime();
@@ -500,6 +593,7 @@ function showZoneCard(continent, first) {
 
 function stopSprint() {
   state.sprint = false;
+  clearPath();
   $("touch-sprint")?.classList.remove("active");
 }
 
@@ -635,6 +729,7 @@ function openModal(name) {
 function closeModal(name) {
   if (name && $(name)) $(name).hidden = true;
   if (name === "rede") social?.close();
+  if (name === "duel") duelUi?.close();
   if (name === "npc") state.npc = null;
   if (state.modal === name) state.modal = null;
   if (!state.modal && !state.panelOpen) $("scrim").hidden = true;
@@ -738,33 +833,31 @@ function closeChat() {
 
 function interact() {
   if (!state.started || state.panelOpen || state.modal) return;
+  clearPath();
   const target = state.nearest;
   if (!target) return;
-  if (target.kind === "station") openPost(target.station.post, target.station);
-  else if (target.kind === "waystone") openTravel();
-  else if (target.kind === "npc") {
-    const npc = target.npc;
-    const lines = NPCS[npc.id]?.lines || ["..."];
-    npc.lineIndex = ((npc.lineIndex || 0) + 1) % lines.length;
-    npc.bubble = { text: lines[npc.lineIndex], until: performance.now() + 6500 };
-    openNpc(npc);
-  }
+  interactTarget(target);
 }
 
 function findNearest() {
   let best = null;
-  let bestD = INTERACT_RADIUS;
-  for (const s of world.stations) {
-    const d = Math.hypot(s.x - player.x, s.y - player.y);
-    if (d < bestD) { bestD = d; best = { kind: "station", station: s }; }
+  let bestD = Infinity;
+  const near = (kind, obj, ground, radius = INTERACT_RADIUS) => {
+    const d = Math.hypot(obj.x - player.x, obj.y - player.y);
+    if (d <= radius && d < bestD) {
+      bestD = d;
+      best = { kind, obj, ground };
+    }
+  };
+  for (const s of world.stations) near("station", s);
+  for (const w of world.waystones) near("waystone", w);
+  for (const n of world.npcs) near("npc", n);
+  for (const m of world.monsters) {
+    if (m.alive) near("monster", m, m.ground, 2.1);
   }
-  for (const w of world.waystones) {
-    const d = Math.hypot(w.x - player.x, w.y - player.y);
-    if (d < bestD) { bestD = d; best = { kind: "waystone", waystone: w }; }
-  }
-  for (const n of world.npcs) {
-    const d = Math.hypot(n.x - player.x, n.y - player.y);
-    if (d < bestD) { bestD = d; best = { kind: "npc", npc: n }; }
+  for (const h of world.hunters) {
+    if (h.boss.alive) near("boss", h.boss, h, 2.2);
+    near("lever", h.lever, h, 1.9);
   }
   return best;
 }
@@ -778,9 +871,12 @@ function updatePrompt() {
   state.nearest = near;
   if (!near) { $("prompt").hidden = true; return; }
   let label;
-  if (near.kind === "station") label = near.station.label;
-  else if (near.kind === "waystone") label = near.waystone.name;
-  else label = `falar com ${NPCS[near.npc.id]?.name || "alguém"}`;
+  if (near.kind === "station") label = near.obj.label;
+  else if (near.kind === "waystone") label = near.obj.name;
+  else if (near.kind === "npc") label = `falar com ${NPCS[near.obj.id]?.name || "alguém"}`;
+  else if (near.kind === "monster") label = `desafiar ${near.obj.name}`;
+  else if (near.kind === "boss") label = `enfrentar ${near.obj.name}`;
+  else label = near.obj.pulled ? "passagem aberta" : "puxar a alavanca";
   if ($("prompt-label").textContent !== label) $("prompt-label").textContent = label;
   $("prompt").hidden = false;
 }
@@ -791,17 +887,11 @@ function updateBoost(dt, active) {
   if (player.boost < 0.01) player.boost = 0;
 }
 
-function updateMovement(dt) {
-  const sprinting = state.sprint;
-  const keys = state.keys;
-  let dx = 0, dy = 0;
-  if (keys.has("a") || keys.has("arrowleft") || state.touch.left) dx -= 1;
-  if (keys.has("d") || keys.has("arrowright") || state.touch.right) dx += 1;
-  if (keys.has("w") || keys.has("arrowup") || state.touch.up) dy -= 1;
-  if (keys.has("s") || keys.has("arrowdown") || state.touch.down) dy += 1;
-  if (dx === 0 && dy === 0) { player.moving = false; return; }
+function walkStep(dx, dy, dt) {
   const len = Math.hypot(dx, dy);
+  if (!len) { player.moving = false; return false; }
   dx /= len; dy /= len;
+  const sprinting = state.sprint;
   const step = PLAYER_SPEED * (sprinting ? SPRINT_MULT : 1) * dt;
   const oldX = player.x, oldY = player.y;
   const nx = player.x + dx * step;
@@ -814,12 +904,79 @@ function updateMovement(dt) {
   if (Math.abs(dx) > Math.abs(dy)) player.dir = dx > 0 ? 2 : 1;
   else player.dir = dy > 0 ? 0 : 3;
   player.moving = moved;
-  if (!moved) return;
+  if (!moved) return false;
   const now = performance.now();
   if (now - state.footstepAt > (sprinting ? 155 : 340)) {
     state.footstepAt = now;
     if (sprinting) audio.hover(); else audio.footstep();
   }
+  return true;
+}
+
+function updateMovement(dt) {
+  const keys = state.keys;
+  let dx = 0, dy = 0;
+  if (keys.has("a") || keys.has("arrowleft") || state.touch.left) dx -= 1;
+  if (keys.has("d") || keys.has("arrowright") || state.touch.right) dx += 1;
+  if (keys.has("w") || keys.has("arrowup") || state.touch.up) dy -= 1;
+  if (keys.has("s") || keys.has("arrowdown") || state.touch.down) dy += 1;
+  if (dx === 0 && dy === 0) { player.moving = false; return; }
+  walkStep(dx, dy, dt);
+}
+
+function clearPath() {
+  state.path = null;
+  state.pending = null;
+  player.pathLine = null;
+  player.pathGoal = null;
+}
+
+function setPathTo(x, y, pending = null) {
+  clearPath();
+  const path = findPath(world, { x: player.x, y: player.y }, { x, y });
+  if (!path || !path.length) {
+    toast("Não achei um caminho até aí.", 2800);
+    return false;
+  }
+  state.path = path;
+  state.pending = pending;
+  player.pathLine = path;
+  const last = path[path.length - 1];
+  player.pathGoal = { x: last.x, y: last.y };
+  return true;
+}
+
+function updateAutoWalk(dt) {
+  const path = state.path;
+  if (!path || !path.length) return false;
+  const stepLen = PLAYER_SPEED * (state.sprint ? SPRINT_MULT : 1) * dt;
+  let target = path[0];
+  let dx = target.x - player.x;
+  let dy = target.y - player.y;
+  let dist = Math.hypot(dx, dy);
+  if (dist <= stepLen + 0.09) {
+    player.x = target.x;
+    player.y = target.y;
+    player.moving = true;
+    if (Math.abs(dx) > Math.abs(dy)) player.dir = dx > 0 ? 2 : 1;
+    else player.dir = dy > 0 ? 0 : 3;
+    path.shift();
+    if (!path.length) {
+      const pending = state.pending;
+      clearPath();
+      if (pending) {
+        const d = Math.hypot(pending.obj.x - player.x, pending.obj.y - player.y);
+        if (d <= INTERACT_RADIUS + 1.2) interactTarget(pending);
+        else toast("Não cheguei perto o bastante. Clique de novo.", 2800);
+      }
+    }
+    return true;
+  }
+  if (!walkStep(dx, dy, dt)) {
+    clearPath();
+    toast("O caminho travou. Clique de novo.", 2600);
+  }
+  return true;
 }
 
 function updateCat(dt) {
@@ -857,8 +1014,10 @@ function loop(now) {
     loop.last = now;
     const active = state.started && !state.panelOpen && !state.modal && !state.chatOpen;
     updateBoost(dt, active);
+    rpg.tick();
     if (active) {
-      updateMovement(dt);
+      if (state.path) updateAutoWalk(dt);
+      else updateMovement(dt);
       updateZone();
     } else {
       player.moving = false;
@@ -869,7 +1028,22 @@ function loop(now) {
       state.fogSavedAt = now;
       saveFog();
     }
+    const hpNow = rpg.hp();
+    const hpMaxNow = rpg.hpMax();
+    if (hpNow !== state.lastHp || hpMaxNow !== state.lastHpMax) {
+      state.lastHp = hpNow;
+      state.lastHpMax = hpMaxNow;
+      const hpEl = $("hp-hud");
+      if (hpEl) hpEl.textContent = `❤ ${hpNow}/${hpMaxNow}`;
+    }
     for (const n of world.npcs) n.questMark = quests.markFor(n.id);
+    for (const m of world.monsters) m.alive = rpg.monsterAlive(m.id);
+    for (const h of world.hunters) {
+      h.ready = rpg.leverReady(h);
+      h.lever.pulled = rpg.leverPulled(h.id);
+      h.lever.ready = h.ready;
+      h.boss.alive = rpg.bossAlive(h);
+    }
     renderer.draw(now, player, state.peers, world.npcs, world.cat, player.moving);
     updatePrompt();
     if (state.net) state.net.setLocal(player.x, player.y, player.dir, player.boost);
@@ -915,6 +1089,10 @@ window.addEventListener("keydown", (e) => {
   const k = e.key.toLowerCase();
   if (["arrowup", "arrowdown", "arrowleft", "arrowright", " "].includes(k)) e.preventDefault();
   if (!state.started) return;
+  if (state.modal === "duel" && duelUi) {
+    if (/^[1-4]$/.test(k)) { e.preventDefault(); duelUi.answer(Number(k) - 1); return; }
+    if (k === "enter" || k === " ") { e.preventDefault(); duelUi.advance(); return; }
+  }
   if (k === "escape") {
     if (state.panelOpen) closePanel();
     else if (state.modal) closeModal(state.modal);
@@ -928,8 +1106,10 @@ window.addEventListener("keydown", (e) => {
   }
   if (k === "e" || k === "enter") { interact(); return; }
   if (k === "j") { openJournal(); return; }
+  if (k === "c") { openSheet(); return; }
   if (k === "r") { openRede(); return; }
   if (k === "t") { openChat(); return; }
+  if (["w", "a", "s", "d", "arrowup", "arrowdown", "arrowleft", "arrowright"].includes(k)) clearPath();
   state.keys.add(k);
 });
 window.addEventListener("keyup", (e) => {
@@ -968,38 +1148,59 @@ sprintBtn.addEventListener("pointerup", touchSprint(false));
 sprintBtn.addEventListener("pointerleave", touchSprint(false));
 sprintBtn.addEventListener("pointercancel", touchSprint(false));
 
+function entityAt(wx, wy) {
+  let best = null;
+  let bestD = Infinity;
+  const hit = (kind, obj, ground, radius = 1.5) => {
+    const d = Math.hypot(obj.x - wx, obj.y - wy);
+    if (d <= radius && d < bestD) {
+      bestD = d;
+      best = { kind, obj, ground };
+    }
+  };
+  for (const s of world.stations) hit("station", s);
+  for (const w of world.waystones) hit("waystone", w);
+  for (const n of world.npcs) hit("npc", n, null, 1.4);
+  for (const m of world.monsters) {
+    if (m.alive) hit("monster", m, m.ground, 1.5);
+  }
+  for (const h of world.hunters) {
+    if (h.boss.alive) hit("boss", h.boss, h, 1.7);
+    hit("lever", h.lever, h, 1.3);
+  }
+  return best;
+}
+
 $("world").addEventListener("pointerdown", (e) => {
   if (!state.started || state.panelOpen || state.modal || state.chatOpen) return;
+  if (e.button !== undefined && e.button !== 0) return;
   const rect = $("world").getBoundingClientRect();
   const sx = e.clientX - rect.left;
   const sy = e.clientY - rect.top;
   const wx = (sx / renderer.zoom + renderer.camX) / 16;
   const wy = (sy / renderer.zoom + renderer.camY) / 16;
-  for (const s of world.stations) {
-    if (Math.hypot(s.x - wx, s.y - wy) < 1.4 &&
-        Math.hypot(s.x - player.x, s.y - player.y) < INTERACT_RADIUS + 0.6) {
-      openPost(s.post, s);
-      return;
+  const hit = entityAt(wx, wy);
+  if (hit) {
+    const d = Math.hypot(hit.obj.x - player.x, hit.obj.y - player.y);
+    if (d <= INTERACT_RADIUS + 0.7) {
+      clearPath();
+      interactTarget(hit);
+    } else {
+      setPathTo(hit.obj.x, hit.obj.y, hit);
     }
+    return;
   }
-  for (const w of world.waystones) {
-    if (Math.hypot(w.x - wx, w.y - wy) < 1.4 &&
-        Math.hypot(w.x - player.x, w.y - player.y) < INTERACT_RADIUS + 0.6) {
-      openTravel();
-      return;
-    }
+  const goal = nearestWalkable(world, wx, wy, 2);
+  if (!goal) {
+    toast("Não dá para andar aí. A água e as paredes ficam de fora.", 3000);
+    return;
   }
-  for (const n of world.npcs) {
-    if (Math.hypot(n.x - wx, n.y - wy) < 1.3 &&
-        Math.hypot(n.x - player.x, n.y - player.y) < INTERACT_RADIUS + 0.6) {
-      n.lineIndex = ((n.lineIndex || 0) + 1) % (NPCS[n.id]?.lines?.length || 1);
-      openNpc(n);
-      return;
-    }
-  }
+  clearPath();
+  setPathTo(goal.x, goal.y, null);
 });
 
 $("btn-chat").addEventListener("click", openChat);
+$("btn-sheet").addEventListener("click", openSheet);
 $("btn-rede").addEventListener("click", openRede);
 $("panel-live").addEventListener("pointerdown", () => {
   if (state.currentPost) quests.report("lab", state.currentPost);
@@ -1061,9 +1262,9 @@ window.addEventListener("beforeunload", () => {
   const coarse = window.matchMedia("(pointer: coarse)").matches;
   if (coarse) {
     const lead = document.querySelector(".intro-lead");
-    if (lead) lead.innerHTML = "Cada continente é uma página. Ande com o direcional, segure <strong>Turbo</strong> para acelerar e toque em <kbd>A</kbd> nas estações para descobrir 32 fragmentos de computação, matemática, física, química, música e inteligência artificial.";
+    if (lead) lead.innerHTML = "Cada continente é uma página. Ande com o direcional, toque no chão para ir até ali, segure <strong>Turbo</strong> para acelerar e toque em <kbd>A</kbd> nas estações para descobrir 32 fragmentos de computação, matemática, física, química, música e inteligência artificial.";
     const controls = document.querySelector(".intro-controls");
-    if (controls) controls.innerHTML = "direcional para andar · <strong>Turbo</strong> para acelerar · <kbd>A</kbd> para interagir · Falar abre a conversa";
+    if (controls) controls.innerHTML = "toque no chão para andar · <strong>Turbo</strong> acelera · <kbd>A</kbd> interage · Falar abre a conversa";
     const canvas = $("world");
     if (canvas) canvas.setAttribute("aria-label", "Mapa do mundo, em pixel art. Ande com o direcional e interaja com A.");
   }
@@ -1078,6 +1279,6 @@ window.addEventListener("beforeunload", () => {
   setNetStatus({ state: "solo", count: 1 });
   requestAnimationFrame(loop);
   if (new URLSearchParams(location.search).has("debug")) {
-    window.__mundo = { player, state, world, renderer, audio, quests, rede };
+    window.__mundo = { player, state, world, renderer, audio, quests, rede, rpg, sheetUi, duelUi };
   }
 })();

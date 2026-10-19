@@ -13,6 +13,8 @@ globalThis.localStorage = {
 const { Quests, QUESTS } = await import("../js/quests.js");
 const { Rede } = await import("../js/nostr.js");
 const { NOSTR } = await import("../js/config.js");
+const { RPG } = await import("../js/rpg.js");
+const { GROUNDS } = await import("../js/rpg-data.js");
 
 const quest = (id) => QUESTS.find((q) => q.id === id);
 const cards = new Set();
@@ -64,6 +66,16 @@ assert.deepEqual(q.progress(quest("fios-vivos")), { have: 5, need: 5 });
 assert.equal(q.complete("fios-vivos").ok, true);
 assert.equal(q.title, "Fios Vivos");
 
+// caçadas
+q.accept("cacador");
+assert.deepEqual(q.progress(quest("cacador")), { have: 0, need: 3 });
+q.report("hunts");
+q.report("hunts");
+assert.equal(q.ready(quest("cacador")), false);
+q.report("hunts");
+assert.equal(q.ready(quest("cacador")), true);
+assert.equal(q.complete("cacador").ok, true);
+
 // social
 q.accept("voz-do-mundo");
 assert.deepEqual(q.progress(quest("voz-do-mundo")), { have: 0, need: 2 });
@@ -97,4 +109,62 @@ assert.equal(rede.acceptChannel({ ...base, id: "id5", kind: 0 }, "geral"), false
 assert.equal(rede.channelEvents("geral").length, 1);
 
 assert.ok(titles > 0, "missão pronta avisa");
-console.log("ok missões, persistência e filtro dos canais");
+
+// RPG: duelo, dano, vitória, alavanca e chefe
+store.clear();
+let xpGanho = 0;
+const rpg = new RPG({
+  getLevel: () => 1,
+  gainXp: (n) => { xpGanho += n; },
+  toast: () => {},
+  audio: {},
+});
+const ground = GROUNDS.find((g) => g.id === "cs");
+const easy = ground.monsters[0];
+assert.equal(rpg.startDuel(easy, ground).ok, true);
+for (let i = 0; i < 6 && rpg.duel.phase !== "victory"; i++) {
+  if (rpg.duel.phase === "question") rpg.answer(rpg.duel.question.answer);
+  else rpg.next();
+}
+assert.equal(rpg.duel.phase, "victory");
+assert.equal(rpg.monsterAlive(easy.id), false);
+assert.equal(rpg.inventoryList().length > 0, true);
+assert.equal(xpGanho > 0, true);
+rpg.next();
+assert.equal(rpg.duel, null);
+
+// errar tira vida
+const medium = ground.monsters[1];
+rpg.startDuel(medium, ground);
+const hpBefore = rpg.hp();
+const wrong = (rpg.duel.question.answer + 1) % rpg.duel.question.options.length;
+rpg.answer(wrong);
+assert.equal(rpg.hp(), hpBefore - 3, "pergunta média tira 3 de vida");
+assert.equal(rpg.duel.phase, "feedback");
+rpg.flee();
+
+// alavanca só abre com os três guardiões
+assert.equal(rpg.pullLever(ground).ok, false);
+for (const m of ground.monsters) rpg.data.monsters[m.id] = Date.now();
+assert.equal(rpg.allMonstersDown(ground), true);
+assert.equal(rpg.pullLever(ground).ok, true);
+assert.equal(rpg.bossAlive(ground), true);
+assert.equal(rpg.startDuel(ground.boss, ground, true).ok, true);
+for (let i = 0; i < 12 && rpg.duel.phase !== "victory"; i++) {
+  if (rpg.duel.phase === "question") rpg.answer(rpg.duel.question.answer);
+  else rpg.next();
+}
+assert.equal(rpg.duel.phase, "victory");
+rpg.next();
+assert.equal(rpg.bossAlive(ground), false, "chefe derrotado sai do mapa");
+assert.equal(rpg.hpMax(), 35, "relíquia do chefe dá +5 de vida máxima");
+rpg.addItem("pocao", 1);
+rpg.data.hp = 5;
+const healed = rpg.useItem("pocao");
+assert.equal(healed.ok, true);
+assert.equal(rpg.hp(), 5 + 18, "poção cura 18");
+const againRpg = new RPG({ getLevel: () => 1, gainXp: () => {}, toast: () => {}, audio: {} });
+assert.equal(againRpg.monsterAlive(easy.id), false, "monstro derrotado persiste");
+assert.equal(againRpg.inventoryList().length > 0, true, "item persiste");
+
+console.log("ok missões, persistência, filtro dos canais e RPG");
