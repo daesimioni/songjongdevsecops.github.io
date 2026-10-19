@@ -1292,8 +1292,9 @@ function entityAt(wx, wy) {
 }
 
 $("world").addEventListener("pointerdown", (e) => {
-  if (!state.started || state.panelOpen || state.modal || state.chatOpen) return;
+  if (!state.started || state.panelOpen || state.modal) return;
   if (e.button !== undefined && e.button !== 0) return;
+  if (state.chatOpen) closeChat();
   const rect = $("world").getBoundingClientRect();
   const sx = e.clientX - rect.left;
   const sy = e.clientY - rect.top;
@@ -1310,12 +1311,32 @@ $("world").addEventListener("pointerdown", (e) => {
     }
     return;
   }
-  const goal = nearestWalkable(world, wx, wy, 2);
+  const goal = nearestWalkable(world, wx, wy, 6);
   if (!goal) {
     toast("Não dá para andar aí. A água e as paredes ficam de fora.", 3000);
     return;
   }
   clearPath();
+  setPathTo(goal.x, goal.y, null);
+});
+
+$("minimap-canvas").addEventListener("pointerdown", (e) => {
+  if (!state.started || state.panelOpen || state.modal) return;
+  if (e.button !== undefined && e.button !== 0) return;
+  if (state.chatOpen) closeChat();
+  stopSprint();
+  const rect = e.currentTarget.getBoundingClientRect();
+  const wx = ((e.clientX - rect.left) / rect.width) * MAP_W;
+  const wy = ((e.clientY - rect.top) / rect.height) * MAP_H;
+  if (!world.isExplored(Math.floor(wx), Math.floor(wy))) {
+    toast("Ainda está na névoa. Ande até lá para revelar.", 3000);
+    return;
+  }
+  const goal = nearestWalkable(world, wx, wy, 3);
+  if (!goal) {
+    toast("Não dá para andar aí.", 2600);
+    return;
+  }
   setPathTo(goal.x, goal.y, null);
 });
 

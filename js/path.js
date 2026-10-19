@@ -71,7 +71,7 @@ class Heap {
 }
 
 export function findPath(world, from, to, maxNodes = 16000) {
-  const start = nearestWalkable(world, from.x, from.y, 0);
+  const start = nearestWalkable(world, from.x, from.y, 1);
   if (!start) return null;
   let goal = nearestWalkable(world, to.x, to.y, 2, PATH_PAD);
   if (!goal) return null;

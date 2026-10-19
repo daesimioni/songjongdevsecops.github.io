@@ -59,8 +59,10 @@ e o botão de concluir quando o objetivo está cumprido.
 ## Caçadas e ficha
 
 Clique no chão e o boneco anda até ali sozinho, contornando água, parede e
-árvore. Clique numa estação, NPC, monstro ou alavanca para ele ir até perto e
-interagir. WASD cancela o caminho.
+árvore. Clique também no minimapa, desde que o ponto já esteja revelado. Clique
+numa estação, NPC, monstro ou alavanca para ele ir até perto e interagir. Se a
+conversa estiver aberta, o clique no mundo fecha a conversa e anda. WASD cancela
+o caminho.
 
 Cada continente tem uma clareira de caça com três guardiões e uma alavanca. Cada
 monstro abre uma prova de perguntas:
