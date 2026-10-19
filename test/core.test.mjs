@@ -129,6 +129,7 @@ for (let i = 0; i < 6 && rpg.duel.phase !== "victory"; i++) {
 assert.equal(rpg.duel.phase, "victory");
 assert.equal(rpg.monsterAlive(easy.id), false);
 assert.equal(rpg.inventoryList().length > 0, true);
+assert.equal(rpg.hpMax(), 30, "item comum não é relíquia");
 assert.equal(xpGanho > 0, true);
 rpg.next();
 assert.equal(rpg.duel, null);

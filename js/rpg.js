@@ -335,8 +335,8 @@ export class RPG {
     const ground = d.ground;
     const monster = d.monster;
     const tier = d.boss ? 4 : monster.tier;
-    const itemId = ground.loot[Math.min(2, Math.max(0, (d.boss ? 3 : tier) - 1))] || ground.loot[0];
-    const loot = [{ id: itemId, qty: 1 }];
+    const itemId = d.boss ? ground.bossLoot : ground.loot[Math.min(2, Math.max(0, tier - 1))];
+    const loot = [{ id: itemId || ground.loot[0], qty: 1 }];
     if (d.boss) loot.push({ id: "pocao", qty: 1 });
     else if (Math.random() < 0.28) loot.push({ id: "pocao", qty: 1 });
     for (const l of loot) this.addItem(l.id, l.qty);

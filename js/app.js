@@ -570,9 +570,9 @@ function startGame() {
   const coarse = window.matchMedia("(pointer: coarse)").matches;
   if (coarse) {
     document.querySelector("#prompt kbd").textContent = "A";
-    setTimeout(() => toast("direcional para andar, segure Turbo para voar baixo, A para interagir.", 4600), 800);
+    setTimeout(() => toast("toque no chão para andar, segure Turbo para voar baixo, A para interagir.", 4800), 800);
   } else {
-    setTimeout(() => toast("WASD anda, Shift acende a nave, E interage, J diário, T conversa.", 4800), 800);
+    setTimeout(() => toast("WASD ou clique no chão anda, Shift acende a nave, E interage, C é a ficha.", 5200), 800);
   }
 }
 
