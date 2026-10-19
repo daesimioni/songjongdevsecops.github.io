@@ -481,6 +481,7 @@ export const NPCS = {
       "Bem-vindo ao Porto. Seis continentes, mais terra do que os olhos acreditam.",
       "Cada farol da doca acende uma Pedra do Porto. Aperte Enter nas pedras para voltar rápido.",
       "O diário guarda o que você já viu. Não precisa decorar nada.",
+      "Ao lado de cada acampamento de caça tem uma boca de caverna. Lá embaixo o bicho não espera você apertar Enter: ele vê primeiro.",
     ],
   },
   ada: {
@@ -488,6 +489,7 @@ export const NPCS = {
     lines: [
       "Um somador é só uma frase feita de fios. Aprenda a ler a frase e o processador inteiro começa a fazer sentido.",
       "A memória do circuito é o que separa contar de lembrar.",
+      "A boca de pedra ao lado do acampamento desce fundo. Lá embaixo o Bit não espera você apertar Enter: ele sente primeiro.",
     ],
   },
   hypatia: {
@@ -495,6 +497,7 @@ export const NPCS = {
     lines: [
       "Não tenha pressa no infinito. Ele não tem pressa com você.",
       "A curva que você vê é um acordo entre uma fórmula e a tela. A fórmula é a parte que importa.",
+      "A caverna dos números guarda o infinito num poço. Não fique olhando por muito tempo.",
     ],
   },
   marie: {
@@ -502,6 +505,7 @@ export const NPCS = {
     lines: [
       "Mude a velocidade de lançamento e veja o corpo cair ou escapar. A órbita mora num intervalo muito estreito.",
       "Uma medida é sempre uma conversa entre o mundo e o instrumento. O instrumento nunca é mudo.",
+      "A caverna mede o que a luz faz no escuro. Leve tocha, e desconfie do que ela ilumina.",
     ],
   },
   pythagoras: {
@@ -509,6 +513,7 @@ export const NPCS = {
     lines: [
       "O som é número se movendo. Razões pequenas soam bem porque as ondas se encontram com frequência.",
       "Uma oitava é 2 para 1. Não inventei isso: o ar já sabia.",
+      "O conservatório embaixo da terra tem acústica de pedra. Os monstros chamam aquilo de dissonância.",
     ],
   },
   turing: {
@@ -516,6 +521,7 @@ export const NPCS = {
     lines: [
       "A pergunta interessante não é se a máquina pensa. É o que ela consegue fazer com o que recebeu.",
       "Dados ruins produzem confiança boa. É a combinação mais perigosa que existe.",
+      "A rede profunda é uma cidade que aprende sozinha. Não confie no que ela diz que lembra.",
     ],
   },
   mendeleev: {
@@ -523,6 +529,7 @@ export const NPCS = {
     lines: [
       "Eu deixei buracos na tabela e apostei que eles seriam ocupados. Dois foram. A natureza me devia essa.",
       "Se você entende por que uma coluna se parece por dentro, já entende metade da química.",
+      "A mina tem cristal de veio. A forja da cidade subterrânea transforma o veio em chave.",
     ],
   },
 };

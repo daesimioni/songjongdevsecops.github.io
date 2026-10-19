@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Mundo de Song</title>
-<meta name="description" content="Um arquipélago jogável em pixel art: computação, matemática, física, química, música e inteligência artificial em 32 estações, com caçadas de perguntas, missões e uma rede de jogadores.">
+<meta name="description" content="Um arquipélago jogável em pixel art: computação, matemática, física, química, música e inteligência artificial em 32 estações, com caçadas de perguntas, cavernas, missões e uma rede de jogadores.">
 <meta name="theme-color" content="#070b18">
 <meta property="og:title" content="Mundo de Song">
 <meta property="og:description" content="Seis continentes, 32 estações e missões para atravessar a pé. Lógica, fractais, átomos, harmonia, redes neurais, conversa por Nostr e mais.">
@@ -72,6 +72,33 @@
   </div>
 
   <div id="scrim" class="scrim" hidden></div>
+
+  <div id="dungeon" class="dungeon" hidden aria-label="Caverna no subsolo">
+    <canvas id="dungeon-canvas" aria-label="Mapa da caverna, em pixel art. Ande com WASD ou clique, interaja com E e saia com Esc."></canvas>
+    <div class="dungeon-hud">
+      <div class="dg-head">
+        <div class="dg-title-wrap">
+          <p class="dg-kicker">no subsolo</p>
+          <h2 id="dg-title"></h2>
+          <p id="dg-sub" class="dg-sub"></p>
+        </div>
+        <div class="dg-actions">
+          <button id="dg-sheet" class="dg-exit" type="button">ficha <kbd>F</kbd></button>
+          <button id="dg-exit" class="dg-exit" type="button">sair <kbd>Esc</kbd></button>
+        </div>
+      </div>
+      <div class="dg-stats">
+        <span id="dg-room" class="dg-room"></span>
+        <span id="dg-hp"></span>
+        <span id="dg-keys"></span>
+        <span id="dg-torch"></span>
+        <span id="dg-bag"></span>
+      </div>
+      <p id="dg-msg" class="dg-msg"></p>
+      <div id="dg-prompt" class="dg-prompt" hidden><kbd>E</kbd> <span></span></div>
+      <p class="dg-help">WASD ou clique para andar · <kbd>E</kbd> interage · <kbd>Espaço</kbd> corre · <kbd>Esc</kbd> sobe</p>
+    </div>
+  </div>
 
   <aside id="panel" class="panel" role="dialog" aria-modal="true" aria-labelledby="panel-title" hidden>
     <div class="panel-head">
@@ -192,6 +219,7 @@
       <p class="help-note">Clique no chão para o boneco andar até ali. Clique numa estação, NPC, monstro ou alavanca para ir até perto e interagir sozinho.</p>
       <p class="help-note">Os NPCs têm missões. Aperte <kbd>Enter</kbd> perto deles para aceitar, responder e entregar. O Diário lista o que está em andamento e quanto falta.</p>
       <p class="help-note">Nas clareiras com bandeira acontecem as <strong>caçadas</strong>. Cada monstro abre uma prova: acertar tira vida dele, errar tira a sua. Derrube os três guardiões, puxe a alavanca e enfrente o chefe. A vitória dá XP, item e perícia do continente. A <strong>Ficha</strong> (<kbd>F</kbd>) mostra vida, perícias e mochila.</p>
+      <p class="help-note">Ao lado de cada clareira há uma <strong>boca de caverna</strong>. Lá dentro o bicho que vê você começa a batalha sozinho, e quanto mais fundo, mais forte. O chão dá ferro, erva, cristal e madeira; a forja da cidade subterrânea faz poção, tocha, chave, bomba e caldo. Baú fundo pede chave. <kbd>Esc</kbd> sobe de volta.</p>
       <p class="help-note">A <strong>Rede</strong> é a conversa do mundo: canais por continente, DMs privadas e a lista de quem está por perto. Sua conta é uma chave Nostr criada e guardada neste navegador, sem cadastro e sem servidor meu. Só conteúdo marcado pelo jogo aparece ali.</p>
       <p class="help-note">Este site é estático. A presença no mapa usa um broker MQTT público por WebSocket; a Rede usa relays Nostr públicos. Se o sinal falhar, o mundo continua funcionando sozinho.</p>
     </div>

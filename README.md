@@ -82,13 +82,39 @@ item raro. Cada vitória dá XP e item; os monstros voltam depois de cinco minut
 o chefe depois de vinte. O item do chefe é uma relíquia: cada uma soma 5 de vida
 máxima.
 
-A **Ficha** (`F`) mostra vida, nível, perícias e mochila. A vida volta devagar
-fora de duelo; a Poção de Café cura na hora. Cair num duelo não perde item nem
-XP: o boneco acorda no Porto com a vida cheia.
+A **Ficha** (`F`) mostra vida, nível, perícias, mochila e a forja. A vida volta
+devagar fora de duelo; a Poção de Café cura 18, o Caldo de Caverna cura 35.
+Cair num duelo não perde item nem XP: o boneco acorda no Porto com a vida cheia.
 
 Estações, pedras, NPCs, monstros, alavancas e mobília barram a passagem. O
 desenho é ordenado por profundidade, então uma fonte, árvore ou parede na frente
 do boneco cobre o corpo dele em vez de ficar sempre atrás.
+
+## As cavernas
+
+Ao lado de cada clareira de caça existe uma boca de caverna. `Enter` nela entra
+num mapa próprio, em tela cheia: salas ligadas por túneis de três tiles que se
+cruzam em anel, entrada embaixo, cidade no fundo. São seis temas, um por
+continente, com paleta, nomes de sala e bichos próprios.
+
+Lá embaixo valem as mesmas regras do mundo, com uma diferença: o bicho que vê
+você começa a batalha sozinho. Ele anda em volta do ninho, tem um raio de visão
+e precisa de linha reta até o aventureiro; quando isso acontece, aparece um `!`
+e o duelo de perguntas abre. Quanto mais fundo, mais forte: as salas perto da
+entrada têm monstros de uma estrela, as do meio de duas, as do fundo de três, e
+o chefe fica no último beco, sem alavanca. Ele responde com perguntas médias e
+difíceis e deixa a relíquia do continente.
+
+Cada sala tem baú. Baú fundo é selado e pede uma **Chave de Caverna**, que se
+faz na forja. A caverna dá os materiais da forja: ferro, erva, cristal de veio e
+madeira. Na cidade subterrânea há uma forja (abre a Ficha), um altar que devolve
+a vida a cada 45 segundos, uma horta de ervas que rebrota e uma pedra de retorno.
+A receita é curta e honesta: poção, tocha, chave, bomba e caldo.
+
+A **tocha** acende por dois minutos e aumenta a luz; a **bomba** espanta os
+bichos num raio de três tiles, sem XP e sem saque. `F` abre a Ficha em qualquer
+lugar, `Esc` sobe de volta para a boca da caverna. Monstros e chefe guardam o
+tempo de respawn de sempre; os baús se reabrem a cada descida.
 
 ## A Rede
 
@@ -127,8 +153,9 @@ node test/core.test.mjs
 ```
 
 Ela cobre o progresso e a persistência das missões, o filtro que mantém
-conteúdo de fora fora dos canais, o ciclo de duelo, dano, alavanca e chefe e a
-interpolação dos outros jogadores.
+conteúdo de fora fora dos canais, o ciclo de duelo, dano, alavanca e chefe, a
+interpolação dos outros jogadores e a caverna: salas com chão, ligação da
+entrada até a cidade, linha de visão, chefe sem alavanca e a forja.
 
 ## Rodar na mão
 
@@ -154,8 +181,10 @@ Depois abra `http://localhost:8000`.
 | `js/nostr.js` | conta, canais, DMs NIP-17, perfis e presença Nostr |
 | `js/quests.js` | missões, progresso, XP e títulos |
 | `js/path.js` | caminho A* do clique até o destino |
-| `js/rpg.js` | vida, perícias, itens, monstros, alavancas e duelo |
-| `js/rpg-data.js` | caçadas, monstros, itens e as 54 perguntas |
+| `js/rpg.js` | vida, perícias, itens, forja, monstros, alavancas e duelo |
+| `js/rpg-data.js` | caçadas, monstros, itens, receitas e as 54 perguntas |
+| `js/dungeon.js` | a caverna em tela cheia: mapa, visão, batalha por encontro e desenho |
+| `js/dungeon-data.js` | as seis cavernas: salas, temas, monstros e chefes |
 | `js/creature.js` | desenho dos monstros no mapa e no duelo |
 | `js/sheet.js` | a ficha de aventureiro |
 | `js/duel.js` | a janela de prova contra cada monstro |
@@ -179,6 +208,8 @@ wat2wasm wasm/julia.wat -o wasm/julia.wasm
 
 - Textos e falas: `js/content.js`.
 - Posição e nome das estações: `js/config.js`, no array `SITES`.
+- Cavernas (salas, temas, monstros, chefes): `js/dungeon-data.js`.
+- Receitas, itens e perguntas: `js/rpg-data.js`.
 - Elementos da tabela: `js/data/elements.js`.
 - Instrumentos: `js/zones/`. Computação, matemática, física e química ficam em
   `cs.js`, `math.js`, `physics.js` e `chem.js`; música em `music.js`; IA em

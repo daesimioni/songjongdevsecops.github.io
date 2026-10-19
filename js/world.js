@@ -1,8 +1,9 @@
 import {
   MAP_W, MAP_H, TILE, TILE_KIND as K, SOLID, CONTINENTS, SITES,
-  WAYSTONES, NPC_SPAWNS, CAT_SPAWN, REVEAL_RADIUS,
+  WAYSTONES, NPC_SPAWNS, CAT_SPAWN, REVEAL_RADIUS, PLAYER_W, PLAYER_H,
 } from "./config.js";
 import { GROUNDS } from "./rpg-data.js";
+import { dungeonById } from "./dungeon-data.js";
 
 const { WATER, SAND, GRASS, PATH, TREE, FLOWER, BRIDGE, PLAZA } = K;
 
@@ -362,8 +363,52 @@ export function createWorld() {
     addProp(h.boss.x, h.boss.y, 0.7, 0.5, () => h.boss.alive === true);
   }
 
+  // A boca da caverna fica ao lado do acampamento de caça. O lugar é escolhido
+  // depois dos props para não nascer em cima de monstro, árvore ou alavanca.
+  // A saída (logo abaixo da boca) também precisa caber o corpo inteiro.
+  const caves = hunters.map((h) => {
+    const def = dungeonById(`dungeon-${h.continent}`);
+    const freeSpot = (cx, cy) =>
+      !boxCollides(cx, cy, 1.9, 1.0) &&
+      !boxCollides(cx, cy + 0.9, PLAYER_W, PLAYER_H) &&
+      !boxCollides(cx, cy + 1.5, PLAYER_W, PLAYER_H) &&
+      !boxCollides(cx, cy + 1.7, PLAYER_W, PLAYER_H);
+    let spot = { x: h.center.x + 3, y: h.center.y + 3 };
+    let found = false;
+    for (let r = 4; r <= 8 && !found; r++) {
+      for (let dy = -r; dy <= r && !found; dy++) {
+        for (let dx = -r; dx <= r && !found; dx++) {
+          if (Math.max(Math.abs(dx), Math.abs(dy)) !== r) continue;
+          const cx = Math.round(h.center.x + dx);
+          const cy = Math.round(h.center.y + dy);
+          if (cx < 2 || cy < 2 || cx > MAP_W - 2 || cy > MAP_H - 2) continue;
+          if (!freeSpot(cx, cy)) continue;
+          if (Math.hypot(cx - h.boss.x, cy - h.boss.y) < 3.5) continue;
+          if (Math.hypot(cx - h.lever.x, cy - h.lever.y) < 3.2) continue;
+          if (Math.hypot(cx - h.banner.x, cy - h.banner.y) < 2.5) continue;
+          if (h.monsters.some((m) => Math.hypot(cx - m.x, cy - m.y) < 2.6)) continue;
+          spot = { x: cx, y: cy };
+          found = true;
+        }
+      }
+    }
+    return {
+      kind: "cave",
+      id: def?.id || `dungeon-${h.continent}`,
+      continent: h.continent,
+      name: def?.rooms?.[0]?.name || `Caverna de ${CONTINENTS[h.continent]?.name || ""}`,
+      x: spot.x,
+      y: spot.y,
+      accent: h.accent,
+      groundId: h.id,
+      // onde o corpo reaparece quando sobe de volta
+      exit: { x: spot.x, y: spot.y + 1.5 },
+    };
+  });
+  for (const c of caves) addProp(c.x, c.y, 0.78, 0.42);
+
   return {
-    tiles, decor, props, stations, waystones, npcs, hunters, monsters,
+    tiles, decor, props, stations, waystones, npcs, hunters, monsters, caves,
     cat: { ...CAT_SPAWN, facing: 1, t: 0, moving: false },
     get, set, isSolidTile, boxCollides,
     continentAt, continentAtTile,

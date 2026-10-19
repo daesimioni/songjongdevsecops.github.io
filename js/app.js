@@ -16,8 +16,10 @@ import { feedPeer, peerRenderPosition } from "./interp.js";
 import { RPG } from "./rpg.js";
 import { createSheet } from "./sheet.js";
 import { createDuel } from "./duel.js";
+import { createDungeon } from "./dungeon.js";
 
 const $ = (id) => document.getElementById(id);
+let dungeon = null;
 
 const LIVE = {
   logic: () => import("./zones/logic.js"),
@@ -135,6 +137,7 @@ const rpg = new RPG({
   audio,
   getLevel: level,
   onRespawn: () => {
+    dungeon?.close("death");
     player.x = SPAWN.x;
     player.y = SPAWN.y;
     player.moving = false;
@@ -157,6 +160,23 @@ const sheetUi = createSheet({
   getTitle: () => quests.title,
   toast,
   audio,
+  onUse: (id, res) => {
+    if (id === "tocha") {
+      if (dungeon?.isOpen()) dungeon.useTorch(res.light);
+      else {
+        rpg.addItem("tocha", 1);
+        toast("A tocha é para a caverna. Guardei de volta.", 2800);
+      }
+      return;
+    }
+    if (id === "bomba") {
+      if (dungeon?.isOpen()) dungeon.useBomb();
+      else {
+        rpg.addItem("bomba", 1);
+        toast("A bomba é para a caverna. Guardei de volta.", 2800);
+      }
+    }
+  },
 });
 let duelUi = null;
 duelUi = createDuel({
@@ -165,6 +185,41 @@ duelUi = createDuel({
   audio,
   onClose: () => closeModal("duel"),
   onVictory: () => quests.report("hunts"),
+});
+
+dungeon = createDungeon({
+  rpg,
+  toast,
+  audio,
+  isBlocked: () => state.panelOpen || !!state.modal || state.chatOpen,
+  onEncounter: (monster, ground, boss) => {
+    openDuel(monster, ground, boss);
+    return !!rpg.duel;
+  },
+  onForge: () => openSheet(),
+  onSheet: () => openSheet(),
+  onExit: ({ kind, dungeon: def }) => {
+    if (kind === "death") return;
+    const cave = world.caves.find((c) => c.continent === def?.continent);
+    if (cave) {
+      player.x = cave.exit.x;
+      player.y = cave.exit.y;
+      player.dir = 0;
+      player.moving = false;
+      player.continentId = cave.continent;
+      clearPath();
+      state.lastContinent = cave.continent;
+      showZoneCard(CONTINENTS[cave.continent], false);
+      renderer.kick(0.45);
+    }
+    audio.chime();
+    toast(
+      kind === "waystone"
+        ? "A pedra te devolveu à boca da caverna."
+        : "Você subiu de volta para o sol.",
+      3400,
+    );
+  },
 });
 
 function readJSON(key, fallback) {
@@ -284,6 +339,22 @@ function pullLever(ground) {
   renderer.kick(0.6);
 }
 
+function enterCave(cave) {
+  if (!state.started) return;
+  stopSprint();
+  clearPath();
+  closeChat();
+  if (state.panelOpen) closePanel();
+  closeModal(state.modal);
+  const ok = dungeon?.open(cave.id);
+  if (!ok) {
+    toast("A caverna não abriu agora. Tente de novo.", 3000);
+    audio.error();
+    return;
+  }
+  toast(cave.name, 3000);
+}
+
 function interactTarget(target) {
   if (!target) return;
   if (target.kind === "station") openPost(target.obj.post, target.obj);
@@ -298,6 +369,7 @@ function interactTarget(target) {
   else if (target.kind === "monster") openDuel(target.obj, target.ground);
   else if (target.kind === "boss") openDuel(target.ground.boss, target.ground, true);
   else if (target.kind === "lever") pullLever(target.ground);
+  else if (target.kind === "cave") enterCave(target.obj);
 }
 
 function openRede() {
@@ -748,7 +820,7 @@ function openModal(name) {
 function closeModal(name) {
   if (name && $(name)) $(name).hidden = true;
   if (name === "rede") social?.close();
-  if (name === "duel") duelUi?.close();
+  if (name === "duel") { duelUi?.close(); dungeon?.onDuelClosed(); }
   if (name === "npc") state.npc = null;
   if (state.modal === name) state.modal = null;
   if (!state.modal && !state.panelOpen) $("scrim").hidden = true;
@@ -863,7 +935,7 @@ function saveChatLog() {
 }
 
 function pushChatMessage(name, text, color, mine = false) {
-  const clean = String(text || "").replace(/[<> -]/g, " ").replace(/\s+/g, " ").trim().slice(0, 160);
+  const clean = String(text || "").replace(/[<>\x00-\x1f]/g, " ").replace(/\s+/g, " ").trim().slice(0, 160);
   if (!clean) return;
   state.chatLog.push({
     name: mine ? player.name : String(name || "viajante").slice(0, 24),
@@ -954,6 +1026,7 @@ function findNearest() {
     if (h.boss.alive) near("boss", h.boss, h, 2.2);
     near("lever", h.lever, h, 1.9);
   }
+  for (const c of world.caves) near("cave", c, null, 1.8);
   return best;
 }
 
@@ -971,6 +1044,7 @@ function updatePrompt() {
   else if (near.kind === "npc") label = `falar com ${NPCS[near.obj.id]?.name || "alguém"}`;
   else if (near.kind === "monster") label = `desafiar ${near.obj.name}`;
   else if (near.kind === "boss") label = `enfrentar ${near.obj.name}`;
+  else if (near.kind === "cave") label = `descer em ${near.obj.name}`;
   else label = near.obj.pulled ? "passagem aberta" : "puxar a alavanca";
   if ($("prompt-label").textContent !== label) $("prompt-label").textContent = label;
   $("prompt").hidden = false;
@@ -1116,6 +1190,10 @@ function loop(now) {
     const active = state.started && !state.panelOpen && !state.modal && !state.chatOpen;
     updateBoost(dt, active);
     rpg.tick();
+    if (dungeon?.isOpen()) {
+      $("prompt").hidden = true;
+      return;
+    }
     if (active) {
       if (state.path) updateAutoWalk(dt);
       else updateMovement(dt);
@@ -1223,6 +1301,7 @@ window.addEventListener("keydown", (e) => {
     return;
   }
   if (state.panelOpen || state.modal) return;
+  if (dungeon?.isOpen()) return;
   if (k === " " || e.code === "Space") {
     if (!state.sprint) { state.sprint = true; audio.boost(); }
     return;
@@ -1299,6 +1378,7 @@ function entityAt(wx, wy) {
     if (h.boss.alive) hit("boss", h.boss, h, 1.7);
     hit("lever", h.lever, h, 1.3);
   }
+  for (const c of world.caves) hit("cave", c, null, 1.4);
   return best;
 }
 
@@ -1437,6 +1517,6 @@ window.addEventListener("beforeunload", () => {
   setNetStatus({ state: "solo", count: 1 });
   requestAnimationFrame(loop);
   if (new URLSearchParams(location.search).has("debug")) {
-    window.__mundo = { player, state, world, renderer, audio, quests, rede, rpg, sheetUi, duelUi };
+    window.__mundo = { player, state, world, renderer, audio, quests, rede, rpg, sheetUi, duelUi, dungeon };
   }
 })();

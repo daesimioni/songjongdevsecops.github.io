@@ -1710,3 +1710,184 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
   .chat-log { max-height: 30vh; min-height: 40px; padding: 8px 10px; }
   .chat-line { font-size: 11.5px; }
 }
+
+/* ---------- a caverna ---------- */
+.dungeon {
+  position: absolute;
+  inset: 0;
+  z-index: 16;
+  background: #05070e;
+}
+.dungeon[hidden] { display: none !important; }
+
+#dungeon-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  image-rendering: pixelated;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.dungeon-hud {
+  position: absolute;
+  inset: 0;
+  padding: 18px clamp(14px, 3vw, 34px);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.dg-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.dg-kicker {
+  margin: 0 0 6px;
+  font-family: var(--pixel);
+  font-size: 8px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+#dg-title {
+  margin: 0;
+  font-family: var(--pixel);
+  font-size: clamp(11px, 1.5vw, 16px);
+  line-height: 1.5;
+  color: var(--amber);
+  text-shadow: 0 2px 0 #000;
+}
+
+.dg-sub {
+  margin: 6px 0 0;
+  max-width: 54ch;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  text-shadow: 0 1px 2px #000;
+}
+
+.dg-actions {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 8px;
+}
+
+.dg-exit {
+  pointer-events: auto;
+  flex: 0 0 auto;
+  padding: 8px 10px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink);
+  background: rgba(5, 8, 20, 0.8);
+  border: 1px solid var(--line-strong);
+  border-radius: 3px;
+}
+.dg-exit:hover, .dg-exit:focus-visible {
+  border-color: var(--amber);
+  color: var(--amber);
+}
+
+.dg-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+}
+.dg-stats span {
+  padding: 5px 8px;
+  color: var(--ink);
+  background: rgba(5, 8, 20, 0.72);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+}
+.dg-stats .dg-room {
+  color: var(--mint);
+  border-color: var(--line-strong);
+}
+
+.dg-msg {
+  margin: 0;
+  min-height: 1.5em;
+  max-width: 62ch;
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ink);
+  text-shadow: 0 1px 3px #000;
+}
+
+.dg-prompt {
+  position: absolute;
+  left: 50%;
+  bottom: 74px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  font-family: var(--mono);
+  font-size: 12px;
+  background: rgba(5, 8, 20, 0.88);
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+}
+
+.dg-help {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 18px;
+  margin: 0;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--muted);
+  text-shadow: 0 1px 2px #000;
+}
+
+@media (max-width: 720px) {
+  .dungeon-hud { padding: 12px; gap: 7px; }
+  .dg-sub { display: none; }
+  .dg-help { display: none; }
+  .dg-msg { font-size: 11px; }
+  .dg-stats { font-size: 10px; gap: 5px; }
+  .dg-stats span { padding: 4px 6px; }
+  .dg-prompt { bottom: 22px; }
+}
+
+.sheet-recipes { display: grid; gap: 7px; }
+.recipe-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: rgba(255, 200, 87, 0.03);
+}
+.recipe-card b {
+  flex: none;
+  font-family: var(--pixel);
+  font-size: 8px;
+  line-height: 1.6;
+  color: var(--amber);
+}
+.recipe-card span {
+  flex: 1;
+  font-family: var(--mono);
+  font-size: 10px;
+  line-height: 1.5;
+  color: var(--muted);
+}

@@ -15,8 +15,11 @@ const { Rede } = await import("../js/nostr.js");
 const { NOSTR } = await import("../js/config.js");
 const { RPG } = await import("../js/rpg.js");
 const { GROUNDS } = await import("../js/rpg-data.js");
+const { DUNGEONS } = await import("../js/dungeon-data.js");
+const { buildDungeonMap, dungeonSolid, dungeonLineOfSight } = await import("../js/dungeon.js");
 const { addPeerSample, feedPeer, peerRenderPosition } = await import("../js/interp.js");
 const { createWorld } = await import("../js/world.js");
+const { findPath } = await import("../js/path.js");
 const { PLAYER_W, PLAYER_H, SPAWN } = await import("../js/config.js");
 
 const quest = (id) => QUESTS.find((q) => q.id === id);
@@ -222,5 +225,64 @@ for (const stone of w.waystones) {
   const free = spots.some(([dx, dy]) => !w.boxCollides(stone.x + dx, stone.y + dy, PLAYER_W, PLAYER_H));
   assert.equal(free, true, `viagem livre perto de ${stone.name}`);
 }
+// toda boca de caverna tem saída livre e caminho desde a pedra do continente
+for (const cave of w.caves) {
+  assert.equal(w.boxCollides(cave.exit.x, cave.exit.y, PLAYER_W, PLAYER_H), false, `saída livre em ${cave.continent}`);
+  const stone = w.waystones.find((s) => s.continent === cave.continent);
+  assert.ok(stone, `pedra de ${cave.continent}`);
+  assert.ok(findPath(w, stone, cave.exit), `caminho até a caverna de ${cave.continent}`);
+}
 
-console.log("ok missões, persistência, canais, RPG, interpolação e colisão");
+// a caverna: salas com chão, entrada que chega na cidade, parede que corta a vista
+const dg = DUNGEONS[0];
+const dmap = buildDungeonMap(dg);
+for (const room of dg.rooms) {
+  const cx = room.x + Math.floor(room.w / 2);
+  const cy = room.y + Math.floor(room.h / 2);
+  assert.equal(dungeonSolid(dmap, cx, cy), false, `sala ${room.id} tem chão`);
+}
+const entrance = dg.rooms.find((r) => r.kind === "entrance");
+const city = dg.rooms.find((r) => r.kind === "city");
+const seen = new Uint8Array(dmap.W * dmap.H);
+const queue = [[entrance.x + Math.floor(entrance.w / 2), entrance.y + Math.floor(entrance.h / 2)]];
+seen[queue[0][1] * dmap.W + queue[0][0]] = 1;
+while (queue.length) {
+  const [x, y] = queue.shift();
+  for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+    const nx = x + dx;
+    const ny = y + dy;
+    if (dungeonSolid(dmap, nx, ny)) continue;
+    const i = ny * dmap.W + nx;
+    if (seen[i]) continue;
+    seen[i] = 1;
+    queue.push([nx, ny]);
+  }
+}
+assert.equal(seen[(city.y + Math.floor(city.h / 2)) * dmap.W + city.x + Math.floor(city.w / 2)], 1, "entrada chega à cidade");
+assert.equal(dungeonLineOfSight(dmap, 3, 24, 13, 24), false, "parede corta a linha de visão");
+const roomA = dg.rooms.find((r) => r.id === "a");
+assert.equal(
+  dungeonLineOfSight(dmap, roomA.x + 2.5, roomA.y + 3.5, roomA.x + 5.5, roomA.y + 3.5),
+  true,
+  "sala aberta deixa ver",
+);
+
+// o chefe da caverna não depende de alavanca, e a forja consome e devolve
+assert.equal(rpg.bossAlive({ id: "dungeon-teste", dungeon: true }), true, "chefe de caverna sem alavanca");
+assert.equal(rpg.bossAlive({ id: "caçada-teste" }), false, "chefe de superfície pede alavanca");
+store.clear();
+rpg.data = { hp: null, skills: {}, items: {}, monsters: {}, bosses: {}, levers: {} };
+rpg.addItem("ferro", 2);
+rpg.addItem("madeira", 1);
+const made = rpg.craft("chave");
+assert.equal(made.ok, true, "forja faz a chave");
+assert.equal(rpg.itemCount("chave"), 1);
+assert.equal(rpg.itemCount("ferro"), 0, "forja consome o ferro");
+assert.equal(rpg.craft("pocao").ok, false, "sem erva não sai poção");
+rpg.addItem("ferro", 1);
+rpg.addItem("veio", 1);
+assert.equal(rpg.craft("bomba").ok, true, "forja faz a bomba");
+assert.equal(rpg.useItem("bomba").bomb, true, "bomba é item de uso");
+assert.equal(rpg.itemCount("bomba"), 0, "bomba some ao usar");
+
+console.log("ok missões, persistência, canais, RPG, interpolação, colisão e caverna");

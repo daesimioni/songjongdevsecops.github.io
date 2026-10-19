@@ -1,5 +1,6 @@
 // Caminho no mapa: A* em grade, oito direções, sem cortar quina.
-// É o que faz o clique no chão virar caminhada sem segurar tecla.
+// É o que faz o clique no chão virar caminhada sem segurar tecla. O mesmo
+// algoritmo serve ao mundo e às cavernas; só muda o tamanho e o que é sólido.
 import { MAP_W, MAP_H, PLAYER_W, PLAYER_H } from "./config.js";
 
 const DIRS = [
@@ -70,21 +71,38 @@ class Heap {
   }
 }
 
-export function findPath(world, from, to, maxNodes = 16000) {
-  const start = nearestWalkable(world, from.x, from.y, 1);
+// `walkable(tx, ty, pad)` responde se o centro do tile cabe. O `pad` só é
+// aplicado no destino: o começo precisa aceitar o corpo onde ele já está.
+export function findPathIn(width, height, walkable, from, to, { goalPad = 0, maxNodes = 16000 } = {}) {
+  const nearest = (x, y, maxR, pad) => {
+    const cx = Math.floor(x);
+    const cy = Math.floor(y);
+    if (walkable(cx, cy, pad)) return { x: cx + 0.5, y: cy + 0.5 };
+    for (let r = 1; r <= maxR; r++) {
+      for (let dy = -r; dy <= r; dy++) {
+        for (let dx = -r; dx <= r; dx++) {
+          if (Math.max(Math.abs(dx), Math.abs(dy)) !== r) continue;
+          if (walkable(cx + dx, cy + dy, pad)) return { x: cx + dx + 0.5, y: cy + dy + 0.5 };
+        }
+      }
+    }
+    return null;
+  };
+
+  const start = nearest(from.x, from.y, 1, 0);
   if (!start) return null;
-  let goal = nearestWalkable(world, to.x, to.y, 2, PATH_PAD);
+  const goal = nearest(to.x, to.y, 2, goalPad);
   if (!goal) return null;
   const sx = Math.floor(start.x), sy = Math.floor(start.y);
   const tx = Math.floor(goal.x), ty = Math.floor(goal.y);
   if (sx === tx && sy === ty) return [goal];
 
-  const size = MAP_W * MAP_H;
+  const size = width * height;
   const g = new Float32Array(size).fill(Infinity);
   const came = new Int32Array(size).fill(-1);
   const closed = new Uint8Array(size);
   const open = new Heap();
-  const idx = (x, y) => y * MAP_W + x;
+  const idx = (x, y) => y * width + x;
   const h = (x, y) => {
     const dx = Math.abs(x - tx);
     const dy = Math.abs(y - ty);
@@ -105,7 +123,7 @@ export function findPath(world, from, to, maxNodes = 16000) {
       const path = [];
       let cur = ci;
       while (cur !== -1) {
-        path.push({ x: (cur % MAP_W) + 0.5, y: Math.floor(cur / MAP_W) + 0.5 });
+        path.push({ x: (cur % width) + 0.5, y: Math.floor(cur / width) + 0.5 });
         cur = came[cur];
       }
       path.reverse();
@@ -114,10 +132,10 @@ export function findPath(world, from, to, maxNodes = 16000) {
     for (const [dx, dy, cost] of DIRS) {
       const nx = node.x + dx;
       const ny = node.y + dy;
-      if (!tileWalkable(world, nx, ny, PATH_PAD)) continue;
+      if (!walkable(nx, ny, PATH_PAD)) continue;
       if (dx !== 0 && dy !== 0) {
-        if (!tileWalkable(world, node.x + dx, node.y, PATH_PAD)) continue;
-        if (!tileWalkable(world, node.x, node.y + dy, PATH_PAD)) continue;
+        if (!walkable(node.x + dx, node.y, PATH_PAD)) continue;
+        if (!walkable(node.x, node.y + dy, PATH_PAD)) continue;
       }
       const ni = idx(nx, ny);
       if (closed[ni]) continue;
@@ -129,4 +147,11 @@ export function findPath(world, from, to, maxNodes = 16000) {
     }
   }
   return null;
+}
+
+export function findPath(world, from, to, maxNodes = 16000) {
+  return findPathIn(MAP_W, MAP_H, (tx, ty, pad) => tileWalkable(world, tx, ty, pad), from, to, {
+    goalPad: PATH_PAD,
+    maxNodes,
+  });
 }

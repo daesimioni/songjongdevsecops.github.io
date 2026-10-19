@@ -1,5 +1,6 @@
-// A ficha do aventureiro: vida, perícias, itens e o que cada coisa faz.
+// A ficha do aventureiro: vida, perícias, itens, forja e o que cada coisa faz.
 import { CONTINENTS } from "./config.js";
+import { ITEMS, RECIPES } from "./rpg-data.js";
 
 const $ = (id) => document.getElementById(id);
 
@@ -14,7 +15,7 @@ function accentOf(continent) {
   return CONTINENTS[continent]?.accent || "#ffc857";
 }
 
-export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio }) {
+export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onUse }) {
   function render() {
     const body = $("sheet-body");
     if (!body) return;
@@ -72,14 +73,17 @@ export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio }) {
         const text = el("div", "item-text");
         text.append(el("b", "", `${item.name} ×${item.qty}`), el("span", "", item.desc));
         card.append(icon, text);
-        if (item.heal) {
+        if (item.heal || item.use === "light" || item.use === "bomb") {
           const use = el("button", "item-use", "usar");
           use.type = "button";
           use.addEventListener("click", () => {
             const res = rpg.useItem(item.id);
             if (!res.ok) { toast(res.reason, 3200); return; }
-            toast(`+${res.healed} de vida.`, 2400);
+            if (res.healed) toast(`+${res.healed} de vida.`, 2400);
+            else if (res.light) toast("A tocha acende.", 2400);
+            else if (res.bomb) toast("A bomba estoura.", 2400);
             audio.blip();
+            onUse?.(item.id, res);
             render();
           });
           card.appendChild(use);
@@ -89,8 +93,34 @@ export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio }) {
       body.appendChild(list);
     }
 
+    body.appendChild(el("h3", "sheet-sec", "Forja e alquimia"));
+    const recipes = el("div", "sheet-recipes");
+    for (const recipe of RECIPES) {
+      const card = el("div", "recipe-card");
+      const need = Object.entries(recipe.need)
+        .map(([id, n]) => `${ITEMS[id]?.name || id} ${rpg.itemCount(id)}/${n}`)
+        .join(" · ");
+      card.append(el("b", "", recipe.name), el("span", "", need));
+      const make = el("button", "item-use", "fazer");
+      make.type = "button";
+      make.addEventListener("click", () => {
+        const res = rpg.craft(recipe.id);
+        if (!res.ok) {
+          toast(res.reason, 3200);
+          audio.error?.();
+          return;
+        }
+        toast(`${res.item.name} feito.`, 2600);
+        audio.chime();
+        render();
+      });
+      card.appendChild(make);
+      recipes.appendChild(card);
+    }
+    body.appendChild(recipes);
+
     const note = el("p", "sheet-note");
-    note.textContent = "Responder certo nas caçadas sobe a perícia do continente. A perícia aumenta o dano contra os monstros. Vida volta devagar fora de duelo, e a Poção de Café cura na hora.";
+    note.textContent = "Responder certo nas caçadas sobe a perícia do continente, que aumenta o dano contra os monstros. A caverna dá ferro, erva, cristal e madeira: a forja transforma em poção, tocha e chave. Tocha acesa aumenta a luz no subsolo por dois minutos.";
     body.appendChild(note);
   }
 

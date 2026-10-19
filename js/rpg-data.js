@@ -44,7 +44,23 @@ export const ITEMS = {
   matriz: { name: "Matriz Esparsa", continent: "ai", desc: "Uma tabela cheia de zeros que aprendeu a guardar só o que importa." },
   caixa: { name: "Fragmento da Caixa Preta", continent: "ai", relic: true, desc: "Uma placa opaca com uma luz que pisca quando ninguém entende. Relíquia: +5 de vida máxima." },
   pocao: { name: "Poção de Café", continent: "hub", heal: 18, desc: "Recupera 18 de vida. Gosto de fio elétrico, efeito de segunda-feira." },
+  ferro: { name: "Ferro Bruto", continent: "hub", desc: "Um pedaço de veio escuro. A forja transforma em ferramenta." },
+  erva: { name: "Erva de Caverna", continent: "hub", desc: "Cresce onde a luz não chega. Cheira a remédio e a terra molhada." },
+  veio: { name: "Cristal de Veio", continent: "hub", desc: "Guarda um pouco de luz. Serve para tocha e para poção." },
+  madeira: { name: "Madeira Petrificada", continent: "hub", desc: "Madeira que virou pedra. Ainda tem veio, ainda queima." },
+  chave: { name: "Chave de Caverna", continent: "hub", desc: "Abre baús selados do subsolo. Some depois de usada." },
+  tocha: { name: "Tocha de Veio", continent: "hub", use: "light", desc: "Acesa, aumenta a luz da caverna por dois minutos." },
+  bomba: { name: "Bomba de Ferro", continent: "hub", use: "bomb", desc: "Estoura perto de você e espanta os bichos num raio curto. Não dá XP nem saque." },
+  caldo: { name: "Caldo de Caverna", continent: "hub", heal: 35, desc: "Culinária de fundo de mina: cura 35. Erva, café e paciência." },
 };
+
+export const RECIPES = [
+  { id: "pocao", name: "Poção de Café", out: "pocao", qty: 1, need: { erva: 2, veio: 1 } },
+  { id: "tocha", name: "Tocha de Veio", out: "tocha", qty: 1, need: { madeira: 1, veio: 1 } },
+  { id: "chave", name: "Chave de Caverna", out: "chave", qty: 1, need: { ferro: 2, madeira: 1 } },
+  { id: "bomba", name: "Bomba de Ferro", out: "bomba", qty: 1, need: { ferro: 1, veio: 1 } },
+  { id: "caldo", name: "Caldo de Caverna", out: "caldo", qty: 1, need: { erva: 2, pocao: 1 } },
+];
 
 const GROUNDS_RAW = [
   {

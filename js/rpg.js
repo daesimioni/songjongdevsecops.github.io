@@ -2,7 +2,7 @@
 // perguntas. Tudo vive no localStorage; o mundo compartilhado continua sendo
 // só posição e conversa.
 import { STORAGE } from "./config.js";
-import { SKILLS, TIERS, ITEMS, QUESTIONS } from "./rpg-data.js";
+import { SKILLS, TIERS, ITEMS, QUESTIONS, RECIPES } from "./rpg-data.js";
 
 const RESPAWN_MS = 5 * 60 * 1000;
 const BOSS_RESPAWN_MS = 20 * 60 * 1000;
@@ -169,14 +169,43 @@ export class RPG {
   }
 
   useItem(id) {
-    if (id !== "pocao") return { ok: false, reason: "Este item não se usa agora." };
-    if (this.itemCount(id) <= 0) return { ok: false, reason: "Você não tem essa poção." };
+    const item = ITEMS[id];
+    if (!item || !["pocao", "tocha", "bomba", "caldo"].includes(id)) return { ok: false, reason: "Este item não se usa agora." };
+    if (this.itemCount(id) <= 0) return { ok: false, reason: `Você não tem ${item.name}.` };
+    if (id === "tocha") {
+      this.data.items[id]--;
+      if (this.data.items[id] <= 0) delete this.data.items[id];
+      this.save();
+      return { ok: true, light: 120000, name: item.name };
+    }
+    if (id === "bomba") {
+      this.data.items[id]--;
+      if (this.data.items[id] <= 0) delete this.data.items[id];
+      this.save();
+      return { ok: true, bomb: true, name: item.name };
+    }
     if (this.hp() >= this.hpMax()) return { ok: false, reason: "Sua vida já está cheia." };
     this.data.items[id]--;
     if (this.data.items[id] <= 0) delete this.data.items[id];
-    const healed = this.heal(ITEMS[id].heal || 15);
+    const healed = this.heal(item.heal || 15);
     this.save();
     return { ok: true, healed };
+  }
+
+  craft(recipeId) {
+    const recipe = RECIPES.find((r) => r.id === recipeId);
+    if (!recipe) return { ok: false, reason: "Esta receita não existe." };
+    for (const [id, need] of Object.entries(recipe.need)) {
+      if (this.itemCount(id) < need) {
+        return { ok: false, reason: `Falta ${ITEMS[id]?.name || id} (${this.itemCount(id)}/${need}).` };
+      }
+    }
+    for (const [id, need] of Object.entries(recipe.need)) {
+      this.data.items[id] -= need;
+      if (this.data.items[id] <= 0) delete this.data.items[id];
+    }
+    this.addItem(recipe.out, recipe.qty);
+    return { ok: true, recipe, item: ITEMS[recipe.out] };
   }
 
   inventoryList() {
@@ -224,7 +253,9 @@ export class RPG {
   }
 
   bossAlive(ground) {
-    if (!this.leverPulled(ground.id)) return false;
+    // nas cavernas não existe alavanca: o chefe está sempre no fundo, só some
+    // enquanto o corpo esfria.
+    if (!ground.dungeon && !this.leverPulled(ground.id)) return false;
     const at = this.data.bosses[ground.id];
     return !Number.isFinite(at) || now() - at > BOSS_RESPAWN_MS;
   }
@@ -250,7 +281,18 @@ export class RPG {
     };
   }
 
-  buildDeck(continent, tiers) {
+  // As salas têm tema. A pergunta que combina com o tema vai para a frente do
+  // baralho; o resto continua no sorteio. Sem tema, é sorteio puro.
+  themeScore(text, hint) {
+    if (!hint) return 0;
+    const body = String(text).toLowerCase();
+    const words = String(hint).toLowerCase().split(/[^a-zà-ú0-9]+/i).filter((w) => w.length >= 4);
+    let score = 0;
+    for (const w of words) if (body.includes(w)) score += 3;
+    return score;
+  }
+
+  buildDeck(continent, tiers, hint = "") {
     const deck = [];
     for (const tier of tiers) {
       const bank = QUESTION_INDEX.get(continent)?.[tier] || [];
@@ -263,18 +305,19 @@ export class RPG {
           answer: mixed.findIndex((o) => o.ok),
           why: q.why,
           tier,
+          score: this.themeScore(`${q.q} ${q.why}`, hint),
         });
       }
     }
-    return shuffle(deck);
+    return shuffle(deck).sort((a, b) => b.score - a.score);
   }
 
   startDuel(monster, ground, boss = false) {
     if (boss ? !this.bossAlive(ground) : !this.monsterAlive(monster.id)) {
       return { ok: false, reason: "Este monstro não está mais aqui." };
     }
-    const tiers = boss ? [1, 2, 3] : [monster.tier];
-    const deck = this.buildDeck(ground.continent, tiers);
+    const tiers = boss ? [2, 3] : [monster.tier];
+    const deck = this.buildDeck(ground.continent, tiers, monster?.theme || ground.theme);
     if (!deck.length) return { ok: false, reason: "As perguntas deste continente ainda não foram escritas." };
     const hp = boss ? TIERS[4].hp : TIERS[monster.tier].hp;
     this.duel = {
@@ -337,6 +380,7 @@ export class RPG {
     const tier = d.boss ? 4 : monster.tier;
     const itemId = d.boss ? ground.bossLoot : ground.loot[Math.min(2, Math.max(0, tier - 1))];
     const loot = [{ id: itemId || ground.loot[0], qty: 1 }];
+    if (ground.material) loot.push({ id: ground.material, qty: d.boss ? 3 : 1 });
     if (d.boss) loot.push({ id: "pocao", qty: 1 });
     else if (Math.random() < 0.28) loot.push({ id: "pocao", qty: 1 });
     for (const l of loot) this.addItem(l.id, l.qty);
