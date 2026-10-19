@@ -58,6 +58,8 @@ const state = {
   opened: new Set(saved.visited),
   keys: new Set(),
   touch: { up: false, down: false, left: false, right: false },
+  fogDirty: false,
+  fogSavedAt: 0,
 };
 
 function readJSON(key, fallback) {
@@ -69,6 +71,31 @@ function readJSON(key, fallback) {
 function writeJSON(key, value) {
   try { localStorage.setItem(key, JSON.stringify(value)); } catch { /* sem storage */ }
 }
+function loadFog() {
+  try {
+    const raw = localStorage.getItem(STORAGE.explored);
+    if (!raw) return;
+    const bin = atob(raw);
+    if (bin.length !== 48 * 36) return;
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    world.setExplored(bytes);
+  } catch { /* sem storage ou lixo */ }
+}
+
+function saveFog() {
+  if (!state.fogDirty) return;
+  try {
+    const bytes = world.exploredBytes;
+    let s = "";
+    for (let i = 0; i < bytes.length; i += 4096) {
+      s += String.fromCharCode(...bytes.subarray(i, i + 4096));
+    }
+    localStorage.setItem(STORAGE.explored, btoa(s));
+    state.fogDirty = false;
+  } catch { /* sem storage */ }
+}
+
 function sanitizeRoom(value) {
   const r = String(value || "").toLowerCase().replace(/[^a-z0-9-]/g, "").slice(0, 24);
   return r || NET.defaultRoom;
@@ -469,6 +496,11 @@ function loop(now) {
       player.moving = false;
     }
     updateCat(dt);
+    if (world.markExplored(player.x, player.y, 4.6)) state.fogDirty = true;
+    if (state.fogDirty && now - state.fogSavedAt > 1500) {
+      state.fogSavedAt = now;
+      saveFog();
+    }
     renderer.draw(now, player, state.peers, world.npcs, world.cat, player.moving);
     updatePrompt();
     if (state.net) state.net.setLocal(player.x, player.y, player.dir);
@@ -594,6 +626,7 @@ if (new URLSearchParams(location.search).has("debug")) {
 }
 
 window.addEventListener("beforeunload", () => {
+  saveFog();
   if (state.net) state.net.destroy();
 });
 
@@ -612,6 +645,8 @@ window.addEventListener("beforeunload", () => {
     const canvas = document.getElementById("world");
     if (canvas) canvas.setAttribute("aria-label", "Mapa do mundo, em pixel art. Ande com o direcional e interaja com A.");
   }
+  loadFog();
+  world.markExplored(player.x, player.y, 4.6);
   $("net-pill").classList.remove("on");
   $("online").textContent = "solo";
   setSound(false);

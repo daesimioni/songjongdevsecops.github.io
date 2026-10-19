@@ -36,6 +36,12 @@ export function createRenderer(canvas, world) {
   const mmBase = document.createElement("canvas");
   mmBase.width = MAP_W * 2;
   mmBase.height = MAP_H * 2;
+  const mmBaseCtx = mmBase.getContext("2d");
+  const mmFog = document.createElement("canvas");
+  mmFog.width = MAP_W * 2;
+  mmFog.height = MAP_H * 2;
+  const fogCtx = mmFog.getContext("2d");
+  let fogVersion = -1;
   buildMinimapBase();
 
   function resize() {
@@ -64,7 +70,7 @@ export function createRenderer(canvas, world) {
   }
 
   function buildMinimapBase() {
-    if (!mctx) return;
+    const g = mmBaseCtx;
     for (let y = 0; y < MAP_H; y++) {
       for (let x = 0; x < MAP_W; x++) {
         const t = world.get(x, y);
@@ -80,13 +86,13 @@ export function createRenderer(canvas, world) {
         else if (t === K.TREE) c = "#0c1d15";
         else if (t === K.WALL) c = "#3b3352";
         else if (t === K.VOID) c = "#05070f";
-        mctx.fillStyle = c;
-        mctx.fillRect(x * 2, y * 2, 2, 2);
+        g.fillStyle = c;
+        g.fillRect(x * 2, y * 2, 2, 2);
       }
     }
     for (const s of world.stations) {
-      mctx.fillStyle = s.accent;
-      mctx.fillRect(Math.round(s.x * 2) - 1, Math.round(s.y * 2) - 1, 3, 3);
+      g.fillStyle = s.accent;
+      g.fillRect(Math.round(s.x * 2) - 1, Math.round(s.y * 2) - 1, 3, 3);
     }
   }
 
@@ -503,19 +509,37 @@ export function createRenderer(canvas, world) {
     // cabeça
     ctx.fillStyle = colors.skin;
     ctx.fillRect(-4, -20, 8, 8);
-    // cabelo
+    // cabelo: por cima e cobrindo a nuca, nunca o lado do rosto
     ctx.fillStyle = colors.hair;
     ctx.fillRect(-4, -21, 8, 3);
-    if (dir === 0) ctx.fillRect(-5, -20, 2, 5);
-    else if (dir === 1) ctx.fillRect(-5, -20, 3, 6);
-    else if (dir === 2) ctx.fillRect(2, -20, 3, 6);
-    else ctx.fillRect(-4, -20, 8, 7);
-    // olhos
+    if (dir === 0) {
+      ctx.fillRect(-5, -20, 2, 5);
+      ctx.fillRect(3, -20, 2, 5);
+    } else if (dir === 1) {
+      // olhando para a esquerda: nuca à direita
+      ctx.fillRect(1, -20, 4, 6);
+      ctx.fillRect(-4, -21, 8, 3);
+    } else if (dir === 2) {
+      // olhando para a direita: nuca à esquerda
+      ctx.fillRect(-5, -20, 4, 6);
+      ctx.fillRect(-4, -21, 8, 3);
+    } else {
+      // de costas
+      ctx.fillRect(-4, -20, 8, 7);
+    }
+    // rosto: olho e nariz do lado para onde anda
     ctx.fillStyle = "#14121f";
-    if (dir !== 3) {
-      const ex = dir === 1 ? -3 : dir === 2 ? 1 : -2;
-      ctx.fillRect(ex, -17, 1, 2);
-      if (dir !== 1) ctx.fillRect(ex + 3, -17, 1, 2);
+    if (dir === 0) {
+      ctx.fillRect(-2, -17, 1, 2);
+      ctx.fillRect(1, -17, 1, 2);
+    } else if (dir === 1) {
+      ctx.fillRect(-3, -17, 1, 2);
+    } else if (dir === 2) {
+      ctx.fillRect(2, -17, 1, 2);
+    }
+    if (dir === 1 || dir === 2) {
+      ctx.fillStyle = colors.skin;
+      ctx.fillRect(dir === 1 ? -5 : 4, -16, 1, 2);
     }
     // detalhe no peito
     ctx.fillStyle = colors.accent || "#fff3d1";
@@ -718,7 +742,18 @@ export function createRenderer(canvas, world) {
 
   function drawMinimap(player, peers) {
     if (!mctx) return;
+    if (fogVersion !== world.exploredVersion) {
+      fogVersion = world.exploredVersion;
+      fogCtx.clearRect(0, 0, mmFog.width, mmFog.height);
+      fogCtx.fillStyle = "#04060d";
+      for (let y = 0; y < MAP_H; y++) {
+        for (let x = 0; x < MAP_W; x++) {
+          if (!world.isExplored(x, y)) fogCtx.fillRect(x * 2, y * 2, 2, 2);
+        }
+      }
+    }
     mctx.drawImage(mmBase, 0, 0);
+    mctx.drawImage(mmFog, 0, 0);
     for (const p of peers) {
       mctx.fillStyle = p.color || "#61f4c0";
       mctx.fillRect(Math.round(p.x * 2) - 1, Math.round(p.y * 2) - 1, 3, 3);

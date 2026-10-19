@@ -23,6 +23,7 @@ export const STORAGE = {
   name: "mundo-song:name:v1",
   sound: "mundo-song:sound:v1",
   room: "mundo-song:room:v1",
+  explored: "mundo-song:explored:v1",
 };
 
 export const ZONES = {

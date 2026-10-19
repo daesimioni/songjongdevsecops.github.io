@@ -173,6 +173,36 @@ export function createWorld() {
   const stations = STATIONS.map((s) => ({ ...s }));
   const npcs = NPC_SPAWNS.map((n) => ({ ...n, bob: rand() * Math.PI * 2 }));
 
+  // névoa do minimapa: começa tudo escuro e vai revelando em volta do passo
+  const explored = new Uint8Array(MAP_W * MAP_H);
+  let exploredVersion = 0;
+  function markExplored(cx, cy, radius) {
+    const r = Math.ceil(radius);
+    const x0 = Math.max(0, Math.floor(cx - radius));
+    const x1 = Math.min(MAP_W - 1, Math.ceil(cx + radius));
+    const y0 = Math.max(0, Math.floor(cy - radius));
+    const y1 = Math.min(MAP_H - 1, Math.ceil(cy + radius));
+    let changed = false;
+    for (let y = y0; y <= y1; y++) {
+      for (let x = x0; x <= x1; x++) {
+        if (Math.hypot(x + 0.5 - cx, y + 0.5 - cy) > radius) continue;
+        const i = at(x, y);
+        if (!explored[i]) { explored[i] = 1; changed = true; }
+      }
+    }
+    if (changed) exploredVersion++;
+    return changed;
+  }
+  function isExplored(tx, ty) {
+    if (tx < 0 || ty < 0 || tx >= MAP_W || ty >= MAP_H) return false;
+    return explored[at(tx, ty)] === 1;
+  }
+  function setExplored(bytes) {
+    if (!bytes || bytes.length !== explored.length) return;
+    explored.set(bytes);
+    exploredVersion++;
+  }
+
   function isSolidTile(tx, ty) {
     return SOLID.has(get(tx, ty));
   }
@@ -207,6 +237,9 @@ export function createWorld() {
     tiles, decor, stations, npcs,
     cat: { ...CAT_SPAWN, x: CAT_SPAWN.x, y: CAT_SPAWN.y, facing: 1, t: 0 },
     get, set, isSolidTile, boxCollides, zoneAt,
+    markExplored, isExplored, setExplored,
+    get exploredVersion() { return exploredVersion; },
+    get exploredBytes() { return explored; },
   };
 }
 
