@@ -132,6 +132,31 @@ grande. `C` abre a Ficha em qualquer lugar, `Esc` sobe de volta para a boca da
 caverna. Monstros e chefe guardam o tempo de respawn de sempre; os baús e os
 veios se reabrem a cada descida.
 
+## No celular
+
+A página é feita para o toque, não adaptada depois:
+
+- **andar**: direcional na base ou toque no chão. Segurar o direcional continua
+  andando; **Turbo** acende a nave.
+- **agir**: o botão **A** interage com estação, NPC, caverna e baú. No celular ele
+  troca o `F` do teclado.
+- **tudo à mão**: Falar, Rede, Diário, Ficha, som e ajuda ficam numa linha só no
+  topo, com 38 pixels de altura ou mais e sem letra miúda de atalho. A barra de
+  status da praça encurta para caber.
+- **caverna**: toque no chão para andar e no objeto para interagir; o minimapa
+  aparece menor no canto e a ajuda vira "toque no chão, toque no objeto". Ficha e
+  sair ficam em botões no topo.
+- **conversa**: o campo tem 16 px (o iPhone não dá zoom ao focar) e a barra sobe
+  junto com o teclado usando a área visível do navegador.
+- **modais**: largura total, altura de 90% da tela, cabeçalho com o fechar preso no
+  topo e alternativas de 44 px ou mais. Nada de alvo pequeno.
+- **paisagem**: o HUD compacta, o minimapa sai da frente dos botões e a ajuda da
+  caverna fica só nos controles. As bordas respeitam o `safe-area-inset` do
+  aparelho.
+
+A conferência de toque roda em viewport de 390×844, 360×640 e 844×390, com
+eventos de toque reais e sem erro de console.
+
 ## A Rede
 
 A conta do jogador é uma chave Nostr criada e guardada no próprio navegador.

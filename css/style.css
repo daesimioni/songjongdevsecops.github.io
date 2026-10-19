@@ -2100,3 +2100,157 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
   color: var(--amber);
 }
 .pvp-down #hud { opacity: 0.4; }
+
+/* ---------- toque: alvo grande, teclado escondido, sem zoom acidental ---------- */
+.touch-only { display: none; }
+
+@media (pointer: coarse) {
+  html, body { overscroll-behavior: none; }
+  button, .pill, .check, a { touch-action: manipulation; }
+  .hud-btn, .pill, .dg-exit, .rede-tab, .chatbar button { min-height: 40px; }
+  .modal-head .hud-btn, .pvp-action, .duel-next, .duel-option, .pvp-option,
+  .rede-mini, .training-card, .intro-form .start, .panel-head .hud-btn {
+    min-height: 44px;
+  }
+  .duel-option kbd, .pvp-option kbd, .intro-controls kbd { display: none; }
+  #world, #dungeon-canvas, #touch, .dpad button, .touch-action, .touch-sprint {
+    -webkit-touch-callout: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .kb-only { display: none; }
+  .touch-only { display: inline; }
+  .dg-exit kbd { display: none; }
+  #dg-prompt kbd { display: none; }
+  #dg-prompt::before { content: "toque em "; color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; }
+}
+
+@media (max-width: 720px) {
+  .hud {
+    padding: calc(8px + env(safe-area-inset-top)) calc(10px + env(safe-area-inset-right)) 8px calc(10px + env(safe-area-inset-left));
+    gap: 6px;
+  }
+  .brand-title { font-size: 10px; }
+  .hud-actions { flex-wrap: nowrap; gap: 4px; }
+  .hud-btn { min-height: 38px; padding: 0 7px; font-size: 11px; white-space: nowrap; }
+  .hud-btn-icon { width: 36px; padding: 0; }
+  #btn-sound { width: 38px; padding: 0; justify-content: center; font-size: 0; }
+  #btn-sound::before { content: "♪"; font-size: 16px; }
+  #net-pill { flex: 0 1 96px; min-width: 0; padding: 0 8px; font-size: 10px; }
+  #net-pill b { max-width: 64px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .touch {
+    padding: 12px calc(12px + env(safe-area-inset-right)) calc(12px + env(safe-area-inset-bottom)) calc(12px + env(safe-area-inset-left));
+  }
+  .touch .dpad { grid-template-columns: repeat(3, 52px); grid-template-rows: repeat(3, 52px); gap: 6px; }
+  .dpad button { font-size: 16px; }
+  .touch-action { width: 68px; height: 68px; }
+  .touch-sprint { width: 56px; height: 56px; }
+
+  .prompt { bottom: calc(198px + env(safe-area-inset-bottom)); max-width: 88vw; font-size: 12px; }
+  .toast { bottom: calc(260px + env(safe-area-inset-bottom)); max-width: 88vw; }
+
+  .chatbar { bottom: calc(12px + var(--kb-gap, 0px)); width: calc(100% - 20px); }
+  .chatbar form { padding: 7px; gap: 6px; }
+  .chatbar label { display: none; }
+  .chatbar input { font-size: 16px; min-height: 40px; }
+  .chatbar button { min-height: 42px; padding: 0 10px; }
+  #chat-log { max-height: 30dvh; }
+
+  .modal { padding: 8px; }
+  .modal-card { width: 100%; max-height: 90dvh; padding: 16px 14px 20px; border-radius: 12px; overscroll-behavior: contain; }
+  .modal-head {
+    position: sticky;
+    top: -16px;
+    z-index: 3;
+    margin: -16px -14px 12px;
+    padding: 14px 14px 10px;
+    background: #0b1024;
+    border-bottom: 1px solid var(--line);
+  }
+  .modal-head h2 { font-size: 11px; }
+  .modal-head .hud-btn { min-height: 40px; padding: 0 10px; }
+  .duel-card, .pvp-card { width: 100%; }
+  #duel-name { font-size: clamp(14px, 4.4vw, 18px); }
+  .duel-top { gap: 10px; }
+  .duel-option, .pvp-option { padding: 12px; font-size: 13px; min-height: 48px; }
+  .duel-feedback, .duel-hint, .pvp-text, .pvp-note, .pvp-sub, .training-sub { font-size: 12px; }
+  .pvp-question { padding: 12px; }
+  .pvp-question b { font-size: 12.5px; }
+  .journal-progress { font-size: 12px; }
+  .rede-body { padding: 10px; }
+  .rede-mini { padding: 0 10px; }
+  .panel-head { position: sticky; top: 0; z-index: 4; background: #0a0f21; }
+  .panel-head .hud-btn { min-height: 40px; padding: 0 10px; }
+  .help-note { font-size: 12.5px; }
+
+  .dungeon-hud {
+    padding: calc(10px + env(safe-area-inset-top)) 12px calc(8px + env(safe-area-inset-bottom));
+    gap: 6px;
+  }
+  #dg-title { font-size: clamp(13px, 4.4vw, 18px); }
+  .dg-stats { font-size: 10px; gap: 4px; }
+  .dg-stats span { padding: 4px 6px; }
+  .dg-exit { min-height: 40px; padding: 0 10px; }
+  .dg-msg { font-size: 11.5px; max-width: 88vw; }
+  #dg-map {
+    display: block;
+    width: 88px;
+    height: 66px;
+    right: 10px;
+    bottom: calc(40px + env(safe-area-inset-bottom));
+    opacity: 0.92;
+    pointer-events: none;
+  }
+  .dg-prompt { bottom: calc(118px + env(safe-area-inset-bottom)); max-width: 86vw; font-size: 12px; }
+  .dg-help {
+    display: block;
+    left: 12px;
+    right: 108px;
+    bottom: calc(10px + env(safe-area-inset-bottom));
+    text-align: left;
+    font-size: 9.5px;
+  }
+}
+
+@media (max-width: 380px) {
+  .hud-btn { font-size: 10.5px; padding: 0 6px; }
+  .touch .dpad { grid-template-columns: repeat(3, 48px); grid-template-rows: repeat(3, 48px); gap: 5px; }
+  .touch-action { width: 62px; height: 62px; }
+  .touch-sprint { width: 52px; height: 52px; }
+  .prompt { bottom: calc(186px + env(safe-area-inset-bottom)); }
+  .toast { bottom: calc(246px + env(safe-area-inset-bottom)); }
+}
+
+@media (max-height: 520px) and (pointer: coarse) {
+  .hud { padding-top: calc(4px + env(safe-area-inset-top)); }
+  .brand { display: none; }
+  .touch { padding: 8px 12px calc(8px + env(safe-area-inset-bottom)); }
+  .touch .dpad { grid-template-columns: repeat(3, 44px); grid-template-rows: repeat(3, 44px); gap: 4px; }
+  .dpad button { font-size: 14px; }
+  .touch-action { width: 56px; height: 56px; }
+  .touch-sprint { width: 46px; height: 46px; }
+  .prompt { bottom: calc(150px + env(safe-area-inset-bottom)); }
+  .toast { bottom: auto; top: calc(54px + env(safe-area-inset-top)); }
+  .hud-btn { min-height: 38px; padding: 0 7px; font-size: 11px; }
+  #btn-sound { width: 38px; padding: 0; justify-content: center; font-size: 0; }
+  #btn-sound::before { content: "♪"; font-size: 16px; }
+  #net-pill { flex: 0 1 96px; min-width: 0; padding: 0 8px; font-size: 10px; }
+  #net-pill b { max-width: 64px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .minimap { display: none; }
+  .modal-card { max-height: 94dvh; }
+  .dungeon-hud { padding-top: calc(6px + env(safe-area-inset-top)); }
+  .dg-sub { display: none; }
+  .dg-help { display: none; }
+  .dg-prompt { bottom: 92px; }
+  #dg-map { bottom: 12px; }
+}
+
+/* tablet de toque: o minimapa não fica embaixo do botão A */
+@media (pointer: coarse) and (min-width: 721px) and (min-height: 601px) {
+  .minimap { bottom: calc(200px + env(safe-area-inset-bottom)); }
+  .hud-btn { min-height: 40px; }
+}
+@media (pointer: coarse) and (max-height: 600px) {
+  .minimap { display: none; }
+}

@@ -626,13 +626,13 @@ function setNetStatus({ state: s, count }) {
   const label = $("online");
   pill.classList.toggle("on", s === "online");
   if (s === "online") {
-    label.textContent = count > 1 ? `${count} na praça` : "praça vazia";
+    label.textContent = count > 1 ? `${count} aqui` : "só você";
     pill.title = "Clique para copiar o convite desta sala";
   } else if (s === "connecting") {
-    label.textContent = "conectando";
+    label.textContent = "ligando";
     pill.title = "Procurando a praça compartilhada";
   } else if (s === "offline") {
-    label.textContent = "sinal caiu";
+    label.textContent = "sem sinal";
     pill.title = "Sem sinal agora; o mundo segue sozinho";
   } else {
     label.textContent = "solo";
@@ -643,7 +643,7 @@ function updateOnlineCount() {
   if (!state.net) return;
   if ($("net-pill").classList.contains("on")) {
     $("online").textContent = state.peers.length > 0
-      ? `${state.peers.length + 1} na praça` : "praça vazia";
+      ? `${state.peers.length + 1} aqui` : "só você";
   }
 }
 function setPeers(peers) {
@@ -701,7 +701,7 @@ function startGame() {
   const coarse = window.matchMedia("(pointer: coarse)").matches;
   if (coarse) {
     document.querySelector("#prompt kbd").textContent = "A";
-    setTimeout(() => toast("toque no chão para andar, segure Turbo para voar baixo, A para interagir.", 4800), 800);
+    setTimeout(() => toast("toque no chão para andar, Turbo acelera e A interage. Os botões do topo abrem Falar, Rede, Diário e Ficha.", 5200), 800);
   } else {
     setTimeout(() => toast("WASD ou clique no chão anda, Espaço acende a nave, F interage, Q fala, E Rede, Z diário, C ficha.", 5400), 800);
   }
@@ -1496,6 +1496,20 @@ $("scrim").addEventListener("click", () => {
 $("panel-close").addEventListener("click", closePanel);
 $("panel-back").addEventListener("click", closePanel);
 
+// O teclado do celular cobre o rodapé: o campo de conversa sobe junto com a
+// área visível para continuar à vista enquanto se digita.
+function fitKeyboard() {
+  const vv = window.visualViewport;
+  if (!vv) return;
+  const gap = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+  document.documentElement.style.setProperty("--kb-gap", `${Math.round(gap)}px`);
+}
+if (window.visualViewport) {
+  window.visualViewport.addEventListener("resize", fitKeyboard);
+  window.visualViewport.addEventListener("scroll", fitKeyboard);
+  fitKeyboard();
+}
+
 $("chat-form").addEventListener("submit", (e) => {
   e.preventDefault();
   const text = $("chat-input").value.trim();
@@ -1540,9 +1554,9 @@ window.addEventListener("beforeunload", () => {
   const coarse = window.matchMedia("(pointer: coarse)").matches;
   if (coarse) {
     const lead = document.querySelector(".intro-lead");
-    if (lead) lead.innerHTML = "Cada continente é uma página. Ande com o direcional, toque no chão para ir até ali, segure <strong>Turbo</strong> para acelerar e toque em <kbd>A</kbd> nas estações para descobrir 32 fragmentos de computação, matemática, física, química, música e inteligência artificial.";
+    if (lead) lead.innerHTML = "Cada continente é uma página. Ande com o direcional, toque no chão para ir até ali, segure <strong>Turbo</strong> para acelerar e toque em <kbd>A</kbd> perto de estações, NPCs e cavernas. Os botões do topo abrem a conversa, a Rede, o Diário e a Ficha.";
     const controls = document.querySelector(".intro-controls");
-    if (controls) controls.innerHTML = "toque no chão para andar · <strong>Turbo</strong> acelera · <kbd>A</kbd> interage · Falar abre a conversa";
+    if (controls) controls.innerHTML = "toque no chão para andar · <strong>Turbo</strong> acelera · <kbd>A</kbd> interage · topo: Falar, Rede, Diário, Ficha";
     const canvas = $("world");
     if (canvas) canvas.setAttribute("aria-label", "Mapa do mundo, em pixel art. Ande com o direcional e interaja com A.");
   }

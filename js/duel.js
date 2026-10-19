@@ -165,7 +165,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
       next.addEventListener("click", advance);
       body.appendChild(next);
     } else {
-      const foot = el("p", "duel-hint", "Responda com 1, 2 ou 3. Errar tira vida; acertar tira vida do monstro.");
+      const foot = el("p", "duel-hint", "Toque numa alternativa (ou 1, 2 e 3 no teclado). Errar tira vida; acertar tira vida do monstro.");
       body.appendChild(foot);
     }
   }

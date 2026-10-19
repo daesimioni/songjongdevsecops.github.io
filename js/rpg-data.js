@@ -215,7 +215,7 @@ export const QUESTIONS = {
     3: [
       { q: "Por que o problema da parada é indecidível?", options: ["Porque não cabe na memória", "Porque um programa geral se contradiz ao analisar a si mesmo", "Porque a CPU é finita"], a: 1, why: "Turing mostrou que um programa que decide se outro para pode ser alimentado com si mesmo e gerar uma contradição." },
       { q: "Duas chaves diferentes caem no mesmo balde de uma tabela hash. Isso é...", options: ["Uma colisão, tratada por encadeamento ou sondagem", "Um erro fatal", "Uma árvore"], a: 0, why: "Colisão é normal. O balde vira uma lista ou o algoritmo procura o próximo espaço livre." },
-      { q: "P versus NP pergunta, essencialmente...", options: ["Se todo problema verificável rápido é resolvível rápido", "Se a luz é finita", "Se NP é indecidível"], a: 0, why: "Verificar uma solução pode ser fácil e encontrá-la difícil. A pergunta é se essas duas classes coincidem." },
+      { q: "O que a pergunta P versus NP quer dizer?", options: ["Se todo problema verificável rápido é resolvível rápido", "Se a luz é finita", "Se NP é indecidível"], a: 0, why: "Verificar uma solução pode ser fácil e encontrá-la difícil. A pergunta é se essas duas classes coincidem." },
     ],
   },
   math: {

@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <title>Mundo de Song</title>
 <meta name="description" content="Um arquipélago jogável em pixel art: computação, matemática, física, química, música e inteligência artificial em 32 estações, com caçadas de perguntas, cavernas, missões e uma rede de jogadores.">
 <meta name="theme-color" content="#070b18">
@@ -54,7 +54,7 @@
     <p id="zone-sub"></p>
   </div>
 
-  <div id="prompt" class="prompt" hidden>
+  <div id="prompt" class="prompt" hidden aria-live="polite">
     <kbd>F</kbd>
     <span id="prompt-label"></span>
   </div>
@@ -65,7 +65,7 @@
     <div id="chat-log" class="chat-log" aria-live="polite" aria-label="histórico da conversa da sala"></div>
     <form id="chat-form">
       <label for="chat-input">diga algo</label>
-      <input id="chat-input" maxlength="120" autocomplete="off" spellcheck="false" placeholder="aparece para quem está na mesma sala">
+      <input id="chat-input" maxlength="120" autocomplete="off" spellcheck="false" enterkeyhint="send" autocapitalize="sentences" placeholder="aparece para quem está na mesma sala">
       <button type="submit">enviar</button>
       <button type="button" id="chat-cancel">sair</button>
     </form>
@@ -98,7 +98,7 @@
       <canvas id="dg-map" width="128" height="96" aria-label="Minimapa da caverna, com o que já foi andado"></canvas>
       <p id="dg-msg" class="dg-msg" role="status" aria-live="polite"></p>
       <div id="dg-prompt" class="dg-prompt" hidden><kbd>F</kbd> <span></span></div>
-      <p id="dg-help" class="dg-help">WASD ou clique para andar · <kbd>F</kbd> interage · <kbd>C</kbd> ficha · <kbd>Espaço</kbd> corre · <kbd>Esc</kbd> sobe</p>
+      <p id="dg-help" class="dg-help"><span class="kb-only">WASD ou clique para andar · <kbd>F</kbd> interage · <kbd>C</kbd> ficha · <kbd>Espaço</kbd> corre · <kbd>Esc</kbd> sobe</span><span class="touch-only">toque no chão para andar · toque no objeto para interagir · ficha e sair no topo</span></p>
     </div>
   </div>
 
@@ -252,7 +252,7 @@
       </div>
       <p class="help-note">Segure <kbd>Espaço</kbd> para acender a nave e cruzar o mapa mais rápido; no celular, segure o botão <strong>Turbo</strong>. A nave não atravessa água: as pontes continuam sendo caminho.</p>
       <p class="help-note"><kbd>Enter</kbd> também abre a conversa; com ela aberta, <kbd>Enter</kbd> envia e fecha.</p>
-      <p class="help-note">No celular, use o direcional, o botão A e o Turbo. A praça é pública: quem estiver na mesma sala vê seu apelido, seu boneco e suas mensagens. Use um apelido, não seu nome completo.</p>
+      <p class="help-note">No celular, use o direcional, o botão A e o Turbo; os botões do topo abrem Falar, Rede, Diário e Ficha, e a conversa sobe junto com o teclado. A praça é pública: quem estiver na mesma sala vê seu apelido, seu boneco e suas mensagens. Use um apelido, não seu nome completo.</p>
       <p class="help-note">As <strong>Pedras do Porto</strong>, os monólitos brilhantes nas docas, abrem a viagem rápida para os continentes que você já visitou. As pontes também funcionam a pé.</p>
       <p class="help-note">Clique no chão para o boneco andar até ali. Clique numa estação, NPC ou boca de caverna para ir até perto e interagir sozinho.</p>
       <p class="help-note">Os NPCs têm missões. Aperte <kbd>F</kbd> perto deles para aceitar, responder e entregar. O Diário (<kbd>Z</kbd>) lista o que está em andamento e quanto falta.</p>
@@ -260,7 +260,7 @@
       <p class="help-note">Quem dá XP, item e perícia é o bicho da <strong>caverna</strong>: acertar tira vida dele, errar tira a sua. Fugir nunca é de graça: a chance de levar um golpe na fuga cresce com a dificuldade do monstro (o chefe é o pior) e o café da horta reduz esse risco por um tempo.</p>
       <p class="help-note">Na <strong>Rede</strong> dá para <strong>desafiar</strong> outro jogador para um duelo de perguntas: você escolhe uma carta (muito fácil a muito difícil), ele responde para se defender. Errar custa compostura, não vida nem item. Quem chega a zero fica 10 segundos desativado.</p>
       <p class="help-note">Na cidade subterrânea: a forja abre a Ficha, a mesa grava encantos permanentes, a horta quer semente e o bicho quer ração. Veios de cristal pedem picareta.</p>
-      <p class="help-note">Ao lado de cada clareira há uma <strong>boca de caverna</strong>. Lá dentro o bicho que vê você começa a batalha sozinho, e quanto mais fundo, mais forte. O chão dá ferro, erva, cristal e madeira; a forja da cidade subterrânea faz ferramentas, comida, tocha, chave e bomba. Baú fundo pede chave. <kbd>Esc</kbd> sobe de volta.</p>
+      <p class="help-note">Ao lado de cada clareira há uma <strong>boca de caverna</strong>. Lá dentro o bicho que vê você começa a batalha sozinho, e quanto mais fundo, mais forte. O chão dá ferro, erva, cristal e madeira; a forja da cidade subterrânea faz ferramentas, comida, tocha, chave e bomba. Baú fundo pede chave. <kbd>Esc</kbd> sobe de volta; no celular, toque no chão para andar, toque no objeto para interagir e use <strong>ficha</strong> e <strong>sair</strong> no topo.</p>
       <p class="help-note">A <strong>Rede</strong> é a conversa do mundo: canais por continente, DMs privadas e a lista de quem está por perto. Sua conta é uma chave Nostr criada e guardada neste navegador, sem cadastro e sem servidor meu. Só conteúdo marcado pelo jogo aparece ali.</p>
       <p class="help-note">Este site é estático. A presença no mapa usa um broker MQTT público por WebSocket; a Rede usa relays Nostr públicos. Se o sinal falhar, o mundo continua funcionando sozinho.</p>
     </div>

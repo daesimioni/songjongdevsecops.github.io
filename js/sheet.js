@@ -75,7 +75,7 @@ export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onUs
     body.appendChild(el("h3", "sheet-sec", "Mochila"));
     const inv = rpg.inventoryList();
     if (!inv.length) {
-      body.appendChild(el("p", "sheet-empty", "A mochila está vazia. Os monstros das caçadas deixam alguma coisa."));
+      body.appendChild(el("p", "sheet-empty", "A mochila está vazia. Os monstros das cavernas deixam alguma coisa."));
     } else {
       const list = el("div", "sheet-items");
       for (const item of inv) {
