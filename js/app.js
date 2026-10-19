@@ -603,6 +603,15 @@ window.addEventListener("beforeunload", () => {
   if (roomFromHash) state.room = roomFromHash;
   $("intro-name").value = saved.name || "";
   $("intro-room").value = state.room;
+  const coarse = window.matchMedia("(pointer: coarse)").matches;
+  if (coarse) {
+    const lead = document.querySelector(".intro-lead");
+    if (lead) lead.innerHTML = "Cada canto deste mapa é uma página. Ande até lá com o direcional, toque em <kbd>A</kbd> e mexa no que encontrar: portas lógicas, fractais, Fourier, um sólido em 3D, um sequenciador.";
+    const controls = document.querySelector(".intro-controls");
+    if (controls) controls.innerHTML = "direcional para andar · <kbd>A</kbd> para interagir · Falar abre a conversa";
+    const canvas = document.getElementById("world");
+    if (canvas) canvas.setAttribute("aria-label", "Mapa do mundo, em pixel art. Ande com o direcional e interaja com A.");
+  }
   $("net-pill").classList.remove("on");
   $("online").textContent = "solo";
   setSound(false);
