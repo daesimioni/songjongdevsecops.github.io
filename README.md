@@ -42,7 +42,7 @@ contínuos em vez de dar pulinhos; o custo é cerca de 200 ms de atraso visual.
 A conversa da sala tem um histórico curto no próprio campo de fala: as mensagens
 novas entram embaixo, as antigas sobem e somem, e o que sobra fica guardado na
 sessão do navegador por sala. `Q` ou `Enter` abrem a conversa; dentro dela, `Enter`
-envia e fecha, e `Enter` ou `Q` de novo abrem. Esc fecha sem enviar.
+envia e fecha; depois de fechar, `Enter` ou `Q` abrem de novo. Esc fecha sem enviar.
 
 ## Missões
 
@@ -93,7 +93,8 @@ do boneco cobre o corpo dele em vez de ficar sempre atrás.
 
 ## As cavernas
 
-Ao lado de cada clareira de caça existe uma boca de caverna. `F` nela entra
+Ao lado de cada clareira de caça existe uma boca de caverna; no minimapa ela
+aparece como um quadradinho vazado. `F` nela entra
 num mapa próprio, em tela cheia: salas ligadas por túneis de três tiles que se
 cruzam em anel, entrada embaixo, cidade no fundo. São seis temas, um por
 continente, com paleta, nomes de sala e bichos próprios.

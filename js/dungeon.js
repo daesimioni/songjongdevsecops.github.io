@@ -3,7 +3,7 @@
 // pelo corredor, entra no campo de visão, exclama e chama o duelo de perguntas.
 import { TILE, PLAYER_W, PLAYER_H } from "./config.js";
 import { DUNGEON_LAYOUT, dungeonById } from "./dungeon-data.js";
-import { GROUNDS } from "./rpg-data.js";
+import { GROUNDS, ITEMS } from "./rpg-data.js";
 import { drawCreature } from "./creature.js";
 import { findPathIn } from "./path.js";
 import { hash2 } from "./world.js";
@@ -16,7 +16,24 @@ const SPEED = 4.6; // tiles por segundo
 const SPRINT = 1.8;
 const PATH_PAD = 0.16;
 const CITY_LIGHT = 22;
-const BOSS_RESPAWN_LABEL = "o chefe ainda está de pé";
+
+// Um sprite de luz só, reutilizado por todas as tochas: criar um gradiente por
+// tocha a cada quadro é o tipo de desperdício que aparece no celular.
+let torchSprite = null;
+function torchGlowSprite() {
+  if (torchSprite) return torchSprite;
+  const c = document.createElement("canvas");
+  c.width = c.height = 128;
+  const g = c.getContext("2d");
+  const grad = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+  grad.addColorStop(0, "rgba(255, 186, 92, 0.2)");
+  grad.addColorStop(0.45, "rgba(255, 150, 70, 0.07)");
+  grad.addColorStop(1, "rgba(255, 150, 70, 0)");
+  g.fillStyle = grad;
+  g.fillRect(0, 0, 128, 128);
+  torchSprite = c;
+  return c;
+}
 
 // ---------- mapa ----------
 export function buildDungeonMap(def) {
@@ -75,7 +92,7 @@ function roomIndexAt(map, x, y) {
 }
 
 // Caixa do corpo contra os tiles: a mesma ideia da colisão do mundo.
-function boxFree(map, x, y, pad = 0) {
+function boxFree(map, x, y, pad = 0, solids = null) {
   const hw = (PLAYER_W + pad) / 2;
   const hh = (PLAYER_H + pad) / 2;
   const x0 = Math.floor(x - hw);
@@ -85,6 +102,11 @@ function boxFree(map, x, y, pad = 0) {
   for (let ty = y0; ty <= y1; ty++) {
     for (let tx = x0; tx <= x1; tx++) {
       if (dungeonSolid(map, tx, ty)) return false;
+    }
+  }
+  if (solids) {
+    for (const s of solids) {
+      if (Math.abs(x - s.x) < hw + s.hw && Math.abs(y - s.y) < hh + s.hh) return false;
     }
   }
   return true;
@@ -358,9 +380,18 @@ function drawBuilding(ctx, x, y, w, h, palette, accent) {
 }
 
 // ---------- a caverna em si ----------
-export function createDungeon({ rpg, toast, audio, onEncounter, onForge, onSheet, onExit, isBlocked }) {
+export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBlocked }) {
   const canvas = $("dungeon-canvas");
   const ctx = canvas?.getContext("2d", { alpha: false }) || null;
+
+  // Enquanto a caverna cobre a tela, o HUD do mundo não deve receber Tab nem
+  // clique por baixo do desenho.
+  const WORLD_CHROME = [".hud", "#touch", "#minimap", "#prompt", "#zone-card", "#chatbar", "#world"];
+  function setWorldInert(on) {
+    for (const sel of WORLD_CHROME) {
+      for (const node of document.querySelectorAll(sel)) node.inert = on;
+    }
+  }
 
   const state = {
     open: false,
@@ -372,6 +403,7 @@ export function createDungeon({ rpg, toast, audio, onEncounter, onForge, onSheet
     boss: null,
     chests: [],
     props: [],
+    solids: [],
     path: null,
     pending: null,
     keys: new Set(),
@@ -537,8 +569,8 @@ export function createDungeon({ rpg, toast, audio, onEncounter, onForge, onSheet
       props.push({ kind: "waystone", x: city.x + city.w / 2 + 3, y: city.y + 2.6, label: "pedra de retorno", interact: true });
       props.push({ kind: "keeper", x: city.x + city.w / 2 - 3, y: city.y + city.h - 3.4, label: "conversar com a mestra", interact: true });
       props.push({ kind: "garden", x: city.x + city.w / 2 + 1.5, y: city.y + city.h - 3.4, label: "colher a horta de ervas", interact: true, readyAt: 0 });
-      props.push({ kind: "building", x: city.x + 1.2, y: city.y + 1.2, w: 26, h: 22 });
-      props.push({ kind: "building", x: city.x + city.w - 4.8, y: city.y + 1.2, w: 30, h: 22 });
+      props.push({ kind: "building", x: city.x + 1.2, y: city.y + 1.2, w: 26, h: 22, solid: true });
+      props.push({ kind: "building", x: city.x + city.w - 4.8, y: city.y + 1.2, w: 30, h: 22, solid: true });
     }
     return props;
   }
@@ -561,6 +593,15 @@ export function createDungeon({ rpg, toast, audio, onEncounter, onForge, onSheet
     state.boss = rpg.bossAlive(state.ground) ? spawnBoss(def) : null;
     state.chests = makeChests(def);
     state.props = makeProps(def);
+    // o que ocupa espaço de verdade dentro da sala: prédios e baús
+    state.solids = [];
+    for (const p of state.props) {
+      if (!p.solid) continue;
+      const hw = p.w / TILE / 2;
+      const hh = p.h / TILE / 2;
+      state.solids.push({ x: p.x + hw, y: p.y + hh, hw, hh });
+    }
+    for (const c of state.chests) state.solids.push({ x: c.x, y: c.y, hw: 0.4, hh: 0.28 });
     state.path = null;
     state.pending = null;
     state.keys.clear();
@@ -580,12 +621,17 @@ export function createDungeon({ rpg, toast, audio, onEncounter, onForge, onSheet
 
     spawnPlayer(def);
     $("dungeon").hidden = false;
+    setWorldInert(true);
     $("dungeon").dataset.dungeon = def.continent;
     $("dg-title").textContent = def.name;
     $("dg-sub").textContent = def.sub;
     $("dg-room").textContent = "";
     $("dg-msg").textContent = "";
     $("dg-prompt").hidden = true;
+    // no celular não existe tecla F: o toque no objeto faz o mesmo trabalho
+    const coarse = window.matchMedia("(pointer: coarse)").matches;
+    const promptKey = $("dg-prompt").querySelector("kbd");
+    if (promptKey) promptKey.textContent = coarse ? "toque" : "F";
     updateHud();
     resize();
     say(`${def.name}. ${def.sub}.`, 4200);
@@ -606,6 +652,7 @@ export function createDungeon({ rpg, toast, audio, onEncounter, onForge, onSheet
     state.keys.clear();
     state.sprint = false;
     $("dungeon").hidden = true;
+    setWorldInert(false);
     $("dg-prompt").hidden = true;
     audio.close();
     onExit?.({ kind, dungeon: state.def });
@@ -649,7 +696,7 @@ export function createDungeon({ rpg, toast, audio, onEncounter, onForge, onSheet
 
   // ---- colisão e caminhada ----
   function walkable(tx, ty, pad) {
-    return boxFree(state.map, tx + 0.5, ty + 0.5, pad);
+    return boxFree(state.map, tx + 0.5, ty + 0.5, pad, state.solids);
   }
 
   function walkStep(dx, dy, dt) {
@@ -664,8 +711,8 @@ export function createDungeon({ rpg, toast, audio, onEncounter, onForge, onSheet
     const p = state.player;
     const ox = p.x;
     const oy = p.y;
-    if (boxFree(state.map, p.x + dx * step, p.y)) p.x += dx * step;
-    if (boxFree(state.map, p.x, p.y + dy * step)) p.y += dy * step;
+    if (boxFree(state.map, p.x + dx * step, p.y, 0, state.solids)) p.x += dx * step;
+    if (boxFree(state.map, p.x, p.y + dy * step, 0, state.solids)) p.y += dy * step;
     p.x = clamp(p.x, 0.6, state.map.W - 0.6);
     p.y = clamp(p.y, 0.6, state.map.H - 0.6);
     const moved = p.x !== ox || p.y !== oy;
@@ -755,10 +802,11 @@ export function createDungeon({ rpg, toast, audio, onEncounter, onForge, onSheet
     let bestD = Infinity;
     for (const obj of interactables()) {
       const d = Math.hypot(obj.x - x, obj.y - y);
-      if (d <= radius && d < bestD) {
-        bestD = d;
-        best = obj;
-      }
+      if (d > radius || d >= bestD) continue;
+      // parede no meio: o baú do outro lado não é seu
+      if (!dungeonLineOfSight(state.map, x, y, obj.x, obj.y)) continue;
+      bestD = d;
+      best = obj;
     }
     return best;
   }
@@ -766,9 +814,9 @@ export function createDungeon({ rpg, toast, audio, onEncounter, onForge, onSheet
   function rollChest(chest) {
     const loot = [{ id: state.def.material, qty: chest.locked ? 4 : 2 }];
     if (Math.random() < 0.55) loot.push({ id: "veio", qty: 1 });
-    if (Math.random() < 0.45) loot.push({ id: "pocao", qty: 1 });
-    if (chest.locked) loot.push({ id: "chave", qty: 1 });
-    else if (Math.random() < 0.28) loot.push({ id: "chave", qty: 1 });
+    if (chest.locked || Math.random() < 0.45) loot.push({ id: "pocao", qty: 1 });
+    // baú selado não devolve a chave: o custo da chave tem que doer um pouco
+    if (!chest.locked && Math.random() < 0.3) loot.push({ id: "chave", qty: 1 });
     return loot;
   }
 
@@ -791,7 +839,9 @@ export function createDungeon({ rpg, toast, audio, onEncounter, onForge, onSheet
       const loot = rollChest(obj);
       for (const l of loot) rpg.addItem(l.id, l.qty);
       obj.opened = true;
-      const names = loot.map((l) => `${ITEM_NAMES[l.id] || l.id}×${l.qty}`).join(", ");
+      const merged = new Map();
+      for (const l of loot) merged.set(l.id, (merged.get(l.id) || 0) + l.qty);
+      const names = [...merged].map(([id, qty]) => `${ITEMS[id]?.name || id}×${qty}`).join(", ");
       say(`Baú aberto: ${names}.`, 4200);
       audio.chime();
       updateHud();
@@ -821,7 +871,7 @@ export function createDungeon({ rpg, toast, audio, onEncounter, onForge, onSheet
     }
     if (obj.kind === "forge") {
       say("A forja do subsolo. Transforme o que a caverna deu.", 2400);
-      onForge?.();
+      onSheet?.();
       return;
     }
     if (obj.kind === "keeper") {
@@ -867,7 +917,7 @@ export function createDungeon({ rpg, toast, audio, onEncounter, onForge, onSheet
       const r = 0.6 + Math.random() * 2.8;
       const tx = m.hx + Math.cos(a) * r;
       const ty = m.hy + Math.sin(a) * r;
-      if (boxFree(state.map, tx, ty, PATH_PAD)) {
+      if (boxFree(state.map, tx, ty, PATH_PAD, state.solids)) {
         m.tx = tx;
         m.ty = ty;
         return;
@@ -894,7 +944,7 @@ export function createDungeon({ rpg, toast, audio, onEncounter, onForge, onSheet
             const step = Math.min(dist, m.speed * dt);
             const nx = m.x + (dx / dist) * step;
             const ny = m.y + (dy / dist) * step;
-            if (boxFree(state.map, nx, ny, PATH_PAD)) {
+            if (boxFree(state.map, nx, ny, PATH_PAD, state.solids)) {
               m.x = nx;
               m.y = ny;
               m.moving = true;
@@ -999,16 +1049,19 @@ export function createDungeon({ rpg, toast, audio, onEncounter, onForge, onSheet
       state.roomIndex = ri;
       const room = state.map.rooms[ri];
       if (room) {
-        say(`${room.name}.`, 3000);
-        if (room.kind === "city") say(`${room.name}. Aqui a caverna descansa.`, 4400);
+        say(room.kind === "city" ? `${room.name}. Aqui a caverna descansa.` : `${room.name}.`, 3400);
       }
     }
-    if (state.msg && t > state.msg.until) state.msg = null;
+    if (state.msg && t > state.msg.until) {
+      state.msg = null;
+      const node = $("dg-msg");
+      if (node) node.textContent = "";
+    }
 
     const near = nearestInteractable(p.x, p.y, 1.7);
     const prompt = $("dg-prompt");
     if (prompt) {
-      const label = near?.label || "";
+      const label = near?.kind === "chest" && near.opened ? "baú vazio" : near?.label || "";
       prompt.hidden = !near;
       const span = prompt.querySelector("span");
       if (span && span.textContent !== label) span.textContent = label;
@@ -1143,16 +1196,17 @@ export function createDungeon({ rpg, toast, audio, onEncounter, onForge, onSheet
       drawables.push({ y: m.y, draw: () => drawMonster(m, t) });
     }
     if (state.boss?.alive) drawables.push({ y: state.boss.y, draw: () => drawMonster(state.boss, t) });
+    // o gato entra antes do aventureiro: parado no mesmo tile, ele fica atrás
+    if (state.history.length > 14) {
+      const trail = state.history[state.history.length - 14];
+      if (Math.hypot(trail.x - state.player.x, trail.y - state.player.y) < 5) {
+        drawables.push({ y: trail.y, draw: () => drawCat(ctx, trail.x * TILE, trail.y * TILE, t) });
+      }
+    }
     drawables.push({
       y: state.player.y,
       draw: () => drawAdventurer(ctx, state.player.x * TILE, state.player.y * TILE, state.player.dir, state.player.moving, t, palette.accent),
     });
-    if (state.history.length > 14) {
-      const trail = state.history[state.history.length - 14];
-      if (Math.hypot(trail.x - state.player.x, trail.y - state.player.y) < 5) {
-        drawables.push({ y: trail.y + 0.05, draw: () => drawCat(ctx, trail.x * TILE, trail.y * TILE, t) });
-      }
-    }
     drawables.sort((a, b) => a.y - b.y);
     for (const d of drawables) d.draw();
 
@@ -1173,18 +1227,14 @@ export function createDungeon({ rpg, toast, audio, onEncounter, onForge, onSheet
     // a luz das tochas volta por cima do breu
     ctx.save();
     ctx.globalCompositeOperation = "lighter";
+    const glowSprite = torchGlowSprite();
     for (const prop of state.props) {
       if (prop.kind !== "torch") continue;
       const tx = (prop.x * TILE - camX) * scale;
       const ty = (prop.y * TILE - camY) * scale;
       if (tx < -140 || tx > vw + 140 || ty < -140 || ty > vh + 140) continue;
       const r = 4.6 * TILE * scale;
-      const glow = ctx.createRadialGradient(tx, ty, 0, tx, ty, r);
-      glow.addColorStop(0, "rgba(255, 186, 92, 0.2)");
-      glow.addColorStop(0.45, "rgba(255, 150, 70, 0.07)");
-      glow.addColorStop(1, "rgba(255, 150, 70, 0)");
-      ctx.fillStyle = glow;
-      ctx.fillRect(tx - r, ty - r, r * 2, r * 2);
+      ctx.drawImage(glowSprite, tx - r, ty - r, r * 2, r * 2);
     }
     ctx.restore();
   }
@@ -1291,7 +1341,8 @@ export function createDungeon({ rpg, toast, audio, onEncounter, onForge, onSheet
     const hit = nearestInteractable(wx, wy, 1.5);
     if (hit) {
       const d = Math.hypot(hit.x - state.player.x, hit.y - state.player.y);
-      if (d <= 1.7) act(hit);
+      const clear = dungeonLineOfSight(state.map, state.player.x, state.player.y, hit.x, hit.y);
+      if (d <= 1.7 && clear) act(hit);
       else setPathTo(hit.x, hit.y, hit);
       return;
     }
@@ -1327,12 +1378,15 @@ export function createDungeon({ rpg, toast, audio, onEncounter, onForge, onSheet
       for (const m of state.monsters) {
         if (!m.alive) continue;
         if (Math.hypot(m.x - p.x, m.y - p.y) > 3) continue;
+        if (!dungeonLineOfSight(state.map, p.x, p.y, m.x, m.y)) continue;
         m.alive = false;
         rpg.data.monsters[m.id] = Date.now();
         hit++;
       }
       rpg.save();
-      const bossClose = state.boss?.alive && Math.hypot(state.boss.x - p.x, state.boss.y - p.y) <= 3;
+      const bossClose = state.boss?.alive
+        && Math.hypot(state.boss.x - p.x, state.boss.y - p.y) <= 3
+        && dungeonLineOfSight(state.map, p.x, p.y, state.boss.x, state.boss.y);
       if (bossClose) say("O chefe nem sentiu. A bomba só o irritou.", 3000);
       else if (hit) say(`Bum. ${hit} bicho(s) viraram fumaça. Sem XP, sem saque.`, 3400);
       else say("A bomba estourou no vazio.", 2400);
@@ -1343,19 +1397,3 @@ export function createDungeon({ rpg, toast, audio, onEncounter, onForge, onSheet
     get state() { return state; },
   };
 }
-
-// Nomes para a mensagem do baú, sem puxar a tabela toda para dentro do laço.
-const ITEM_NAMES = (() => {
-  const names = {
-    ferro: "Ferro Bruto",
-    erva: "Erva de Caverna",
-    veio: "Cristal de Veio",
-    madeira: "Madeira Petrificada",
-    chave: "Chave de Caverna",
-    pocao: "Poção de Café",
-    tocha: "Tocha de Veio",
-    bomba: "Bomba de Ferro",
-    caldo: "Caldo de Caverna",
-  };
-  return names;
-})();

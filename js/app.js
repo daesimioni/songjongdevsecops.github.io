@@ -162,20 +162,24 @@ const sheetUi = createSheet({
   audio,
   onUse: (id, res) => {
     if (id === "tocha") {
-      if (dungeon?.isOpen()) dungeon.useTorch(res.light);
-      else {
-        rpg.addItem("tocha", 1);
-        toast("A tocha é para a caverna. Guardei de volta.", 2800);
+      if (dungeon?.isOpen()) {
+        dungeon.useTorch(res.light);
+        return true;
       }
-      return;
+      rpg.addItem("tocha", 1);
+      toast("A tocha é para a caverna. Guardei de volta.", 2800);
+      return false;
     }
     if (id === "bomba") {
-      if (dungeon?.isOpen()) dungeon.useBomb();
-      else {
-        rpg.addItem("bomba", 1);
-        toast("A bomba é para a caverna. Guardei de volta.", 2800);
+      if (dungeon?.isOpen()) {
+        dungeon.useBomb();
+        return true;
       }
+      rpg.addItem("bomba", 1);
+      toast("A bomba é para a caverna. Guardei de volta.", 2800);
+      return false;
     }
+    return true;
   },
 });
 let duelUi = null;
@@ -189,14 +193,12 @@ duelUi = createDuel({
 
 dungeon = createDungeon({
   rpg,
-  toast,
   audio,
   isBlocked: () => state.panelOpen || !!state.modal || state.chatOpen,
   onEncounter: (monster, ground, boss) => {
     openDuel(monster, ground, boss);
     return !!rpg.duel;
   },
-  onForge: () => openSheet(),
   onSheet: () => openSheet(),
   onExit: ({ kind, dungeon: def }) => {
     if (kind === "death") return;

@@ -1461,6 +1461,15 @@ export function createRenderer(canvas, world) {
       mctx.fillStyle = h.boss.alive ? "#ff7aa8" : (h.ready ? "#ffc857" : h.accent);
       mctx.fillRect(mx - 1, my - 1, 3, 3);
     }
+    for (const c of world.caves || []) {
+      if (!world.isExplored(Math.floor(c.x), Math.floor(c.y))) continue;
+      const mx = Math.round(c.x * 2);
+      const my = Math.round(c.y * 2);
+      mctx.fillStyle = "#05070e";
+      mctx.fillRect(mx - 2, my - 2, 5, 5);
+      mctx.strokeStyle = c.accent;
+      mctx.strokeRect(mx - 2.5, my - 2.5, 5, 5);
+    }
     mctx.fillStyle = "#fff";
     mctx.fillRect(Math.round(player.x * 2) - 1, Math.round(player.y * 2) - 1, 3, 3);
     mctx.strokeStyle = "rgba(255,255,255,0.5)";

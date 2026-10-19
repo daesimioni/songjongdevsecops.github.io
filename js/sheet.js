@@ -79,11 +79,12 @@ export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onUs
           use.addEventListener("click", () => {
             const res = rpg.useItem(item.id);
             if (!res.ok) { toast(res.reason, 3200); return; }
+            const accepted = onUse?.(item.id, res) !== false;
             if (res.healed) toast(`+${res.healed} de vida.`, 2400);
-            else if (res.light) toast("A tocha acende.", 2400);
-            else if (res.bomb) toast("A bomba estoura.", 2400);
+            else if ((res.light || res.bomb) && accepted) {
+              toast(res.light ? "A tocha acende." : "A bomba estoura.", 2400);
+            }
             audio.blip();
-            onUse?.(item.id, res);
             render();
           });
           card.appendChild(use);
