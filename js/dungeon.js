@@ -1257,7 +1257,7 @@ export function createDungeon({ rpg, toast, audio, onEncounter, onForge, onSheet
       state.sprint = true;
       return;
     }
-    if (k === "e" || k === "enter") {
+    if (k === "e") {
       e.preventDefault();
       interact();
       return;

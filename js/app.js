@@ -663,7 +663,7 @@ function startGame() {
     document.querySelector("#prompt kbd").textContent = "A";
     setTimeout(() => toast("toque no chão para andar, segure Turbo para voar baixo, A para interagir.", 4800), 800);
   } else {
-    setTimeout(() => toast("WASD/QEZC ou clique no chão anda, Espaço acende a nave, Enter interage, F é a ficha.", 5400), 800);
+    setTimeout(() => toast("WASD ou clique no chão anda, Espaço acende a nave, E interage, Enter fala, F é a ficha.", 5400), 800);
   }
 }
 
@@ -978,6 +978,10 @@ function renderChatLog(forceBottom = false) {
 
 function openChat() {
   if (!state.started || state.panelOpen || state.modal) return;
+  if (state.chatOpen) {
+    $("chat-input").focus();
+    return;
+  }
   stopSprint();
   if (!state.net) {
     toast("esta sessão é solo. Recarregue e entre na praça compartilhada para conversar.");
@@ -1090,10 +1094,6 @@ function updateMovement(dt) {
   if (keys.has("d") || keys.has("arrowright") || state.touch.right) dx += 1;
   if (keys.has("w") || keys.has("arrowup") || state.touch.up) dy -= 1;
   if (keys.has("s") || keys.has("arrowdown") || state.touch.down) dy += 1;
-  if (keys.has("q")) { dx -= 1; dy -= 1; }
-  if (keys.has("e")) { dx += 1; dy -= 1; }
-  if (keys.has("z")) { dx -= 1; dy += 1; }
-  if (keys.has("c")) { dx += 1; dy += 1; }
   if (dx === 0 && dy === 0) { player.moving = false; return; }
   walkStep(dx, dy, dt);
 }
@@ -1308,6 +1308,11 @@ window.addEventListener("keydown", (e) => {
   }
   if (k === "enter") {
     e.preventDefault();
+    openChat();
+    return;
+  }
+  if (k === "e") {
+    e.preventDefault();
     interact();
     return;
   }
@@ -1319,7 +1324,7 @@ window.addEventListener("keydown", (e) => {
     openChat();
     return;
   }
-  if (["w", "a", "s", "d", "q", "e", "z", "c", "arrowup", "arrowdown", "arrowleft", "arrowright"].includes(k)) clearPath();
+  if (["w", "a", "s", "d", "arrowup", "arrowdown", "arrowleft", "arrowright"].includes(k)) clearPath();
   state.keys.add(k);
 });
 window.addEventListener("keyup", (e) => {
@@ -1465,6 +1470,7 @@ $("chat-form").addEventListener("submit", (e) => {
     player.bubble = { text, until: performance.now() + 6500 };
     pushChatMessage(player.name, text, player.color, true);
     $("chat-input").value = "";
+    closeChat();
   } else {
     toast("a mensagem não saiu. Veja se o sinal está de pé.");
   }

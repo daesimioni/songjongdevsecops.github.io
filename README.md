@@ -27,9 +27,9 @@ Segure `Espaço` para acender a nave e cruzar o mapa mais rápido; no celular,
 segure o botão **Turbo**. A nave é um pequeno skiff que flutua, balança e deixa
 rastro, mas não atravessa água: as pontes continuam sendo caminho.
 
-No teclado: `WASD`, `QEZC` ou setas andam, com `Q`/`E`/`Z`/`C` nas diagonais.
-`Espaço` liga a nave, `Enter` interage, `F` abre a ficha, `J` o diário, `T` a
-conversa e `R` a Rede.
+No teclado: `WASD` ou setas andam; segure duas direções para andar na diagonal.
+`Espaço` liga a nave, `E` interage, `Enter` abre a conversa, `F` a ficha, `J` o
+diário e `R` a Rede. A tecla `T` continua abrindo a conversa como atalho.
 
 A praça compartilhada mostra outras pessoas na mesma sala. Não existe servidor
 próprio: o site é estático e o sinal usa um broker MQTT público por WebSocket.
@@ -41,12 +41,13 @@ contínuos em vez de dar pulinhos; o custo é cerca de 200 ms de atraso visual.
 
 A conversa da sala tem um histórico curto no próprio campo de fala: as mensagens
 novas entram embaixo, as antigas sobem e somem, e o que sobra fica guardado na
-sessão do navegador por sala. Enter envia; Esc fecha.
+sessão do navegador por sala. `Enter` abre a conversa; dentro dela, `Enter`
+envia e fecha, e `Enter` de novo abre. Esc fecha sem enviar.
 
 ## Missões
 
 Os sete NPCs do mapa dão missões. Um `!` flutuante marca quem tem missão para
-dar; quando o objetivo está cumprido, ele vira `?`. Aperte `Enter` perto deles para
+dar; quando o objetivo está cumprido, ele vira `?`. Aperte `E` perto deles para
 aceitar, responder e entregar. São três tipos:
 
 - **caminhada**: abrir estações, acender os sete faróis, mexer em oito
@@ -65,8 +66,8 @@ e o botão de concluir quando o objetivo está cumprido.
 Clique no chão e o boneco anda até ali sozinho, contornando água, parede e
 árvore. Clique também no minimapa, desde que o ponto já esteja revelado. Clique
 numa estação, NPC, monstro ou alavanca para ele ir até perto e interagir. Se a
-conversa estiver aberta, o clique no mundo fecha a conversa e anda. WASD, QEZC ou
-as setas cancelam o caminho.
+conversa estiver aberta, o clique no mundo fecha a conversa e anda. WASD ou as
+setas cancelam o caminho.
 
 Cada continente tem uma clareira de caça com três guardiões e uma alavanca. Cada
 monstro abre uma prova de perguntas:
@@ -92,7 +93,7 @@ do boneco cobre o corpo dele em vez de ficar sempre atrás.
 
 ## As cavernas
 
-Ao lado de cada clareira de caça existe uma boca de caverna. `Enter` nela entra
+Ao lado de cada clareira de caça existe uma boca de caverna. `E` nela entra
 num mapa próprio, em tela cheia: salas ligadas por túneis de três tiles que se
 cruzam em anel, entrada embaixo, cidade no fundo. São seis temas, um por
 continente, com paleta, nomes de sala e bichos próprios.
