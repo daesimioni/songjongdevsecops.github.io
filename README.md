@@ -147,7 +147,12 @@ Cada continente tem **duas bocas de caverna**, uma perto da clareira e outra a
 alguns tiles. Elas são pareadas pelo túnel: a escada da entrada volta para a boca
 por onde você desceu, a escada do fundo (na cidade subterrânea) sai na outra
 boca, e a pedra de retorno devolve à entrada. No minimapa cada boca é um
-quadradinho vazado.
+quadradinho vazado, e cada escada do subsolo vira uma setinha para cima.
+
+A escada é desenhada como subida, não como buraco: degraus que clareiam e
+estreitam para o alto, um retângulo de luz da superfície no topo e uma seta de
+pedra apontando para cima. O prompt confirma o destino (`F subir para Boca do
+Silício`).
 
 `F` numa boca entra no mapa em tela cheia: salas ligadas por túneis, entrada
 embaixo, cidade no fundo. Seis temas, um por continente, com paleta, nomes e

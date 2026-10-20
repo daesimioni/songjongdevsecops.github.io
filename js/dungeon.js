@@ -289,16 +289,53 @@ function drawChest(ctx, x, y, opened, accent) {
   ctx.restore();
 }
 
-function drawStairs(ctx, x, y, accent) {
+function drawStairs(ctx, x, y, accent, t = 0) {
+  const glow = 0.5 + Math.sin(t * 0.004) * 0.16;
   ctx.save();
   ctx.translate(x, y);
-  ctx.fillStyle = "#05070e";
-  ctx.fillRect(-10, -12, 20, 12);
-  ctx.fillStyle = "#1b2338";
-  for (let i = 0; i < 4; i++) ctx.fillRect(-8 + i, -10 + i * 2.5, 16 - i * 2, 2);
-  ctx.fillStyle = accent;
-  ctx.globalAlpha = 0.5;
-  ctx.fillRect(-7, -11, 14, 1);
+  // sombra no chão
+  ctx.fillStyle = "rgba(0,0,0,0.38)";
+  ctx.beginPath();
+  ctx.ellipse(0, 0, 13, 4, 0, 0, Math.PI * 2);
+  ctx.fill();
+  // vão da escada
+  ctx.fillStyle = "#070a13";
+  ctx.fillRect(-11, -24, 22, 24);
+  // degraus: cada um sobe 4px e afina 1px de cada lado, e o de cima é o mais claro
+  const treads = [
+    [-10, -4, 20, "#2f3a5c", "#4d5d90"],
+    [-9, -8, 18, "#374469", "#56699f"],
+    [-8, -12, 16, "#40507b", "#6177af"],
+    [-7, -16, 14, "#4a5c8d", "#6e86bf"],
+    [-6, -20, 12, "#55699c", "#7d95cf"],
+  ];
+  for (const [dx, dy, w, riser, tread] of treads) {
+    ctx.fillStyle = riser;
+    ctx.fillRect(dx, dy, w, 3);
+    ctx.fillStyle = tread;
+    ctx.fillRect(dx, dy - 1, w, 1);
+  }
+  // paredes laterais
+  ctx.fillStyle = "#141a29";
+  ctx.fillRect(-13, -24, 2, 25);
+  ctx.fillRect(11, -24, 2, 25);
+  ctx.fillStyle = "#2b3654";
+  ctx.fillRect(-13, -24, 2, 1);
+  ctx.fillRect(11, -24, 2, 1);
+  // a abertura lá em cima, com a luz da superfície vazando pela pedra
+  ctx.fillStyle = `rgba(255,233,176,${0.55 + glow * 0.3})`;
+  ctx.fillRect(-6, -24, 12, 2);
+  const halo = ctx.createRadialGradient(0, -26, 1, 0, -26, 13);
+  halo.addColorStop(0, `rgba(255,233,176,${0.2 + glow * 0.12})`);
+  halo.addColorStop(1, "rgba(255,233,176,0)");
+  ctx.fillStyle = halo;
+  ctx.fillRect(-14, -40, 28, 18);
+  // seta de pedra apontando para cima, para o sentido não deixar dúvida
+  ctx.fillStyle = `rgba(255,233,176,${0.55 + glow * 0.3})`;
+  ctx.fillRect(-1, -38, 2, 1);
+  ctx.fillRect(-2, -37, 4, 1);
+  ctx.fillRect(-3, -36, 6, 1);
+  ctx.fillRect(-1, -35, 2, 5);
   ctx.restore();
 }
 
@@ -751,7 +788,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
         x: city.x + 6,
         y: city.y + city.h - 1.8,
         stairMouth: "far",
-        label: "túnel para a outra boca",
+        label: "subir pelo túnel até a outra boca",
         interact: true,
       });
       props.push({ kind: "building", x: city.x + 1.2, y: city.y + 1.2, w: 26, h: 22, solid: true });
@@ -1005,6 +1042,18 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
     if (state.boss?.alive && state.seen[Math.floor(state.boss.y) * W + Math.floor(state.boss.x)]) {
       g.fillStyle = "#ff7aa8";
       g.fillRect(Math.floor(state.boss.x) * 2 - 1, Math.floor(state.boss.y) * 2 - 1, 3, 3);
+    }
+    // escadas: uma seta para cima, para achar a saída no minimapa
+    for (const prop of state.props) {
+      if (prop.kind !== "stairs") continue;
+      const sx = Math.floor(prop.x);
+      const sy = Math.floor(prop.y);
+      if (!state.seen[sy * W + sx]) continue;
+      g.fillStyle = "#ffe9b0";
+      g.fillRect(sx * 2, sy * 2 - 3, 2, 2);
+      g.fillRect(sx * 2 - 2, sy * 2 - 1, 2, 2);
+      g.fillRect(sx * 2 + 2, sy * 2 - 1, 2, 2);
+      g.fillRect(sx * 2, sy * 2 - 1, 2, 2);
     }
     g.fillStyle = "#fff";
     g.fillRect(Math.floor(state.player.x) * 2 - 1, Math.floor(state.player.y) * 2 - 1, 3, 3);
@@ -1640,7 +1689,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
       drawables.push({
         y: prop.y + (prop.kind === "building" ? (prop.h || 0) / TILE : 0),
         draw: () => {
-          if (prop.kind === "stairs") drawStairs(ctx, prop.x * TILE, prop.y * TILE, palette.accent);
+          if (prop.kind === "stairs") drawStairs(ctx, prop.x * TILE, prop.y * TILE, palette.accent, t);
           else if (prop.kind === "altar") drawAltar(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent);
           else if (prop.kind === "forge") drawForge(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent);
           else if (prop.kind === "waystone") drawWaystone(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent);
