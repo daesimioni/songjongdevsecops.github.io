@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <title>Mundo de Song</title>
-<meta name="description" content="Um arquipélago jogável em pixel art: computação, matemática, física, química, música e inteligência artificial em 32 estações, com caçadas de perguntas, cavernas, missões e uma rede de jogadores.">
+<meta name="description" content="Um arquipélago jogável em pixel art: computação, matemática, física, química, música, inteligência artificial e língua portuguesa em 37 estações, com caçadas de perguntas, cavernas, missões e uma rede de jogadores.">
 <meta name="theme-color" content="#070b18">
 <meta property="og:title" content="Mundo de Song">
-<meta property="og:description" content="Seis continentes, 32 estações e missões para atravessar a pé. Lógica, fractais, átomos, harmonia, redes neurais, conversa por Nostr e mais.">
+<meta property="og:description" content="Sete continentes, 37 estações e missões para atravessar a pé. Lógica, fractais, átomos, harmonia, redes neurais, língua portuguesa, conversa por Nostr e mais.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://songjongdevsecops.github.io/">
 <meta property="og:site_name" content="Mundo de Song">
@@ -16,7 +16,7 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Mundo de Song">
-<meta name="twitter:description" content="Seis continentes, 32 estações e missões em pixel art. Ande, descubra, converse e mexa em cada instrumento.">
+<meta name="twitter:description" content="Sete continentes, 37 estações e missões em pixel art. Ande, descubra, converse e mexa em cada instrumento.">
 <meta name="twitter:image" content="https://songjongdevsecops.github.io/assets/og.png">
 <link rel="canonical" href="https://songjongdevsecops.github.io/">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
@@ -38,7 +38,7 @@
     </div>
     <div class="hud-actions">
       <button type="button" id="net-pill" class="pill" title="Estado da praça compartilhada"><i></i><b id="online">solo</b></button>
-      <span id="progress" class="pill pill-progress" title="Fragmentos descobertos e nível"><span>✦</span><b id="progress-text">0/32</b><span class="sep">·</span><b id="level-text">Nv 1</b><span class="sep">·</span><b id="hp-hud">❤ 30</b></span>
+      <span id="progress" class="pill pill-progress" title="Fragmentos descobertos e nível"><span>✦</span><b id="progress-text">0/37</b><span class="sep">·</span><b id="level-text">Nv 1</b><span class="sep">·</span><b id="hp-hud">❤ 30</b></span>
       <button id="btn-chat" class="hud-btn" type="button">Falar <kbd>Q</kbd></button>
       <button id="btn-rede" class="hud-btn" type="button">Rede <kbd>E</kbd><i id="rede-dot" class="rede-dot" hidden></i></button>
       <button id="btn-journal" class="hud-btn" type="button">Diário <kbd>Z</kbd></button>
@@ -58,6 +58,15 @@
     <kbd>F</kbd>
     <span id="prompt-label"></span>
   </div>
+
+  <aside id="steps" class="steps" hidden aria-label="Primeiros passos">
+    <div class="steps-head">
+      <b>primeiros passos</b>
+      <button type="button" id="steps-min" class="steps-min" aria-label="recolher os primeiros passos">–</button>
+    </div>
+    <ul id="steps-list"></ul>
+    <p id="steps-next" class="steps-next"></p>
+  </aside>
 
   <div id="toast" class="toast" role="status" hidden></div>
 
@@ -299,7 +308,7 @@
     <div class="intro-card">
       <p class="intro-eyebrow">um blog jogável · edição 2026</p>
       <h1 id="intro-title">MUNDO<br>DE SONG</h1>
-      <p class="intro-lead">Seis continentes, 32 fragmentos. Cada estação é uma página com um instrumento para mexer: lógica, circuitos, processadores, infinito, cálculo, pêndulos, luz, átomos, harmonia, ritmo, redes neurais e mais. Os NPCs dão missões, as caçadas dão itens e perícias, e a Rede liga você aos outros jogadores. Ande, clique no chão, segure Espaço para acender a nave e cruze o mapa voando baixo.</p>
+      <p class="intro-lead">Sete continentes, 37 fragmentos. Cada estação é uma página com um instrumento para mexer: lógica, circuitos, processadores, infinito, cálculo, pêndulos, luz, átomos, harmonia, ritmo, redes neurais, português do Brasil e mais. Os NPCs dão missões, as caçadas dão itens e perícias, e a Rede liga você aos outros jogadores. Ande, clique no chão, segure Espaço para acender a nave e cruze o mapa voando baixo. O cartão de primeiros passos aparece no canto; siga ele se estiver perdido.</p>
       <form id="intro-form" autocomplete="off">
         <label for="intro-name">seu apelido</label>
         <input id="intro-name" name="mundo-apelido" maxlength="16" placeholder="viajante" autocomplete="off" required>

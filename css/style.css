@@ -2522,3 +2522,48 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
   }
   .scanlines { opacity: 0.08; }
 }
+
+/* primeiros passos: cartão discreto até o jogador pegar o jeito */
+.steps {
+  position: fixed;
+  left: 18px;
+  bottom: 84px;
+  z-index: 6;
+  width: min(270px, 42vw);
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(7, 11, 24, 0.82);
+  backdrop-filter: blur(4px);
+  font-family: var(--mono);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+.steps-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
+.steps-head b { font-family: var(--pixel); font-size: 7px; letter-spacing: 0.06em; color: var(--amber); text-transform: uppercase; }
+.steps-min {
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1;
+}
+.steps ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 3px; }
+.steps li { font-size: 10.5px; line-height: 1.4; color: var(--ink); padding-left: 14px; position: relative; }
+.steps li::before {
+  content: "○";
+  position: absolute;
+  left: 0;
+  color: var(--muted);
+}
+.steps li.done { color: var(--muted); text-decoration: line-through; }
+.steps li.done::before { content: "✓"; color: var(--mint); text-decoration: none; }
+.steps-next { margin: 7px 0 0; font-size: 10px; color: var(--cyan); }
+.steps.all-done { border-color: rgba(97, 244, 192, 0.45); }
+.steps.min ul, .steps.min .steps-next { display: none; }
+@media (max-width: 760px) {
+  .steps { left: 10px; bottom: 150px; width: min(230px, 62vw); padding: 8px 10px; }
+  .steps li { font-size: 9.5px; }
+}

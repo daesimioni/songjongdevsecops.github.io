@@ -124,6 +124,11 @@ const state = {
   trainingNpc: null,
   pvpDownUntil: 0,
   pvpDownTimer: null,
+  steps: readJSON(STORAGE.steps, {}),
+  stepsOpen: false,
+  stepX: SPAWN.x,
+  stepY: SPAWN.y,
+  walked: 0,
   lastFocus: null,
 };
 
@@ -223,7 +228,7 @@ duelUi = createDuel({
   toast,
   audio,
   onClose: () => closeModal("duel"),
-  onVictory: () => quests.report("hunts"),
+  onVictory: () => { quests.report("hunts"); markStep("duel"); },
 });
 
 const pvpUi = createPvp({
@@ -539,6 +544,7 @@ function enterCave(cave) {
   const pair = world.caves.find((c) => c.id === cave.pairId);
   rpg.setCave(true);
   const ok = dungeon?.open(cave.defId || cave.id, pair ? { ...cave, pair } : cave);
+  if (ok) markStep("cave");
   if (!ok) {
     rpg.setCave(false);
     toast("A caverna não abriu agora. Tente de novo.", 3000);
@@ -553,6 +559,7 @@ function interactTarget(target) {
   if (target.kind === "station") openPost(target.obj.post, target.obj);
   else if (target.kind === "waystone") openTravel();
   else if (target.kind === "npc") {
+    markStep("npc");
     const npc = target.obj;
     const lines = NPCS[npc.id]?.lines || ["..."];
     npc.lineIndex = ((npc.lineIndex || 0) + 1) % lines.length;
@@ -620,7 +627,7 @@ function questCard(q, npc) {
     const btn = el("button", "quest-btn", "aceitar missão");
     btn.type = "button";
     btn.addEventListener("click", () => {
-      if (quests.accept(q.id)) { audio.blip(); buildNpc(npc); }
+      if (quests.accept(q.id)) { markStep("quest"); audio.blip(); buildNpc(npc); }
     });
     card.appendChild(btn);
     return card;
@@ -735,9 +742,55 @@ function gainXp(n) {
   }
 }
 
+const FIRST_STEPS = [
+  { id: "walk", label: "ande pelo mapa (WASD ou clique no chão)" },
+  { id: "station", label: "abra uma estação de estudo" },
+  { id: "npc", label: "converse com um NPC" },
+  { id: "quest", label: "aceite uma missão" },
+  { id: "cave", label: "desça numa caverna" },
+  { id: "duel", label: "vença um duelo de perguntas" },
+];
+
+function markStep(id) {
+  if (state.steps[id]) return false;
+  state.steps[id] = true;
+  writeJSON(STORAGE.steps, state.steps);
+  renderSteps();
+  audio.blip();
+  const done = FIRST_STEPS.filter((s2) => state.steps[s2.id]).length;
+  if (done === FIRST_STEPS.length) {
+    toast("Primeiros passos completos. O arquipélago é seu.", 4200);
+  } else {
+    const next = FIRST_STEPS.find((s2) => !state.steps[s2.id]);
+    toast(`Primeiro passo ${done}/${FIRST_STEPS.length}. Próximo: ${next.label}.`, 2600);
+  }
+  return true;
+}
+
+function renderSteps() {
+  const card = $("steps");
+  const list = $("steps-list");
+  if (!card || !list) return;
+  const done = FIRST_STEPS.filter((s2) => state.steps[s2.id]).length;
+  list.textContent = "";
+  let next = "";
+  for (const step of FIRST_STEPS) {
+    const ok = !!state.steps[step.id];
+    const li = document.createElement("li");
+    li.className = ok ? "done" : "";
+    li.textContent = step.label;
+    list.appendChild(li);
+    if (!ok && !next) next = step.label;
+  }
+  $("steps-next").textContent = next ? `agora: ${next}` : "tudo pronto, siga o mapa";
+  card.classList.toggle("all-done", done === FIRST_STEPS.length);
+  card.hidden = !(state.started && (state.stepsOpen || done < FIRST_STEPS.length));
+}
+
 function markCard(postId) {
   if (!postId || state.cards.has(postId)) return false;
   state.cards.add(postId);
+  markStep("station");
   saveCards();
   updateProgress();
   audio.blip();
@@ -845,6 +898,7 @@ function startGame() {
   rede.setName(player.name);
   $("intro").hidden = true;
   $("minimap").hidden = false;
+  renderSteps();
   document.body.classList.add("playing");
   if (window.matchMedia("(pointer: coarse)").matches) $("touch").hidden = false;
   audio.unlock();
@@ -1332,8 +1386,8 @@ function updatePrompt() {
   state.nearest = near;
   if (!near) { $("prompt").hidden = true; return; }
   let label;
-  if (near.kind === "station") label = near.obj.label;
-  else if (near.kind === "waystone") label = near.obj.name;
+  if (near.kind === "station") label = `abrir ${near.obj.label}`;
+  else if (near.kind === "waystone") label = `viajar de ${near.obj.name}`;
   else if (near.kind === "npc") {
     label = near.obj.trainer
       ? `treinar com ${NPCS[near.obj.id]?.name || "o instrutor"}`
@@ -1578,6 +1632,13 @@ function loop(now) {
     }
     renderer.draw(now, player, state.peers, world.npcs, world.cat, player.moving);
     updatePrompt();
+    const stepD = Math.hypot(player.x - state.stepX, player.y - state.stepY);
+    state.stepX = player.x;
+    state.stepY = player.y;
+    if (stepD > 0 && stepD < 2) {
+      state.walked += stepD;
+      if (state.walked > 20) markStep("walk");
+    }
     if (state.net) state.net.setLocal(player.x, player.y, player.dir, player.boost);
   } catch (e) {
     console.error("[loop] erro", e);
@@ -1770,6 +1831,8 @@ $("panel-live").addEventListener("pointerdown", () => {
   if (state.currentPost) quests.report("lab", state.currentPost);
 }, { passive: true });
 $("btn-journal").addEventListener("click", openJournal);
+$("steps-min")?.addEventListener("click", () => $("steps").classList.toggle("min"));
+
 $("btn-help").addEventListener("click", () => { openModal("help"); audio.open(); });
 $("btn-sound").addEventListener("click", () => setSound(!saved.sound));
 $("net-pill").addEventListener("click", async () => {

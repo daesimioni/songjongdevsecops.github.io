@@ -34,6 +34,7 @@ export const STORAGE = {
   rpg: "mundo-song:rpg:v1",
   chat: "mundo-song:chat:v1",
   outfit: "mundo-song:outfit:v1",
+  steps: "mundo-song:steps:v1",
 };
 
 // O backup da conta viaja como DM NIP-17 para a própria chave: o relay só vê

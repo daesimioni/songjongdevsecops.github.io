@@ -132,11 +132,16 @@ export function createRenderer(canvas, world) {
     c.fillRect(px, py, TILE, TILE);
 
     if (t === K.GRASS || t === K.FLOWER) {
-      c.fillStyle = "#1d3c2b";
-      const n = 2 + Math.floor(h * 3);
+      // manchas de grama mais nova dão relevo sem custo por frame
+      if (h > 0.62) {
+        c.fillStyle = "rgba(32, 68, 47, 0.55)";
+        c.fillRect(px + 2, py + 2, 12, 11);
+      }
+      const n = 3 + Math.floor(h * 3);
       for (let i = 0; i < n; i++) {
         const bx = px + 2 + Math.floor(hash2(x + i, y * 3 + i) * 12);
         const by = py + 3 + Math.floor(hash2(x * 5 + i, y) * 11);
+        c.fillStyle = i % 2 ? "#214733" : "#15301f";
         c.fillRect(bx, by, 1, 2);
       }
       if (t === K.FLOWER) {
@@ -148,6 +153,10 @@ export function createRenderer(canvas, world) {
       }
     } else if (t === K.PATH) {
       c.fillStyle = "#63513a";
+      c.fillRect(px, py, TILE, TILE);
+      c.fillStyle = "rgba(43, 33, 22, 0.55)";
+      if (world.get(x, y - 1) !== K.PATH) c.fillRect(px, py, TILE, 1);
+      c.fillStyle = "rgba(255, 222, 160, 0.08)";
       c.fillRect(px, py, TILE, 2);
       c.fillStyle = "#4a3b29";
       for (let i = 0; i < 3; i++) {
@@ -155,6 +164,8 @@ export function createRenderer(canvas, world) {
         const sy = py + 4 + Math.floor(hash2(x, y + i) * 10);
         c.fillRect(sx, sy, 2, 1);
       }
+      c.fillStyle = "#7a6446";
+      c.fillRect(px + Math.floor(h * 10), py + 12, 2, 1);
     } else if (t === K.STONE || t === K.PLAZA) {
       c.strokeStyle = t === K.PLAZA ? "#4b4f77" : "#2b3049";
       c.lineWidth = 1;
@@ -168,10 +179,35 @@ export function createRenderer(canvas, world) {
         c.fillRect(px + 8, py + 8, 3, 1);
       }
     } else if (t === K.WATER) {
-      c.fillStyle = "#0f2c46";
+      const wet = (xx, yy) => {
+        const n = world.get(xx, yy);
+        return n !== K.WATER && n !== K.BRIDGE;
+      };
+      const landN = wet(x, y - 1);
+      const landS = wet(x, y + 1);
+      const landW = wet(x - 1, y);
+      const landE = wet(x + 1, y);
+      const shallow = landN || landS || landW || landE;
+      // água rasa perto da costa clareia e ganha espuma: a praia fica legível
+      c.fillStyle = shallow ? "#19455f" : "#0f2c46";
       c.fillRect(px, py, TILE, TILE);
+      if (shallow) {
+        c.fillStyle = "rgba(150, 228, 255, 0.26)";
+        if (landN) c.fillRect(px + 2, py, 12, 1);
+        if (landS) c.fillRect(px + 2, py + TILE - 1, 12, 1);
+        if (landW) c.fillRect(px, py + 2, 1, 12);
+        if (landE) c.fillRect(px + TILE - 1, py + 2, 1, 12);
+        c.fillStyle = "rgba(226, 248, 255, 0.55)";
+        for (let i = 0; i < 4; i++) {
+          const bx = px + 1 + Math.floor(hash2(x + i * 3, y) * 14);
+          const by = py + 1 + Math.floor(hash2(x, y + i * 3) * 14);
+          const edge = (landN && by < py + 3) || (landS && by > py + 12) ||
+            (landW && bx < px + 3) || (landE && bx > px + 12);
+          if (edge) c.fillRect(bx, by, 2, 1);
+        }
+      }
       if (!animated) return;
-      c.fillStyle = "rgba(107, 213, 255, 0.22)";
+      c.fillStyle = shallow ? "rgba(178, 238, 255, 0.34)" : "rgba(107, 213, 255, 0.22)";
       for (let i = 0; i < 2; i++) {
         const w = 5 + Math.round(Math.sin(time * 0.0016 + x + y + i) * 3);
         c.fillRect(px + 2 + i * 7, py + 4 + i * 5, w, 1);
@@ -181,6 +217,12 @@ export function createRenderer(canvas, world) {
       c.fillRect(px, py, TILE, 2);
       c.fillStyle = "#5d4f34";
       c.fillRect(px + Math.floor(h * 10), py + 7, 2, 1);
+      c.fillStyle = "rgba(240, 226, 190, 0.16)";
+      c.fillRect(px + 3 + Math.floor(h * 8), py + 4, 3, 1);
+      if (world.get(x, y + 1) === K.WATER) {
+        c.fillStyle = "rgba(30, 60, 74, 0.45)";
+        c.fillRect(px, py + TILE - 2, TILE, 2);
+      }
     } else if (t === K.CIRCUIT) {
       c.fillStyle = "#0d3438";
       c.fillRect(px + 2, py + 2, TILE - 4, TILE - 4);
@@ -330,23 +372,32 @@ export function createRenderer(canvas, world) {
     ctx.fillRect(px + 6, py + 9, 4, 7);
     ctx.fillStyle = "#3a2a20";
     ctx.fillRect(px + 6, py + 9, 1, 6);
-    // copa em camadas
+    // copa em camadas, mais cheia conforme o hash
     const sway = Math.sin(time * 0.0012 + x * 1.7 + y) * 0.6;
-    const layers = [
-      { y: 1, w: 12, c: "#0f2b1c" },
-      { y: 3, w: 14, c: "#163a25" },
-      { y: 5, w: 12, c: "#1d4a2e" },
-    ];
-    for (const l of layers) {
-      ctx.fillStyle = l.c;
-      ctx.fillRect(px + 8 - l.w / 2 + sway, py + l.y, l.w, 5);
-      ctx.fillRect(px + 9 - l.w / 2 + sway, py + l.y + 1, l.w - 2, 5);
-    }
-    ctx.fillStyle = "rgba(97, 244, 192, 0.12)";
-    ctx.fillRect(px + 5, py + 3, 3, 2);
-    if (h > 0.7) {
-      ctx.fillStyle = "rgba(255, 200, 87, 0.55)";
-      ctx.fillRect(px + 9, py + 6, 1, 1);
+    const wide = h > 0.55 ? 18 : 16;
+    const cx = px + 8 + sway;
+    const top = py + (h > 0.55 ? 0 : 2);
+    ctx.fillStyle = "#0c2417";
+    ctx.fillRect(cx - wide / 2, top + 3, wide, 10);
+    ctx.fillRect(cx - wide / 2 + 2, top + 1, wide - 4, 14);
+    ctx.fillStyle = "#143723";
+    ctx.fillRect(cx - wide / 2 + 1, top + 4, wide - 2, 8);
+    ctx.fillRect(cx - wide / 2 + 3, top + 2, wide - 6, 12);
+    ctx.fillStyle = "#1c4a2e";
+    ctx.fillRect(cx - wide / 2 + 3, top + 5, wide - 6, 5);
+    ctx.fillRect(cx - wide / 2 + 5, top + 3, wide - 10, 9);
+    ctx.fillStyle = "#245c39";
+    ctx.fillRect(cx - 4, top + 4, 8, 3);
+    ctx.fillRect(cx - 2, top + 3, 4, 5);
+    ctx.fillStyle = "rgba(180, 255, 214, 0.22)";
+    ctx.fillRect(cx - 4, top + 2, 3, 2);
+    ctx.fillStyle = "rgba(2, 6, 10, 0.25)";
+    ctx.fillRect(cx + 3, top + 13, wide / 2 - 1, 2);
+    if (h > 0.72) {
+      ctx.fillStyle = "rgba(255, 200, 87, 0.7)";
+      ctx.fillRect(cx - 3, top + 8, 1, 1);
+      ctx.fillRect(cx + 3, top + 6, 1, 1);
+      ctx.fillRect(cx + 1, top + 10, 1, 1);
     }
   }
 
@@ -372,12 +423,10 @@ export function createRenderer(canvas, world) {
       ctx.fillRect(px - 1, py - 10, 2, 22);
       ctx.fillStyle = "#4a3f5f";
       ctx.fillRect(px - 3, py - 12, 6, 2);
-      const glow = 0.45 + Math.sin(time * 0.003 + d.x) * 0.12;
-      const g = ctx.createRadialGradient(px, py - 10, 0, px, py - 10, 18);
-      g.addColorStop(0, `rgba(255, 214, 128, ${glow})`);
-      g.addColorStop(1, "rgba(255, 214, 128, 0)");
-      ctx.fillStyle = g;
-      ctx.fillRect(px - 18, py - 28, 36, 36);
+      const glow = 0.78 + Math.sin(time * 0.003 + d.x) * 0.16;
+      ctx.globalAlpha = glow;
+      ctx.drawImage(lampGlow(), px - 18, py - 28);
+      ctx.globalAlpha = 1;
       ctx.fillStyle = "#ffe3a1";
       ctx.fillRect(px - 1, py - 11, 2, 2);
     } else if (d.type === "sign") {
@@ -583,6 +632,21 @@ export function createRenderer(canvas, world) {
     g.fillRect(0, 0, 72, 72);
     glowCache.set(accent, sprite);
     return sprite;
+  }
+
+  let lampSprite = null;
+  function lampGlow() {
+    if (lampSprite) return lampSprite;
+    lampSprite = document.createElement("canvas");
+    lampSprite.width = 36;
+    lampSprite.height = 36;
+    const g = lampSprite.getContext("2d");
+    const grad = g.createRadialGradient(18, 18, 0, 18, 18, 18);
+    grad.addColorStop(0, "rgba(255, 214, 128, 0.55)");
+    grad.addColorStop(1, "rgba(255, 214, 128, 0)");
+    g.fillStyle = grad;
+    g.fillRect(0, 0, 36, 36);
+    return lampSprite;
   }
 
   function drawStation(s, time) {
@@ -1261,6 +1325,8 @@ export function createRenderer(canvas, world) {
     g.imageSmoothingEnabled = false;
     const bx = cx * CHUNK;
     const by = cy * CHUNK;
+    // o desenho usa coordenadas do mundo; desloca para o canto do bloco
+    g.setTransform(1, 0, 0, 1, -bx * TILE, -by * TILE);
     for (let y = 0; y < CHUNK; y++) {
       for (let x = 0; x < CHUNK; x++) {
         const tx = bx + x;
