@@ -63,6 +63,15 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 - [x] desempenho e carga medidos
 - [x] commit e push com evidência
 
+### H. Minimapa
+
+- [x] minimapa maior (232x155) com marcador em seta e anel, na direção do boneco
+- [x] zoom de 1× a 6× pela roda do mouse e pelos botões, com o mapa inteiro no 1×
+- [x] coordenada `x y z` e piso, no mundo e no minimapa da caverna
+- [x] clique convertido pela janela do zoom, sem perder a caminhada até o ponto
+- [x] o mapa inteiro deixou de ser cortado: o base é 560x360 e o canvas mostrava
+      só o canto de 300x200
+
 ### G. Bestiário
 
 - [x] tecla B e botão "Bestiário" no menu, com o mesmo caminho pelo Diário
@@ -85,11 +94,15 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 - O bestiário lê a mesma função que cria o bicho na caverna. Espécie, cor, nome
   e id da ficha e do encontro não podem divergir, senão o jogador caça um bicho
   e vê outro no caderno.
+- O minimapa é uma janela, não um selo: o personagem precisa ser achado sem
+  apertar os olhos, e o mapa inteiro é o nível 1 do zoom. Coordenada e piso
+  ficam à vista, porque é assim que o jogador se localiza no subsolo.
 
 ## 4. Andamento
 
 | data | fase | o que entrou | prova |
 |---|---|---|---|
+| 2026-10-20 | H | minimapa 232x155 com coordenada x y z, piso, zoom 1× a 6× pela roda e botões, botão mapa inteiro e marcador em seta; caverna ganhou coordenada, profundidade e minimapa de 200x150; o mapa base de 560x360 não é mais cortado no canto | navegador: coordenada x 91 y 61 z 0, zoom 1× a 6×, roda, clique andou 5 tiles, viagem para a Álgebra acompanhou, caverna z -1 com marcador, console limpo |
 | 2026-10-20 | G | bestiário com tecla B e botão no menu, 487 fichas de 93 cavernas agrupadas por continente, silhueta até o encontro, busca sem acento, filtros e placar; id de bicho passou a carregar a caverna (antes o mesmo id se repetia entre cavernas do mesmo continente) | node: 93 cavernas, 487 fichas, ids únicos, encontro e vitória sobrevivem ao recarregar; navegador: 487 sprites, 93 grupos, busca "algebra" acha a Cripta da Álgebra, filtros 486/0/487, Diário abre o bestiário, 390 px sem estouro e menu em duas linhas, sem erro de console |
 | 2026-10-20 | acesso | expedição na Pedra do Porto lista os 82 faróis do catálogo desde o início; viajar para uma pedra de área marca o continente e o passo de expedição; minimapa mostra silhueta de terra e ponte na névoa | navegador: lista com 82 destinos de expedição e 12 do porto, viagem até a Álgebra chegou na área certa com o passo marcado, sem erro de console |
 | 2026-10-20 | revisão | ações de contexto só perto (pegar/abrir/descer/viajar), arrastar para o espaço errado recusa, runa conjura pela mochila, Ficha resume a mochila e abre o painel, equipamento aparece também na caverna, barras com aria, imagem de compartilhamento nova | navegador: item longe só olhar/andar, estação longe idem, arrastar arma para elmo recusado e elmo no lugar certo equipado, runa curou 10 pela mochila, Ficha abriu a mochila, poção de mana 1 para 9, sem erro de console |

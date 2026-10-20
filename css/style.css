@@ -786,16 +786,57 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
   bottom: 18px;
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
-  gap: 6px;
-  padding: 7px;
+  gap: 5px;
+  padding: 8px;
   border: 1px solid var(--line);
   border-radius: 7px;
-  background: rgba(7, 10, 24, 0.78);
+  background: rgba(7, 10, 24, 0.82);
   backdrop-filter: blur(8px);
 }
-#minimap-canvas { display: block; width: 190px; height: 127px; image-rendering: pixelated; opacity: 0.94; }
-#room-label { font-family: var(--mono); font-size: 10px; color: var(--muted); }
+.mini-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.mini-coord {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.05em;
+  color: var(--ink);
+}
+.mini-floor {
+  padding: 1px 6px;
+  border: 1px solid rgba(255, 200, 87, 0.35);
+  border-radius: 99px;
+  font-family: var(--mono);
+  font-size: 8.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--amber);
+}
+#minimap-canvas {
+  display: block;
+  width: 232px;
+  height: 155px;
+  image-rendering: pixelated;
+  opacity: 0.94;
+  cursor: crosshair;
+}
+.mini-tools { display: flex; align-items: center; gap: 4px; }
+.mini-btn {
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: rgba(8, 12, 28, 0.8);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1;
+}
+.mini-btn:hover { border-color: var(--line-strong); color: var(--mint); }
+.mini-fit { width: auto; padding: 0 6px; font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase; }
+.mini-zoom { min-width: 26px; text-align: center; font-family: var(--mono); font-size: 10.5px; color: var(--mint); }
+#room-label { margin-left: auto; font-family: var(--mono); font-size: 9.5px; color: var(--muted); }
 
 .noscript {
   position: absolute;
@@ -2161,8 +2202,8 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
   position: absolute;
   right: clamp(14px, 3vw, 34px);
   bottom: 44px;
-  width: 160px;
-  height: 120px;
+  width: 200px;
+  height: 150px;
   image-rendering: pixelated;
   background: rgba(5, 8, 20, 0.78);
   border: 1px solid var(--line-strong);

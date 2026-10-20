@@ -1269,6 +1269,8 @@ function startGame() {
   rede.setName(player.name);
   $("intro").hidden = true;
   $("minimap").hidden = false;
+  $("mini-zoom").textContent = renderer.miniLabel;
+  updateMiniHud(true);
   renderSteps();
   document.body.classList.add("playing");
   if (window.matchMedia("(pointer: coarse)").matches) $("touch").hidden = false;
@@ -2230,6 +2232,7 @@ function loop(now) {
     player.gear = gearAtual();
     renderer.draw(now, player, state.peers, world.npcs, world.cat, player.moving);
     updatePrompt();
+    updateMiniHud();
     const stepD = Math.hypot(player.x - state.stepX, player.y - state.stepY);
     state.stepX = player.x;
     state.stepY = player.y;
@@ -2633,8 +2636,10 @@ $("minimap-canvas").addEventListener("pointerdown", (e) => {
   if (state.chatOpen) closeChat();
   stopSprint();
   const rect = e.currentTarget.getBoundingClientRect();
-  const wx = ((e.clientX - rect.left) / rect.width) * MAP_W;
-  const wy = ((e.clientY - rect.top) / rect.height) * MAP_H;
+  const fx = (e.clientX - rect.left) / rect.width;
+  const fy = (e.clientY - rect.top) / rect.height;
+  // o mapa pode estar aproximado: converte o clique pela janela atual
+  const { x: wx, y: wy } = renderer.miniWorldAt(fx, fy);
   if (!world.isExplored(Math.floor(wx), Math.floor(wy))) {
     toast("Ainda está na névoa. Ande até lá para revelar.", 3000);
     return;
@@ -2646,6 +2651,38 @@ $("minimap-canvas").addEventListener("pointerdown", (e) => {
   }
   setPathTo(goal.x, goal.y, null);
 });
+
+function trocarZoomMini(delta) {
+  const res = renderer.miniZoom(delta);
+  const rotulo = $("mini-zoom");
+  if (rotulo) rotulo.textContent = res.label;
+  if (res.mudou) audio.blip();
+}
+
+$("minimap-canvas").addEventListener("wheel", (e) => {
+  if (!state.started || state.panelOpen || state.modal) return;
+  e.preventDefault();
+  trocarZoomMini(e.deltaY < 0 ? 1 : -1);
+}, { passive: false });
+$("mini-in").addEventListener("click", () => trocarZoomMini(1));
+$("mini-out").addEventListener("click", () => trocarZoomMini(-1));
+$("mini-fit").addEventListener("click", () => {
+  const rotulo = $("mini-zoom");
+  const label = renderer.miniFit();
+  if (rotulo) rotulo.textContent = label;
+  audio.blip();
+});
+
+let miniHudKey = "";
+function updateMiniHud(force = false) {
+  const x = Math.round(player.x);
+  const y = Math.round(player.y);
+  const chave = `${x}:${y}`;
+  if (!force && chave === miniHudKey) return;
+  miniHudKey = chave;
+  const el = $("mini-coord");
+  if (el) el.textContent = `x ${x} y ${y} z 0`;
+}
 
 $("btn-chat").addEventListener("click", openChat);
 $("btn-sheet").addEventListener("click", openSheet);

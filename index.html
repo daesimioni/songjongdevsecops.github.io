@@ -122,6 +122,7 @@
         <span id="dg-keys"></span>
         <span id="dg-torch"></span>
         <span id="dg-bag"></span>
+        <span id="dg-coord"></span>
         <span id="dg-layer">subsolo -1</span>
         <span id="dg-pack" hidden></span>
         <span id="dg-buffs" hidden></span>
@@ -383,6 +384,7 @@
       <p class="help-note">No celular, use o direcional, o botão A e o Turbo; os botões do topo abrem Falar, Rede, Diário e Ficha, e a conversa sobe junto com o teclado. A praça é pública: quem estiver na mesma sala vê seu apelido, seu boneco e suas mensagens. Use um apelido, não seu nome completo.</p>
       <p class="help-note">As <strong>Pedras do Porto</strong>, os monólitos brilhantes nas docas, abrem a viagem rápida para os continentes que você já visitou. As pontes também funcionam a pé.</p>
       <p class="help-note">Clique no chão para o boneco andar até ali. Clique numa estação, NPC ou boca de caverna para ir até perto e interagir sozinho.</p>
+      <p class="help-note">O <strong>minimapa</strong> mostra a coordenada <kbd>x y z</kbd> onde você está: z 0 é a superfície, z -1 o subsolo e z -2 o Porto Submerso. Use a roda do mouse ou os botões <strong>−</strong> e <strong>+</strong> para aproximar, <strong>mapa</strong> para ver o arquipélago inteiro, e clique num ponto já revelado para andar até lá.</p>
       <p class="help-note">Os NPCs têm missões. Aperte <kbd>F</kbd> perto deles para aceitar, responder e entregar. O Diário (<kbd>Z</kbd>) lista o que está em andamento e quanto falta.</p>
       <p class="help-note">A superfície é sala de aula: nas clareiras com bandeira fica um <strong>instrutor</strong>. Fale com ele para treinar o mesmo tema da caverna, em três dificuldades, <strong>sem perder vida e sem loot</strong>. A <strong>Ficha</strong> (<kbd>C</kbd>) mostra vida, perícias e mochila.</p>
       <p class="help-note">Quem dá XP, item e perícia é o bicho da <strong>caverna</strong>: acertar tira vida dele, errar tira a sua. Fugir nunca é de graça: a chance de levar um golpe na fuga cresce com a dificuldade do monstro (o chefe é o pior) e o café da horta reduz esse risco por um tempo.</p>
@@ -495,8 +497,18 @@
   </div>
 
   <div id="minimap" class="minimap" hidden>
-    <canvas id="minimap-canvas" width="600" height="400" role="img" aria-label="Minimapa do arquipélago. Clique num ponto revelado para andar até lá."></canvas>
-    <span id="room-label">sala praca</span>
+    <div class="mini-head">
+      <span id="mini-coord" class="mini-coord" aria-live="off">x 0 y 0 z 0</span>
+      <span id="mini-floor" class="mini-floor">superfície</span>
+    </div>
+    <canvas id="minimap-canvas" width="600" height="400" role="img" aria-label="Minimapa do arquipélago, centrado no personagem. Use os botões ou a roda do mouse para o zoom, e clique num ponto revelado para andar até lá."></canvas>
+    <div class="mini-tools">
+      <button type="button" id="mini-out" class="mini-btn" aria-label="diminuir o zoom do minimapa">−</button>
+      <span id="mini-zoom" class="mini-zoom" aria-live="polite">3×</span>
+      <button type="button" id="mini-in" class="mini-btn" aria-label="aumentar o zoom do minimapa">+</button>
+      <button type="button" id="mini-fit" class="mini-btn mini-fit" aria-label="ver o mapa inteiro">mapa</button>
+      <span id="room-label">sala praca</span>
+    </div>
   </div>
 
   <noscript><p class="noscript">Este mundo precisa de JavaScript para andar. O texto dos posts continua aqui, mas sem o mapa.</p></noscript>

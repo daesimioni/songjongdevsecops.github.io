@@ -1020,6 +1020,9 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
     if (buffNode) buffNode.hidden = buffs.length === 0;
     const room = state.map ? state.map.rooms[state.roomIndex] : null;
     setText("dg-room", room ? room.name : "");
+    // coordenada e profundidade, no mesmo formato do minimapa da superfície
+    const z = state.def?.layer === -2 ? -2 : -1;
+    setText("dg-coord", `x ${Math.round(state.player.x)} y ${Math.round(state.player.y)} z ${z}`);
     const pack = $("dg-pack");
     if (pack) {
       pack.hidden = state.pack.length === 0;
@@ -1083,8 +1086,29 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
       g.fillRect(sx * 2 + 2, sy * 2 - 1, 2, 2);
       g.fillRect(sx * 2, sy * 2 - 1, 2, 2);
     }
+    // o herói tem anel e seta: um risco de 3 px some no meio do mapa
+    const px = state.player.x * 2;
+    const py = state.player.y * 2;
+    g.beginPath();
+    g.arc(px, py, 7, 0, Math.PI * 2);
+    g.strokeStyle = "rgba(255,255,255,0.4)";
+    g.lineWidth = 1.5;
+    g.stroke();
+    g.save();
+    g.translate(px, py);
+    g.rotate([Math.PI, Math.PI * 1.5, Math.PI * 0.5, 0][state.player.dir] || 0);
+    g.beginPath();
+    g.moveTo(0, -7);
+    g.lineTo(-5, 5);
+    g.lineTo(0, 2.5);
+    g.lineTo(5, 5);
+    g.closePath();
     g.fillStyle = "#fff";
-    g.fillRect(Math.floor(state.player.x) * 2 - 1, Math.floor(state.player.y) * 2 - 1, 3, 3);
+    g.fill();
+    g.lineWidth = 1.5;
+    g.strokeStyle = "#070b18";
+    g.stroke();
+    g.restore();
   }
 
   // ---- colisão e caminhada ----

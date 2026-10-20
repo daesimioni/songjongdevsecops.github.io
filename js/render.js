@@ -1691,8 +1691,63 @@ export function createRenderer(canvas, world) {
     ctx.textAlign = "left";
   }
 
+  // ---- minimapa com zoom, centro no personagem e coordenada ----
+  // O mapa tem 2 px por tile; o nível 0 é o mapa inteiro e os outros são uma
+  // janela em volta do jogador, como no Tibia, para o marcador não sumir.
+  const MINI_SCALES = [0, 2, 3, 4, 6];
+  let miniIndex = 2;
+  let miniPlayer = null;
+
+  function miniView() {
+    const tilePx = MINI_SCALES[miniIndex];
+    const DW = minimap?.width || mmBase.width;
+    const DH = minimap?.height || mmBase.height;
+    const p = miniPlayer || { x: MAP_W / 2, y: MAP_H / 2 };
+    const srcW = tilePx ? Math.min(mmBase.width, (DW * 2) / tilePx) : mmBase.width;
+    const srcH = tilePx ? Math.min(mmBase.height, (DH * 2) / tilePx) : mmBase.height;
+    const sx = Math.max(0, Math.min(mmBase.width - srcW, p.x * 2 - srcW / 2));
+    const sy = Math.max(0, Math.min(mmBase.height - srcH, p.y * 2 - srcH / 2));
+    return { sx, sy, srcW, srcH, DW, DH };
+  }
+
+  function miniPoint(view, wx, wy) {
+    return {
+      x: ((wx * 2 - view.sx) / view.srcW) * view.DW,
+      y: ((wy * 2 - view.sy) / view.srcH) * view.DH,
+    };
+  }
+
+  const miniLabel = () => (MINI_SCALES[miniIndex] ? `${MINI_SCALES[miniIndex]}×` : "1×");
+
+  function drawMiniMarker(px, py, dir) {
+    const t = performance.now();
+    const pulse = 11 + Math.sin(t * 0.004) * 3;
+    mctx.beginPath();
+    mctx.arc(px, py, pulse, 0, Math.PI * 2);
+    mctx.strokeStyle = "rgba(255,255,255,0.34)";
+    mctx.lineWidth = 2;
+    mctx.stroke();
+    mctx.save();
+    mctx.translate(px, py);
+    // a seta aponta para onde o boneco olha; a base do triângulo é o norte
+    mctx.rotate([Math.PI, Math.PI * 1.5, Math.PI * 0.5, 0][dir] || 0);
+    mctx.beginPath();
+    mctx.moveTo(0, -11);
+    mctx.lineTo(-7, 8);
+    mctx.lineTo(0, 4);
+    mctx.lineTo(7, 8);
+    mctx.closePath();
+    mctx.fillStyle = "#ffffff";
+    mctx.fill();
+    mctx.lineWidth = 2;
+    mctx.strokeStyle = "#070b18";
+    mctx.stroke();
+    mctx.restore();
+  }
+
   function drawMinimap(player, peers) {
     if (!mctx) return;
+    miniPlayer = player;
     if (fogVersion !== world.exploredVersion && performance.now() - lastFogBuild > 120) {
       fogVersion = world.exploredVersion;
       lastFogBuild = performance.now();
@@ -1718,34 +1773,34 @@ export function createRenderer(canvas, world) {
       }
       fogCtx.putImageData(img, 0, 0);
     }
-    mctx.drawImage(mmBase, 0, 0);
-    mctx.drawImage(mmFog, 0, 0);
+    const view = miniView();
+    mctx.imageSmoothingEnabled = false;
+    mctx.drawImage(mmBase, view.sx, view.sy, view.srcW, view.srcH, 0, 0, view.DW, view.DH);
+    mctx.drawImage(mmFog, view.sx, view.sy, view.srcW, view.srcH, 0, 0, view.DW, view.DH);
     for (const p of peers) {
+      const pt = miniPoint(view, p.rx ?? p.x, p.ry ?? p.y);
       mctx.fillStyle = p.color || "#61f4c0";
-      mctx.fillRect(Math.round((p.rx ?? p.x) * 2) - 1, Math.round((p.ry ?? p.y) * 2) - 1, 3, 3);
+      mctx.fillRect(Math.round(pt.x) - 2, Math.round(pt.y) - 2, 4, 4);
     }
     for (const h of world.hunters) {
       if (!world.isExplored(Math.floor(h.center.x), Math.floor(h.center.y))) continue;
-      const mx = Math.round(h.center.x * 2);
-      const my = Math.round(h.center.y * 2);
+      const pt = miniPoint(view, h.center.x, h.center.y);
       mctx.fillStyle = "#0a0c18";
-      mctx.fillRect(mx - 2, my - 2, 5, 5);
+      mctx.fillRect(Math.round(pt.x) - 3, Math.round(pt.y) - 3, 6, 6);
       mctx.fillStyle = h.accent;
-      mctx.fillRect(mx - 1, my - 1, 3, 3);
+      mctx.fillRect(Math.round(pt.x) - 2, Math.round(pt.y) - 2, 4, 4);
     }
     for (const c of world.caves || []) {
       if (!world.isExplored(Math.floor(c.x), Math.floor(c.y))) continue;
-      const mx = Math.round(c.x * 2);
-      const my = Math.round(c.y * 2);
+      const pt = miniPoint(view, c.x, c.y);
       mctx.fillStyle = "#05070e";
-      mctx.fillRect(mx - 2, my - 2, 5, 5);
+      mctx.fillRect(Math.round(pt.x) - 3, Math.round(pt.y) - 3, 6, 6);
       mctx.strokeStyle = c.accent;
-      mctx.strokeRect(mx - 2.5, my - 2.5, 5, 5);
+      mctx.lineWidth = 1.5;
+      mctx.strokeRect(Math.round(pt.x) - 3, Math.round(pt.y) - 3, 6, 6);
     }
-    mctx.fillStyle = "#fff";
-    mctx.fillRect(Math.round(player.x * 2) - 1, Math.round(player.y * 2) - 1, 3, 3);
-    mctx.strokeStyle = "rgba(255,255,255,0.5)";
-    mctx.strokeRect(Math.round(player.x * 2) - 2.5, Math.round(player.y * 2) - 2.5, 5, 5);
+    const hero = miniPoint(view, player.x, player.y);
+    drawMiniMarker(hero.x, hero.y, player.dir);
   }
 
   function kick(n = 1) { shake = n; }
@@ -1759,6 +1814,25 @@ export function createRenderer(canvas, world) {
     get camY() { return camY; },
     worldToScreen(wx, wy) {
       return { x: (wx * TILE - camX) * zoom, y: (wy * TILE - camY) * zoom };
+    },
+    // ---- minimapa: zoom e leitura de coordenada do clique ----
+    get miniScale() { return MINI_SCALES[miniIndex]; },
+    get miniLabel() { return miniLabel(); },
+    miniZoom(delta) {
+      const antes = miniIndex;
+      miniIndex = Math.max(0, Math.min(MINI_SCALES.length - 1, miniIndex + delta));
+      return { mudou: miniIndex !== antes, label: miniLabel() };
+    },
+    miniFit() {
+      miniIndex = 0;
+      return miniLabel();
+    },
+    miniWorldAt(fx, fy) {
+      const view = miniView();
+      return {
+        x: (view.sx + Math.max(0, Math.min(1, fx)) * view.srcW) / 2,
+        y: (view.sy + Math.max(0, Math.min(1, fy)) * view.srcH) / 2,
+      };
     },
   };
 }
