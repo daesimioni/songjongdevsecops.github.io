@@ -174,6 +174,8 @@ export const CONTINENTS = {
 
 // Áreas temáticas dentro de um continente: cada uma tem a própria ilha,
 // estações, clareira de caçada e caverna. O continente continua sendo o mesmo.
+import { CATALOG_CONTENT } from "./catalog-gen.js";
+
 export const AREAS = [
   {
     id: "physics-em",
@@ -368,6 +370,9 @@ export const AREAS = [
     accent: "#61f4c0",
   },
 ];
+
+// as áreas do catálogo entram por geração; sem banco de conteúdo, não entram
+AREAS.push(...CATALOG_CONTENT.areas);
 
 export const SITES = [
   // Porto
@@ -764,6 +769,8 @@ export const SITES = [
   },
 ];
 
+SITES.push(...CATALOG_CONTENT.sites);
+
 export const WAYSTONES = [
   { id: "hub", continent: "hub", name: "Pedra do Porto", x: 98, y: 64, accent: "#ffc857" },
   { id: "cs", continent: "cs", name: "Farol da Computação", x: 96, y: 28, accent: "#61f4c0" },
@@ -789,6 +796,7 @@ export const WAYSTONES = [
   { id: "lingua-semantics", continent: "lingua", name: "Farol da Semântica", x: 272, y: 135, accent: "#e8c07a" },
   { id: "physics-optics", continent: "physics", name: "Farol da Óptica", x: 78, y: 174, accent: "#ff7aa8" },
   { id: "cs-security", continent: "cs", name: "Farol da Segurança", x: 226, y: 173, accent: "#61f4c0" },
+  ...CATALOG_CONTENT.waystones,
 ];
 
 export const NPC_SPAWNS = [
@@ -823,6 +831,7 @@ export const NPC_SPAWNS = [
   { id: "saussure", continent: "lingua", x: 267, y: 139, accent: "#e8c07a" },
   { id: "huygens", continent: "physics", x: 73, y: 178, accent: "#ff7aa8" },
   { id: "diffie", continent: "cs", x: 221, y: 177, accent: "#61f4c0" },
+  ...CATALOG_CONTENT.npcSpawns,
 ];
 
 export const CAT_SPAWN = { x: 87, y: 61 };

@@ -79,7 +79,7 @@ Sem banco preenchido, a área não entra no jogo: o teste cobra cobertura.
       ilhas posicionadas por disciplina, pontes entre vizinhas, túneis das
       interseções, placas, waystones e bocas. Prova: 86 áreas reconhecidas no
       mapa, 0 sobreposição, toda área com waystone, boca e caminho até vizinha.
-- [ ] **F2. Gerador e banco de Matemática.** 11 seções (9 novas), 22 páginas,
+- [x] **F2. Gerador e banco de Matemática.** 11 seções (9 novas), 22 páginas,
       cavernas, caçadas, NPCs, missões e 33 perguntas. Prova: contagens e
       navegação de ponta a ponta nas 11 áreas.
 - [ ] **F3. Física.** 15 seções (11 novas).
@@ -96,3 +96,4 @@ Sem banco preenchido, a área não entra no jogo: o teste cobra cobertura.
 | data | fase | o que entrou | prova |
 |---|---|---|---|
 | 2026-10-20 | F1 | catálogo das 82 seções, mapa 560x360, 70 ilhas posicionadas, 64 pontes e 25 túneis | node: 82 seções, 70 posições sem sobreposição, 64 pontes curtas, 25 túneis; navegador ao vivo com 60 fps e 1,3 ms de desenho |
+| 2026-10-20 | F2 | gerador (`catalog-gen.js`) e banco de Matemática (`catalog-bank.js`): 9 áreas, 27 estações, 9 cavernas, 9 caçadas, 18 NPCs (9 com missão), 9 missões, 27 perguntas | node: 25 áreas no mapa, 96 estações, 32 cavernas, 32 clareiras, 55 instrutores, 51 missões, 643 perguntas; navegador: 27 estações de Matemática no mapa, pontes sem buraco, caminho a pé entre seções, página abrindo, caverna com chefe, NPC aceitando e fechando missão |

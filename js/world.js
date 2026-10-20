@@ -4,6 +4,8 @@ import {
 } from "./config.js";
 import { GROUNDS } from "./rpg-data.js";
 import { dungeonById } from "./dungeon-data.js";
+import { CATALOG_CONTENT } from "./catalog-gen.js";
+import { CATALOG_BRIDGES, CATALOG_AREAS } from "./catalog-layout.js";
 
 const { WATER, SAND, GRASS, PATH, TREE, FLOWER, BRIDGE, PLAZA } = K;
 
@@ -188,6 +190,25 @@ export function createWorld() {
   bridgeLine(244, 135, 254, 135, 3, BRIDGE); // linguagem e semântica
   bridgeLine(74, 151, 78, 162, 3, BRIDGE); // analítica e óptica
   bridgeLine(226, 145, 226, 162, 3, BRIDGE); // linguagem e segurança
+  // pontes do catálogo: só entre áreas que já têm conteúdo, curtas como a
+  // distância entre duas seções vizinhas
+  {
+    const ready = new Set(AREAS.map((a) => a.id));
+    const spotOf = new Map(CATALOG_AREAS.map((spot) => [spot.id, spot]));
+    for (const [a, b] of CATALOG_BRIDGES) {
+      if (!ready.has(a) || !ready.has(b)) continue;
+      const pa = spotOf.get(a), pb = spotOf.get(b);
+      if (!pa || !pb) continue;
+      const dx = pb.cx - pa.cx, dy = pb.cy - pa.cy;
+      const len = Math.hypot(dx, dy) || 1;
+      const ux = dx / len, uy = dy / len;
+      bridgeLine(pa.cx + ux * 10.5, pa.cy + uy * 10.5, pb.cx - ux * 10.5, pb.cy - uy * 10.5, 3, BRIDGE);
+      // a ponta da ponte encosta em terra, não em água
+      rect(Math.round(pa.cx + ux * 9) - 1, Math.round(pa.cy + uy * 9) - 1, 3, 3, pa.rect ? (AREAS.find((x) => x.id === a)?.base ?? 12) : 12);
+      rect(Math.round(pb.cx - ux * 9) - 1, Math.round(pb.cy - uy * 9) - 1, 3, 3, AREAS.find((x) => x.id === b)?.base ?? 12);
+    }
+  }
+
   // encontros de ponte com terra
   rect(88, 30, 5, 4, CONTINENTS.cs.path);
   rect(88, 88, 5, 4, CONTINENTS.physics.path);
@@ -273,6 +294,7 @@ export function createWorld() {
     return false;
   };
 
+  const catalogDecor = CATALOG_CONTENT.decor;
   const decoForArea = {
     "cs-arch": ["rack", "pillar", "terminal"],
     "cs-net": ["antenna", "rack", "node"],
@@ -291,6 +313,8 @@ export function createWorld() {
     "lingua-literature": ["quill", "book", "flower"],
     "lingua-semantics": ["mask", "book", "star"],
   };
+
+  Object.assign(decoForArea, catalogDecor);
 
   const decoFor = {
     hub: ["tree", "tree", "flower", "bench", "lamp", "star"],

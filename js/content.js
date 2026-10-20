@@ -1,6 +1,8 @@
 // Os textos do arquipélago. Cada estação do mapa é uma página; o instrumento
 // interativo mora em js/zones/ e é carregado só quando a pessoa abre o painel.
 
+import { CATALOG_CONTENT } from "./catalog-gen.js";
+
 export const POSTS = {
   welcome: {
     kicker: "porto do início",
@@ -1093,6 +1095,8 @@ export const POSTS = {
   },
 };
 
+Object.assign(POSTS, CATALOG_CONTENT.posts);
+
 export const NPCS = {
   guia: {
     name: "Dona Zefa",
@@ -1592,3 +1596,5 @@ export const NPCS = {
     ],
   },
 };
+
+Object.assign(NPCS, CATALOG_CONTENT.npcs);

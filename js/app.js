@@ -2452,6 +2452,6 @@ window.addEventListener("beforeunload", () => {
   setNetStatus({ state: "solo", count: 1 });
   requestAnimationFrame(loop);
   if (new URLSearchParams(location.search).has("debug")) {
-    window.__mundo = { player, state, world, renderer, audio, quests, rede, backup, rpg, sheetUi, duelUi, dungeon, pvpUi, knockDown, get social() { return social; } };
+    window.__mundo = { player, state, world, renderer, audio, quests, rede, backup, rpg, sheetUi, duelUi, dungeon, pvpUi, knockDown, findPath, openPost: (id) => openPost(id), get social() { return social; } };
   }
 })();

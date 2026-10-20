@@ -23,6 +23,8 @@ const { HAIRS, AVATAR_DEFAULT, normalizeAvatar, avatarColors, avatarCode, avatar
 const { OUTFITS } = await import("../js/outfits.js");
 const { createWorld } = await import("../js/world.js");
 const { CATALOG, CATALOG_BY_ID, DISCIPLINES, CATALOG_EXISTING } = await import("../js/catalog.js");
+const { CATALOG_CONTENT } = await import("../js/catalog-gen.js");
+const ready = CATALOG_CONTENT.areas.length;
 const { CATALOG_AREAS, CATALOG_BRIDGES, CATALOG_TUNNELS } = await import("../js/catalog-layout.js");
 
 const source = (rel) => readFileSync(new URL(rel, import.meta.url), "utf8");
@@ -31,7 +33,7 @@ const check = (cond, message) => { if (!cond) faults.push(message); };
 const continents = CONTINENT_ORDER.filter((c) => c !== "hub");
 
 // 43 estações com texto: cinco por continente, duas no porto e as áreas temáticas
-check(SITES.length === 69, `SITES tem ${SITES.length} estações, esperado 69`);
+check(SITES.length === 69 + ready * 3, `SITES tem ${SITES.length} estações, esperado ${69 + ready * 3}`);
 check(new Set(SITES.map((s) => s.id)).size === SITES.length, "id de estação repetido");
 check(SITES.filter((s) => s.continent === "hub").length === 2, "o porto precisa de 2 estações");
 for (const site of SITES) {
@@ -229,7 +231,7 @@ check(slimeRpg.duel.monsterHp > 4, "gosma não se recompôs no erro");
 check(!!wrongRes.feedback.note, "erro sem explicação do jeito da espécie");
 
 // cavernas: seis, com entrada, cidade, monstros e chefe
-check(DUNGEONS.length === 23, `DUNGEONS tem ${DUNGEONS.length} cavernas, esperado 23`);
+check(DUNGEONS.length === 23 + ready, `DUNGEONS tem ${DUNGEONS.length} cavernas, esperado ${23 + ready}`);
 for (const dungeon of DUNGEONS) {
   check(continents.includes(dungeon.continent), `caverna ${dungeon.id} em continente inválido`);
   check(dungeon.monsters?.length >= 4, `caverna ${dungeon.id} com poucos monstros`);
@@ -263,9 +265,9 @@ for (const area of AREAS) {
 }
 const areaSigns = world.decor.filter((d) => d.type === "sign" && d.text.startsWith("Área"));
 check(areaSigns.length === AREAS.length, `placas de área: ${areaSigns.length}, esperado ${AREAS.length}`);
-check(world.hunters.length === 23, `mundo com ${world.hunters.length} clareiras`);
+check(world.hunters.length === 23 + ready, `mundo com ${world.hunters.length} clareiras, esperado ${23 + ready}`);
 check(world.monsters.length === 0, "a superfície ainda tem monstros");
-check(world.caves.length === 46, `mundo com ${world.caves.length} bocas de caverna, esperado 46`);
+check(world.caves.length === 46 + ready * 2, `mundo com ${world.caves.length} bocas de caverna, esperado ${46 + ready * 2}`);
 for (const cave of world.caves) {
   const pair = world.caves.find((c) => c.id === cave.pairId);
   check(!!pair, `boca ${cave.id} sem par`);
@@ -274,7 +276,7 @@ for (const cave of world.caves) {
     check(pair.mouth !== cave.mouth, `boca ${cave.id} pareada com a mesma boca`);
   }
 }
-check(world.npcs.filter((n) => n.trainer).length === 23, "faltam instrutores na superfície");
+check(world.npcs.filter((n) => n.trainer).length === 23 + ready, `instrutores: ${world.npcs.filter((n) => n.trainer).length}, esperado ${23 + ready}`);
 for (const c of continents) {
   check(!!world.caves.find((cave) => cave.continent === c), `continente ${c} sem boca de caverna`);
   check(!!DUNGEONS.find((d) => d.continent === c), `continente ${c} sem caverna definida`);
@@ -329,6 +331,32 @@ for (const [inter, d] of CATALOG_TUNNELS) {
   check(!!CATALOG_BY_ID.get(inter)?.links, `${inter} não é interseção`);
   check(!!DISCIPLINES[d], `túnel para disciplina inexistente: ${d}`);
 }
+
+// F2: toda área pronta precisa do pacote completo dentro do jogo
+for (const item of CATALOG_CONTENT.areas) {
+  const inGame = AREAS.find((a) => a.id === item.id);
+  check(!!inGame, `${item.id} está no catálogo mas não no mapa`);
+  const stations = SITES.filter((st) => st.post?.startsWith(`${item.id}-`));
+  check(stations.length === 3, `${item.id} com ${stations.length} estações, esperado 3`);
+  check(!!WAYSTONES.find((w) => w.id === item.id), `${item.id} sem farol`);
+  check(!!NPC_SPAWNS.find((n) => n.id === CATALOG_CONTENT.grounds.find((g) => g.id === item.id)?.keeper), `${item.id} sem NPC no mapa`);
+  const dungeon = DUNGEONS.find((d) => d.id === `dungeon-${item.id}`);
+  check(!!dungeon, `${item.id} sem caverna`);
+  if (dungeon) {
+    check(dungeon.rooms.length === 10, `${item.id}: caverna com ${dungeon.rooms.length} salas`);
+    check(dungeon.rooms.some((r) => r.kind === "city"), `${item.id}: caverna sem cidade`);
+    check(typeof dungeon.boss === "string" && dungeon.boss.length > 3, `${item.id}: caverna sem chefe`);
+  }
+  const ground = GROUNDS.find((g) => g.id === item.id);
+  check(!!ground && ground.monsters.length === 3, `${item.id} sem caçada de três monstros`);
+  check(QUESTS.some((q) => q.id === `missao-${item.id}`), `${item.id} sem missão`);
+  const own = ["1", "2", "3"].map((t) => (QUESTIONS[item.continent]?.[t] || []).filter((q) => q.why && q.q).length);
+  check(own.every((n) => n > 0), `${item.id} sem perguntas no continente`);
+  check(!!CATALOG_CONTENT.decor[item.id], `${item.id} sem família de decoração`);
+  check(!!CATALOG_CONTENT.posts[`${item.id}-1`], `${item.id} sem página`);
+}
+check(AREAS.length === 16 + ready, `mapa com ${AREAS.length} áreas, esperado ${16 + ready}`);
+check(QUESTS.length >= 42 + ready, `missões: ${QUESTS.length}, esperado ao menos ${42 + ready}`);
 
 // bicho-assinatura precisa de desenho e de ficha no bestiário, senão cai no chefe
 const sigLine = source("../js/dungeon.js").split("\n").find((l) => l.includes("const signature =")) || "";

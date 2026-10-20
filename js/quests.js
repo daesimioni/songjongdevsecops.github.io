@@ -3,6 +3,8 @@
 import { backupCorrupt } from "./storage.js";
 import { SITES, STORAGE } from "./config.js";
 
+import { CATALOG_CONTENT } from "./catalog-gen.js";
+
 export const QUESTS = [
   {
     id: "tres-passos",
@@ -609,6 +611,8 @@ export const QUESTS = [
     reward: { xp: 38, title: "Leitor de Entrelinhas" },
   },
 ];
+
+QUESTS.push(...CATALOG_CONTENT.quests);
 
 const QUEST_BY_ID = new Map(QUESTS.map((q) => [q.id, q]));
 

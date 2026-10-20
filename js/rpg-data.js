@@ -2,6 +2,8 @@
 // itens e as seis perícias. Cada pergunta tem uma explicação curta porque o
 // objetivo é ensinar, não só vencer.
 
+import { CATALOG_CONTENT } from "./catalog-gen.js";
+
 export const SKILLS = {
   cs: { name: "Lógica", desc: "fios, portas, algoritmos e máquinas", color: "#61f4c0" },
   math: { name: "Abstração", desc: "formas, provas, limites e acaso", color: "#b48cff" },
@@ -646,6 +648,8 @@ const GROUNDS_RAW = [
     boss: { id: "cs-security-boss", name: "A Chave Mestra", kind: "boss", dx: 0, dy: 0 },
   },
 ];
+
+GROUNDS_RAW.push(...CATALOG_CONTENT.grounds);
 
 export const GROUNDS = GROUNDS_RAW.map((g) => ({
   ...g,
@@ -1930,4 +1934,10 @@ export const EXTRA_QUESTIONS_18 = {
 
 for (const [continent, tiers] of Object.entries(EXTRA_QUESTIONS_18)) {
   for (const [tier, list] of Object.entries(tiers)) QUESTIONS[continent][tier].push(...list);
+}
+
+// perguntas do catálogo: uma por tópico de estação, na dificuldade do tópico
+for (const item of CATALOG_CONTENT.questions) {
+  const bucket = QUESTIONS[item.continent]?.[item.tier];
+  if (bucket) bucket.push(item.q);
 }

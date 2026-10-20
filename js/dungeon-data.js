@@ -6,6 +6,8 @@
 // bichos e chefe. Planta própria por continente quando o mapa começar a
 // parecer repetido.
 
+import { CATALOG_CONTENT } from "./catalog-gen.js";
+
 export const DUNGEON_LAYOUT = {
   width: 64,
   height: 48,
@@ -591,6 +593,9 @@ const COMMON = {
     palette: { floor: "#16302c", floor2: "#102420", wall: "#081715", wallTop: "#21463f", accent: "#61f4c0" },
   },
 };
+
+// as cavernas do catálogo entram antes de virar lista
+Object.assign(COMMON, CATALOG_CONTENT.dungeons);
 
 export const DUNGEONS = Object.entries(COMMON).map(([key, d]) => {
   // metade das cavernas espelha as salas laterais: mesmo desenho de túneis,
