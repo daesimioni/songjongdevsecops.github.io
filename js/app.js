@@ -290,6 +290,7 @@ dungeon = createDungeon({
     return !!rpg.duel;
   },
   onSheet: () => openSheet(),
+  onInventory: () => openInventory(),
   onKeeper: () => openShop(),
   onConurbation: () => openTravel("caves"),
   onPortal: (defId) => portalToCity(defId),
@@ -2353,6 +2354,10 @@ window.addEventListener("keydown", (e) => {
     else if (state.chatOpen) closeChat();
     return;
   }
+  // I e B fecham a própria tela: o atalho promete abrir e fechar, e o
+  // guarda de modal abaixo impediria o fechamento
+  if (state.modal === "inventory" && k === "i") { closeModal("inventory"); return; }
+  if (state.modal === "bestiary" && k === "b") { closeModal("bestiary"); return; }
   if (state.panelOpen || state.modal) return;
   if (dungeon?.isOpen()) return;
   if (k === " " || e.code === "Space") {
@@ -2369,8 +2374,8 @@ window.addEventListener("keydown", (e) => {
   if (k === "e") { openRede(); return; }
   if (k === "z") { openJournal(); return; }
   if (k === "c") { openSheet(); return; }
-  if (k === "b") { if (state.modal === "bestiary") closeModal("bestiary"); else openBestiary(); return; }
-  if (k === "i") { if (state.modal === "inventory") closeModal("inventory"); else openInventory(); return; }
+  if (k === "b") { openBestiary(); return; }
+  if (k === "i") { openInventory(); return; }
   if (/^[1-6]$/.test(k) && state.spells?.length) {
     const magia = state.spells[Number(k) - 1];
     if (magia) { e.preventDefault(); usarMagia(magia.id); }

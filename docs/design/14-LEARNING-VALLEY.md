@@ -63,6 +63,13 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 - [x] desempenho e carga medidos
 - [x] commit e push com evidência
 
+### M. Mochila na caverna
+
+- [x] botão **mochila** no HUD da caverna, ao lado de turbo, ficha e sair
+- [x] tecla `I` abre a mochila dentro da caverna, sem sair dela
+- [x] a mochila abre por cima da caverna e o Esc fecha só ela
+- [x] no celular as teclas somem dos quatro botões e "sair" não é cortado
+
 ### L. Perguntas em A-E
 
 - [x] todo duelo e todo PvP mostram cinco alternativas, A a E
@@ -152,6 +159,7 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 
 | data | fase | o que entrou | prova |
 |---|---|---|---|
+| 2026-10-20 | M | mochila no HUD da caverna e tecla I dentro da caverna; o modal abre por cima, Esc fecha só a mochila e a caverna continua; no celular os quatro botões cabem sem cortar sair | navegador: botão visível, clique abriu a mochila com 40 espaços e a caverna atrás, Esc voltou, I abriu, 390 px com turbo/mochila/ficha/sair dentro da tela, console limpo |
 | 2026-10-20 | L | perguntas padronizadas em cinco alternativas A-E no duelo e no PvP; a certa embaralha entre as cinco; questão com 6 escritas usa 5; distratores próximos por troca de oposto, semelhança com a resposta e mesma área; as 632 perguntas geradas do catálogo passaram a nascer com 5 opções escritas | node: 1603 perguntas e 35 cartas de PvP com 5, respostas espalhadas, distratores conferidos (Cantor, autovalor, grandes números, integração por partes), PvP 5; navegador: cinco botões A-E, tecla E responde, quinta marcada, console limpo |
 | 2026-10-20 | K | a forma do bicho passou a vir do nome: 10 formas novas (livro, símbolo, nota, átomo, cristal, engrenagem, nó, prisma, vetor, frasco), classificador por palavra com disciplina de desempate, e arte, ficha, fraqueza e duelo para todas; 356 nomes cobertos | node: 25 formas com arte/nome/fraqueza, 17 casos de congruência (ácido->frasco, acorde->nota, instrução->engrenagem, autovalores->vetor), sem forma órfã; navegador: bestiário mostra as fichas novas e a separação das 93 cavernas continua com 651 bichos e nenhum ponto visto por dois |
 | 2026-10-20 | J | Espaço e Turbo alternam a nave na superfície e na caverna; o casco passou para js/skiff.js e a caverna usa o mesmo desenho, com boost suave e lift do boneco; soltar a tecla não desliga | navegador: espaço liga e continua ligado, espaço de novo desliga, auto-repeat não pisca, Turbo do celular alterna com aria-pressed, caverna liga/desliga e o casco aparece andando, console limpo; node verde |

@@ -521,7 +521,7 @@ function drawBuilding(ctx, x, y, w, h, palette, accent) {
 }
 
 // ---------- a caverna em si ----------
-export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeeper, onConurbation, onPortal, isBlocked, avatar = {}, look = null, gear = null }) {
+export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, onExit, onKeeper, onConurbation, onPortal, isBlocked, avatar = {}, look = null, gear = null }) {
   const canvas = $("dungeon-canvas");
   const ctx = canvas?.getContext("2d", { alpha: false }) || null;
 
@@ -1984,6 +1984,10 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
       onSheet?.();
       return;
     }
+    if (k === "i") {
+      onInventory?.();
+      return;
+    }
     state.keys.add(k);
   }
 
@@ -2026,6 +2030,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
   canvas?.addEventListener("pointerdown", onPointer);
   $("dg-exit")?.addEventListener("click", () => close("stairs", state.entryCave));
   $("dg-sheet")?.addEventListener("click", () => onSheet?.());
+  $("dg-inventory")?.addEventListener("click", () => onInventory?.());
   const sprintBtn = $("dg-sprint");
   const setSprint = (on) => {
     state.sprint = on;

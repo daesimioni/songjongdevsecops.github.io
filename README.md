@@ -18,7 +18,7 @@ O arquipélago do saber não fica pendurado num único caminho de pedra: cada um
 
 A abertura é uma tela de título com o vale em pixel art animado: estrelas, lua, montanhas, rio e vagalumes. Depois dela vêm a chave, o personagem e uma passagem curta para o mundo.
 
-No jogo, a vida e a mana ficam em barras no topo. A mochila abre com <kbd>I</kbd>: grade de itens com ícones desenhados, equipamento ao lado, arrastar e soltar, detalhe do item e um boneco que muda de arma, elmo e cor de armadura conforme você veste. O botão direito abre um menu com olhar, falar, abrir, descer, viajar, pegar e andar até aqui. Runas e magias aparecem na barra inferior e gastam mana.
+No jogo, a vida e a mana ficam em barras no topo. A mochila abre com <kbd>I</kbd> na superfície e na caverna, e também pelo botão escrito no HUD dos dois: grade de itens com ícones desenhados, equipamento ao lado, arrastar e soltar, detalhe do item e um boneco que muda de arma, elmo e cor de armadura conforme você veste. O botão direito abre um menu com olhar, falar, abrir, descer, viajar, pegar e andar até aqui. Runas e magias aparecem na barra inferior e gastam mana.
 
 O **Bestiário** abre com <kbd>B</kbd> ou pelo botão escrito no menu. São as 93 cavernas agrupadas por continente, com 464 fichas: nome, espécie, andar, o que o bicho faz contra você e a fraqueza dele. O que você ainda não encontrou aparece como silhueta e `???`; o primeiro encontro revela a ficha, e a vitória marca o bicho como vencido. Tem busca sem acento, filtro por conhecidos/vencidos/por ver, placar de descobertas por continente e a caverna onde você está já vem aberta. A forma vem do nome, não de um sorteio: `Ácido` é um frasco, `Acorde` uma nota, `Instrução` uma engrenagem, `Sílaba` um símbolo, `Fóton` um prisma. São 25 formas desenhadas, cada uma com nome de leitura, fraqueza e jeito próprio de atrapalhar o duelo.
 
@@ -326,8 +326,9 @@ A página é feita para o toque, não adaptada depois:
   o Bestiário o menu passou a quebrar em duas linhas no celular em vez de espremer
   os últimos botões; a barra de status da praça encurta para caber.
 - **caverna**: toque no chão para andar e no objeto para interagir; o minimapa
-  aparece menor no canto e a ajuda vira "toque no chão, toque no objeto". Ficha e
-  sair ficam em botões no topo.
+  aparece menor no canto e a ajuda vira "toque no chão, toque no objeto".
+  **Mochila**, ficha e sair ficam em botões no topo, como no resto do HUD; a
+  mochila também abre com <kbd>I</kbd>.
 - **conversa**: o campo tem 16 px (o iPhone não dá zoom ao focar) e a barra sobe
   junto com o teclado usando a área visível do navegador.
 - **modais**: largura total, altura de 90% da tela, cabeçalho com o fechar preso no

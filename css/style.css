@@ -3587,3 +3587,11 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
 @media (max-width: 760px), (pointer: coarse) {
   .steps { top: 172px; }
 }
+
+/* no celular a caverna ganhou a mochila: sem as teclas, os quatro botões
+   cabem e "sair" não fica cortado */
+@media (max-width: 720px) {
+  .dg-actions { gap: 4px; }
+  .dg-exit { padding: 0 8px; font-size: 10.5px; }
+  .dg-exit kbd { display: none; }
+}
