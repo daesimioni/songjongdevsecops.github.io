@@ -12,7 +12,7 @@ globalThis.localStorage = {
   clear: () => store.clear(),
 };
 
-const { CONTINENTS, SITES, WAYSTONES, NPC_SPAWNS, CONTINENT_ORDER, AREAS } = await import("../js/config.js");
+const { CONTINENTS, SITES, WAYSTONES, NPC_SPAWNS, CONTINENT_ORDER, AREAS, MAP_W, MAP_H } = await import("../js/config.js");
 const { QUESTIONS, DEEP_QUESTIONS, GROUNDS, ITEMS, RECIPES, ENCHANTS, MONSTER_TRAITS } = await import("../js/rpg-data.js");
 const { DUNGEONS } = await import("../js/dungeon-data.js");
 const { POSTS, NPCS } = await import("../js/content.js");
@@ -22,6 +22,8 @@ const { isAdminKey, ADMIN_PUBKEYS, ADMIN_LABEL } = await import("../js/admin.js"
 const { HAIRS, AVATAR_DEFAULT, normalizeAvatar, avatarColors, avatarCode, avatarFromCode, hairUnlock, hairQuest } = await import("../js/avatar.js");
 const { OUTFITS } = await import("../js/outfits.js");
 const { createWorld } = await import("../js/world.js");
+const { CATALOG, CATALOG_BY_ID, DISCIPLINES, CATALOG_EXISTING } = await import("../js/catalog.js");
+const { CATALOG_AREAS, CATALOG_BRIDGES, CATALOG_TUNNELS } = await import("../js/catalog-layout.js");
 
 const source = (rel) => readFileSync(new URL(rel, import.meta.url), "utf8");
 const faults = [];
@@ -276,6 +278,56 @@ check(world.npcs.filter((n) => n.trainer).length === 23, "faltam instrutores na 
 for (const c of continents) {
   check(!!world.caves.find((cave) => cave.continent === c), `continente ${c} sem boca de caverna`);
   check(!!DUNGEONS.find((d) => d.continent === c), `continente ${c} sem caverna definida`);
+}
+
+// catálogo: 82 seções (71 + 11 interseções), uma área de jogo por seção
+check(CATALOG.length === 82, `catálogo: ${CATALOG.length} seções, esperado 82`);
+const porDisciplina = {};
+for (const item of CATALOG) porDisciplina[item.discipline] = (porDisciplina[item.discipline] || 0) + 1;
+check(porDisciplina.math === 11, `matemática: ${porDisciplina.math}, esperado 11`);
+check(porDisciplina.physics === 15, `física: ${porDisciplina.physics}, esperado 15`);
+check(porDisciplina.chem === 13, `química: ${porDisciplina.chem}, esperado 13`);
+check(porDisciplina.cs === 17, `computação: ${porDisciplina.cs}, esperado 17`);
+check(porDisciplina.lingua === 15, `língua: ${porDisciplina.lingua}, esperado 15`);
+check(porDisciplina.inter === 11, `interseções: ${porDisciplina.inter}, esperado 11`);
+for (const item of CATALOG) {
+  check(!!DISCIPLINES[item.discipline], `${item.id} em disciplina inexistente`);
+  check(item.topics?.length === 3, `${item.id} sem os três tópicos de estação`);
+  check(typeof item.name === "string" && item.name.startsWith("Área"), `${item.id} sem nome de área`);
+}
+check(CATALOG_EXISTING.size === 12, `seções já cobertas: ${CATALOG_EXISTING.size}, esperado 12`);
+check(CATALOG_AREAS.length === 70, `áreas novas posicionadas: ${CATALOG_AREAS.length}, esperado 70`);
+for (const spot of CATALOG_AREAS) {
+  check(!!CATALOG_BY_ID.get(spot.id), `posição de área fora do catálogo: ${spot.id}`);
+  check(spot.rect.x > 0 && spot.rect.y > 0 && spot.rect.x + spot.rect.w < MAP_W && spot.rect.y + spot.rect.h < MAP_H, `${spot.id} fora do mapa`);
+  check(spot.land.rx * 2 <= spot.rect.w && spot.land.ry * 2 <= spot.rect.h, `${spot.id} com terra maior que o retângulo`);
+}
+// nenhuma ilha em cima da outra e nenhuma em cima do mundo antigo
+for (let i = 0; i < CATALOG_AREAS.length; i++) {
+  const a = CATALOG_AREAS[i];
+  for (let j = i + 1; j < CATALOG_AREAS.length; j++) {
+    const b = CATALOG_AREAS[j];
+    const gapX = Math.abs(a.cx - b.cx), gapY = Math.abs(a.cy - b.cy);
+    check(gapX >= 20 || gapY >= 12, `${a.id} encosta em ${b.id}`);
+  }
+  check(a.cx - a.land.rx > 293 || a.cy - a.land.ry > 191, `${a.id} invadiu o mundo antigo`);
+}
+check(CATALOG_BRIDGES.length === 64, `pontes de catálogo: ${CATALOG_BRIDGES.length}, esperado 64`);
+const spotById = new Map(CATALOG_AREAS.map((a) => [a.id, a]));
+for (const [a, b] of CATALOG_BRIDGES) {
+  const pa = spotById.get(a), pb = spotById.get(b);
+  check(!!pa && !!pb, `ponte com área sem posição: ${a} -> ${b}`);
+  if (pa && pb) check(Math.hypot(pa.cx - pb.cx, pa.cy - pb.cy) < 26, `ponte longa demais: ${a} -> ${b}`);
+}
+const linked = new Set(CATALOG_BRIDGES.flat());
+for (const spot of CATALOG_AREAS) {
+  const viz = CATALOG_BRIDGES.filter(([a, b]) => a === spot.id || b === spot.id).length;
+  check(viz >= 1 || CATALOG_TUNNELS.some(([t]) => t === spot.id), `${spot.id} sem caminho para ninguém`);
+}
+check(CATALOG_TUNNELS.length === 25, `túneis de interseção: ${CATALOG_TUNNELS.length}, esperado 25`);
+for (const [inter, d] of CATALOG_TUNNELS) {
+  check(!!CATALOG_BY_ID.get(inter)?.links, `${inter} não é interseção`);
+  check(!!DISCIPLINES[d], `túnel para disciplina inexistente: ${d}`);
 }
 
 // bicho-assinatura precisa de desenho e de ficha no bestiário, senão cai no chefe

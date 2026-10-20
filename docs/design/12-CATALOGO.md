@@ -1,0 +1,98 @@
+# 12. O catálogo inteiro dentro do mundo
+
+Este documento é o contrato da expansão pedida: **uma área de jogo para cada
+seção** do catálogo de conhecimento, com geografia coerente e caminho entre
+áreas vizinhas. Ele é a fonte de verdade da execução; cada fase marcada aqui
+tem prova no teste do projeto.
+
+## 1. O que conta como área
+
+O catálogo tem 71 seções numeradas nas cinco disciplinas e 11 seções de
+interseção. Cada seção vira **uma área** no mapa, com o mesmo pacote de
+conteúdo das áreas que já existem:
+
+| peça | por área | onde mora |
+|---|---|---|
+| 2 estações (página + instrumento) | 164 páginas | `content.js` e `catalog-bank.js` |
+| 1 caverna com 10 salas e chefe | 82 cavernas | `dungeon-data.js` gerado do catálogo |
+| 1 clareira de caçada com 3 monstros | 82 clareiras | `rpg-data.js` gerado |
+| 1 NPC com missão própria | 82 NPCs | `content.js` e `quests.js` |
+| perguntas fácil/médio/difícil | 3 por tópico (492) | banco por disciplina |
+| decoração e assinatura próprias | 82 famílias | `world.js` e `render.js` |
+| placa, waystone e boca de caverna | 82 de cada | `config.js` |
+
+Contagens-alvo: **16 áreas antigas + 70 novas = 86 áreas** (as 12 seções que já
+têm área antiga não são duplicadas; 71 seções + 11 interseções = 82 seções,
+12 já cobertas, 70 novas).
+
+## 2. Geografia
+
+O mapa cresce para **560 x 360 tiles** (era 300 x 200). O que já existe fica
+onde está; o mar novo recebe as áreas do catálogo em **arquipélagos por
+disciplina**, com duas regras:
+
+1. **Vizinhança é distância.** Seções consecutivas da mesma disciplina ficam
+   lado a lado, em corrente, com ponte curta entre uma e a seguinte. A ordem
+   da corrente é a ordem do catálogo.
+2. **Interseção é passagem.** Cada área de interseção fica entre os dois
+   arquipélagos que ela liga e ganha **túnel** para as duas áreas-mãe (uma
+   escada em cada lado), além de ponte para a vizinha mais próxima.
+
+Regiões:
+
+| arquipélago | região no mar novo | âncora |
+|---|---|---|
+| Matemática | faixa superior direita | liga ao continente pelo farol e pelo túnel |
+| Física | faixa média direita | idem |
+| Química | faixa esquerda inferior | idem |
+| Computação | faixa inferior direita | idem |
+| Língua | faixa inferior esquerda | idem |
+| Interseções | cinturão do meio | túneis para as duas mães |
+
+Cada área tem: ilha de 22 x 14 tiles, 2 estações, placa com o nome, uma pedra
+de viagem (ou entrada na rede de pedras já existente), boca de caverna,
+clareira de caçada e NPC. Caverna e clareira ficam na própria ilha; a caverna
+desce para o subsolo e o túnel da conurbação (camada -2) continua sendo o
+atalho entre cidades.
+
+## 3. De onde vem o conteúdo
+
+Para não escrever 164 páginas à mão de uma vez e não inventar texto vazio, o
+conteúdo de cada área vem de um **banco por disciplina** (`js/catalog-bank.js`):
+para cada tópico, uma definição curta, três pontos-chave, um erro comum e uma
+pergunta por dificuldade (fácil, média, difícil) com gabarito e explicação.
+
+O gerador (`js/catalog-gen.js`) transforma o banco em:
+
+- post de estação (definição + pontos + erro comum),
+- pergunta dos monstros e do treino,
+- nome de monstro, chefe, salas da caverna e loot,
+- missão do NPC (quiz curto ou caçada),
+- texto do NPC (três falas ligadas ao tópico),
+- família de decoração e prop de assinatura.
+
+Sem banco preenchido, a área não entra no jogo: o teste cobra cobertura.
+
+## 4. Fases (cada uma termina em commit e prova)
+
+- [ ] **F1. Catálogo e geografia.** `catalog.js` com as 82 seções, mapa 560 x 360,
+      ilhas posicionadas por disciplina, pontes entre vizinhas, túneis das
+      interseções, placas, waystones e bocas. Prova: 86 áreas reconhecidas no
+      mapa, 0 sobreposição, toda área com waystone, boca e caminho até vizinha.
+- [ ] **F2. Gerador e banco de Matemática.** 11 seções (9 novas), 22 páginas,
+      cavernas, caçadas, NPCs, missões e 33 perguntas. Prova: contagens e
+      navegação de ponta a ponta nas 11 áreas.
+- [ ] **F3. Física.** 15 seções (11 novas).
+- [ ] **F4. Química.** 13 seções (11 novas).
+- [ ] **F5. Computação.** 17 seções (13 novas).
+- [ ] **F6. Língua.** 15 seções (13 novas).
+- [ ] **F7. Interseções.** 11 áreas com túnel para as duas mães.
+- [ ] **F8. Prova final.** 86 áreas, 82 cavernas, 82 clareiras, 82 NPCs de
+      missão, 492 perguntas novas, tudo verde no node, no navegador e ao vivo;
+      desempenho medido com o mapa maior.
+
+## 5. Registro de execução
+
+| data | fase | o que entrou | prova |
+|---|---|---|---|
+| 2026-10-20 | F1 | catálogo das 82 seções e plano | node conta 82 seções e 6 disciplinas |
