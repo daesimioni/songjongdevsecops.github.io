@@ -110,7 +110,10 @@ for (const c of continents) {
   check(!!byTier, `sem perguntas para ${c}`);
   for (const tier of [1, 2, 3]) {
     const list = byTier?.[tier] || [];
-    check(list.length >= 3, `${c} tier ${tier} tem ${list.length} perguntas`);
+    // um monstro fácil pede 3 acertos, o médio 7 e o difícil 12: o baralho
+    // precisa de perguntas distintas para a luta inteira, sem repetir.
+    const need = tier === 3 ? 12 : tier === 2 ? 7 : 3;
+    check(list.length >= need, `${c} tier ${tier} tem ${list.length} perguntas, esperado ${need}`);
     for (const q of list) {
       check(q.options?.length === 3, `${c}/${tier}: pergunta sem 3 alternativas: ${q.q}`);
       check(new Set(q.options).size === 3, `${c}/${tier}: alternativas repetidas: ${q.q}`);
@@ -140,7 +143,7 @@ for (const c of continents) {
   }
   check(rpg.buildDeck(c, [1], "").length > 0, `baralho fácil de ${c} vazio`);
   check(rpg.buildDeck(c, [2], "").length > 0, `baralho médio de ${c} vazio`);
-  check(rpg.buildDeck(c, [3], "").length > 0, `baralho difícil de ${c} vazio`);
+  check(rpg.buildDeck(c, [3], "").length >= 12, `baralho difícil de ${c} com menos de 12 perguntas`);
 }
 
 // relíquia soma dano no PvP, mas o bônus para em +2

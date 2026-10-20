@@ -412,7 +412,7 @@ cinco cartas, a dificuldade que vira dano e a compostura.
 
 A segunda confere o conteúdo inteiro: as 51 estações e seus textos, falas de NPC,
 33 missões, itens, equipamento, relíquias por continente, receitas, encantos, as
-192 perguntas (sem repetição e com resposta válida), as cinco cartas do PvP por
+216 perguntas (sem repetição e com resposta válida), as cinco cartas do PvP por
 continente, as catorze cavernas e o mundo montado (catorze instrutores, vinte e
 oito bocas, nenhum monstro na superfície).
 

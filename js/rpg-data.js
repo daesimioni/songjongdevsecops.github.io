@@ -860,3 +860,62 @@ export const EXTRA_QUESTIONS_3 = {
 for (const [continent, tiers] of Object.entries(EXTRA_QUESTIONS_3)) {
   for (const [tier, list] of Object.entries(tiers)) QUESTIONS[continent][tier].push(...list);
 }
+
+export const EXTRA_QUESTIONS_4 = {
+  cs: {
+    3: [
+      { q: "Por que um desvio mal previsto custa caro no pipeline?", options: ["As instruções já buscadas são descartadas", "A memória aquece", "O clock dobra"], a: 0, why: "O processador aposta no caminho e adianta trabalho. Se o desvio for outro, esse trabalho é jogado fora." },
+      { q: "Qual é a diferença entre processo e thread?", options: ["Threads compartilham o espaço de endereço do processo", "Processos são sempre mais rápidos", "Threads não têm pilha"], a: 0, why: "Threads do mesmo processo compartilham memória; processos têm espaços separados e conversam por IPC." },
+      { q: "A hierarquia de cache explora...", options: ["Localidade temporal e espacial", "Endereços aleatórios", "Um clock fixo"], a: 0, why: "Programas repetem dados e acessam vizinhos; guardar o que acabou de ser usado evita ir longe de novo." },
+    ],
+  },
+  math: {
+    3: [
+      { q: "O teorema do valor médio garante que existe um ponto onde...", options: ["a derivada iguala a taxa média de variação", "a função é constante", "a integral é zero"], a: 0, why: "Entre dois pontos, a taxa média aparece em algum ponto intermediário com derivada igual a ela, se f for contínua e derivável." },
+      { q: "Um conjunto é enumerável quando...", options: ["pode ser posto em bijeção com os naturais", "é finito", "tem medida zero"], a: 0, why: "Enumerar é listar em sequência indexada pelos naturais. Inteiros e racionais são enumeráveis; reais não são." },
+      { q: "A integral de Riemann pode falhar em funções...", options: ["com muitas descontinuidades", "constantes", "polinomiais"], a: 0, why: "Oscilações demais impedem que a soma de Riemann convirja. A integral de Lebesgue cobre mais casos." },
+    ],
+  },
+  physics: {
+    3: [
+      { q: "Por que a luz não escapa de um buraco negro?", options: ["A velocidade de escape excede a da luz", "O vácuo bloqueia fótons", "A luz perde massa"], a: 0, why: "A gravidade é tão intensa que a velocidade de escape passa de c. Nenhuma trajetória para fora cabe do horizonte." },
+      { q: "Na relatividade restrita, o intervalo entre dois eventos é...", options: ["invariante entre referenciais inerciais", "sempre maior em repouso", "dependente só da distância"], a: 0, why: "Tempo e espaço mudam juntos de modo que o intervalo espaço-tempo fica igual para todos os observadores inerciais." },
+      { q: "Num processo espontâneo de um sistema isolado, a entropia...", options: ["aumenta", "diminui", "fica sempre constante"], a: 0, why: "A segunda lei diz que a entropia total de um sistema isolado não diminui. Processos reversíveis ideais ficam constantes." },
+    ],
+  },
+  chem: {
+    3: [
+      { q: "A energia de ionização cresce ao longo do período porque...", options: ["a carga nuclear efetiva aumenta", "o raio atômico aumenta", "os nêutrons diminuem"], a: 0, why: "Com mais prótons puxando os mesmos elétrons de valência, fica mais difícil arrancar um elétron." },
+      { q: "Um tampão resiste à mudança de pH porque...", options: ["tem ácido e base conjugados", "tem pH 7 fixo", "não tem água"], a: 0, why: "O par ácido-base consome o que é adicionado. Por isso a variação de pH fica pequena até o tampão esgotar." },
+      { q: "Enantiômeros são...", options: ["imagens especulares não sobreponíveis", "sempre iguais em tudo", "moléculas sem carbono"], a: 0, why: "Eles têm a mesma fórmula e os mesmos grupos, mas não se sobrepõem por rotação, como mãos esquerda e direita." },
+    ],
+  },
+  music: {
+    3: [
+      { q: "A fuga é uma forma em que...", options: ["um tema entra em vozes sucessivas", "só um instrumento toca", "não há contraponto"], a: 0, why: "O sujeito aparece em uma voz, depois em outras, sobrepostas. É contraponto levado ao formato de composição." },
+      { q: "Uma cadência deceptiva...", options: ["foge da tônica esperada", "termina na tônica", "não tem acorde"], a: 0, why: "O ouvido espera resolver na tônica e o acorde desvia, criando surpresa. É um gesto de suspensão." },
+      { q: "O contraponto estuda...", options: ["a combinação de linhas melódicas independentes", "o volume do amplificador", "a afinação do piano"], a: 0, why: "As vozes têm contorno próprio e soam juntas, como no coral. Harmonia pensa acordes; contraponto pensa linhas." },
+    ],
+  },
+  ai: {
+    3: [
+      { q: "A função de perda mede...", options: ["o erro entre predição e alvo", "o tamanho do dataset", "a velocidade da GPU"], a: 0, why: "Ela dá um número para o quanto a saída está errada. O gradiente desce na direção que reduz esse número." },
+      { q: "Overfitting costuma aparecer quando...", options: ["o modelo é complexo demais para o dado", "faltam parâmetros", "o treino é curto"], a: 0, why: "Com capacidade de sobra, o modelo decora o treino, inclusive o ruído, e perde generalização." },
+      { q: "A atenção em transformers permite...", options: ["pesar relações entre todos os tokens", "substituir a descida de gradiente", "guardar os pesos em cache"], a: 0, why: "Cada token consulta os outros e recebe pesos, o que captura dependências mesmo longe na sequência." },
+      { q: "Generalização é...", options: ["ter bom desempenho em dados não vistos", "decorar o conjunto de treino", "aumentar a memória da GPU"], a: 0, why: "Generalizar é aplicar o que aprendeu a casos novos. Decorar o treino pode dar nota alta nele e nota baixa fora." },
+      { q: "Um viés nos dados de treino pode...", options: ["ser reproduzido e amplificado pelo modelo", "sumir com mais camadas", "só afetar a velocidade"], a: 0, why: "O modelo aprende a estatística que recebe. Se um grupo aparece menos ou sempre associado a algo, a predição herda isso." },
+    ],
+  },
+  lingua: {
+    3: [
+      { q: "Em “Ele disse que viria”, a oração subordinada é...", options: ["substantiva objetiva direta", "adjetiva", "adverbial"], a: 0, why: "A oração completa o sentido de dizer, sem preposição, e funciona como objeto direto: é substantiva objetiva direta." },
+      { q: "Na norma-padrão, assistir no sentido de ver pede...", options: ["a preposição a", "objeto direto sem preposição", "predicativo do sujeito"], a: 0, why: "O verbo assistir, nesse sentido, é transitivo indireto: assistir ao filme. Na fala informal, a forma direta aparece." },
+      { q: "A coesão por elipse acontece quando...", options: ["um termo já conhecido é omitido", "o nome é repetido", "usa-se um sinônimo"], a: 0, why: "A elipse deixa o termo subentendido pelo contexto, sem repeti-lo. Sinônimo é coesão lexical." },
+      { q: "O foco narrativo em primeira pessoa...", options: ["limita a informação ao que o narrador sabe", "é sempre onisciente", "não tem narrador"], a: 0, why: "O narrador-personagem só conta o que viveu ou percebeu. Isso cria mistério e restringe o que o leitor pode saber." },
+    ],
+  },
+};
+
+for (const [continent, tiers] of Object.entries(EXTRA_QUESTIONS_4)) {
+  for (const [tier, list] of Object.entries(tiers)) QUESTIONS[continent][tier].push(...list);
+}
