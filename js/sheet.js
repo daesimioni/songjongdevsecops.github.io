@@ -61,6 +61,42 @@ export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onUs
       body.appendChild(look);
     }
 
+    body.appendChild(el("h3", "sheet-sec", "Equipamento"));
+    const gear = el("div", "sheet-gear");
+    for (const slot of rpg.equippedView()) {
+      const row = el("div", "gear-row");
+      row.append(el("span", "gear-slot", slot.name), el("b", "", slot.item ? slot.item.name : "vazio"));
+      if (slot.item) {
+        const off = el("button", "item-use", "tirar");
+        off.type = "button";
+        off.addEventListener("click", () => {
+          rpg.unequip(slot.slot);
+          audio.blip();
+          render();
+        });
+        row.appendChild(off);
+      }
+      gear.appendChild(row);
+    }
+    const bagGear = rpg.inventoryList().filter((item) => item.slot && rpg.data.equipped?.[item.slot] !== item.id);
+    for (const item of bagGear) {
+      const row = el("div", "gear-row");
+      const bonus = [item.damage ? `+${item.damage} dano` : "", item.hp ? `+${item.hp} vida` : ""].filter(Boolean).join(" · ");
+      row.append(el("span", "gear-slot", item.slot), el("b", "", `${item.name}${bonus ? ` (${bonus})` : ""}`));
+      const on = el("button", "item-use", "equipar");
+      on.type = "button";
+      on.addEventListener("click", () => {
+        const res = rpg.equip(item.id);
+        if (!res.ok) { toast(res.reason, 2600); return; }
+        toast(`${item.name} equipado.`, 2400);
+        audio.blip();
+        render();
+      });
+      row.appendChild(on);
+      gear.appendChild(row);
+    }
+    body.appendChild(gear);
+
     body.appendChild(el("h3", "sheet-sec", "Perícias"));
     const grid = el("div", "sheet-skills");
     for (const s of rpg.skillsView()) {

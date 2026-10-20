@@ -50,6 +50,7 @@ const COMMON = {
     sub: "onde os fios antigos ainda pulsam",
     material: "ferro",
     tunnel: "elbow",
+    equipment: ["chave-longa", "colete-malha"],
     shift: { a: [-2, 1], c: [2, -1], g: [1, 2] },
     boss: "O Compilador Ancestral",
     rooms: [
@@ -72,6 +73,7 @@ const COMMON = {
     sub: "corredores que não terminam na primeira volta",
     material: "veio",
     tunnel: "split",
+    equipment: ["espada-prova", "manto-giz"],
     shift: { b: [2, 1], d: [-2, -2], h: [-1, 2] },
     boss: "O Infinito Profundo",
     rooms: [
@@ -94,6 +96,7 @@ const COMMON = {
     sub: "o calor, a luz e a queda moram aqui embaixo",
     material: "ferro",
     tunnel: "wide",
+    equipment: ["cajado-luz", "lentes-prisma"],
     shift: { a: [2, 2], c: [-2, 2], e: [1, -1], h: [-2, 1] },
     boss: "O Observador Cego",
     rooms: [
@@ -116,6 +119,7 @@ const COMMON = {
     sub: "um labirinto que muda de cor conforme o pH",
     material: "erva",
     tunnel: "cross",
+    equipment: ["frasco-acido", "avental-alquimista"],
     shift: { b: [-2, 2], d: [2, 1], g: [-1, -2] },
     boss: "O Catalisador",
     rooms: [
@@ -138,6 +142,7 @@ const COMMON = {
     sub: "a acústica das pedras guarda compassos antigos",
     material: "madeira",
     tunnel: "zigzag",
+    equipment: ["batuta-maestro", "casaca-harmonia"],
     shift: { a: [-1, -2], c: [1, 2], e: [-2, 1] },
     boss: "A Dissonância",
     rooms: [
@@ -160,6 +165,7 @@ const COMMON = {
     sub: "túneis de dados e uma cidade que aprende sozinha",
     material: "veio",
     tunnel: "narrow",
+    equipment: ["cajado-vetores", "capuz-dados"],
     shift: { b: [1, -2], d: [-2, 1], f: [2, -1] },
     boss: "A Caixa Preta",
     rooms: [

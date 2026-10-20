@@ -182,6 +182,23 @@ assert.equal(plotRpg.data.plots["dungeon-cs:0"]?.planted, true, "horta plantada 
 delete rpg.data.plots;
 rpg.save();
 
+// equipar arma e armadura muda dano e vida, e persiste
+const gearRpg = new RPG({ getLevel: () => 1, gainXp: () => {}, toast: () => {}, audio: {} });
+gearRpg.addItem("chave-longa", 1);
+gearRpg.addItem("colete-malha", 1);
+const bareDamage = gearRpg.damageFor("cs");
+const bareHp = gearRpg.hpMax();
+assert.equal(gearRpg.equip("chave-longa").ok, true);
+assert.equal(gearRpg.equip("colete-malha").ok, true);
+assert.equal(gearRpg.damageFor("cs"), bareDamage + 1, "arma soma dano");
+assert.equal(gearRpg.hpMax(), bareHp + 5, "armadura soma vida");
+const gearAgain = new RPG({ getLevel: () => 1, gainXp: () => {}, toast: () => {}, audio: {} });
+assert.equal(gearAgain.data.equipped.weapon, "chave-longa", "arma equipada persiste");
+assert.equal(gearAgain.hpMax(), bareHp + 5, "vida equipada persiste");
+assert.equal(gearAgain.unequip("armor").ok, true);
+assert.equal(gearAgain.hpMax(), bareHp, "tirar a armadura devolve a vida");
+assert.equal(gearAgain.equip("pocao").ok, false, "poção não é equipamento");
+
 // save corrompido não vira save vazio sem deixar cópia
 const corruptKey = STORAGE.rpg;
 const goodRaw = store.get(corruptKey);

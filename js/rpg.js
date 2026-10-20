@@ -65,6 +65,7 @@ function emptyData() {
     enchants: {},
     buffs: {},
     pet: { bond: 0 },
+    equipped: {},
     plots: {},
     plotGift: {},
   };
@@ -99,6 +100,9 @@ function readData() {
       if (BUFF_NAMES[id] && Number.isFinite(at) && at > now()) data.buffs[id] = at;
     }
     data.pet.bond = clamp(Number(obj.pet?.bond) || 0, 0, 3);
+    for (const [slot, id] of Object.entries(obj.equipped || {})) {
+      if (ITEMS[id]?.slot === slot && Number(data.items[id]) > 0) data.equipped[slot] = id;
+    }
     for (const [key, plot] of Object.entries(obj.plots || {})) {
       if (typeof key !== "string" || key.length > 40 || !plot || typeof plot !== "object") continue;
       if (!plot.planted) continue;
@@ -167,8 +171,43 @@ export class RPG {
       .length;
   }
 
+  equipmentBonus() {
+    let hp = 0, damage = 0;
+    for (const [slot, id] of Object.entries(this.data.equipped || {})) {
+      const item = ITEMS[id];
+      if (!item || item.slot !== slot || this.itemCount(id) <= 0) continue;
+      hp += Number(item.hp) || 0;
+      damage += Number(item.damage) || 0;
+    }
+    return { hp, damage };
+  }
+
+  equip(id) {
+    const item = ITEMS[id];
+    if (!item?.slot) return { ok: false, reason: "Isso não é equipamento." };
+    if (this.itemCount(id) <= 0) return { ok: false, reason: "Você não tem essa peça." };
+    this.data.equipped[item.slot] = id;
+    this.save();
+    return { ok: true, slot: item.slot, item };
+  }
+
+  unequip(slot) {
+    if (!this.data.equipped?.[slot]) return { ok: false, reason: "Esse espaço já está vazio." };
+    delete this.data.equipped[slot];
+    this.save();
+    return { ok: true, slot };
+  }
+
+  equippedView() {
+    const names = { weapon: "arma", helmet: "elmo", armor: "armadura", legs: "pernas", boots: "botas", shield: "escudo", ring: "anel", necklace: "colar" };
+    return Object.entries(names).map(([slot, name]) => {
+      const id = this.data.equipped?.[slot];
+      return { slot, name, item: id && this.itemCount(id) > 0 ? { id, ...ITEMS[id] } : null };
+    });
+  }
+
   hpMax() {
-    let max = 30 + (Math.max(1, this.getLevel()) - 1) * 4 + this.relics() * 5;
+    let max = 30 + (Math.max(1, this.getLevel()) - 1) * 4 + this.relics() * 5 + this.equipmentBonus().hp;
     if (this.data.enchants.vigor) max += 10;
     if (this.buffActive("maxhp")) max += 5;
     if (this.data.pet.bond >= 3) max += 5;
@@ -279,7 +318,7 @@ export class RPG {
     let damage = skill >= 10 ? 3 : skill >= 6 ? 2 : 1;
     if (this.data.enchants.furor) damage++;
     if (this.buffActive("damage")) damage++;
-    return damage;
+    return damage + this.equipmentBonus().damage;
   }
 
   // ---------- itens ----------
@@ -636,6 +675,13 @@ export class RPG {
     if (d.boss) loot.push({ id: "pocao", qty: 1 });
     else if (Math.random() < 0.28) loot.push({ id: "pocao", qty: 1 });
     for (const l of loot) this.addItem(l.id, l.qty);
+    if (d.boss) {
+      const accessory = ground.continent === "cs" ? "anel-sinapse" : ground.continent === "music" ? "colar-constante" : null;
+      if (accessory && this.itemCount(accessory) <= 0) {
+        loot.push({ id: accessory, qty: 1 });
+        this.addItem(accessory, 1);
+      }
+    }
     this.addSkillXp(ground.continent, 2);
     const xp = TIERS[tier].xp;
     this.gainXp(xp);

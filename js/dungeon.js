@@ -595,11 +595,20 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
     const s = spots[(room.x + room.y + k) % spots.length];
     const x = room.x + 0.8 + s[0] * (room.w - 1.6);
     const y = room.y + 0.8 + s[1] * (room.h - 1.6);
+    // espécies diferentes por andar: não é só o nome que muda
+    const species = {
+      1: ["slime", "bat", "spider"],
+      2: ["eye", "bat", "spider"],
+      3: ["golem", "eye", "bat"],
+    }[tier] || ["slime"];
+    const seed = [...name].reduce((sum, ch) => sum + ch.charCodeAt(0), 0) + k;
+    const kind = species[seed % species.length];
+    const baseSpeed = { bat: 0.82, spider: 0.46, slime: 0.58, eye: 0.54, golem: 0.5 }[kind] || 0.55;
     return {
       id: `dg-${def.continent}-${room.id}-m${k}`,
       name,
       tier,
-      kind: tier >= 3 ? "golem" : tier === 2 ? "eye" : "slime",
+      kind,
       level: tier * 3,
       x,
       y,
@@ -610,10 +619,10 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
       dir: 0,
       moving: false,
       alive: true,
-      vision: 3.3 + tier * 0.45,
+      vision: 3.2 + tier * 0.45 + (kind === "bat" ? 0.4 : kind === "spider" ? 0.2 : 0),
       // meia-lua: o bicho vê na direção em que está virado
-      fov: tier >= 3 ? 0.85 : tier === 2 ? 1.15 : 1.35,
-      speed: 0.55 + tier * 0.16,
+      fov: { bat: 1.5, spider: 1.0, slime: 1.35, eye: 1.15, golem: 0.85 }[kind] || 1.2,
+      speed: baseSpeed + tier * 0.12,
       waitUntil: clock() + 600 + Math.random() * 1800,
       accent: def.palette.accent,
       theme: room.theme,
@@ -1121,6 +1130,9 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
     if (chest.locked || Math.random() < 0.45) loot.push({ id: "pocao", qty: 1 });
     // baú selado não devolve a chave: o custo da chave tem que doer um pouco
     if (!chest.locked && Math.random() < 0.3) loot.push({ id: "chave", qty: 1 });
+    // de vez em quando o baú guarda uma peça de equipamento do continente
+    const gear = (state.def.equipment || []).filter((id) => rpg.itemCount(id) <= 0 && !Object.values(rpg.data.equipped || {}).includes(id));
+    if (gear.length && Math.random() < 0.4) loot.push({ id: gear[Math.floor(Math.random() * gear.length)], qty: 1 });
     return loot;
   }
 

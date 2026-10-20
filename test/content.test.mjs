@@ -63,6 +63,13 @@ for (const [id, item] of Object.entries(ITEMS)) {
   if (item.heal) check(item.heal > 0 && item.heal <= 60, `item ${id} cura fora de faixa`);
   if (item.buff) check(["speed", "damage", "maxhp"].includes(item.buff.id), `item ${id} com buff desconhecido`);
 }
+const SLOTS = new Set(["weapon", "helmet", "armor", "legs", "boots", "shield", "ring", "necklace"]);
+for (const [id, item] of Object.entries(ITEMS)) {
+  if (!item.slot) continue;
+  check(SLOTS.has(item.slot), `item ${id} com espaço desconhecido ${item.slot}`);
+  check(Number(item.damage) > 0 || Number(item.hp) > 0, `equipamento ${id} sem bônus`);
+  if (item.weapon) check(["sword", "club", "axe", "wand", "rod"].includes(item.weapon), `arma ${id} com tipo ${item.weapon}`);
+}
 for (const c of continents) {
   const relics = Object.values(ITEMS).filter((i) => i.continent === c && i.relic).length;
   check(relics === 1, `continente ${c} tem ${relics} relíquias, esperado 1`);
@@ -145,6 +152,9 @@ for (const dungeon of DUNGEONS) {
   check(typeof dungeon.boss === "string" && dungeon.boss.length > 0, `caverna ${dungeon.id} sem chefe`);
   check(dungeon.rooms.length >= 8, `caverna ${dungeon.id} com ${dungeon.rooms.length} salas`);
   check(dungeon.rooms.some((r) => r.kind === "entrance"), `caverna ${dungeon.id} sem entrada`);
+  for (const id of dungeon.equipment || []) {
+    check(!!ITEMS[id]?.slot, `caverna ${dungeon.id} solta equipamento inexistente ${id}`);
+  }
   check(dungeon.rooms.some((r) => r.kind === "city"), `caverna ${dungeon.id} sem cidade`);
 }
 

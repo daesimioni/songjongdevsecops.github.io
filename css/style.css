@@ -2308,3 +2308,20 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
 @media (max-width: 720px) {
   .outfit-grid { grid-template-columns: 1fr; }
 }
+
+/* equipamento da ficha */
+.sheet-gear { display: grid; gap: 6px; margin-bottom: 18px; }
+.gear-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 9px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.02);
+  font-family: var(--mono);
+  font-size: 11px;
+}
+.gear-row b { flex: 1; font-weight: 500; color: var(--ink); }
+.gear-slot { min-width: 62px; color: var(--muted); text-transform: lowercase; }
+.gear-row .item-use { padding: 4px 8px; font-size: 10px; }
