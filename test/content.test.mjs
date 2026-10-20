@@ -2,6 +2,7 @@
 // perguntas por continente, baralhos do duelo, cavernas e o mundo montado.
 // Roda sem navegador: node test/content.test.mjs
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 
 const store = new Map();
 globalThis.localStorage = {
@@ -203,6 +204,18 @@ check(world.npcs.filter((n) => n.trainer).length === 23, "faltam instrutores na 
 for (const c of continents) {
   check(!!world.caves.find((cave) => cave.continent === c), `continente ${c} sem boca de caverna`);
   check(!!DUNGEONS.find((d) => d.continent === c), `continente ${c} sem caverna definida`);
+}
+
+// bicho-assinatura precisa de desenho e de ficha no bestiário, senão cai no chefe
+const source = (rel) => readFileSync(new URL(rel, import.meta.url), "utf8");
+const sigLine = source("../js/dungeon.js").split("\n").find((l) => l.includes("const signature =")) || "";
+const sigKinds = [...sigLine.matchAll(/"([a-z]+)"/g)].map((m) => m[1]);
+const labelsLine = source("../js/rpg.js").split("\n").find((l) => l.includes("const labels = {")) || "";
+const creatureSrc = source("../js/creature.js");
+check(sigKinds.length === 8, `bichos-assinatura: ${sigKinds.length}, esperado 8`);
+for (const kind of sigKinds) {
+  check(creatureSrc.includes(`kind === "${kind}"`), `sem desenho para ${kind}`);
+  check(labelsLine.includes(`${kind}:`), `bestiário sem nome para ${kind}`);
 }
 
 assert.equal(faults.length, 0, `conteúdo com ${faults.length} problema(s):\n- ${faults.join("\n- ")}`);

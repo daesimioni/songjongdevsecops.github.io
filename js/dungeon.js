@@ -677,9 +677,12 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
       2: ["eye", "bat", "spider", "wisp", "scorpion"],
       3: ["golem", "eye", "bat", "scorpion"],
     }[tier] || ["slime"];
+    // bicho-assinatura do continente: a masmorra de Física não tem a fauna de Música
+    const signature = { cs: ["ant"], math: ["beetle"], physics: ["crab"], chem: ["jelly"], music: ["moth"], ai: ["sentinel"], lingua: ["imp", "serpent"] }[def.continent] || [];
+    const pool = [...species, ...signature];
     const seed = [...name].reduce((sum, ch) => sum + ch.charCodeAt(0), 0) + k;
-    const kind = species[seed % species.length];
-    const baseSpeed = { bat: 0.82, spider: 0.46, slime: 0.58, eye: 0.54, golem: 0.5, wisp: 0.7, scorpion: 0.5 }[kind] || 0.55;
+    const kind = pool[seed % pool.length];
+    const baseSpeed = { bat: 0.82, spider: 0.46, slime: 0.58, eye: 0.54, golem: 0.5, wisp: 0.7, scorpion: 0.5, ant: 0.78, moth: 0.86, beetle: 0.42, crab: 0.64, jelly: 0.36, imp: 0.74, sentinel: 0.38, serpent: 0.52 }[kind] || 0.55;
     return {
       id: `dg-${def.continent}-${room.id}-m${k}`,
       name,
@@ -697,7 +700,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
       alive: true,
       vision: 3.2 + tier * 0.45 + (kind === "bat" ? 0.4 : kind === "wisp" ? 0.3 : kind === "spider" ? 0.2 : kind === "scorpion" ? 0.1 : 0),
       // meia-lua: o bicho vê na direção em que está virado
-      fov: { bat: 1.5, spider: 1.0, slime: 1.35, eye: 1.15, golem: 0.85, wisp: 1.4, scorpion: 0.95 }[kind] || 1.2,
+      fov: { bat: 1.5, spider: 1.0, slime: 1.35, eye: 1.15, golem: 0.85, wisp: 1.4, scorpion: 0.95, ant: 1.3, moth: 1.55, beetle: 0.8, crab: 1.1, jelly: 0.7, imp: 1.25, sentinel: 1.05, serpent: 1.2 }[kind] || 1.2,
       speed: baseSpeed + tier * 0.12,
       waitUntil: clock() + 600 + Math.random() * 1800,
       accent: def.palette.accent,
