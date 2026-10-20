@@ -226,7 +226,9 @@ function indexQuestions() {
   }
   for (const [continent, q] of Object.entries(DEEP_QUESTIONS)) {
     const tiers = QUESTION_INDEX.get(continent);
-    if (tiers?.[3]) tiers[3].push(q);
+    // a pergunta do fundo é escrita para o tema da caverna: no empate de
+    // assunto, ela vem antes das perguntas gerais do continente
+    if (tiers?.[3]) tiers[3].push({ ...q, deep: true });
   }
 }
 indexQuestions();
@@ -989,7 +991,7 @@ export class RPG {
           answer: filled.answer,
           why: q.why,
           tier,
-          score: this.themeScore(`${q.q} ${q.why}`, hint),
+          score: this.themeScore(`${q.q} ${q.why}`, hint) + (q.deep ? 1 : 0),
         });
       }
     }

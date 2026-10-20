@@ -2,6 +2,7 @@
 // interativo mora em js/zones/ e é carregado só quando a pessoa abre o painel.
 
 import { CATALOG_CONTENT } from "./catalog-gen.js";
+import { LEGACY_CONTENT } from "./config.js";
 
 export const POSTS = {
   welcome: {
@@ -14,8 +15,8 @@ export const POSTS = {
     lab: null,
     body: `
       <p>Este blog não tem índice. Tem <strong>mapa</strong>. Você entra com um boneco, atravessa pontes e escolhe por qual continente começar. Cada estação que encontra é uma página: um texto curto e um instrumento para mexer com as mãos.</p>
-      <p>O mapa cresceu para o <strong>catálogo inteiro</strong>: cada seção de Matemática, Física, Química, Computação e Língua Portuguesa ganhou a sua área, com estação, clareira de caçada, caverna e missão próprias, e as interseções entre as disciplinas ficaram entre as duas mães, ligadas pelo túnel. Ao todo são <strong>86 áreas</strong> e <strong>279 fragmentos</strong>, ligados por ponte quando são vizinhos.</p>
-      <p>São sete continentes. A <em>Computação</em> mostra como saímos de interruptores e areia até processadores. <em>Matemática</em> visita o infinito, as formas, a mudança e o acaso. <em>Física</em> testa pêndulos, ondas, calor, luz e órbitas. <em>Química</em> abre a tabela periódica, as ligações, as reações e o equilíbrio. <em>Música</em> mostra a matemática escondida no som. <em>Inteligência Artificial</em> abre os dados, as redes, a linguagem e os limites. O <em>Vale da Língua</em> desce ao português do Brasil: o som, a palavra, a frase e o texto. Ao todo, 279 fragmentos para descobrir.</p>
+      <p>O mapa cresceu para o <strong>catálogo inteiro</strong>: cada seção de Matemática, Física, Química, Computação e Língua Portuguesa ganhou a sua área, com estação, clareira de caçada, caverna e missão próprias, e as interseções entre as disciplinas ficaram entre as duas mães, ligadas pelo túnel. Ao todo são <strong>86 áreas</strong> e <strong>454 fragmentos</strong>, ligados por ponte quando são vizinhos.</p>
+      <p>São sete continentes. A <em>Computação</em> mostra como saímos de interruptores e areia até processadores. <em>Matemática</em> visita o infinito, as formas, a mudança e o acaso. <em>Física</em> testa pêndulos, ondas, calor, luz e órbitas. <em>Química</em> abre a tabela periódica, as ligações, as reações e o equilíbrio. <em>Música</em> mostra a matemática escondida no som. <em>Inteligência Artificial</em> abre os dados, as redes, a linguagem e os limites. O <em>Vale da Língua</em> desce ao português do Brasil: o som, a palavra, a frase e o texto. Ao todo, 454 fragmentos para descobrir: cada seção virou uma área e cada subárea do catálogo virou uma estação.</p>
       <p>Cada estação abre uma página e soma experiência. O <strong>Diário</strong> guarda o que você já encontrou. As <strong>Pedras do Porto</strong>, os monólitos brilhantes nas docas, levam você de volta a qualquer continente já visitado. A névoa do minimapa só some onde você anda.</p>
       <blockquote>Não tem pressa. O mapa é grande, mas o caminho é seu.</blockquote>
       <p>Os <strong>NPCs</strong> têm missões. Aperte F perto deles: tem caminhada, pergunta e conversa. Cada missão paga experiência e um título, e o Diário mostra quanto falta para a próxima.</p>
@@ -1096,6 +1097,7 @@ export const POSTS = {
 };
 
 Object.assign(POSTS, CATALOG_CONTENT.posts);
+Object.assign(POSTS, LEGACY_CONTENT.posts);
 
 export const NPCS = {
   guia: {

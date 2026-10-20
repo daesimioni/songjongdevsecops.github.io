@@ -105,32 +105,34 @@ export function createWorld() {
     }
   }
 
-  // 3. clareiras das estações
+  // 3. clareiras das estações: a subárea tem praça menor, porque a ilha tem
+  // várias estações e a clareira grande comeria o terreno todo
   for (const site of SITES) {
     const c = areaAtTile(Math.round(site.x), Math.round(site.y)) || CONTINENTS[site.continent];
-    rect(Math.round(site.x) - 4, Math.round(site.y) - 4, 9, 9, c.floor);
+    const raio = site.minor ? 1 : 4;
+    rect(Math.round(site.x) - raio, Math.round(site.y) - raio, raio * 2 + 1, raio * 2 + 1, c.floor);
   }
 
   // 4. caminhos internos: da pedra do porto até cada estação
-  function hpath(y, x0, x1, tile) {
+  function hpath(y, x0, x1, tile, largura = 2) {
     const a = Math.min(x0, x1), b = Math.max(x0, x1);
     for (let x = a; x <= b; x++) {
-      set(x, y, tile); set(x, y + 1, tile);
+      for (let d = 0; d < largura; d++) set(x, y + d, tile);
     }
   }
-  function vpath(x, y0, y1, tile) {
+  function vpath(x, y0, y1, tile, largura = 2) {
     const a = Math.min(y0, y1), b = Math.max(y0, y1);
     for (let y = a; y <= b; y++) {
-      set(x, y, tile); set(x + 1, y, tile);
+      for (let d = 0; d < largura; d++) set(x + d, y, tile);
     }
   }
-  function connect(a, b, tile) {
+  function connect(a, b, tile, largura = 2) {
     if (Math.abs(b.x - a.x) > Math.abs(b.y - a.y)) {
-      hpath(Math.round(a.y), Math.round(a.x), Math.round(b.x), tile);
-      vpath(Math.round(b.x), Math.round(a.y), Math.round(b.y), tile);
+      hpath(Math.round(a.y), Math.round(a.x), Math.round(b.x), tile, largura);
+      vpath(Math.round(b.x), Math.round(a.y), Math.round(b.y), tile, largura);
     } else {
-      vpath(Math.round(a.x), Math.round(a.y), Math.round(b.y), tile);
-      hpath(Math.round(b.y), Math.round(a.x), Math.round(b.x), tile);
+      vpath(Math.round(a.x), Math.round(a.y), Math.round(b.y), tile, largura);
+      hpath(Math.round(b.y), Math.round(a.x), Math.round(b.x), tile, largura);
     }
   }
 
@@ -140,7 +142,7 @@ export function createWorld() {
     // a pedra de uma área só liga às estações daquela área: o resto fica do
     // outro lado da água, e caminho não atravessa mar.
     for (const site of SITES.filter((s) => s.continent === stone.continent && areaAtTile(s.x, s.y) === area)) {
-      connect(stone, site, c.path);
+      connect(stone, site, c.path, site.minor ? 1 : 2);
     }
   }
 
@@ -388,8 +390,10 @@ export function createWorld() {
     }
   }
 
-  // lâmpadas nas esquinas de cada estação
+  // lâmpadas nas esquinas das estações grandes: a subárea fica vizinha de
+  // outra e a lâmpada cairia em cima da estação do lado
   for (const site of SITES) {
+    if (site.minor) continue;
     const c = CONTINENTS[site.continent];
     for (const [dx, dy] of [[-3, -3], [3, -3], [-3, 3], [3, 3]]) {
       decor.push({ type: "lamp", x: site.x + dx, y: site.y + dy, accent: c.accent });
@@ -629,6 +633,9 @@ export function createWorld() {
   const caves = [];
   for (const h of hunters) {
     const def = dungeonById(h.dungeon);
+    // a boca não pode nascer em cima do farol da própria área: além de feio,
+    // tranca a passagem entre a pedra e a caverna
+    const pedraDaArea = WAYSTONES.find((s) => s.id === h.id);
     const base = def?.rooms?.[0]?.name || `Caverna de ${CONTINENTS[h.continent]?.name || ""}`;
     const freeSpot = (cx, cy) =>
       !boxCollides(cx, cy, 1.9, 1.0) &&
@@ -648,6 +655,7 @@ export function createWorld() {
             if (Math.hypot(cx - h.banner.x, cy - h.banner.y) < 2.5) continue;
             if (caves.some((c) => Math.hypot(c.x - cx, c.y - cy) < 7)) continue;
             if (avoid && Math.hypot(avoid.x - cx, avoid.y - cy) < 7) continue;
+            if (pedraDaArea && Math.hypot(pedraDaArea.x - cx, pedraDaArea.y - cy) < 5) continue;
             return { x: cx, y: cy };
           }
         }

@@ -733,8 +733,12 @@ export function createRenderer(canvas, world) {
   function drawStation(s, time) {
     const px = s.x * TILE, py = s.y * TILE;
     const pulse = 0.5 + Math.sin(time * 0.0024 + s.x) * 0.5;
-    ctx.globalAlpha = 0.62 + pulse * 0.34;
-    ctx.drawImage(glowSprite(s.accent), px - 36, py - 36);
+    // subárea tem pedestal menor: a ilha tem várias e o ícone grande encostava
+    // no da estação vizinha
+    const k = s.minor ? 0.72 : 1;
+    const halo = Math.round(36 * k);
+    ctx.globalAlpha = (s.minor ? 0.34 : 0.62) + pulse * 0.3;
+    ctx.drawImage(glowSprite(s.accent), px - halo, py - halo, halo * 2, halo * 2);
     ctx.globalAlpha = 1;
 
     if (s.icon === "fountain") {
@@ -782,29 +786,30 @@ export function createRenderer(canvas, world) {
 
     // pedestal comum
     ctx.fillStyle = "rgba(2,6,10,0.35)";
-    ctx.beginPath(); ctx.ellipse(px, py + 9, 14, 4.5, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(px, py + 9 * k, 14 * k, 4.5 * k, 0, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = "#141a2e";
-    ctx.fillRect(px - 13, py - 3, 26, 10);
+    ctx.fillRect(px - 13 * k, py - 3 * k, 26 * k, 10 * k);
     ctx.fillStyle = "#232c48";
-    ctx.fillRect(px - 12, py - 4, 24, 3);
+    ctx.fillRect(px - 12 * k, py - 4 * k, 24 * k, 3 * k);
     ctx.fillStyle = hexA(s.accent, 0.35);
-    ctx.fillRect(px - 10, py - 4, 20, 1);
+    ctx.fillRect(px - 10 * k, py - 4 * k, 20 * k, 1);
     ctx.fillStyle = "#0d1220";
     for (const [dx, dy] of [[-11, 3], [9, 3], [-11, -1], [9, -1]]) {
-      ctx.fillRect(px + dx, py + dy, 2, 2);
+      ctx.fillRect(px + dx * k, py + dy * k, 2, 2);
     }
-    const beam = ctx.createLinearGradient(px, py - 4, px, py - 30);
+    const beam = ctx.createLinearGradient(px, py - 4, px, py - 28);
     beam.addColorStop(0, hexA(s.accent, 0.16));
     beam.addColorStop(1, hexA(s.accent, 0));
     ctx.fillStyle = beam;
-    ctx.fillRect(px - 8, py - 32, 16, 30);
-    drawStationIcon(s.icon, px, py - 24, time, s.accent);
+    ctx.fillRect(px - 8 * k, py - 30 * k, 16 * k, 28 * k);
+    drawStationIcon(s.icon, px, py - 24 * k, time, s.accent, k);
   }
 
-  function drawStationIcon(icon, px, py, time, accent) {
+  function drawStationIcon(icon, px, py, time, accent, escala = 1) {
     const bob = Math.sin(time * 0.002 + px * 0.01) * 1.4;
     ctx.save();
     ctx.translate(px, py + bob);
+    if (escala !== 1) ctx.scale(escala, escala);
     ctx.strokeStyle = accent;
     ctx.fillStyle = accent;
     ctx.lineWidth = 1.6;

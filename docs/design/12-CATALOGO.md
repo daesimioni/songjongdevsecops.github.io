@@ -8,22 +8,39 @@ tem prova no teste do projeto.
 ## 1. O que conta como área
 
 O catálogo tem 71 seções numeradas nas cinco disciplinas e 11 seções de
-interseção. Cada seção vira **uma área** no mapa, com o mesmo pacote de
-conteúdo das áreas que já existem:
+interseção, e dentro delas **283 subáreas** e **2.659 tópicos**. Cada seção vira
+**uma área** no mapa; cada subárea vira **uma estação** com página e
+instrumento. Seção sem subárea (as interseções, por exemplo) tem os tópicos
+repartidos em três trilhas, e cada trilha também vira estação.
 
 | peça | por área | onde mora |
 |---|---|---|
-| 3 estações (página + instrumento) | 210 páginas | `content.js` e `catalog-bank.js` |
+| 1 estação por subárea (página + instrumento) | 385 páginas: 283 de subárea e 102 de trilha | `catalog-topics.js`, `catalog-gen.js` e `catalog-legacy.js` |
 | 1 caverna com 10 salas e chefe | 82 cavernas | `dungeon-data.js` gerado do catálogo |
 | 1 clareira de caçada com 3 monstros | 82 clareiras | `rpg-data.js` gerado |
 | 1 NPC com missão própria | 82 NPCs | `content.js` e `quests.js` |
-| perguntas fácil/médio/difícil | 3 por tópico (492) | banco por disciplina |
+| perguntas de subárea | 2 por subárea (566) mais 210 do banco | `catalog-text.js` e `catalog-bank-*` |
 | decoração e assinatura próprias | 82 famílias | `world.js` e `render.js` |
 | placa, waystone e boca de caverna | 82 de cada | `config.js` |
 
 Contagens-alvo: **16 áreas antigas + 70 novas = 86 áreas** (as 12 seções que já
 têm área antiga não são duplicadas; 71 seções + 11 interseções = 82 seções,
 12 já cobertas, 70 novas).
+
+### 1.1 A lista de subáreas é o conteúdo
+
+A lista que o dono passou em 2026-10-20 foi copiada inteira para
+`js/catalog-topics.js`: 82 seções, 283 subáreas e 2.659 tópicos. O gerador lê
+essa lista, e não uma amostra de três tópicos por seção. Cada estação de
+subárea abre a página com os tópicos daquela subárea, e o teste
+`content.test.mjs` cobra que toda subárea tenha estação e que todo tópico
+apareça no corpo de uma página. As 12 seções que já tinham área antiga ganham
+as estações de subárea dentro da ilha existente (`catalog-legacy.js`), longe
+do farol, do NPC e da clareira de caçada.
+
+A pergunta de cada subárea sai do próprio catálogo: uma pergunta o tópico da
+subárea, a outra pergunta em que subárea o tópico aparece. As alternativas são
+tópicos e subáreas irmãs, então a resposta é conferível na página.
 
 ## 2. Geografia
 
@@ -49,11 +66,13 @@ Regiões:
 | Língua | faixa inferior esquerda | idem |
 | Interseções | cinturão do meio | túneis para as duas mães |
 
-Cada área tem: ilha de 22 x 14 tiles, 2 estações, placa com o nome, uma pedra
-de viagem (ou entrada na rede de pedras já existente), boca de caverna,
-clareira de caçada e NPC. Caverna e clareira ficam na própria ilha; a caverna
-desce para o subsolo e o túnel da conurbação (camada -2) continua sendo o
-atalho entre cidades.
+Cada área tem: ilha de 22 x 14 tiles, uma estação por subárea (com praça de
+3 x 3 tiles e caminho de 1 tile, para caberem todas), placa com o nome, uma
+pedra de viagem (ou entrada na rede de pedras já existente), boca de caverna,
+clareira de caçada e NPC. A boca da caverna mantém 5 tiles de distância do
+farol da própria área, para não trancar a passagem. Caverna e clareira ficam na
+própria ilha; a caverna desce para o subsolo e o túnel da conurbação (camada -2)
+continua sendo o atalho entre cidades.
 
 ## 3. De onde vem o conteúdo
 
@@ -102,6 +121,7 @@ Sem banco preenchido, a área não entra no jogo: o teste cobra cobertura.
 | 2026-10-20 | F5 | banco de Computação (`catalog-bank-cs.js`): 14 áreas novas, 42 tópicos; uma pergunta duplicada foi trocada | node: 62 áreas, 207 estações, 69 cavernas, 69 clareiras, 88 missões, 754 perguntas; navegador: 46/46 áreas do catálogo com pacote completo, 46/46 cavernas abrindo, página e missão de Computação; revisão ao vivo 48/48 |
 | 2026-10-20 | F6 | banco de Língua (`catalog-bank-lingua.js`): 13 áreas novas, 39 tópicos | node: 75 áreas, 246 estações, 82 cavernas, 82 clareiras, 101 missões, 793 perguntas; navegador: 59/59 áreas do catálogo com pacote completo, página e missão de Língua; 60 fps com desenho 1,1 ms; revisão ao vivo 48/48 |
 | 2026-10-20 | F7 | banco das Interseções (`catalog-bank-inter.js`): 11 áreas, 33 tópicos; cada interseção foi posicionada entre as duas disciplinas-mãe e ligada pelo túnel da conurbação; pontes de corrente caíram de 64 para 54 | node: 86 áreas, 82 seções cobertas com área, caverna, NPC e missão, 93 cavernas, 93 clareiras, 112 missões, 826 perguntas; navegador: 70/70 áreas do catálogo completas, 70 cavernas abrindo, túnel da interseção listando as capitais das duas mães; 14/14 |
+| 2026-10-20 | F9 | catálogo completo: 283 subáreas viram estações (220 nas ilhas novas e 63 dentro das ilhas antigas), 32 seções sem subárea viram 3 trilhas, 2.659 tópicos nas páginas, 566 perguntas novas | node: 454 estações, 454 páginas, 385 estações de catálogo, 1.603 perguntas, 283 subáreas com página, 2.659 tópicos cobertos, todas as estações dentro da ilha e sem encostar; navegador: contagem do diário, páginas abrindo, GOD e prova final verdes |
 | 2026-10-20 | F8 | varredura final: cobertura das 82 seções, diário com 86 áreas, lista de túneis por continente, desempenho medido com CPU lenta | node: 86 áreas, 279 estações, 93 cavernas, 93 clareiras, 186 bocas, 112 missões, 833 perguntas, 82/82 seções cobertas, 94 faróis; navegador: 15/15 no catálogo e 6/6 na prova final; 60 fps normal, 47 fps a 4x e 45 fps a 6x de CPU; diário reconhece as áreas e interseções; tudo ao vivo |
 
 ## 6. Refinamento depois da primeira entrega

@@ -57,11 +57,13 @@ O alvo:
 | Área da Literatura | Língua | 30,170 | 10,156 42x32 |
 | Área da Semântica | Língua | 272,135 | 252,120 40x30 |
 
-Cada área tem duas estações, uma pedra de viagem, um NPC com missão, uma
-clareira de caçada, um instrutor, uma caverna própria e uma decoração
-assinatura (antena, dado, lente, molécula, pena, máscara, relógio etc.). Agora são duas áreas por
-continente. A ponte liga a área ao
-continente ou à área vizinha; o teste de caminho cobre todas as bocas.
+Cada área tem uma estação por subárea do catálogo (e três trilhas quando a
+seção não tem subárea), uma pedra de viagem, um NPC com missão, uma clareira de
+caçada, um instrutor, uma caverna própria e uma decoração assinatura (antena,
+dado, lente, molécula, pena, máscara, relógio etc.). As doze áreas antigas
+mantêm as duas estações feitas à mão e recebem as estações de subárea dentro da
+mesma ilha. A ponte liga a área ao continente ou à área vizinha; o teste de
+caminho cobre todas as bocas.
 
 Regra de interação da boca: a distância é medida pelo degrau de saída
 (`cave.exit`), não pelo centro do desenho. Assim um NPC que passeia na frente

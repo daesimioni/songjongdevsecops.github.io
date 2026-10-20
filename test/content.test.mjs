@@ -12,7 +12,7 @@ globalThis.localStorage = {
   clear: () => store.clear(),
 };
 
-const { CONTINENTS, SITES, WAYSTONES, NPC_SPAWNS, CONTINENT_ORDER, AREAS, MAP_W, MAP_H } = await import("../js/config.js");
+const { CONTINENTS, SITES, WAYSTONES, NPC_SPAWNS, CONTINENT_ORDER, AREAS, MAP_W, MAP_H, LEGACY_CONTENT } = await import("../js/config.js");
 const { QUESTIONS, DEEP_QUESTIONS, GROUNDS, ITEMS, RECIPES, ENCHANTS, MONSTER_TRAITS } = await import("../js/rpg-data.js");
 const { DUNGEONS } = await import("../js/dungeon-data.js");
 const { POSTS, NPCS } = await import("../js/content.js");
@@ -24,6 +24,8 @@ const { OUTFITS } = await import("../js/outfits.js");
 const { createWorld } = await import("../js/world.js");
 const { CATALOG, CATALOG_BY_ID, DISCIPLINES, CATALOG_EXISTING } = await import("../js/catalog.js");
 const { CATALOG_CONTENT } = await import("../js/catalog-gen.js");
+const { SECTION_TOPICS } = await import("../js/catalog-topics.js");
+const { insideLand } = await import("../js/catalog-place.js");
 const ready = CATALOG_CONTENT.areas.length;
 const { CATALOG_AREAS, CATALOG_BRIDGES, CATALOG_TUNNELS } = await import("../js/catalog-layout.js");
 
@@ -31,9 +33,12 @@ const source = (rel) => readFileSync(new URL(rel, import.meta.url), "utf8");
 const faults = [];
 const check = (cond, message) => { if (!cond) faults.push(message); };
 const continents = CONTINENT_ORDER.filter((c) => c !== "hub");
+const estacoesDaSecao = (num) => SECTION_TOPICS[num]?.subareas?.length || 3;
+const totalEstacoes = 69 + CATALOG.reduce((n, a) => n + estacoesDaSecao(a.num), 0);
+const catalogoEstacoes = SITES.filter((s) => s.catalog);
 
 // 43 estações com texto: cinco por continente, duas no porto e as áreas temáticas
-check(SITES.length === 69 + ready * 3, `SITES tem ${SITES.length} estações, esperado ${69 + ready * 3}`);
+check(SITES.length === totalEstacoes, `SITES tem ${SITES.length} estações, esperado ${totalEstacoes}`);
 check(new Set(SITES.map((s) => s.id)).size === SITES.length, "id de estação repetido");
 check(SITES.filter((s) => s.continent === "hub").length === 2, "o porto precisa de 2 estações");
 for (const site of SITES) {
@@ -260,6 +265,21 @@ check(!isAdminKey("", "npub1outro"), "isAdminKey reconhece npub que não é do G
 check(!ADMIN_PUBKEYS.some((k) => k.startsWith("nsec1")), "chave privada dentro do repositório");
 
 const world = createWorld();
+// toda estação precisa de degrau livre em volta: o pedestal ocupa o centro,
+// mas o jogador tem que conseguir chegar e apertar F
+const semDegrau = [], naAgua = [];
+for (const site of SITES) {
+  let livre = false;
+  for (let dy = -2; dy <= 2 && !livre; dy++) {
+    for (let dx = -2; dx <= 2 && !livre; dx++) {
+      if (!world.boxCollides(site.x + dx, site.y + dy, 0.3, 0.24)) livre = true;
+    }
+  }
+  if (!livre) semDegrau.push(site.id);
+  if (world.get(Math.floor(site.x), Math.floor(site.y)) === 3) naAgua.push(site.id);
+}
+check(semDegrau.length === 0, `estação sem degrau livre: ${semDegrau.slice(0, 6).join(", ")}`);
+check(naAgua.length === 0, `estação na água: ${naAgua.slice(0, 6).join(", ")}`);
 for (const area of AREAS) {
   check(world.areaAt(area.land.cx, area.land.cy)?.id === area.id, `área ${area.id} não é reconhecida no mapa`);
 }
@@ -357,8 +377,8 @@ for (const [inter, d] of CATALOG_TUNNELS) {
 for (const item of CATALOG_CONTENT.areas) {
   const inGame = AREAS.find((a) => a.id === item.id);
   check(!!inGame, `${item.id} está no catálogo mas não no mapa`);
-  const stations = SITES.filter((st) => st.post?.startsWith(`${item.id}-`));
-  check(stations.length === 3, `${item.id} com ${stations.length} estações, esperado 3`);
+  const stations = SITES.filter((st) => st.catalog && st.post?.startsWith(`${item.id}-`));
+  check(stations.length === estacoesDaSecao(item.num), `${item.id} com ${stations.length} estações, esperado ${estacoesDaSecao(item.num)}`);
   check(!!WAYSTONES.find((w) => w.id === item.id), `${item.id} sem farol`);
   check(!!NPC_SPAWNS.find((n) => n.id === CATALOG_CONTENT.grounds.find((g) => g.id === item.id)?.keeper), `${item.id} sem NPC no mapa`);
   const dungeon = DUNGEONS.find((d) => d.id === `dungeon-${item.id}`);
@@ -375,6 +395,51 @@ for (const item of CATALOG_CONTENT.areas) {
   check(own.every((n) => n > 0), `${item.id} sem perguntas no continente`);
   check(!!CATALOG_CONTENT.decor[item.id], `${item.id} sem família de decoração`);
   check(!!CATALOG_CONTENT.posts[`${item.id}-1`], `${item.id} sem página`);
+}
+// F9: o catálogo inteiro, subárea por subárea, dentro do jogo
+const secoes = Object.entries(SECTION_TOPICS);
+check(secoes.length === 82, `SECTION_TOPICS: ${secoes.length} seções, esperado 82`);
+let totalSubareas = 0, totalTopicos = 0;
+for (const [num, sec] of secoes) {
+  const subs = sec.subareas || [];
+  totalSubareas += subs.length;
+  totalTopicos += subs.reduce((n, [, lista]) => n + lista.length, 0) + (sec.topics?.length || 0);
+  check(subs.length > 0 || sec.topics?.length > 0, `seção ${num} sem subárea nem tópico`);
+}
+check(totalSubareas === 283, `subáreas do catálogo: ${totalSubareas}, esperado 283`);
+check(totalTopicos === 2659, `tópicos do catálogo: ${totalTopicos}, esperado 2659`);
+check(catalogoEstacoes.length === totalEstacoes - 69, `estações do catálogo: ${catalogoEstacoes.length}, esperado ${totalEstacoes - 69}`);
+let semSubarea = [], semTopico = [], foraDaIlha = [], semPerguntas = [];
+for (const item of CATALOG) {
+  const sec = SECTION_TOPICS[item.num];
+  const areaId = item.existing || item.id;
+  const area = AREAS.find((a) => a.id === areaId);
+  const stations = SITES.filter((st) => st.catalog && st.post?.startsWith(`${areaId}-`));
+  const subs = (sec.subareas || []).map(([nome, topicos]) => ({ nome, topicos }));
+  if (subs.length) {
+    for (const sub of subs) {
+      const site = stations.find((s) => s.name === sub.nome || s.post && POSTS[s.post]?.body.includes(`<strong>${sub.nome}</strong>`));
+      if (!site) { semSubarea.push(`${item.id}/${sub.nome}`); continue; }
+      const body = POSTS[site.post].body;
+      for (const topico of sub.topicos) if (!body.includes(topico)) semTopico.push(`${item.id}/${topico}`);
+      const tagged = [1, 2, 3].reduce((n, tier) => n + (QUESTIONS[area?.continent]?.[tier] || []).filter((q) => q.area === areaId).length, 0);
+      if (tagged < 2) semPerguntas.push(areaId);
+    }
+  } else {
+    const todos = sec.topics || [];
+    const corpo = stations.map((s) => POSTS[s.post]?.body || "").join("\n");
+    for (const topico of todos) if (!corpo.includes(topico)) semTopico.push(`${item.id}/${topico}`);
+  }
+  if (area) for (const s of stations) if (!insideLand(area.land, s.x, s.y, 0.7)) foraDaIlha.push(`${areaId}/${s.id}`);
+}
+check(semSubarea.length === 0, `subáreas sem estação: ${semSubarea.slice(0, 6).join(", ")}`);
+check(semTopico.length === 0, `tópicos fora das páginas: ${semTopico.slice(0, 6).join(", ")}`);
+check(foraDaIlha.length === 0, `estação fora da ilha: ${foraDaIlha.slice(0, 6).join(", ")}`);
+check(semPerguntas.length === 0, `área com menos de duas perguntas: ${semPerguntas.slice(0, 6).join(", ")}`);
+check(LEGACY_CONTENT.sites.length === 69, `subáreas das áreas antigas: ${LEGACY_CONTENT.sites.length}, esperado 69`);
+for (const site of LEGACY_CONTENT.sites) {
+  check(!!POSTS[site.post], `estação antiga ${site.id} sem página`);
+  check(site.minor === true, `estação antiga ${site.id} sem marca de subárea`);
 }
 check(AREAS.length === 16 + ready, `mapa com ${AREAS.length} áreas, esperado ${16 + ready}`);
 check(QUESTS.length >= 42 + ready, `missões: ${QUESTS.length}, esperado ao menos ${42 + ready}`);
@@ -482,17 +547,18 @@ check(semMissao.length === 0, `seções sem NPC com missão: ${semMissao.join(",
 check(AREAS.length === 86, `áreas no mapa: ${AREAS.length}, esperado 86`);
 check(DUNGEONS.length === 93, `cavernas: ${DUNGEONS.length}, esperado 93`);
 check(GROUNDS.length === 93, `caçadas: ${GROUNDS.length}, esperado 93`);
-check(SITES.length === 279, `catações: ${SITES.length}, esperado 279`);
+check(SITES.length === totalEstacoes, `catações: ${SITES.length}, esperado ${totalEstacoes}`);
 check(QUESTS.length === 112, `missões: ${QUESTS.length}, esperado 112`);
 check(WAYSTONES.length === 94, `faróis: ${WAYSTONES.length}, esperado 94`);
 // 826 do banco mais as 7 perguntas do fundo que o módulo do duelo injeta
-check(totalQuestions === 833, `perguntas: ${totalQuestions}, esperado 833`);
+check(totalQuestions === 1603, `perguntas: ${totalQuestions}, esperado 1603`);
 // cada área nova tem uma pergunta própria em cada dificuldade
 let semPergunta = [];
-for (const item of CATALOG_CONTENT.areas) {
+for (const item of CATALOG) {
+  const areaId = item.existing || item.id;
   for (const tier of [1, 2, 3]) {
-    const tagged = (QUESTIONS[item.continent]?.[tier] || []).filter((q) => q.area === item.id);
-    if (tagged.length !== 1) semPergunta.push(`${item.id}/${tier}:${tagged.length}`);
+    const tagged = (QUESTIONS[AREAS.find((a) => a.id === areaId)?.continent]?.[tier] || []).filter((q) => q.area === areaId);
+    if (tagged.length < 1) semPergunta.push(`${areaId}/${tier}:${tagged.length}`);
   }
 }
 check(semPergunta.length === 0, `áreas com pergunta própria faltando: ${semPergunta.slice(0, 6).join(", ")}`);

@@ -5,6 +5,9 @@
 import { CATALOG, DISCIPLINES } from "./catalog.js";
 import { CATALOG_AREAS } from "./catalog-layout.js";
 import { BANK } from "./catalog-bank.js";
+import { SECTION_TOPICS } from "./catalog-topics.js";
+import { ICONS, articleOf, labFor, subareaBody, subareaQuiz, titleCase, trilhaQuiz, trilhas } from "./catalog-text.js";
+import { placeStations } from "./catalog-place.js";
 
 // cada área tem um tom próprio dentro da cor da disciplina: 14 ilhas da mesma
 // cor seriam quatorze vezes o mesmo lugar
@@ -35,41 +38,6 @@ const DECOR = {
   inter: [["book", "orb", "star"], ["crystal", "book", "wave"], ["pillar", "orb", "star"]],
 };
 
-// instrumento de cada estação: casa por palavra do tópico e, se não casar,
-// gira entre os instrumentos da disciplina
-const LAB_RULES = [
-  [/lógic|prova|demonstra|contraexemplo|argument/, "logic"],
-  [/infinit|limite|série|sucess|assíntot/, "infinity"],
-  [/derivada|integral|cálculo|equaç|diferen/, "calculus"],
-  [/probab|estatístic|aleat|distribui|amostr/, "probability"],
-  [/fractal|caos|dimens|topolog/, "fractal"],
-  [/onda|frequên|harmônic|fourier|som|áudio|música/, "fourier"],
-  [/movimento|força|pêndulo|cinemát|mecânic|inércia/, "motion"],
-  [/calor|termodinâm|entropia|temperatura|energia livre/, "thermo"],
-  [/luz|óptic|lente|cor|espectro|fóton/, "optics"],
-  [/gravit|órbita|estrela|galáx|cosmo|planet|astro/, "gravity"],
-  [/elemento|períod|tabela/, "periodic"],
-  [/ligação|molécul|orbital|estrutura molecular/, "bonds"],
-  [/ácido|base|ph|titula|equilíbrio|solução/, "titration"],
-  [/oxida|reduç|eletroquím|bateria/, "energy"],
-  [/equilíbrio químico|balanço|estequiometr/, "balance"],
-  [/bit|binári|porta|circuito|somador/, "adder"],
-  [/processo|concorr|thread|estado|sistema operacional/, "state"],
-  [/cpu|processador|cache|pipeline|microarquitetura/, "cpu"],
-  [/históri|étic|impacto/, "history"],
-  [/linguagem|texto|token|semântic|palavra/, "language"],
-  [/fala|voz|som|oral/, "echo"],
-  [/aprendizado|neural|inteligência artificial|\bia\b|treinamento/, "learning"],
-  [/visão|imagem|pixel/, "vision"],
-];
-const LAB_FALLBACK = {
-  math: ["logic", "infinity", "calculus", "probability"],
-  physics: ["motion", "optics", "gravity"],
-  chem: ["periodic", "bonds", "titration"],
-  cs: ["adder", "cpu", "state"],
-  lingua: ["language", "echo", "history"],
-  inter: ["learning", "fourier", "language"],
-};
 // a pergunta do NPC não pode ter a resposta sempre na letra A
 function quizFor(q, salt) {
   const correct = q.o[q.a];
@@ -77,13 +45,6 @@ function quizFor(q, salt) {
   const shift = salt % 3;
   const options = [...base.slice(shift), ...base.slice(0, shift)];
   return { question: q.q, options, answer: options.indexOf(correct), why: q.why };
-}
-
-function labFor(topic, discipline, index) {
-  const text = `${topic.name} ${topic.def}`.toLowerCase();
-  for (const [re, lab] of LAB_RULES) if (re.test(text)) return lab;
-  const list = LAB_FALLBACK[discipline] || LAB_FALLBACK.math;
-  return list[index % list.length];
 }
 
 // equipamento que pode cair dos baús de cada disciplina
@@ -114,15 +75,6 @@ const LOOT = {
   inter: { loot: ["regua", "frasco", "pergaminho"], boss: "infinito" },
 };
 
-const ICONS = {
-  math: ["shape", "infinity", "curve", "dice", "chart", "clock"],
-  physics: ["pendulum", "wave", "planet", "heat", "prism", "scale"],
-  chem: ["flask", "molecule", "fire", "table", "scale", "chain"],
-  cs: ["chip", "cpu", "network", "terminal", "chart", "radio"],
-  lingua: ["book", "text", "eye", "sign", "note", "chart"],
-  inter: ["book", "chart", "eye", "terminal", "wave", "network"],
-};
-
 // nomes de quem habita cada arquipélago; ids únicos no mundo
 const KEEPERS = {
   math: [["gauss", "Gauss"], ["noether", "Noether"], ["cantor", "Cantor"], ["euler", "Euler"], ["riemann", "Riemann"], ["poincare", "Poincaré"], ["ramanujan", "Ramanujan"], ["fibonacci", "Fibonacci"], ["hilbert", "Hilbert"], ["leibniz", "Leibniz"], ["pascal", "Pascal"]],
@@ -151,22 +103,6 @@ function shade(hex, amount) {
   const b = clamp((n & 255) * (1 + amount));
   return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, "0")}`;
 }
-
-// título com as palavras pequenas do português em minúscula
-const SMALL = new Set(["e", "de", "da", "do", "das", "dos", "em", "no", "na", "nos", "nas", "a", "o", "as", "os", "um", "uma", "para", "com", "por", "ao", "à"]);
-// artigo da área, para "Cripta dos Fundamentos" e não "Cripta da Fundamentos"
-function articleOf(name) {
-  const m = /^Área (da|das|do|dos) (.+)$/.exec(String(name || ""));
-  if (m) return { article: m[1], noun: m[2] };
-  return { article: "da", noun: String(name || "").replace(/^Área /, "") };
-}
-
-const titleCase = (text) => String(text || "").split(/\s+/).map((word, i) => {
-  const clean = word.toLowerCase();
-  if (word.length <= 5 && word === word.toUpperCase() && /[A-Z]/.test(word)) return word;
-  if (i > 0 && SMALL.has(clean)) return clean;
-  return clean.charAt(0).toUpperCase() + clean.slice(1);
-}).join(" ");
 
 export function buildCatalogContent() {
   const areas = [];
@@ -202,6 +138,7 @@ export function buildCatalogContent() {
 
     areas.push({
       id: area.id,
+      num: area.num,
       continent,
       name: area.name,
       sub: area.sub,
@@ -219,21 +156,52 @@ export function buildCatalogContent() {
 
     waystones.push({ id: area.id, continent, name: `Farol ${article} ${noun}`, x: spot.waystone.x, y: spot.waystone.y, accent });
 
-    bank.forEach((topic, i) => {
+    // Uma estação por subárea do catálogo. Seção sem subárea (as interseções)
+    // reparte os tópicos em três trilhas, cada uma com a sua página.
+    const secao = SECTION_TOPICS[area.num];
+    const lista = [];
+    let gruposTrilha = null;
+    if (secao?.subareas?.length) {
+      const posicoes = placeStations(spot.land, secao.subareas.length, [spot.waystone, spot.npc, spot.hunt]);
+      secao.subareas.forEach(([nome, topicos], i) => lista.push({ nome, topicos, bankTopic: null, pos: posicoes[i] }));
+    } else if (secao?.topics?.length) {
+      const grupos = trilhas(secao.topics, 3);
+      gruposTrilha = grupos;
+      const posicoes = placeStations(spot.land, grupos.length, [spot.waystone, spot.npc, spot.hunt]);
+      grupos.forEach((topicos, i) => lista.push({
+        nome: bank[i]?.name || area.short,
+        topicos,
+        bankTopic: bank[i] || bank[0],
+        pos: posicoes[i],
+      }));
+    }
+
+    lista.forEach((item, i) => {
       const postId = `${area.id}-${i + 1}`;
-      const siteName = titleCase(topic.name);
+      const siteName = titleCase(item.nome);
       sites.push({
         id: postId,
         continent,
         name: siteName,
-        label: topic.name,
-        x: i === 0 ? spot.sites[0].x : i === 1 ? spot.sites[1].x : spot.waystone.x + 5,
-        y: i === 0 ? spot.sites[0].y : i === 1 ? spot.sites[1].y : spot.waystone.y + 2,
+        label: siteName,
+        x: item.pos.x,
+        y: item.pos.y,
         post: postId,
         accent,
         icon: (ICONS[spot.discipline] || ICONS.inter)[i % 6],
+        minor: true,
+        catalog: true,
       });
-      const body = `<p>${topic.def}</p><ul>${topic.keys.map((k) => `<li>${k}</li>`).join("")}</ul><blockquote>${topic.mistake}</blockquote>`;
+      const corpo = item.bankTopic
+        ? `<p>${item.bankTopic.def}</p><ul>${item.bankTopic.keys.map((k) => `<li>${k}</li>`).join("")}</ul><blockquote>${item.bankTopic.mistake}</blockquote><p><strong>Trilha ${i + 1} de ${lista.length}.</strong> O catálogo lista estes tópicos nesta parte da seção:</p><ul>${item.topicos.map((t) => `<li>${t}</li>`).join("")}</ul>`
+        : subareaBody({
+            sectionNum: area.num,
+            sectionName: secao.name,
+            discipline: spot.discipline,
+            name: item.nome,
+            topics: item.topicos,
+            siblings: lista.map((x) => x.nome),
+          });
       posts[postId] = {
         kicker: `${discipline.name.toLowerCase()} · ${area.short.toLowerCase()}`,
         title: siteName,
@@ -241,9 +209,30 @@ export function buildCatalogContent() {
         read: "2 min",
         tags: [discipline.name.toLowerCase(), area.short.toLowerCase()],
         continent,
-        lab: labFor(topic, spot.discipline, i),
-        body,
+        lab: item.bankTopic
+          ? labFor(`${item.bankTopic.name} ${item.bankTopic.def}`, spot.discipline, i)
+          : labFor(`${item.nome} ${item.topicos.join(" ")}`, spot.discipline, i),
+        body: corpo,
       };
+      if (item.bankTopic) {
+        const quizzes = trilhaQuiz({ sectionName: secao.name, groups: gruposTrilha || [], index: i, salt: order * 11 + i });
+        for (const q of quizzes) questions.push({ continent, area: area.id, tier: (i % 3) + 1, q });
+      } else {
+        const quizzes = subareaQuiz({
+          sectionNum: area.num,
+          sectionName: secao.name,
+          discipline: spot.discipline,
+          subarea: { name: item.nome, topics: item.topicos },
+          siblings: lista.map((x) => x.nome),
+          salt: order * 7 + i,
+        });
+        for (const q of quizzes) questions.push({ continent, area: area.id, tier: (i % 3) + 1, q });
+      }
+    });
+
+    // as três perguntas do banco continuam no baralho da área, mesmo quando as
+    // estações passaram a ser as subáreas
+    bank.forEach((topic, i) => {
       questions.push({
         continent,
         area: area.id,

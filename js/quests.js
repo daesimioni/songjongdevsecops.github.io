@@ -56,8 +56,8 @@ export const QUESTS = [
     npc: "guia",
     giver: "Dona Zefa",
     title: "O mundo inteiro",
-    brief: "Duzentos e setenta e nove fragmentos, sete continentes e o catálogo inteiro, uma volta completa. Quando o mapa acabar, o Porto ainda vai estar aqui.",
-    goal: { type: "cards", count: 279 },
+    brief: "Quatrocentos e cinquenta e quatro fragmentos, sete continentes e o catálogo inteiro, uma volta completa. Quando o mapa acabar, o Porto ainda vai estar aqui.",
+    goal: { type: "cards", count: 454 },
     reward: { xp: 150, title: "Mundo de Song" },
   },
   {
