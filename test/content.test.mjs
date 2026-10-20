@@ -180,6 +180,8 @@ const world = createWorld();
 for (const area of AREAS) {
   check(world.areaAt(area.land.cx, area.land.cy)?.id === area.id, `área ${area.id} não é reconhecida no mapa`);
 }
+const areaSigns = world.decor.filter((d) => d.type === "sign" && d.text.startsWith("Área"));
+check(areaSigns.length === AREAS.length, `placas de área: ${areaSigns.length}, esperado ${AREAS.length}`);
 check(world.hunters.length === 21, `mundo com ${world.hunters.length} clareiras`);
 check(world.monsters.length === 0, "a superfície ainda tem monstros");
 check(world.caves.length === 42, `mundo com ${world.caves.length} bocas de caverna, esperado 42`);

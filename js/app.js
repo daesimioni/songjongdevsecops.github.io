@@ -1,5 +1,5 @@
 import {
-  CONTINENTS, CONTINENT_ORDER, SITES, WAYSTONES, SPAWN,
+  AREAS, CONTINENTS, CONTINENT_ORDER, SITES, WAYSTONES, SPAWN,
   PLAYER_SPEED, SPRINT_MULT, PLAYER_W, PLAYER_H, INTERACT_RADIUS,
   STORAGE, NET, MAP_W, MAP_H,
 } from "./config.js";
@@ -1074,7 +1074,21 @@ function buildJournal() {
     head.className = "journal-continent";
     head.innerHTML = `<h3>${continent.name} <span class="${done ? "done" : ""}">${opened}/${sites.length}${done ? " · selo" : ""}</span></h3>`;
     list.appendChild(head);
-    for (const site of sites) {
+    const groups = [
+      { title: "", sites: sites.filter((site) => !world.areaAt(site.x, site.y)) },
+      ...AREAS.filter((area) => area.continent === cid).map((area) => ({
+        title: area.name,
+        sites: sites.filter((site) => world.areaAt(site.x, site.y)?.id === area.id),
+      })),
+    ].filter((group) => group.sites.length);
+    for (const group of groups) {
+      if (group.title) {
+        const sub = document.createElement("div");
+        sub.className = "journal-area";
+        sub.textContent = group.title;
+        list.appendChild(sub);
+      }
+    for (const site of group.sites) {
       const unlocked = state.cards.has(site.post);
       const post = POSTS[site.post];
       const btn = document.createElement("button");
@@ -1099,6 +1113,7 @@ function buildJournal() {
         });
       }
       list.appendChild(btn);
+    }
     }
   }
   buildJournalQuests();

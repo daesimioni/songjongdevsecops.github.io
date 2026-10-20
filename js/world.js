@@ -313,9 +313,12 @@ export function createWorld() {
   // placas nas docas
   for (const stone of WAYSTONES) {
     if (stone.continent === "hub") continue;
+    // a placa do farol de uma área diz o nome da área, não só o continente
+    const area = areaAtTile(stone.x, stone.y);
     decor.push({
       type: "sign", x: stone.x + 2.4, y: stone.y + 1.2,
-      text: CONTINENTS[stone.continent].name, accent: CONTINENTS[stone.continent].accent,
+      text: area ? area.name : CONTINENTS[stone.continent].name,
+      accent: area ? area.accent : CONTINENTS[stone.continent].accent,
     });
   }
 
