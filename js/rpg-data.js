@@ -62,6 +62,12 @@ export const ITEMS = {
   "botas-marcha": { name: "Botas de Marcha", continent: "physics", slot: "boots", hp: 2, desc: "Solado de borracha e mola de aço. O caminho parece menor." },
   "escudo-cristal": { name: "Escudo de Cristal", continent: "chem", slot: "shield", hp: 4, desc: "Uma lâmina de cristal de equilíbrio. Segura o golpe e devolve a cor." },
   "runa-faisca": { name: "Runa da Faísca", continent: "hub", use: "spark", desc: "Uma carga de magia: elimina uma alternativa errada na pergunta atual do duelo. Some ao usar." },
+  "colar-corrente": { name: "Colar de Corrente", continent: "cs", slot: "necklace", hp: 4, desc: "Uma corrente de elos pequenos que nunca emperra." },
+  "anel-fractal": { name: "Anel Fractal", continent: "math", slot: "ring", damage: 1, desc: "A mesma forma em todas as escalas. Cabe no dedo e não acaba." },
+  "colar-inercia": { name: "Colar de Inércia", continent: "physics", slot: "necklace", hp: 4, desc: "Um peso que insiste em continuar fazendo o que já fazia." },
+  "anel-equilibrio": { name: "Anel de Equilíbrio", continent: "chem", slot: "ring", hp: 3, desc: "Um anel que se desloca quando você mexe na concentração." },
+  "colar-ressonancia": { name: "Colar de Ressonância", continent: "music", slot: "necklace", damage: 1, desc: "Duas lâminas que vibram na mesma frequência." },
+  "anel-atencao": { name: "Anel de Atenção", continent: "ai", slot: "ring", hp: 3, desc: "Cada pedra olha para uma parte diferente do problema." },
   pocao: { name: "Poção de Café", continent: "hub", heal: 18, desc: "Recupera 18 de vida. Gosto de fio elétrico, efeito de segunda-feira." },
   ferro: { name: "Ferro Bruto", continent: "hub", desc: "Um pedaço de veio escuro. A forja transforma em ferramenta." },
   erva: { name: "Erva de Caverna", continent: "hub", desc: "Cresce onde a luz não chega. Cheira a remédio e a terra molhada." },
@@ -475,5 +481,96 @@ export const EXTRA_QUESTIONS_2 = {
 };
 
 for (const [continent, tiers] of Object.entries(EXTRA_QUESTIONS_2)) {
+  for (const [tier, list] of Object.entries(tiers)) QUESTIONS[continent][tier].push(...list);
+}
+
+export const EXTRA_QUESTIONS_3 = {
+  cs: {
+    1: [
+      { q: "Em binário, quanto é 1 + 1?", options: ["10", "11", "2"], a: 0, why: "Um mais um estoura o bit e vira 10 em binário, que é 2 em decimal." },
+      { q: "O que uma variável guarda?", options: ["Um valor que pode mudar", "Uma constante imutável", "Um arquivo"], a: 0, why: "A variável é um nome para um espaço que guarda um valor; o valor pode mudar durante o programa." },
+    ],
+    2: [
+      { q: "Uma pilha (stack) segue qual ordem?", options: ["FIFO, o primeiro que entra sai primeiro", "LIFO, o último que entra sai primeiro", "Aleatória"], a: 1, why: "A pilha empilha e desempilha no topo: o último a entrar é o primeiro a sair. A fila é FIFO." },
+      { q: "O que um compilador faz?", options: ["Traduz o código para outra linguagem antes de rodar", "Executa o código linha a linha", "Desenha a tela"], a: 0, why: "O compilador traduz o programa para código de máquina ou outra linguagem; o interpretador executa aos poucos." },
+    ],
+    3: [
+      { q: "O que a notação O grande descreve?", options: ["Como o custo cresce com o tamanho da entrada", "O número exato de operações", "A memória do disco"], a: 0, why: "O grande O compara o crescimento, ignorando constantes. Ele não promete o tempo exato." },
+      { q: "O que é uma condição de corrida?", options: ["O resultado depende da ordem de acesso concorrente", "Um erro de compilação", "Uma corrida de dados no disco"], a: 0, why: "Duas execuções disputam o mesmo recurso e a ordem muda o resultado. Exclusão mútua ou imutabilidade resolvem." },
+    ],
+  },
+  math: {
+    1: [
+      { q: "Qual é a área de um retângulo de 3 por 5?", options: ["8", "15", "16"], a: 1, why: "A área é base vezes altura: 3 × 5 = 15. O 8 seria o perímetro dividido por 2." },
+      { q: "Quanto é 12 ÷ 4?", options: ["2", "3", "4"], a: 1, why: "Doze dividido em quatro grupos iguais dá três em cada grupo." },
+    ],
+    2: [
+      { q: "Qual é a probabilidade de duas caras seguidas numa moeda justa?", options: ["1/2", "1/4", "1/8"], a: 1, why: "Cada cara tem 1/2; os eventos independentes multiplicam: 1/2 × 1/2 = 1/4." },
+      { q: "A derivada de sen x é...", options: ["cos x", "-cos x", "sen x"], a: 0, why: "A derivada do seno é o cosseno. A do cosseno é menos o seno." },
+    ],
+    3: [
+      { q: "O que o teorema da incompletude de Gödel mostra?", options: ["Que há verdades não demonstráveis em sistemas consistentes fortes", "Que toda conta tem resposta", "Que a matemática é inútil"], a: 0, why: "Um sistema suficientemente forte e consistente não prova todas as verdades aritméticas. Isso não o torna inútil: mostra limites." },
+      { q: "O valor esperado de um dado justo de seis faces é...", options: ["3", "3,5", "6"], a: 1, why: "A média ponderada é (1+2+3+4+5+6)/6 = 3,5. O valor esperado não precisa ser um resultado possível." },
+    ],
+  },
+  physics: {
+    1: [
+      { q: "Velocidade média é...", options: ["distância dividida pelo tempo", "massa vezes aceleração", "força dividida pela área"], a: 0, why: "v = Δs/Δt. Massa vezes aceleração é força, e força por área é pressão." },
+      { q: "A frequência se mede em...", options: ["joule", "hertz", "newton"], a: 1, why: "Hertz é um ciclo por segundo. Joule é energia e newton é força." },
+    ],
+    2: [
+      { q: "A energia cinética de um corpo é...", options: ["m·v", "½·m·v²", "m·g·h"], a: 1, why: "A energia do movimento cresce com o quadrado da velocidade. m·g·h é a energia potencial gravitacional." },
+      { q: "A refração acontece quando a onda...", options: ["muda de meio e de velocidade", "bate e volta", "para de vibrar"], a: 0, why: "A mudança de velocidade na fronteira desvia a frente de onda. Voltar é reflexão." },
+    ],
+    3: [
+      { q: "O princípio da incerteza diz que...", options: ["posição e momento não têm precisão simultânea arbitrária", "tudo é incerto", "a luz é sempre onda"], a: 0, why: "O produto das incertezas tem um limite mínimo. Não é ignorância do instrumento, é da natureza quântica." },
+      { q: "A conservação da energia afirma que...", options: ["a energia não some, só se transforma", "a energia sempre aumenta", "a energia só existe em movimento"], a: 0, why: "A energia total de um sistema isolado permanece; ela muda de forma, como calor, movimento ou ligação." },
+    ],
+  },
+  chem: {
+    1: [
+      { q: "Qual é o símbolo do sódio?", options: ["S", "Na", "So"], a: 1, why: "Sódio é Na, do latim natrium. S é enxofre." },
+      { q: "Um pH menor que 7 indica...", options: ["ácido", "neutro", "básico"], a: 0, why: "Abaixo de 7 a solução é ácida; acima é básica. A escala é logarítmica." },
+    ],
+    2: [
+      { q: "Massa molar é...", options: ["a massa de um mol de substância", "a massa de um átomo só", "o volume de um gás"], a: 0, why: "A massa molar usa o mol como ponte entre a escala atômica e a de laboratório." },
+      { q: "Oxidação é...", options: ["perda de elétrons", "ganho de prótons", "perda de nêutrons"], a: 0, why: "Quem oxida perde elétrons; quem reduz ganha. As duas coisas acontecem juntas." },
+    ],
+    3: [
+      { q: "A constante de equilíbrio indica...", options: ["a extensão da reação no equilíbrio", "a velocidade inicial", "a cor da solução"], a: 0, why: "Ela compara produtos e reagentes no equilíbrio. Não diz quanto tempo levou para chegar lá." },
+      { q: "Um catalisador não muda...", options: ["a posição do equilíbrio", "a energia de ativação", "a velocidade da reação"], a: 0, why: "Ele acelera os dois sentidos igualmente; o equilíbrio final é o mesmo, só chega mais rápido." },
+    ],
+  },
+  music: {
+    1: [
+      { q: "Forte e piano indicam...", options: ["intensidade", "altura", "timbre"], a: 0, why: "Dinâmica é volume. Altura é frequência e timbre é a cor do som." },
+      { q: "Um semitom é...", options: ["o menor intervalo da escala temperada", "uma oitava", "um acorde"], a: 0, why: "A escala temperada divide a oitava em 12 semitons iguais." },
+    ],
+    2: [
+      { q: "A relativa menor de Dó maior é...", options: ["Lá menor", "Mi menor", "Sol menor"], a: 0, why: "A relativa menor fica uma terça menor abaixo e usa as mesmas notas: Dó maior e Lá menor." },
+      { q: "Síncope é...", options: ["um acento fora do tempo forte", "um instrumento de sopro", "uma pausa longa"], a: 0, why: "A síncope desloca o acento para o contratempo ou para uma parte fraca, criando impulso." },
+    ],
+    3: [
+      { q: "A forma sonata organiza...", options: ["exposição, desenvolvimento e recapitulação", "só refrões", "apenas improvisos"], a: 0, why: "A exposição apresenta os temas, o desenvolvimento os transforma e a recapitulação os resolve na tônica." },
+      { q: "Contraponto é...", options: ["linhas melódicas simultâneas e independentes", "um solo sem acompanhamento", "uma afinação"], a: 0, why: "Cada voz tem seu desenho e ainda assim forma um tecido; é diferente de melodia com acompanhamento de acordes." },
+    ],
+  },
+  ai: {
+    1: [
+      { q: "Em um conjunto de dados, uma feature é...", options: ["uma característica de entrada", "a resposta esperada", "o nome do modelo"], a: 0, why: "A feature descreve o exemplo; o rótulo é a resposta que queremos prever." },
+      { q: "O rótulo de um exemplo supervisionado é...", options: ["a resposta esperada", "uma coluna de entrada", "o tamanho do arquivo"], a: 0, why: "No aprendizado supervisionado, cada exemplo vem com a resposta certa para o modelo comparar." },
+    ],
+    2: [
+      { q: "A precisão mede...", options: ["dos positivos previstos, quantos são certos", "dos positivos reais, quantos foram achados", "o tempo de treino"], a: 0, why: "Precisão é acertos entre os que o modelo marcou como positivos. Recall é quantos positivos reais foram achados." },
+      { q: "O recall mede...", options: ["dos positivos reais, quantos foram encontrados", "dos previstos, quantos são certos", "a memória da GPU"], a: 0, why: "Recall alto significa poucos positivos esquecidos; pode vir com mais falsos positivos." },
+    ],
+    3: [
+      { q: "Aprendizado por reforço aprende com...", options: ["recompensa e punição", "rótulos fixos", "tabelas prontas"], a: 0, why: "O agente age e recebe sinal de recompensa; ele ajusta a política para maximizar a recompensa ao longo do tempo." },
+      { q: "Um modelo de difusão gera dados...", options: ["removendo ruído aos poucos", "sorteando pixels", "copiando o treino"], a: 0, why: "O treino aprende a desfazer ruído; a geração parte do ruído e o remove em passos até formar a amostra." },
+    ],
+  },
+};
+
+for (const [continent, tiers] of Object.entries(EXTRA_QUESTIONS_3)) {
   for (const [tier, list] of Object.entries(tiers)) QUESTIONS[continent][tier].push(...list);
 }

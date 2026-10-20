@@ -124,7 +124,7 @@ para os outros jogadores pela rede.
 A Ficha também tem **equipamento**: arma, elmo, armadura, pernas, botas, escudo,
 anel e colar. Cada peça soma pouco (arma +1 ou +2 de dano; armadura +4 ou +5 de
 vida) e cai de baú de caverna ou de chefe. A ideia é fôlego e vocabulário, nunca
-resolver a pergunta pelo número.
+resolver a pergunta pelo número. São 23 peças, incluindo anéis e colares.
 
 ## As cavernas
 
@@ -282,8 +282,8 @@ pergunta que casa com o tema. O duelo entre jogadores entra pela mesma prova: as
 cinco cartas, a dificuldade que vira dano e a compostura.
 
 A segunda confere o conteúdo inteiro: as 32 estações e seus textos, falas de NPC,
-18 missões, itens, equipamento, relíquias por continente, receitas, encantos, as
-96 perguntas (sem repetição e com resposta válida), as cinco cartas do PvP por
+24 missões, itens, equipamento, relíquias por continente, receitas, encantos, as
+132 perguntas (sem repetição e com resposta válida), as cinco cartas do PvP por
 continente, as seis cavernas e o mundo montado (seis instrutores, doze bocas,
 nenhum monstro na superfície).
 

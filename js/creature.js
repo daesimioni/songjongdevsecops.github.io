@@ -77,6 +77,34 @@ export function drawCreature(ctx, kind, accent, time = 0, scale = 1) {
     ctx.fillStyle = "#fff3d1";
     ctx.fillRect(-4, -9, 2, 2);
     ctx.fillRect(2, -9, 2, 2);
+  } else if (kind === "wisp") {
+    ctx.fillStyle = "rgba(255,255,255,0.10)";
+    ctx.beginPath();
+    ctx.arc(0, -12, 16, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = accent;
+    ctx.fillRect(-5, -17, 10, 7);
+    ctx.fillRect(-3, -10, 6, 4);
+    ctx.fillStyle = "#fff3d1";
+    ctx.fillRect(-3, -15, 3, 2);
+    ctx.fillStyle = "#101426";
+    ctx.fillRect(-2, -14, 1, 1);
+    ctx.fillRect(1, -14, 1, 1);
+    ctx.fillStyle = accent;
+    ctx.fillRect(-1, -7, 2, 5);
+    ctx.fillRect(-4, -4, 3, 2);
+  } else if (kind === "scorpion") {
+    ctx.fillStyle = "#101426";
+    for (const [x, y, w, h] of [[-13, -8, 6, 2], [7, -8, 6, 2], [-14, -5, 7, 2], [7, -5, 7, 2], [-12, -2, 5, 2], [7, -2, 5, 2]]) ctx.fillRect(x, y, w, h);
+    ctx.fillStyle = accent;
+    ctx.fillRect(-6, -10, 12, 8);
+    ctx.fillRect(-3, -15, 6, 5);
+    ctx.fillStyle = "#1a1730";
+    ctx.fillRect(4, -16, 3, 3);
+    ctx.fillRect(-7, -16, 3, 3);
+    ctx.fillStyle = "#fff3d1";
+    ctx.fillRect(-2, -8, 2, 2);
+    ctx.fillRect(1, -8, 2, 2);
   } else if (kind === "golem") {
     ctx.fillStyle = "#171a2b";
     ctx.fillRect(-8, -8, 6, 8);

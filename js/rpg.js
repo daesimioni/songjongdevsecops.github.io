@@ -195,7 +195,7 @@ export class RPG {
   }
 
   seenView() {
-    const labels = { slime: "gosma", eye: "olho", golem: "golem", bat: "morcego", spider: "aranha", boss: "chefe" };
+    const labels = { slime: "gosma", eye: "olho", golem: "golem", bat: "morcego", spider: "aranha", wisp: "fogo-fátuo", scorpion: "escorpião", boss: "chefe" };
     return Object.entries(this.data.seen)
       .map(([kind, entry]) => ({ kind, label: labels[kind] || kind, ...entry }))
       .sort((a, b) => b.tier - a.tier || b.count - a.count || a.kind.localeCompare(b.kind));

@@ -399,7 +399,7 @@ assert.equal(rpg.craft("cafe").ok, true, "cozinha o café");
 rpg.useItem("cafe");
 assert.equal(rpg.speedMult(), 1.3, "café acelera");
 const deepDeck = rpg.buildDeck("cs", [3], "algoritmos");
-assert.equal(deepDeck.length, 6, "pergunta do fundo entrou no baralho");
+assert.equal(deepDeck.length, 8, "pergunta do fundo entrou no baralho");
 assert.ok(deepDeck[0].q.includes("escalonador"), "tema da sala puxa a pergunta certa");
 
 // fuga sempre arrisca, e o risco cresce com a dificuldade do bicho

@@ -598,13 +598,13 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
     const y = room.y + 0.8 + s[1] * (room.h - 1.6);
     // espécies diferentes por andar: não é só o nome que muda
     const species = {
-      1: ["slime", "bat", "spider"],
-      2: ["eye", "bat", "spider"],
-      3: ["golem", "eye", "bat"],
+      1: ["slime", "bat", "spider", "wisp"],
+      2: ["eye", "bat", "spider", "wisp", "scorpion"],
+      3: ["golem", "eye", "bat", "scorpion"],
     }[tier] || ["slime"];
     const seed = [...name].reduce((sum, ch) => sum + ch.charCodeAt(0), 0) + k;
     const kind = species[seed % species.length];
-    const baseSpeed = { bat: 0.82, spider: 0.46, slime: 0.58, eye: 0.54, golem: 0.5 }[kind] || 0.55;
+    const baseSpeed = { bat: 0.82, spider: 0.46, slime: 0.58, eye: 0.54, golem: 0.5, wisp: 0.7, scorpion: 0.5 }[kind] || 0.55;
     return {
       id: `dg-${def.continent}-${room.id}-m${k}`,
       name,
@@ -620,9 +620,9 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
       dir: 0,
       moving: false,
       alive: true,
-      vision: 3.2 + tier * 0.45 + (kind === "bat" ? 0.4 : kind === "spider" ? 0.2 : 0),
+      vision: 3.2 + tier * 0.45 + (kind === "bat" ? 0.4 : kind === "wisp" ? 0.3 : kind === "spider" ? 0.2 : kind === "scorpion" ? 0.1 : 0),
       // meia-lua: o bicho vê na direção em que está virado
-      fov: { bat: 1.5, spider: 1.0, slime: 1.35, eye: 1.15, golem: 0.85 }[kind] || 1.2,
+      fov: { bat: 1.5, spider: 1.0, slime: 1.35, eye: 1.15, golem: 0.85, wisp: 1.4, scorpion: 0.95 }[kind] || 1.2,
       speed: baseSpeed + tier * 0.12,
       waitUntil: clock() + 600 + Math.random() * 1800,
       accent: def.palette.accent,
