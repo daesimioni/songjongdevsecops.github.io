@@ -595,11 +595,11 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
   // a distância entre duas casas for maior que a soma dos alcances de visão
   // mais os dois passeios, os círculos de visão não se tocam e nenhum ponto do
   // mapa pode ser visto pelos dois ao mesmo tempo. É a garantia contra matilha.
-  const MONSTER_ROAM = 0.8;
-  const MONSTER_GAP = 0.4;
+  const MONSTER_ROAM = 0.6;
+  const MONSTER_GAP = 0.25;
 
   function visionFor(kind, tier) {
-    return 3.2 + tier * 0.45 + (kind === "bat" ? 0.4 : kind === "wisp" ? 0.3 : kind === "spider" ? 0.2 : kind === "scorpion" ? 0.1 : 0);
+    return 3.2 + tier * 0.45 + (kind === "bat" ? 0.4 : kind === "wisp" ? 0.3 : kind === "note" ? 0.25 : kind === "node" ? 0.2 : kind === "spider" ? 0.2 : kind === "glyph" || kind === "prism" ? 0.15 : kind === "vector" ? 0.1 : kind === "scorpion" ? 0.1 : 0);
   }
 
   // folga: positivo quer dizer que os dois círculos, já com o passeio, não se
@@ -631,7 +631,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
 
   function makeMonster(def, room, k, name, tier, post) {
     const kind = creatureKind(def, name, tier, k);
-    const baseSpeed = { bat: 0.82, spider: 0.46, slime: 0.58, eye: 0.54, golem: 0.5, wisp: 0.7, scorpion: 0.5, ant: 0.78, moth: 0.86, beetle: 0.42, crab: 0.64, jelly: 0.36, imp: 0.74, sentinel: 0.38, serpent: 0.52 }[kind] || 0.55;
+    const baseSpeed = { bat: 0.82, spider: 0.46, slime: 0.58, eye: 0.54, golem: 0.5, wisp: 0.7, scorpion: 0.5, ant: 0.78, moth: 0.86, beetle: 0.42, crab: 0.64, jelly: 0.36, imp: 0.74, sentinel: 0.38, serpent: 0.52, tome: 0.4, glyph: 0.66, note: 0.8, atom: 0.6, crystal: 0.38, gear: 0.46, node: 0.68, prism: 0.5, vector: 0.74, flask: 0.54 }[kind] || 0.55;
     const x = post.x;
     const y = post.y;
     return {
@@ -652,7 +652,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
       vision: visionFor(kind, tier),
       roam: MONSTER_ROAM,
       // meia-lua: o bicho vê na direção em que está virado
-      fov: { bat: 1.5, spider: 1.0, slime: 1.35, eye: 1.15, golem: 0.85, wisp: 1.4, scorpion: 0.95, ant: 1.3, moth: 1.55, beetle: 0.8, crab: 1.1, jelly: 0.7, imp: 1.25, sentinel: 1.05, serpent: 1.2 }[kind] || 1.2,
+      fov: { bat: 1.5, spider: 1.0, slime: 1.35, eye: 1.15, golem: 0.85, wisp: 1.4, scorpion: 0.95, ant: 1.3, moth: 1.55, beetle: 0.8, crab: 1.1, jelly: 0.7, imp: 1.25, sentinel: 1.05, serpent: 1.2, tome: 1.05, glyph: 1.35, note: 1.5, atom: 1.25, crystal: 0.85, gear: 0.9, node: 1.3, prism: 1.2, vector: 1.15, flask: 1.1 }[kind] || 1.2,
       speed: baseSpeed + tier * 0.12,
       waitUntil: clock() + 600 + Math.random() * 1800,
       accent: creatureAccent(def, name, k),
@@ -682,18 +682,30 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
       const kind = creatureKind(def, name, tier);
       planos.push({ room, name, tier, kind, vision: visionFor(kind, tier), id });
     }
-    const postos = [];
-    if (bossRoom) {
-      postos.push({ x: bossRoom.x + bossRoom.w / 2, y: bossRoom.y + bossRoom.h / 2, vision: 5.6, roam: 0 });
+    // A ordem de escolha muda o resultado do encaixe. Tentar as ordens mais
+    // prováveis e ficar com a que coloca mais bichos evita perder um bicho
+    // numa sala apertada só porque outro escolheu primeiro.
+    const ordens = [
+      [...planos].sort((a, b) => b.vision - a.vision),
+      [...planos].sort((a, b) => a.vision - b.vision),
+      [...planos].sort((a, b) => (b.room.w * b.room.h) - (a.room.w * a.room.h)),
+      planos,
+    ];
+    let melhor = null;
+    for (const ordem of ordens) {
+      const postos = [];
+      if (bossRoom) postos.push({ x: bossRoom.x + bossRoom.w / 2, y: bossRoom.y + bossRoom.h / 2, vision: 5.6, roam: 0 });
+      const atribuidos = [];
+      for (const plano of ordem) {
+        const posto = melhorPosto(plano, postos);
+        if (!posto) continue;
+        atribuidos.push([plano, posto]);
+        postos.push({ x: posto.x, y: posto.y, vision: plano.vision, roam: MONSTER_ROAM });
+      }
+      if (!melhor || atribuidos.length > melhor.length) melhor = atribuidos;
+      if (melhor.length === planos.length) break;
     }
-    // quem enxerga mais longe escolhe primeiro, senão a folga dele é comida
-    // por um bicho de visão curta
-    for (const plano of [...planos].sort((a, b) => b.vision - a.vision)) {
-      const posto = melhorPosto(plano, postos);
-      if (!posto) continue; // sem ponto seguro, melhor não nascer
-      plano.post = posto;
-      postos.push({ x: posto.x, y: posto.y, vision: plano.vision, roam: MONSTER_ROAM });
-    }
+    for (const [plano, posto] of melhor || []) plano.post = posto;
     const out = [];
     for (const plano of planos) {
       if (!plano.post) continue;

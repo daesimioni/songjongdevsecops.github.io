@@ -642,36 +642,90 @@ for (const d of DUNGEONS) {
 // A espécie e a cor de um bicho saem do nome e da disciplina, do mesmo jeito
 // que a caverna o desenha. O bestiário lê daqui para não inventar um bicho
 // diferente do que o jogador encontra lá embaixo.
-const SPECIES_BY_TIER = {
-  1: ["slime", "bat", "spider", "wisp"],
-  2: ["eye", "bat", "spider", "wisp", "scorpion"],
-  3: ["golem", "eye", "bat", "scorpion"],
-};
-// bicho-assinatura do continente: a masmorra de Física não tem fauna de Música
-const SIGNATURE_BY_CONTINENT = {
-  cs: ["ant"], math: ["beetle"], physics: ["crab"], chem: ["jelly"],
-  music: ["moth"], ai: ["sentinel"], lingua: ["imp", "serpent"],
+// A forma do bicho vem do nome, não de um sorteio: "Ácido" vira frasco,
+// "Acorde" vira nota, "Instrução" vira engrenagem. O nome carrega uma pista do
+// que se espera, e a arte do duelo, do mapa e do bestiário segue essa pista.
+// A ordem importa: o que é específico vem antes do que é genérico.
+const FORMA_POR_PALAVRA = [
+  [/\b(teorema|axioma|lema|prova|corolario|definicao|demonstracao|postulado|conjectura|paradoxo)(?:s|es)?\b/, "tome"],
+  [/\b(livro|tomo|fabula|resenha|reportagem|redacao|relatorio|artigo|narrativa|personagem|narrador|estrofe|conto|cronica|roteiro|argumentacao|texto|leitura|literatura|historia|canon|capitu|comunicacao|producao|escrita|discurso|romance|poesia|poema|resumo|manual|norma|documentacao|certificado|referencia|bibliografia|antologia|ensaio|editorial|entrevista|teatro|cinema|midia|episodio)(?:s|es)?\b/, "tome"],
+  [/\b(letra|silaba|fonema|acento|crase|hifen|pontuacao|sintaxe|concordancia|verbo|sujeito|sinonimo|metafora|rima|verso|gramatica|ortografia|lexico|terminologia|traducao|latim|lingua|fonetica|morfologia|semantica|pragmatica|implicatura|ambiguidade|pressuposto|refutacao|genero|regencia|colocacao|estilistica|prosodia|alofone|diccao|clareza|corpus|logica|proposicional|silogismo|sons da fala)(?:s|es)?\b/, "glyph"],
+  [/\b(acorde|oitava|quinta|compasso|timbre|harmonico|ressonancia|dissonancia|sincope|cadencia|batimento|ritmo|melodia|semitom|afinacao|instrumento|orquestra|contraponto|coda|silencio|coral|cancao|partitura|clave|pausa|musica|frequencia|acustica|canon|fuga|motivo|repouso|pulso)(?:s|es)?\b/, "note"],
+  [/\b(prisma|lente|espectro|reflexo|miragem|refracao|difracao|optica|foton|polarizacao)(?:s|es)?\b/, "prism"],
+  [/\b(atom|atomos|atomica|eletron|proton|neutron|ion|molecula|ligacao|isomero|cetona|ester|amida|benzeno|eteno|carbono|quiral|reatividade|fissao|fusao|radio|orbital|valencia|estequiometria|eletroquimica|fisico-quimica|oxido|ozonio|carbonato|fertilizante|farmaceutica|bioquimica|proteina|enzima|fosforilacao|metabolismo|celula|composto|compostos|complexo|complexos)(?:s|es)?\b/, "atom"],
+  [/\b(acido|reagente|solucao|eluente|titulante|precipitado|impureza|catalisador|cristalizacao|destilacao|extracao|solvente|frasco|bureta|erlenmeyer|bequer|indicador|eletrolise|equilibrio)(?:s|es)?\b/, "flask"],
+  [/\b(membrana|membranas|micela|micelas|polimero|polimeros|gelatina|espuma|emulsao|bolha|bolhas|coloide|mucosa)(?:s|es)?\b/, "jelly"],
+  [/\b(gosma|limo|lodo|pasta|cola|resina|celulose|mistura|conjunto|conjuntos|grupo|grupos|classe|classes|familia|familias|colecao|colecoes|populacao|enxame|matilha|rebanho)(?:s|es)?\b/, "slime"],
+  [/\b(engrenagem|maquina|mecanismo|motor|turbina|pistao|roda|rotacao|relogio|clock|barramento|registrador|instrucao|pipeline|ula|processador|cpu|memoria|cache|disco|fusivel|resistor|capacitor|bobina|valvula|transistor|circuito|hardware|interruptor|switch|porta|fio|rele|bomba|forno|torno|alavanca|esteira|servidor|datacenter|infraestrutura|sensor|antena|pendulo|balanca)(?:s|es)?\b/, "gear"],
+  [/\b(handshake|ping|timeout|pacote|datagrama|roteador|token|embedding|perceptron|peso|pesos|epoca|feature|pooling|multiagentes|nuvem|virtual|kernel|fila|filas|heaps|hash|logs|telemetria|consistencia|sincronizacao|armazenamento|banco|bancos|dataset|contexto|prompt|bit|byte|pixel|borda|caixa|classificacao|regressao|dado|dados|amostra|rede|redes|grafo|grafos|conexao|conexoes)(?:s|es)?\b/, "node"],
+  [/\b(vetor|vetores|gradiente|direcao|deslocamento|seta|forca|forcas|momento|impulso|aceleracao|velocidade|autovalor|autovalores|autovetor|autovetores)(?:s|es)?\b/, "vector"],
+  [/\b(olho|olhos|visao|atencao|foco|observa|vigia|percep|reconhecimento|outlier|vies)(?:s|es)?\b/, "eye"],
+  [/\b(fogo|chama|faisca|luz|brilho|raio|energia|calor|plasma|quanta|vapor|estrela|sol|magma|entropia|carga|voltagem|corrente|magnetismo|ima|orbita|eletric)(?:s|es)?\b/, "wisp"],
+  [/\b(pedra|rocha|golem|corpo|corpos|estrutura|estruturas|solido|solidos|material|materiais|massa|gravidade|dureza|metal|metais|ferro|aco|argila|muralha|monumento)(?:s|es)?\b/, "golem"],
+  [/\b(teia|aranha|malha|trama|armadilha|entrelacamento|cobertura)(?:s|es)?\b/, "spider"],
+  [/\b(linha|linhas|corda|cadeia|sequencia|sequencias|serie|series|curva|trajetoria|espiral|recursao|recorrencia|ciclo|ciclos|laco|loop|fluxo|limite|convergencia|divergencia|continuidade|funcao|funcoes|equacao|equacoes|tensor|campo|campos|onda|ondas|geodesica|derivada|integral|irracional|irracionais)(?:s|es)?\b/, "serpent"],
+  [/\b(colonia|formiga|algoritmo|algoritmos|automato|automatos|processamento|execucao|procedimento|rotina|tarefa|tarefas|desvio|salto|passo)(?:s|es)?\b/, "ant"],
+  [/\b(mariposa|borboleta|asa|asas|voo|navegacao|migracao|orientacao|padrao|padroes)(?:s|es)?\b/, "moth"],
+  [/\b(morcego|sonar|noite|sombra|sombrio|eco|ecos)(?:s|es)?\b/, "bat"],
+  [/\b(besouro|casco|concha|carapaca|elitro|arquivo|registro|acervo)(?:s|es)?\b/, "beetle"],
+  [/\b(caranguejo|praia|litoral|pinca|defesa|porto)(?:s|es)?\b/, "crab"],
+  [/\b(escorpiao|veneno|ferrao|toxina|peconha|pungente)(?:s|es)?\b/, "scorpion"],
+  [/\b(duende|trapaca|erro|erros|equivoco|ironia|sorte|acaso|caos|mentira|ilusao|confusao|ruido|falha|bug|alucinacao|moeda|moedas|baralho|baralhos|aposta|apostas|tendencia|tendencias)(?:s|es)?\b/, "imp"],
+  [/\b(sentinela|firewall|protocolo|senha|cifra|criptografia|seguranca|autenticacao|cofre|validacao|verificacao|teste|testes|chave|codigo)(?:s|es)?\b/, "sentinel"],
+  [/\b(cristal|cristais|zeolita|zeolitas|mineral|minerais|simetria|topologia|variedade|variedades|geometria|fractal|vertice|vertices|poliedro|reticulado|estrutural|amorfo|amorfos|nano|nanomateriais|semiconductor)(?:s|es)?\b/, "crystal"],
+];
+
+// a disciplina decide quando o nome é abstrato demais para a palavra resolver
+const FORMA_POR_DISCIPLINA = {
+  math: [
+    [/(topologia|topologico|topologicos|espacos topologicos)/, "spider"],
+    [/(otimizacao|otimizacoes)/, "vector"],
+    [/(conjunto|conjuntos|grupo|grupos|anel|aneis|classe|classes|familia|familias)/, "slime"],
+  ],
+  physics: [
+    [/(turbina|pistao|motor|bobina|capacitor|resistor|valvula|transistor|circuito|ima|fusivel|pendulo|balanca|forno)/, "gear"],
+    [/(mecanica|dinamica|hidrostatica|termodinamica)/, "golem"],
+  ],
+  chem: [
+    [/(acido|base|reagente|solubilidade|solucao|titulante|precipitado|precipitacao|impureza|catalisador|eluente|indicador|equilibrio)/, "flask"],
+  ],
+  cs: [
+    [/(firewall|senha|cifra|criptografia|seguranca|certificado|assinatura|autenticacao|cofre|verificacao|testes|protocolo)/, "sentinel"],
+    [/(representacao|conhecimento|agente|agentes|aprendizado|reforco|recomendacao|recomendacoes|rede|redes|sistema|sistemas|banco|bancos|dados|nuvem|servidor|virtual|kernel|fila|filas|hash|logs|telemetria|arquitetura da informacao)/, "node"],
+  ],
+  ai: [
+    [/(camada|camadas|sistema|sistemas|agentes|multiagentes|contexto|prompt|embedding|perceptron)/, "node"],
+    [/(visao|atencao|percepcao|reconhecimento|imagem|imagens|rosto|classificacao)/, "eye"],
+  ],
+  lingua: [[/(familia|familias|classe|classes|conjunto|conjuntos)/, "glyph"]],
 };
 
-function creatureSeed(name, k = 0) {
-  return [...String(name)].reduce((sum, ch) => sum + ch.charCodeAt(0), 0) + k;
+const FORMA_PADRAO = {
+  math: "crystal", physics: "wisp", chem: "atom", cs: "gear", ai: "node", music: "note", lingua: "glyph",
+};
+
+const semAcento = (texto) => String(texto).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+export function creatureKind(def, name) {
+  const n = semAcento(name);
+  for (const [re, forma] of FORMA_POR_DISCIPLINA[def.continent] || []) {
+    if (re.test(n)) return forma;
+  }
+  for (const [re, forma] of FORMA_POR_PALAVRA) {
+    if (re.test(n)) return forma;
+  }
+  return FORMA_PADRAO[def.continent] || "slime";
 }
 
-// quando o nome é um dos bichos da própria área, ele mantém a espécie e a cor
-// que a ilha lhe deu: nada de três "gosmas" iguais na Cripta da Álgebra
+// o accent continua vindo da identidade da área: o bicho pode mudar de forma
+// com o nome, mas a cor da ilha permanece
 function faunaIndex(def, name) {
   const alvo = String(name).toLowerCase();
   return (def.faunaNames || []).findIndex((nome) => nome.toLowerCase() === alvo);
 }
 
-export function creatureKind(def, name, tier, k = 0) {
-  const idx = faunaIndex(def, name);
-  if (idx >= 0 && def.fauna?.[idx]) return def.fauna[idx];
-  const species = SPECIES_BY_TIER[tier] || SPECIES_BY_TIER[1];
-  const signature = SIGNATURE_BY_CONTINENT[def.continent] || [];
-  // a fauna da área entra primeiro: a masmorra da Álgebra não tem bicho de Química
-  const pool = [...(def.fauna || []), ...species, ...signature];
-  return pool[creatureSeed(name, k) % pool.length];
+function creatureSeed(name, k = 0) {
+  return [...String(name)].reduce((sum, ch) => sum + ch.charCodeAt(0), 0) + k;
 }
 
 export function creatureAccent(def, name, k = 0) {
@@ -712,7 +766,7 @@ export function dungeonCreatures(def) {
         id,
         ids: [id],
         nome,
-        tipo: creatureKind(def, nome, tier),
+        tipo: creatureKind(def, nome),
         tier,
         accent: creatureAccent(def, nome),
         chefe: false,

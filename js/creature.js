@@ -246,6 +246,265 @@ export function drawCreature(ctx, kind, accent, time = 0, scale = 1) {
     ctx.fillRect(-12, -31, 3, 2);
     ctx.fillRect(-15, -32, 3, 1);
     ctx.fillRect(-15, -30, 3, 1);
+  } else if (kind === "tome") {
+    // livro aberto, com marcador e olhos nas páginas
+    ctx.fillStyle = "#101426";
+    ctx.fillRect(-13, -22, 26, 17);
+    ctx.fillStyle = accent;
+    ctx.fillRect(-12, -21, 24, 15);
+    ctx.fillStyle = "#f4f0ff";
+    ctx.fillRect(-10, -19, 8, 10);
+    ctx.fillRect(2, -19, 8, 10);
+    ctx.fillStyle = "#101426";
+    ctx.fillRect(-8, -16, 2, 3);
+    ctx.fillRect(3, -16, 2, 3);
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(-8, -16, 1, 1);
+    ctx.fillRect(3, -16, 1, 1);
+    ctx.fillStyle = "#ffc857";
+    ctx.fillRect(-2, -24, 4, 6);
+    ctx.fillStyle = "#101426";
+    ctx.fillRect(-10, -6, 4, 3);
+    ctx.fillRect(5, -6, 4, 3);
+  } else if (kind === "glyph") {
+    // símbolo flutuante com aura
+    ctx.fillStyle = "rgba(255,255,255,0.06)";
+    ctx.beginPath();
+    ctx.ellipse(0, -18, 14, 12, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#101426";
+    ctx.fillRect(-9, -30, 4, 22);
+    ctx.fillRect(5, -30, 4, 22);
+    ctx.fillRect(-9, -22, 18, 4);
+    ctx.fillRect(-5, -14, 4, 4);
+    ctx.fillStyle = accent;
+    ctx.fillRect(-7, -28, 2, 18);
+    ctx.fillRect(7, -28, 2, 18);
+    ctx.fillRect(-7, -20, 14, 2);
+    ctx.fillStyle = "#101426";
+    ctx.fillRect(-4, -12, 3, 3);
+    ctx.fillRect(1, -12, 3, 3);
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(-4, -12, 1, 1);
+    ctx.fillRect(1, -12, 1, 1);
+  } else if (kind === "note") {
+    // nota musical com haste e bandeirola
+    ctx.fillStyle = "#101426";
+    ctx.beginPath();
+    ctx.ellipse(-4, -6, 8, 5, -0.2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillRect(2, -32, 4, 26);
+    ctx.fillRect(5, -32, 9, 3);
+    ctx.fillRect(11, -29, 3, 7);
+    ctx.fillStyle = accent;
+    ctx.beginPath();
+    ctx.ellipse(-4, -6, 6, 3.4, -0.2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillRect(4, -30, 2, 23);
+    ctx.fillRect(6, -30, 6, 2);
+    ctx.fillStyle = "#101426";
+    ctx.fillRect(-6, -8, 2, 2);
+    ctx.fillRect(-1, -8, 2, 2);
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(-6, -8, 1, 1);
+    ctx.fillRect(-1, -8, 1, 1);
+  } else if (kind === "atom") {
+    // núcleo com órbitas e elétrons
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.ellipse(0, -18, 15, 6, 0.55, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.ellipse(0, -18, 15, 6, -0.55, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(-13, -24, 2, 2);
+    ctx.fillRect(11, -12, 2, 2);
+    ctx.fillStyle = "#101426";
+    ctx.beginPath();
+    ctx.arc(0, -18, 7, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = accent;
+    ctx.beginPath();
+    ctx.arc(0, -18, 5.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#101426";
+    ctx.fillRect(-4, -20, 3, 3);
+    ctx.fillRect(1, -20, 3, 3);
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(-4, -20, 1, 1);
+    ctx.fillRect(1, -20, 1, 1);
+  } else if (kind === "crystal") {
+    // cristal facetado, com estilhaços
+    ctx.fillStyle = "#101426";
+    ctx.beginPath();
+    ctx.moveTo(0, -36);
+    ctx.lineTo(11, -20);
+    ctx.lineTo(7, -6);
+    ctx.lineTo(-4, -3);
+    ctx.lineTo(-12, -18);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = accent;
+    ctx.beginPath();
+    ctx.moveTo(0, -33);
+    ctx.lineTo(8, -20);
+    ctx.lineTo(5, -9);
+    ctx.lineTo(-3, -6);
+    ctx.lineTo(-9, -18);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = "rgba(255,255,255,0.3)";
+    ctx.beginPath();
+    ctx.moveTo(0, -33);
+    ctx.lineTo(8, -20);
+    ctx.lineTo(0, -18);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = "#101426";
+    ctx.fillRect(-4, -22, 3, 4);
+    ctx.fillRect(1, -22, 3, 4);
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(-4, -22, 1, 1);
+    ctx.fillRect(1, -22, 1, 1);
+    ctx.fillStyle = accent;
+    ctx.fillRect(-15, -10, 3, 7);
+    ctx.fillRect(12, -12, 3, 9);
+  } else if (kind === "gear") {
+    // engrenagem com dentes
+    ctx.fillStyle = "#101426";
+    for (let i = 0; i < 8; i++) {
+      const a = (i * Math.PI) / 4;
+      ctx.fillRect(Math.round(Math.cos(a) * 11) - 2, Math.round(-18 + Math.sin(a) * 11) - 2, 4, 4);
+    }
+    ctx.beginPath();
+    ctx.arc(0, -18, 11, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = accent;
+    ctx.beginPath();
+    ctx.arc(0, -18, 9, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#101426";
+    ctx.beginPath();
+    ctx.arc(0, -18, 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(-6, -23, 2, 2);
+    ctx.fillRect(4, -23, 2, 2);
+  } else if (kind === "node") {
+    // nó central ligado à rede
+    const nos = [[-14, -8], [13, -7], [-10, -31], [11, -30]];
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 1.5;
+    for (const [x, y] of nos) {
+      ctx.beginPath();
+      ctx.moveTo(0, -18);
+      ctx.lineTo(x, y);
+      ctx.stroke();
+    }
+    for (const [x, y] of nos) {
+      ctx.fillStyle = accent;
+      ctx.beginPath();
+      ctx.arc(x, y, 3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.fillStyle = "#101426";
+    ctx.beginPath();
+    ctx.arc(0, -18, 9, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = accent;
+    ctx.beginPath();
+    ctx.arc(0, -18, 7, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#101426";
+    ctx.fillRect(-4, -20, 3, 3);
+    ctx.fillRect(1, -20, 3, 3);
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(-4, -20, 1, 1);
+    ctx.fillRect(1, -20, 1, 1);
+  } else if (kind === "prism") {
+    // prisma com feixe de luz
+    ctx.fillStyle = "#101426";
+    ctx.beginPath();
+    ctx.moveTo(0, -36);
+    ctx.lineTo(14, -6);
+    ctx.lineTo(-14, -6);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = accent;
+    ctx.beginPath();
+    ctx.moveTo(0, -32);
+    ctx.lineTo(10, -8);
+    ctx.lineTo(-10, -8);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = "#fff3d1";
+    ctx.fillRect(8, -22, 14, 2);
+    ctx.fillRect(10, -17, 12, 2);
+    ctx.fillRect(12, -12, 10, 2);
+    ctx.fillStyle = "#101426";
+    ctx.fillRect(-4, -16, 3, 3);
+    ctx.fillRect(1, -16, 3, 3);
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(-4, -16, 1, 1);
+    ctx.fillRect(1, -16, 1, 1);
+  } else if (kind === "vector") {
+    // seta viva, apontando para a direção
+    ctx.strokeStyle = "#101426";
+    ctx.lineWidth = 6;
+    ctx.beginPath();
+    ctx.moveTo(-12, -6);
+    ctx.lineTo(6, -26);
+    ctx.stroke();
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(-12, -6);
+    ctx.lineTo(6, -26);
+    ctx.stroke();
+    ctx.fillStyle = "#101426";
+    ctx.beginPath();
+    ctx.moveTo(10, -33);
+    ctx.lineTo(1, -22);
+    ctx.lineTo(14, -22);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = accent;
+    ctx.beginPath();
+    ctx.moveTo(9, -31);
+    ctx.lineTo(3, -23);
+    ctx.lineTo(12, -23);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = "#101426";
+    ctx.fillRect(-10, -9, 3, 3);
+    ctx.fillRect(-5, -11, 3, 3);
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(-10, -9, 1, 1);
+    ctx.fillRect(-5, -11, 1, 1);
+  } else if (kind === "flask") {
+    // frasco com reagente e bolhas
+    ctx.fillStyle = "#101426";
+    ctx.fillRect(-4, -30, 8, 6);
+    ctx.fillRect(-9, -24, 18, 18);
+    ctx.fillStyle = "#dff5ff";
+    ctx.fillRect(-6, -24, 12, 3);
+    ctx.fillStyle = accent;
+    ctx.fillRect(-7, -16, 14, 9);
+    ctx.fillStyle = "#dff5ff";
+    ctx.fillRect(-9, -24, 2, 18);
+    ctx.fillStyle = "#ffc857";
+    ctx.fillRect(-3, -33, 6, 3);
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(-4, -19, 2, 2);
+    ctx.fillRect(2, -13, 2, 2);
+    ctx.fillStyle = "#101426";
+    ctx.fillRect(-4, -10, 3, 3);
+    ctx.fillRect(1, -10, 3, 3);
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(-4, -10, 1, 1);
+    ctx.fillRect(1, -10, 1, 1);
   } else {
     // chefe: golem grande com chifres
     ctx.fillStyle = "#21162b";

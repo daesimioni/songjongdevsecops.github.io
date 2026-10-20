@@ -63,6 +63,15 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 - [x] desempenho e carga medidos
 - [x] commit e push com evidência
 
+### K. Formas por nome
+
+- [x] dez formas novas: livro, símbolo, nota, átomo, cristal, engrenagem, nó,
+      prisma, vetor e frasco
+- [x] a forma sai de palavras do nome, com a disciplina como desempate
+- [x] arte, ficha, fraqueza, velocidade, visão e traço de duelo para cada forma
+- [x] conferido: 356 nomes em 25 formas, 17 casos de congruência, sem forma
+      órfã de arte ou ficha
+
 ### J. Nave
 
 - [x] `Espaço` e **Turbo** alternam a nave em vez de exigir segurar, na
@@ -113,6 +122,9 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 - O bestiário lê a mesma função que cria o bicho na caverna. Espécie, cor, nome
   e id da ficha e do encontro não podem divergir, senão o jogador caça um bicho
   e vê outro no caderno.
+- A forma do bicho vem do nome. Se o nome é "Ácido", a arte tem que ser um
+  frasco; se é "Acorde", uma nota. Nome abstrato cai na forma da disciplina,
+  nunca num sorteio.
 - A nave é um desenho só, em `js/skiff.js`: superfície e caverna não podem
   mostrar cascos diferentes.
 - Bicho de caverna tem casa e passeio curto. Dois círculos de visão que se
@@ -126,6 +138,7 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 
 | data | fase | o que entrou | prova |
 |---|---|---|---|
+| 2026-10-20 | K | a forma do bicho passou a vir do nome: 10 formas novas (livro, símbolo, nota, átomo, cristal, engrenagem, nó, prisma, vetor, frasco), classificador por palavra com disciplina de desempate, e arte, ficha, fraqueza e duelo para todas; 356 nomes cobertos | node: 25 formas com arte/nome/fraqueza, 17 casos de congruência (ácido->frasco, acorde->nota, instrução->engrenagem, autovalores->vetor), sem forma órfã; navegador: bestiário mostra as fichas novas e a separação das 93 cavernas continua com 651 bichos e nenhum ponto visto por dois |
 | 2026-10-20 | J | Espaço e Turbo alternam a nave na superfície e na caverna; o casco passou para js/skiff.js e a caverna usa o mesmo desenho, com boost suave e lift do boneco; soltar a tecla não desliga | navegador: espaço liga e continua ligado, espaço de novo desliga, auto-repeat não pisca, Turbo do celular alterna com aria-pressed, caverna liga/desliga e o casco aparece andando, console limpo; node verde |
 | 2026-10-20 | I | bichos postados no miolo da sala com passeio de 0,8 tile; posição escolhida para a soma das visões mais os passeios caber entre as casas, com margem de 0,4 tile; sala do chefe sem bicho comum; bestiário passa a listar 464 criaturas | navegador: 93 cavernas, 651 bichos comuns, 7 por caverna, chefe sozinho, folga mínima 0,49 tile, 1.142.784 pontos testados e nenhum visto por dois bichos, console limpo; node verde |
 | 2026-10-20 | H | minimapa 232x155 com coordenada x y z, piso, zoom 1× a 6× pela roda e botões, botão mapa inteiro e marcador em seta; caverna ganhou coordenada, profundidade e minimapa de 200x150; o mapa base de 560x360 não é mais cortado no canto | navegador: coordenada x 91 y 61 z 0, zoom 1× a 6×, roda, clique andou 5 tiles, viagem para a Álgebra acompanhou, caverna z -1 com marcador, console limpo |

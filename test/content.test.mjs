@@ -13,7 +13,7 @@ globalThis.localStorage = {
 };
 
 const { CONTINENTS, SITES, WAYSTONES, NPC_SPAWNS, CONTINENT_ORDER, AREAS, MAP_W, MAP_H, LEGACY_CONTENT } = await import("../js/config.js");
-const { QUESTIONS, DEEP_QUESTIONS, GROUNDS, ITEMS, RECIPES, ENCHANTS, MONSTER_TRAITS, MONSTER_LABELS } = await import("../js/rpg-data.js");
+const { QUESTIONS, DEEP_QUESTIONS, GROUNDS, ITEMS, RECIPES, ENCHANTS, MONSTER_TRAITS, MONSTER_LABELS, MONSTER_WEAKNESS, CREATURE_FORMS } = await import("../js/rpg-data.js");
 const { DUNGEONS } = await import("../js/dungeon-data.js");
 const { POSTS, NPCS } = await import("../js/content.js");
 const { QUESTS } = await import("../js/quests.js");
@@ -604,15 +604,14 @@ for (const dungeon of DUNGEONS.filter((d) => CATALOG_CONTENT.areas.some((a) => `
   check(typeof dungeon.boss === "string" && dungeon.boss.length > 3, `${dungeon.id}: sem chefe`);
 }
 
-// bicho-assinatura precisa de desenho e de ficha no bestiário, senão cai no chefe
-const sigSrc = source("../js/dungeon-data.js");
-const sigBlock = sigSrc.slice(sigSrc.indexOf("const SIGNATURE_BY_CONTINENT"));
-const sigKinds = [...sigBlock.slice(0, sigBlock.indexOf("}")).matchAll(/"([a-z]+)"/g)].map((m) => m[1]);
+// toda forma que o jogo usa precisa de desenho, nome de leitura e fraqueza;
+// o chefe cai no desenho final, então fica de fora dessa cobrança
 const creatureSrc = source("../js/creature.js");
-check(sigKinds.length === 8, `bichos-assinatura: ${sigKinds.length}, esperado 8`);
-for (const kind of sigKinds) {
+for (const kind of CREATURE_FORMS) {
+  if (kind === "boss") continue;
   check(creatureSrc.includes(`kind === "${kind}"`), `sem desenho para ${kind}`);
   check(!!MONSTER_LABELS[kind], `bestiário sem nome para ${kind}`);
+  check(!!MONSTER_WEAKNESS[kind], `bestiário sem fraqueza para ${kind}`);
 }
 
 // F11: texto curado de Matemática, subárea por subárea

@@ -42,6 +42,18 @@ export const MONSTER_TRAITS = {
   imp: { id: "haste", label: "trapaça: ataca de novo quando você erra" },
   sentinel: { id: "armor", label: "placa: seu acerto tira um de dano a menos" },
   serpent: { id: "divide", label: "troca de pele: cura quando você erra" },
+  // formas que vieram dos nomes: livro, símbolo, nota, átomo, cristal,
+  // engrenagem, nó, prisma, vetor e frasco
+  tome: { id: "armor", label: "capa dura: seu acerto tira um de dano a menos" },
+  glyph: { id: "dodge", label: "símbolo: muda de forma e desvia" },
+  note: { id: "haste", label: "eco: ataca de novo quando você erra" },
+  atom: { id: "divide", label: "fissão: se divide quando você erra" },
+  crystal: { id: "armor", label: "aresta: seu acerto tira um de dano a menos" },
+  gear: { id: "armor", label: "engrenagem: seu acerto tira um de dano a menos" },
+  node: { id: "haste", label: "rede: ataca em paralelo quando você erra" },
+  prism: { id: "dodge", label: "refração: às vezes desvia do seu acerto" },
+  vector: { id: "haste", label: "direção: ataca de novo quando você erra" },
+  flask: { id: "divide", label: "reação: se recompõe quando você erra" },
 };
 
 // Nome de leitura e fraqueza de cada espécie. Ficam aqui para o duelo, o
@@ -51,6 +63,9 @@ export const MONSTER_LABELS = {
   spider: "aranha", wisp: "fogo-fátuo", scorpion: "escorpião", boss: "chefe",
   ant: "formiga", moth: "mariposa", beetle: "besouro", crab: "caranguejo",
   jelly: "água-viva", imp: "duende", sentinel: "sentinela", serpent: "serpente",
+  tome: "livro", glyph: "símbolo", note: "nota", atom: "átomo",
+  crystal: "cristal", gear: "engrenagem", node: "nó", prism: "prisma",
+  vector: "vetor", flask: "frasco",
 };
 
 export const MONSTER_WEAKNESS = {
@@ -66,7 +81,16 @@ export const MONSTER_WEAKNESS = {
   imp: "recua quando acerta, covarde",
   sentinel: "só patrulha o corredor, cego na curva",
   serpent: "segue reto, dobra em S",
+  tome: "pesado, lombada exposta", glyph: "frágil, se desfaz quando lido",
+  note: "vibra no lugar, fácil de acertar o eco", atom: "núcleo exposto, órbitas previsíveis",
+  crystal: "lento, aresta exposta", gear: "trava quando a rotação para",
+  node: "depende da rede, cai quando isolado", prism: "só refrata em ângulo",
+  vector: "segue reto, não dobra", flask: "vidro fino, derrama o conteúdo",
 };
+
+// Todas as formas que o jogo desenha, para o teste cobrar arte e ficha de cada
+// uma sem manter uma lista solta em outro arquivo.
+export const CREATURE_FORMS = [...Object.keys(MONSTER_TRAITS), "boss"];
 
 export const ITEMS = {
   parafuso: { name: "Parafuso de Bronze", continent: "cs", desc: "Rosca de latão que nunca espanou. Dizem que veio do primeiro somador." },
