@@ -2432,6 +2432,30 @@ function abrirMenu(e, wx, wy) {
     : (area ? `bioma · ${area.biome?.name || area.sub}` : "água");
   head.append(titulo, tipo);
   ctxMenu.appendChild(head);
+  const adicionarUsos = () => {
+    const pocao = rpg.inventoryList().find((i) => i.heal > 0);
+    if (pocao) {
+      ctxMenu.appendChild(acaoMenu("✚", `usar ${pocao.name}`, "", () => {
+        const res = rpg.useItem(pocao.id);
+        if (!res.ok) { toast(res.reason, 2600); return; }
+        toast(`${pocao.name}: +${res.healed || 0} de vida.`, 2600);
+        audio.blip();
+        updateSpellbar();
+      }));
+    }
+    const poçãoMana = rpg.inventoryList().find((i) => i.mana > 0);
+    if (poçãoMana) {
+      ctxMenu.appendChild(acaoMenu("◈", `usar ${poçãoMana.name}`, "", () => {
+        const res = rpg.useItem(poçãoMana.id);
+        if (!res.ok) { toast(res.reason, 2600); return; }
+        toast(`${poçãoMana.name}: +${res.mana || 0} de mana.`, 2600);
+        audio.blip();
+        updateSpellbar();
+      }));
+    }
+    const magia = state.spells?.[0];
+    if (magia) ctxMenu.appendChild(acaoMenu("✦", `usar ${magia.name}`, String(magia.mana), () => usarMagia(magia.id)));
+  };
   if (alvo) {
     const d = Math.hypot(alvo.obj.x - player.x, alvo.obj.y - player.y);
     const perto = d <= INTERACT_RADIUS + 0.7;
@@ -2448,18 +2472,7 @@ function abrirMenu(e, wx, wy) {
       ctxMenu.appendChild(acaoMenu("✦", "pegar", "F", () => pegarItem(alvo.obj)));
     }
     ctxMenu.appendChild(acaoMenu("◉", "olhar de perto", "", () => olharLugar(wx, wy, alvo)));
-    const pocao = rpg.inventoryList().find((i) => i.heal > 0);
-    if (pocao) {
-      ctxMenu.appendChild(acaoMenu("✚", `usar ${pocao.name}`, "", () => {
-        const res = rpg.useItem(pocao.id);
-        if (!res.ok) { toast(res.reason, 2600); return; }
-        toast(`${pocao.name}: +${res.healed || 0} de vida.`, 2600);
-        audio.blip();
-        updateSpellbar();
-      }));
-    }
-    const magia = state.spells?.[0];
-    if (magia) ctxMenu.appendChild(acaoMenu("✦", `usar ${magia.name}`, String(magia.mana), () => usarMagia(magia.id)));
+    adicionarUsos();
     if (!perto) {
       ctxMenu.appendChild(acaoMenu("➜", "andar até aqui", "", () => {
         const goal = nearestWalkable(world, alvo.obj.x, alvo.obj.y, 4);
@@ -2475,16 +2488,7 @@ function abrirMenu(e, wx, wy) {
       }));
     }
     ctxMenu.appendChild(acaoMenu("◉", "olhar o chão", "", () => olharLugar(wx, wy, null)));
-    const pocao = rpg.inventoryList().find((i) => i.heal > 0);
-    if (pocao) {
-      ctxMenu.appendChild(acaoMenu("✚", `usar ${pocao.name}`, "", () => {
-        const res = rpg.useItem(pocao.id);
-        if (!res.ok) { toast(res.reason, 2600); return; }
-        toast(`${pocao.name}: +${res.healed || 0} de vida.`, 2600);
-        audio.blip();
-        updateSpellbar();
-      }));
-    }
+    adicionarUsos();
   }
   ctxMenu.hidden = false;
   const rect = ctxMenu.getBoundingClientRect();
