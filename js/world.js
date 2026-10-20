@@ -155,6 +155,7 @@ export function createWorld() {
   bridgeLine(146, 35, 146, 42, 3, BRIDGE); // nordeste e direita
   bridgeLine(138, 81, 112, 92, 3, BRIDGE); // direita e sul
   bridgeLine(66, 94, 40, 83, 3, BRIDGE); // sul e esquerda
+  bridgeLine(43, 108, 74, 112, 3, BRIDGE); // sul e vale da língua
   // encontros de ponte com terra
   rect(88, 30, 5, 4, CONTINENTS.cs.path);
   rect(88, 88, 5, 4, CONTINENTS.physics.path);
@@ -166,6 +167,8 @@ export function createWorld() {
   rect(88, 71, 5, 4, CONTINENTS.hub.floor);
   rect(105, 62, 4, 5, CONTINENTS.hub.floor);
   rect(72, 62, 4, 5, CONTINENTS.hub.floor);
+  rect(41, 107, 4, 4, CONTINENTS.lingua.path);
+  rect(73, 111, 4, 4, CONTINENTS.physics.path);
   rect(76, 47, 4, 4, CONTINENTS.hub.floor);
   rect(101, 47, 4, 4, CONTINENTS.hub.floor);
 
@@ -214,6 +217,7 @@ export function createWorld() {
     chem: ["mushroom", "flask", "bubble", "mushroom", "lamp"],
     music: ["note", "note", "speaker", "lamp", "star", "wave"],
     ai: ["node", "terminal", "orb", "lamp", "synapse", "star"],
+    lingua: ["tree", "book", "lamp", "book", "flower", "star"],
   };
 
   for (let y = 2; y < MAP_H - 2; y++) {

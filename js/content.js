@@ -12,7 +12,7 @@ export const POSTS = {
     lab: null,
     body: `
       <p>Este blog não tem índice. Tem <strong>mapa</strong>. Você entra com um boneco, atravessa pontes e escolhe por qual continente começar. Cada estação que encontra é uma página: um texto curto e um instrumento para mexer com as mãos.</p>
-      <p>São seis continentes. A <em>Computação</em> mostra como saímos de interruptores e areia até processadores. <em>Matemática</em> visita o infinito, as formas, a mudança e o acaso. <em>Física</em> testa pêndulos, ondas, calor, luz e órbitas. <em>Química</em> abre a tabela periódica, as ligações, as reações e o equilíbrio. <em>Música</em> mostra a matemática escondida no som. <em>Inteligência Artificial</em> abre os dados, as redes, a linguagem e os limites. Ao todo, 32 fragmentos para descobrir.</p>
+      <p>São sete continentes. A <em>Computação</em> mostra como saímos de interruptores e areia até processadores. <em>Matemática</em> visita o infinito, as formas, a mudança e o acaso. <em>Física</em> testa pêndulos, ondas, calor, luz e órbitas. <em>Química</em> abre a tabela periódica, as ligações, as reações e o equilíbrio. <em>Música</em> mostra a matemática escondida no som. <em>Inteligência Artificial</em> abre os dados, as redes, a linguagem e os limites. O <em>Vale da Língua</em> desce ao português do Brasil: o som, a palavra, a frase e o texto. Ao todo, 37 fragmentos para descobrir.</p>
       <p>Cada estação abre uma página e soma experiência. O <strong>Diário</strong> guarda o que você já encontrou. As <strong>Pedras do Porto</strong>, os monólitos brilhantes nas docas, levam você de volta a qualquer continente já visitado. A névoa do minimapa só some onde você anda.</p>
       <blockquote>Não tem pressa. O mapa é grande, mas o caminho é seu.</blockquote>
       <p>Os <strong>NPCs</strong> têm missões. Aperte F perto deles: tem caminhada, pergunta e conversa. Cada missão paga experiência e um título, e o Diário mostra quanto falta para a próxima.</p>
@@ -473,6 +473,83 @@ export const POSTS = {
     `,
   },
 
+
+  // ---------------- Vale da Língua ----------------
+  words: {
+    kicker: "vale da língua · praça das palavras",
+    title: "A palavra antes da palavra",
+    date: "2026-10-20",
+    read: "5 min",
+    tags: ["etimologia", "latim", "português"],
+    continent: "lingua",
+    lab: null,
+    body: `
+      <p>Palavra tem idade. "Escola" veio do grego <em>skholé</em>, que queria dizer ócio, o tempo livre de quem não precisava trabalhar com as mãos. "Página" veio do latim <em>pagina</em>, a folha escrita. "Algoritmo" carrega o nome de al-Khwarizmi, matemático persa do século IX. Nenhuma delas nasceu com o sentido de hoje.</p>
+      <p>O português do Brasil é filho do latim, mas foi criado também por línguas indígenas e africanas. "Abacaxi", "mandioca" e "tapioca" vieram do tupi. "Samba", "caçula" e "moleque" vieram de línguas africanas. O vocabulário é um mapa de encontros, e nem todos foram escolhidos pelas pessoas que falavam.</p>
+      <p>Quando você descobre a origem de uma palavra, ganha um atalho de memória. "Exceção" vem de <em>exceptio</em>, o ato de tirar de fora. "Concordância" vem de <em>concordia</em>, corações no mesmo lugar. A palavra antiga explica a regra moderna.</p>
+      <blockquote>Quem sabe de onde a palavra veio entende melhor por que ela se escreve assim.</blockquote>
+    `,
+  },
+  concord: {
+    kicker: "vale da língua · oficina da concordância",
+    title: "Sujeito e verbo precisam combinar",
+    date: "2026-10-16",
+    read: "4 min",
+    tags: ["gramática", "concordância", "sintaxe"],
+    continent: "lingua",
+    lab: null,
+    body: `
+      <p>Concordância é o acordo entre as partes da frase. Se o sujeito está no plural, o verbo também vai: "os meninos chegaram". Se o sujeito é feminino, o adjetivo acompanha: "a casa velha". Parece simples até aparecer um sujeito comprido ou distante do verbo.</p>
+      <p>Em "a lista de materiais chegou", o sujeito é "a lista", não "materiais". O núcleo manda: singular. Já "a maioria dos alunos foi" aceita "foi" porque o núcleo é "maioria"; com "a maioria dos alunos foram" a concordância é com a ideia de plural, e a norma culta prefere a primeira.</p>
+      <p>Tem um caso brasileiro famoso: "a gente". A expressão virou sujeito de terceira pessoa do singular, então o certo é "a gente foi", e não "a gente fomos". A língua muda, mas a regra que o texto escrito cobra continua essa.</p>
+      <blockquote>O verbo não adivinha o sujeito: ele concorda com o núcleo.</blockquote>
+    `,
+  },
+  accents: {
+    kicker: "vale da língua · mural dos acentos",
+    title: "O acento é memória da pronúncia",
+    date: "2026-10-12",
+    read: "5 min",
+    tags: ["ortografia", "acentuação", "hífen"],
+    continent: "lingua",
+    lab: null,
+    body: `
+      <p>O acento gráfico marca onde a voz pesa. Palavras proparoxítonas, com a força na antepenúltima sílaba, levam acento sempre: lâmpada, médico, ângulo. As paroxítonas, com a força na penúltima, levam acento quando terminam em certos sons, como fácil, órgão e série. As oxítonas, com a força na última, levam acento em terminações como café, caju e parabéns.</p>
+      <p>Os monossílabos tônicos também: pá, pé, pó. E há acentos que existem para separar palavras parecidas, como "pôde" e "pode", "têm" e "tem". O acento ajuda a ler em voz alta uma língua que já foi escrita sem ele.</p>
+      <p>O hífen é outra memória: guarda a história de uma palavra composta. "Passatempo" já se juntou; "guarda-chuva" ainda não. O acordo ortográfico de 1990 mudou casos, mas não a lógica: quando a composição se consolidou, a hifenização tende a cair.</p>
+      <blockquote>Antes de acentuar, diga a palavra em voz alta. O corpo costuma saber.</blockquote>
+    `,
+  },
+  genres: {
+    kicker: "vale da língua · biblioteca dos gêneros",
+    title: "Todo texto tem um lugar",
+    date: "2026-10-08",
+    read: "6 min",
+    tags: ["literatura", "gêneros", "leitura"],
+    continent: "lingua",
+    lab: null,
+    body: `
+      <p>Gênero textual é a combinação entre forma, assunto e situação. Uma receita, uma notícia, um contrato e um poema organizam a linguagem de maneiras diferentes porque fazem coisas diferentes. Não existe texto sem gênero; existe texto cujo gênero você ainda não reconheceu.</p>
+      <p>A literatura é um gênero amplo, com subgêneros. <em>Dom Casmurro</em> é romance; as crônicas de Clarice Lispector são textos curtos de jornal que viram literatura; um cordel é poema narrativo popular. Machado de Assis escreveu quase de tudo, e cada forma pedia um jeito de ler.</p>
+      <p>A crônica talvez seja o gênero mais brasileiro: nasceu no jornal, fala do cotidiano e cabe em uma coluna. Ela parece simples porque é curta, mas exige uma observação que quase ninguém faz. Ler gêneros diferentes é aprender os atalhos que cada um oferece.</p>
+      <blockquote>O texto tem lugar, voz e destino. Saber o gênero é saber com quem se está falando.</blockquote>
+    `,
+  },
+  crase: {
+    kicker: "vale da língua · sala da crase",
+    title: "O a que vira à",
+    date: "2026-10-04",
+    read: "5 min",
+    tags: ["crase", "regência", "sintaxe"],
+    continent: "lingua",
+    lab: null,
+    body: `
+      <p>Crase é o encontro de duas vogais iguais: a preposição "a" com o artigo "a". Escreve-se "à" com acento grave. "Entreguei o documento à diretora" tem preposição exigida pelo verbo entregar e artigo que acompanha diretora. Sem o artigo, não há crase: "entreguei o documento a ela", porque ela não aceita artigo.</p>
+      <p>O teste do masculino resolve a maioria dos casos. Se a frase fica natural com "ao", cabe "à": "vou à escola" porque "vou ao colégio". Se fica natural com "a um" ou "para a", cuidado: não é o mesmo encontro. E nomes de lugar, quando vêm sem artigo, não levam acento: "vou a Brasília", mas "volto da Bahia, vou à Bahia".</p>
+      <p>A crase também aparece com horas: "às oito". E desaparece quando o verbo não exige a preposição: "cantei a música" não tem crase, porque a música é objeto direto. A regra não é decorar uma lista: é perguntar quem exige a preposição.</p>
+      <blockquote>Se dá para trocar por "ao", o "à" está no lugar.</blockquote>
+    `,
+  },
 };
 
 export const NPCS = {
@@ -606,6 +683,24 @@ export const NPCS = {
       "O cravo bem temperado resolveu uma briga antiga: doze teclas que soam quase certas em todas as tonalidades.",
       "Uma oitava dobra a frequência. Uma quinta multiplica por três meios. A música já era matemática antes de ter nome.",
       "A dissonância não é erro. É tensão pedindo resolução. O monstro do conservatório também pede.",
+    ],
+  },
+  alzira: {
+    name: "Professora Alzira",
+    lines: [
+      "Bem-vindo ao Vale da Língua. Aqui a gente estuda a língua que a gente usa para estudar todo o resto.",
+      "O som vira sílaba, a sílaba vira palavra, a palavra vira frase e a frase vira texto. Cada estação segue um pedaço desse caminho.",
+      "A crase parece pequena e resolve muita briga. Se eliminar o a fica estranho, provavelmente é preposição; se fica normal, pode ser artigo.",
+      "Ler gêneros diferentes é aprender atalhos. Uma crônica de jornal cabe em uma coluna e precisa ser lida devagar.",
+      "O latim não morreu: ele aparece toda vez que você pergunta por que uma palavra se escreve assim.",
+    ],
+  },
+  "trainer-lingua": {
+    name: "Mestre Camilo",
+    lines: [
+      "Treinar aqui é de graça. Na grota, a mesma pergunta cobra vida e paga item.",
+      "Comece pela concordância: acertar o plural do sujeito resolve metade das pegadinhas.",
+      "A querida crase só é difícil quando a gente esquece de perguntar quem pede a preposição.",
     ],
   },
   shannon: {

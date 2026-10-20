@@ -3,7 +3,7 @@
 No ar em <https://songjongdevsecops.github.io/>.
 
 Um blog pessoal que se atravessa a pé. O site é um arquipélago em pixel art:
-você entra com um boneco, cruza pontes e encontra 32 estações. Cada estação é
+você entra com um boneco, cruza pontes e encontra 37 estações. Cada estação é
 uma página com um texto curto e um instrumento interativo.
 
 ## O arquipélago
@@ -17,8 +17,9 @@ uma página com um texto curto e um instrumento interativo.
 | **Química** | tabela periódica interativa, moléculas em 3D, titulação, energia de reação e balanceamento |
 | **Música** | polirritmia, intervalos e razões, temperamento e escalas, timbre aditivo e música generativa |
 | **Inteligência Artificial** | regressão linear, rede neural que aprende um círculo, tokens e predição, convolução de imagem e ética |
+| **Vale da Língua** | etimologia, concordância, acentuação e hífen, gêneros textuais e crase |
 
-O mapa tem 180 por 120 tiles, seis continentes, ilhas, um anel de pontes entre
+O mapa tem 180 por 120 tiles, sete continentes, ilhas, um anel de pontes entre
 elas e um porto
 central. O minimapa começa coberto por névoa e revela o que você anda. Cada
 estação descoberta vira um fragmento no diário e soma experiência. As Pedras do
@@ -169,6 +170,7 @@ recarga, e um lugar próprio na aventura:
 | Vaga-lume de Vidro | +2 mana máxima | pulso: devolve 3 de mana | 0 | 90 s |
 | Grilo do Compasso | +1 mana por acerto | ritmo: +1 de dano por 2 min | 2 | 150 s |
 | Sombra da Caixa | +1 dano | aviso: tema e fraqueza do monstro | 1 | 90 s |
+| Papagaio do Vale | +3 vida, +1 luz | tagarela: risca duas alternativas | 3 | 120 s |
 
 A **mana** começa em 10, volta 1 a cada 45 segundos e é o combustível das
 habilidades. A ficha mostra a mana e a recarga; no duelo, o botão do bicho fica
@@ -386,9 +388,9 @@ chefe sem alavanca, a forja, os encantamentos, a comida com efeito, o bicho e a
 pergunta que casa com o tema. O duelo entre jogadores entra pela mesma prova: as
 cinco cartas, a dificuldade que vira dano e a compostura.
 
-A segunda confere o conteúdo inteiro: as 32 estações e seus textos, falas de NPC,
+A segunda confere o conteúdo inteiro: as 37 estações e seus textos, falas de NPC,
 24 missões, itens, equipamento, relíquias por continente, receitas, encantos, as
-132 perguntas (sem repetição e com resposta válida), as cinco cartas do PvP por
+154 perguntas (sem repetição e com resposta válida), as cinco cartas do PvP por
 continente, as seis cavernas e o mundo montado (seis instrutores, doze bocas,
 nenhum monstro na superfície).
 
@@ -431,14 +433,14 @@ Depois abra `http://localhost:8000`.
 | `js/pvp.js` | o duelo de perguntas entre jogadores |
 | `js/social.js` | janela da Rede: canais, DMs, pessoas e conta |
 | `js/audio.js` | síntese, ambiente e sequenciador |
-| `js/content.js` | os 32 textos e as falas dos NPCs |
+| `js/content.js` | os 37 textos e as falas dos NPCs |
 | `js/config.js` | mapa, continentes, estações, pedras e cores |
 | `js/data/elements.js` | os 36 elementos da tabela periódica |
 | `js/zones/` | os instrumentos interativos de cada região |
 | `wasm/julia.wat` | fonte do módulo WebAssembly do conjunto de Julia |
 | `wasm/julia.wasm` | o módulo compilado, de 296 bytes |
 | `test/core.test.mjs` | conferência de missões, RPG, treino, fuga, duelo PvP e caverna |
-| `test/content.test.mjs` | conferência das 32 estações, perguntas, itens, cavernas e mundo |
+| `test/content.test.mjs` | conferência das 37 estações, perguntas, itens, cavernas e mundo |
 | `test/ui.test.mjs` | conferência de ids, imports, botões, rótulos e aria |
 | `test/backup.test.mjs` | envelope do backup, whitelist, dedupe e restauração |
 

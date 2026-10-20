@@ -72,6 +72,7 @@ export const NOSTR = {
     { id: "chem", name: "Química", sub: "átomos trocando de roupa" },
     { id: "music", name: "Música", sub: "som organizado em números" },
     { id: "ai", name: "Inteligência Artificial", sub: "redes, linguagem e limites" },
+    { id: "lingua", name: "Vale da Língua", sub: "português do Brasil, do som à frase" },
   ],
 };
 
@@ -153,6 +154,17 @@ export const CONTINENTS = {
     base: 22,
     floor: 23,
     path: 23,
+  },
+  lingua: {
+    id: "lingua",
+    name: "Vale da Língua",
+    sub: "o português do Brasil, do som da fala à frase escrita",
+    accent: "#e8c07a",
+    land: { cx: 29, cy: 104, rx: 15, ry: 9 },
+    rect: { x: 13, y: 94, w: 33, h: 21 },
+    base: 0,
+    floor: 12,
+    path: 1,
   },
 };
 
@@ -330,6 +342,33 @@ export const SITES = [
     label: "Ética e Limites", x: 148, y: 30, post: "ethics",
     accent: "#ff7aa8", icon: "scale",
   },
+
+  // Vale da Língua
+  {
+    id: "words", continent: "lingua", name: "Praça das Palavras",
+    label: "Etimologia", x: 22, y: 98, post: "words",
+    accent: "#e8c07a", icon: "book",
+  },
+  {
+    id: "concord", continent: "lingua", name: "Oficina da Concordância",
+    label: "Sujeito e Verbo", x: 35, y: 99, post: "concord",
+    accent: "#ffc857", icon: "sign",
+  },
+  {
+    id: "accents", continent: "lingua", name: "Mural dos Acentos",
+    label: "Acentuação e Hífen", x: 20, y: 107, post: "accents",
+    accent: "#ff9f6b", icon: "terminal",
+  },
+  {
+    id: "genres", continent: "lingua", name: "Biblioteca dos Gêneros",
+    label: "Gêneros Textuais", x: 36, y: 107, post: "genres",
+    accent: "#b48cff", icon: "book",
+  },
+  {
+    id: "crase", continent: "lingua", name: "Sala da Crase",
+    label: "Crase e Regência", x: 28, y: 111, post: "crase",
+    accent: "#61f4c0", icon: "scale",
+  },
 ];
 
 export const WAYSTONES = [
@@ -340,6 +379,7 @@ export const WAYSTONES = [
   { id: "chem", continent: "chem", name: "Farol da Química", x: 38, y: 64, accent: "#7ee787" },
   { id: "music", continent: "music", name: "Farol da Música", x: 58, y: 32, accent: "#ffb26b" },
   { id: "ai", continent: "ai", name: "Farol da IA", x: 122, y: 32, accent: "#6bd5ff" },
+  { id: "lingua", continent: "lingua", name: "Farol da Língua", x: 29, y: 103, accent: "#e8c07a" },
 ];
 
 export const NPC_SPAWNS = [
@@ -357,6 +397,7 @@ export const NPC_SPAWNS = [
   { id: "lavoisier", continent: "chem", x: 25, y: 63, accent: "#9bf0a8" },
   { id: "bach", continent: "music", x: 45, y: 31, accent: "#ffc489" },
   { id: "shannon", continent: "ai", x: 135, y: 31, accent: "#8fe3ff" },
+  { id: "alzira", continent: "lingua", x: 33, y: 102, accent: "#e8c07a" },
 ];
 
 export const CAT_SPAWN = { x: 87, y: 61 };
@@ -401,4 +442,4 @@ export const SOLID = new Set([
   TILE_KIND.WALL,
 ]);
 
-export const CONTINENT_ORDER = ["hub", "cs", "math", "physics", "chem", "music", "ai"];
+export const CONTINENT_ORDER = ["hub", "cs", "math", "physics", "chem", "music", "ai", "lingua"];

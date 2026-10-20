@@ -292,6 +292,30 @@ export const QUESTS = [
     },
     reward: { xp: 34, title: "Olho de Teste" },
   },
+  {
+    id: "palavra-certa",
+    npc: "alzira",
+    giver: "Professora Alzira",
+    title: "A palavra certa",
+    brief: "Uma frase, uma crase e uma escolha. Se errar, ninguém morre: você tenta de novo.",
+    goal: { type: "quiz" },
+    quiz: {
+      question: "Qual frase usa a crase corretamente?",
+      options: ["Vou a escola.", "Vou à escola.", "Vou há escola."],
+      answer: 1,
+      why: "Vou a algum lugar, e escola pede artigo: a + a = à. A forma de testar é trocar por um substantivo masculino: vou ao colégio.",
+    },
+    reward: { xp: 30, title: "Guardião da Crase" },
+  },
+  {
+    id: "vale-das-letras",
+    npc: "alzira",
+    giver: "Professora Alzira",
+    title: "O vale inteiro",
+    brief: "Visite as cinco estações do Vale da Língua. O som, a palavra, a frase, o texto e o acento.",
+    goal: { type: "cards", continent: "lingua", count: 5 },
+    reward: { xp: 40, title: "Leitor do Vale" },
+  },
 ];
 
 const QUEST_BY_ID = new Map(QUESTS.map((q) => [q.id, q]));

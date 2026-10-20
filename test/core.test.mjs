@@ -408,7 +408,7 @@ const compGround = GROUNDS.find((g) => g.id === "cs");
 comp.startDuel(compGround.monsters[0], compGround, false);
 const faro = comp.usePetAbility({ duel: true });
 assert.equal(faro.ok, true, "faro funciona no duelo");
-assert.equal(typeof faro.spark, "number", "faro risca uma alternativa");
+assert.equal(Array.isArray(faro.sparks) && faro.sparks.length === 1, true, "faro risca uma alternativa");
 assert.equal(comp.mana(), 8, "faro custa 2 de mana");
 assert.ok(comp.petCdLeft("gato") > 0, "faro entra em recarga");
 const againFaro = comp.usePetAbility({ duel: true });
@@ -471,6 +471,19 @@ comp.data.petCd = {};
 const wisp = comp.usePetAbility({});
 assert.equal(wisp.ok, true, "pulso funciona");
 assert.equal(comp.mana(), 5, "pulso devolve 3 de mana");
+
+// papagaio do vale risca duas alternativas de uma vez
+comp.data.pets.papagaio = { bond: 3 };
+comp.data.petActive = "papagaio";
+comp.data.mana = 10;
+comp.data.petCd = {};
+comp.startDuel(compGround.monsters[1], compGround, false);
+const papagaio = comp.usePetAbility({ duel: true });
+assert.equal(papagaio.ok, true, "tagarela funciona");
+assert.equal(papagaio.sparks.length, 2, "tagarela risca duas alternativas");
+assert.equal(new Set(papagaio.sparks).size, 2, "as duas riscadas são diferentes");
+assert.equal(comp.mana(), 7, "tagarela custa 3 de mana");
+comp.duel = null;
 
 // montarias: compra, acelera e o casco só vale na superfície
 comp.data.mounts = {};
@@ -729,9 +742,9 @@ assert.equal(pvpCards.length, 5, "cinco cartas de duelo");
 assert.deepEqual(pvpCards.map((c) => c.difficulty), [1, 2, 3, 4, 5], "uma por dificuldade");
 assert.deepEqual(pvpCards.map((c) => c.damage), [1, 2, 3, 4, 5], "dano acompanha a dificuldade");
 for (const c of pvpCards) {
-  assert.equal(c.options.length, 3, "três alternativas");
-  assert.ok(c.answer >= 0 && c.answer < 3, "resposta dentro das alternativas");
-  assert.equal(new Set(c.options).size, 3, "sem alternativa repetida");
+  assert.equal(c.options.length, 6, "seis alternativas no PvP");
+  assert.ok(c.answer >= 0 && c.answer < 6, "resposta dentro das alternativas");
+  assert.equal(new Set(c.options).size, 6, "sem alternativa repetida");
   assert.ok(c.q.length >= 4 && c.why.length > 0, "pergunta e explicação vêm juntas");
 }
 const dmgBefore = pvpCards[4].damage;

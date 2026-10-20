@@ -6,7 +6,7 @@ import { drawCreature } from "./creature.js";
 const $ = (id) => document.getElementById(id);
 const LETTERS = "ABCDEF";
 let lastPick = null;
-let sparked = null;
+let sparked = [];
 let hinted = null;
 let petInfo = "";
 
@@ -74,7 +74,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
       return false;
     }
     lastPick = null;
-    sparked = null;
+    sparked = [];
     hinted = null;
     petInfo = "";
     render();
@@ -86,7 +86,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
     stopSprite();
     rpg.flee();
     lastPick = null;
-    sparked = null;
+    sparked = [];
   }
 
   function openTraining(continent, tier, theme, monster) {
@@ -96,7 +96,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
       return false;
     }
     lastPick = null;
-    sparked = null;
+    sparked = [];
     hinted = null;
     petInfo = "";
     render();
@@ -167,7 +167,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
       b.appendChild(el("kbd", "", LETTERS[i] || String(i + 1)));
       b.appendChild(el("span", "", text));
       if (hinted === i) b.classList.add("hinted");
-      if (sparked === i) {
+      if (sparked.includes(i)) {
         b.disabled = true;
         b.classList.add("sparked");
       } else if (d.phase === "feedback") {
@@ -214,7 +214,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
         for (const [id, label] of runes) {
           const rune = el("button", "duel-rune", `${label} · ${rpg.itemCount(id)}`);
           rune.type = "button";
-          if (id === "runa-faisca" && sparked !== null) rune.disabled = true;
+          if (id === "runa-faisca" && sparked.length > 0) rune.disabled = true;
           rune.addEventListener("click", () => castSpell(id));
           bar.appendChild(rune);
         }
@@ -306,7 +306,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
       render();
       return false;
     }
-    if (res.effect === "faro") sparked = res.spark;
+    if (res.sparks) sparked.push(...res.sparks);
     else if (res.effect === "sabedoria") hinted = res.answer;
     else if (res.effect === "aviso") {
       petInfo = `${res.pet.name}: ${res.monster} é ${TIERS[res.tier]?.stars || ""} ${TIERS[res.tier]?.name || ""} e puxa ${res.theme || "o tema da sala"}.`;
@@ -337,13 +337,13 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
   }
 
   function spark() {
-    if (!rpg.duel || rpg.duel.phase !== "question" || sparked !== null) return false;
+    if (!rpg.duel || rpg.duel.phase !== "question" || sparked.length) return false;
     const res = rpg.useItem("runa-faisca");
     if (!res.ok) { toast(res.reason, 2800); return false; }
     const q = rpg.duel.question;
     const wrong = q.options.map((_, i) => i).filter((i) => i !== q.answer);
     if (!wrong.length) return false;
-    sparked = wrong[Math.floor(Math.random() * wrong.length)];
+    sparked.push(wrong[Math.floor(Math.random() * wrong.length)]);
     audio.blip();
     render();
     return true;
@@ -351,7 +351,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
 
   function answer(index) {
     if (!rpg.duel || rpg.duel.phase !== "question") return;
-    if (sparked === index) return;
+    if (sparked.includes(index)) return;
     lastPick = index;
     const res = rpg.answer(index);
     if (res.correct) audio.blip();
@@ -372,7 +372,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
       onClose?.();
       return;
     }
-    sparked = null;
+    sparked = [];
     hinted = null;
     petInfo = "";
     const res = rpg.next();

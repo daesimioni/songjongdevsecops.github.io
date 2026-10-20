@@ -9,6 +9,7 @@ export const PET_COLORS = {
   wisp: { body: "#c9a227", light: "#ffe9a0", eye: "#fff3c4" },
   cricket: { body: "#3f6b3a", light: "#5d8f4e", eye: "#ffe9b0" },
   shade: { body: "#3b2d55", light: "#57417c", eye: "#b48cff" },
+  parrot: { body: "#4f9a4a", light: "#7ec96a", eye: "#ffe9b0" },
 };
 
 export function drawPetSprite(ctx, kind, x, y, t = 0, moving = false) {
@@ -84,6 +85,23 @@ export function drawPetSprite(ctx, kind, x, y, t = 0, moving = false) {
     ctx.moveTo(2, -7 - bob);
     ctx.lineTo(4, -10 - bob);
     ctx.stroke();
+  } else if (kind === "parrot") {
+    ctx.fillStyle = colors.body;
+    ctx.fillRect(-4, -6 - bob, 8, 5);
+    ctx.fillRect(-3, -9 - bob, 6, 4);
+    ctx.fillStyle = colors.light;
+    ctx.fillRect(-2, -5 - bob, 4, 2);
+    ctx.fillStyle = "#d94f3d";
+    ctx.fillRect(-3, -10 - bob, 2, 2);
+    ctx.fillRect(-2, -11 - bob, 3, 1);
+    ctx.fillStyle = colors.eye;
+    ctx.fillRect(0, -8 - bob, 2, 2);
+    ctx.fillStyle = "#1a1a1a";
+    ctx.fillRect(1, -8 - bob, 1, 1);
+    ctx.fillStyle = "#e8b84a";
+    ctx.fillRect(2, -6 - bob, 2, 2);
+    ctx.fillStyle = colors.body;
+    ctx.fillRect(-6, -5 - bob, 2, 4);
   } else if (kind === "shade") {
     ctx.globalAlpha = 0.9;
     ctx.fillStyle = colors.body;

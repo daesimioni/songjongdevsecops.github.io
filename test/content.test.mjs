@@ -23,8 +23,8 @@ const faults = [];
 const check = (cond, message) => { if (!cond) faults.push(message); };
 const continents = CONTINENT_ORDER.filter((c) => c !== "hub");
 
-// 32 estações com texto, cinco por continente e duas no porto
-check(SITES.length === 32, `SITES tem ${SITES.length} estações, esperado 32`);
+// 37 estações com texto, cinco por continente e duas no porto
+check(SITES.length === 37, `SITES tem ${SITES.length} estações, esperado 37`);
 check(new Set(SITES.map((s) => s.id)).size === SITES.length, "id de estação repetido");
 check(SITES.filter((s) => s.continent === "hub").length === 2, "o porto precisa de 2 estações");
 for (const site of SITES) {
@@ -131,8 +131,8 @@ for (const c of continents) {
   check(cards.map((x) => x.damage).join(",") === "1,2,3,4,5", `PvP de ${c} com dano fora de ordem`);
   check(new Set(cards.map((x) => x.q)).size === cards.length, `PvP de ${c} repete pergunta`);
   for (const card of cards) {
-    check(card.options.length === 3, `PvP de ${c}: carta sem 3 alternativas`);
-    check(card.answer >= 0 && card.answer < 3, `PvP de ${c}: resposta fora da faixa`);
+    check(card.options.length === 6, `PvP de ${c}: carta sem 6 alternativas`);
+    check(card.answer >= 0 && card.answer < 6, `PvP de ${c}: resposta fora da faixa`);
   }
   check(rpg.buildDeck(c, [1], "").length > 0, `baralho fácil de ${c} vazio`);
   check(rpg.buildDeck(c, [2], "").length > 0, `baralho médio de ${c} vazio`);
@@ -148,7 +148,7 @@ relicRpg.addItem("orbita", 1);
 check(relicRpg.pvpQuestions("cs")[4].damage === 7, "duas relíquias somam o teto de 2 de dano no PvP");
 
 // cavernas: seis, com entrada, cidade, monstros e chefe
-check(DUNGEONS.length === 6, `DUNGEONS tem ${DUNGEONS.length} cavernas, esperado 6`);
+check(DUNGEONS.length === 7, `DUNGEONS tem ${DUNGEONS.length} cavernas, esperado 7`);
 for (const dungeon of DUNGEONS) {
   check(continents.includes(dungeon.continent), `caverna ${dungeon.id} em continente inválido`);
   check(dungeon.monsters?.length >= 4, `caverna ${dungeon.id} com poucos monstros`);
@@ -164,9 +164,9 @@ for (const dungeon of DUNGEONS) {
 
 // o mundo que o jogo monta: instrutores na superfície, bicho só na caverna
 const world = createWorld();
-check(world.hunters.length === 6, `mundo com ${world.hunters.length} clareiras`);
+check(world.hunters.length === 7, `mundo com ${world.hunters.length} clareiras`);
 check(world.monsters.length === 0, "a superfície ainda tem monstros");
-check(world.npcs.filter((n) => n.trainer).length === 6, "faltam instrutores na superfície");
+check(world.npcs.filter((n) => n.trainer).length === 7, "faltam instrutores na superfície");
 for (const c of continents) {
   check(!!world.caves.find((cave) => cave.continent === c), `continente ${c} sem boca de caverna`);
   check(!!DUNGEONS.find((d) => d.continent === c), `continente ${c} sem caverna definida`);

@@ -17,6 +17,14 @@ const PET_ABILITY_IDS = new Set(Object.values(PETS).map((pet) => pet.ability.id)
 // pergunta não precisa citar a palavra exata para puxar assunto.
 const THEME_WORDS = {
   circuitos: ["circuito", "fio", "transistor", "porta", "sinal"],
+  fonemas: ["som", "fonema", "sílaba", "letra", "fala"],
+  verbos: ["verbo", "conjugação", "tempo", "modo", "ação"],
+  crase: ["crase", "preposição", "artigo", "à", "regência"],
+  acentos: ["acento", "oxítona", "paroxítona", "proparoxítona", "hífen"],
+  sintaxe: ["sintaxe", "oração", "sujeito", "predicado", "objeto"],
+  generos: ["gênero", "conto", "crônica", "poema", "romance"],
+  pontuacao: ["vírgula", "ponto", "pontuação", "reticências", "travessão"],
+  etimologia: ["origem", "etimologia", "latim", "palavra", "grego"],
   lógica: ["lógica", "booleano", "proposição", "porta", "verdade"],
   memória: ["memória", "cache", "registrador", "ram", "guardar"],
   tempo: ["clock", "frequência", "ciclo", "tempo", "atraso"],
@@ -473,10 +481,14 @@ export class RPG {
       return { ok: false, reason: `Falta mana (${this.mana()}/${ab.mana}).` };
     }
     const out = { ok: true, pet: { id: pet.id, name: pet.name }, ability: ab, effect: ab.id };
-    if (ab.id === "faro") {
+    if (ab.id === "faro" || ab.id === "tagarela") {
       const wrong = this.duel.question.options.map((_, i) => i).filter((i) => i !== this.duel.question.answer);
       if (!wrong.length) return { ok: false, reason: "Esta pergunta não tem alternativa para riscar." };
-      out.spark = wrong[Math.floor(Math.random() * wrong.length)];
+      const howMany = ab.id === "tagarela" ? 2 : 1;
+      out.sparks = [];
+      for (let i = 0; i < howMany && wrong.length; i++) {
+        out.sparks.push(wrong.splice(Math.floor(Math.random() * wrong.length), 1)[0]);
+      }
     }
     if (ab.id === "sabedoria") out.answer = this.duel.question.answer;
     if (ab.id === "aviso") {
@@ -1013,10 +1025,11 @@ export class RPG {
       if (!q) continue;
       const options = q.options.map((text, i) => ({ text, ok: i === q.a }));
       const mixed = shuffle(options);
+      const filled = this.padOptions(mixed.map((o) => o.text), mixed.findIndex((o) => o.ok), continent, tier);
       list.push({
         q: q.q,
-        options: mixed.map((o) => o.text),
-        answer: mixed.findIndex((o) => o.ok),
+        options: filled.options,
+        answer: filled.answer,
         why: q.why,
         tier,
         difficulty,

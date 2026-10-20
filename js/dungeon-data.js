@@ -183,6 +183,29 @@ const COMMON = {
     monsters: ["Token", "Perceptron", "Gradiente", "Peso", "Vetor", "Camada", "Atenção", "Época", "Ruído", "Caixa"],
     palette: { floor: "#122b3b", floor2: "#0c1f2b", wall: "#07131b", wallTop: "#204760", accent: "#6bd5ff" },
   },
+  lingua: {
+    name: "Grotas da Língua",
+    sub: "onde as palavras se formam, se flexionam e se perdem",
+    material: "tinta",
+    tunnel: "split",
+    equipment: ["pena-poeta", "sobretudo-pergaminho", "oculos-revisor", "anel-virgula"],
+    shift: { a: [2, -1], c: [-2, 2], g: [1, -2] },
+    boss: "O Latim Ancestral",
+    rooms: [
+      ["Boca da Língua", "entrada"],
+      ["Galeria dos Fonemas", "fonemas"],
+      ["Salão dos Verbos", "verbos"],
+      ["Cripta da Crase", "crase"],
+      ["Arquivo dos Acentos", "acentos"],
+      ["Oficina das Frases", "sintaxe"],
+      ["Torre dos Gêneros", "generos"],
+      ["Praça da Gramática", "cidade"],
+      ["Câmara da Pontuação", "pontuacao"],
+      ["Poço do Latim", "etimologia"],
+    ],
+    monsters: ["Sílaba", "Verbo", "Fonema", "Acento", "Hífen", "Crase", "Sintaxe", "Metáfora", "Estrofe", "Rima", "Pontuação", "Concordância"],
+    palette: { floor: "#3a2f22", floor2: "#2a2218", wall: "#1a140c", wallTop: "#57452e", accent: "#e8c07a" },
+  },
 };
 
 export const DUNGEONS = Object.entries(COMMON).map(([continent, d]) => {

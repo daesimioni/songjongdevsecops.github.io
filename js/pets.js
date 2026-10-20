@@ -51,6 +51,14 @@ export const PETS = {
     passive: { manaHit: 1 },
     ability: { id: "ritmo", name: "ritmo", mana: 2, cd: 150000, desc: "+1 de dano por dois minutos" },
   },
+  papagaio: {
+    name: "Papagaio do Vale",
+    kind: "parrot",
+    continent: "lingua",
+    where: "Praça da Gramática",
+    passive: { hp: 3, sight: 1 },
+    ability: { id: "tagarela", name: "tagarela", mana: 3, cd: 120000, desc: "risca duas alternativas erradas de uma vez" },
+  },
   sombra: {
     name: "Sombra da Caixa",
     kind: "shade",
@@ -68,6 +76,7 @@ export const PET_BY_CONTINENT = {
   chem: "vaga",
   music: "grilo",
   ai: "sombra",
+  lingua: "papagaio",
 };
 
 export const MOUNTS = {

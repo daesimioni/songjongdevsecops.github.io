@@ -45,6 +45,10 @@ export const ITEMS = {
   embedding: { name: "Vetor de Significado", continent: "ai", desc: "Uma seta que aponta para o lugar onde as palavras se parecem." },
   matriz: { name: "Matriz Esparsa", continent: "ai", desc: "Uma tabela cheia de zeros que aprendeu a guardar só o que importa." },
   caixa: { name: "Fragmento da Caixa Preta", continent: "ai", relic: true, desc: "Uma placa opaca com uma luz que pisca quando ninguém entende. Relíquia: +5 de vida máxima." },
+  pergaminho: { name: "Pergaminho Velho", continent: "lingua", desc: "Folha que guardou uma frase por tempo demais. A tinta ainda pega no dedo." },
+  tinta: { name: "Tinta Ferrogálica", continent: "lingua", desc: "Escurece com o tempo. Escreve, mancha e não sai fácil." },
+  letra: { name: "Letra Solta", continent: "lingua", desc: "Uma letra que se desprendeu da palavra e ainda procura o lugar dela." },
+  camoes: { name: "Pedra de Camões", continent: "lingua", relic: true, desc: "Uma pedra com uma estrofe gasta pelo mar. Relíquia: +5 de vida máxima." },
   // equipamento temático: cada continente deixa uma arma e uma peça de roupa
   "chave-longa": { name: "Chave de Fenda Longa", continent: "cs", slot: "weapon", weapon: "club", damage: 1, desc: "Um clube de oficina. Aperta parafuso e ideia teimosa." },
   "colete-malha": { name: "Colete de Malha", continent: "cs", slot: "armor", hp: 5, desc: "Anéis de cobre trançados. Pesa, mas segura o tranco." },
@@ -58,6 +62,11 @@ export const ITEMS = {
   "casaca-harmonia": { name: "Casaca de Harmonia", continent: "music", slot: "armor", hp: 4, desc: "Forro de veludo e bolsos para partituras roubadas." },
   "cajado-vetores": { name: "Cajado de Vetores", continent: "ai", slot: "weapon", weapon: "rod", damage: 2, desc: "Aponta para a direção do gradiente. Não pergunte para onde." },
   "capuz-dados": { name: "Capuz de Dados", continent: "ai", slot: "helmet", hp: 3, desc: "Um capuz cheio de pesos pequenos. Aquece a cabeça e a inferência." },
+  "pena-poeta": { name: "Pena do Poeta", continent: "lingua", slot: "weapon", weapon: "rod", damage: 1, desc: "Uma pena que já escreveu versos e recados. A ponta ainda corta." },
+  "sobretudo-pergaminho": { name: "Sobretudo de Pergaminho", continent: "lingua", slot: "armor", hp: 4, desc: "Páginas costuradas com linha de algodão. Segura o frio e o corretivo." },
+  "oculos-revisor": { name: "Óculos do Revisor", continent: "lingua", slot: "helmet", hp: 3, desc: "Lentes que enxergam vírgula fora de lugar a três metros." },
+  "anel-virgula": { name: "Anel de Vírgula", continent: "lingua", slot: "ring", damage: 1, desc: "Uma vírgula de prata que dá uma pausa no meio do golpe." },
+  "colar-rima": { name: "Colar de Rima", continent: "lingua", slot: "necklace", damage: 1, desc: "Duas contas que terminam no mesmo som. Uma puxa a outra." },
   "anel-sinapse": { name: "Anel de Sinapse", continent: "hub", slot: "ring", damage: 1, desc: "Um anel que lembra o último caminho. Relíquia de chefe da Computação." },
   "colar-constante": { name: "Colar da Constante", continent: "hub", slot: "necklace", hp: 5, desc: "A conta que não muda quando o mundo muda. Relíquia de chefe de Música." },
   "pernas-reforcadas": { name: "Perneiras de Cálculo", continent: "math", slot: "legs", hp: 3, desc: "Joelheiras de couro com fórmulas gravadas. Ajudam a subir a escada." },
@@ -215,6 +224,22 @@ const GROUNDS_RAW = [
     ],
     boss: { id: "ai-boss", name: "A Caixa Preta", kind: "boss", dx: 0, dy: 0 },
   },
+  {
+    id: "lingua",
+    continent: "lingua",
+    name: "Caçada das Palavras",
+    center: { x: 29, y: 98 },
+    banner: { x: 0, y: -3 },
+    lever: { x: -3, y: 3 },
+    loot: ["pergaminho", "tinta", "letra"],
+    bossLoot: "camoes",
+    monsters: [
+      { id: "lingua-m1", name: "Sílaba", tier: 1, kind: "slime", dx: -3, dy: -2 },
+      { id: "lingua-m2", name: "Verbo", tier: 2, kind: "eye", dx: 3, dy: -2 },
+      { id: "lingua-m3", name: "Sintaxe", tier: 3, kind: "golem", dx: 0, dy: 3 },
+    ],
+    boss: { id: "lingua-boss", name: "O Latim Ancestral", kind: "boss", dx: 0, dy: 0 },
+  },
 ];
 
 export const GROUNDS = GROUNDS_RAW.map((g) => ({
@@ -341,11 +366,47 @@ export const QUESTIONS = {
       { q: "Alinhamento de IA pergunta...", options: ["Como fazer o objetivo da máquina coincidir com o humano", "Como acelerar a rede", "Como reduzir tokens"], a: 0, why: "Um sistema pode maximizar a métrica errada. Alinhar é fazer a métrica representar o que realmente queremos." },
     ],
   },
+  lingua: {
+    1: [
+      { q: "Qual frase está com a concordância certa?", options: ["Os meninos chegou cedo.", "Os meninos chegaram cedo.", "Os menino chega cedo."], a: 1, why: "Sujeito no plural pede verbo no plural: os meninos chegaram." },
+      { q: "Qual palavra está escrita corretamente?", options: ["excessão", "exceção", "eceção"], a: 1, why: "Escreve-se exceção, com ç depois do x. Excessão não existe." },
+      { q: "Complete: \"Queria ir, ___ chovia.\"", options: ["mais", "mas", "más"], a: 1, why: "Mas é conjunção de oposição. Mais indica quantidade e más é o feminino plural de mau." },
+      { q: "Qual é o plural de cidadão?", options: ["cidadões", "cidadãos", "cidadães"], a: 1, why: "O plural é cidadãos. Muitos substantivos em -ão fazem plural em -ãos, como cidadão, irmão e mão." },
+      { q: "Em “A menina comprou o livro”, o sujeito é...", options: ["A menina", "o livro", "comprou"], a: 0, why: "O sujeito pratica a ação: a menina comprou. O livro é o objeto direto." },
+      { q: "Qual frase usa a vírgula corretamente?", options: ["Maria comprou pão, leite e café.", "Maria, comprou pão leite e café.", "Maria comprou, pão leite e café."], a: 0, why: "A vírgula separa itens de uma enumeração e não deve separar o sujeito do verbo." },
+      { q: "Qual dessas palavras é um verbo?", options: ["cidade", "correr", "bonito"], a: 1, why: "Correr é ação, portanto verbo. Cidade é substantivo e bonito é adjetivo." },
+      { q: "Na fala brasileira, “a gente” pede qual forma?", options: ["A gente fomos.", "A gente foi.", "A gente fui."], a: 1, why: "A expressão a gente funciona como sujeito de terceira pessoa do singular, então o verbo fica foi." },
+    ],
+    2: [
+      { q: "Complete: “Não sei ___ ele faltou.”", options: ["porque", "por que", "porquê"], a: 1, why: "Em pergunta indireta usa-se por que separado, sem acento. Porque explica e porquê é substantivo." },
+      { q: "Complete: “Vou ___ escola.”", options: ["a", "à", "há"], a: 1, why: "Crase é a soma da preposição a com o artigo a: vou à escola. Há indica tempo passado." },
+      { q: "Qual frase está na voz passiva?", options: ["O menino quebrou o vidro.", "O vidro foi quebrado pelo menino.", "O menino se quebrou."], a: 1, why: "Na passiva o sujeito sofre a ação: o vidro foi quebrado. A primeira está na ativa." },
+      { q: "Em “Dei o livro ao amigo”, o objeto indireto é...", options: ["o livro", "ao amigo", "Dei"], a: 1, why: "O livro é objeto direto; ao amigo é objeto indireto, com preposição." },
+      { q: "“Seus olhos são dois oceanos” é...", options: ["metáfora", "metonímia", "hipérbole"], a: 0, why: "A metáfora compara sem usar como: os olhos são os oceanos, não parecem." },
+      { q: "Complete: “___ dez anos que ele partiu.”", options: ["Fazem", "Faz", "Faz-se"], a: 1, why: "O verbo fazer indicando tempo decorrido é impessoal e fica no singular: faz dez anos." },
+      { q: "Qual palavra é proparoxítona?", options: ["café", "lâmpada", "papel"], a: 1, why: "Proparoxítona tem a força na antepenúltima sílaba, como lâm-pa-da. Todas levam acento." },
+      { q: "Complete: “Ele passou ___ na prova.”", options: ["mal", "mau", "máo"], a: 0, why: "Mal é o oposto de bem e pode ser advérbio. Mau é o oposto de bom e é adjetivo." },
+    ],
+    3: [
+      { q: "Qual oração é subordinada substantiva objetiva direta?", options: ["Espero que você venha.", "Quando chove, fico em casa.", "Ele corre como um atleta."], a: 0, why: "A oração completa o verbo esperar sem preposição, então é objeto direto do verbo." },
+      { q: "Em “Entreguei o documento à diretora”, a crase é...", options: ["preposição a + artigo a", "acento de ênfase", "artigo definido"], a: 0, why: "Entregar a algo a alguém: a preposição encontra o artigo de a diretora e vira à." },
+      { q: "Qual colocação pronominal segue a norma-padrão?", options: ["Me empresta o livro.", "Empresta-me o livro.", "Empresta me o livro."], a: 1, why: "Com verbo no início da fala, a próclise não cabe na norma-padrão: usa-se a ênclise, empresta-me." },
+      { q: "“Chorei rios de lágrimas” é...", options: ["hipérbole", "eufemismo", "antítese"], a: 0, why: "Hipérbole é exagero proposital. Eufemismo suaviza e antítese opõe ideias." },
+      { q: "Quem escreveu Dom Casmurro?", options: ["Machado de Assis", "José de Alencar", "Clarice Lispector"], a: 0, why: "Machado de Assis publicou Dom Casmurro em 1899. Capitu e Bentinho são personagens do romance." },
+      { q: "Em “O povo elegeu o prefeito”, o predicado é...", options: ["verbal", "nominal", "verbo-nominal"], a: 0, why: "O núcleo do predicado é o verbo eleger, verbo significativo. Não há predicativo do sujeito." },
+    ],
+  },
 };
 
 // Perguntas que puxam o assunto das salas do fundo da caverna: entram no
 // baralho difícil de cada continente e o tema da sala as coloca na frente.
 export const DEEP_QUESTIONS = {
+  lingua: {
+    q: "Em “Havia muitos livros na sala”, o sujeito é...",
+    options: ["muitos livros", "não existe sujeito", "a sala"],
+    a: 1,
+    why: "O verbo haver no sentido de existir é impessoal: a oração não tem sujeito. Muitos livros é o objeto direto.",
+  },
   cs: {
     q: "Um escalonador de processos decide o quê?",
     options: ["Qual instrução roda em cada núcleo agora", "Qual é o IP da máquina", "Quanto custa um byte"],
