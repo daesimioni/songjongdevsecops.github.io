@@ -246,15 +246,15 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
 #zone-eyebrow {
   font-family: var(--pixel);
   font-size: 8px;
-  letter-spacing: 0.3em;
+  line-height: 2;
+  letter-spacing: 0.18em;
   color: var(--mint);
-  text-transform: uppercase;
   margin-bottom: 12px;
 }
 #zone-name {
   font-family: var(--pixel);
   font-size: clamp(16px, 3.2vw, 28px);
-  line-height: 1.5;
+  line-height: 1.7;
   margin: 0 0 12px;
   color: var(--ink);
   text-shadow: 0 0 30px rgba(180, 140, 255, 0.55), 0 3px 0 #000;
@@ -1088,6 +1088,29 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
 .pill-progress .sep { color: rgba(255,255,255,0.2); }
 .travel-lead { font-family: var(--mono); font-size: 12.5px; line-height: 1.6; color: var(--muted); margin: 0 0 16px; }
 .travel-list { display: grid; gap: 10px; }
+.travel-filter {
+  width: 100%;
+  margin: 0 0 10px;
+  padding: 9px 11px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.25);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 12.5px;
+}
+.travel-filter:focus { border-color: var(--line-strong); }
+.journal-area-group { margin: 2px 0 6px; }
+.journal-area-group > summary {
+  cursor: pointer;
+  padding: 6px 2px;
+  font-family: var(--pixel);
+  font-size: 7.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.journal-area-group[open] > summary { color: var(--mint); }
 .travel-group {
   margin: 12px 2px 4px;
   font-family: var(--pixel);

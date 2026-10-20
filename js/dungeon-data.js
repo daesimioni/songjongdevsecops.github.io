@@ -600,7 +600,7 @@ Object.assign(COMMON, CATALOG_CONTENT.dungeons);
 export const DUNGEONS = Object.entries(COMMON).map(([key, d]) => {
   // metade das cavernas espelha as salas laterais: mesmo desenho de túneis,
   // geografia diferente, sem duplicar a planta inteira.
-  const mirror = ["math", "music", "ai"].includes(key);
+  const mirror = d.mirror ?? ["math", "music", "ai"].includes(key);
   const continent = d.continent || key;
   return {
     id: `dungeon-${key}`,

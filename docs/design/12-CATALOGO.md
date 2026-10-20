@@ -13,7 +13,7 @@ conteúdo das áreas que já existem:
 
 | peça | por área | onde mora |
 |---|---|---|
-| 2 estações (página + instrumento) | 164 páginas | `content.js` e `catalog-bank.js` |
+| 3 estações (página + instrumento) | 210 páginas | `content.js` e `catalog-bank.js` |
 | 1 caverna com 10 salas e chefe | 82 cavernas | `dungeon-data.js` gerado do catálogo |
 | 1 clareira de caçada com 3 monstros | 82 clareiras | `rpg-data.js` gerado |
 | 1 NPC com missão própria | 82 NPCs | `content.js` e `quests.js` |

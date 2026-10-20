@@ -44,12 +44,19 @@ export function createWorld() {
     }
   };
 
-  function areaAtTile(tx, ty) {
-    for (const a of AREAS) {
-      const r = a.rect;
-      if (tx >= r.x && tx < r.x + r.w && ty >= r.y && ty < r.y + r.h) return a;
+  // índice de área por tile: com 86 áreas, varrer a lista em cada tile do mapa
+  // custava segundos na montagem do mundo
+  const areaGrid = new Uint8Array(MAP_W * MAP_H);
+  for (let i = 0; i < AREAS.length; i++) {
+    const r = AREAS[i].rect;
+    for (let y = Math.max(0, r.y); y < Math.min(MAP_H, r.y + r.h); y++) {
+      for (let x = Math.max(0, r.x); x < Math.min(MAP_W, r.x + r.w); x++) areaGrid[y * MAP_W + x] = i + 1;
     }
-    return null;
+  }
+  function areaAtTile(tx, ty) {
+    if (tx < 0 || ty < 0 || tx >= MAP_W || ty >= MAP_H) return null;
+    const found = areaGrid[ty * MAP_W + tx];
+    return found ? AREAS[found - 1] : null;
   }
   function areaAt(x, y) { return areaAtTile(Math.floor(x), Math.floor(y)); }
 
@@ -202,7 +209,13 @@ export function createWorld() {
       const dx = pb.cx - pa.cx, dy = pb.cy - pa.cy;
       const len = Math.hypot(dx, dy) || 1;
       const ux = dx / len, uy = dy / len;
-      bridgeLine(pa.cx + ux * 10.5, pa.cy + uy * 10.5, pb.cx - ux * 10.5, pb.cy - uy * 10.5, 3, BRIDGE);
+      // distância até a borda elíptica da ilha na direção da ponte
+      const edge = (land) => land
+        ? 1 / Math.sqrt((ux / land.rx) ** 2 + (uy / land.ry) ** 2)
+        : 10;
+      const startA = edge(AREAS.find((x) => x.id === a)?.land) + 0.6;
+      const startB = edge(AREAS.find((x) => x.id === b)?.land) + 0.6;
+      bridgeLine(pa.cx + ux * startA, pa.cy + uy * startA, pb.cx - ux * startB, pb.cy - uy * startB, 3, BRIDGE);
       // a ponta da ponte encosta em terra, não em água
       rect(Math.round(pa.cx + ux * 9) - 1, Math.round(pa.cy + uy * 9) - 1, 3, 3, pa.rect ? (AREAS.find((x) => x.id === a)?.base ?? 12) : 12);
       rect(Math.round(pb.cx - ux * 9) - 1, Math.round(pb.cy - uy * 9) - 1, 3, 3, AREAS.find((x) => x.id === b)?.base ?? 12);
@@ -286,13 +299,26 @@ export function createWorld() {
   }
   for (const n of NPC_SPAWNS) used.add(key(Math.round(n.x), Math.round(n.y)));
 
-  const nearUsed = (x, y, r) => {
-    for (const s of used) {
-      const [ux, uy] = s.split(",").map(Number);
-      if (Math.hypot(ux - x, uy - y) < r) return true;
+  // máscara de "perto de estação/pedra/NPC": era uma varredura em lista por
+  // tile do mapa e custava quase 2 s para montar o mundo
+  const RAIO_LIVRE = 2.4;
+  const pertoDeUso = new Uint8Array(MAP_W * MAP_H);
+  const marcarPerto = (ux, uy) => {
+    const r = Math.ceil(RAIO_LIVRE);
+    for (let dy = -r; dy <= r; dy++) {
+      for (let dx = -r; dx <= r; dx++) {
+        const x = ux + dx, y = uy + dy;
+        if (x < 0 || y < 0 || x >= MAP_W || y >= MAP_H) continue;
+        if (Math.hypot(dx, dy) >= RAIO_LIVRE) continue;
+        pertoDeUso[y * MAP_W + x] = 1;
+      }
     }
-    return false;
   };
+  for (const s of used) {
+    const [ux, uy] = s.split(",").map(Number);
+    marcarPerto(ux, uy);
+  }
+  const nearUsed = (x, y) => pertoDeUso[Math.floor(y) * MAP_W + Math.floor(x)] === 1;
 
   const catalogDecor = CATALOG_CONTENT.decor;
   const decoForArea = {
@@ -316,6 +342,16 @@ export function createWorld() {
 
   Object.assign(decoForArea, catalogDecor);
 
+  // enfeite não pode cair no mar: puxa o ponto para o centro da ilha
+  const insideIsland = (x, y, cx, cy) => {
+    let px = x, py = y;
+    for (let i = 0; i < 6 && get(Math.floor(px), Math.floor(py)) === WATER; i++) {
+      px += (cx - px) * 0.34;
+      py += (cy - py) * 0.34;
+    }
+    return { x: px, y: py };
+  };
+
   const decoFor = {
     hub: ["tree", "tree", "flower", "bench", "lamp", "star"],
     cs: ["terminal", "node", "lamp", "terminal", "crystal"],
@@ -331,7 +367,7 @@ export function createWorld() {
     for (let x = 2; x < MAP_W - 2; x++) {
       const t = get(x, y);
       if (![GRASS, K.CIRCUIT, K.GOLD, K.BASALT, K.MOSS, K.SONIC, K.NEURAL, SAND, FLOWER].includes(t)) continue;
-      if (nearUsed(x + 0.5, y + 0.5, 2.4)) continue;
+      if (nearUsed(x + 0.5, y + 0.5)) continue;
       if (hash2(x, y) > 0.055) continue;
       const c = continentAtTile(x, y);
       if (!c) continue;
@@ -365,8 +401,11 @@ export function createWorld() {
     if (stone.continent === "hub") continue;
     // a placa do farol de uma área diz o nome da área, não só o continente
     const area = areaAtTile(stone.x, stone.y);
+    const signSpot = area
+      ? insideIsland(stone.x + 2.4, stone.y + 1.2, area.land.cx, area.land.cy)
+      : { x: stone.x + 2.4, y: stone.y + 1.2 };
     decor.push({
-      type: "sign", x: stone.x + 2.4, y: stone.y + 1.2,
+      type: "sign", x: signSpot.x, y: signSpot.y,
       text: area ? area.name : CONTINENTS[stone.continent].name,
       accent: area ? area.accent : CONTINENTS[stone.continent].accent,
     });
@@ -379,8 +418,9 @@ export function createWorld() {
     const kinds = decoForArea[area.id];
     if (!kinds) continue;
     for (let i = 0; i < 3; i++) {
+      const spot = insideIsland(stone.x - 3 + i * 3, stone.y - 2.2, area.land.cx, area.land.cy);
       decor.push({
-        type: kinds[0], x: stone.x - 3 + i * 3, y: stone.y - 2.2,
+        type: kinds[0], x: spot.x, y: spot.y,
         accent: area.accent, hue: hash2(stone.x + i, stone.y),
       });
     }

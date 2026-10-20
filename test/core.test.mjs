@@ -641,9 +641,12 @@ for (const stone of w.waystones) {
 // toda boca de caverna tem saída livre e caminho desde a pedra do continente
 for (const cave of w.caves) {
   assert.equal(w.boxCollides(cave.exit.x, cave.exit.y, PLAYER_W, PLAYER_H), false, `saída livre em ${cave.continent}`);
-  const stone = w.waystones.find((s) => s.continent === cave.continent);
+  // cada ilha do catálogo tem farol próprio; a caverna é alcançada a pé dele
+  const areaId = String(cave.defId || "").replace(/^dungeon-/, "");
+  const own = w.waystones.find((s) => s.id === areaId);
+  const stone = own || w.waystones.find((s) => s.continent === cave.continent);
   assert.ok(stone, `pedra de ${cave.continent}`);
-  assert.ok(findPath(w, stone, cave.exit), `caminho até a caverna de ${cave.continent}`);
+  assert.ok(findPath(w, stone, cave.exit), `caminho até a caverna de ${areaId || cave.continent}`);
 }
 
 // o anel de pontes liga as ilhas sem passar pelo centro

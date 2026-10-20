@@ -24,6 +24,57 @@ const DECOR = {
   inter: [["book", "orb", "star"], ["crystal", "book", "wave"], ["pillar", "orb", "star"]],
 };
 
+// instrumento de cada estação: casa por palavra do tópico e, se não casar,
+// gira entre os instrumentos da disciplina
+const LAB_RULES = [
+  [/lógic|prova|demonstra|contraexemplo|argument/, "logic"],
+  [/infinit|limite|série|sucess|assíntot/, "infinity"],
+  [/derivada|integral|cálculo|equaç|diferen/, "calculus"],
+  [/probab|estatístic|aleat|distribui|amostr/, "probability"],
+  [/fractal|caos|dimens|topolog/, "fractal"],
+  [/onda|frequên|harmônic|fourier|som|áudio|música/, "fourier"],
+  [/movimento|força|pêndulo|cinemát|mecânic|inércia/, "motion"],
+  [/calor|termodinâm|entropia|temperatura|energia livre/, "thermo"],
+  [/luz|óptic|lente|cor|espectro|fóton/, "optics"],
+  [/gravit|órbita|estrela|galáx|cosmo|planet|astro/, "gravity"],
+  [/elemento|períod|tabela/, "periodic"],
+  [/ligação|molécul|orbital|estrutura molecular/, "bonds"],
+  [/ácido|base|ph|titula|equilíbrio|solução/, "titration"],
+  [/oxida|reduç|eletroquím|bateria/, "energy"],
+  [/equilíbrio químico|balanço|estequiometr/, "balance"],
+  [/bit|binári|porta|circuito|somador/, "adder"],
+  [/processo|concorr|thread|estado|sistema operacional/, "state"],
+  [/cpu|processador|cache|pipeline|microarquitetura/, "cpu"],
+  [/históri|étic|impacto/, "history"],
+  [/linguagem|texto|token|semântic|palavra/, "language"],
+  [/fala|voz|som|oral/, "echo"],
+  [/aprendizado|neural|inteligência artificial|\bia\b|treinamento/, "learning"],
+  [/visão|imagem|pixel/, "vision"],
+];
+const LAB_FALLBACK = {
+  math: ["logic", "infinity", "calculus", "probability"],
+  physics: ["motion", "optics", "gravity"],
+  chem: ["periodic", "bonds", "titration"],
+  cs: ["adder", "cpu", "state"],
+  lingua: ["language", "echo", "history"],
+  inter: ["learning", "fourier", "language"],
+};
+// a pergunta do NPC não pode ter a resposta sempre na letra A
+function quizFor(q, salt) {
+  const correct = q.o[q.a];
+  const base = [correct, q.o[(q.a + 1) % 6], q.o[(q.a + 2) % 6]];
+  const shift = salt % 3;
+  const options = [...base.slice(shift), ...base.slice(0, shift)];
+  return { question: q.q, options, answer: options.indexOf(correct), why: q.why };
+}
+
+function labFor(topic, discipline, index) {
+  const text = `${topic.name} ${topic.def}`.toLowerCase();
+  for (const [re, lab] of LAB_RULES) if (re.test(text)) return lab;
+  const list = LAB_FALLBACK[discipline] || LAB_FALLBACK.math;
+  return list[index % list.length];
+}
+
 const LOOT = {
   math: { loot: ["regua", "teorema", "axioma"], boss: "infinito" },
   physics: { loot: ["ima", "prisma", "quanta"], boss: "orbita" },
@@ -45,11 +96,11 @@ const ICONS = {
 // nomes de quem habita cada arquipélago; ids únicos no mundo
 const KEEPERS = {
   math: [["gauss", "Gauss"], ["noether", "Noether"], ["cantor", "Cantor"], ["euler", "Euler"], ["riemann", "Riemann"], ["poincare", "Poincaré"], ["ramanujan", "Ramanujan"], ["fibonacci", "Fibonacci"], ["hilbert", "Hilbert"], ["leibniz", "Leibniz"], ["pascal", "Pascal"]],
-  physics: [["newton", "Newton"], ["planck", "Planck"], ["bohr", "Bohr"], ["einstein", "Einstein"], ["feynman", "Feynman"], ["maxwell", "Maxwell"], ["kepler", "Kepler"], ["tesla", "Tesla"], ["hawking", "Hawking"], ["fermi", "Fermi"], ["schrodinger", "Schrödinger"], ["heisenberg", "Heisenberg"]],
-  chem: [["dalton", "Dalton"], ["pauling", "Pauling"], ["arrhenius", "Arrhenius"], ["avogadro", "Avogadro"], ["berzelius", "Berzelius"], ["roentgen", "Röntgen"], ["prout", "Prout"], ["leblanc", "Leblanc"], ["wöhler", "Wöhler"], ["cannizzaro", "Cannizzaro"], ["ramsay", "Ramsay"]],
-  cs: [["lovelace", "Lovelace"], ["hopper", "Hopper"], ["dijkstra", "Dijkstra"], ["knuth", "Knuth"], ["lamport", "Lamport"], ["tanenbaum", "Tanenbaum"], ["ritchie", "Ritchie"], ["thompson", "Thompson"], ["torvalds", "Torvalds"], ["berners", "Berners-Lee"], ["rivest", "Rivest"], ["cerf", "Cerf"], ["mccarthy", "McCarthy"], ["kahn", "Kahn"]],
+  physics: [["hooke", "Hooke"], ["planck", "Planck"], ["bohr", "Bohr"], ["einstein", "Einstein"], ["feynman", "Feynman"], ["maxwell", "Maxwell"], ["kepler", "Kepler"], ["tesla", "Tesla"], ["hawking", "Hawking"], ["fermi", "Fermi"], ["schrodinger", "Schrödinger"], ["heisenberg", "Heisenberg"]],
+  chem: [["dalton", "Dalton"], ["pauling", "Pauling"], ["arrhenius", "Arrhenius"], ["avogadro", "Avogadro"], ["berzelius", "Berzelius"], ["roentgen", "Röntgen"], ["prout", "Prout"], ["leblanc", "Leblanc"], ["wohler", "Wöhler"], ["cannizzaro", "Cannizzaro"], ["ramsay", "Ramsay"]],
+  cs: [["lovelace", "Lovelace"], ["hopper", "Hopper"], ["dijkstra", "Dijkstra"], ["knuth", "Knuth"], ["lamport", "Lamport"], ["tanenbaum", "Tanenbaum"], ["ritchie", "Ritchie"], ["thompson", "Thompson"], ["torvalds", "Torvalds"], ["berners", "Berners-Lee"], ["shamir", "Shamir"], ["cerf", "Cerf"], ["mccarthy", "McCarthy"], ["kahn", "Kahn"]],
   lingua: [["camoes", "Camões"], ["cecilia", "Cecília"], ["drummond", "Drummond"], ["guimaraes", "Guimarães"], ["clarice", "Clarice"], ["vieira", "Vieira"], ["pessoa", "Pessoa"], ["saramago", "Saramago"], ["bechara", "Bechara"], ["cunha", "Cunha"], ["said", "Said Ali"], ["bosi", "Bosi"], ["coutinho", "Coutinho"]],
-  inter: [["descartes", "Descartes"], ["nash", "Nash"], ["mandelbrot", "Mandelbrot"], ["wiener", "Wiener"], ["mcluhan", "McLuhan"], ["sapir", "Sapir"], ["whorf", "Whorf"], ["vonbertalanffy", "Bertalanffy"], ["shannon2", "Shannon"], ["turing2", "Turing"], ["lovelace2", "Ada"]],
+  inter: [["descartes", "Descartes"], ["nash", "Nash"], ["mandelbrot", "Mandelbrot"], ["wiener", "Wiener"], ["mcluhan", "McLuhan"], ["sapir", "Sapir"], ["whorf", "Whorf"], ["vonbertalanffy", "Bertalanffy"], ["kolmogorov", "Kolmogorov"], ["godel", "Gödel"], ["hofstadter", "Hofstadter"]],
 };
 
 const WORDS = {
@@ -73,6 +124,13 @@ function shade(hex, amount) {
 
 // título com as palavras pequenas do português em minúscula
 const SMALL = new Set(["e", "de", "da", "do", "das", "dos", "em", "no", "na", "nos", "nas", "a", "o", "as", "os", "um", "uma", "para", "com", "por", "ao", "à"]);
+// artigo da área, para "Cripta dos Fundamentos" e não "Cripta da Fundamentos"
+function articleOf(name) {
+  const m = /^Área (da|das|do|dos) (.+)$/.exec(String(name || ""));
+  if (m) return { article: m[1], noun: m[2] };
+  return { article: "da", noun: String(name || "").replace(/^Área /, "") };
+}
+
 const titleCase = (text) => String(text || "").split(/\s+/).map((word, i) => {
   const clean = word.toLowerCase();
   if (word.length <= 5 && word === word.toUpperCase() && /[A-Z]/.test(word)) return word;
@@ -101,6 +159,7 @@ export function buildCatalogContent() {
     const discipline = DISCIPLINES[spot.discipline];
     const tiles = TILES[spot.discipline] || TILES.math;
     const accent = discipline.accent;
+    const { article, noun } = articleOf(area.name);
     // a interseção pertence ao continente da primeira disciplina que liga, para
     // perguntas, caçada e duelo caírem num baralho que existe
     const continent = spot.discipline === "inter"
@@ -127,7 +186,7 @@ export function buildCatalogContent() {
     const families = DECOR[spot.discipline] || DECOR.inter;
     decor[area.id] = families[order % families.length];
 
-    waystones.push({ id: area.id, continent, name: `Farol da ${area.short}`, x: spot.waystone.x, y: spot.waystone.y, accent });
+    waystones.push({ id: area.id, continent, name: `Farol ${article} ${noun}`, x: spot.waystone.x, y: spot.waystone.y, accent });
 
     bank.forEach((topic, i) => {
       const postId = `${area.id}-${i + 1}`;
@@ -151,7 +210,7 @@ export function buildCatalogContent() {
         read: "4 min",
         tags: [discipline.name.toLowerCase(), area.short.toLowerCase()],
         continent,
-        lab: null,
+        lab: labFor(topic, spot.discipline, i),
         body,
       };
       questions.push({
@@ -195,33 +254,36 @@ export function buildCatalogContent() {
       title: area.name.replace("Área", "Missão"),
       brief: `${area.sub}. ${bank[1].mistake}`,
       goal: { type: "quiz" },
-      quiz: {
-        question: bank[1].q.q,
-        options: [bank[1].q.o[bank[1].q.a], bank[1].q.o[(bank[1].q.a + 1) % 6], bank[1].q.o[(bank[1].q.a + 2) % 6]],
-        answer: 0,
-        why: bank[1].q.why,
-      },
+      quiz: quizFor(bank[1].q, order),
       reward: { xp: 38, title: `Aprendiz de ${keeperName}` },
     });
 
     const roomThemes = [shortWords[0], shortWords[1], shortWords[2], words[0], words[1], words[2], words[3], words[4], words[5], words[6]].map((w) => String(w).toLowerCase());
+    // cada terceira caverna usa outra planta: espelhada e com salas deslocadas
+    const SHIFTS = [
+      { b: [2, -2], e: [-1, 2], h: [2, 1] },
+      { a: [1, 1], c: [-1, -1], g: [0, 2] },
+      { d: [1, -1], f: [-1, 1], h: [-2, 0] },
+    ];
     dungeons[area.id] = {
       continent,
-      name: `Cripta da ${area.short}`,
+      name: `Cripta ${article} ${noun}`,
       sub: area.sub,
       material: "veio",
+      mirror: order % 2 === 1,
+      shift: SHIFTS[order % 3],
       tunnel: ["wide", "split", "zigzag", "cross"][order % 4],
       equipment: [],
-      boss: `O Guardião da ${area.short}`,
+      boss: `O Guardião ${article} ${noun}`,
       rooms: [
-        [`Boca da ${area.short}`, "entrada"],
+        [`Boca ${article} ${noun}`, "entrada"],
         [`Sala ${titleCase(shortWords[0])}`, roomThemes[0]],
         [`Corredor ${titleCase(shortWords[1])}`, roomThemes[1]],
         [`Cripta ${titleCase(shortWords[2])}`, roomThemes[2]],
         [`Oficina ${titleCase(words[0])}`, roomThemes[3]],
         [`Poço ${titleCase(words[1])}`, roomThemes[4]],
         [`Torre ${titleCase(words[2])}`, roomThemes[5]],
-        [`Praça da ${area.short}`, "cidade"],
+        [`Praça ${article} ${noun}`, "cidade"],
         [`Câmara ${titleCase(words[3])}`, roomThemes[6]],
         [`Galeria ${titleCase(words[4])}`, roomThemes[7]],
       ],
@@ -237,7 +299,7 @@ export function buildCatalogContent() {
       id: area.id,
       continent,
       dungeon: `dungeon-${area.id}`,
-      name: `Caçada da ${area.short}`,
+      name: `Caçada ${article} ${noun}`,
       center: { x: spot.hunt.x, y: spot.hunt.y },
       banner: { x: 0, y: -3 },
       lever: { x: -3, y: 3 },
@@ -248,7 +310,7 @@ export function buildCatalogContent() {
         { id: `${area.id}-m2`, name: shortWords[1], tier: 2, kind: "eye", dx: 3, dy: -1 },
         { id: `${area.id}-m3`, name: shortWords[2], tier: 3, kind: "golem", dx: 0, dy: 3 },
       ],
-      boss: { id: `${area.id}-boss`, name: `O Guardião da ${area.short}`, kind: "boss", dx: 0, dy: 0 },
+      boss: { id: `${area.id}-boss`, name: `O Guardião ${article} ${noun}`, kind: "boss", dx: 0, dy: 0 },
       keeper: keeperId,
     });
   }

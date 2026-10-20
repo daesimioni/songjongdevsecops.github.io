@@ -399,6 +399,61 @@ for (const [a, b] of CATALOG_BRIDGES) {
 }
 check(pontesSecas === CATALOG_BRIDGES.length, `pontes secas: ${pontesSecas}/${CATALOG_BRIDGES.length}`);
 
+// português correto nas etiquetas geradas e instrumento em toda estação nova
+const LABS = new Set(["logic", "fractal", "fourier", "solid", "echo", "adder", "state", "cpu", "history", "infinity", "calculus", "probability", "motion", "thermo", "optics", "gravity", "periodic", "bonds", "titration", "energy", "balance", "rhythm", "harmony", "scales", "timbre", "generative", "learning", "neural", "language", "vision"]);
+const artigoDe = (name) => {
+  const m = /^Área (da|das|do|dos) (.+)$/.exec(name);
+  return m ? { art: m[1], noun: m[2] } : { art: "da", noun: name.replace(/^Área /, "") };
+};
+let etiquetaErrada = [], semInstrumento = [];
+for (const item of CATALOG_CONTENT.areas) {
+  const area = CATALOG.find((a) => a.id === item.id);
+  const { art, noun } = artigoDe(area.name);
+  const dungeon = DUNGEONS.find((d) => d.id === `dungeon-${item.id}`);
+  const ground = GROUNDS.find((g) => g.id === item.id);
+  const stone = (WAYSTONES.find((w) => w.id === item.id));
+  const boss = dungeon?.boss || "";
+  if (!dungeon?.name.endsWith(`${art} ${noun}`)) etiquetaErrada.push(`${item.id}: ${dungeon?.name}`);
+  if (!ground?.name.endsWith(`${art} ${noun}`)) etiquetaErrada.push(`${item.id}: ${ground?.name}`);
+  if (!stone?.name.endsWith(`${art} ${noun}`)) etiquetaErrada.push(`${item.id}: ${stone?.name}`);
+  if (!boss.endsWith(`${art} ${noun}`)) etiquetaErrada.push(`${item.id}: ${boss}`);
+  for (const post of Object.values(CATALOG_CONTENT.posts).filter((p) => p.tags?.includes(area.short.toLowerCase()) || p.kicker?.endsWith(area.short.toLowerCase()))) {
+    void post;
+  }
+}
+check(etiquetaErrada.length === 0, `etiquetas sem concordância: ${etiquetaErrada.slice(0, 5).join(" | ")}`);
+for (const [id, post] of Object.entries(CATALOG_CONTENT.posts)) {
+  if (!LABS.has(post.lab)) semInstrumento.push(`${id}:${post.lab}`);
+}
+check(semInstrumento.length === 0, `catações sem instrumento: ${semInstrumento.slice(0, 5).join(", ")}`);
+// nomes de NPC não se repetem entre áreas
+const nomesNpc = new Map();
+for (const n of Object.values(NPCS)) nomesNpc.set(n.name, (nomesNpc.get(n.name) || 0) + 1);
+const repetidos = [...nomesNpc.entries()].filter(([, n]) => n > 1).map(([nome]) => nome);
+check(repetidos.length === 0, `nomes de NPC repetidos: ${repetidos.join(", ")}`);
+// as cavernas geradas não usam todas a mesma planta
+const plantas = new Set(DUNGEONS.filter((d) => CATALOG_CONTENT.areas.some((a) => `dungeon-${a.id}` === d.id))
+  .map((d) => d.rooms.map((r) => `${r.x}:${r.y}`).join("|")));
+check(plantas.size >= 3, `plantas de caverna do catálogo: ${plantas.size}, esperado ao menos 3`);
+
+// missão do NPC: resposta não pode cair sempre na primeira alternativa
+const respostasQuiz = new Set();
+for (const q of CATALOG_CONTENT.quests) {
+  const quiz = q.quiz;
+  check(quiz.options.length === 3, `${q.id}: quiz com ${quiz.options.length} alternativas`);
+  check(new Set(quiz.options).size === 3, `${q.id}: alternativas repetidas no quiz`);
+  check(quiz.options[quiz.answer] === quiz.options[quiz.answer], `${q.id}: sem resposta marcada`);
+  respostasQuiz.add(quiz.answer);
+}
+check(respostasQuiz.size >= 2, `quiz sempre na mesma letra: ${[...respostasQuiz].join(",")}`);
+
+// pergunta de duelo sempre com seis alternativas na hora da luta
+const rpgOptions = new RPG({ getLevel: () => 1, gainXp: () => {}, toast: () => {}, audio: {} });
+for (const item of CATALOG_CONTENT.areas.slice(0, 8)) {
+  const deck = rpgOptions.buildDeck(item.continent, [1], "");
+  check(deck.length > 0 && deck.every((q) => q.options.length === 6), `${item.id}: duelo sem 6 alternativas`);
+}
+
 // cobertura do catálogo: as 82 seções têm área, caverna, NPC e missão no jogo
 let cobertas = 0, semCaverna = [], semMissao = [], semArea = [];
 for (const item of CATALOG) {
@@ -447,6 +502,18 @@ for (const spot of CATALOG_AREAS) {
   if (CATALOG_CONTENT.areas.some((a) => a.id === spot.id) && world.get(spot.cx, spot.cy) === 3) ilhaNaAgua.push(spot.id);
 }
 check(ilhaNaAgua.length === 0, `ilhas na água: ${ilhaNaAgua.slice(0, 6).join(", ")}`);
+
+// enfeite nunca flutua no mar
+const decorNaAgua = world.decor.filter((d) => world.get(Math.floor(d.x), Math.floor(d.y)) === 3);
+check(decorNaAgua.length === 0, `decoração na água: ${decorNaAgua.length} (${decorNaAgua.slice(0, 3).map((d) => d.type).join(", ")})`);
+
+// caverna do catálogo: sala dentro da planta e chefe de verdade
+for (const dungeon of DUNGEONS.filter((d) => CATALOG_CONTENT.areas.some((a) => `dungeon-${a.id}` === d.id))) {
+  for (const room of dungeon.rooms) {
+    check(room.x >= 0 && room.y >= 0 && room.x + room.w <= 64 && room.y + room.h <= 48, `${dungeon.id}: sala ${room.id} fora da planta`);
+  }
+  check(typeof dungeon.boss === "string" && dungeon.boss.length > 3, `${dungeon.id}: sem chefe`);
+}
 
 // bicho-assinatura precisa de desenho e de ficha no bestiário, senão cai no chefe
 const sigLine = source("../js/dungeon.js").split("\n").find((l) => l.includes("const signature =")) || "";

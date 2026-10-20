@@ -1290,13 +1290,17 @@ function buildJournal() {
       })),
     ].filter((group) => group.sites.length);
     for (const group of groups) {
+      // área recolhível: com 86 áreas o diário não pode virar parede de rolagem
+      const wrap = group.title ? document.createElement("details") : document.createElement("div");
       if (group.title) {
-        const sub = document.createElement("div");
-        sub.className = "journal-area";
-        sub.textContent = group.title;
-        list.appendChild(sub);
+        wrap.className = "journal-area-group";
+        const summary = document.createElement("summary");
+        const openedHere = group.sites.filter((site) => state.cards.has(site.post)).length;
+        summary.textContent = `${group.title} · ${openedHere}/${group.sites.length}`;
+        if (world.areaAt(player.x, player.y)?.name === group.title) wrap.open = true;
+        wrap.appendChild(summary);
       }
-    for (const site of group.sites) {
+      for (const site of group.sites) {
       const unlocked = state.cards.has(site.post);
       const post = POSTS[site.post];
       const btn = document.createElement("button");
@@ -1320,8 +1324,9 @@ function buildJournal() {
           openPost(site.post, site);
         });
       }
-      list.appendChild(btn);
-    }
+        wrap.appendChild(btn);
+      }
+      list.appendChild(wrap);
     }
   }
   buildJournalQuests();
@@ -1338,8 +1343,27 @@ function openTravel(mode = "stones") {
     ? "As cidades subterrâneas se ligam por túneis antigos. Escolha a cidade de destino; a saída devolve você à boca daquela caverna."
     : "Os faróis que você já acendeu podem ser alcançados num piscar. Os outros continuam escondidos na névoa.";
   buildTravel();
+  wireTravelFilter();
   openModal("travel");
   audio.open();
+}
+
+// com 93 cavernas e 94 faróis a lista precisa de filtro
+function wireTravelFilter() {
+  const input = $("travel-filter");
+  const list = $("travel-list");
+  if (!input || !list) return;
+  input.value = "";
+  input.oninput = () => {
+    const query = input.value.trim().toLowerCase();
+    for (const node of list.children) {
+      if (node.classList.contains("travel-group")) {
+        node.hidden = false;
+        continue;
+      }
+      node.hidden = !!query && !node.textContent.toLowerCase().includes(query);
+    }
+  };
 }
 
 function buildTravel() {
@@ -2002,7 +2026,7 @@ function loop(now) {
     }
     updateCat(dt);
     if (world.markExplored(player.x, player.y)) state.fogDirty = true;
-    if (state.fogDirty && now - state.fogSavedAt > 1500) {
+    if (state.fogDirty && now - state.fogSavedAt > 4000) {
       state.fogSavedAt = now;
       saveFog();
     }
@@ -2059,6 +2083,10 @@ function loadFog() {
   try {
     const raw = localStorage.getItem(STORAGE.explored);
     if (!raw) return;
+    if (raw.startsWith("r1:")) {
+      world.setExplored(decodeFog(raw));
+      return;
+    }
     const bin = atob(raw);
     const size = world.exploredBytes.length;
     if (bin.length !== size) return;
@@ -2067,15 +2095,34 @@ function loadFog() {
     world.setExplored(bytes);
   } catch { /* sem storage */ }
 }
+// A névoa é praticamente toda zero: guardar em RLE derruba de 269 KB para
+// poucos KB e o save deixa de pesar no laço. O formato antigo continua sendo lido.
+function encodeFog(bytes) {
+  let out = "r1:";
+  let i = 0;
+  while (i < bytes.length) {
+    const value = bytes[i];
+    let run = 1;
+    while (i + run < bytes.length && bytes[i + run] === value && run < 65000) run++;
+    out += `${value}:${run};`;
+    i += run;
+  }
+  return out;
+}
+function decodeFog(raw) {
+  const out = new Uint8Array(world.exploredBytes.length);
+  let at = 0;
+  for (const part of raw.slice(3).split(";")) {
+    if (!part) continue;
+    const [v, n] = part.split(":").map(Number);
+    for (let i = 0; i < n && at < out.length; i++) out[at++] = v;
+  }
+  return out;
+}
 function saveFog() {
   if (!state.fogDirty) return;
   try {
-    const bytes = world.exploredBytes;
-    let s = "";
-    for (let i = 0; i < bytes.length; i += 4096) {
-      s += String.fromCharCode(...bytes.subarray(i, i + 4096));
-    }
-    localStorage.setItem(STORAGE.explored, btoa(s));
+    localStorage.setItem(STORAGE.explored, encodeFog(world.exploredBytes));
     state.fogDirty = false;
   } catch { /* sem storage */ }
 }
