@@ -61,6 +61,10 @@ export const ITEMS = {
   tinta: { name: "Tinta Ferrogálica", continent: "lingua", desc: "Escurece com o tempo. Escreve, mancha e não sai fácil." },
   letra: { name: "Letra Solta", continent: "lingua", desc: "Uma letra que se desprendeu da palavra e ainda procura o lugar dela." },
   camoes: { name: "Pedra de Camões", continent: "lingua", relic: true, desc: "Uma pedra com uma estrofe gasta pelo mar. Relíquia: +5 de vida máxima." },
+  verso: { name: "Verso Solto", continent: "lingua", desc: "Uma linha que perdeu a estrofe e ainda procura a rima." },
+  estrofe: { name: "Estrofe Inteira", continent: "lingua", desc: "Quatro versos que decidiram ficar juntos." },
+  pagina: { name: "Página em Branco", continent: "lingua", desc: "O lugar onde a história ainda pode ser qualquer uma." },
+  "pedra-machado": { name: "Pedra de Machado", continent: "lingua", relic: true, desc: "Uma pedra com um narrador gravado que jura estar contando a verdade. Relíquia: +5 de vida máxima." },
   cobre: { name: "Cobre Enrolado", continent: "physics", desc: "Fio brilhante que conduz corrente e paciência." },
   bobina: { name: "Bobina de Cobre", continent: "physics", desc: "Espiral de fio que transforma movimento em corrente." },
   fusivel: { name: "Fusível Queimado", continent: "physics", desc: "Morreu para salvar o resto. Merece um lugar na mochila." },
@@ -92,6 +96,9 @@ export const ITEMS = {
   "oculos-revisor": { name: "Óculos do Revisor", continent: "lingua", slot: "helmet", hp: 3, desc: "Lentes que enxergam vírgula fora de lugar a três metros." },
   "anel-virgula": { name: "Anel de Vírgula", continent: "lingua", slot: "ring", damage: 1, desc: "Uma vírgula de prata que dá uma pausa no meio do golpe." },
   "colar-rima": { name: "Colar de Rima", continent: "lingua", slot: "necklace", damage: 1, desc: "Duas contas que terminam no mesmo som. Uma puxa a outra." },
+  "caneta-narrativa": { name: "Caneta Narrativa", continent: "lingua", slot: "weapon", weapon: "rod", damage: 2, desc: "Escreve o golpe antes de ele acontecer. A tinta decide o ponto de vista." },
+  "casaco-personagem": { name: "Casaco de Personagem", continent: "lingua", slot: "armor", hp: 5, desc: "Tem bolsos para segredos e um forro que muda de acordo com quem veste." },
+  "oculos-narrador": { name: "Óculos do Narrador", continent: "lingua", slot: "helmet", hp: 3, desc: "Enxergam a cena por dentro da cabeça de quem está contando." },
   "anel-bobina": { name: "Anel de Bobina", continent: "physics", slot: "ring", damage: 1, desc: "Uma espira de cobre no dedo. Gira o golpe junto com o campo." },
   "escudo-capacitor": { name: "Escudo de Capacitor", continent: "physics", slot: "shield", hp: 4, desc: "Segura a carga do golpe e devolve depois, devagar." },
   "manto-dieletrico": { name: "Manto Dielétrico", continent: "physics", slot: "armor", hp: 4, desc: "Tecido que não conduz. Bom para quem trabalha perto de corrente." },
@@ -385,6 +392,23 @@ const GROUNDS_RAW = [
     ],
     boss: { id: "ai-vision-boss", name: "A Alucinação", kind: "boss", dx: 0, dy: 0 },
   },
+  {
+    id: "lingua-literature",
+    continent: "lingua",
+    dungeon: "dungeon-lingua-literature",
+    name: "Caçada da Narrativa",
+    center: { x: 34, y: 178 },
+    banner: { x: 0, y: -3 },
+    lever: { x: -3, y: 3 },
+    loot: ["verso", "estrofe", "pagina"],
+    bossLoot: "pedra-machado",
+    monsters: [
+      { id: "lingua-literature-m1", name: "Verso", tier: 1, kind: "slime", dx: -3, dy: -2 },
+      { id: "lingua-literature-m2", name: "Estrofe", tier: 2, kind: "eye", dx: 3, dy: -2 },
+      { id: "lingua-literature-m3", name: "Narrador", tier: 3, kind: "golem", dx: 0, dy: 3 },
+    ],
+    boss: { id: "lingua-literature-boss", name: "O Narrador Não Confiável", kind: "boss", dx: 0, dy: 0 },
+  },
 ];
 
 export const GROUNDS = GROUNDS_RAW.map((g) => ({
@@ -559,6 +583,8 @@ export const QUESTIONS = {
       { q: "Qual frase usa a vírgula corretamente?", options: ["Maria comprou pão, leite e café.", "Maria, comprou pão leite e café.", "Maria comprou, pão leite e café."], a: 0, why: "A vírgula separa itens de uma enumeração e não deve separar o sujeito do verbo." },
       { q: "Qual dessas palavras é um verbo?", options: ["cidade", "correr", "bonito"], a: 1, why: "Correr é ação, portanto verbo. Cidade é substantivo e bonito é adjetivo." },
       { q: "Na fala brasileira, “a gente” pede qual forma?", options: ["A gente fomos.", "A gente foi.", "A gente fui."], a: 1, why: "A expressão a gente funciona como sujeito de terceira pessoa do singular, então o verbo fica foi." },
+      { q: "Quem conta a história é...", options: ["O narrador", "O autor", "O personagem principal"], a: 0, why: "Narrador é a voz que conta dentro do texto; autor é quem escreveu. Os dois não se confundem." },
+      { q: "Um soneto tem...", options: ["Catorze versos", "Dez versos", "Quatro versos"], a: 0, why: "O soneto clássico tem catorze versos, distribuídos em dois quartetos e dois tercetos." },
     ],
     2: [
       { q: "Complete: “Não sei ___ ele faltou.”", options: ["porque", "por que", "porquê"], a: 1, why: "Em pergunta indireta usa-se por que separado, sem acento. Porque explica e porquê é substantivo." },
@@ -569,6 +595,8 @@ export const QUESTIONS = {
       { q: "Complete: “___ dez anos que ele partiu.”", options: ["Fazem", "Faz", "Faz-se"], a: 1, why: "O verbo fazer indicando tempo decorrido é impessoal e fica no singular: faz dez anos." },
       { q: "Qual palavra é proparoxítona?", options: ["café", "lâmpada", "papel"], a: 1, why: "Proparoxítona tem a força na antepenúltima sílaba, como lâm-pa-da. Todas levam acento." },
       { q: "Complete: “Ele passou ___ na prova.”", options: ["mal", "mau", "máo"], a: 0, why: "Mal é o oposto de bem e pode ser advérbio. Mau é o oposto de bom e é adjetivo." },
+      { q: "O narrador que sabe tudo sobre as personagens é...", options: ["Onisciente", "Personagem", "Testemunha"], a: 0, why: "O narrador onisciente conhece pensamentos e fatos que as personagens não contam. O testemunha só relata o que viu." },
+      { q: "Em poesia, métrica é...", options: ["A contagem das sílabas poéticas", "O assunto do poema", "O nome do autor"], a: 0, why: "Métrica conta sílabas poéticas, com elisões próprias da fala do verso. Não é a mesma contagem da gramática." },
     ],
     3: [
       { q: "Qual oração é subordinada substantiva objetiva direta?", options: ["Espero que você venha.", "Quando chove, fico em casa.", "Ele corre como um atleta."], a: 0, why: "A oração completa o verbo esperar sem preposição, então é objeto direto do verbo." },
@@ -577,6 +605,8 @@ export const QUESTIONS = {
       { q: "“Chorei rios de lágrimas” é...", options: ["hipérbole", "eufemismo", "antítese"], a: 0, why: "Hipérbole é exagero proposital. Eufemismo suaviza e antítese opõe ideias." },
       { q: "Quem escreveu Dom Casmurro?", options: ["Machado de Assis", "José de Alencar", "Clarice Lispector"], a: 0, why: "Machado de Assis publicou Dom Casmurro em 1899. Capitu e Bentinho são personagens do romance." },
       { q: "Em “O povo elegeu o prefeito”, o predicado é...", options: ["verbal", "nominal", "verbo-nominal"], a: 0, why: "O núcleo do predicado é o verbo eleger, verbo significativo. Não há predicativo do sujeito." },
+      { q: "O discurso indireto livre mistura...", options: ["A voz do narrador e a do personagem", "Duas línguas diferentes", "Narrador e leitor"], a: 0, why: "No indireto livre, a fala do personagem aparece sem aspas nem verbo de dizer, embutida na voz do narrador." },
+      { q: "Intertextualidade é...", options: ["O diálogo entre textos", "Cópia sem intenção", "Um resumo do enredo"], a: 0, why: "Um texto retoma, cita ou transforma outro. É conversa entre obras, não plágio nem resumo." },
     ],
   },
 };

@@ -54,8 +54,8 @@ export const QUESTS = [
     npc: "guia",
     giver: "Dona Zefa",
     title: "O mundo inteiro",
-    brief: "Quarenta e nove fragmentos, sete continentes, uma volta completa. Quando o mapa acabar, o Porto ainda vai estar aqui.",
-    goal: { type: "cards", count: 49 },
+    brief: "Cinquenta e um fragmentos, sete continentes, uma volta completa. Quando o mapa acabar, o Porto ainda vai estar aqui.",
+    goal: { type: "cards", count: 51 },
     reward: { xp: 150, title: "Mundo de Song" },
   },
   {
@@ -421,6 +421,25 @@ export const QUESTS = [
       why: "O kernel compara vizinhos: onde a intensidade muda rápido, a resposta é alta. É assim que a rede começa a separar contorno de superfície.",
     },
     reward: { xp: 36, title: "Olho de Marr" },
+  },
+  {
+    id: "narrador-duvida",
+    npc: "machado",
+    giver: "Machado",
+    title: "A versão de quem conta",
+    brief: "Bentinho conta a própria história com muita certeza. O que o leitor deve fazer com essa certeza?",
+    goal: { type: "quiz" },
+    quiz: {
+      question: "O que caracteriza um narrador não confiável?",
+      options: [
+        "Conta a história de um ponto de vista que pode distorcer os fatos",
+        "Nunca participa da história",
+        "Sabe exatamente o que todos pensam",
+      ],
+      answer: 0,
+      why: "O narrador não confiável tem limite ou interesse, e o texto dá pistas para o leitor duvidar. Em Dom Casmurro, a acusação de Bentinho é a versão dele, não a verdade do romance.",
+    },
+    reward: { xp: 36, title: "Leitor Desconfiado" },
   },
 ];
 

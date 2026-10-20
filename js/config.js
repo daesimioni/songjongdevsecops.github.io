@@ -244,6 +244,18 @@ export const AREAS = [
     path: 23,
     accent: "#6bd5ff",
   },
+  {
+    id: "lingua-literature",
+    continent: "lingua",
+    name: "Área da Literatura",
+    sub: "narrativa, verso e o que fica depois da última linha",
+    land: { cx: 30, cy: 170, rx: 16, ry: 10 },
+    rect: { x: 10, y: 156, w: 42, h: 32 },
+    base: 0,
+    floor: 12,
+    path: 1,
+    accent: "#e8c07a",
+  },
 ];
 
 export const SITES = [
@@ -519,6 +531,18 @@ export const SITES = [
     label: "Objetos e Limites", x: 168, y: 18, post: "detection",
     accent: "#8fe3ff", icon: "network",
   },
+
+  // Língua · área da literatura
+  {
+    id: "narrative", continent: "lingua", name: "Sala da Narrativa",
+    label: "Narrador e Tempo", x: 22, y: 166, post: "narrative",
+    accent: "#e8c07a", icon: "book",
+  },
+  {
+    id: "poetry", continent: "lingua", name: "Recital dos Versos",
+    label: "Poesia e Métrica", x: 39, y: 175, post: "poetry",
+    accent: "#ffd166", icon: "text",
+  },
 ];
 
 export const WAYSTONES = [
@@ -536,6 +560,7 @@ export const WAYSTONES = [
   { id: "chem-organic", continent: "chem", name: "Farol da Orgânica", x: 31, y: 138, accent: "#7ee787" },
   { id: "music-acoustics", continent: "music", name: "Farol da Acústica", x: 59, y: 63, accent: "#ffb26b" },
   { id: "ai-vision", continent: "ai", name: "Farol da Visão", x: 168, y: 12, accent: "#6bd5ff" },
+  { id: "lingua-literature", continent: "lingua", name: "Farol da Literatura", x: 30, y: 170, accent: "#e8c07a" },
 ];
 
 export const NPC_SPAWNS = [
@@ -560,6 +585,7 @@ export const NPC_SPAWNS = [
   { id: "kekule", continent: "chem", x: 27, y: 141, accent: "#7ee787" },
   { id: "helmholtz", continent: "music", x: 55, y: 59, accent: "#ffb26b" },
   { id: "marr", continent: "ai", x: 164, y: 15, accent: "#6bd5ff" },
+  { id: "machado", continent: "lingua", x: 27, y: 174, accent: "#e8c07a" },
 ];
 
 export const CAT_SPAWN = { x: 87, y: 61 };

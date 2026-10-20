@@ -350,6 +350,30 @@ const COMMON = {
     monsters: ["Pixel", "Borda", "Filtro", "Kernel", "Pooling", "Feature", "Classe", "Caixa", "Rosto", "Ruído", "Alucinação"],
     palette: { floor: "#132b3a", floor2: "#0d1f2a", wall: "#07131a", wallTop: "#204a5f", accent: "#6bd5ff" },
   },
+  "lingua-literature": {
+    continent: "lingua",
+    name: "Biblioteca das Vozes",
+    sub: "cada corredor conta a mesma história de um jeito",
+    material: "tinta",
+    tunnel: "split",
+    equipment: ["caneta-narrativa", "casaco-personagem", "oculos-narrador"],
+    shift: { a: [1, 2], c: [-2, -1], g: [-1, 2] },
+    boss: "O Narrador Não Confiável",
+    rooms: [
+      ["Boca da História", "entrada"],
+      ["Sala do Narrador", "narrador"],
+      ["Corredor do Foco", "foco"],
+      ["Cripta do Tempo", "tempo"],
+      ["Oficina dos Versos", "versos"],
+      ["Poço da Métrica", "métrica"],
+      ["Torre das Rimas", "rimas"],
+      ["Praça das Personagens", "cidade"],
+      ["Câmara do Intertexto", "intertexto"],
+      ["Galeria do Silêncio", "silêncio"],
+    ],
+    monsters: ["Verso", "Estrofe", "Narrador", "Capitu", "Rima", "Metáfora", "Personagem", "Foco", "Tempo", "Voz", "Silêncio"],
+    palette: { floor: "#33291d", floor2: "#261e15", wall: "#17110b", wallTop: "#503f2b", accent: "#e8c07a" },
+  },
 };
 
 export const DUNGEONS = Object.entries(COMMON).map(([key, d]) => {

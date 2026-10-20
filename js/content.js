@@ -12,7 +12,7 @@ export const POSTS = {
     lab: null,
     body: `
       <p>Este blog não tem índice. Tem <strong>mapa</strong>. Você entra com um boneco, atravessa pontes e escolhe por qual continente começar. Cada estação que encontra é uma página: um texto curto e um instrumento para mexer com as mãos.</p>
-      <p>São sete continentes. A <em>Computação</em> mostra como saímos de interruptores e areia até processadores. <em>Matemática</em> visita o infinito, as formas, a mudança e o acaso. <em>Física</em> testa pêndulos, ondas, calor, luz e órbitas. <em>Química</em> abre a tabela periódica, as ligações, as reações e o equilíbrio. <em>Música</em> mostra a matemática escondida no som. <em>Inteligência Artificial</em> abre os dados, as redes, a linguagem e os limites. O <em>Vale da Língua</em> desce ao português do Brasil: o som, a palavra, a frase e o texto. Ao todo, 49 fragmentos para descobrir.</p>
+      <p>São sete continentes. A <em>Computação</em> mostra como saímos de interruptores e areia até processadores. <em>Matemática</em> visita o infinito, as formas, a mudança e o acaso. <em>Física</em> testa pêndulos, ondas, calor, luz e órbitas. <em>Química</em> abre a tabela periódica, as ligações, as reações e o equilíbrio. <em>Música</em> mostra a matemática escondida no som. <em>Inteligência Artificial</em> abre os dados, as redes, a linguagem e os limites. O <em>Vale da Língua</em> desce ao português do Brasil: o som, a palavra, a frase e o texto. Ao todo, 51 fragmentos para descobrir.</p>
       <p>Cada estação abre uma página e soma experiência. O <strong>Diário</strong> guarda o que você já encontrou. As <strong>Pedras do Porto</strong>, os monólitos brilhantes nas docas, levam você de volta a qualquer continente já visitado. A névoa do minimapa só some onde você anda.</p>
       <blockquote>Não tem pressa. O mapa é grande, mas o caminho é seu.</blockquote>
       <p>Os <strong>NPCs</strong> têm missões. Aperte F perto deles: tem caminhada, pergunta e conversa. Cada missão paga experiência e um título, e o Diário mostra quanto falta para a próxima.</p>
@@ -750,6 +750,40 @@ export const POSTS = {
       <blockquote>Detectar é dizer o que e onde. Confiar é outra pergunta, e não vem no mesmo pacote.</blockquote>
     `,
   },
+
+  // ---------------- Língua · literatura ----------------
+  narrative: {
+    kicker: "língua · sala da narrativa",
+    title: "Quem conta a história também escolhe o que você vê",
+    date: "2026-09-14",
+    read: "6 min",
+    tags: ["literatura", "narrador", "narrativa"],
+    continent: "lingua",
+    lab: null,
+    body: `
+      <p>Toda narrativa tem uma voz. O narrador não é o autor: é a posição de quem conta. Pode estar fora da história, sabendo tudo, ou dentro dela, sabendo só o que viveu. Essa escolha muda o que o leitor pode descobrir e quando.</p>
+      <p>No narrador onisciente, o texto entra na cabeça das personagens e informa o que ninguém disse. No narrador-personagem, o leitor fica preso ao ponto de vista dele. No narrador testemunha, acompanha de perto sem participar de tudo. Cada um produz um tipo diferente de suspeita.</p>
+      <p>O tempo também é escolha. A narração pode seguir a ordem dos fatos, começar pelo meio ou voltar décadas. Cenas detalhadas desaceleram; resumos apressam. O ritmo não é enfeite: é o leitor sendo conduzido pelo olho de quem conta.</p>
+      <p>Às vezes o narrador mente, distorce ou entende errado, e o texto deixa pistas para o leitor desconfiar. É o narrador não confiável. O romance clássico brasileiro tem um exemplo famoso: Bentinho conta a própria história e condena Capitu com uma certeza que o leitor não precisa compartilhar.</p>
+      <blockquote>A história não é só o que aconteceu. É o que a voz escolheu contar, e na ordem em que contou.</blockquote>
+    `,
+  },
+  poetry: {
+    kicker: "língua · recital dos versos",
+    title: "O verso é uma unidade de respiração",
+    date: "2026-09-10",
+    read: "5 min",
+    tags: ["literatura", "poesia", "métrica"],
+    continent: "lingua",
+    lab: null,
+    body: `
+      <p>Verso não é sinônimo de rima. Verso é a linha do poema, e o que o separa do parágrafo é a decisão de cortar ali. O corte muda a respiração e cria expectativa. Um poema pode ter versos livres, sem métrica fixa, e continuar sendo poema.</p>
+      <p>Quando há métrica, conta-se sílaba poética, não gramatical. As vogais vizinhas podem se juntar numa só emissão, e a contagem segue o ritmo da fala. Um soneto tem catorze versos; uma redondilha maior tem sete sílabas poéticas. O nome vem da contagem, não do assunto.</p>
+      <p>A rima é repetição de som no fim ou no interior do verso. Pode ser consoante, quando os sons finais coincidem por completo, ou toante, quando só as vogais coincidem. Rima pobre, rica, rara: a classificação depende do que se repete.</p>
+      <p>No século vinte, a poesia concreta levou a página a sério: o espaço em branco, o tamanho da letra e a disposição das palavras passaram a significar junto com o texto. Ler em voz alta ainda ajuda, mas o olho também passou a ler a forma.</p>
+      <blockquote>O corte do verso é uma pausa que o poeta escolhe. O leitor obedece com o corpo.</blockquote>
+    `,
+  },
 };
 
 export const NPCS = {
@@ -1009,6 +1043,24 @@ export const NPCS = {
       "Treino de visão aqui, no claro e com imagem parada. A câmara é que cobra.",
       "Comece pela convolução: kernel pequeno, desliza, soma, destaca borda. O resto é empilhar.",
       "Detecção não é classificação com nome maior. Precisa da caixa, não só da classe.",
+    ],
+  },
+  machado: {
+    name: "Machado",
+    lines: [
+      "Quem conta a história escolhe o que o leitor pode saber. Desconfie de narrador com certeza demais.",
+      "Capitu nunca contou a versão dela. É por isso que a discussão dura até hoje.",
+      "O tempo da narrativa não é o tempo do relógio. Uma página pode durar um ano, ou um segundo.",
+      "Ao leitor cabe ler nas entrelinhas. O narrador diz uma coisa e o texto mostra outra.",
+      "A biblioteca ao lado guarda vozes que discordam entre si. Lá dentro, a pergunta é sobre quem fala.",
+    ],
+  },
+  "trainer-lingua-literature": {
+    name: "Mestra Cecília",
+    lines: [
+      "Treino de literatura aqui, no claro e sem rima forçada. A biblioteca é que cobra.",
+      "Comece pelo narrador: quem conta, de onde conta e o que sabe. Metade das perguntas sai daí.",
+      "Verso livre não é verso sem regra. É verso que escolhe as regras a cada linha.",
     ],
   },
   shannon: {
