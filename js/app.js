@@ -1384,10 +1384,15 @@ function findNearest() {
       best = { kind, obj, ground };
     }
   };
+  // a boca da caverna é medida pelo degrau de saída, não pelo centro do
+  // desenho: NPC que passeia na frente não pode esconder a descida.
+  for (const c of world.caves) {
+    const d = Math.hypot(c.exit.x - player.x, c.exit.y - player.y);
+    if (d <= 1.8 && d < bestD) { bestD = d; best = { kind: "cave", obj: c, ground: null }; }
+  }
   for (const s of world.stations) near("station", s);
   for (const w of world.waystones) near("waystone", w);
   for (const n of world.npcs) near("npc", n);
-  for (const c of world.caves) near("cave", c, null, 1.8);
   return best;
 }
 

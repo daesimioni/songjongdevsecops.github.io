@@ -48,6 +48,11 @@ Cada área tem duas estações, uma pedra de viagem, um NPC com missão, uma
 clareira de caçada, um instrutor e uma caverna própria. A ponte liga a área ao
 continente ou à área vizinha; o teste de caminho cobre todas as bocas.
 
+Regra de interação da boca: a distância é medida pelo degrau de saída
+(`cave.exit`), não pelo centro do desenho. Assim um NPC que passeia na frente
+da caverna não rouba o F. O teste de navegador entra e sai pelas 28 bocas, uma
+a uma, e confere que a volta cai no mesmo degrau.
+
 ## 2. A superfície
 
 ### As sete ilhas
