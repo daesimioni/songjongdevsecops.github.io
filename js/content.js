@@ -12,7 +12,7 @@ export const POSTS = {
     lab: null,
     body: `
       <p>Este blog não tem índice. Tem <strong>mapa</strong>. Você entra com um boneco, atravessa pontes e escolhe por qual continente começar. Cada estação que encontra é uma página: um texto curto e um instrumento para mexer com as mãos.</p>
-      <p>São sete continentes. A <em>Computação</em> mostra como saímos de interruptores e areia até processadores. <em>Matemática</em> visita o infinito, as formas, a mudança e o acaso. <em>Física</em> testa pêndulos, ondas, calor, luz e órbitas. <em>Química</em> abre a tabela periódica, as ligações, as reações e o equilíbrio. <em>Música</em> mostra a matemática escondida no som. <em>Inteligência Artificial</em> abre os dados, as redes, a linguagem e os limites. O <em>Vale da Língua</em> desce ao português do Brasil: o som, a palavra, a frase e o texto. Ao todo, 45 fragmentos para descobrir.</p>
+      <p>São sete continentes. A <em>Computação</em> mostra como saímos de interruptores e areia até processadores. <em>Matemática</em> visita o infinito, as formas, a mudança e o acaso. <em>Física</em> testa pêndulos, ondas, calor, luz e órbitas. <em>Química</em> abre a tabela periódica, as ligações, as reações e o equilíbrio. <em>Música</em> mostra a matemática escondida no som. <em>Inteligência Artificial</em> abre os dados, as redes, a linguagem e os limites. O <em>Vale da Língua</em> desce ao português do Brasil: o som, a palavra, a frase e o texto. Ao todo, 47 fragmentos para descobrir.</p>
       <p>Cada estação abre uma página e soma experiência. O <strong>Diário</strong> guarda o que você já encontrou. As <strong>Pedras do Porto</strong>, os monólitos brilhantes nas docas, levam você de volta a qualquer continente já visitado. A névoa do minimapa só some onde você anda.</p>
       <blockquote>Não tem pressa. O mapa é grande, mas o caminho é seu.</blockquote>
       <p>Os <strong>NPCs</strong> têm missões. Aperte F perto deles: tem caminhada, pergunta e conversa. Cada missão paga experiência e um título, e o Diário mostra quanto falta para a próxima.</p>
@@ -682,6 +682,40 @@ export const POSTS = {
       <blockquote>Repita o bloco mil vezes e ele deixa de ser bloco. Vira substância.</blockquote>
     `,
   },
+
+  // ---------------- Música · acústica ----------------
+  acoustics: {
+    kicker: "música · câmara acústica",
+    title: "Todo corpo tem uma nota que ele gosta",
+    date: "2026-09-30",
+    read: "5 min",
+    tags: ["acústica", "ressonância", "ondas"],
+    continent: "music",
+    lab: null,
+    body: `
+      <p>Bata num copo e ele toca uma nota. Mude a quantidade de água e a nota muda. Todo corpo tem frequências naturais, aquelas em que vibra com pouca energia e muita amplitude. Quando um som chega perto de uma delas, o corpo responde junto: é a ressonância.</p>
+      <p>O fenômeno não é exclusivo de instrumento. Ponte, prédio, taça de cristal e até a caixa do violão têm modos naturais. Uma força pequena, repetida no ritmo certo, acumula energia a cada ciclo. É por isso que cantor de voz potente quebra taça sem tocar nela.</p>
+      <p>Atrás disso estão as ondas estacionárias. Numa corda presa nas duas pontas, as pontas são nós fixos: só cabem padrões em que um número inteiro de meias ondas cabe no comprimento. Essas são as frequências harmônicas, múltiplos da fundamental. O mesmo raciocínio vale para tubos, com nós e ventres nas pontas certas.</p>
+      <p>Sala também ressoa. Reflexões atrasadas viram eco ou reverberação; frequências que a sala favorece soam mais altas que as outras. A sala anecoica faz o contrário: absorve tudo e deixa o som nu, sem a assinatura do lugar.</p>
+      <blockquote>Ressoar não é gritar mais alto. É chegar no ritmo certo.</blockquote>
+    `,
+  },
+  instruments: {
+    kicker: "música · oficina dos instrumentos",
+    title: "Corda, tubo e pele: três jeitos de mexer o ar",
+    date: "2026-09-26",
+    read: "6 min",
+    tags: ["instrumentos", "acústica", "timbre"],
+    continent: "music",
+    lab: null,
+    body: `
+      <p>Instrumentos de corda funcionam com cordas esticadas. Mais tensão, mais agudo. Mais comprimento, mais grave. Mais massa por metro, mais grave ainda. O violão aperta a corda com o dedo para encurtar o comprimento; o piano usa martelo e cordas de espessuras diferentes.</p>
+      <p>Instrumentos de sopro usam a coluna de ar dentro de um tubo. Num tubo aberto nas duas pontas, cabem meias ondas; fechado numa ponta, cabem quartos ímpares. Por isso clarinete e flauta têm dedilhados e extensões diferentes apesar de serem ambos tubos.</p>
+      <p>Percussão usa membrana ou barra. A membrana tem modos próprios, e o tambor não produz uma nota limpa: produz um conjunto de frequências que decai em tempos diferentes. É essa mistura que dá o ataque seco e o corpo do som.</p>
+      <p>O timbre nasce daí: quais harmônicos aparecem, com que força, e como o som começa e termina. Um violino e uma flauta tocando a mesma nota diferem no conteúdo harmônico e no envelope. A altura é uma só; a identidade é a mistura.</p>
+      <blockquote>Três famílias, um objetivo: perturbar o ar de um jeito que o ouvido reconheça.</blockquote>
+    `,
+  },
 };
 
 export const NPCS = {
@@ -905,6 +939,24 @@ export const NPCS = {
       "Treino de orgânica é aqui, no claro e de jaleco. O bosque é que cobra.",
       "Comece pela tetravalência: sabendo que o carbono faz quatro ligações, a metade das perguntas se resolve.",
       "Não confunda grupo funcional com cadeia. A cadeia é o esqueleto; o grupo é o tempero.",
+    ],
+  },
+  helmholtz: {
+    name: "Helmholtz",
+    lines: [
+      "Fiz um resonador de vidro para provar que o ouvido decompõe o som. Cada esfera respondia a uma faixa estreita.",
+      "Ressonância é energia entrando no ritmo certo. Pequena por ciclo, enorme depois de muitos ciclos.",
+      "Duas notas quase iguais produzem batimento: a diferença vira uma pulsação lenta. Afine pelo batimento e ele some.",
+      "A câmara logo ali foi construída para não devolver nada. O silêncio de dentro é mais estranho que qualquer acorde.",
+      "Se a onda estacionária te enrolar, conte os nós. Cada nó é uma ponta que não se mexe.",
+    ],
+  },
+  "trainer-music-acoustics": {
+    name: "Mestre Fourier",
+    lines: [
+      "Treino de acústica aqui, no claro e sem eco atrapalhando. A câmara é que cobra.",
+      "Toda onda complicada é soma de senos. Quebre o som em partes e a pergunta fica mais simples.",
+      "Ressonância é a pergunta que mais aparece. Decore a condição: frequência excitadora igual à natural.",
     ],
   },
   shannon: {

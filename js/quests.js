@@ -54,8 +54,8 @@ export const QUESTS = [
     npc: "guia",
     giver: "Dona Zefa",
     title: "O mundo inteiro",
-    brief: "Quarenta e cinco fragmentos, sete continentes, uma volta completa. Quando o mapa acabar, o Porto ainda vai estar aqui.",
-    goal: { type: "cards", count: 45 },
+    brief: "Quarenta e sete fragmentos, sete continentes, uma volta completa. Quando o mapa acabar, o Porto ainda vai estar aqui.",
+    goal: { type: "cards", count: 47 },
     reward: { xp: 150, title: "Mundo de Song" },
   },
   {
@@ -383,6 +383,25 @@ export const QUESTS = [
       why: "O anel tem seis carbonos com elétrons pi que circulam por igual. O círculo resume isso: não há uma ligação dupla fixa em cada posição.",
     },
     reward: { xp: 34, title: "Guardião do Anel" },
+  },
+  {
+    id: "nota-que-insiste",
+    npc: "helmholtz",
+    giver: "Helmholtz",
+    title: "A nota que insiste",
+    brief: "Toda taça tem uma frequência preferida. O que precisa acontecer para ela responder?",
+    goal: { type: "quiz" },
+    quiz: {
+      question: "O que provoca ressonância num corpo?",
+      options: [
+        "Uma vibração na frequência natural dele",
+        "Qualquer som, desde que alto",
+        "Uma vibração muito acima da natural",
+      ],
+      answer: 0,
+      why: "Quando a excitação bate com um modo natural, a energia se acumula ciclo após ciclo e a amplitude cresce. Fora dessa frequência, o corpo responde pouco.",
+    },
+    reward: { xp: 34, title: "Ouvinte de Helmholtz" },
   },
 ];
 

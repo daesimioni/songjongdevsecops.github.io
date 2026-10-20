@@ -220,6 +220,18 @@ export const AREAS = [
     path: 17,
     accent: "#7ee787",
   },
+  {
+    id: "music-acoustics",
+    continent: "music",
+    name: "Área da Acústica",
+    sub: "ondas, ressonância e o que o ouvido separa",
+    land: { cx: 59, cy: 63, rx: 11, ry: 16 },
+    rect: { x: 46, y: 44, w: 26, h: 38 },
+    base: 20,
+    floor: 21,
+    path: 21,
+    accent: "#ffb26b",
+  },
 ];
 
 export const SITES = [
@@ -471,6 +483,18 @@ export const SITES = [
     label: "Cadeias e Polímeros", x: 40, y: 143, post: "polymers",
     accent: "#6bd5ff", icon: "chain",
   },
+
+  // Música · área da acústica
+  {
+    id: "acoustics", continent: "music", name: "Câmara Acústica",
+    label: "Ressonância e Harmônicos", x: 53, y: 54, post: "acoustics",
+    accent: "#ffb26b", icon: "wave",
+  },
+  {
+    id: "instruments", continent: "music", name: "Oficina dos Instrumentos",
+    label: "Cordas, Tubos e Pele", x: 65, y: 70, post: "instruments",
+    accent: "#ffd166", icon: "piano",
+  },
 ];
 
 export const WAYSTONES = [
@@ -486,6 +510,7 @@ export const WAYSTONES = [
   { id: "cs-arch", continent: "cs", name: "Farol da Arquitetura", x: 204, y: 25, accent: "#61f4c0" },
   { id: "math-analysis", continent: "math", name: "Farol da Análise", x: 226, y: 78, accent: "#b48cff" },
   { id: "chem-organic", continent: "chem", name: "Farol da Orgânica", x: 31, y: 138, accent: "#7ee787" },
+  { id: "music-acoustics", continent: "music", name: "Farol da Acústica", x: 59, y: 63, accent: "#ffb26b" },
 ];
 
 export const NPC_SPAWNS = [
@@ -508,6 +533,7 @@ export const NPC_SPAWNS = [
   { id: "vonneumann", continent: "cs", x: 196, y: 29, accent: "#61f4c0" },
   { id: "cauchy", continent: "math", x: 219, y: 84, accent: "#b48cff" },
   { id: "kekule", continent: "chem", x: 27, y: 141, accent: "#7ee787" },
+  { id: "helmholtz", continent: "music", x: 55, y: 59, accent: "#ffb26b" },
 ];
 
 export const CAT_SPAWN = { x: 87, y: 61 };

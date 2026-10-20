@@ -302,6 +302,30 @@ const COMMON = {
     monsters: ["Carbono", "Cadeia", "Eteno", "Benzeno", "Álcool", "Cetona", "Éster", "Polímero", "Isômero", "Quiral", "Amida"],
     palette: { floor: "#1c3322", floor2: "#14261a", wall: "#0a1710", wallTop: "#2c4f34", accent: "#7ee787" },
   },
+  "music-acoustics": {
+    continent: "music",
+    name: "Câmara dos Ecos",
+    sub: "uma sala que devolve cada som com um pouco de atraso",
+    material: "madeira",
+    tunnel: "cross",
+    equipment: ["anel-harmonico", "manto-acustico", "fones-eco"],
+    shift: { b: [2, -1], d: [-1, 2], g: [2, 1] },
+    boss: "O Eco Profundo",
+    rooms: [
+      ["Boca do Eco", "entrada"],
+      ["Sala da Ressonância", "ressonância"],
+      ["Corredor dos Harmônicos", "harmônicos"],
+      ["Oficina dos Tubos", "tubos"],
+      ["Cripta das Cordas", "cordas"],
+      ["Poço das Membranas", "membranas"],
+      ["Torre do Silêncio", "anecoica"],
+      ["Praça dos Ecos", "cidade"],
+      ["Câmara dos Batimentos", "batimentos"],
+      ["Galeria do Decaimento", "decaimento"],
+    ],
+    monsters: ["Ressonância", "Harmônico", "Eco", "Tubo", "Corda", "Membrana", "Nó", "Ventre", "Batimento", "Timbre", "Decaimento"],
+    palette: { floor: "#332a1c", floor2: "#261f14", wall: "#17110a", wallTop: "#4e3f2c", accent: "#ffb26b" },
+  },
 };
 
 export const DUNGEONS = Object.entries(COMMON).map(([key, d]) => {
