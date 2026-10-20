@@ -169,6 +169,9 @@ export async function saveTo(rede, { force = false } = {}) {
   return { ok: true, at: snapshot.at, bytes: text.length, relays: res.relays || 0 };
 }
 
+// ponytail: lemos só os últimos 30 dias e ficamos com o snapshot mais novo;
+// sem poda do histórico (evento de relay não se apaga). Se um dia o volume
+// pesar, o caminho é um evento "índice" apontando o snapshot atual.
 export async function latestFrom(rede) {
   if (!rede?.ready) return null;
   const list = await rede.selfSavesRecent(BACKUP.days, 6000);
