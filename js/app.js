@@ -2454,15 +2454,44 @@ function abrirMenu(e, wx, wy) {
   ctxMenu.style.top = `${Math.max(8, y)}px`;
   ctxMenu.querySelector("button")?.focus({ preventScroll: true });
 }
-$("world").addEventListener("contextmenu", (e) => {
-  e.preventDefault();
+function abrirMenuNoPonto(clientX, clientY) {
   if (!state.started || state.panelOpen || state.modal || state.chatOpen || dungeon?.isOpen()) return;
   const rect = $("world").getBoundingClientRect();
-  const sx = e.clientX - rect.left;
-  const sy = e.clientY - rect.top;
+  const sx = clientX - rect.left;
+  const sy = clientY - rect.top;
   const wx = (sx / renderer.zoom + renderer.camX) / 16;
   const wy = (sy / renderer.zoom + renderer.camY) / 16;
-  abrirMenu(e, wx, wy);
+  abrirMenu({ clientX, clientY }, wx, wy);
+}
+$("world").addEventListener("contextmenu", (e) => {
+  e.preventDefault();
+  abrirMenuNoPonto(e.clientX, e.clientY);
+});
+
+// toque longo abre o mesmo menu no celular
+let toqueMenuTimer = null;
+let toqueMenuOrigem = null;
+$("world").addEventListener("pointerdown", (e) => {
+  if (e.pointerType !== "touch") return;
+  clearTimeout(toqueMenuTimer);
+  toqueMenuOrigem = { x: e.clientX, y: e.clientY };
+  toqueMenuTimer = setTimeout(() => {
+    if (!toqueMenuOrigem) return;
+    clearPath();
+    abrirMenuNoPonto(toqueMenuOrigem.x, toqueMenuOrigem.y);
+    toqueMenuOrigem = null;
+  }, 520);
+});
+$("world").addEventListener("pointermove", (e) => {
+  if (!toqueMenuOrigem) return;
+  if (Math.hypot(e.clientX - toqueMenuOrigem.x, e.clientY - toqueMenuOrigem.y) > 10) {
+    clearTimeout(toqueMenuTimer);
+    toqueMenuOrigem = null;
+  }
+});
+window.addEventListener("pointerup", () => {
+  clearTimeout(toqueMenuTimer);
+  toqueMenuOrigem = null;
 });
 window.addEventListener("pointerdown", (e) => {
   if (!ctxMenu || ctxMenu.hidden) return;
