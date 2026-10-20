@@ -2,7 +2,7 @@ import { hairById } from "./avatar.js";
 
 // O mesmo boneco na superfície e no subsolo: cabelo, gênero e cores vêm do
 // personagem salvo. Quem chama decide o chão, a sombra e o que fica por cima.
-export function drawHuman(ctx, px, py, dir, moving, time, colors, scale = 1, look = null) {
+export function drawHuman(ctx, px, py, dir, moving, time, colors, scale = 1, look = null, gear = null) {
   const s = scale;
   const step = moving ? Math.sin(time * 0.016) : 0;
   ctx.save();
@@ -14,6 +14,11 @@ export function drawHuman(ctx, px, py, dir, moving, time, colors, scale = 1, loo
   ctx.ellipse(0, 0, 6.5, 2.6, 0, 0, Math.PI * 2);
   ctx.fill();
 
+  // o que está equipado muda o desenho: cor da armadura, elmo, arma e escudo
+  const equip = gear || {};
+  const shirt = equip.armor?.accent || colors.shirt;
+  const pants = equip.legs?.accent || colors.pants;
+  const shoes = equip.boots?.accent || colors.shoes || "#1b1c2c";
   const legOff = step > 0 ? 1 : step < -0 ? -1 : 0;
   const lift = moving ? Math.abs(step) * 1.1 : 0;
   const hair = hairById(look?.hair);
@@ -31,23 +36,23 @@ export function drawHuman(ctx, px, py, dir, moving, time, colors, scale = 1, loo
   }
 
   // pernas
-  ctx.fillStyle = colors.pants;
+  ctx.fillStyle = pants;
   ctx.fillRect(-4, -5, 3, 5 - lift);
   ctx.fillRect(1, -5, 3, 4);
-  ctx.fillStyle = colors.shoes || "#1b1c2c";
+  ctx.fillStyle = shoes;
   ctx.fillRect(-4, -1, 3, 1);
   ctx.fillRect(1, -2, 3, 1);
 
   // corpo
-  ctx.fillStyle = colors.shirt;
+  ctx.fillStyle = shirt;
   ctx.fillRect(-shoulder, -13, shoulder * 2, 9);
   ctx.fillStyle = "rgba(255,255,255,0.16)";
   ctx.fillRect(-shoulder, -13, 2, 8);
-  ctx.fillStyle = colors.pants;
+  ctx.fillStyle = pants;
   ctx.fillRect(-4, -5, 8, 2);
 
   // braços
-  ctx.fillStyle = colors.shirt;
+  ctx.fillStyle = shirt;
   ctx.fillRect(-armX, -12 + Math.max(0, legOff), 2, 6);
   ctx.fillRect(armX - 1, -12 - Math.max(0, legOff), 2, 6);
   ctx.fillStyle = colors.skin;
@@ -121,6 +126,17 @@ export function drawHuman(ctx, px, py, dir, moving, time, colors, scale = 1, loo
       ctx.fillRect(tx, tailY, 5, hair.tail);
     }
   }
+  if (equip.helmet) {
+    const metal = equip.helmet.accent || "#b8b0d8";
+    ctx.fillStyle = "#101426";
+    ctx.fillRect(-5, -23, 10, 3);
+    ctx.fillStyle = metal;
+    ctx.fillRect(-5, -23, 10, 2);
+    ctx.fillRect(-5, -21, 2, 5);
+    ctx.fillRect(3, -21, 2, 5);
+    ctx.fillStyle = "rgba(255,255,255,0.28)";
+    ctx.fillRect(-3, -23, 3, 1);
+  }
   // rosto: olho e nariz do lado para onde anda
   ctx.fillStyle = colors.eyes || "#14121f";
   if (dir === 0) {
@@ -138,6 +154,39 @@ export function drawHuman(ctx, px, py, dir, moving, time, colors, scale = 1, loo
   // detalhe no peito
   ctx.fillStyle = colors.accent || "#fff3d1";
   ctx.fillRect(-1, -11, 2, 2);
+
+  const arma = equip.weapon;
+  if (arma) {
+    const gume = arma.accent || "#d8d2ea";
+    if (arma.weapon === "wand" || arma.weapon === "rod") {
+      ctx.fillStyle = "#6b4a2a";
+      ctx.fillRect(armX + 1, -15, 2, 11);
+      ctx.fillStyle = gume;
+      ctx.fillRect(armX, -18, 4, 4);
+      ctx.fillStyle = "rgba(255,255,255,0.5)";
+      ctx.fillRect(armX + 1, -17, 1, 1);
+    } else if (arma.weapon === "club") {
+      ctx.fillStyle = "#6b4a2a";
+      ctx.fillRect(armX + 1, -15, 2, 11);
+      ctx.fillStyle = gume;
+      ctx.fillRect(armX - 1, -21, 6, 7);
+      ctx.fillStyle = "rgba(0,0,0,0.25)";
+      ctx.fillRect(armX, -20, 4, 1);
+    } else {
+      ctx.fillStyle = "#d8d2ea";
+      ctx.fillRect(armX + 2, -24, 2, 13);
+      ctx.fillStyle = gume;
+      ctx.fillRect(armX + 2, -24, 1, 11);
+      ctx.fillStyle = "#8a6a4a";
+      ctx.fillRect(armX, -11, 6, 2);
+    }
+  }
+  if (equip.shield) {
+    ctx.fillStyle = "#101426";
+    ctx.fillRect(-armX - 4, -13, 5, 9);
+    ctx.fillStyle = equip.shield.accent || "#ffc857";
+    ctx.fillRect(-armX - 3, -12, 3, 7);
+  }
 
   ctx.restore();
   }

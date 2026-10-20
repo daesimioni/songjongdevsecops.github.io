@@ -1,6 +1,6 @@
 # Itens: ferramentas de pensamento
 
-Equipamento no Mundo de Song não é número maior. É uma forma de olhar o
+Equipamento no The Learning Valley não é número maior. É uma forma de olhar o
 problema. Cada peça responde a uma pergunta: "que tipo de estudante eu quero ser
 hoje?".
 

@@ -21,10 +21,12 @@ import { isAdminKey, ADMIN_LABEL } from "./admin.js";
 import { CATALOG_CONTENT } from "./catalog-gen.js";
 import { findPath, nearestWalkable } from "./path.js";
 import { feedPeer, peerRenderPosition } from "./interp.js";
+import { startTitle } from "./title.js";
 import { RPG } from "./rpg.js";
 import { ITEMS } from "./rpg-data.js";
 import { createSheet } from "./sheet.js";
 import { createDuel } from "./duel.js";
+import { createInventoryUI } from "./inventory-ui.js";
 import { createDungeon } from "./dungeon.js";
 import { CONURBATION, DUNGEONS, dungeonById } from "./dungeon-data.js";
 
@@ -181,6 +183,33 @@ const rpg = new RPG({
     toast("Você acordou no Porto do Início. A vida voltou cheia.", 5200);
   },
 });
+function usarItem(id, res) {
+    if (id === "tocha") {
+      if (dungeon?.isOpen()) {
+        dungeon.useTorch(res.light);
+        return true;
+      }
+      rpg.addItem("tocha", 1);
+      toast("A tocha é para a caverna. Guardei de volta.", 2800);
+      return false;
+    }
+    if (id === "bomba") {
+      if (dungeon?.isOpen()) {
+        dungeon.useBomb();
+        return true;
+      }
+      rpg.addItem("bomba", 1);
+      toast("A bomba é para a caverna. Guardei de volta.", 2800);
+      return false;
+    }
+    if (id.startsWith("runa-")) {
+      rpg.addItem(id, 1);
+      toast("A runa é para a pergunta do duelo. Guardei de volta.", 2800);
+      return false;
+    }
+    return true;
+}
+
 const sheetUi = createSheet({
   rpg,
   getLevel: level,
@@ -207,33 +236,16 @@ const sheetUi = createSheet({
       audio.chime();
     }
   },
-  onUse: (id, res) => {
-    if (id === "tocha") {
-      if (dungeon?.isOpen()) {
-        dungeon.useTorch(res.light);
-        return true;
-      }
-      rpg.addItem("tocha", 1);
-      toast("A tocha é para a caverna. Guardei de volta.", 2800);
-      return false;
-    }
-    if (id === "bomba") {
-      if (dungeon?.isOpen()) {
-        dungeon.useBomb();
-        return true;
-      }
-      rpg.addItem("bomba", 1);
-      toast("A bomba é para a caverna. Guardei de volta.", 2800);
-      return false;
-    }
-    if (id.startsWith("runa-")) {
-      rpg.addItem(id, 1);
-      toast("A runa é para a pergunta do duelo. Guardei de volta.", 2800);
-      return false;
-    }
-    return true;
-  },
+  onUse: usarItem,
 });
+const inventoryUi = createInventoryUI({
+  rpg,
+  toast,
+  audio,
+  onUse: usarItem,
+  onChange: () => { if (state.modal === "sheet") sheetUi.render(); },
+});
+
 let duelUi = null;
 duelUi = createDuel({
   rpg,
@@ -579,6 +591,26 @@ function openSheet() {
   sheetUi.render();
   openModal("sheet");
   audio.open();
+}
+
+function openInventory() {
+  if (!state.started) return;
+  stopSprint();
+  if (state.panelOpen) closePanel();
+  closeChat();
+  inventoryUi.open();
+  openModal("inventory");
+  audio.open();
+}
+
+// o que está vestido vira desenho no boneco; a Ficha e o mapa leem o mesmo
+function gearAtual() {
+  const out = {};
+  for (const [slot, id] of Object.entries(rpg.data.equipped || {})) {
+    const item = ITEMS[id];
+    if (item && rpg.itemCount(id) > 0) out[slot] = item;
+  }
+  return out;
 }
 
 function openDuel(monster, ground, boss = false, partner = null) {
@@ -1518,6 +1550,7 @@ const MODAL_FOCUS_BACK = {
   help: "btn-help",
   pvp: "btn-rede",
   outfits: "btn-sheet",
+  inventory: "btn-inventory",
 };
 function restoreFocus(modalName) {
   const back = state.lastFocus;
@@ -2031,13 +2064,27 @@ function loop(now) {
       saveFog();
     }
     if (state.god) { rpg.data.hp = rpg.hpMax(); rpg.data.mana = rpg.manaMax(); }
+    // vida e mana no HUD: número e barra, com aviso quando a vida está baixa
     const hpNow = rpg.hp();
     const hpMaxNow = rpg.hpMax();
     if (hpNow !== state.lastHp || hpMaxNow !== state.lastHpMax) {
       state.lastHp = hpNow;
       state.lastHpMax = hpMaxNow;
       const hpEl = $("hp-hud");
-      if (hpEl) hpEl.textContent = `❤ ${hpNow}/${hpMaxNow}`;
+      if (hpEl) hpEl.textContent = `${hpNow}/${hpMaxNow}`;
+      const fill = $("hp-fill");
+      if (fill) fill.style.width = `${Math.max(0, Math.min(100, (hpNow / Math.max(1, hpMaxNow)) * 100))}%`;
+      $("hp-hud")?.closest(".vital")?.classList.toggle("baixo", hpNow / Math.max(1, hpMaxNow) <= 0.3);
+    }
+    const manaNow = rpg.mana();
+    const manaMaxNow = rpg.manaMax();
+    if (manaNow !== state.lastMana || manaMaxNow !== state.lastManaMax) {
+      state.lastMana = manaNow;
+      state.lastManaMax = manaMaxNow;
+      const manaEl = $("mana-hud");
+      if (manaEl) manaEl.textContent = `${manaNow}/${manaMaxNow}`;
+      const fill = $("mana-fill");
+      if (fill) fill.style.width = `${Math.max(0, Math.min(100, (manaNow / Math.max(1, manaMaxNow)) * 100))}%`;
     }
     for (const n of world.npcs) n.questMark = quests.markFor(n.id);
     const peerStep = PLAYER_SPEED * SPRINT_MULT * 1.1 * dt;
@@ -2062,6 +2109,7 @@ function loop(now) {
         }
       }
     }
+    player.gear = gearAtual();
     renderer.draw(now, player, state.peers, world.npcs, world.cat, player.moving);
     updatePrompt();
     const stepD = Math.hypot(player.x - state.stepX, player.y - state.stepY);
@@ -2165,6 +2213,7 @@ window.addEventListener("keydown", (e) => {
   if (k === "e") { openRede(); return; }
   if (k === "z") { openJournal(); return; }
   if (k === "c") { openSheet(); return; }
+  if (k === "i") { if (state.modal === "inventory") closeModal("inventory"); else openInventory(); return; }
   if (k === "f") {
     e.preventDefault();
     interact();
@@ -2281,6 +2330,7 @@ $("minimap-canvas").addEventListener("pointerdown", (e) => {
 
 $("btn-chat").addEventListener("click", openChat);
 $("btn-sheet").addEventListener("click", openSheet);
+$("btn-inventory").addEventListener("click", openInventory);
 $("admin-badge").addEventListener("click", openGod);
 $("btn-rede").addEventListener("click", openRede);
 $("panel-live").addEventListener("pointerdown", () => {
@@ -2512,6 +2562,42 @@ window.addEventListener("beforeunload", () => {
   setSound(false);
   setNetStatus({ state: "solo", count: 1 });
   requestAnimationFrame(loop);
+
+  // a tela de título cobre a entrada até a pessoa dizer que quer entrar; em
+  // ?debug ela sai da frente para os testes acharem o formulário
+  const splash = $("splash");
+  const splashEnter = $("splash-enter");
+  let stopTitle = () => {};
+  if (splash) {
+    if (new URLSearchParams(location.search).has("debug")) {
+      splash.hidden = true;
+    } else {
+      stopTitle = startTitle($("splash-canvas"));
+      splashEnter?.focus({ preventScroll: true });
+    }
+  }
+  function fecharSplash() {
+    if (!splash || splash.hidden) return;
+    splash.classList.add("saindo");
+    audio.open();
+    setTimeout(() => {
+      splash.hidden = true;
+      splash.classList.remove("saindo");
+      stopTitle();
+      const alvo = !$("intro-saved").hidden ? $("intro-continue") : $("intro-create");
+      alvo?.focus({ preventScroll: true });
+    }, 520);
+  }
+  splashEnter?.addEventListener("click", fecharSplash);
+  window.addEventListener("keydown", (e) => {
+    if (!splash || splash.hidden) return;
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      e.stopPropagation();
+      fecharSplash();
+    }
+  }, { capture: true });
+
   if (new URLSearchParams(location.search).has("debug")) {
     window.__mundo = { player, state, world, renderer, audio, quests, rede, backup, rpg, sheetUi, duelUi, dungeon, pvpUi, knockDown, findPath, openPost: (id) => openPost(id), catalog: CATALOG_CONTENT, get social() { return social; } };
   }

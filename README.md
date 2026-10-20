@@ -1,8 +1,8 @@
-# Mundo de Song
+# The Learning Valley
 
 No ar em <https://songjongdevsecops.github.io/>.
 
-Um blog pessoal que se atravessa a pé. O site é um arquipélago em pixel art:
+Um blog pessoal que se atravessa a pé, agora chamado The Learning Valley. O site é um arquipélago em pixel art:
 você entra com um boneco, cruza pontes e encontra 454 estações. Cada estação é
 uma página com um texto curto e um instrumento interativo: as seções são áreas
 e as subáreas do catálogo são estações, com os tópicos de cada uma listados na

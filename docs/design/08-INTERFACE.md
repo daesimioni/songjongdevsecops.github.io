@@ -34,7 +34,7 @@ toque, ainda em texto, para aprovação antes do código.
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
-│ MUNDO DE SONG     ● praça  42/60  Nv 12  ❤ 48/60  ◈ 20/30  │
+│ THE LEARNING VALLEY     ● praça  42/60  Nv 12  ❤ 48/60  ◈ 20/30  │
 │                                      mapa  ficha  diário  ?  │
 │                                                              │
 │                                                              │

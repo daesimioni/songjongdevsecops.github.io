@@ -1,4 +1,4 @@
-# Mundo de Song: o arquipélago que se estuda a pé
+# The Learning Valley: o arquipélago que se estuda a pé
 
 Documento de conceito e direção. Este arquivo é intenção, não implementação.
 Nada aqui foi codificado ainda; a ordem é conceito, desenho detalhado, revisão

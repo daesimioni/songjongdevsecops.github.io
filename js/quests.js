@@ -61,7 +61,7 @@ export const QUESTS = [
     title: "O mundo inteiro",
     brief: "Quatrocentos e cinquenta e quatro fragmentos, sete continentes e o catálogo inteiro, uma volta completa. Quando o mapa acabar, o Porto ainda vai estar aqui.",
     goal: { type: "cards", count: 454 },
-    reward: { xp: 150, title: "Mundo de Song" },
+    reward: { xp: 150, title: "The Learning Valley" },
   },
   {
     id: "vai-um",

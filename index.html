@@ -3,20 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
-<title>Mundo de Song</title>
-<meta name="description" content="Um arquipélago jogável em pixel art: computação, matemática, física, química, música, inteligência artificial e língua portuguesa em 37 estações, com caçadas de perguntas, cavernas, missões e uma rede de jogadores.">
+<title>The Learning Valley</title>
+<meta name="description" content="The Learning Valley: um blog jogável em pixel art com 86 áreas, 454 estações, cavernas de perguntas, inventário, magias e uma rede de jogadores.">
 <meta name="theme-color" content="#070b18">
-<meta property="og:title" content="Mundo de Song">
-<meta property="og:description" content="Sete continentes, 37 estações e missões para atravessar a pé. Lógica, fractais, átomos, harmonia, redes neurais, língua portuguesa, conversa por Nostr e mais.">
+<meta property="og:title" content="The Learning Valley">
+<meta property="og:description" content="The Learning Valley: 86 áreas, 454 estações e missões para atravessar a pé. Lógica, fractais, átomos, harmonia, redes neurais, língua portuguesa, conversa por Nostr e mais.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://songjongdevsecops.github.io/">
-<meta property="og:site_name" content="Mundo de Song">
+<meta property="og:site_name" content="The Learning Valley">
 <meta property="og:image" content="https://songjongdevsecops.github.io/assets/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Mundo de Song">
-<meta name="twitter:description" content="Sete continentes, 37 estações e missões em pixel art. Ande, descubra, converse e mexa em cada instrumento.">
+<meta name="twitter:title" content="The Learning Valley">
+<meta name="twitter:description" content="The Learning Valley: sete continentes, 454 estações e missões em pixel art. Ande, descubra, converse e mexa em cada instrumento.">
 <meta name="twitter:image" content="https://songjongdevsecops.github.io/assets/og.png">
 <link rel="canonical" href="https://songjongdevsecops.github.io/">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
@@ -33,15 +33,26 @@
 
   <header class="hud hud-top">
     <div class="brand">
-      <span class="brand-title">MUNDO DE SONG</span>
+      <span class="brand-title">THE LEARNING VALLEY</span>
       <span class="brand-sub">um blog que se atravessa a pé</span>
+    </div>
+    <div class="hud-vitals" aria-label="vida e mana">
+      <div class="vital vital-hp">
+        <div class="vital-head"><span>vida</span><b id="hp-hud">30/30</b></div>
+        <div class="vital-bar"><i id="hp-fill"></i></div>
+      </div>
+      <div class="vital vital-mana">
+        <div class="vital-head"><span>mana</span><b id="mana-hud">10/10</b></div>
+        <div class="vital-bar"><i id="mana-fill"></i></div>
+      </div>
     </div>
     <div class="hud-actions">
       <button type="button" id="net-pill" class="pill" title="Estado da praça compartilhada"><i></i><b id="online">solo</b></button>
-      <span id="progress" class="pill pill-progress" title="Fragmentos descobertos e nível"><span>✦</span><b id="progress-text">0/37</b><span class="sep">·</span><b id="level-text">Nv 1</b><span class="sep">·</span><b id="hp-hud">❤ 30</b></span>
+      <span id="progress" class="pill pill-progress" title="Fragmentos descobertos e nível"><span>✦</span><b id="progress-text">0/37</b><span class="sep">·</span><b id="level-text">Nv 1</b></span>
       <button id="btn-chat" class="hud-btn" type="button">Falar <kbd>Q</kbd></button>
       <button id="btn-rede" class="hud-btn" type="button">Rede <kbd>E</kbd><i id="rede-dot" class="rede-dot" hidden></i></button>
       <button id="btn-journal" class="hud-btn" type="button">Diário <kbd>Z</kbd></button>
+      <button id="btn-inventory" class="hud-btn" type="button">Mochila <kbd>I</kbd></button>
       <button id="btn-sheet" class="hud-btn" type="button">Ficha <kbd>C</kbd></button>
       <button id="admin-badge" class="admin-badge" type="button" hidden title="poderes do GOD">GOD</button>
       <button id="btn-sound" class="hud-btn" type="button" aria-pressed="false">Som</button>
@@ -197,6 +208,27 @@
     </div>
   </div>
 
+  <div id="inventory" class="modal" role="dialog" aria-modal="true" aria-labelledby="inv-title" hidden>
+    <div class="modal-card inventory-card">
+      <div class="modal-head">
+        <div>
+          <p class="inv-kicker">mochila e equipamento</p>
+          <h2 id="inv-title">O que você carrega</h2>
+        </div>
+        <button type="button" class="hud-btn" data-close="inventory">fechar <kbd>Esc</kbd></button>
+      </div>
+      <div class="inv-layout">
+        <div id="inv-equip" class="inv-equip"></div>
+        <div class="inv-bag">
+          <div class="inv-bag-head"><span>mochila</span><span id="inv-count"></span></div>
+          <div id="inv-grid" class="inv-grid" aria-label="itens da mochila"></div>
+        </div>
+        <aside id="inv-detail" class="inv-detail" aria-live="polite"></aside>
+      </div>
+      <p class="inv-hint">arraste uma peça para o espaço certo ou toque nela para ver o que faz. <kbd>I</kbd> abre e fecha a mochila.</p>
+    </div>
+  </div>
+
   <div id="outfits" class="modal" role="dialog" aria-modal="true" aria-labelledby="outfits-title" hidden>
     <div class="modal-card outfits-card">
       <div class="modal-head">
@@ -333,10 +365,22 @@
     </div>
   </div>
 
+  <div id="splash" class="splash" aria-label="The Learning Valley">
+    <canvas id="splash-canvas" aria-hidden="true"></canvas>
+    <div class="splash-vignette" aria-hidden="true"></div>
+    <div class="splash-card">
+      <p class="splash-kicker">um blog jogável em pixel art</p>
+      <h1 class="splash-logo"><span>THE</span><b>LEARNING</b><span>VALLEY</span></h1>
+      <p class="splash-tag">Oitenta e seis áreas. Quatrocentas e cinquenta e quatro estações. Um vale inteiro para atravessar a pé, responder e lembrar.</p>
+      <button type="button" id="splash-enter" class="splash-enter">entrar no vale <kbd>Enter</kbd></button>
+      <p class="splash-foot">perguntas · cavernas · inventário · magias · rede</p>
+    </div>
+  </div>
+
   <div id="intro" class="modal intro" role="dialog" aria-modal="true" aria-labelledby="intro-title">
     <div class="intro-card">
       <p class="intro-eyebrow">um blog jogável · edição 2026</p>
-      <h1 id="intro-title">MUNDO<br>DE SONG</h1>
+      <h1 id="intro-title">THE<br>LEARNING VALLEY</h1>
       <p class="intro-lead">Sete continentes, 86 áreas e 454 fragmentos: cada estação é uma página com um instrumento para mexer. Os NPCs dão missões, as caçadas dão itens e a Rede liga você aos outros. Ande, clique no chão e segure Espaço para cruzar o mapa voando baixo.</p>
 
       <section id="intro-key-step" class="intro-step">

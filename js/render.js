@@ -1601,7 +1601,7 @@ export function createRenderer(canvas, world) {
         const onShip = player.boost > 0.35;
         if (player.boost > 0.01) drawSkiff(player.x * TILE, player.y * TILE, player.dir, time, player.boost, moving);
         drawHuman(ctx, player.x * TILE, player.y * TILE - lift + bob, player.dir, onShip ? false : moving, time,
-          player.colors || PLAYER_COLORS[0], 1, player.look);
+          player.colors || PLAYER_COLORS[0], 1, player.look, player.gear || null);
         drawNameTag(player.name, player.x * TILE, player.y * TILE - 26 - lift, player.color);
         if (player.bubble && player.bubble.until > now) {
           drawBubble(player.bubble.text, player.x * TILE, player.y * TILE - lift, player.color);
