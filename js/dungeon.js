@@ -593,11 +593,22 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
     };
   }
 
-  function makeMonster(def, room, k, name, tier) {
+  function makeMonster(def, room, k, name, tier, taken = []) {
     const spots = [[0.28, 0.3], [0.72, 0.28], [0.5, 0.72], [0.24, 0.7], [0.76, 0.68]];
-    const s = spots[(room.x + room.y + k) % spots.length];
-    const x = room.x + 0.8 + s[0] * (room.w - 1.6);
-    const y = room.y + 0.8 + s[1] * (room.h - 1.6);
+    const start = (room.x + room.y + k) % spots.length;
+    let x = 0;
+    let y = 0;
+    // escolhe o canto da sala mais longe dos bichos já postos: nada de
+    // amontoar dois no mesmo canto só porque o mapa sorteou assim
+    let bestDist = -1;
+    for (let i = 0; i < spots.length; i++) {
+      const s = spots[(start + i) % spots.length];
+      const cx = room.x + 0.8 + s[0] * (room.w - 1.6);
+      const cy = room.y + 0.8 + s[1] * (room.h - 1.6);
+      const dist = taken.length ? Math.min(...taken.map((p) => Math.hypot(p.x - cx, p.y - cy))) : 99;
+      if (dist >= 3) { x = cx; y = cy; break; }
+      if (dist > bestDist) { bestDist = dist; x = cx; y = cy; }
+    }
     // espécies diferentes por andar: não é só o nome que muda
     const species = {
       1: ["slime", "bat", "spider", "wisp"],
@@ -647,7 +658,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
         const id = `dg-${def.continent}-${room.id}-m${k}`;
         if (!rpg.monsterAlive(id)) continue;
         const name = names[(n + k) % Math.max(1, names.length)] || "Coisa";
-        out.push(makeMonster(def, room, k, name, tier));
+        out.push(makeMonster(def, room, k, name, tier, out));
       }
       n += count;
     });
