@@ -20,6 +20,8 @@ A abertura é uma tela de título com o vale em pixel art animado: estrelas, lua
 
 No jogo, a vida e a mana ficam em barras no topo. A mochila abre com <kbd>I</kbd>: grade de itens com ícones desenhados, equipamento ao lado, arrastar e soltar, detalhe do item e um boneco que muda de arma, elmo e cor de armadura conforme você veste. O botão direito abre um menu com olhar, falar, abrir, descer, viajar, pegar e andar até aqui. Runas e magias aparecem na barra inferior e gastam mana.
 
+O **Bestiário** abre com <kbd>B</kbd> ou pelo botão escrito no menu. São as 93 cavernas agrupadas por continente, com 487 fichas: nome, espécie, andar, o que o bicho faz contra você e a fraqueza dele. O que você ainda não encontrou aparece como silhueta e `???`; o primeiro encontro revela a ficha, e a vitória marca o bicho como vencido. Tem busca sem acento, filtro por conhecidos/vencidos/por ver, placar de descobertas por continente e a caverna onde você está já vem aberta.
+
 ## O arquipélago
 
 | continente | estações |
@@ -304,9 +306,10 @@ A página é feita para o toque, não adaptada depois:
   andando; **Turbo** acende a nave.
 - **agir**: o botão **A** interage com estação, NPC, caverna e baú. No celular ele
   troca o `F` do teclado.
-- **tudo à mão**: Falar, Rede, Diário, Ficha, som e ajuda ficam numa linha só no
-  topo, com 38 pixels de altura ou mais e sem letra miúda de atalho. A barra de
-  status da praça encurta para caber.
+- **tudo à mão**: Falar, Rede, Diário, Bestiário, Mochila, Ficha, som e ajuda
+  ficam no topo, com 38 pixels de altura ou mais e sem letra miúda de atalho. Com
+  o Bestiário o menu passou a quebrar em duas linhas no celular em vez de espremer
+  os últimos botões; a barra de status da praça encurta para caber.
 - **caverna**: toque no chão para andar e no objeto para interagir; o minimapa
   aparece menor no canto e a ajuda vira "toque no chão, toque no objeto". Ficha e
   sair ficam em botões no topo.
@@ -405,7 +408,7 @@ conferida dos dois lados.
 
 ## Conferir
 
-A parte que não depende do navegador tem três conferências, e elas rodam em
+A parte que não depende do navegador tem cinco conferências, e elas rodam em
 sequência sem instalar nada:
 
 ```bash
@@ -413,6 +416,7 @@ node test/core.test.mjs
 node test/content.test.mjs
 node test/ui.test.mjs
 node test/backup.test.mjs
+node test/bestiary.test.mjs
 ```
 
 A primeira cobre o progresso e a persistência das missões, o filtro que mantém
@@ -440,6 +444,11 @@ A terceira confere a casca: id repetido ou faltando, import que não resolve,
 botão sem `type`, imagem sem `alt`, link `_blank` sem `rel`, `aria-labelledby`
 apontando para id inexistente, `data-close` órfão e `console.log` esquecido.
 
+A quinta confere o Bestiário contra as cavernas de verdade: 93 cavernas viram
+487 fichas, todo id de encontro é único entre cavernas, toda espécie tem nome de
+leitura e fraqueza, o bicho repetido em várias salas vira uma ficha só, e
+encontro, vitória e chefe aparecem no placar e sobrevivem ao recarregar o estado.
+
 ## Rodar na mão
 
 Não tem build. Basta servir a pasta como arquivo estático:
@@ -466,10 +475,11 @@ Depois abra `http://localhost:8000`.
 | `js/quests.js` | missões, progresso, XP e títulos |
 | `js/path.js` | caminho A* do clique até o destino |
 | `js/rpg.js` | vida, perícias, itens, forja, encantos, buffs, bicho, monstros, treino, fuga e duelo |
-| `js/rpg-data.js` | caçadas, monstros, itens, receitas, encantos e as 60 perguntas |
+| `js/rpg-data.js` | monstros, itens, receitas, encantos, perguntas e a ficha de cada espécie |
 | `js/dungeon.js` | a caverna em tela cheia: mapa, minimapa, visão, veios, horta, bicho e desenho |
-| `js/dungeon-data.js` | as seis cavernas: salas, temas, monstros e chefes |
+| `js/dungeon-data.js` | as 93 cavernas: salas, temas, monstros, chefes e quem vive em cada uma |
 | `js/creature.js` | desenho dos monstros no mapa e no duelo |
+| `js/bestiary.js` | o bestiário: cavernas por continente, silhuetas, descoberta e filtros |
 | `js/sheet.js` | a ficha de aventureiro |
 | `js/duel.js` | a janela de prova contra cada monstro e o treino do instrutor |
 | `js/pvp.js` | o duelo de perguntas entre jogadores |
@@ -485,6 +495,7 @@ Depois abra `http://localhost:8000`.
 | `test/content.test.mjs` | conferência das 454 estações, perguntas, itens, cavernas, áreas, cobertura do catálogo e mundo |
 | `test/ui.test.mjs` | conferência de ids, imports, botões, rótulos e aria |
 | `test/backup.test.mjs` | envelope do backup, whitelist, dedupe e restauração |
+| `test/bestiary.test.mjs` | 93 cavernas, 487 fichas, ids únicos, descoberta e vitória |
 
 O módulo wasm é gerado com `wat2wasm`:
 
@@ -496,7 +507,8 @@ wat2wasm wasm/julia.wat -o wasm/julia.wasm
 
 - Textos e falas: `js/content.js`.
 - Posição e nome das estações: `js/config.js`, no array `SITES`.
-- Cavernas (salas, temas, monstros, chefes): `js/dungeon-data.js`.
+- Cavernas (salas, temas, monstros, chefes): `js/dungeon-data.js`. É de lá que
+  `js/bestiary.js` lê quem vive em cada sala, para a ficha não divergir do bicho.
 - Receitas, itens e perguntas: `js/rpg-data.js`.
 - Elementos da tabela: `js/data/elements.js`.
 - Instrumentos: `js/zones/`. Computação, matemática, física e química ficam em

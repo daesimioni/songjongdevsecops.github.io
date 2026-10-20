@@ -13,7 +13,7 @@ globalThis.localStorage = {
 };
 
 const { CONTINENTS, SITES, WAYSTONES, NPC_SPAWNS, CONTINENT_ORDER, AREAS, MAP_W, MAP_H, LEGACY_CONTENT } = await import("../js/config.js");
-const { QUESTIONS, DEEP_QUESTIONS, GROUNDS, ITEMS, RECIPES, ENCHANTS, MONSTER_TRAITS } = await import("../js/rpg-data.js");
+const { QUESTIONS, DEEP_QUESTIONS, GROUNDS, ITEMS, RECIPES, ENCHANTS, MONSTER_TRAITS, MONSTER_LABELS } = await import("../js/rpg-data.js");
 const { DUNGEONS } = await import("../js/dungeon-data.js");
 const { POSTS, NPCS } = await import("../js/content.js");
 const { QUESTS } = await import("../js/quests.js");
@@ -605,14 +605,14 @@ for (const dungeon of DUNGEONS.filter((d) => CATALOG_CONTENT.areas.some((a) => `
 }
 
 // bicho-assinatura precisa de desenho e de ficha no bestiário, senão cai no chefe
-const sigLine = source("../js/dungeon.js").split("\n").find((l) => l.includes("const signature =")) || "";
-const sigKinds = [...sigLine.matchAll(/"([a-z]+)"/g)].map((m) => m[1]);
-const labelsLine = source("../js/rpg.js").split("\n").find((l) => l.includes("const labels = {")) || "";
+const sigSrc = source("../js/dungeon-data.js");
+const sigBlock = sigSrc.slice(sigSrc.indexOf("const SIGNATURE_BY_CONTINENT"));
+const sigKinds = [...sigBlock.slice(0, sigBlock.indexOf("}")).matchAll(/"([a-z]+)"/g)].map((m) => m[1]);
 const creatureSrc = source("../js/creature.js");
 check(sigKinds.length === 8, `bichos-assinatura: ${sigKinds.length}, esperado 8`);
 for (const kind of sigKinds) {
   check(creatureSrc.includes(`kind === "${kind}"`), `sem desenho para ${kind}`);
-  check(labelsLine.includes(`${kind}:`), `bestiário sem nome para ${kind}`);
+  check(!!MONSTER_LABELS[kind], `bestiário sem nome para ${kind}`);
 }
 
 // F11: texto curado de Matemática, subárea por subárea

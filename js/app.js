@@ -31,6 +31,7 @@ import { ITEMS } from "./rpg-data.js";
 import { createSheet } from "./sheet.js";
 import { createDuel } from "./duel.js";
 import { createInventoryUI } from "./inventory-ui.js";
+import { createBestiary } from "./bestiary.js";
 import { itemIconElement } from "./item-art.js";
 import { createDungeon } from "./dungeon.js";
 import { CONURBATION, DUNGEONS, dungeonById } from "./dungeon-data.js";
@@ -251,6 +252,10 @@ const inventoryUi = createInventoryUI({
   onUse: usarItem,
   getAvatar: () => ({ colors: player.colors, look: player.look, gear: gearAtual() }),
   onChange: () => { if (state.modal === "sheet") sheetUi.render(); updateSpellbar(); },
+});
+const bestiaryUi = createBestiary({
+  rpg,
+  getAreaId: () => world.areaAt(player.x, player.y)?.id || "",
 });
 
 let duelUi = null;
@@ -1333,30 +1338,32 @@ function openJournal() {
   audio.open();
 }
 
+function openBestiary() {
+  if (!state.started) return;
+  stopSprint();
+  if (state.panelOpen) closePanel();
+  closeChat();
+  bestiaryUi.open();
+  openModal("bestiary");
+  audio.open();
+}
+
 function buildJournalBestiary() {
   const box = $("journal-bestiary");
   if (!box) return;
   box.textContent = "";
-  const seen = rpg.seenView();
-  if (!seen.length) {
-    box.appendChild(el("p", "journal-empty", "Nenhum bicho visto ainda. Os monstros moram nas cavernas; a superfície é sala de aula."));
-    return;
-  }
-  const grid = el("div", "bestiary-grid");
-  for (const entry of seen) {
-    const card = el("div", `bestiary-card t${entry.tier}`);
-    card.append(
-      el("b", "", entry.name),
-      el("span", "", `${entry.label} · andar ${entry.tier === 4 ? "chefe" : entry.tier}`),
-      el("span", "", entry.theme ? `tema: ${entry.theme}` : "tema: ainda não visto"),
-      el("span", "", `fraqueza: ${entry.weakness}`),
-      entry.trait ? el("span", "", `como atrapalha: ${entry.trait}`) : el("span"),
-      el("i", "", `${entry.count} encontro${entry.count === 1 ? "" : "s"}`),
-    );
-    if (entry.sample) card.appendChild(el("em", "bestiary-q", `“${entry.sample}”`));
-    grid.appendChild(card);
-  }
-  box.appendChild(grid);
+  const r = bestiaryUi.summary();
+  const resumo = el("div", "sheet-bag-resumo");
+  const texto = el("div", "sheet-bag-text");
+  texto.append(
+    el("b", "", `${r.vistos} de ${r.total} criaturas conhecidas`),
+    el("span", "", `${r.vencidos} vencidas · ${r.chefes} de ${r.chefesTotal} chefes no chão · silhueta até o primeiro encontro`),
+  );
+  const abrir = el("button", "item-use", "abrir bestiário");
+  abrir.type = "button";
+  abrir.addEventListener("click", openBestiary);
+  resumo.append(texto, abrir);
+  box.appendChild(resumo);
 }
 
 function buildJournal() {
@@ -1648,6 +1655,7 @@ function focusablesIn(container) {
 }
 const MODAL_FOCUS_BACK = {
   journal: "btn-journal",
+  bestiary: "btn-bestiary",
   sheet: "btn-sheet",
   rede: "btn-rede",
   help: "btn-help",
@@ -2349,6 +2357,7 @@ window.addEventListener("keydown", (e) => {
   if (k === "e") { openRede(); return; }
   if (k === "z") { openJournal(); return; }
   if (k === "c") { openSheet(); return; }
+  if (k === "b") { if (state.modal === "bestiary") closeModal("bestiary"); else openBestiary(); return; }
   if (k === "i") { if (state.modal === "inventory") closeModal("inventory"); else openInventory(); return; }
   if (/^[1-6]$/.test(k) && state.spells?.length) {
     const magia = state.spells[Number(k) - 1];
@@ -2647,6 +2656,7 @@ $("panel-live").addEventListener("pointerdown", () => {
   if (state.currentPost) quests.report("lab", state.currentPost);
 }, { passive: true });
 $("btn-journal").addEventListener("click", openJournal);
+$("btn-bestiary").addEventListener("click", openBestiary);
 $("steps-min")?.addEventListener("click", () => $("steps").classList.toggle("min"));
 
 $("btn-help").addEventListener("click", () => { openModal("help"); audio.open(); });

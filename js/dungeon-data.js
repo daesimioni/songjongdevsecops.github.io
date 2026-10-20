@@ -633,8 +633,105 @@ for (const d of DUNGEONS) {
   d.palette = { floor: bioma.floor, floor2: bioma.base, wall: "#0b0d18", wallTop: bioma.path, accent: bioma.accent };
   d.fauna = fauna.map((f) => f.kind);
   d.faunaAccents = fauna.map((f) => f.accent);
+  d.faunaNames = fauna.map((f) => f.name);
   d.material = bioma.material;
   d.bossAccent = bioma.accent;
+}
+
+// ---------------------------------------------------------------- quem vive
+// A espécie e a cor de um bicho saem do nome e da disciplina, do mesmo jeito
+// que a caverna o desenha. O bestiário lê daqui para não inventar um bicho
+// diferente do que o jogador encontra lá embaixo.
+const SPECIES_BY_TIER = {
+  1: ["slime", "bat", "spider", "wisp"],
+  2: ["eye", "bat", "spider", "wisp", "scorpion"],
+  3: ["golem", "eye", "bat", "scorpion"],
+};
+// bicho-assinatura do continente: a masmorra de Física não tem fauna de Música
+const SIGNATURE_BY_CONTINENT = {
+  cs: ["ant"], math: ["beetle"], physics: ["crab"], chem: ["jelly"],
+  music: ["moth"], ai: ["sentinel"], lingua: ["imp", "serpent"],
+};
+
+function creatureSeed(name, k = 0) {
+  return [...String(name)].reduce((sum, ch) => sum + ch.charCodeAt(0), 0) + k;
+}
+
+// quando o nome é um dos bichos da própria área, ele mantém a espécie e a cor
+// que a ilha lhe deu: nada de três "gosmas" iguais na Cripta da Álgebra
+function faunaIndex(def, name) {
+  const alvo = String(name).toLowerCase();
+  return (def.faunaNames || []).findIndex((nome) => nome.toLowerCase() === alvo);
+}
+
+export function creatureKind(def, name, tier, k = 0) {
+  const idx = faunaIndex(def, name);
+  if (idx >= 0 && def.fauna?.[idx]) return def.fauna[idx];
+  const species = SPECIES_BY_TIER[tier] || SPECIES_BY_TIER[1];
+  const signature = SIGNATURE_BY_CONTINENT[def.continent] || [];
+  // a fauna da área entra primeiro: a masmorra da Álgebra não tem bicho de Química
+  const pool = [...(def.fauna || []), ...species, ...signature];
+  return pool[creatureSeed(name, k) % pool.length];
+}
+
+export function creatureAccent(def, name, k = 0) {
+  const idx = faunaIndex(def, name);
+  if (idx >= 0 && def.faunaAccents?.[idx]) return def.faunaAccents[idx];
+  const accents = def.faunaAccents || [];
+  return accents[creatureSeed(name, k) % accents.length] || def.palette?.accent || def.bossAccent || "#b48cff";
+}
+
+// o id carrega a caverna: sem isso, o bicho "a" de toda caverna de Física era
+// o mesmo bicho, e matar um marcava o outro como morto
+export function creatureId(def, roomId, k = 0) {
+  return `dg-${def.id.replace(/^dungeon-/, "")}-${roomId}-m${k}`;
+}
+
+// A ficha que o bestiário mostra: os nomes que se repetem entre salas viram um
+// bicho só, com todos os ids em que ele pode aparecer.
+export function dungeonCreatures(def) {
+  const porNome = new Map();
+  let n = 0;
+  for (const room of def.rooms) {
+    if (room.kind === "entrance" || room.kind === "city") continue;
+    const nome = def.monsters[n % def.monsters.length] || "Coisa";
+    const tier = Math.max(1, Math.min(3, Number(room.tier) || 1));
+    const id = creatureId(def, room.id);
+    const chave = nome.toLowerCase();
+    const atual = porNome.get(chave);
+    if (atual) {
+      atual.ids.push(id);
+      atual.salas.push(room.name);
+    } else {
+      porNome.set(chave, {
+        id,
+        ids: [id],
+        nome,
+        tipo: creatureKind(def, nome, tier),
+        tier,
+        accent: creatureAccent(def, nome),
+        chefe: false,
+        salas: [room.name],
+      });
+    }
+    n++;
+  }
+  const bichos = [...porNome.values()];
+  if (def.boss) {
+    const sala = def.rooms.find((r) => r.id === (def.layout || DUNGEON_LAYOUT).bossRoom) || def.rooms[def.rooms.length - 2];
+    bichos.push({
+      id: `${def.id}-boss`,
+      ids: [`${def.id}-boss`],
+      nome: def.boss,
+      tipo: "boss",
+      tier: 4,
+      accent: def.bossAccent || def.palette?.accent || "#ffc857",
+      chefe: true,
+      chave: def.id,
+      salas: [sala?.name || "sala do chefe"],
+    });
+  }
+  return bichos;
 }
 
 export function dungeonById(id) {

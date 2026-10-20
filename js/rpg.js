@@ -3,7 +3,7 @@
 // só posição e conversa.
 import { backupCorrupt } from "./storage.js";
 import { STORAGE } from "./config.js";
-import { SKILLS, TIERS, ITEMS, QUESTIONS, RECIPES, ENCHANTS, DEEP_QUESTIONS, MONSTER_TRAITS } from "./rpg-data.js";
+import { SKILLS, TIERS, ITEMS, QUESTIONS, RECIPES, ENCHANTS, DEEP_QUESTIONS, MONSTER_TRAITS, MONSTER_LABELS, MONSTER_WEAKNESS } from "./rpg-data.js";
 import { BOND_MAX, MANA_MS, PETS, MOUNTS, petById, mountById } from "./pets.js";
 
 const RESPAWN_MS = 5 * 60 * 1000;
@@ -93,6 +93,7 @@ function emptyData() {
     mountActive: null,
     equipped: {},
     seen: {},
+    met: {},
     plots: {},
     plotGift: {},
   };
@@ -157,6 +158,10 @@ function readData() {
     if (typeof obj.mountActive === "string" && data.mounts[obj.mountActive]) data.mountActive = obj.mountActive;
     for (const [slot, id] of Object.entries(obj.equipped || {})) {
       if (ITEMS[id]?.slot === slot && Number(data.items[id]) > 0) data.equipped[slot] = id;
+    }
+    for (const [id, at] of Object.entries(obj.met || {})) {
+      if (!/^[a-z0-9-]{2,60}$/.test(id) || !Number.isFinite(at)) continue;
+      data.met[id] = at;
     }
     for (const [kind, entry] of Object.entries(obj.seen || {})) {
       if (!/^[a-z]{3,10}$/.test(kind) || !entry || typeof entry !== "object") continue;
@@ -280,27 +285,15 @@ export class RPG {
     const bank = QUESTIONS[entry.continent]?.[entry.tier] || [];
     if (bank.length) entry.sample = bank[entry.count % bank.length].q.slice(0, 90);
     this.data.seen[kind] = entry;
+    // o bestiário guarda a criatura pelo id: encontrar já revela a ficha
+    const id = String(monster.id || "").toLowerCase().replace(/[^a-z0-9-]/g, "").slice(0, 60);
+    if (id) this.data.met[id] = now();
     this.save();
   }
 
   seenView() {
-    const labels = { slime: "gosma", eye: "olho", golem: "golem", bat: "morcego", spider: "aranha", wisp: "fogo-fátuo", scorpion: "escorpião", boss: "chefe", ant: "formiga", moth: "mariposa", beetle: "besouro", crab: "caranguejo", jelly: "água-viva", imp: "duende", sentinel: "sentinela", serpent: "serpente" };
-    const weak = {
-      slime: "lento, flanco fácil", bat: "voo errático, pouca vida",
-      spider: "espera parada, teia previsível", wisp: "curioso, segue a luz",
-      eye: "vê longe, vira devagar", golem: "lento, guarda o corpo",
-      scorpion: "teimoso, ataca de perto", boss: "arena, sem alavanca",
-      ant: "anda em fila, corta em uma",
-      moth: "cega perto da lanterna, voa em círculo",
-      beetle: "casco duro, vira mal",
-      crab: "anda de lado, não sobe degrau",
-      jelly: "flutua devagar, evita parede",
-      imp: "recua quando acerta, covarde",
-      sentinel: "só patrulha o corredor, cego na curva",
-      serpent: "segue reto, dobra em S",
-    };
     return Object.entries(this.data.seen)
-      .map(([kind, entry]) => ({ kind, label: labels[kind] || kind, weakness: weak[kind] || "observar o movimento", trait: MONSTER_TRAITS[kind]?.label || "", ...entry }))
+      .map(([kind, entry]) => ({ kind, label: MONSTER_LABELS[kind] || kind, weakness: MONSTER_WEAKNESS[kind] || "observar o movimento", trait: MONSTER_TRAITS[kind]?.label || "", ...entry }))
       .sort((a, b) => b.tier - a.tier || b.count - a.count || a.kind.localeCompare(b.kind));
   }
 

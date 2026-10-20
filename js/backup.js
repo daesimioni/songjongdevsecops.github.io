@@ -90,7 +90,9 @@ export function localIsEmpty() {
     (!Array.isArray(cards) || cards.length === 0) &&
     countKeys(rpg?.items) === 0 &&
     countKeys(rpg?.seen) === 0 &&
+    countKeys(rpg?.met) === 0 &&
     countKeys(rpg?.monsters) === 0 &&
+    countKeys(rpg?.bosses) === 0 &&
     countKeys(quests?.done) === 0 &&
     countKeys(quests?.accepted) === 0
   );

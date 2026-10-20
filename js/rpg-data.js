@@ -44,6 +44,30 @@ export const MONSTER_TRAITS = {
   serpent: { id: "divide", label: "troca de pele: cura quando você erra" },
 };
 
+// Nome de leitura e fraqueza de cada espécie. Ficam aqui para o duelo, o
+// diário e o bestiário contarem a mesma história sobre o mesmo bicho.
+export const MONSTER_LABELS = {
+  slime: "gosma", eye: "olho", golem: "golem", bat: "morcego",
+  spider: "aranha", wisp: "fogo-fátuo", scorpion: "escorpião", boss: "chefe",
+  ant: "formiga", moth: "mariposa", beetle: "besouro", crab: "caranguejo",
+  jelly: "água-viva", imp: "duende", sentinel: "sentinela", serpent: "serpente",
+};
+
+export const MONSTER_WEAKNESS = {
+  slime: "lento, flanco fácil", bat: "voo errático, pouca vida",
+  spider: "espera parada, teia previsível", wisp: "curioso, segue a luz",
+  eye: "vê longe, vira devagar", golem: "lento, guarda o corpo",
+  scorpion: "teimoso, ataca de perto", boss: "arena, sem alavanca",
+  ant: "anda em fila, corta em uma",
+  moth: "cega perto da lanterna, voa em círculo",
+  beetle: "casco duro, vira mal",
+  crab: "anda de lado, não sobe degrau",
+  jelly: "flutua devagar, evita parede",
+  imp: "recua quando acerta, covarde",
+  sentinel: "só patrulha o corredor, cego na curva",
+  serpent: "segue reto, dobra em S",
+};
+
 export const ITEMS = {
   parafuso: { name: "Parafuso de Bronze", continent: "cs", desc: "Rosca de latão que nunca espanou. Dizem que veio do primeiro somador." },
   chip: { name: "Chip de Silício", continent: "cs", desc: "Um pedaço de areia que aprendeu a pensar em binário." },

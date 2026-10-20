@@ -63,6 +63,15 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 - [x] desempenho e carga medidos
 - [x] commit e push com evidência
 
+### G. Bestiário
+
+- [x] tecla B e botão "Bestiário" no menu, com o mesmo caminho pelo Diário
+- [x] 93 cavernas por continente, 487 fichas ligadas aos encontros de verdade
+- [x] silhueta e `???` até o primeiro encontro; ficha, fraqueza e estado depois
+- [x] busca sem acento e filtro por conhecidos, vencidos e por ver
+- [x] placar de descobertas, vencidos e chefes, com a caverna atual já aberta
+- [x] sprite em canvas por espécie, com a cor que a área deu ao bicho
+
 ## 3. Regras de desenho
 
 - A tela de título é a primeira impressão: vale com camadas, céu em degradê,
@@ -73,11 +82,15 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 - Arrastar e soltar no desktop; no celular, tocar no item e tocar no destino.
 - Botão direito não é atalho escondido: abre um menu com o que dá para fazer
   naquele lugar.
+- O bestiário lê a mesma função que cria o bicho na caverna. Espécie, cor, nome
+  e id da ficha e do encontro não podem divergir, senão o jogador caça um bicho
+  e vê outro no caderno.
 
 ## 4. Andamento
 
 | data | fase | o que entrou | prova |
 |---|---|---|---|
+| 2026-10-20 | G | bestiário com tecla B e botão no menu, 487 fichas de 93 cavernas agrupadas por continente, silhueta até o encontro, busca sem acento, filtros e placar; id de bicho passou a carregar a caverna (antes o mesmo id se repetia entre cavernas do mesmo continente) | node: 93 cavernas, 487 fichas, ids únicos, encontro e vitória sobrevivem ao recarregar; navegador: 487 sprites, 93 grupos, busca "algebra" acha a Cripta da Álgebra, filtros 486/0/487, Diário abre o bestiário, 390 px sem estouro e menu em duas linhas, sem erro de console |
 | 2026-10-20 | acesso | expedição na Pedra do Porto lista os 82 faróis do catálogo desde o início; viajar para uma pedra de área marca o continente e o passo de expedição; minimapa mostra silhueta de terra e ponte na névoa | navegador: lista com 82 destinos de expedição e 12 do porto, viagem até a Álgebra chegou na área certa com o passo marcado, sem erro de console |
 | 2026-10-20 | revisão | ações de contexto só perto (pegar/abrir/descer/viajar), arrastar para o espaço errado recusa, runa conjura pela mochila, Ficha resume a mochila e abre o painel, equipamento aparece também na caverna, barras com aria, imagem de compartilhamento nova | navegador: item longe só olhar/andar, estação longe idem, arrastar arma para elmo recusado e elmo no lugar certo equipado, runa curou 10 pela mochila, Ficha abriu a mochila, poção de mana 1 para 9, sem erro de console |
 | 2026-10-20 | D/E | toque longo abre o menu no celular; menu de treinador tem atacar e usar poção | navegador: pointerdown de toque abriu o menu com andar e olhar; menu de treinador listou falar, atacar (treino), olhar e usar Poção de Café; sem estouro em 390 px |

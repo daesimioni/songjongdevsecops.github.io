@@ -52,6 +52,7 @@
       <button id="btn-chat" class="hud-btn" type="button">Falar <kbd>Q</kbd></button>
       <button id="btn-rede" class="hud-btn" type="button">Rede <kbd>E</kbd><i id="rede-dot" class="rede-dot" hidden></i></button>
       <button id="btn-journal" class="hud-btn" type="button">Diário <kbd>Z</kbd></button>
+      <button id="btn-bestiary" class="hud-btn" type="button">Bestiário <kbd>B</kbd></button>
       <button id="btn-inventory" class="hud-btn" type="button">Mochila <kbd>I</kbd></button>
       <button id="btn-sheet" class="hud-btn" type="button">Ficha <kbd>C</kbd></button>
       <button id="admin-badge" class="admin-badge" type="button" hidden title="poderes do GOD">GOD</button>
@@ -233,6 +234,31 @@
     </div>
   </div>
 
+  <div id="bestiary" class="modal" role="dialog" aria-modal="true" aria-labelledby="best-title" hidden>
+    <div class="modal-card bestiary-card">
+      <div class="modal-head">
+        <div>
+          <p class="inv-kicker">quem vive no vale</p>
+          <h2 id="best-title">Bestiário</h2>
+        </div>
+        <button type="button" class="hud-btn" data-close="bestiary">fechar <kbd>Esc</kbd></button>
+      </div>
+      <div class="best-resumo">
+        <div class="best-placar">
+          <p id="best-progress" class="best-progress">0 de 487 criaturas descobertas</p>
+          <div id="best-meter" class="best-meter" role="progressbar" aria-label="criaturas descobertas" aria-valuemin="0" aria-valuemax="487" aria-valuenow="0"><i id="best-meter-fill"></i></div>
+        </div>
+        <div id="best-stats" class="best-numeros"></div>
+      </div>
+      <div class="best-tools">
+        <input id="best-search" class="travel-filter" type="text" placeholder="procurar bicho, caverna ou continente" autocomplete="off" aria-label="procurar no bestiário">
+        <div id="best-tabs" class="best-tabs" role="group" aria-label="filtrar o bestiário"></div>
+      </div>
+      <div id="best-list" class="best-list"></div>
+      <p class="inv-hint">cada silhueta é um bicho que ainda não cruzou o seu caminho. <kbd>B</kbd> abre e fecha o bestiário.</p>
+    </div>
+  </div>
+
   <div id="outfits" class="modal" role="dialog" aria-modal="true" aria-labelledby="outfits-title" hidden>
     <div class="modal-card outfits-card">
       <div class="modal-head">
@@ -347,6 +373,8 @@
         <div><kbd>Q</kbd><span>abrir a conversa</span></div>
         <div><kbd>E</kbd><span>abrir a Rede</span></div>
         <div><kbd>Z</kbd><span>diário</span></div>
+        <div><kbd>B</kbd><span>bestiário</span></div>
+        <div><kbd>I</kbd><span>mochila</span></div>
         <div><kbd>C</kbd><span>ficha</span></div>
         <div><kbd>Esc</kbd><span>fechar</span></div>
       </div>
