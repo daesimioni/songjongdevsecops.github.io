@@ -28,7 +28,7 @@ function swatchRow(label, list, value, onPick) {
   return row;
 }
 
-export function renderCharacterEditor(mount, { look, colors, isLocked = () => false, onChange }) {
+export function renderCharacterEditor(mount, { look, colors, outfits = [], outfit = "", isLocked = () => false, isOutfitLocked = () => false, onChange, onOutfit }) {
   const current = normalizeAvatar(look);
   mount.textContent = "";
 
@@ -70,6 +70,23 @@ export function renderCharacterEditor(mount, { look, colors, isLocked = () => fa
   }
   hairRow.appendChild(hairGrid);
   controls.appendChild(hairRow);
+
+  if (outfits.length && onOutfit) {
+    const outfitRow = el("div", "look-row");
+    outfitRow.appendChild(el("span", "look-label", "traje"));
+    const outfitChips = el("div", "look-chips");
+    for (const item of outfits) {
+      const locked = isOutfitLocked(item);
+      const button = el("button", `look-chip${outfit === item.id ? " on" : ""}${locked ? " locked" : ""}`, item.name);
+      button.type = "button";
+      button.disabled = locked;
+      if (locked) button.title = "abre ao completar o continente";
+      button.addEventListener("click", () => onOutfit(item.id));
+      outfitChips.appendChild(button);
+    }
+    outfitRow.appendChild(outfitChips);
+    controls.appendChild(outfitRow);
+  }
 
   controls.appendChild(swatchRow("pele", SKINS, current.skin, (skin) => onChange({ skin })));
   controls.appendChild(swatchRow("cabelo", HAIR_TONES, current.hairColor, (hairColor) => onChange({ hairColor })));

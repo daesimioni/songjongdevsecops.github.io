@@ -494,8 +494,16 @@ function openLook() {
   const draw = () => renderCharacterEditor(mount, {
     look: player.look,
     colors: player.colors,
+    outfits: OUTFITS,
+    outfit: player.outfitId,
     isLocked: (continent) => !hairOpen(continent),
+    isOutfitLocked: (item) => !outfitUnlocked(item),
     onChange: (patch) => { applyLook(patch); audio.blip(); draw(); },
+    onOutfit: (id) => {
+      if (!applyOutfit(id)) return;
+      audio.blip();
+      draw();
+    },
   });
   draw();
   openModal("look");
@@ -2150,8 +2158,12 @@ function renderIntroLook() {
   const draw = () => renderCharacterEditor(mount, {
     look: player.look,
     colors: player.colors,
+    outfits: OUTFITS,
+    outfit: player.outfitId,
     isLocked: (continent) => !hairOpen(continent),
+    isOutfitLocked: (item) => !outfitUnlocked(item),
     onChange: (patch) => { applyLook(patch); draw(); },
+    onOutfit: (id) => { applyOutfit(id); draw(); },
   });
   draw();
 }

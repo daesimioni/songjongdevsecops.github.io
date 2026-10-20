@@ -9,6 +9,27 @@ export const OUTFITS = [
     colors: { hair: "#3a2a55", skin: "#f0c9a8", shirt: "#61f4c0", pants: "#2f3a66", accent: "#fff3d1" },
   },
   {
+    id: "camiseta",
+    name: "Camiseta",
+    continent: "hub",
+    desc: "a roupa de todo dia, sem cerimônia",
+    colors: { hair: "#3a2a55", skin: "#f0c9a8", shirt: "#ece8ff", pants: "#3a4466", accent: "#61f4c0" },
+  },
+  {
+    id: "avental",
+    name: "Avental",
+    continent: "hub",
+    desc: "pano de oficina, bolso fundo",
+    colors: { hair: "#3a2a55", skin: "#f0c9a8", shirt: "#8a8fb5", pants: "#2f3a66", accent: "#ffc857" },
+  },
+  {
+    id: "casaco",
+    name: "Casaco",
+    continent: "hub",
+    desc: "para quem viaja de madrugada",
+    colors: { hair: "#3a2a55", skin: "#f0c9a8", shirt: "#3a4466", pants: "#1b1c2c", accent: "#6bd5ff" },
+  },
+  {
     id: "silicio",
     name: "Aprendiz de Silício",
     continent: "cs",
