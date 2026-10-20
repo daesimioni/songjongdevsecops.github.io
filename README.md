@@ -299,10 +299,24 @@ grande. `C` abre a Ficha em qualquer lugar, `Esc` sobe de volta para a boca da
 caverna. Monstros e chefe guardam o tempo de respawn de sempre; os baús e os
 veios se reabrem a cada descida.
 
+## Desenho
+
+O tile tem 16 px de origem e aparece entre 24 e 32 px na tela: o zoom trava em
+2x, antes ele chegava a 3,5x em monitor grande e cada bloco virava uma parede.
+O chão não é mais uma cor chapada por tile. Cada tile leva grão de 1 px, o tom
+muda em manchas de três em três tiles (não em xadrez) e as bordas de água,
+areia, caminho e praça são comidas por dither. A praça virou lajota pequena, a
+parede virou pedra com junta, a ponte tem tábua e a árvore tem copa arredondada
+desenhada em linhas de 1 px, com sombra, tronco e galho. O piso da caverna é
+pintado uma vez por descida num canvas do mapa inteiro, então o xadrez de 16 px
+saiu e entrou rachadura, cascalho, cogumelo e parede com borda serrada.
+
 ## Desempenho
 
 O chão é pintado uma vez em blocos de 16x16 tiles e só o bloco visível é
-copiado por frame; água e magma recebem o brilho animado por cima. Rótulos de
+copiado por frame; água e magma recebem só a onda animada por cima. A caverna
+pinta o mapa inteiro num canvas na descida e cada quadro copia o pedaço
+visível. Rótulos de
 NPC, brilho de estação e a névoa do minimapa ficam em sprites prontos, e o que
 está fora da tela nem entra na lista de desenho. Não sobra nenhum blend de tela
 cheia: as listras de CRT viraram alpha simples, e em tela de toque o blur de

@@ -545,6 +545,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     chests: [],
     props: [],
     solids: [],
+    terrain: null,
     seen: null,
     minimapAt: 0,
     path: null,
@@ -884,6 +885,9 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     state.entryCave = entryCave || null;
     state.pack = [];
     state.map = buildDungeonMap(def);
+    // chão e parede são estáticos: pinta uma vez por descida e cada quadro só
+    // copia o pedaço visível (o detalhe fino não custa por frame)
+    state.terrain = buildTerrain(state.map, def.palette);
     state.seen = new Uint8Array(state.map.W * state.map.H);
     state.minimapAt = 0;
     state.ground = groundFor(def);
@@ -1702,6 +1706,149 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     }
   }
 
+  // O chão da caverna é estático: pinta uma vez por descida num canvas do
+  // tamanho do mapa e cada quadro só copia o pedaço visível. Antes, cada tile
+  // era um quadrado chapado do xadrez; agora o piso tem grão, rachadura e
+  // parede serrada sem custo por frame.
+  function buildTerrain(map, palette) {
+    const cv = document.createElement("canvas");
+    cv.width = map.W * TILE;
+    cv.height = map.H * TILE;
+    const g = cv.getContext("2d");
+    if (!g) return cv;
+    g.imageSmoothingEnabled = false;
+    const cityIndex = map.rooms.findIndex((r) => r.kind === "city");
+    const solid = (x, y) => dungeonSolid(map, x, y);
+    // mancha larga de 3 em 3 tiles: o piso muda de tom como terreno, não
+    // como xadrez de 16 px
+    const patch = (x, y) => {
+      const fx = x / 3, fy = y / 3;
+      const x0 = Math.floor(fx), y0 = Math.floor(fy);
+      const tx = fx - x0, ty = fy - y0;
+      const a = hash2(x0, y0), b = hash2(x0 + 1, y0);
+      const c = hash2(x0, y0 + 1), d = hash2(x0 + 1, y0 + 1);
+      const topo = a + (b - a) * tx;
+      const base = c + (d - c) * tx;
+      return topo + (base - topo) * ty;
+    };
+
+    // chão
+    for (let ty = 0; ty < map.H; ty++) {
+      for (let tx = 0; tx < map.W; tx++) {
+        if (solid(tx, ty)) continue;
+        const px = tx * TILE, py = ty * TILE;
+        const h = hash2(tx, ty);
+        if (map.roomGrid[ty * map.W + tx] === cityIndex) {
+          // lajotas de 8 px em fileiras alternadas
+          g.fillStyle = patch(tx, ty) > 0.5 ? "#2b3150" : "#2f3557";
+          g.fillRect(px, py, TILE, TILE);
+          g.fillStyle = "rgba(9, 12, 24, 0.5)";
+          for (let yy = 0; yy < TILE; yy += 8) {
+            g.fillRect(px, py + yy + 7, TILE, 1);
+            const off = ((yy / 8) + tx) % 2 ? 4 : 0;
+            for (let xx = off; xx < TILE; xx += 8) g.fillRect(px + xx, py + yy, 1, 7);
+          }
+          g.fillStyle = "rgba(255,255,255,0.055)";
+          g.fillRect(px + 2, py + 1, 5, 1);
+          if (h > 0.8) {
+            g.fillStyle = "rgba(255, 200, 87, 0.24)";
+            g.fillRect(px + 5 + Math.floor(h * 5), py + 9, 2, 1);
+          }
+        } else {
+          // um piso só, com véu e grão: o xadrez de 16 px sumiu
+          g.fillStyle = palette.floor;
+          g.fillRect(px, py, TILE, TILE);
+          g.fillStyle = patch(tx, ty) > 0.5 ? "rgba(255,255,255,0.022)" : "rgba(0,0,0,0.08)";
+          g.fillRect(px, py, TILE, TILE);
+          for (let i = 0; i < 4; i++) {
+            const gx = px + 1 + Math.floor(hash2(tx * 13 + i * 5, ty * 17 - i) * 14);
+            const gy = py + 1 + Math.floor(hash2(tx * 7 - i, ty * 19 + i * 5) * 14);
+            g.fillStyle = i % 2 ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.1)";
+            g.fillRect(gx, gy, 1, 1);
+          }
+          if (h > 0.92) {
+            // cogumelo
+            g.fillStyle = "#3a2f22";
+            g.fillRect(px + 6, py + 9, 2, 4);
+            g.fillStyle = palette.accent;
+            g.globalAlpha = 0.7;
+            g.fillRect(px + 4, py + 7, 6, 3);
+            g.globalAlpha = 1;
+          } else if (h > 0.86) {
+            // rachadura
+            g.strokeStyle = "rgba(0,0,0,0.28)";
+            g.lineWidth = 1;
+            g.beginPath();
+            g.moveTo(px + 2, py + 4 + Math.floor(h * 5));
+            g.lineTo(px + 6, py + 8);
+            g.lineTo(px + 5, py + 13);
+            g.stroke();
+          } else if (h > 0.8) {
+            // cascalho
+            g.fillStyle = "rgba(0,0,0,0.22)";
+            g.fillRect(px + 4, py + 10, 5, 2);
+            g.fillRect(px + 10, py + 5, 2, 2);
+            g.fillStyle = "rgba(255,255,255,0.06)";
+            g.fillRect(px + 5, py + 5, 2, 1);
+          }
+        }
+      }
+    }
+
+    // paredes
+    for (let ty = 0; ty < map.H; ty++) {
+      for (let tx = 0; tx < map.W; tx++) {
+        if (!solid(tx, ty)) continue;
+        const px = tx * TILE, py = ty * TILE;
+        const h = hash2(tx + 11, ty + 7);
+        g.fillStyle = palette.wall;
+        g.fillRect(px, py, TILE, TILE);
+        g.fillStyle = "rgba(255,255,255,0.035)";
+        g.fillRect(px + 2 + Math.floor(h * 10), py + 3 + Math.floor(h * 9), 1, 1);
+        g.fillStyle = "rgba(0,0,0,0.2)";
+        g.fillRect(px + 9 - Math.floor(h * 6), py + 10 - Math.floor(h * 5), 1, 1);
+        const baixo = !solid(tx, ty + 1);
+        const cima = !solid(tx, ty - 1);
+        const esq = !solid(tx - 1, ty);
+        const dir = !solid(tx + 1, ty);
+        if (!(baixo || cima || esq || dir)) continue;
+        // pedras só na face que aparece
+        for (let r = 0; r < 3; r++) {
+          const yy = py + r * 5;
+          const off = (r % 2) * 3 + Math.floor(h * 2);
+          for (let i = -1; i < 3; i++) {
+            const xx = px + off + i * 7;
+            const lx = Math.max(px, xx);
+            const rx = Math.min(px + TILE, xx + 6);
+            if (rx <= lx) continue;
+            const tom = hash2(tx * 7 + i, ty * 5 + r);
+            g.fillStyle = tom > 0.62 ? palette.wallTop : palette.wall;
+            g.fillRect(lx + 1, yy + 1, Math.max(1, rx - lx - 1), 3);
+            g.fillStyle = "rgba(255,255,255,0.045)";
+            g.fillRect(lx + 1, yy + 1, Math.max(1, rx - lx - 1), 1);
+          }
+        }
+        g.fillStyle = "rgba(255,255,255,0.05)";
+        g.fillRect(px, py, TILE, 2);
+        if (baixo) {
+          g.fillStyle = "rgba(0,0,0,0.34)";
+          g.fillRect(px, py + TILE, TILE, 5);
+        }
+        // a rocha morde o chão: 1 a 3 px de borda serrada na face aberta
+        g.fillStyle = palette.wall;
+        for (let i = 0; i < TILE; i += 2) {
+          if (hash2(tx * 29 + i, ty * 31 + i * 3) < 0.42) continue;
+          const d = 1 + Math.floor(hash2(tx + i, ty - i) * 3);
+          if (baixo) g.fillRect(px + i, py + TILE, 2, d);
+          if (cima) g.fillRect(px + i, py - d, 2, d);
+          if (esq) g.fillRect(px - d, py + i, d, 2);
+          if (dir) g.fillRect(px + TILE, py + i, d, 2);
+        }
+      }
+    }
+    return cv;
+  }
+
   function draw(t) {
     if (!ctx || !state.map) return;
     const dpr = state.dpr;
@@ -1724,69 +1871,9 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     ctx.scale(scale, scale);
     ctx.translate(-camX, -camY);
 
-    const x0 = Math.max(0, Math.floor(camX / TILE) - 1);
-    const x1 = Math.min(state.map.W - 1, Math.ceil((camX + viewW) / TILE) + 1);
-    const y0 = Math.max(0, Math.floor(camY / TILE) - 1);
-    const y1 = Math.min(state.map.H - 1, Math.ceil((camY + viewH) / TILE) + 1);
     const cityIndex = state.map.rooms.findIndex((r) => r.kind === "city");
-
-    // chão e decoração
-    for (let ty = y0; ty <= y1; ty++) {
-      for (let tx = x0; tx <= x1; tx++) {
-        if (dungeonSolid(state.map, tx, ty)) continue;
-        const px = tx * TILE;
-        const py = ty * TILE;
-        const city = state.map.roomGrid[ty * state.map.W + tx] === cityIndex;
-        ctx.fillStyle = city ? "#2b3150" : (tx + ty) % 2 ? palette.floor : palette.floor2;
-        ctx.fillRect(px, py, TILE, TILE);
-        const h = hash2(tx, ty);
-        if (city) {
-          ctx.fillStyle = "rgba(255,255,255,0.04)";
-          if ((tx + ty) % 4 === 0) ctx.fillRect(px, py + 7, TILE, 1);
-        } else if (h > 0.93) {
-          // cogumelo
-          ctx.fillStyle = "#3a2f22";
-          ctx.fillRect(px + 6, py + 9, 2, 4);
-          ctx.fillStyle = palette.accent;
-          ctx.globalAlpha = 0.7;
-          ctx.fillRect(px + 4, py + 7, 6, 3);
-          ctx.globalAlpha = 1;
-        } else if (h > 0.88) {
-          ctx.fillStyle = "rgba(0,0,0,0.22)";
-          ctx.fillRect(px + 4, py + 10, 5, 2);
-          ctx.fillRect(px + 10, py + 5, 2, 2);
-        } else if (h > 0.84) {
-          // cascalho
-          ctx.fillStyle = "rgba(255,255,255,0.06)";
-          ctx.fillRect(px + 5, py + 5, 2, 1);
-          ctx.fillRect(px + 9, py + 8, 1, 1);
-        }
-      }
-    }
-
-    // paredes com sombra no chão de baixo
-    for (let ty = y0; ty <= y1; ty++) {
-      for (let tx = x0; tx <= x1; tx++) {
-        if (!dungeonSolid(state.map, tx, ty)) continue;
-        let nearFloor = false;
-        for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
-          if (!dungeonSolid(state.map, tx + dx, ty + dy)) nearFloor = true;
-        }
-        if (!nearFloor) continue;
-        const px = tx * TILE;
-        const py = ty * TILE;
-        ctx.fillStyle = palette.wall;
-        ctx.fillRect(px, py, TILE, TILE);
-        ctx.fillStyle = "rgba(255,255,255,0.05)";
-        ctx.fillRect(px, py, TILE, 2);
-        if (!dungeonSolid(state.map, tx, ty + 1)) {
-          ctx.fillStyle = palette.wallTop;
-          ctx.fillRect(px, py + TILE - 3, TILE, 3);
-          ctx.fillStyle = "rgba(0,0,0,0.34)";
-          ctx.fillRect(px, py + TILE, TILE, 5);
-        }
-      }
-    }
+    // chão e parede vêm do canvas pintado na descida: um drawImage por quadro
+    if (state.terrain) ctx.drawImage(state.terrain, 0, 0);
 
     // tochas nas paredes
     for (const prop of state.props) {

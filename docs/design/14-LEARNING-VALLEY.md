@@ -63,6 +63,19 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 - [x] desempenho e carga medidos
 - [x] commit e push com evidência
 
+### O. Desenho granular
+
+- [x] o zoom da superfície trava em 2x (24 a 32 px por tile); antes chegava a
+      3,5x em monitor grande e o bloco virava parede
+- [x] grão de 1 px em todo tile e tom em mancha de 3 em 3 tiles, não em xadrez
+- [x] praça e pedra em lajota pequena, parede em pedra com junta, ponte em tábua
+- [x] costa, margem do caminho e borda da praça com dither; espuma pontilhada
+- [x] copa de árvore arredondada em spans de 1 px, com camadas, tronco e sombra
+- [x] a caverna pinta chão e parede num canvas por descida: o xadrez de 16 px
+      saiu, entrou rachadura, cascalho, cogumelo e parede com borda serrada
+- [x] conferido: 60 fps a 1x, ~50 a 4x e ~46 a 6x de CPU; 1920x1080 em zoom 2;
+      sem erro de console
+
 ### N. Coleta com pergunta
 
 - [x] árvore, água e veio viram alvo de `F`, clique ou menu de contexto
@@ -176,6 +189,7 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 
 | data | fase | o que entrou | prova |
 |---|---|---|---|
+| 2026-10-20 | O | desenho granular: zoom da superfície em 2x (antes 3,5x), grão de 1 px e tom por mancha, lajota na praça, pedra na parede, tábua na ponte, copa de árvore arredondada, dither na costa e no caminho; caverna com chão e parede pintados uma vez por descida | navegador: 1920x1080 em zoom 2, capturas antes/depois do porto, floresta e caverna, 60 fps a 1x, 49,8 a 4x e 46,5 a 6x de CPU, console limpo; node verde |
 | 2026-10-20 | N | coleta com pergunta: veio, árvore e água com raridade de quatro degraus (comum, incomum, raro e lendário); a pergunta vem do tier da raridade pedido sozinho, sem misturar baralhos; o lendário pede duas perguntas seguidas e só entrega acertando as duas; peixes lagoa/prateado/escama azul/Peixe do Espelho com cura 10/16/24/40 | node: 900 sorteios sem recurso fora de ITEMS, fronteiras de raridade, rodadas do lendário e cura crescente dos peixes; navegador: pesca comum, lendário com duas perguntas (duas certas entregam, errar a segunda não entrega), veio gastando 1 de 3 cargas, 390 px sem estouro, console limpo |
 | 2026-10-20 | M | mochila no HUD da caverna e tecla I dentro da caverna; o modal abre por cima, Esc fecha só a mochila e a caverna continua; no celular os quatro botões cabem sem cortar sair | navegador: botão visível, clique abriu a mochila com 40 espaços e a caverna atrás, Esc voltou, I abriu, 390 px com turbo/mochila/ficha/sair dentro da tela, console limpo |
 | 2026-10-20 | L | perguntas padronizadas em cinco alternativas A-E no duelo e no PvP; a certa embaralha entre as cinco; questão com 6 escritas usa 5; distratores próximos por troca de oposto, semelhança com a resposta e mesma área; as 632 perguntas geradas do catálogo passaram a nascer com 5 opções escritas | node: 1603 perguntas e 35 cartas de PvP com 5, respostas espalhadas, distratores conferidos (Cantor, autovalor, grandes números, integração por partes), PvP 5; navegador: cinco botões A-E, tecla E responde, quinta marcada, console limpo |
