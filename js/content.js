@@ -12,7 +12,7 @@ export const POSTS = {
     lab: null,
     body: `
       <p>Este blog não tem índice. Tem <strong>mapa</strong>. Você entra com um boneco, atravessa pontes e escolhe por qual continente começar. Cada estação que encontra é uma página: um texto curto e um instrumento para mexer com as mãos.</p>
-      <p>São sete continentes. A <em>Computação</em> mostra como saímos de interruptores e areia até processadores. <em>Matemática</em> visita o infinito, as formas, a mudança e o acaso. <em>Física</em> testa pêndulos, ondas, calor, luz e órbitas. <em>Química</em> abre a tabela periódica, as ligações, as reações e o equilíbrio. <em>Música</em> mostra a matemática escondida no som. <em>Inteligência Artificial</em> abre os dados, as redes, a linguagem e os limites. O <em>Vale da Língua</em> desce ao português do Brasil: o som, a palavra, a frase e o texto. Ao todo, 43 fragmentos para descobrir.</p>
+      <p>São sete continentes. A <em>Computação</em> mostra como saímos de interruptores e areia até processadores. <em>Matemática</em> visita o infinito, as formas, a mudança e o acaso. <em>Física</em> testa pêndulos, ondas, calor, luz e órbitas. <em>Química</em> abre a tabela periódica, as ligações, as reações e o equilíbrio. <em>Música</em> mostra a matemática escondida no som. <em>Inteligência Artificial</em> abre os dados, as redes, a linguagem e os limites. O <em>Vale da Língua</em> desce ao português do Brasil: o som, a palavra, a frase e o texto. Ao todo, 45 fragmentos para descobrir.</p>
       <p>Cada estação abre uma página e soma experiência. O <strong>Diário</strong> guarda o que você já encontrou. As <strong>Pedras do Porto</strong>, os monólitos brilhantes nas docas, levam você de volta a qualquer continente já visitado. A névoa do minimapa só some onde você anda.</p>
       <blockquote>Não tem pressa. O mapa é grande, mas o caminho é seu.</blockquote>
       <p>Os <strong>NPCs</strong> têm missões. Aperte F perto deles: tem caminhada, pergunta e conversa. Cada missão paga experiência e um título, e o Diário mostra quanto falta para a próxima.</p>
@@ -648,6 +648,40 @@ export const POSTS = {
       <blockquote>Infinitas parcelas podem caber num número finito. O contrário também, e é aí que a coisa fica interessante.</blockquote>
     `,
   },
+
+  // ---------------- Química · orgânica ----------------
+  carbon: {
+    kicker: "química · forja do carbono",
+    title: "O átomo que segura quatro coisas",
+    date: "2026-09-12",
+    read: "5 min",
+    tags: ["orgânica", "carbono", "ligações"],
+    continent: "chem",
+    lab: null,
+    body: `
+      <p>Carbono tem quatro elétrons na camada de valência. Em vez de perder ou ganhar quatro de uma vez, ele prefere compartilhar: faz quatro ligações covalentes e fica estável. Essa obsessão por quatro é a razão de a vida ser possível.</p>
+      <p>Com quatro mãos, o carbono monta cadeias. Cada carbono pode se ligar a outros carbonos, formando filas, ramos e anéis. O metano tem um carbono; o octano tem oito em fila; o grafite tem camadas inteiras; o diamante tem uma rede tridimensional. Mesmo elemento, arranjos diferentes, propriedades completamente diferentes.</p>
+      <p>A cadeia ganha personalidade quando outros átomos entram. Um oxigênio ligado a um hidrogênio vira álcool; um oxigênio com dupla ligação vira cetona; um nitrogênio vira amina. São os grupos funcionais. Não é decoreba: o grupo decide o cheiro, a solubilidade e a reação.</p>
+      <p>Por isso química orgânica é menos "química do carbono" e mais "química das combinações de carbono". O mesmo esqueleto pode aparecer como açúcar, gordura, proteína ou perfume, só trocando a roupa dos grupos funcionais.</p>
+      <blockquote>Quatro ligações, infinitas cadeias. O carbono nunca precisou de mais que isso.</blockquote>
+    `,
+  },
+  polymers: {
+    kicker: "química · salão dos polímeros",
+    title: "A cadeia que vira plástico e a que vira você",
+    date: "2026-09-08",
+    read: "6 min",
+    tags: ["polímeros", "orgânica", "materiais"],
+    continent: "chem",
+    lab: null,
+    body: `
+      <p>Um polímero é uma cadeia longa feita de unidades pequenas repetidas, os monômeros. Eteno vira polietileno; estireno vira isopor e copinho; aminoácidos viram proteína. A ideia é sempre a mesma: repetir um bloco até o conjunto ganhar propriedades que o bloco sozinho não tinha.</p>
+      <p>Existem dois jeitos principais de montar. Na adição, os monômeros com dupla ligação se abrem e se ligam sem liberar nada. Na condensação, cada união libera uma molécula pequena, quase sempre água. O polietileno é adição; o poliéster e o náilon são condensação.</p>
+      <p>Rigidez, elasticidade e ponto de fusão vêm do empilhamento e dos ramos. Cadeias muito lineares se acomodam ordenadas e formam plásticos resistentes. Cadeias ramificadas embolam e amolecem cedo. A mesma matéria-prima pode virar sacola fina ou cano grosso só mudando a receita.</p>
+      <p>A natureza inventou isso antes da indústria. Celulose, proteína, DNA e borracha natural são polímeros. A diferença é que a natureza também aprendeu a desmontar os seus. O plástico comum levou décadas para isso, e é o problema que a reciclagem tenta contornar.</p>
+      <blockquote>Repita o bloco mil vezes e ele deixa de ser bloco. Vira substância.</blockquote>
+    `,
+  },
 };
 
 export const NPCS = {
@@ -853,6 +887,24 @@ export const NPCS = {
       "Treino de análise aqui, no claro e sem soma infinita cobrando juros. O vale é que cobra.",
       "Comece pela definição de limite: é a pergunta que sustenta quase todas as outras.",
       "Série geométrica é o teste mais fácil de aplicar e o mais fácil de esquecer a razão certa.",
+    ],
+  },
+  kekule: {
+    name: "Kekulé",
+    lines: [
+      "O benzeno me apareceu como uma cobra mordendo a própria cauda. Pode rir: o desenho do anel está naquela imagem até hoje.",
+      "As seis ligações pi do anel não ficam alternando entre duas posições. Elas se espalham, e por isso o benzeno é simétrico.",
+      "Isômero é fórmula igual, arranjo diferente. É como trocar as peças de lugar sem trocar o número de peças.",
+      "Carbono com quatro grupos diferentes ganha duas versões que não se sobrepõem, como mão esquerda e direita. Isso é quiralidade.",
+      "A forja ao lado trabalha esse carbono quiral. Se a cadeia enrolar errado, ela acerta a pergunta.",
+    ],
+  },
+  "trainer-chem-organic": {
+    name: "Mestra Wöhler",
+    lines: [
+      "Treino de orgânica é aqui, no claro e de jaleco. O bosque é que cobra.",
+      "Comece pela tetravalência: sabendo que o carbono faz quatro ligações, a metade das perguntas se resolve.",
+      "Não confunda grupo funcional com cadeia. A cadeia é o esqueleto; o grupo é o tempero.",
     ],
   },
   shannon: {

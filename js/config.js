@@ -208,6 +208,18 @@ export const AREAS = [
     path: 13,
     accent: "#b48cff",
   },
+  {
+    id: "chem-organic",
+    continent: "chem",
+    name: "Área da Química Orgânica",
+    sub: "carbono, cadeias e o que a vida faz com eles",
+    land: { cx: 31, cy: 138, rx: 17, ry: 11 },
+    rect: { x: 10, y: 122, w: 44, h: 30 },
+    base: 16,
+    floor: 17,
+    path: 17,
+    accent: "#7ee787",
+  },
 ];
 
 export const SITES = [
@@ -447,6 +459,18 @@ export const SITES = [
     label: "Convergência", x: 236, y: 82, post: "series",
     accent: "#6bd5ff", icon: "infinity",
   },
+
+  // Química · área orgânica
+  {
+    id: "carbon", continent: "chem", name: "Forja do Carbono",
+    label: "Carbono e Ligações", x: 22, y: 133, post: "carbon",
+    accent: "#7ee787", icon: "flask",
+  },
+  {
+    id: "polymers", continent: "chem", name: "Salão dos Polímeros",
+    label: "Cadeias e Polímeros", x: 40, y: 143, post: "polymers",
+    accent: "#6bd5ff", icon: "chain",
+  },
 ];
 
 export const WAYSTONES = [
@@ -461,6 +485,7 @@ export const WAYSTONES = [
   { id: "physics-em", continent: "physics", name: "Farol do Eletromagnetismo", x: 152, y: 104, accent: "#ffb26b" },
   { id: "cs-arch", continent: "cs", name: "Farol da Arquitetura", x: 204, y: 25, accent: "#61f4c0" },
   { id: "math-analysis", continent: "math", name: "Farol da Análise", x: 226, y: 78, accent: "#b48cff" },
+  { id: "chem-organic", continent: "chem", name: "Farol da Orgânica", x: 31, y: 138, accent: "#7ee787" },
 ];
 
 export const NPC_SPAWNS = [
@@ -482,6 +507,7 @@ export const NPC_SPAWNS = [
   { id: "faraday", continent: "physics", x: 146, y: 111, accent: "#ffb26b" },
   { id: "vonneumann", continent: "cs", x: 196, y: 29, accent: "#61f4c0" },
   { id: "cauchy", continent: "math", x: 219, y: 84, accent: "#b48cff" },
+  { id: "kekule", continent: "chem", x: 27, y: 141, accent: "#7ee787" },
 ];
 
 export const CAT_SPAWN = { x: 87, y: 61 };

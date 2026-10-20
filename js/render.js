@@ -866,6 +866,23 @@ export function createRenderer(canvas, world) {
       ctx.beginPath();
       ctx.moveTo(-5, 3); ctx.lineTo(-8, 8); ctx.lineTo(8, 8); ctx.lineTo(5, 3);
       ctx.closePath(); ctx.fill();
+    } else if (icon === "chain") {
+      ctx.strokeStyle = hexA(accent, 0.9);
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(-5, 5); ctx.lineTo(5, -5);
+      ctx.stroke();
+      ctx.fillStyle = "#d9d0e8";
+      for (const [x, y] of [[-6, 6], [6, -6]]) {
+        ctx.beginPath();
+        ctx.arc(x, y, 4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = hexA(accent, 0.9);
+        ctx.beginPath();
+        ctx.arc(x, y, 1.6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#d9d0e8";
+      }
     } else if (icon === "fire") {
       ctx.beginPath();
       ctx.moveTo(0, 9);

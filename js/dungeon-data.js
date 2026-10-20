@@ -278,6 +278,30 @@ const COMMON = {
     monsters: ["Sequência", "Série", "Épsilon", "Delta", "Derivada", "Integral", "Convergência", "Divergência", "Cauchy", "Continuidade", "Limite"],
     palette: { floor: "#2c2440", floor2: "#1f1930", wall: "#120f1e", wallTop: "#413463", accent: "#c9a4ff" },
   },
+  "chem-organic": {
+    continent: "chem",
+    name: "Bosque do Carbono",
+    sub: "onde as cadeias crescem e se enrolam sozinhas",
+    material: "erva",
+    tunnel: "zigzag",
+    equipment: ["oculos-organicos", "jaleco-organico", "colar-quiral"],
+    shift: { a: [-1, 2], c: [2, -1], h: [1, 1] },
+    boss: "O Carbono Quiral",
+    rooms: [
+      ["Clareira do Carbono", "entrada"],
+      ["Galho das Ligações", "ligações"],
+      ["Trilha das Cadeias", "cadeias"],
+      ["Cripta dos Aromáticos", "aromáticos"],
+      ["Oficina dos Álcoois", "álcoois"],
+      ["Poço dos Ácidos", "ácidos"],
+      ["Torre dos Polímeros", "polímeros"],
+      ["Praça da Vida", "cidade"],
+      ["Câmara dos Isômeros", "isômeros"],
+      ["Bosque da Quiralidade", "quiralidade"],
+    ],
+    monsters: ["Carbono", "Cadeia", "Eteno", "Benzeno", "Álcool", "Cetona", "Éster", "Polímero", "Isômero", "Quiral", "Amida"],
+    palette: { floor: "#1c3322", floor2: "#14261a", wall: "#0a1710", wallTop: "#2c4f34", accent: "#7ee787" },
+  },
 };
 
 export const DUNGEONS = Object.entries(COMMON).map(([key, d]) => {

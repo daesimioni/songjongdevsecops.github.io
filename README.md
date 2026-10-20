@@ -3,7 +3,7 @@
 No ar em <https://songjongdevsecops.github.io/>.
 
 Um blog pessoal que se atravessa a pé. O site é um arquipélago em pixel art:
-você entra com um boneco, cruza pontes e encontra 43 estações. Cada estação é
+você entra com um boneco, cruza pontes e encontra 45 estações. Cada estação é
 uma página com um texto curto e um instrumento interativo.
 
 ## O arquipélago
@@ -14,12 +14,12 @@ uma página com um texto curto e um instrumento interativo.
 | **Computação** | portas lógicas, somador de quatro bits, flip-flop e contador, CPU de brinquedo e uma linha do tempo da computação |
 | **Matemática** | paradoxos do infinito, sólidos platônicos em 3D, derivada e integral, máquina de Galton, fractais e a área da análise (limites, séries, caçada e caverna próprias) |
 | **Física** | pêndulo, série de Fourier, gás ideal, prisma de Newton, órbitas gravitacionais e a área do eletromagnetismo (indução, Maxwell, caçada e caverna próprias) |
-| **Química** | tabela periódica interativa, moléculas em 3D, titulação, energia de reação e balanceamento |
+| **Química** | tabela periódica interativa, moléculas em 3D, titulação, energia de reação, balanceamento e a área orgânica (carbono, polímeros, caçada e caverna próprias) |
 | **Música** | polirritmia, intervalos e razões, temperamento e escalas, timbre aditivo e música generativa |
 | **Inteligência Artificial** | regressão linear, rede neural que aprende um círculo, tokens e predição, convolução de imagem e ética |
 | **Vale da Língua** | etimologia, concordância, acentuação e hífen, gêneros textuais e crase |
 
-O mapa tem 300 por 200 tiles, sete continentes e três áreas temáticas, ilhas, um anel de pontes entre
+O mapa tem 300 por 200 tiles, sete continentes e quatro áreas temáticas, ilhas, um anel de pontes entre
 elas e um porto
 central. O minimapa começa coberto por névoa e revela o que você anda. Cada
 estação descoberta vira um fragmento no diário e soma experiência. As Pedras do
@@ -410,11 +410,11 @@ chefe sem alavanca, a forja, os encantamentos, a comida com efeito, o bicho e a
 pergunta que casa com o tema. O duelo entre jogadores entra pela mesma prova: as
 cinco cartas, a dificuldade que vira dano e a compostura.
 
-A segunda confere o conteúdo inteiro: as 43 estações e seus textos, falas de NPC,
-29 missões, itens, equipamento, relíquias por continente, receitas, encantos, as
-172 perguntas (sem repetição e com resposta válida), as cinco cartas do PvP por
-continente, as dez cavernas e o mundo montado (dez instrutores, vinte bocas,
-nenhum monstro na superfície).
+A segunda confere o conteúdo inteiro: as 45 estações e seus textos, falas de NPC,
+30 missões, itens, equipamento, relíquias por continente, receitas, encantos, as
+178 perguntas (sem repetição e com resposta válida), as cinco cartas do PvP por
+continente, as onze cavernas e o mundo montado (onze instrutores, vinte e duas
+bocas, nenhum monstro na superfície).
 
 A terceira confere a casca: id repetido ou faltando, import que não resolve,
 botão sem `type`, imagem sem `alt`, link `_blank` sem `rel`, `aria-labelledby`
@@ -462,7 +462,7 @@ Depois abra `http://localhost:8000`.
 | `wasm/julia.wat` | fonte do módulo WebAssembly do conjunto de Julia |
 | `wasm/julia.wasm` | o módulo compilado, de 296 bytes |
 | `test/core.test.mjs` | conferência de missões, RPG, treino, fuga, duelo PvP e caverna |
-| `test/content.test.mjs` | conferência das 43 estações, perguntas, itens, cavernas, áreas e mundo |
+| `test/content.test.mjs` | conferência das 45 estações, perguntas, itens, cavernas, áreas e mundo |
 | `test/ui.test.mjs` | conferência de ids, imports, botões, rótulos e aria |
 | `test/backup.test.mjs` | envelope do backup, whitelist, dedupe e restauração |
 

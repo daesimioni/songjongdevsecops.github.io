@@ -54,8 +54,8 @@ export const QUESTS = [
     npc: "guia",
     giver: "Dona Zefa",
     title: "O mundo inteiro",
-    brief: "Quarenta e três fragmentos, sete continentes, uma volta completa. Quando o mapa acabar, o Porto ainda vai estar aqui.",
-    goal: { type: "cards", count: 43 },
+    brief: "Quarenta e cinco fragmentos, sete continentes, uma volta completa. Quando o mapa acabar, o Porto ainda vai estar aqui.",
+    goal: { type: "cards", count: 45 },
     reward: { xp: 150, title: "Mundo de Song" },
   },
   {
@@ -364,6 +364,25 @@ export const QUESTS = [
       why: "Você escolhe a margem do resultado, e a definição cobra uma margem na entrada. Se dá para vencer para qualquer épsilon, o limite existe e vale L.",
     },
     reward: { xp: 36, title: "Aprendiz de Cauchy" },
+  },
+  {
+    id: "anel-que-nao-fecha",
+    npc: "kekule",
+    giver: "Kekulé",
+    title: "O anel que não fecha",
+    brief: "Seis carbonos, seis hidrogênios e uma simetria que não deixa o desenho parar quieto.",
+    goal: { type: "quiz" },
+    quiz: {
+      question: "Por que o benzeno é representado por um anel com um círculo no meio?",
+      options: [
+        "Porque os elétrons pi estão deslocalizados pelos seis carbonos",
+        "Porque ele tem seis ligações simples fixas",
+        "Porque ele é um hidrocarboneto de cadeia aberta",
+      ],
+      answer: 0,
+      why: "O anel tem seis carbonos com elétrons pi que circulam por igual. O círculo resume isso: não há uma ligação dupla fixa em cada posição.",
+    },
+    reward: { xp: 34, title: "Guardião do Anel" },
   },
 ];
 
