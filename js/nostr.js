@@ -1,7 +1,7 @@
 // A conta do jogador é uma chave Nostr criada no próprio navegador.
 // Os canais do jogo carregam os selos `client`/`game`, e só eventos com esses
 // selos entram na tela: nada de conteúdo Nostr de fora do mundo.
-import { NOSTR, STORAGE } from "./config.js";
+import { BACKUP, NOSTR, STORAGE } from "./config.js";
 
 const CDN = "https://esm.sh/nostr-tools@2.25.2";
 const HEX64 = /^[0-9a-f]{64}$/i;
@@ -78,6 +78,8 @@ export class Rede {
     this.pendingTimers = new Map();
     this.onStatus = null;
     this.onDm = null;
+    this.onSelfSave = null;
+    this.selfSaves = new Map();
     this.onChannel = null;
     this.onPresence = null;
     this.closed = false;
@@ -370,6 +372,14 @@ export class Rede {
     }
   }
 
+  noteSelfSave(id, text, at) {
+    const key = id || `${at}:${text.length}`;
+    if (this.selfSaves.has(key)) return;
+    this.selfSaves.set(key, { id: key, at, text });
+    while (this.selfSaves.size > 40) this.selfSaves.delete(this.selfSaves.keys().next().value);
+    this.onSelfSave?.({ at, text });
+  }
+
   handleWrap(ev) {
     if (!ev || ev.kind !== 1059 || !ev.id || this.seenWraps.has(ev.id)) return;
     this.seenWraps.add(ev.id);
@@ -377,10 +387,15 @@ export class Rede {
     let rumor = null;
     try { rumor = this.nt.nip17.unwrapEvent(ev, this.sk); } catch { return; }
     if (!rumor || typeof rumor.content !== "string") return;
-    const text = clean(rumor.content, 500);
-    if (!text) return;
     const mine = rumor.pubkey === this.pk;
     const at = Number(rumor.created_at) || nowSec();
+    // backup da conta: é uma DM para si mesmo e não entra na conversa
+    if (mine && rumor.content.startsWith(BACKUP.mark)) {
+      this.noteSelfSave(rumor.id, rumor.content, at);
+      return;
+    }
+    const text = clean(rumor.content, 500);
+    if (!text) return;
     if (mine) {
       // A cópia para si mesmo não guarda o destinatário; ela confirma a
       // mensagem que ainda está pendente na conversa local.
@@ -414,11 +429,11 @@ export class Rede {
     this.onDm?.(msg);
   }
 
-  async sendDm(peer, text) {
+  async sendDm(peer, text, { silent = false, limit = 500 } = {}) {
     await this.init();
     const target = String(peer || "").trim();
     if (!HEX64.test(target)) return { ok: false, reason: "preciso da chave pública (npub ou hex) de quem vai receber." };
-    const t = clean(text, 500);
+    const t = clean(text, limit);
     if (!t) return { ok: false, reason: "mensagem vazia" };
     const now = Date.now();
     if (now - this.lastSend < 1200) return { ok: false, reason: "calma, uma de cada vez" };
@@ -429,8 +444,8 @@ export class Rede {
     } catch (err) {
       return { ok: false, reason: err?.message || "não deu para selar a mensagem." };
     }
-    const list = this.conversations.get(target) || [];
-    const pending = {
+    const list = silent ? null : this.conversations.get(target) || [];
+    const pending = silent ? null : {
       id: `local:${Math.random().toString(36).slice(2, 10)}`,
       author: this.pk,
       peer: target,
@@ -439,15 +454,19 @@ export class Rede {
       mine: true,
       pending: true,
     };
-    list.push(pending);
-    this.conversations.set(target, list);
+    if (list) {
+      list.push(pending);
+      this.conversations.set(target, list);
+    }
     const relays = wraps.length ? await this.publishMany(wraps) : 0;
     this.status(relays > 0 ? "pronta" : "sem rede", { relays });
     if (relays === 0) {
-      pending.pending = false;
-      pending.failed = true;
-      this.onDm?.({ ...pending, self: true });
-    } else {
+      if (pending) {
+        pending.pending = false;
+        pending.failed = true;
+        this.onDm?.({ ...pending, self: true });
+      }
+    } else if (pending) {
       // Se a cópia para si não voltar do relay, a mensagem não fica "enviando"
       // para sempre: vira "não saiu" e pode ser reenviada.
       const timer = setTimeout(() => {
@@ -460,6 +479,51 @@ export class Rede {
       this.pendingTimers.set(pending.id, timer);
     }
     return { ok: relays > 0, relays, wraps: wraps.length };
+  }
+
+  // DM para a própria chave: o backup da conta usa este caminho
+  sendSelf(text) {
+    return this.sendDm(this.pk, text, { silent: true, limit: BACKUP.max });
+  }
+
+  // busca os backups já publicados (a inscrição ao vivo só pega os novos)
+  async selfSavesRecent(days = BACKUP.days, waitMs = 5000) {
+    await this.init();
+    if (!this.ready || !this.pool) return [];
+    const since = nowSec() - Math.max(1, days) * 86400;
+    const found = new Map(this.selfSaves);
+    return new Promise((resolve) => {
+      let settled = false;
+      let sub = null;
+      const finish = () => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        try { sub?.close(); } catch { /* já fechou */ }
+        resolve(Array.from(found.values()).sort((a, b) => b.at - a.at));
+      };
+      const timer = setTimeout(finish, waitMs);
+      try {
+        sub = this.pool.subscribe(
+          NOSTR.relays,
+          { kinds: [1059], "#p": [this.pk], since },
+          {
+            onevent: (ev) => {
+              try {
+                const rumor = this.nt.nip17.unwrapEvent(ev, this.sk);
+                if (!rumor || rumor.pubkey !== this.pk) return;
+                const raw = String(rumor.content || "");
+                if (!raw.startsWith(BACKUP.mark)) return;
+                const at = Number(rumor.created_at) || nowSec();
+                found.set(rumor.id || `${at}:${raw.length}`, { id: rumor.id, at, text: raw });
+              } catch { /* não é para mim */ }
+            },
+            oneose: finish,
+            onclose: finish,
+          },
+        );
+      } catch { finish(); }
+    });
   }
 
   async publishMany(events) {

@@ -11,6 +11,7 @@ import { Net } from "./net.js";
 import { Rede } from "./nostr.js";
 import { Quests } from "./quests.js";
 import { createSocial } from "./social.js";
+import { createBackup } from "./backup.js";
 import { createPvp } from "./pvp.js";
 import { OUTFITS, outfitById, outfitColors } from "./outfits.js";
 import { findPath, nearestWalkable } from "./path.js";
@@ -131,6 +132,7 @@ for (const cid of CONTINENT_ORDER) {
 }
 
 const rede = new Rede({ name: player.name });
+const backup = createBackup({ rede });
 let social = null;
 const quests = new Quests({
   getCards: () => state.cards,
@@ -330,6 +332,7 @@ function bootSocial() {
   if (social) return;
   social = createSocial({
     rede,
+    backup,
     quests,
     player,
     getPeers: () => state.peers,
@@ -345,7 +348,17 @@ function bootSocial() {
   });
   social.connect();
   rede.init()
-    .then(() => { if (state.net) state.net.setIdentity(rede.pk); })
+    .then(async () => {
+      if (state.net) state.net.setIdentity(rede.pk);
+      // conta nova num navegador novo: o estado volta da DM do próprio jogador
+      const back = await backup.restoreIfEmpty();
+      if (back.restored) {
+        toast("sua conta voltou da sua DM no Nostr. Recarregando o mundo.", 5200);
+        setTimeout(() => location.reload(), 1800);
+        return;
+      }
+      backup.start();
+    })
     .catch(() => {});
 }
 
@@ -1787,6 +1800,6 @@ window.addEventListener("beforeunload", () => {
   setNetStatus({ state: "solo", count: 1 });
   requestAnimationFrame(loop);
   if (new URLSearchParams(location.search).has("debug")) {
-    window.__mundo = { player, state, world, renderer, audio, quests, rede, rpg, sheetUi, duelUi, dungeon, pvpUi, knockDown, social };
+    window.__mundo = { player, state, world, renderer, audio, quests, rede, backup, rpg, sheetUi, duelUi, dungeon, pvpUi, knockDown, social };
   }
 })();

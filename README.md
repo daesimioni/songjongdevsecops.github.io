@@ -259,6 +259,24 @@ nenhum conteúdo de fora do jogo aparece ali. As DMs usam NIP-17
 (gift wrap), então o relay não lê o texto. A presença é um evento efêmero com o
 continente em que a pessoa está.
 
+### Backup na sua DM
+
+O jogo guarda a conta inteira na sua própria DM do Nostr. A cada cinco minutos
+de jogo, e quando a aba fica escondida, o estado local vira JSON, passa por
+gzip, vira base64 e é enviado como DM NIP-17 para a sua chave. O relay só vê um
+gift wrap cifrado; ninguém além de quem tem a nsec consegue ler.
+
+O backup inclui cards, xp, docas, névoa, nome, som, sala, missões, rpg e traje.
+Ficam de fora a **nsec** (é a chave que decifra a DM, não pode viajar dentro
+dela) e o **chat** (conversa de terceiros). O envelope leva a hora do envio, e
+a DM só é reenviada quando o estado muda.
+
+Numa conta nova, num navegador novo, o jogo busca os backups dos últimos 30
+dias e restaura sozinho o mais recente. Se o navegador já tem progresso, nada é
+trocado sem você mandar: a aba **Conta** da Rede mostra a hora do último envio e
+tem os botões **salvar agora** e **carregar da DM**. O estado comprimido ocupa
+menos de 1 KB na maior parte das contas, então cabe folgado numa DM.
+
 O [nostr-tools](https://github.com/nbd-wtf/nostr-tools) vem de ESM.sh e é
 carregado só quando a Rede liga. Se os relays não responderem, o jogo continua
 a pé e a Rede avisa.
@@ -290,6 +308,7 @@ sequência sem instalar nada:
 node test/core.test.mjs
 node test/content.test.mjs
 node test/ui.test.mjs
+node test/backup.test.mjs
 ```
 
 A primeira cobre o progresso e a persistência das missões, o filtro que mantém
@@ -333,6 +352,7 @@ Depois abra `http://localhost:8000`.
 | `js/net.js` | sala compartilhada por MQTT sobre WebSocket |
 | `js/interp.js` | buffer e interpolação da posição dos outros jogadores |
 | `js/nostr.js` | conta, canais, DMs NIP-17, perfis e presença Nostr |
+| `js/backup.js` | estado inteiro na própria DM: base64, gzip e restauração |
 | `js/quests.js` | missões, progresso, XP e títulos |
 | `js/path.js` | caminho A* do clique até o destino |
 | `js/rpg.js` | vida, perícias, itens, forja, encantos, buffs, bicho, monstros, treino, fuga e duelo |
@@ -354,6 +374,7 @@ Depois abra `http://localhost:8000`.
 | `test/core.test.mjs` | conferência de missões, RPG, treino, fuga, duelo PvP e caverna |
 | `test/content.test.mjs` | conferência das 32 estações, perguntas, itens, cavernas e mundo |
 | `test/ui.test.mjs` | conferência de ids, imports, botões, rótulos e aria |
+| `test/backup.test.mjs` | envelope do backup, whitelist, dedupe e restauração |
 
 O módulo wasm é gerado com `wat2wasm`:
 

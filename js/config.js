@@ -36,6 +36,18 @@ export const STORAGE = {
   outfit: "mundo-song:outfit:v1",
 };
 
+// O backup da conta viaja como DM NIP-17 para a própria chave: o relay só vê
+// um gift wrap cifrado. O conteúdo é o estado local em JSON, comprimido e em
+// base64. A nsec (STORAGE.nostr) e o chat ficam de fora, por segurança.
+export const BACKUP = {
+  mark: "mundo-song:save:v1:",
+  storage: "mundo-song:save:last:v1",
+  every: 5 * 60 * 1000,
+  days: 30,
+  max: 60000,
+  keys: ["cards", "xp", "docks", "explored", "name", "sound", "room", "quests", "rpg", "outfit"],
+};
+
 // A rede do mundo: relays públicos, canais do jogo e DMs privadas (NIP-17).
 // Tudo que entra na tela passa por estes dois selos, então nenhum conteúdo
 // de fora do jogo aparece aqui.

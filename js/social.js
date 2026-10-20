@@ -51,7 +51,7 @@ async function copyText(text) {
   }
 }
 
-export function createSocial({ rede, quests, player, getPeers, getLevel, getTitle, setName, toast, audio, onChallenge }) {
+export function createSocial({ rede, backup, quests, player, getPeers, getLevel, getTitle, setName, toast, audio, onChallenge }) {
   const ui = {
     open: false,
     tab: "mundo",
@@ -505,6 +505,46 @@ export function createSocial({ rede, quests, player, getPeers, getLevel, getTitl
     const warn = el("p", "rede-warn", "Importar outra chave troca sua identidade e suas DMs neste navegador.");
     card.appendChild(warn);
     wrap.appendChild(card);
+
+    // backup da conta: o estado inteiro vai cifrado para a própria DM
+    const bk = el("div", "rede-card");
+    bk.appendChild(el("h3", "rede-sec", "Backup na sua DM"));
+    const st = backup?.status?.() || {};
+    const when = Number(st.at) || 0;
+    bk.appendChild(el("p", "rede-hint", when
+      ? `Último envio ${new Date(when).toLocaleString("pt-BR")} · ${st.bytes || 0} caracteres`
+      : "Nenhum backup enviado desta conta ainda."));
+    bk.appendChild(el("p", "rede-hint", "A cada cinco minutos de jogo o estado inteiro vai cifrado para a sua própria DM, no Nostr. A nsec nunca entra no backup."));
+    const bkRow = el("div", "rede-keyrow");
+    const saveNow = el("button", "rede-mini", "salvar agora");
+    saveNow.type = "button";
+    saveNow.disabled = !backup;
+    saveNow.addEventListener("click", async () => {
+      if (!backup) return;
+      saveNow.disabled = true;
+      const res = await backup.saveNow({ force: true });
+      saveNow.disabled = false;
+      toast(res.ok
+        ? (res.skipped ? "nada mudou desde o último backup." : "backup enviado para a sua DM.")
+        : (res.reason || "não deu para salvar agora."), 4200);
+      if (ui.tab === "conta") render();
+    });
+    const loadNow = el("button", "rede-mini", "carregar da DM");
+    loadNow.type = "button";
+    loadNow.disabled = !backup;
+    loadNow.addEventListener("click", async () => {
+      if (!backup) return;
+      if (!confirm("Carregar o último backup da sua DM? O progresso deste navegador será trocado.")) return;
+      loadNow.disabled = true;
+      const res = await backup.restoreFromDm();
+      loadNow.disabled = false;
+      if (!res.ok) { toast(res.reason || "nenhum backup encontrado.", 4200); return; }
+      toast("conta restaurada. Recarregando o mundo.", 4200);
+      setTimeout(() => location.reload(), 1500);
+    });
+    bkRow.append(saveNow, loadNow);
+    bk.appendChild(bkRow);
+    wrap.appendChild(bk);
 
     const imp = el("form", "rede-card rede-form-stack");
     imp.appendChild(el("h3", "rede-sec", "Importar chave"));
