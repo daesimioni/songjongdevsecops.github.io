@@ -20,11 +20,16 @@ function validColor(c) {
   return typeof c === "string" && /^#[0-9a-f]{6}$/i.test(c) ? c : "#61f4c0";
 }
 
+function validOutfit(o) {
+  return typeof o === "string" && /^[a-z0-9-]{1,20}$/.test(o) ? o : "";
+}
+
 export class Net {
-  constructor({ room, name, color, onPeers, onStatus, onChat, onPvp, onError }) {
+  constructor({ room, name, color, outfit, onPeers, onStatus, onChat, onPvp, onError }) {
     this.room = room;
     this.name = clean(name, 16) || "viajante";
     this.color = validColor(color);
+    this.outfit = validOutfit(outfit);
     this.id = "ms_" + Math.random().toString(36).slice(2, 12);
     this.onPeers = onPeers;
     this.onStatus = onStatus;
@@ -155,6 +160,7 @@ export class Net {
         mount: msg.m === 1 || msg.m === true,
         seq: Number(msg.s) || 0,
         pubkey,
+        outfit: validOutfit(msg.o),
         moving,
         lastSeen: now,
       });
@@ -235,6 +241,11 @@ export class Net {
     this.publishState(true);
   }
 
+  setOutfit(id) {
+    this.outfit = validOutfit(id);
+    this.publishState(true);
+  }
+
   publishState(force) {
     if (!this.connected || !this.client) return;
     this.seq = (this.seq + 1) % 1000000000;
@@ -246,6 +257,7 @@ export class Net {
       s: this.seq,
       m: this.state.m || undefined,
       k: this.pubkey || undefined,
+      o: this.outfit || undefined,
     }), { qos: 0 });
     if (force) this.emitPeers();
   }

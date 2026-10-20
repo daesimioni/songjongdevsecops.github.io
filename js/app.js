@@ -1,6 +1,6 @@
 import {
   CONTINENTS, CONTINENT_ORDER, SITES, WAYSTONES, SPAWN,
-  PLAYER_SPEED, SPRINT_MULT, PLAYER_W, PLAYER_H, INTERACT_RADIUS, PLAYER_COLORS,
+  PLAYER_SPEED, SPRINT_MULT, PLAYER_W, PLAYER_H, INTERACT_RADIUS,
   STORAGE, NET, MAP_W, MAP_H,
 } from "./config.js";
 import { createWorld } from "./world.js";
@@ -12,6 +12,7 @@ import { Rede } from "./nostr.js";
 import { Quests } from "./quests.js";
 import { createSocial } from "./social.js";
 import { createPvp } from "./pvp.js";
+import { OUTFITS, outfitById, outfitColors } from "./outfits.js";
 import { findPath, nearestWalkable } from "./path.js";
 import { feedPeer, peerRenderPosition } from "./interp.js";
 import { RPG } from "./rpg.js";
@@ -74,19 +75,21 @@ const saved = {
   xp: Number(readJSON(STORAGE.xp, 0)) || 0,
 };
 
+const savedOutfit = outfitById(readJSON(STORAGE.outfit, "viajante"));
 const player = {
   x: SPAWN.x,
   y: SPAWN.y,
   dir: 0,
   moving: false,
   name: saved.name || "viajante",
-  colorIndex: Math.floor(Math.random() * PLAYER_COLORS.length),
+  outfitId: savedOutfit.id,
+  colors: outfitColors(savedOutfit.id),
   bubble: null,
   boost: 0,
   pathLine: null,
   pathGoal: null,
 };
-player.color = PLAYER_COLORS[player.colorIndex].shirt;
+player.color = player.colors.shirt;
 
 const state = {
   started: false,
@@ -166,6 +169,7 @@ const sheetUi = createSheet({
   getTitle: () => quests.title,
   toast,
   audio,
+  onOutfits: () => openOutfits(),
   onUse: (id, res) => {
     if (id === "tocha") {
       if (dungeon?.isOpen()) {
@@ -218,10 +222,10 @@ dungeon = createDungeon({
     return !!rpg.duel;
   },
   onSheet: () => openSheet(),
-  avatar: PLAYER_COLORS[player.colorIndex] || null,
-  onExit: ({ kind, dungeon: def }) => {
+  avatar: player.colors,
+  onExit: ({ kind, dungeon: def, target }) => {
     if (kind === "death") return;
-    const cave = world.caves.find((c) => c.continent === def?.continent);
+    const cave = target || world.caves.find((c) => c.continent === def?.continent);
     if (cave) {
       player.x = cave.exit.x;
       player.y = cave.exit.y;
@@ -236,8 +240,10 @@ dungeon = createDungeon({
     audio.chime();
     toast(
       kind === "waystone"
-        ? "A pedra te devolveu à boca da caverna."
-        : "Você subiu de volta para o sol.",
+        ? `A pedra te devolveu a ${cave?.name || "a boca da caverna"}.`
+        : cave
+          ? `Você subiu em ${cave.name}.`
+          : "Você subiu de volta para o sol.",
       3400,
     );
   },
@@ -336,6 +342,65 @@ function bootSocial() {
     .catch(() => {});
 }
 
+function outfitUnlocked(outfit) {
+  return outfit.continent === "hub" || continentComplete(outfit.continent);
+}
+
+function applyOutfit(id) {
+  const outfit = outfitById(id);
+  if (!outfitUnlocked(outfit)) return false;
+  Object.assign(player.colors, outfit.colors);
+  player.outfitId = outfit.id;
+  player.color = player.colors.shirt;
+  writeJSON(STORAGE.outfit, outfit.id);
+  state.net?.setOutfit?.(outfit.id);
+  renderer.kick(0.25);
+  return true;
+}
+
+function openOutfits() {
+  if (!state.started) return;
+  stopSprint();
+  closeChat();
+  if (state.panelOpen) closePanel();
+  const unlocked = OUTFITS.filter(outfitUnlocked).length;
+  $("outfits-sub").textContent = unlocked === OUTFITS.length
+    ? "todos os trajes abertos. A roupa vale no mapa e na caverna."
+    : `${unlocked} de ${OUTFITS.length} trajes. Cada continente completo abre o traje dele.`;
+  const body = $("outfits-body");
+  body.textContent = "";
+  const grid = el("div", "outfit-grid");
+  for (const outfit of OUTFITS) {
+    const open = outfitUnlocked(outfit);
+    const card = el("button", `outfit-card${player.outfitId === outfit.id ? " on" : ""}${open ? "" : " locked"}`);
+    card.type = "button";
+    card.disabled = !open;
+    const swatch = el("span", "outfit-swatch");
+    for (const key of ["hair", "shirt", "pants", "accent"]) {
+      const chip = el("i");
+      chip.style.background = outfit.colors[key];
+      swatch.appendChild(chip);
+    }
+    card.append(
+      swatch,
+      el("b", "", outfit.name),
+      el("span", "", open ? outfit.desc : `complete as 5 estações de ${CONTINENTS[outfit.continent]?.name || "um continente"}`),
+    );
+    if (open) {
+      card.addEventListener("click", () => {
+        if (!applyOutfit(outfit.id)) return;
+        toast(`traje: ${outfit.name}`, 2600);
+        audio.blip();
+        openOutfits();
+      });
+    }
+    grid.appendChild(card);
+  }
+  body.appendChild(grid);
+  openModal("outfits");
+  audio.open();
+}
+
 function openSheet() {
   if (!state.started) return;
   stopSprint();
@@ -388,7 +453,8 @@ function enterCave(cave) {
   closeChat();
   if (state.panelOpen) closePanel();
   closeModal(state.modal);
-  const ok = dungeon?.open(cave.id);
+  const pair = world.caves.find((c) => c.id === cave.pairId);
+  const ok = dungeon?.open(cave.defId || cave.id, pair ? { ...cave, pair } : cave);
   if (!ok) {
     toast("A caverna não abriu agora. Tente de novo.", 3000);
     audio.error();
@@ -667,6 +733,7 @@ function startNet() {
     room: state.room,
     name: player.name,
     color: player.color,
+    outfit: player.outfitId,
     onPeers: setPeers,
     onStatus: setNetStatus,
     onChat: (peer, text) => {
@@ -872,6 +939,7 @@ const MODAL_FOCUS_BACK = {
   rede: "btn-rede",
   help: "btn-help",
   pvp: "btn-rede",
+  outfits: "btn-sheet",
 };
 function restoreFocus(modalName) {
   const back = state.lastFocus;
@@ -1173,10 +1241,16 @@ function walkStep(dx, dy, dt) {
   const sprinting = state.sprint;
   const step = PLAYER_SPEED * (sprinting ? SPRINT_MULT : 1) * rpg.speedMult() * dt;
   const oldX = player.x, oldY = player.y;
-  const nx = player.x + dx * step;
-  const ny = player.y + dy * step;
-  if (!world.boxCollides(nx, player.y, PLAYER_W, PLAYER_H)) player.x = nx;
-  if (!world.boxCollides(player.x, ny, PLAYER_W, PLAYER_H)) player.y = ny;
+  // Em velocidade de nave o passo do quadro passa de um tile e atravessaria
+  // parede fina. Divide o movimento em pedaços que a colisão consegue ver.
+  const chunks = Math.max(1, Math.ceil(step / 0.24));
+  const part = step / chunks;
+  for (let i = 0; i < chunks; i++) {
+    const nx = player.x + dx * part;
+    if (!world.boxCollides(nx, player.y, PLAYER_W, PLAYER_H)) player.x = nx;
+    const ny = player.y + dy * part;
+    if (!world.boxCollides(player.x, ny, PLAYER_W, PLAYER_H)) player.y = ny;
+  }
   player.x = Math.max(0.5, Math.min(MAP_W - 0.5, player.x));
   player.y = Math.max(0.5, Math.min(MAP_H - 0.5, player.y));
   const moved = player.x !== oldX || player.y !== oldY;

@@ -13,7 +13,7 @@ const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
 const clock = () => performance.now();
 
 const SPEED = 4.6; // tiles por segundo
-const SPRINT = 1.8;
+const SPRINT = 3.6;
 const PATH_PAD = 0.16;
 const CITY_LIGHT = 22;
 
@@ -52,21 +52,42 @@ export function buildDungeonMap(def) {
   for (const room of def.rooms) carveRect(room.x, room.y, room.w, room.h);
 
   const byId = new Map(def.rooms.map((r) => [r.id, r]));
-  for (const [aId, bId] of DUNGEON_LAYOUT.corridors) {
+  const style = def.tunnel || "elbow";
+  const half = style === "wide" ? 2 : style === "narrow" ? 0 : 1;
+  const hRun = (x0, x1, y) => {
+    const lo = Math.min(x0, x1), hi = Math.max(x0, x1);
+    for (let x = lo; x <= hi; x++) for (let d = -half; d <= half; d++) carve(x, y + d);
+  };
+  const vRun = (y0, y1, x) => {
+    const lo = Math.min(y0, y1), hi = Math.max(y0, y1);
+    for (let y = lo; y <= hi; y++) for (let d = -half; d <= half; d++) carve(x + d, y);
+  };
+  DUNGEON_LAYOUT.corridors.forEach(([aId, bId], ci) => {
     const a = byId.get(aId);
     const b = byId.get(bId);
-    if (!a || !b) continue;
+    if (!a || !b) return;
     const ax = a.x + Math.floor(a.w / 2);
     const ay = a.y + Math.floor(a.h / 2);
     const bx = b.x + Math.floor(b.w / 2);
     const by = b.y + Math.floor(b.h / 2);
-    const x0 = Math.min(ax, bx);
-    const x1 = Math.max(ax, bx);
-    for (let x = x0; x <= x1; x++) for (let d = -1; d <= 1; d++) carve(x, ay + d);
-    const y0 = Math.min(ay, by);
-    const y1 = Math.max(ay, by);
-    for (let y = y0; y <= y1; y++) for (let d = -1; d <= 1; d++) carve(bx + d, y);
-  }
+    if (style === "split") {
+      const mx = Math.floor((ax + bx) / 2);
+      hRun(ax, mx, ay);
+      vRun(ay, by, mx);
+      hRun(mx, bx, by);
+    } else if (style === "zigzag") {
+      const my = Math.floor((ay + by) / 2);
+      vRun(ay, my, ax);
+      hRun(ax, bx, my);
+      vRun(my, by, bx);
+    } else if (style === "cross" && ci % 2 === 1) {
+      vRun(ay, by, ax);
+      hRun(ax, bx, by);
+    } else {
+      hRun(ax, bx, ay);
+      vRun(ay, by, bx);
+    }
+  });
 
   def.rooms.forEach((room, i) => {
     for (let y = room.y; y < room.y + room.h; y++) {
@@ -123,13 +144,14 @@ export function dungeonLineOfSight(map, ax, ay, bx, by) {
 }
 
 // ---------- desenho ----------
-function drawAdventurer(ctx, x, y, dir, moving, t, avatar = {}) {
+function drawAdventurer(ctx, x, y, dir, moving, t, avatar = {}, ship = false) {
   // Mesmas proporções do boneco da superfície: o jogador precisa ser o mesmo
   // personagem lá em cima e aqui embaixo, com capa e lanterna por cima.
   const c = { hair: "#3a2a55", skin: "#f0c9a8", shirt: "#61f4c0", pants: "#2f3a66", ...avatar };
-  const frame = moving ? Math.floor(t / 115) % 4 : 0;
-  const swing = moving ? [0, 1, 0, -1][frame] : 0;
-  const bob = moving && (frame === 1 || frame === 3) ? -1 : 0;
+  const animate = moving && !ship;
+  const frame = animate ? Math.floor(t / 115) % 4 : 0;
+  const swing = animate ? [0, 1, 0, -1][frame] : 0;
+  const bob = animate && (frame === 1 || frame === 3) ? -1 : 0;
   const dark = "#101426";
   ctx.save();
   ctx.translate(x, y + bob);
@@ -138,6 +160,21 @@ function drawAdventurer(ctx, x, y, dir, moving, t, avatar = {}) {
   ctx.beginPath();
   ctx.ellipse(0, 0, 6.5, 2.6, 0, 0, Math.PI * 2);
   ctx.fill();
+  // casco da nave: o boneco vai parado dentro dela
+  if (ship) {
+    ctx.fillStyle = "#0b2438";
+    ctx.fillRect(-11, -4, 22, 4);
+    ctx.fillRect(-8, -6, 16, 2);
+    ctx.fillStyle = "#1d6280";
+    ctx.fillRect(-10, -3, 20, 2);
+    ctx.fillStyle = "#6bd5ff";
+    ctx.fillRect(-13, -4, 3, 2);
+    ctx.fillRect(10, -4, 3, 2);
+    ctx.fillStyle = "rgba(107,213,255,0.18)";
+    ctx.beginPath();
+    ctx.ellipse(0, -2, 17, 7, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
   // capa atrás do corpo, balançando com o passo
   ctx.fillStyle = "#242844";
   ctx.fillRect(-6 + (swing > 0 ? 1 : 0), -15, 12, 11);
@@ -574,6 +611,8 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
       moving: false,
       alive: true,
       vision: 3.3 + tier * 0.45,
+      // meia-lua: o bicho vê na direção em que está virado
+      fov: tier >= 3 ? 0.85 : tier === 2 ? 1.15 : 1.35,
       speed: 0.55 + tier * 0.16,
       waitUntil: clock() + 600 + Math.random() * 1800,
       accent: def.palette.accent,
@@ -622,6 +661,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
       moving: false,
       alive: true,
       vision: 5.6,
+      fov: 1.5,
       speed: 0.4,
       waitUntil: clock() + 900,
       accent: def.palette.accent,
@@ -654,6 +694,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
         kind: "stairs",
         x: entrance.x + entrance.w / 2,
         y: entrance.y + entrance.h - 0.4,
+        stairMouth: "entrance",
         label: "subir para a superfície",
         interact: true,
       });
@@ -694,6 +735,14 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
           label: "horta de ervas",
         });
       }
+      props.push({
+        kind: "stairs",
+        x: city.x + 6,
+        y: city.y + city.h - 1.8,
+        stairMouth: "far",
+        label: "túnel para a outra boca",
+        interact: true,
+      });
       props.push({ kind: "building", x: city.x + 1.2, y: city.y + 1.2, w: 26, h: 22, solid: true });
       props.push({ kind: "building", x: city.x + city.w - 4.8, y: city.y + 1.2, w: 30, h: 22, solid: true });
     }
@@ -713,7 +762,17 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
     return props;
   }
 
-  function spawnPlayer(def) {
+  function spawnPlayer(def, entryCave) {
+    if (entryCave?.mouth === "far") {
+      const far = state.props.find((p) => p.kind === "stairs" && p.stairMouth === "far");
+      if (far) {
+        state.player.x = far.x;
+        state.player.y = far.y;
+        state.player.dir = 3;
+        state.player.moving = false;
+        return;
+      }
+    }
     const entrance = def.rooms.find((r) => r.kind === "entrance") || def.rooms[0];
     state.player.x = entrance.x + entrance.w / 2;
     state.player.y = entrance.y + entrance.h - 2.2;
@@ -721,10 +780,11 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
     state.player.moving = false;
   }
 
-  function open(id) {
+  function open(id, entryCave = null) {
     const def = typeof id === "string" ? dungeonById(id) : id;
     if (!def || !canvas || !ctx) return false;
     state.def = def;
+    state.entryCave = entryCave || null;
     state.map = buildDungeonMap(def);
     state.seen = new Uint8Array(state.map.W * state.map.H);
     state.minimapAt = 0;
@@ -749,6 +809,22 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
         prop.planted = true;
         prop.readyAt = 0;
         prop.gift = true;
+      }
+    }
+    // Cada escada aponta para uma boca: a de entrada volta para onde se desceu,
+    // a do fundo sai na outra boca. Descendo pela outra boca, os papéis trocam.
+    const pair = state.entryCave?.pair || null;
+    const known = [state.entryCave, pair].filter(Boolean);
+    const mouths = {
+      entrance: known.find((c) => c.mouth === "entrance") || state.entryCave,
+      far: known.find((c) => c.mouth === "far") || pair || state.entryCave,
+    };
+    for (const prop of state.props) {
+      if (prop.kind !== "stairs") continue;
+      const target = mouths[prop.stairMouth] || state.entryCave;
+      if (target) {
+        prop.cave = target;
+        prop.label = `subir para ${target.name}`;
       }
     }
     // o que ocupa espaço de verdade dentro da sala: prédios e baús
@@ -789,7 +865,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
     state.open = true;
     state.last = 0;
 
-    spawnPlayer(def);
+    spawnPlayer(def, state.entryCave);
     $("dungeon").hidden = false;
     setWorldInert(true);
     $("dungeon").dataset.dungeon = def.continent;
@@ -811,7 +887,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
     return true;
   }
 
-  function close(kind = "stairs") {
+  function close(kind = "stairs", targetCave = null) {
     if (!state.open) return;
     state.open = false;
     cancelAnimationFrame(state.raf);
@@ -825,7 +901,8 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
     setWorldInert(false);
     $("dg-prompt").hidden = true;
     audio.close();
-    onExit?.({ kind, dungeon: state.def });
+    onExit?.({ kind, dungeon: state.def, entry: state.entryCave, target: targetCave || state.entryCave });
+    state.entryCave = null;
   }
 
   function resize() {
@@ -933,8 +1010,13 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
     const p = state.player;
     const ox = p.x;
     const oy = p.y;
-    if (boxFree(state.map, p.x + dx * step, p.y, 0, state.solids)) p.x += dx * step;
-    if (boxFree(state.map, p.x, p.y + dy * step, 0, state.solids)) p.y += dy * step;
+    // A nave anda rápido demais para a colisão de um passo só.
+    const chunks = Math.max(1, Math.ceil(step / 0.24));
+    const part = step / chunks;
+    for (let i = 0; i < chunks; i++) {
+      if (boxFree(state.map, p.x + dx * part, p.y, 0, state.solids)) p.x += dx * part;
+      if (boxFree(state.map, p.x, p.y + dy * part, 0, state.solids)) p.y += dy * part;
+    }
     p.x = clamp(p.x, 0.6, state.map.W - 0.6);
     p.y = clamp(p.y, 0.6, state.map.H - 0.6);
     const moved = p.x !== ox || p.y !== oy;
@@ -1070,13 +1152,13 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
       return;
     }
     if (obj.kind === "stairs") {
-      say("Você sobe de volta para o sol.", 1600);
-      close("stairs");
+      say(obj.cave ? `Você sobe em ${obj.cave.name}.` : "Você sobe de volta para o sol.", 1800);
+      close("stairs", obj.cave);
       return;
     }
     if (obj.kind === "waystone") {
       say("A pedra puxa você de volta para a boca da caverna.", 1800);
-      close("waystone");
+      close("waystone", state.entryCave);
       return;
     }
     if (obj.kind === "altar") {
@@ -1260,6 +1342,10 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
       if (t < state.encounterLockUntil) continue;
       const d = Math.hypot(state.player.x - m.x, state.player.y - m.y);
       if (d > m.vision) continue;
+      const vx = m.dir === 1 ? -1 : m.dir === 2 ? 1 : 0;
+      const vy = m.dir === 0 ? 1 : m.dir === 3 ? -1 : 0;
+      const facing = d > 0.001 ? (vx * (state.player.x - m.x) + vy * (state.player.y - m.y)) / d : 1;
+      if (facing < Math.cos(m.fov)) continue;
       if (!dungeonLineOfSight(state.map, m.x, m.y, state.player.x, state.player.y)) continue;
       startAlert(m, t);
       return;
@@ -1534,7 +1620,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
     }
     drawables.push({
       y: state.player.y,
-      draw: () => drawAdventurer(ctx, state.player.x * TILE, state.player.y * TILE, state.player.dir, state.player.moving, t, avatar),
+      draw: () => drawAdventurer(ctx, state.player.x * TILE, state.player.y * TILE, state.player.dir, state.player.moving, t, avatar, state.sprint),
     });
     drawables.sort((a, b) => a.y - b.y);
     for (const d of drawables) d.draw();
@@ -1574,13 +1660,23 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
     const y = m.y * TILE;
     const d = Math.hypot(state.player.x - m.x, state.player.y - m.y);
     if (d < m.vision + 3) {
+      const ang = [Math.PI / 2, Math.PI, 0, -Math.PI / 2][m.dir] || 0;
+      const fov = m.fov || 1.2;
       ctx.save();
-      ctx.globalAlpha = 0.18;
+      ctx.globalAlpha = 0.1;
+      ctx.fillStyle = m.accent;
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.arc(x, y, m.vision * TILE, ang - fov, ang + fov);
+      ctx.closePath();
+      ctx.fill();
+      ctx.globalAlpha = 0.28;
       ctx.strokeStyle = m.accent;
       ctx.setLineDash([3, 5]);
       ctx.lineWidth = 1;
       ctx.beginPath();
-      ctx.arc(x, y, m.vision * TILE, 0, Math.PI * 2);
+      ctx.arc(x, y, m.vision * TILE, ang - fov, ang + fov);
+      ctx.lineTo(x, y);
       ctx.stroke();
       ctx.restore();
     }
@@ -1638,6 +1734,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
     if (state.paused) return;
     if (k === " " || e.code === "Space") {
       state.sprint = true;
+      setSprint(true);
       return;
     }
     if (k === "f") {
@@ -1656,12 +1753,12 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
     if (!state.open) return;
     const k = e.key.toLowerCase();
     state.keys.delete(k);
-    if (k === " " || e.code === "Space") state.sprint = false;
+    if (k === " " || e.code === "Space") setSprint(false);
   }
 
   function onBlur() {
     state.keys.clear();
-    state.sprint = false;
+    setSprint(false);
   }
 
   function onPointer(e) {
@@ -1691,8 +1788,18 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
   window.addEventListener("blur", onBlur);
   window.addEventListener("resize", onResize);
   canvas?.addEventListener("pointerdown", onPointer);
-  $("dg-exit")?.addEventListener("click", () => close("stairs"));
+  $("dg-exit")?.addEventListener("click", () => close("stairs", state.entryCave));
   $("dg-sheet")?.addEventListener("click", () => onSheet?.());
+  const sprintBtn = $("dg-sprint");
+  const setSprint = (on) => {
+    state.sprint = on;
+    sprintBtn?.classList.toggle("active", on);
+    sprintBtn?.setAttribute("aria-pressed", String(on));
+  };
+  sprintBtn?.addEventListener("pointerdown", (e) => { e.preventDefault(); setSprint(true); });
+  sprintBtn?.addEventListener("pointerup", () => setSprint(false));
+  sprintBtn?.addEventListener("pointercancel", () => setSprint(false));
+  sprintBtn?.addEventListener("pointerleave", () => setSprint(false));
 
   return {
     open,

@@ -2188,6 +2188,9 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
     padding: calc(10px + env(safe-area-inset-top)) 12px calc(8px + env(safe-area-inset-bottom));
     gap: 6px;
   }
+  .dg-head { flex-wrap: wrap; }
+  .dg-actions { flex-wrap: wrap; justify-content: flex-end; }
+  #dg-title { max-width: 100%; overflow-wrap: anywhere; }
   #dg-title { font-size: clamp(13px, 4.4vw, 18px); }
   .dg-stats { font-size: 10px; gap: 4px; }
   .dg-stats span { padding: 4px 6px; }
@@ -2253,4 +2256,55 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
 }
 @media (pointer: coarse) and (max-height: 600px) {
   .minimap { display: none; }
+}
+
+.dg-exit.active {
+  border-color: var(--cyan);
+  color: var(--cyan);
+  box-shadow: 0 0 14px rgba(107, 213, 255, 0.28);
+}
+
+/* trajes: a mesma roupa no mapa e na caverna */
+.sheet-outfit {
+  width: 100%;
+  margin: 4px 0 16px;
+  padding: 11px 12px;
+  border: 1px solid rgba(255, 200, 87, 0.45);
+  border-radius: 7px;
+  background: rgba(255, 200, 87, 0.07);
+  color: var(--amber);
+  font-family: var(--mono);
+  font-size: 12px;
+  text-align: left;
+}
+.sheet-outfit:hover, .sheet-outfit:focus-visible { background: rgba(255, 200, 87, 0.14); }
+.outfits-card { width: min(560px, 92vw); }
+.outfits-sub {
+  margin: 0 0 16px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+.outfit-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+.outfit-card {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 12px;
+  text-align: left;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.025);
+  color: var(--ink);
+}
+.outfit-card b { font-family: var(--pixel); font-size: 8px; line-height: 1.5; color: var(--amber); }
+.outfit-card span { font-family: var(--mono); font-size: 10px; line-height: 1.5; color: var(--muted); }
+.outfit-card.on { border-color: rgba(97, 244, 192, 0.65); background: rgba(97, 244, 192, 0.07); }
+.outfit-card.on b { color: var(--mint); }
+.outfit-card.locked { opacity: 0.5; cursor: default; }
+.outfit-swatch { display: flex; gap: 3px; }
+.outfit-swatch i { width: 18px; height: 18px; border-radius: 3px; border: 1px solid rgba(0, 0, 0, 0.45); }
+@media (max-width: 720px) {
+  .outfit-grid { grid-template-columns: 1fr; }
 }

@@ -108,7 +108,7 @@ for (const c of continents) {
   const texts = Object.values(byTier || {}).flat().map((q) => q.q);
   check(texts.includes(DEEP_QUESTIONS[c]?.q), `${c}: pergunta do fundo fora do baralho`);
   check(new Set(texts).size === texts.length, `${c}: pergunta repetida no continente`);
-  check(texts.length >= 10, `${c}: só ${texts.length} perguntas no continente`);
+  check(texts.length >= 13, `${c}: só ${texts.length} perguntas no continente`);
 }
 
 // duelo entre jogadores: uma carta por dificuldade, dano crescente

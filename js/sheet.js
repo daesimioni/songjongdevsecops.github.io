@@ -15,7 +15,7 @@ function accentOf(continent) {
   return CONTINENTS[continent]?.accent || "#ffc857";
 }
 
-export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onUse }) {
+export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onUse, onOutfits }) {
   function render() {
     const body = $("sheet-body");
     if (!body) return;
@@ -53,6 +53,13 @@ export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onUs
         ? "bicho companheiro: +5 de vida e +1 de luz na caverna."
         : `bicho da cidade: afeição ${rpg.data.pet.bond}/3, dê ração na praça subterrânea.`,
     ));
+
+    if (onOutfits) {
+      const look = el("button", "sheet-outfit", "trocar traje");
+      look.type = "button";
+      look.addEventListener("click", () => onOutfits());
+      body.appendChild(look);
+    }
 
     body.appendChild(el("h3", "sheet-sec", "Perícias"));
     const grid = el("div", "sheet-skills");

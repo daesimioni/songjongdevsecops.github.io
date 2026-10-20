@@ -49,6 +49,8 @@ const COMMON = {
     name: "Catacumbas do Silício",
     sub: "onde os fios antigos ainda pulsam",
     material: "ferro",
+    tunnel: "elbow",
+    shift: { a: [-2, 1], c: [2, -1], g: [1, 2] },
     boss: "O Compilador Ancestral",
     rooms: [
       ["Boca do Silício", "entrada"],
@@ -69,6 +71,8 @@ const COMMON = {
     name: "Lavras do Infinito",
     sub: "corredores que não terminam na primeira volta",
     material: "veio",
+    tunnel: "split",
+    shift: { b: [2, 1], d: [-2, -2], h: [-1, 2] },
     boss: "O Infinito Profundo",
     rooms: [
       ["Boca dos Números", "entrada"],
@@ -89,6 +93,8 @@ const COMMON = {
     name: "Cavernas do Campo",
     sub: "o calor, a luz e a queda moram aqui embaixo",
     material: "ferro",
+    tunnel: "wide",
+    shift: { a: [2, 2], c: [-2, 2], e: [1, -1], h: [-2, 1] },
     boss: "O Observador Cego",
     rooms: [
       ["Fenda do Campo", "entrada"],
@@ -109,6 +115,8 @@ const COMMON = {
     name: "Minas do Reagente",
     sub: "um labirinto que muda de cor conforme o pH",
     material: "erva",
+    tunnel: "cross",
+    shift: { b: [-2, 2], d: [2, 1], g: [-1, -2] },
     boss: "O Catalisador",
     rooms: [
       ["Boca do Reagente", "entrada"],
@@ -129,6 +137,8 @@ const COMMON = {
     name: "Conservatório Subterrâneo",
     sub: "a acústica das pedras guarda compassos antigos",
     material: "madeira",
+    tunnel: "zigzag",
+    shift: { a: [-1, -2], c: [1, 2], e: [-2, 1] },
     boss: "A Dissonância",
     rooms: [
       ["Fenda Sonora", "entrada"],
@@ -149,6 +159,8 @@ const COMMON = {
     name: "Rede Profunda",
     sub: "túneis de dados e uma cidade que aprende sozinha",
     material: "veio",
+    tunnel: "narrow",
+    shift: { b: [1, -2], d: [-2, 1], f: [2, -1] },
     boss: "A Caixa Preta",
     rooms: [
       ["Boca da Máquina", "entrada"],
@@ -175,12 +187,18 @@ export const DUNGEONS = Object.entries(COMMON).map(([continent, d]) => {
     id: `dungeon-${continent}`,
     continent,
     ...d,
-    rooms: DUNGEON_LAYOUT.rooms.map((room, i) => ({
-      ...room,
-      x: mirror ? DUNGEON_LAYOUT.width - room.x - room.w : room.x,
-      name: d.rooms[i][0],
-      theme: d.rooms[i][1],
-    })),
+    rooms: DUNGEON_LAYOUT.rooms.map((room, i) => {
+      const [dx, dy] = d.shift?.[room.id] || [0, 0];
+      const x = room.x + dx;
+      return {
+        ...room,
+        x: mirror ? DUNGEON_LAYOUT.width - x - room.w : x,
+        y: room.y + dy,
+        name: d.rooms[i][0],
+        theme: d.rooms[i][1],
+      };
+    }),
+    tunnel: d.tunnel || "elbow",
   };
 });
 

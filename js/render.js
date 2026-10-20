@@ -1,3 +1,4 @@
+import { outfitById } from "./outfits.js";
 import {
   TILE, MAP_W, MAP_H, WORLD_W, WORLD_H, TILE_KIND as K, PLAYER_COLORS,
 } from "./config.js";
@@ -1325,13 +1326,15 @@ export function createRenderer(canvas, world) {
     for (const p of peers) {
       const px = (p.rx ?? p.x) * TILE;
       const py = (p.ry ?? p.y) * TILE;
-      const peerColors = { skin: "#e8b98c", hair: "#2a2438", shirt: p.color, pants: "#2f2c45", accent: "#fff3d1" };
+      const peerColors = p.outfit
+        ? outfitById(p.outfit).colors
+        : { skin: "#e8b98c", hair: "#2a2438", shirt: p.color, pants: "#2f2c45", accent: "#fff3d1" };
       drawables.push({
         y: py,
         fn: () => {
           const lift = p.mount ? 5 : 0;
           if (p.mount) drawSkiff(px, py, p.dir || 0, time, 1, p.moving);
-          drawHuman(px, py - lift, p.dir || 0, p.moving, time, peerColors, null, 1);
+          drawHuman(px, py - lift, p.dir || 0, p.mount ? false : p.moving, time, peerColors, null, 1);
           drawNameTag(p.name, px, py - 26 - lift, p.color);
           if (p.bubble && p.bubble.until > now) {
             drawBubble(p.bubble.text, px, py - lift, p.color);
@@ -1344,9 +1347,10 @@ export function createRenderer(canvas, world) {
       fn: () => {
         const lift = 5 * player.boost;
         const bob = Math.sin(time * 0.007) * 1.1 * player.boost;
+        const onShip = player.boost > 0.35;
         if (player.boost > 0.01) drawSkiff(player.x * TILE, player.y * TILE, player.dir, time, player.boost, moving);
-        drawHuman(player.x * TILE, player.y * TILE - lift + bob, player.dir, moving, time,
-          PLAYER_COLORS[player.colorIndex % PLAYER_COLORS.length], null, 1);
+        drawHuman(player.x * TILE, player.y * TILE - lift + bob, player.dir, onShip ? false : moving, time,
+          player.colors || PLAYER_COLORS[0], null, 1);
         drawNameTag(player.name, player.x * TILE, player.y * TILE - 26 - lift, player.color);
         if (player.bubble && player.bubble.until > now) {
           drawBubble(player.bubble.text, player.x * TILE, player.y * TILE - lift, player.color);

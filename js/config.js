@@ -6,7 +6,7 @@ export const WORLD_H = MAP_H * TILE;
 
 // posições e tamanhos de gente são em tiles (1 tile = 16 unidades de mundo)
 export const PLAYER_SPEED = 82 / 16;
-export const SPRINT_MULT = 2.2;
+export const SPRINT_MULT = 4.4;
 export const PLAYER_W = 9 / 16;
 export const PLAYER_H = 6 / 16;
 export const INTERACT_RADIUS = 30 / 16;
@@ -33,6 +33,7 @@ export const STORAGE = {
   nostr: "mundo-song:nostr:v1",
   rpg: "mundo-song:rpg:v1",
   chat: "mundo-song:chat:v1",
+  outfit: "mundo-song:outfit:v1",
 };
 
 // A rede do mundo: relays públicos, canais do jogo e DMs privadas (NIP-17).

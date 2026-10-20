@@ -345,3 +345,78 @@ export const DEEP_QUESTIONS = {
     why: "A atenção calcula pesos para cada token ou posição, em vez de tratar toda a entrada do mesmo jeito.",
   },
 };
+
+// Perguntas extras por continente: mais variedade em cada dificuldade, com o
+// mesmo cuidado de alternativa única e explicação curta.
+export const EXTRA_QUESTIONS = {
+  cs: {
+    1: [
+      { q: "O que um byte guarda?", options: ["Oito bits", "Um bit", "Mil bits"], a: 0, why: "Um byte é um grupo de oito bits, o suficiente para 256 combinações." },
+    ],
+    2: [
+      { q: "O que faz um sistema operacional?", options: ["Organiza processos, memória e arquivos", "Desenha os pixels da tela", "Traduz o código para outra língua"], a: 0, why: "O sistema operacional distribui os recursos da máquina entre os programas e guarda o que precisa durar." },
+    ],
+    3: [
+      { q: "O que é uma máquina de Turing universal?", options: ["Uma máquina que simula qualquer outra máquina de Turing", "Um computador quântico", "Um teclado mecânico"], a: 0, why: "Ela recebe a descrição de outra máquina e executa o mesmo comportamento, o que fundamenta a ideia de computação geral." },
+    ],
+  },
+  math: {
+    1: [
+      { q: "Quanto é 7 × 8?", options: ["54", "56", "64"], a: 1, why: "Sete grupos de oito somam 56. Também é 8 × 7, pela comutatividade." },
+    ],
+    2: [
+      { q: "O teorema de Pitágoras vale para qual triângulo?", options: ["Qualquer triângulo", "Todo triângulo retângulo", "Só triângulos equiláteros"], a: 1, why: "A soma dos quadrados dos catetos é o quadrado da hipotenusa em triângulos retângulos." },
+    ],
+    3: [
+      { q: "O que é um conjunto incontável?", options: ["Um conjunto sem fim que não pode ser listado em sequência", "Um conjunto vazio", "Um conjunto de dois elementos"], a: 0, why: "Os reais são incontáveis: não existe uma lista que os enumere todos, mesmo com infinitas posições." },
+    ],
+  },
+  physics: {
+    1: [
+      { q: "Qual é a unidade de energia no SI?", options: ["newton", "joule", "pascal"], a: 1, why: "Energia e trabalho se medem em joule. Newton é força e pascal é pressão." },
+    ],
+    2: [
+      { q: "A terceira lei de Newton diz que...", options: ["Toda ação tem uma reação de mesmo módulo e sentido oposto", "A força é sempre constante", "O movimento sempre para"], a: 0, why: "As forças vêm em pares, aplicadas em corpos diferentes. É por isso que empurrar uma parede também empurra você." },
+    ],
+    3: [
+      { q: "O que a entropia mede?", options: ["O número de arranjos possíveis de um sistema", "A velocidade da luz", "A carga elétrica"], a: 0, why: "Quanto mais arranjos compatíveis com o estado, maior a entropia. A segunda lei diz que ela tende a crescer num sistema isolado." },
+    ],
+  },
+  chem: {
+    1: [
+      { q: "Qual é o símbolo químico do ferro?", options: ["F", "Fe", "Fr"], a: 1, why: "Ferro é Fe, do latim ferrum. F é flúor e Fr é frâncio." },
+    ],
+    2: [
+      { q: "O que é uma solução?", options: ["Uma mistura homogênea de soluto e solvente", "Um elemento puro", "Uma reação que não acontece"], a: 0, why: "Na solução as partículas se misturam de forma uniforme; a água com sal é o exemplo clássico." },
+    ],
+    3: [
+      { q: "O que uma enzima faz numa reação?", options: ["Baixa a energia de ativação", "Muda o produto final", "Aumenta a temperatura"], a: 0, why: "A enzima oferece um caminho com barreira menor, acelerando a reação sem ser consumida." },
+    ],
+  },
+  music: {
+    1: [
+      { q: "Quantas notas diferentes tem a escala maior?", options: ["5", "7", "12"], a: 1, why: "A escala maior tem sete graus antes de repetir a tônica na oitava." },
+    ],
+    2: [
+      { q: "Um acorde menor é formado por...", options: ["Tônica, terça menor e quinta justa", "Duas oitavas", "Só a tônica"], a: 0, why: "A terça menor é o que dá o caráter melancólico ao acorde, em contraste com a terça maior." },
+    ],
+    3: [
+      { q: "O que é dissonância?", options: ["Uma combinação que pede resolução", "Um som sem frequência", "Um silêncio"], a: 0, why: "Intervalos dissonantes criam tensão e costumam resolver em consonâncias. Não é erro, é tensão." },
+    ],
+  },
+  ai: {
+    1: [
+      { q: "O que é um conjunto de treino?", options: ["Exemplos usados para ajustar o modelo", "A tela do computador", "O teste final"], a: 0, why: "O modelo aprende padrões nesses exemplos. O conjunto de teste fica separado para medir generalização." },
+    ],
+    2: [
+      { q: "Para que serve uma função de perda?", options: ["Medir o erro do modelo", "Guardar os dados", "Aumentar a memória"], a: 0, why: "A perda transforma o erro numa medida que o treino tenta reduzir, ajustando os pesos." },
+    ],
+    3: [
+      { q: "O que é viés em um modelo?", options: ["Um erro sistemático que favorece certos casos", "A velocidade do treino", "O tamanho da tela"], a: 0, why: "Viés é um desvio que se repete e não se corrige só com mais dados; vem dos dados, da métrica ou do desenho." },
+    ],
+  },
+};
+
+for (const [continent, tiers] of Object.entries(EXTRA_QUESTIONS)) {
+  for (const [tier, list] of Object.entries(tiers)) QUESTIONS[continent][tier].push(...list);
+}

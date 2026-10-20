@@ -83,6 +83,7 @@
           <p id="dg-sub" class="dg-sub"></p>
         </div>
         <div class="dg-actions">
+          <button id="dg-sprint" class="dg-exit" type="button" aria-pressed="false">turbo <kbd>Espaço</kbd></button>
           <button id="dg-sheet" class="dg-exit" type="button">ficha <kbd>C</kbd></button>
           <button id="dg-exit" class="dg-exit" type="button">sair <kbd>Esc</kbd></button>
         </div>
@@ -98,7 +99,7 @@
       <canvas id="dg-map" width="128" height="96" aria-label="Minimapa da caverna, com o que já foi andado"></canvas>
       <p id="dg-msg" class="dg-msg" role="status" aria-live="polite"></p>
       <div id="dg-prompt" class="dg-prompt" hidden><kbd>F</kbd> <span></span></div>
-      <p id="dg-help" class="dg-help"><span class="kb-only">WASD ou clique para andar · <kbd>F</kbd> interage · <kbd>C</kbd> ficha · <kbd>Espaço</kbd> corre · <kbd>Esc</kbd> sobe</span><span class="touch-only">toque no chão para andar · toque no objeto para interagir · ficha e sair no topo</span></p>
+      <p id="dg-help" class="dg-help"><span class="kb-only">WASD ou clique para andar · <kbd>F</kbd> interage · <kbd>C</kbd> ficha · <kbd>Espaço</kbd> corre · <kbd>Esc</kbd> sobe</span><span class="touch-only">toque no chão para andar · toque no objeto para interagir · segure turbo para voar · ficha e sair no topo</span></p>
     </div>
   </div>
 
@@ -176,6 +177,17 @@
         <button type="button" class="hud-btn" data-close="sheet">fechar <kbd>Esc</kbd></button>
       </div>
       <div id="sheet-body"></div>
+    </div>
+  </div>
+
+  <div id="outfits" class="modal" role="dialog" aria-modal="true" aria-labelledby="outfits-title" hidden>
+    <div class="modal-card outfits-card">
+      <div class="modal-head">
+        <h2 id="outfits-title">Trajes</h2>
+        <button type="button" class="hud-btn" data-close="outfits">fechar <kbd>Esc</kbd></button>
+      </div>
+      <p id="outfits-sub" class="outfits-sub"></p>
+      <div id="outfits-body"></div>
     </div>
   </div>
 

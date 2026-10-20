@@ -368,46 +368,62 @@ export function createWorld() {
     if (size) addProp(d.x, d.y, size[0], size[1]);
   }
 
-  // A boca da caverna fica ao lado do acampamento de caça. O lugar é escolhido
-  // depois dos props para não nascer em cima de monstro, árvore ou alavanca.
-  // A saída (logo abaixo da boca) também precisa caber o corpo inteiro.
-  const caves = hunters.map((h) => {
+  // Duas bocas por continente, ligadas pelo túnel do subsolo: descer numa e
+  // subir pela escada do fundo leva à outra. A saída (abaixo da boca) precisa
+  // caber o corpo inteiro.
+  const caves = [];
+  for (const h of hunters) {
     const def = dungeonById(`dungeon-${h.continent}`);
+    const base = def?.rooms?.[0]?.name || `Caverna de ${CONTINENTS[h.continent]?.name || ""}`;
     const freeSpot = (cx, cy) =>
       !boxCollides(cx, cy, 1.9, 1.0) &&
       !boxCollides(cx, cy + 0.9, PLAYER_W, PLAYER_H) &&
       !boxCollides(cx, cy + 1.5, PLAYER_W, PLAYER_H) &&
       !boxCollides(cx, cy + 1.7, PLAYER_W, PLAYER_H);
-    let spot = { x: h.center.x + 3, y: h.center.y + 3 };
-    let found = false;
-    for (let r = 4; r <= 8 && !found; r++) {
-      for (let dy = -r; dy <= r && !found; dy++) {
-        for (let dx = -r; dx <= r && !found; dx++) {
-          if (Math.max(Math.abs(dx), Math.abs(dy)) !== r) continue;
-          const cx = Math.round(h.center.x + dx);
-          const cy = Math.round(h.center.y + dy);
-          if (cx < 2 || cy < 2 || cx > MAP_W - 2 || cy > MAP_H - 2) continue;
-          if (!freeSpot(cx, cy)) continue;
-          if (Math.hypot(cx - h.center.x, cy - h.center.y) < 3.2) continue;
-          if (Math.hypot(cx - h.banner.x, cy - h.banner.y) < 2.5) continue;
-          spot = { x: cx, y: cy };
-          found = true;
+    const pick = (from, to, minFromCenter, avoid = null) => {
+      for (let r = from; r <= to; r++) {
+        for (let dy = -r; dy <= r; dy++) {
+          for (let dx = -r; dx <= r; dx++) {
+            if (Math.max(Math.abs(dx), Math.abs(dy)) !== r) continue;
+            const cx = Math.round(h.center.x + dx);
+            const cy = Math.round(h.center.y + dy);
+            if (cx < 2 || cy < 2 || cx > MAP_W - 2 || cy > MAP_H - 2) continue;
+            if (!freeSpot(cx, cy)) continue;
+            if (Math.hypot(cx - h.center.x, cy - h.center.y) < minFromCenter) continue;
+            if (Math.hypot(cx - h.banner.x, cy - h.banner.y) < 2.5) continue;
+            if (caves.some((c) => Math.hypot(c.x - cx, c.y - cy) < 7)) continue;
+            if (avoid && Math.hypot(avoid.x - cx, avoid.y - cy) < 7) continue;
+            return { x: cx, y: cy };
+          }
         }
       }
-    }
-    return {
-      kind: "cave",
-      id: def?.id || `dungeon-${h.continent}`,
-      continent: h.continent,
-      name: def?.rooms?.[0]?.name || `Caverna de ${CONTINENTS[h.continent]?.name || ""}`,
-      x: spot.x,
-      y: spot.y,
-      accent: h.accent,
-      groundId: h.id,
-      // onde o corpo reaparece quando sobe de volta
-      exit: { x: spot.x, y: spot.y + 1.5 },
+      return null;
     };
-  });
+    const first = pick(4, 9, 3.2) || { x: h.center.x + 3, y: h.center.y + 3 };
+    const second = pick(8, 14, 7.5, first) || { x: first.x + 7, y: first.y };
+    const pair = [
+      { mouth: "entrance", spot: first, name: base },
+      { mouth: "far", spot: second, name: `${base} · outra boca` },
+    ];
+    const ids = pair.map((p, i) => `${def?.id || `dungeon-${h.continent}`}-${p.mouth}`);
+    pair.forEach((p, i) => {
+      caves.push({
+        kind: "cave",
+        id: ids[i],
+        defId: def?.id || `dungeon-${h.continent}`,
+        pairId: ids[1 - i],
+        mouth: p.mouth,
+        continent: h.continent,
+        name: p.name,
+        x: p.spot.x,
+        y: p.spot.y,
+        accent: h.accent,
+        groundId: h.id,
+        // onde o corpo reaparece quando sobe de volta
+        exit: { x: p.spot.x, y: p.spot.y + 1.5 },
+      });
+    });
+  }
   for (const c of caves) addProp(c.x, c.y, 0.78, 0.42);
 
   return {
