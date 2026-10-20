@@ -399,6 +399,31 @@ check(semArea.length === 0, `seções sem área: ${semArea.join(", ")}`);
 check(semCaverna.length === 0, `seções sem caverna: ${semCaverna.join(", ")}`);
 check(semMissao.length === 0, `seções sem NPC com missão: ${semMissao.join(", ")}`);
 
+// F8: números finais do catálogo inteiro
+check(AREAS.length === 86, `áreas no mapa: ${AREAS.length}, esperado 86`);
+check(DUNGEONS.length === 93, `cavernas: ${DUNGEONS.length}, esperado 93`);
+check(GROUNDS.length === 93, `caçadas: ${GROUNDS.length}, esperado 93`);
+check(SITES.length === 279, `catações: ${SITES.length}, esperado 279`);
+check(QUESTS.length === 112, `missões: ${QUESTS.length}, esperado 112`);
+check(WAYSTONES.length === 94, `faróis: ${WAYSTONES.length}, esperado 94`);
+// 826 do banco mais as 7 perguntas do fundo que o módulo do duelo injeta
+check(totalQuestions === 833, `perguntas: ${totalQuestions}, esperado 833`);
+// cada área nova tem uma pergunta própria em cada dificuldade
+let semPergunta = [];
+for (const item of CATALOG_CONTENT.areas) {
+  for (const tier of [1, 2, 3]) {
+    const tagged = (QUESTIONS[item.continent]?.[tier] || []).filter((q) => q.area === item.id);
+    if (tagged.length !== 1) semPergunta.push(`${item.id}/${tier}:${tagged.length}`);
+  }
+}
+check(semPergunta.length === 0, `áreas com pergunta própria faltando: ${semPergunta.slice(0, 6).join(", ")}`);
+// a ilha existe de fato no mapa, e não é água
+let ilhaNaAgua = [];
+for (const spot of CATALOG_AREAS) {
+  if (CATALOG_CONTENT.areas.some((a) => a.id === spot.id) && world.get(spot.cx, spot.cy) === 3) ilhaNaAgua.push(spot.id);
+}
+check(ilhaNaAgua.length === 0, `ilhas na água: ${ilhaNaAgua.slice(0, 6).join(", ")}`);
+
 // bicho-assinatura precisa de desenho e de ficha no bestiário, senão cai no chefe
 const sigLine = source("../js/dungeon.js").split("\n").find((l) => l.includes("const signature =")) || "";
 const sigKinds = [...sigLine.matchAll(/"([a-z]+)"/g)].map((m) => m[1]);

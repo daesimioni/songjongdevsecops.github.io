@@ -155,7 +155,8 @@ export function buildCatalogContent() {
         body,
       };
       questions.push({
-        continent: discipline.continent,
+        continent,
+        area: area.id,
         tier: i + 1,
         // o banco guarda 6 alternativas; o baralho base guarda 3 e o duelo
         // completa até seis na hora da pergunta

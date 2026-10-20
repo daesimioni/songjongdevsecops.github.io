@@ -3,8 +3,10 @@
 No ar em <https://songjongdevsecops.github.io/>.
 
 Um blog pessoal que se atravessa a pé. O site é um arquipélago em pixel art:
-você entra com um boneco, cruza pontes e encontra 69 estações. Cada estação é
-uma página com um texto curto e um instrumento interativo.
+você entra com um boneco, cruza pontes e encontra 279 estações. Cada estação é
+uma página com um texto curto e um instrumento interativo. Ao todo, 86 áreas:
+as 16 originais mais uma para cada seção do catálogo de Matemática, Física,
+Química, Computação, Língua Portuguesa e das 11 interseções entre elas.
 
 ## O arquipélago
 
@@ -410,11 +412,12 @@ chefe sem alavanca, a forja, os encantamentos, a comida com efeito, o bicho e a
 pergunta que casa com o tema. O duelo entre jogadores entra pela mesma prova: as
 cinco cartas, a dificuldade que vira dano e a compostura.
 
-A segunda confere o conteúdo inteiro: as 69 estações e seus textos, falas de NPC,
-42 missões, itens, equipamento, relíquias por continente, receitas, encantos, as
-616 perguntas (sem repetição e com resposta válida), as cinco cartas do PvP por
-continente, as 23 cavernas e o mundo montado (23 instrutores, 46 bocas, nenhum
-monstro na superfície).
+A segunda confere o conteúdo inteiro: as 279 estações e seus textos, falas de NPC,
+112 missões, itens, equipamento, relíquias por continente, receitas, encantos, as
+833 perguntas (sem repetição e com resposta válida), as cinco cartas do PvP por
+continente, as 93 cavernas e o mundo montado (93 instrutores, 186 bocas, nenhum
+monstro na superfície). Confere também a cobertura das 82 seções do catálogo:
+cada uma precisa de área, caverna, NPC com missão e três perguntas próprias.
 
 A terceira confere a casca: id repetido ou faltando, import que não resolve,
 botão sem `type`, imagem sem `alt`, link `_blank` sem `rel`, `aria-labelledby`
@@ -462,7 +465,7 @@ Depois abra `http://localhost:8000`.
 | `wasm/julia.wat` | fonte do módulo WebAssembly do conjunto de Julia |
 | `wasm/julia.wasm` | o módulo compilado, de 296 bytes |
 | `test/core.test.mjs` | conferência de missões, RPG, treino, fuga, duelo PvP e caverna |
-| `test/content.test.mjs` | conferência das 69 estações, perguntas, itens, cavernas, áreas e mundo |
+| `test/content.test.mjs` | conferência das 279 estações, perguntas, itens, cavernas, áreas, cobertura do catálogo e mundo |
 | `test/ui.test.mjs` | conferência de ids, imports, botões, rótulos e aria |
 | `test/backup.test.mjs` | envelope do backup, whitelist, dedupe e restauração |
 

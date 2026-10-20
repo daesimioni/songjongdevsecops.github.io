@@ -1088,6 +1088,14 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
 .pill-progress .sep { color: rgba(255,255,255,0.2); }
 .travel-lead { font-family: var(--mono); font-size: 12.5px; line-height: 1.6; color: var(--muted); margin: 0 0 16px; }
 .travel-list { display: grid; gap: 10px; }
+.travel-group {
+  margin: 12px 2px 4px;
+  font-family: var(--pixel);
+  font-size: 7px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
 .travel-item {
   display: flex; align-items: center; justify-content: space-between; gap: 14px;
   padding: 13px 14px; border: 1px solid var(--line); border-radius: 8px;

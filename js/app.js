@@ -1362,7 +1362,20 @@ function buildTravel() {
     under.append(underLeft, underRight);
     if (here !== CONURBATION.id) under.addEventListener("click", enterUnderworld);
     list.appendChild(under);
-    for (const def of DUNGEONS) {
+    // com 93 cavernas, a lista precisa de cabeçalho por continente
+    const ordenadas = [...DUNGEONS].sort((a, b) => {
+      if (a.continent !== b.continent) return String(a.continent).localeCompare(String(b.continent));
+      return String(a.name).localeCompare(String(b.name));
+    });
+    let ultimoContinente = "";
+    for (const def of ordenadas) {
+      if (def.continent !== ultimoContinente) {
+        ultimoContinente = def.continent;
+        const head = document.createElement("p");
+        head.className = "travel-group";
+        head.textContent = CONTINENTS[def.continent]?.name || def.continent;
+        list.appendChild(head);
+      }
       const known = state.docks.has(def.continent);
       const btn = document.createElement("button");
       btn.type = "button";
