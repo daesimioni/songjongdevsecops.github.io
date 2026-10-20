@@ -85,7 +85,7 @@ Sem banco preenchido, a área não entra no jogo: o teste cobra cobertura.
 - [x] **F3. Física.** 15 seções (11 novas).
 - [x] **F4. Química.** 13 seções (11 novas).
 - [x] **F5. Computação.** 17 seções (13 novas).
-- [ ] **F6. Língua.** 15 seções (13 novas).
+- [x] **F6. Língua.** 15 seções (13 novas).
 - [ ] **F7. Interseções.** 11 áreas com túnel para as duas mães.
 - [ ] **F8. Prova final.** 86 áreas, 82 cavernas, 82 clareiras, 82 NPCs de
       missão, 492 perguntas novas, tudo verde no node, no navegador e ao vivo;
@@ -100,3 +100,4 @@ Sem banco preenchido, a área não entra no jogo: o teste cobra cobertura.
 | 2026-10-20 | F3 | banco de Física (`catalog-bank-physics.js`): 12 áreas novas; 36 estações, 12 cavernas, 12 caçadas, 24 NPCs, 12 missões, 36 perguntas | node: 37 áreas, 132 estações, 44 cavernas, 44 clareiras, 63 missões, 679 perguntas; navegador: 21/21 áreas do catálogo com pacote completo, 21/21 cavernas abrindo, pontes secas, página e missão de Física funcionando |
 | 2026-10-20 | F4 | banco de Química (`catalog-bank-chem.js`): 11 áreas novas, 33 tópicos; títulos com acrônimo preservado (DFT) | node: 48 áreas, 165 estações, 55 cavernas, 55 clareiras, 74 missões, 712 perguntas; navegador: 32/32 áreas do catálogo com pacote completo, 32/32 cavernas abrindo, página e missão de Química funcionando; revisão ao vivo 48/48 |
 | 2026-10-20 | F5 | banco de Computação (`catalog-bank-cs.js`): 14 áreas novas, 42 tópicos; uma pergunta duplicada foi trocada | node: 62 áreas, 207 estações, 69 cavernas, 69 clareiras, 88 missões, 754 perguntas; navegador: 46/46 áreas do catálogo com pacote completo, 46/46 cavernas abrindo, página e missão de Computação; revisão ao vivo 48/48 |
+| 2026-10-20 | F6 | banco de Língua (`catalog-bank-lingua.js`): 13 áreas novas, 39 tópicos | node: 75 áreas, 246 estações, 82 cavernas, 82 clareiras, 101 missões, 793 perguntas; navegador: 59/59 áreas do catálogo com pacote completo, página e missão de Língua; 60 fps com desenho 1,1 ms; revisão ao vivo 48/48 |
