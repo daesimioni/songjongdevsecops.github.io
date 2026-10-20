@@ -333,16 +333,19 @@ for (const area of AREAS) {
     helmet: ["Elmo", "Capuz", "Coroa", "Máscara", "Turbante"],
   };
   const ordem = bioma.ordem % 5;
+  const armaTipo = ["sword", "wand", "club"][bioma.ordem % 3];
+  const armaNome = { sword: ["Lâmina", "Espada", "Florete"], wand: ["Cajado", "Bastão", "Cetro"], club: ["Martelo", "Maça", "Malho"] }[armaTipo][bioma.ordem % 3];
+  const armaVerbo = { sword: "corta", wand: "canaliza", club: "esmaga" }[armaTipo];
   const idBase = area.id;
   AREA_ITEMS[area.id] = {
     weapon: {
       id: `${idBase}-lamina`,
-      name: nomeItem(area, prefixos.weapon[ordem], `${article} ${noun}`),
+      name: nomeItem(area, armaNome, `${article} ${noun}`),
       slot: "weapon",
-      weapon: ["sword", "wand", "club"][bioma.ordem % 3],
+      weapon: armaTipo,
       damage: 1 + (bioma.ordem % 2),
       continent: DISCIPLINES[area.discipline]?.continent || "hub",
-      desc: `Forjada ${prepBioma(bioma.name)} ${bioma.name}, corta ${bicho.toLowerCase()} sem perder o fio.`,
+      desc: `${armaTipo === "sword" ? "Forjada" : "Feita"} ${prepBioma(bioma.name)} ${bioma.name}, ${armaVerbo} ${bicho.toLowerCase()} ${armaTipo === "sword" ? "sem perder o fio" : armaTipo === "wand" ? "sem perder a sintonia" : "sem perder o peso"}.`,
     },
     armor: {
       id: `${idBase}-manto`,

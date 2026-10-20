@@ -90,6 +90,24 @@ assert.deepEqual(q.progress(quest("voz-do-mundo")), { have: 1, need: 2 });
 q.report("chat:dm");
 assert.equal(q.ready(quest("voz-do-mundo")), true);
 
+// trilha de área: só cartas daquela área contam
+assert.equal(q.accept("trilha-math-algebra"), true);
+assert.deepEqual(q.progress(quest("trilha-math-algebra")), { have: 0, need: 3 });
+cards.add("math-algebra-1");
+cards.add("math-algebra-2");
+cards.add("math-fundamentos-1");
+assert.deepEqual(q.progress(quest("trilha-math-algebra")), { have: 2, need: 3 });
+cards.add("math-algebra-3");
+assert.equal(q.ready(quest("trilha-math-algebra")), true);
+assert.equal(q.complete("trilha-math-algebra").ok, true);
+
+// chefe da área: o registro de chefe é do RPG, a missão lê o mesmo estado
+assert.equal(q.accept("chefe-math-algebra"), true);
+assert.deepEqual(q.progress(quest("chefe-math-algebra")), { have: 0, need: 1 });
+q.data.bosses = { "math-algebra": Date.now() };
+assert.deepEqual(q.progress(quest("chefe-math-algebra")), { have: 1, need: 1 });
+assert.equal(q.ready(quest("chefe-math-algebra")), true);
+
 // persistência
 const again = make();
 assert.equal(again.isDone("tres-passos"), true);
