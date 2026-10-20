@@ -2400,6 +2400,17 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
 @media (max-width: 720px) { .shop-grid { grid-template-columns: 1fr; } }
 
 .npc-context { color: var(--mint); border-left: 2px solid rgba(97, 244, 192, 0.4); padding-left: 9px; }
+.npc-deep {
+  margin: 4px 0 14px;
+  padding: 8px 11px;
+  border: 1px dashed rgba(97, 244, 192, 0.45);
+  border-radius: 6px;
+  background: rgba(97, 244, 192, 0.06);
+  color: var(--mint);
+  font-family: var(--mono);
+  font-size: 11px;
+}
+.npc-deep:hover { background: rgba(97, 244, 192, 0.13); }
 
 /* companhia: mana, bichos e montarias */
 .duel-bar.mana .duel-bar-track i { background: linear-gradient(90deg, var(--violet), var(--cyan)); }

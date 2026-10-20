@@ -145,7 +145,9 @@ memória), **Cauchy** (limite e série), **Kekulé** (anel do benzeno), **Helmho
 **Barán** (redes), **Carnot** (entropia), **Liebig** (análise), **Schoenberg**
 (forma), **Laplace** (probabilidade), **Chomsky** (linguagem) e **Saussure**
 (sentido).
-Cada um dá uma missão curta e comenta o tema da caverna vizinha. Os outros NPCs
+Cada um dá uma missão curta e comenta o tema da caverna vizinha. Todos
+reconhecem o título, a missão em andamento, a estação que falta e o número de
+conversas; o botão **puxar conversa** abre mais uma fala por visita. Os outros NPCs
 fixos (Téo, Grace, Euclides, Galileu, Lavoisier, Bach, Shannon, Alzira) fazem
 companhia e dão dicas; os 14 instrutores treinam sem dano e sem loot.
 

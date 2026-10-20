@@ -111,6 +111,7 @@ const state = {
   footstepAt: 0,
   cards: saved.cards,
   docks: saved.docks,
+  npcMemory: readJSON(STORAGE.npc, {}),
   xp: saved.xp,
   completed: new Set(),
   keys: new Set(),
@@ -695,6 +696,7 @@ function buildNpc(npc) {
   const body = $("npc-body");
   body.textContent = "";
   const lines = data?.lines || [];
+  const visits = state.npcMemory?.[npc.id] || 0;
   const done = quests.done().length;
   const context = [];
   if (quests.title) context.push(`Ouvi falar de você: ${quests.title}.`);
@@ -702,9 +704,36 @@ function buildNpc(npc) {
   if (npc.continent && continentComplete(npc.continent)) {
     context.push("Esta ilha já está toda aberta para você. Agora é escolher o que revisitar.");
   }
-  if (context.length) body.appendChild(el("p", "npc-line npc-context", context[0]));
+  // o NPC reconhece o que falta na província ou na área onde ele mora
+  if (npc.continent && npc.continent !== "hub") {
+    const area = world.areaAt(npc.x, npc.y);
+    const missing = sitesOf(npc.continent).find((site) => {
+      if (state.cards.has(site.post)) return false;
+      const siteArea = world.areaAt(site.x, site.y);
+      return area ? siteArea?.id === area.id : !siteArea;
+    });
+    if (missing) context.push(`Ainda falta abrir ${missing.name}.`);
+  }
+  const active = quests.active().find((quest) => quest.npc === npc.id);
+  if (active) context.push(`A missão "${active.title}" está de pé.`);
+  if (visits >= 3) context.push(`Já são ${visits} conversas. O nome já é conhecido por aqui.`);
+  for (const line of context.slice(0, 3)) body.appendChild(el("p", "npc-line npc-context", line));
+  const lineIdx = visits > 0 ? (visits - 1) % Math.max(1, lines.length) : 0;
   if (lines.length) {
-    body.appendChild(el("p", "npc-line", lines[(npc.lineIndex || 0) % lines.length]));
+    body.appendChild(el("p", "npc-line", lines[lineIdx]));
+    if (lines.length > 1) {
+      const deep = el("button", "npc-deep", "puxar conversa");
+      deep.type = "button";
+      let step = 0;
+      deep.addEventListener("click", () => {
+        step++;
+        const next = (lineIdx + step) % lines.length;
+        deep.before(el("p", "npc-line npc-context", lines[next]));
+        audio.click?.();
+        if (step >= lines.length - 1) deep.remove();
+      });
+      body.appendChild(deep);
+    }
   }
   const offers = quests.offersFor(npc.id);
   if (!offers.length) {
@@ -720,12 +749,15 @@ function openNpc(npc) {
   closeChat();
   state.npc = npc;
   state.npcFeedback = null;
+  state.npcMemory[npc.id] = (state.npcMemory[npc.id] || 0) + 1;
+  saveNpcMemory();
   buildNpc(npc);
   openModal("npc");
   audio.open();
 }
 
 function saveCards() { writeJSON(STORAGE.cards, Array.from(state.cards)); }
+function saveNpcMemory() { writeJSON(STORAGE.npc, state.npcMemory); }
 function saveDocks() { writeJSON(STORAGE.docks, Array.from(state.docks)); }
 function saveXp() { writeJSON(STORAGE.xp, state.xp); }
 
