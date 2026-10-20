@@ -10,7 +10,7 @@ O que existe hoje (2026-10-20):
 
 - mapa 300x200 com o Porto no centro, seis continentes e o Vale da Língua, mais
   catorze áreas temáticas ligadas por ponte;
-- 21 cavernas, 42 bocas pareadas (duas por caverna), com entrada por qualquer
+- 22 cavernas, 44 bocas pareadas (duas por caverna), com entrada por qualquer
   uma e saída coerente pela escada da outra boca;
 - sete arquétipos de túnel (elbow, split, wide, cross, zigzag, narrow e a
   variação espelhada), com salas laterais, anel de corredores e cidade no fundo;
@@ -42,6 +42,7 @@ O alvo:
 |---|---|---|---|
 | Área do Eletromagnetismo | Física | 152,104 | 134,94 36x20 |
 | Área da Termodinâmica | Física | 116,139 | 96,124 40x30 |
+| Área da Óptica | Física | 78,174 | 58,158 40x32 |
 | Área da Arquitetura de Computadores | Computação | 204,20 | 178,6 52x28 |
 | Área das Redes | Computação | 252,20 | 232,6 40x28 |
 | Área da Análise | Matemática | 226,76 | 202,62 46x27 |
@@ -62,7 +63,7 @@ continente ou à área vizinha; o teste de caminho cobre todas as bocas.
 
 Regra de interação da boca: a distância é medida pelo degrau de saída
 (`cave.exit`), não pelo centro do desenho. Assim um NPC que passeia na frente
-da caverna não rouba o F. O teste de navegador entra e sai pelas 42 bocas, uma
+da caverna não rouba o F. O teste de navegador entra e sai pelas 44 bocas, uma
 a uma, e confere que a volta cai no mesmo degrau.
 
 ## 2. A superfície

@@ -90,6 +90,10 @@ export const ITEMS = {
   ciclo: { name: "Ciclo Fechado", continent: "physics", desc: "Um caminho que volta ao começo, mas nunca de graça." },
   entropia: { name: "Entropia Solta", continent: "physics", desc: "Uma medida de bagunça que só aumenta quando ninguém arruma." },
   "pedra-carnot": { name: "Pedra de Carnot", continent: "physics", relic: true, desc: "Uma pedra que promete o melhor rendimento possível e não entrega mais que isso. Relíquia: +5 de vida máxima." },
+  lente: { name: "Lente de Bolso", continent: "physics", desc: "Vidro curvo que decide para onde a luz vai. A imagem agradece." },
+  reflexo: { name: "Reflexo Teimoso", continent: "physics", desc: "Uma luz que bateu no espelho e voltou com a mesma ideia." },
+  "arco-iris": { name: "Arco-Íris Engarrafado", continent: "physics", desc: "Sete cores que estavam juntas e agora se apresentam em ordem." },
+  "pedra-huygens": { name: "Pedra de Huygens", continent: "physics", relic: true, desc: "Uma pedra que trata cada ponto da frente de onda como uma nova fonte. Relíquia: +5 de vida máxima." },
   instrucao: { name: "Instrução Perdida", continent: "cs", desc: "Um pedaço de programa que se soltou no meio do ciclo." },
   registrador: { name: "Registrador Dourado", continent: "cs", desc: "Guarda um número inteiro e não deixa ninguém ler sem permissão." },
   barramento: { name: "Barramento Largo", continent: "cs", desc: "Fios paralelos por onde os dados viajam em fila." },
@@ -135,6 +139,9 @@ export const ITEMS = {
   "anel-carnot": { name: "Anel de Carnot", continent: "physics", slot: "ring", damage: 1, desc: "Aproveita a diferença de temperatura do golpe e não desperdiça." },
   "manto-termico": { name: "Manto Térmico", continent: "physics", slot: "armor", hp: 4, desc: "Isola o corpo para o calor não sair. O frio também não entra." },
   "capuz-entropia": { name: "Capuz de Entropia", continent: "physics", slot: "helmet", hp: 3, desc: "Desorganiza a mira do inimigo. A bagunça trabalha a seu favor." },
+  "oculos-optica": { name: "Óculos de Óptica", continent: "physics", slot: "helmet", hp: 3, desc: "Corrigem o foco do que está longe. O detalhe chega antes do golpe." },
+  "manto-luz": { name: "Manto de Luz", continent: "physics", slot: "armor", hp: 4, desc: "Tecido que reflete o bastante para o impacto perder a direção." },
+  "anel-foco": { name: "Anel de Foco", continent: "physics", slot: "ring", damage: 1, desc: "Concentra o golpe num ponto só, como uma lente bem ajustada." },
   "manto-dieletrico": { name: "Manto Dielétrico", continent: "physics", slot: "armor", hp: 4, desc: "Tecido que não conduz. Bom para quem trabalha perto de corrente." },
   "anel-pipeline": { name: "Anel de Pipeline", continent: "cs", slot: "ring", damage: 1, desc: "Uma volta de fio que adianta a próxima etapa antes de a atual acabar." },
   "capuz-registrador": { name: "Capuz de Registrador", continent: "cs", slot: "helmet", hp: 3, desc: "Guarda a última ideia bem quentinha, pronta para o próximo ciclo." },
@@ -576,6 +583,23 @@ const GROUNDS_RAW = [
       { id: "lingua-semantics-m3", name: "Ambiguidade", tier: 3, kind: "wisp", dx: 0, dy: 3 },
     ],
     boss: { id: "lingua-semantics-boss", name: "O Duplo Sentido", kind: "boss", dx: 0, dy: 0 },
+  },
+  {
+    id: "physics-optics",
+    continent: "physics",
+    dungeon: "dungeon-physics-optics",
+    name: "Caçada da Luz",
+    center: { x: 82, y: 178 },
+    banner: { x: 0, y: -3 },
+    lever: { x: -3, y: 3 },
+    loot: ["lente", "reflexo", "arco-iris"],
+    bossLoot: "pedra-huygens",
+    monsters: [
+      { id: "physics-optics-m1", name: "Reflexo", tier: 1, kind: "wisp", dx: -3, dy: 1 },
+      { id: "physics-optics-m2", name: "Prisma", tier: 2, kind: "eye", dx: 3, dy: 1 },
+      { id: "physics-optics-m3", name: "Espectro", tier: 3, kind: "golem", dx: 0, dy: 3 },
+    ],
+    boss: { id: "physics-optics-boss", name: "O Espectro Branco", kind: "boss", dx: 0, dy: 0 },
   },
 ];
 
@@ -1813,5 +1837,29 @@ export const EXTRA_QUESTIONS_16 = {
 };
 
 for (const [continent, tiers] of Object.entries(EXTRA_QUESTIONS_16)) {
+  for (const [tier, list] of Object.entries(tiers)) QUESTIONS[continent][tier].push(...list);
+}
+
+// Óptica: duas perguntas por dificuldade.
+export const EXTRA_QUESTIONS_17 = {
+  physics: {
+    1: [
+      { q: "No vácuo, a luz se propaga...", options: ["em linha reta", "em curva fechada", "parada"], a: 0, why: "Sem meio para desviar, o raio segue reto. A curvatura perto de massas enormes é da relatividade geral." },
+      { q: "Um espelho plano forma uma imagem...", options: ["virtual, do mesmo tamanho", "real, invertida", "menor que o objeto"], a: 0, why: "A imagem fica atrás do espelho, direita e simétrica. Espelho côncavo pode formar imagem real." },
+      { q: "A cor de um objeto depende...", options: ["da luz que ele reflete", "da luz que ele absorve toda", "do som ao redor"], a: 0, why: "O objeto absorve algumas frequências e reflete outras; o olho recebe as refletidas." },
+    ],
+    2: [
+      { q: "A refração acontece quando a luz...", options: ["muda de meio e de velocidade", "bate e volta", "é absorvida"], a: 0, why: "A mudança de velocidade na fronteira desvia o raio, conforme Snell." },
+      { q: "Uma lente divergente...", options: ["espalha raios paralelos", "junta raios num foco", "não desvia a luz"], a: 0, why: "A lente côncava espalha os raios. A convergente junta num foco." },
+      { q: "A dispersão da luz branca no prisma acontece porque...", options: ["cada cor tem índice de refração diferente", "o prisma aquece a luz", "a luz perde energia"], a: 0, why: "O vidro desvia cada frequência de um jeito, separando o espectro." },
+    ],
+    3: [
+      { q: "Interferência destrutiva ocorre quando duas ondas...", options: ["chegam em oposição de fase", "têm a mesma fase", "têm frequências zero"], a: 0, why: "Crista encontra vale e a amplitude resultante cai. Em fase, a interferência é construtiva." },
+      { q: "Polarização mostra que a luz...", options: ["é uma onda transversal", "é longitudinal", "não é onda"], a: 0, why: "O campo elétrico oscila perpendicular à propagação. Filtros selecionam uma direção." },
+    ],
+  },
+};
+
+for (const [continent, tiers] of Object.entries(EXTRA_QUESTIONS_17)) {
   for (const [tier, list] of Object.entries(tiers)) QUESTIONS[continent][tier].push(...list);
 }

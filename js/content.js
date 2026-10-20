@@ -12,8 +12,8 @@ export const POSTS = {
     lab: null,
     body: `
       <p>Este blog não tem índice. Tem <strong>mapa</strong>. Você entra com um boneco, atravessa pontes e escolhe por qual continente começar. Cada estação que encontra é uma página: um texto curto e um instrumento para mexer com as mãos.</p>
-      <p>Nas beiradas do mapa, cada continente ganhou <strong>duas áreas temáticas</strong>, cada uma com ilha, estações, clareira de caçada e caverna próprias: eletromagnetismo e termodinâmica, arquitetura e redes, análise e probabilidade, orgânica e analítica, acústica e forma, visão e linguagem, literatura e semântica. São catorze lugares a mais para atravessar a pé.</p>
-      <p>São sete continentes. A <em>Computação</em> mostra como saímos de interruptores e areia até processadores. <em>Matemática</em> visita o infinito, as formas, a mudança e o acaso. <em>Física</em> testa pêndulos, ondas, calor, luz e órbitas. <em>Química</em> abre a tabela periódica, as ligações, as reações e o equilíbrio. <em>Música</em> mostra a matemática escondida no som. <em>Inteligência Artificial</em> abre os dados, as redes, a linguagem e os limites. O <em>Vale da Língua</em> desce ao português do Brasil: o som, a palavra, a frase e o texto. Ao todo, 65 fragmentos para descobrir.</p>
+      <p>Nas beiradas do mapa, cada continente ganhou <strong>duas áreas temáticas</strong> (três na Física), cada uma com ilha, estações, clareira de caçada e caverna próprias: eletromagnetismo, termodinâmica e óptica, arquitetura e redes, análise e probabilidade, orgânica e analítica, acústica e forma, visão e linguagem, literatura e semântica. São quinze lugares a mais para atravessar a pé.</p>
+      <p>São sete continentes. A <em>Computação</em> mostra como saímos de interruptores e areia até processadores. <em>Matemática</em> visita o infinito, as formas, a mudança e o acaso. <em>Física</em> testa pêndulos, ondas, calor, luz e órbitas. <em>Química</em> abre a tabela periódica, as ligações, as reações e o equilíbrio. <em>Música</em> mostra a matemática escondida no som. <em>Inteligência Artificial</em> abre os dados, as redes, a linguagem e os limites. O <em>Vale da Língua</em> desce ao português do Brasil: o som, a palavra, a frase e o texto. Ao todo, 67 fragmentos para descobrir.</p>
       <p>Cada estação abre uma página e soma experiência. O <strong>Diário</strong> guarda o que você já encontrou. As <strong>Pedras do Porto</strong>, os monólitos brilhantes nas docas, levam você de volta a qualquer continente já visitado. A névoa do minimapa só some onde você anda.</p>
       <blockquote>Não tem pressa. O mapa é grande, mas o caminho é seu.</blockquote>
       <p>Os <strong>NPCs</strong> têm missões. Aperte F perto deles: tem caminhada, pergunta e conversa. Cada missão paga experiência e um título, e o Diário mostra quanto falta para a próxima.</p>
@@ -854,6 +854,40 @@ export const POSTS = {
     `,
   },
 
+  // ---------------- Física · óptica ----------------
+  lenses: {
+    kicker: "física · câmara óptica",
+    title: "A luz não sabe o caminho até bater",
+    date: "2026-07-22",
+    read: "5 min",
+    tags: ["óptica", "luz", "lentes"],
+    continent: "physics",
+    lab: null,
+    body: `
+      <p>A luz se propaga em linha reta enquanto o meio não muda. Ao bater numa superfície, parte reflete e parte atravessa. O ângulo de incidência e o de reflexão são iguais, medidos em relação à normal. É por isso que o espelho plano devolve uma imagem simétrica.</p>
+      <p>Quando a luz muda de meio, a velocidade muda e o raio desvia. É a refração. O índice de refração diz quantas vezes a luz é mais lenta naquele material do que no vácuo. A lei de Snell relaciona os ângulos e os índices.</p>
+      <p>Lentes usam a refração para curvar raios. A convergente junta raios paralelos num foco e forma imagens reais ou virtuais conforme a distância. A divergente espalha. Óculos, câmera e olho são arranjos de lentes com o mesmo princípio.</p>
+      <p>Quando a luz passa de um meio mais denso para um menos denso com ângulo grande, ela não atravessa: reflete por dentro. É a reflexão total interna, a base da fibra óptica.</p>
+      <blockquote>A luz não escolhe o caminho mais curto. Escolhe o mais rápido.</blockquote>
+    `,
+  },
+  rainbow: {
+    kicker: "física · sala das cores",
+    title: "O branco é uma multidão de cores",
+    date: "2026-07-18",
+    read: "5 min",
+    tags: ["óptica", "cores", "espectro"],
+    continent: "physics",
+    lab: null,
+    body: `
+      <p>Luz branca é uma mistura de frequências. O prisma separa porque o índice de refração depende da frequência: o violeta desvia mais que o vermelho. O arco-íris é a mesma separação feita por gotas de água.</p>
+      <p>O olho tem três tipos de cone, sensíveis a faixas diferentes. A cor percebida é uma construção do cérebro a partir dessas três respostas. Monitores exploram isso com três canais, vermelho, verde e azul.</p>
+      <p>Cor de objeto é luz refletida. Uma maçã vermelha absorve a maior parte do verde e do azul e devolve o vermelho. Sob luz verde, ela parece escura, porque não há vermelho para refletir.</p>
+      <p>Além do visível, o espectro continua em infravermelho e ultravioleta. O arco-íris que vemos é só a faixa que o olho aprendeu a ler.</p>
+      <blockquote>O branco não é ausência de cor. É todas elas chegando juntas.</blockquote>
+    `,
+  },
+
   // ---------------- Química · analítica ----------------
   analysis: {
     kicker: "química · bancada analítica",
@@ -1030,7 +1064,7 @@ export const NPCS = {
     name: "Dona Zefa",
     lines: [
       "Bem-vindo ao Porto. Sete continentes, mais terra do que os olhos acreditam.",
-      "Cada continente tem duas áreas temáticas nas beiradas, com ponte, estação e caverna. Vale a caminhada.",
+      "Cada continente tem duas áreas temáticas nas beiradas, três na Física, com ponte, estação e caverna. Vale a caminhada.",
       "Cada farol da doca acende uma Pedra do Porto. Aperte F nas pedras para voltar rápido.",
       "O diário guarda o que você já viu. Não precisa decorar nada.",
       "Ao lado de cada acampamento de caça tem uma boca de caverna. Lá embaixo o bicho não espera você apertar F: ele vê primeiro.",
@@ -1337,6 +1371,24 @@ export const NPCS = {
       "Treino de termodinâmica aqui, no claro e com temperatura amena. A fornalha é que cobra.",
       "Comece pela primeira lei: energia interna é calor menos trabalho. O sinal errado derruba a conta.",
       "Entropia e rendimento são as perguntas que mais aparecem. Guarde o limite de Carnot.",
+    ],
+  },
+  huygens: {
+    name: "Huygens",
+    lines: [
+      "Cada ponto da frente de onda é uma nova fonte. A frente seguinte é a soma de todas elas.",
+      "A luz não precisa de meio para viajar. O éter era uma hipótese bonita e errada.",
+      "Refração é mudança de velocidade. O raio desvia porque a frente de onda entorta.",
+      "A câmara ao lado separa o branco. Lá dentro, a pergunta é sobre foco e espectro.",
+      "Polarização mostra que a luz é transversal. O campo elétrico escolhe uma direção.",
+    ],
+  },
+  "trainer-physics-optics": {
+    name: "Mestre Newton",
+    lines: [
+      "Treino de óptica aqui, no claro e sem ofuscar. A galeria é que cobra.",
+      "Comece pela refração: índice, ângulo e velocidade. O resto sai de Snell.",
+      "Cor é luz refletida. Se a pergunta fala de objeto escuro sob outra luz, pense no que ele reflete.",
     ],
   },
   liebig: {

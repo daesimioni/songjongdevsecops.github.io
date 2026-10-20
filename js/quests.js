@@ -54,8 +54,8 @@ export const QUESTS = [
     npc: "guia",
     giver: "Dona Zefa",
     title: "O mundo inteiro",
-    brief: "Sessenta e cinco fragmentos, sete continentes, uma volta completa. Quando o mapa acabar, o Porto ainda vai estar aqui.",
-    goal: { type: "cards", count: 65 },
+    brief: "Sessenta e sete fragmentos, sete continentes, uma volta completa. Quando o mapa acabar, o Porto ainda vai estar aqui.",
+    goal: { type: "cards", count: 67 },
     reward: { xp: 150, title: "Mundo de Song" },
   },
   {
@@ -478,6 +478,25 @@ export const QUESTS = [
       why: "A segunda lei exige uma fonte fria: o rendimento máximo é 1 - Tf/Tq. Sem rejeitar calor, o ciclo não fecha.",
     },
     reward: { xp: 38, title: "Aprendiz de Carnot" },
+  },
+  {
+    id: "branco-e-multidao",
+    npc: "huygens",
+    giver: "Huygens",
+    title: "O branco é uma multidão",
+    brief: "A luz branca atravessa um prisma e sai colorida. Por que as cores se separam?",
+    goal: { type: "quiz" },
+    quiz: {
+      question: "Por que o prisma separa a luz branca em cores?",
+      options: [
+        "Porque o índice de refração depende da frequência",
+        "Porque o vidro aquece a luz",
+        "Porque a luz perde energia ao entrar",
+      ],
+      answer: 0,
+      why: "Cada frequência muda de velocidade de um jeito e desvia num ângulo diferente. O violeta desvia mais que o vermelho.",
+    },
+    reward: { xp: 38, title: "Aprendiz de Huygens" },
   },
   {
     id: "amostra-honesta",

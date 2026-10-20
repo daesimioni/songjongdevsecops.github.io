@@ -542,6 +542,30 @@ const COMMON = {
     monsters: ["Sentido", "Ironia", "Ambiguidade", "Referência", "Sinônimo", "Pressuposto", "Implicatura", "Metáfora", "Contexto", "Ato", "Duplo"],
     palette: { floor: "#33291d", floor2: "#261e15", wall: "#17110b", wallTop: "#503f2b", accent: "#e8c07a" },
   },
+  "physics-optics": {
+    continent: "physics",
+    name: "Galeria do Prisma",
+    sub: "a luz entra branca e sai em sete cores",
+    material: "veio",
+    tunnel: "split",
+    equipment: ["oculos-optica", "manto-luz", "anel-foco"],
+    shift: { b: [2, -2], e: [-1, 2], h: [2, 1] },
+    boss: "O Espectro Branco",
+    rooms: [
+      ["Boca da Luz", "entrada"],
+      ["Sala das Lentes", "lentes"],
+      ["Corredor dos Espelhos", "reflexão"],
+      ["Cripta da Refração", "refração"],
+      ["Oficina da Dispersão", "dispersão"],
+      ["Poço das Cores", "cores"],
+      ["Torre do Espectro", "espectro"],
+      ["Praça da Óptica", "cidade"],
+      ["Câmara da Miragem", "miragem"],
+      ["Galeria da Retina", "visão"],
+    ],
+    monsters: ["Reflexo", "Prisma", "Espectro", "Lente", "Raio", "Miragem", "Fóton", "Foco", "Cor", "Sombra", "Brilho"],
+    palette: { floor: "#33202a", floor2: "#261820", wall: "#170d13", wallTop: "#4a2c3b", accent: "#ff7aa8" },
+  },
 };
 
 export const DUNGEONS = Object.entries(COMMON).map(([key, d]) => {

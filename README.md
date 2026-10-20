@@ -3,7 +3,7 @@
 No ar em <https://songjongdevsecops.github.io/>.
 
 Um blog pessoal que se atravessa a pé. O site é um arquipélago em pixel art:
-você entra com um boneco, cruza pontes e encontra 65 estações. Cada estação é
+você entra com um boneco, cruza pontes e encontra 67 estações. Cada estação é
 uma página com um texto curto e um instrumento interativo.
 
 ## O arquipélago
@@ -19,7 +19,7 @@ uma página com um texto curto e um instrumento interativo.
 | **Inteligência Artificial** | regressão linear, rede neural que aprende um círculo, tokens e predição, convolução de imagem, ética e a área da visão (convolução, detecção, caçada e caverna próprias) |
 | **Vale da Língua** | etimologia, concordância, acentuação e hífen, gêneros textuais, crase e a área da literatura (narrador, poesia, caçada e caverna próprias) |
 
-O mapa tem 300 por 200 tiles, sete continentes e catorze áreas temáticas, ilhas, um anel de pontes entre
+O mapa tem 300 por 200 tiles, sete continentes e quinze áreas temáticas, ilhas, um anel de pontes entre
 elas e um porto
 central. No subsolo, o túnel da conurbação liga as 21 cidades descobertas, e o Porto Submerso, na camada -2, tem um portal para cada capital. O minimapa começa coberto por névoa e revela o que você anda. Cada
 estação descoberta vira um fragmento no diário e soma experiência. As Pedras do
@@ -410,10 +410,10 @@ chefe sem alavanca, a forja, os encantamentos, a comida com efeito, o bicho e a
 pergunta que casa com o tema. O duelo entre jogadores entra pela mesma prova: as
 cinco cartas, a dificuldade que vira dano e a compostura.
 
-A segunda confere o conteúdo inteiro: as 65 estações e seus textos, falas de NPC,
-40 missões, itens, equipamento, relíquias por continente, receitas, encantos, as
-600 perguntas (sem repetição e com resposta válida), as cinco cartas do PvP por
-continente, as 21 cavernas e o mundo montado (21 instrutores, 42 bocas, nenhum
+A segunda confere o conteúdo inteiro: as 67 estações e seus textos, falas de NPC,
+41 missões, itens, equipamento, relíquias por continente, receitas, encantos, as
+606 perguntas (sem repetição e com resposta válida), as cinco cartas do PvP por
+continente, as 22 cavernas e o mundo montado (22 instrutores, 44 bocas, nenhum
 monstro na superfície).
 
 A terceira confere a casca: id repetido ou faltando, import que não resolve,
@@ -462,7 +462,7 @@ Depois abra `http://localhost:8000`.
 | `wasm/julia.wat` | fonte do módulo WebAssembly do conjunto de Julia |
 | `wasm/julia.wasm` | o módulo compilado, de 296 bytes |
 | `test/core.test.mjs` | conferência de missões, RPG, treino, fuga, duelo PvP e caverna |
-| `test/content.test.mjs` | conferência das 65 estações, perguntas, itens, cavernas, áreas e mundo |
+| `test/content.test.mjs` | conferência das 67 estações, perguntas, itens, cavernas, áreas e mundo |
 | `test/ui.test.mjs` | conferência de ids, imports, botões, rótulos e aria |
 | `test/backup.test.mjs` | envelope do backup, whitelist, dedupe e restauração |
 

@@ -341,6 +341,18 @@ export const AREAS = [
     path: 1,
     accent: "#e8c07a",
   },
+  {
+    id: "physics-optics",
+    continent: "physics",
+    name: "Área da Óptica",
+    sub: "luz, lentes e as cores que estavam escondidas",
+    land: { cx: 78, cy: 174, rx: 18, ry: 10 },
+    rect: { x: 58, y: 158, w: 40, h: 32 },
+    base: 14,
+    floor: 15,
+    path: 15,
+    accent: "#ff7aa8",
+  },
 ];
 
 export const SITES = [
@@ -712,6 +724,18 @@ export const SITES = [
     label: "Intenção e Contexto", x: 280, y: 140, post: "pragmatics",
     accent: "#ffd166", icon: "text",
   },
+
+  // Física · área da óptica
+  {
+    id: "lenses", continent: "physics", name: "Câmara Óptica",
+    label: "Lentes e Imagens", x: 68, y: 168, post: "lenses",
+    accent: "#ff7aa8", icon: "prism",
+  },
+  {
+    id: "rainbow", continent: "physics", name: "Sala das Cores",
+    label: "Dispersão e Espectro", x: 88, y: 180, post: "rainbow",
+    accent: "#ffd166", icon: "eye",
+  },
 ];
 
 export const WAYSTONES = [
@@ -737,6 +761,7 @@ export const WAYSTONES = [
   { id: "math-prob", continent: "math", name: "Farol da Probabilidade", x: 272, y: 90, accent: "#b48cff" },
   { id: "ai-language", continent: "ai", name: "Farol da Linguagem", x: 226, y: 135, accent: "#6bd5ff" },
   { id: "lingua-semantics", continent: "lingua", name: "Farol da Semântica", x: 272, y: 135, accent: "#e8c07a" },
+  { id: "physics-optics", continent: "physics", name: "Farol da Óptica", x: 78, y: 174, accent: "#ff7aa8" },
 ];
 
 export const NPC_SPAWNS = [
@@ -769,6 +794,7 @@ export const NPC_SPAWNS = [
   { id: "laplace", continent: "math", x: 267, y: 94, accent: "#b48cff" },
   { id: "chomsky", continent: "ai", x: 221, y: 139, accent: "#6bd5ff" },
   { id: "saussure", continent: "lingua", x: 267, y: 139, accent: "#e8c07a" },
+  { id: "huygens", continent: "physics", x: 73, y: 178, accent: "#ff7aa8" },
 ];
 
 export const CAT_SPAWN = { x: 87, y: 61 };
