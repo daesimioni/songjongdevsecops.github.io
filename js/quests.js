@@ -54,8 +54,8 @@ export const QUESTS = [
     npc: "guia",
     giver: "Dona Zefa",
     title: "O mundo inteiro",
-    brief: "Quarenta e sete fragmentos, sete continentes, uma volta completa. Quando o mapa acabar, o Porto ainda vai estar aqui.",
-    goal: { type: "cards", count: 47 },
+    brief: "Quarenta e nove fragmentos, sete continentes, uma volta completa. Quando o mapa acabar, o Porto ainda vai estar aqui.",
+    goal: { type: "cards", count: 49 },
     reward: { xp: 150, title: "Mundo de Song" },
   },
   {
@@ -402,6 +402,25 @@ export const QUESTS = [
       why: "Quando a excitação bate com um modo natural, a energia se acumula ciclo após ciclo e a amplitude cresce. Fora dessa frequência, o corpo responde pouco.",
     },
     reward: { xp: 34, title: "Ouvinte de Helmholtz" },
+  },
+  {
+    id: "borda-que-denuncia",
+    npc: "marr",
+    giver: "Marr",
+    title: "A borda que denuncia",
+    brief: "O kernel pequeno desliza pela imagem e procura uma mudança brusca. O que ele destaca?",
+    goal: { type: "quiz" },
+    quiz: {
+      question: "O que um filtro de convolução para bordas destaca na imagem?",
+      options: [
+        "Mudanças bruscas de intensidade entre vizinhos",
+        "A cor média da imagem inteira",
+        "O nome dos objetos presentes",
+      ],
+      answer: 0,
+      why: "O kernel compara vizinhos: onde a intensidade muda rápido, a resposta é alta. É assim que a rede começa a separar contorno de superfície.",
+    },
+    reward: { xp: 36, title: "Olho de Marr" },
   },
 ];
 

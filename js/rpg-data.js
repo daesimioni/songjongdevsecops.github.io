@@ -53,6 +53,10 @@ export const ITEMS = {
   embedding: { name: "Vetor de Significado", continent: "ai", desc: "Uma seta que aponta para o lugar onde as palavras se parecem." },
   matriz: { name: "Matriz Esparsa", continent: "ai", desc: "Uma tabela cheia de zeros que aprendeu a guardar só o que importa." },
   caixa: { name: "Fragmento da Caixa Preta", continent: "ai", relic: true, desc: "Uma placa opaca com uma luz que pisca quando ninguém entende. Relíquia: +5 de vida máxima." },
+  pixel: { name: "Pixel Teimoso", continent: "ai", desc: "O menor pedaço de imagem, com a cor que insiste em ficar." },
+  borda: { name: "Borda Afiada", continent: "ai", desc: "Onde uma cor acaba e outra começa. É por aí que a máquina começa a enxergar." },
+  kernel: { name: "Kernel de Bolso", continent: "ai", desc: "Uma matriz pequena que desliza pela imagem procurando padrão." },
+  "pedra-marr": { name: "Pedra de Marr", continent: "ai", relic: true, desc: "Uma pedra com camadas de bordas gravadas. Relíquia: +5 de vida máxima." },
   pergaminho: { name: "Pergaminho Velho", continent: "lingua", desc: "Folha que guardou uma frase por tempo demais. A tinta ainda pega no dedo." },
   tinta: { name: "Tinta Ferrogálica", continent: "lingua", desc: "Escurece com o tempo. Escreve, mancha e não sai fácil." },
   letra: { name: "Letra Solta", continent: "lingua", desc: "Uma letra que se desprendeu da palavra e ainda procura o lugar dela." },
@@ -108,6 +112,9 @@ export const ITEMS = {
   "anel-harmonico": { name: "Anel Harmônico", continent: "music", slot: "ring", damage: 1, desc: "Quando o golpe encontra a frequência certa, o anel responde junto." },
   "manto-acustico": { name: "Manto Acústico", continent: "music", slot: "armor", hp: 4, desc: "Tecido que absorve o eco e deixa o corpo mais quieto." },
   "fones-eco": { name: "Fones do Eco", continent: "music", slot: "helmet", hp: 3, desc: "Auscultam o que vem antes de chegar. O susto perde a vantagem." },
+  "lente-convolucao": { name: "Lente de Convolução", continent: "ai", slot: "helmet", hp: 3, desc: "Passeia pelo mundo procurando bordas. O detalhe aparece antes do susto." },
+  "manto-pixels": { name: "Manto de Pixels", continent: "ai", slot: "armor", hp: 4, desc: "Coberto de quadradinhos que trocam de cor e confundem a mira." },
+  "anel-detector": { name: "Anel Detector", continent: "ai", slot: "ring", damage: 1, desc: "Uma caixinha em volta do alvo. O golpe já sabe onde acertar." },
   "runa-faisca": { name: "Runa da Faísca", continent: "hub", use: "spark", desc: "Uma carga de magia: elimina uma alternativa errada na pergunta atual do duelo. Some ao usar." },
   "runa-trovao": { name: "Runa do Trovão", continent: "hub", use: "thunder", desc: "Dá 2 de dano no monstro da frente sem responder pergunta. Some ao usar." },
   "runa-fogo": { name: "Runa do Fogo", continent: "hub", use: "fire", desc: "Dá 1 de dano em todos os monstros da tela, inclusive a matilha. Some ao usar." },
@@ -361,6 +368,23 @@ const GROUNDS_RAW = [
     ],
     boss: { id: "music-acoustics-boss", name: "O Eco Profundo", kind: "boss", dx: 0, dy: 0 },
   },
+  {
+    id: "ai-vision",
+    continent: "ai",
+    dungeon: "dungeon-ai-vision",
+    name: "Caçada da Imagem",
+    center: { x: 172, y: 14 },
+    banner: { x: 0, y: -3 },
+    lever: { x: -3, y: 3 },
+    loot: ["pixel", "borda", "kernel"],
+    bossLoot: "pedra-marr",
+    monsters: [
+      { id: "ai-vision-m1", name: "Pixel", tier: 1, kind: "slime", dx: -3, dy: 1 },
+      { id: "ai-vision-m2", name: "Borda", tier: 2, kind: "eye", dx: 3, dy: 2 },
+      { id: "ai-vision-m3", name: "Objeto", tier: 3, kind: "golem", dx: 0, dy: 4 },
+    ],
+    boss: { id: "ai-vision-boss", name: "A Alucinação", kind: "boss", dx: 0, dy: 0 },
+  },
 ];
 
 export const GROUNDS = GROUNDS_RAW.map((g) => ({
@@ -511,6 +535,8 @@ export const QUESTIONS = {
       { q: "Um token em um modelo de linguagem é...", options: ["Um pedaço de texto", "Uma GPU", "Uma senha"], a: 0, why: "O texto é cortado em pedaços, palavras ou subpalavras, e cada pedaço vira um número." },
       { q: "Aprendizado supervisionado usa...", options: ["Dados com rótulos", "Só dados sem rótulos", "Nenhum dado"], a: 0, why: "O modelo aprende a partir de exemplos com resposta certa. Sem rótulo, é aprendizado não supervisionado." },
       { q: "Uma rede neural é feita de...", options: ["Camadas de neurônios artificiais", "Fios de cobre", "Transistores apenas"], a: 0, why: "São camadas de unidades simples conectadas por pesos ajustáveis." },
+      { q: "Para a máquina, uma imagem é...", options: ["Uma grade de números", "Um texto livre", "Um som gravado"], a: 0, why: "Cada pixel vira um ou mais números. A rede enxerga uma matriz, não o desenho." },
+      { q: "Um pixel é...", options: ["A menor unidade da imagem", "Um tipo de rede neural", "Um filtro de cor"], a: 0, why: "Pixel é a menor amostra da imagem. Todos juntos formam a grade que a rede processa." },
     ],
     2: [
       { q: "Overfitting acontece quando o modelo...", options: ["Decora o treino e generaliza mal", "Não aprende nada", "Fica rápido demais"], a: 0, why: "Ele aprende ruído dos exemplos e erra em dados novos. O oposto é subajuste." },

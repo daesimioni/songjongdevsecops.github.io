@@ -3,7 +3,7 @@
 No ar em <https://songjongdevsecops.github.io/>.
 
 Um blog pessoal que se atravessa a pé. O site é um arquipélago em pixel art:
-você entra com um boneco, cruza pontes e encontra 47 estações. Cada estação é
+você entra com um boneco, cruza pontes e encontra 49 estações. Cada estação é
 uma página com um texto curto e um instrumento interativo.
 
 ## O arquipélago
@@ -16,10 +16,10 @@ uma página com um texto curto e um instrumento interativo.
 | **Física** | pêndulo, série de Fourier, gás ideal, prisma de Newton, órbitas gravitacionais e a área do eletromagnetismo (indução, Maxwell, caçada e caverna próprias) |
 | **Química** | tabela periódica interativa, moléculas em 3D, titulação, energia de reação, balanceamento e a área orgânica (carbono, polímeros, caçada e caverna próprias) |
 | **Música** | polirritmia, intervalos e razões, temperamento e escalas, timbre aditivo, música generativa e a área da acústica (ressonância, instrumentos, caçada e caverna próprias) |
-| **Inteligência Artificial** | regressão linear, rede neural que aprende um círculo, tokens e predição, convolução de imagem e ética |
+| **Inteligência Artificial** | regressão linear, rede neural que aprende um círculo, tokens e predição, convolução de imagem, ética e a área da visão (convolução, detecção, caçada e caverna próprias) |
 | **Vale da Língua** | etimologia, concordância, acentuação e hífen, gêneros textuais e crase |
 
-O mapa tem 300 por 200 tiles, sete continentes e cinco áreas temáticas, ilhas, um anel de pontes entre
+O mapa tem 300 por 200 tiles, sete continentes e seis áreas temáticas, ilhas, um anel de pontes entre
 elas e um porto
 central. O minimapa começa coberto por névoa e revela o que você anda. Cada
 estação descoberta vira um fragmento no diário e soma experiência. As Pedras do
@@ -410,10 +410,10 @@ chefe sem alavanca, a forja, os encantamentos, a comida com efeito, o bicho e a
 pergunta que casa com o tema. O duelo entre jogadores entra pela mesma prova: as
 cinco cartas, a dificuldade que vira dano e a compostura.
 
-A segunda confere o conteúdo inteiro: as 47 estações e seus textos, falas de NPC,
-31 missões, itens, equipamento, relíquias por continente, receitas, encantos, as
-184 perguntas (sem repetição e com resposta válida), as cinco cartas do PvP por
-continente, as doze cavernas e o mundo montado (doze instrutores, vinte e quatro
+A segunda confere o conteúdo inteiro: as 49 estações e seus textos, falas de NPC,
+32 missões, itens, equipamento, relíquias por continente, receitas, encantos, as
+186 perguntas (sem repetição e com resposta válida), as cinco cartas do PvP por
+continente, as treze cavernas e o mundo montado (treze instrutores, vinte e seis
 bocas, nenhum monstro na superfície).
 
 A terceira confere a casca: id repetido ou faltando, import que não resolve,
@@ -462,7 +462,7 @@ Depois abra `http://localhost:8000`.
 | `wasm/julia.wat` | fonte do módulo WebAssembly do conjunto de Julia |
 | `wasm/julia.wasm` | o módulo compilado, de 296 bytes |
 | `test/core.test.mjs` | conferência de missões, RPG, treino, fuga, duelo PvP e caverna |
-| `test/content.test.mjs` | conferência das 47 estações, perguntas, itens, cavernas, áreas e mundo |
+| `test/content.test.mjs` | conferência das 49 estações, perguntas, itens, cavernas, áreas e mundo |
 | `test/ui.test.mjs` | conferência de ids, imports, botões, rótulos e aria |
 | `test/backup.test.mjs` | envelope do backup, whitelist, dedupe e restauração |
 

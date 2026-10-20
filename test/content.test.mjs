@@ -24,7 +24,7 @@ const check = (cond, message) => { if (!cond) faults.push(message); };
 const continents = CONTINENT_ORDER.filter((c) => c !== "hub");
 
 // 43 estações com texto: cinco por continente, duas no porto e as áreas temáticas
-check(SITES.length === 47, `SITES tem ${SITES.length} estações, esperado 47`);
+check(SITES.length === 49, `SITES tem ${SITES.length} estações, esperado 49`);
 check(new Set(SITES.map((s) => s.id)).size === SITES.length, "id de estação repetido");
 check(SITES.filter((s) => s.continent === "hub").length === 2, "o porto precisa de 2 estações");
 for (const site of SITES) {
@@ -152,7 +152,7 @@ relicRpg.addItem("orbita", 1);
 check(relicRpg.pvpQuestions("cs")[4].damage === 7, "duas relíquias somam o teto de 2 de dano no PvP");
 
 // cavernas: seis, com entrada, cidade, monstros e chefe
-check(DUNGEONS.length === 12, `DUNGEONS tem ${DUNGEONS.length} cavernas, esperado 12`);
+check(DUNGEONS.length === 13, `DUNGEONS tem ${DUNGEONS.length} cavernas, esperado 13`);
 for (const dungeon of DUNGEONS) {
   check(continents.includes(dungeon.continent), `caverna ${dungeon.id} em continente inválido`);
   check(dungeon.monsters?.length >= 4, `caverna ${dungeon.id} com poucos monstros`);
@@ -171,9 +171,9 @@ const world = createWorld();
 for (const area of AREAS) {
   check(world.areaAt(area.land.cx, area.land.cy)?.id === area.id, `área ${area.id} não é reconhecida no mapa`);
 }
-check(world.hunters.length === 12, `mundo com ${world.hunters.length} clareiras`);
+check(world.hunters.length === 13, `mundo com ${world.hunters.length} clareiras`);
 check(world.monsters.length === 0, "a superfície ainda tem monstros");
-check(world.npcs.filter((n) => n.trainer).length === 12, "faltam instrutores na superfície");
+check(world.npcs.filter((n) => n.trainer).length === 13, "faltam instrutores na superfície");
 for (const c of continents) {
   check(!!world.caves.find((cave) => cave.continent === c), `continente ${c} sem boca de caverna`);
   check(!!DUNGEONS.find((d) => d.continent === c), `continente ${c} sem caverna definida`);

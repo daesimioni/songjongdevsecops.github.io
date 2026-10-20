@@ -12,7 +12,7 @@ export const POSTS = {
     lab: null,
     body: `
       <p>Este blog não tem índice. Tem <strong>mapa</strong>. Você entra com um boneco, atravessa pontes e escolhe por qual continente começar. Cada estação que encontra é uma página: um texto curto e um instrumento para mexer com as mãos.</p>
-      <p>São sete continentes. A <em>Computação</em> mostra como saímos de interruptores e areia até processadores. <em>Matemática</em> visita o infinito, as formas, a mudança e o acaso. <em>Física</em> testa pêndulos, ondas, calor, luz e órbitas. <em>Química</em> abre a tabela periódica, as ligações, as reações e o equilíbrio. <em>Música</em> mostra a matemática escondida no som. <em>Inteligência Artificial</em> abre os dados, as redes, a linguagem e os limites. O <em>Vale da Língua</em> desce ao português do Brasil: o som, a palavra, a frase e o texto. Ao todo, 47 fragmentos para descobrir.</p>
+      <p>São sete continentes. A <em>Computação</em> mostra como saímos de interruptores e areia até processadores. <em>Matemática</em> visita o infinito, as formas, a mudança e o acaso. <em>Física</em> testa pêndulos, ondas, calor, luz e órbitas. <em>Química</em> abre a tabela periódica, as ligações, as reações e o equilíbrio. <em>Música</em> mostra a matemática escondida no som. <em>Inteligência Artificial</em> abre os dados, as redes, a linguagem e os limites. O <em>Vale da Língua</em> desce ao português do Brasil: o som, a palavra, a frase e o texto. Ao todo, 49 fragmentos para descobrir.</p>
       <p>Cada estação abre uma página e soma experiência. O <strong>Diário</strong> guarda o que você já encontrou. As <strong>Pedras do Porto</strong>, os monólitos brilhantes nas docas, levam você de volta a qualquer continente já visitado. A névoa do minimapa só some onde você anda.</p>
       <blockquote>Não tem pressa. O mapa é grande, mas o caminho é seu.</blockquote>
       <p>Os <strong>NPCs</strong> têm missões. Aperte F perto deles: tem caminhada, pergunta e conversa. Cada missão paga experiência e um título, e o Diário mostra quanto falta para a próxima.</p>
@@ -716,6 +716,40 @@ export const POSTS = {
       <blockquote>Três famílias, um objetivo: perturbar o ar de um jeito que o ouvido reconheça.</blockquote>
     `,
   },
+
+  // ---------------- IA · visão ----------------
+  convolution: {
+    kicker: "ia · sala da convolução",
+    title: "A imagem é uma grade de números",
+    date: "2026-09-22",
+    read: "6 min",
+    tags: ["visão", "convolução", "redes"],
+    continent: "ai",
+    lab: null,
+    body: `
+      <p>Para o computador, uma foto não é uma cena: é uma grade de números. Cada pixel guarda a intensidade de vermelho, verde e azul. Uma imagem de 1920 por 1080 tem mais de dois milhões de posições, cada uma com três valores. O desenho que você vê é uma interpretação, não o dado.</p>
+      <p>A primeira camada de uma rede de visão costuma ser uma convolução. Um filtro pequeno, o kernel, desliza pela grade e calcula uma soma ponderada da vizinhança. Um kernel que compara vizinhos na horizontal destaca bordas verticais; outro destaca texturas; outro borra. A rede aprende os valores do kernel em vez de alguém desenhá-los.</p>
+      <p>Depois vem o pooling, que resume regiões e reduz a resolução. A rede perde detalhe fino e ganha campo de visão. Empilhando convolução, ativação e pooling, as primeiras camadas veem bordas e as últimas veem partes de objeto. É a hierarquia da visão em camadas.</p>
+      <p>Isso não é o olho humano. O olho faz varredura, ajusta foco, compensa luz e usa contexto. A rede recebe uma grade fixa e procura padrões estatísticos. Funciona muito bem em muitos casos e falha de um jeito que a gente não falha, o que é justamente o assunto interessante.</p>
+      <blockquote>Antes de enxergar, a máquina aprende a ler a grade.</blockquote>
+    `,
+  },
+  detection: {
+    kicker: "ia · torre da detecção",
+    title: "Enxergar é apontar e nomear",
+    date: "2026-09-18",
+    read: "6 min",
+    tags: ["visão", "detecção", "segmentação"],
+    continent: "ai",
+    lab: null,
+    body: `
+      <p>Classificar uma imagem responde uma pergunta só: o que é isto? Detectar responde duas: o que é e onde está. A saída vira uma caixa em volta do objeto, com coordenadas e uma classe. Uma foto pode ter várias caixas, e o trabalho é decidir quais ficam.</p>
+      <p>Os modelos modernos propõem muitas caixas candidatas e pontuam cada uma. Depois descartam as sobrepostas com pouca diferença, num passo de supressão. O critério de sobreposição compara a área da interseção com a da união. Duas caixas quase iguais contam como a mesma detecção.</p>
+      <p>Segmentação vai além da caixa: separa o contorno de cada objeto, pixel por pixel. É mais caro e mais preciso, e é o que permite contar pessoas numa multidão ou medir uma área numa imagem médica.</p>
+      <p>O limite aparece quando o modelo vê o que não existe. Uma textura que parece olho, um reflexo que parece placa, uma combinação de pixels que ativa a classe errada. A alucinação não é falha de ótica: é a estatística respondendo com confiança a um padrão que só ela vê.</p>
+      <blockquote>Detectar é dizer o que e onde. Confiar é outra pergunta, e não vem no mesmo pacote.</blockquote>
+    `,
+  },
 };
 
 export const NPCS = {
@@ -957,6 +991,24 @@ export const NPCS = {
       "Treino de acústica aqui, no claro e sem eco atrapalhando. A câmara é que cobra.",
       "Toda onda complicada é soma de senos. Quebre o som em partes e a pergunta fica mais simples.",
       "Ressonância é a pergunta que mais aparece. Decore a condição: frequência excitadora igual à natural.",
+    ],
+  },
+  marr: {
+    name: "Marr",
+    lines: [
+      "Visão é processar informação, não tirar fotografia. A pergunta certa é: que problema o olho resolve e com que conta?",
+      "Comece pelas bordas. Elas são mudanças bruscas de intensidade, e quase todo o resto é construído em cima delas.",
+      "Há três níveis: o que o sistema faz, como faz e onde isso roda no tecido. Misturar os três é o jeito mais rápido de não entender nenhum.",
+      "A câmara escura ao lado transforma luz em número. O que a máquina vê depois é estatística, não cena.",
+      "Quando a rede alucina, ela está respondendo com confiança a um padrão que só existe para ela. Isso também ensina sobre o nosso olho.",
+    ],
+  },
+  "trainer-ai-vision": {
+    name: "Mestre Rosenblatt",
+    lines: [
+      "Treino de visão aqui, no claro e com imagem parada. A câmara é que cobra.",
+      "Comece pela convolução: kernel pequeno, desliza, soma, destaca borda. O resto é empilhar.",
+      "Detecção não é classificação com nome maior. Precisa da caixa, não só da classe.",
     ],
   },
   shannon: {

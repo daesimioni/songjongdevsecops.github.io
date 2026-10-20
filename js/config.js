@@ -232,6 +232,18 @@ export const AREAS = [
     path: 21,
     accent: "#ffb26b",
   },
+  {
+    id: "ai-vision",
+    continent: "ai",
+    name: "Área da Visão Computacional",
+    sub: "pixels, bordas e o que a máquina acha que viu",
+    land: { cx: 168, cy: 12, rx: 8, ry: 9 },
+    rect: { x: 159, y: 2, w: 18, h: 21 },
+    base: 22,
+    floor: 23,
+    path: 23,
+    accent: "#6bd5ff",
+  },
 ];
 
 export const SITES = [
@@ -495,6 +507,18 @@ export const SITES = [
     label: "Cordas, Tubos e Pele", x: 65, y: 70, post: "instruments",
     accent: "#ffd166", icon: "piano",
   },
+
+  // IA · área da visão
+  {
+    id: "convolution", continent: "ai", name: "Sala da Convolução",
+    label: "Imagem e Convolução", x: 168, y: 6, post: "convolution",
+    accent: "#6bd5ff", icon: "eye",
+  },
+  {
+    id: "detection", continent: "ai", name: "Torre da Detecção",
+    label: "Objetos e Limites", x: 168, y: 18, post: "detection",
+    accent: "#8fe3ff", icon: "network",
+  },
 ];
 
 export const WAYSTONES = [
@@ -511,6 +535,7 @@ export const WAYSTONES = [
   { id: "math-analysis", continent: "math", name: "Farol da Análise", x: 226, y: 78, accent: "#b48cff" },
   { id: "chem-organic", continent: "chem", name: "Farol da Orgânica", x: 31, y: 138, accent: "#7ee787" },
   { id: "music-acoustics", continent: "music", name: "Farol da Acústica", x: 59, y: 63, accent: "#ffb26b" },
+  { id: "ai-vision", continent: "ai", name: "Farol da Visão", x: 168, y: 12, accent: "#6bd5ff" },
 ];
 
 export const NPC_SPAWNS = [
@@ -534,6 +559,7 @@ export const NPC_SPAWNS = [
   { id: "cauchy", continent: "math", x: 219, y: 84, accent: "#b48cff" },
   { id: "kekule", continent: "chem", x: 27, y: 141, accent: "#7ee787" },
   { id: "helmholtz", continent: "music", x: 55, y: 59, accent: "#ffb26b" },
+  { id: "marr", continent: "ai", x: 164, y: 15, accent: "#6bd5ff" },
 ];
 
 export const CAT_SPAWN = { x: 87, y: 61 };

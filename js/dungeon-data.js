@@ -326,6 +326,30 @@ const COMMON = {
     monsters: ["Ressonância", "Harmônico", "Eco", "Tubo", "Corda", "Membrana", "Nó", "Ventre", "Batimento", "Timbre", "Decaimento"],
     palette: { floor: "#332a1c", floor2: "#261f14", wall: "#17110a", wallTop: "#4e3f2c", accent: "#ffb26b" },
   },
+  "ai-vision": {
+    continent: "ai",
+    name: "Câmara Escura",
+    sub: "a imagem entra pelo buraco e sai como número",
+    material: "veio",
+    tunnel: "narrow",
+    equipment: ["lente-convolucao", "manto-pixels", "anel-detector"],
+    shift: { b: [-2, 2], d: [2, -1], h: [-1, 1] },
+    boss: "A Alucinação",
+    rooms: [
+      ["Boca da Imagem", "entrada"],
+      ["Sala dos Pixels", "pixels"],
+      ["Corredor das Bordas", "bordas"],
+      ["Oficina dos Kernels", "convolução"],
+      ["Cripta do Pooling", "pooling"],
+      ["Poço das Features", "features"],
+      ["Torre da Classificação", "classificação"],
+      ["Praça da Detecção", "cidade"],
+      ["Câmara da Segmentação", "segmentação"],
+      ["Galeria das Alucinações", "alucinação"],
+    ],
+    monsters: ["Pixel", "Borda", "Filtro", "Kernel", "Pooling", "Feature", "Classe", "Caixa", "Rosto", "Ruído", "Alucinação"],
+    palette: { floor: "#132b3a", floor2: "#0d1f2a", wall: "#07131a", wallTop: "#204a5f", accent: "#6bd5ff" },
+  },
 };
 
 export const DUNGEONS = Object.entries(COMMON).map(([key, d]) => {
