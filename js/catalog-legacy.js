@@ -6,6 +6,7 @@ import { CATALOG, DISCIPLINES } from "./catalog.js";
 import { SECTION_TOPICS } from "./catalog-topics.js";
 import { ICONS, articleOf, labFor, subareaBody, subareaQuiz, titleCase, topicLabel, trilhaQuiz, trilhas } from "./catalog-text.js";
 import { placeStations } from "./catalog-place.js";
+import { SECAO_TEXT } from "./text/secoes.js";
 
 const dentroDoRetangulo = (rect, p) =>
   p.x >= rect.x - 1 && p.x <= rect.x + rect.w + 1 && p.y >= rect.y - 1 && p.y <= rect.y + rect.h + 1;
@@ -64,8 +65,9 @@ export function buildLegacyContent({ areas, sites, waystones, npcSpawns }) {
         catalog: true,
         legacy: true,
       });
+      const trilhaTexto = item.trilha ? SECAO_TEXT[secaoArea.num] : null;
       const corpo = item.trilha
-        ? `<p><strong>Trilha ${i + 1} de ${lista.length}.</strong> Esta parte da seção <strong>${secao.name}</strong> reúne os tópicos abaixo.</p><ul>${item.topicos.map((t) => `<li>${t}</li>`).join("")}</ul>`
+        ? `${trilhaTexto ? `<p>${trilhaTexto.abre}</p>` : ""}<p><strong>Trilha ${i + 1} de ${lista.length}.</strong> Esta parte da seção <strong>${secao.name}</strong> reúne os tópicos abaixo.</p><ul>${item.topicos.map((t) => `<li>${t}</li>`).join("")}</ul>${trilhaTexto ? `<p><strong>Prática:</strong> ${trilhaTexto.pratica}</p><p><strong>Erro comum:</strong> ${trilhaTexto.erro}</p>` : ""}`
         : subareaBody({
             sectionNum: secaoArea.num,
             sectionName: secao.name,
@@ -73,6 +75,7 @@ export function buildLegacyContent({ areas, sites, waystones, npcSpawns }) {
             name: item.nome,
             topics: item.topicos,
             siblings: lista.map((x) => x.nome),
+            catalogId: secaoArea.id,
           });
       posts[id] = {
         kicker: `${discipline.name.toLowerCase()} · ${noun.toLowerCase()}`,

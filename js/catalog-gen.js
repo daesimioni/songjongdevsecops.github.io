@@ -10,6 +10,7 @@ import { ICONS, articleOf, labFor, subareaBody, subareaQuiz, titleCase, trilhaQu
 import { placeStations } from "./catalog-place.js";
 import { AREA_ITEMS, BIOMES, FAUNA, dungeonIdentity } from "./identity.js";
 import { INTER_TEXT } from "./text/inter.js";
+import { SECAO_TEXT } from "./text/secoes.js";
 
 // cada área tem um tom próprio dentro da cor da disciplina: 14 ilhas da mesma
 // cor seriam quatorze vezes o mesmo lugar
@@ -159,7 +160,7 @@ export function buildCatalogContent() {
         minor: true,
         catalog: true,
       });
-      const inter = item.bankTopic ? INTER_TEXT[area.num] : null;
+      const inter = item.bankTopic ? (SECAO_TEXT[area.num] || INTER_TEXT[area.num]) : null;
       const corpo = item.bankTopic
         ? `${inter ? `<p>${inter.abre}</p>` : ""}<p>${item.bankTopic.def}</p><ul>${item.bankTopic.keys.map((k) => `<li>${k}</li>`).join("")}</ul><blockquote>${item.bankTopic.mistake}</blockquote><p><strong>Trilha ${i + 1} de ${lista.length}.</strong> O catálogo lista estes tópicos nesta parte da seção:</p><ul>${item.topicos.map((t) => `<li>${t}</li>`).join("")}</ul>${inter ? `<p><strong>Prática:</strong> ${inter.pratica}</p><p><strong>Erro comum:</strong> ${inter.erro}</p>` : ""}`
         : subareaBody({
@@ -169,6 +170,7 @@ export function buildCatalogContent() {
             name: item.nome,
             topics: item.topicos,
             siblings: lista.map((x) => x.nome),
+            catalogId: area.id,
           });
       posts[postId] = {
         kicker: `${discipline.name.toLowerCase()} · ${area.short.toLowerCase()}`,

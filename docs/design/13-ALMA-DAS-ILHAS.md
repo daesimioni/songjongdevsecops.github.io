@@ -61,10 +61,10 @@ lista de tópicos continua, mas deixa de ser a página inteira.
 
 ### C. Acabamento
 
-- [ ] Revisar concordância e nomes gerados.
-- [ ] Conferir que nenhum item, bicho, NPC ou caverna ficou repetido.
-- [ ] Medir desempenho e carga com o registro novo.
-- [ ] Rodada completa de navegador no local e no site ao vivo.
+- [x] Revisar concordância e nomes gerados.
+- [x] Conferir que nenhum item, bicho, NPC ou caverna ficou repetido.
+- [x] Medir desempenho e carga com o registro novo.
+- [x] Rodada completa de navegador no local e no site ao vivo.
 
 ## 3. Como a identidade é gerada
 
@@ -108,4 +108,5 @@ missões novas e nenhum erro de console.
 | data | fase | o que entrou | prova |
 |---|---|---|---|
 | 2026-10-20 | B | texto curado das cinco disciplinas e das interseções: 283 subáreas com abertura, prática e erro comum, mais 11 aberturas de interseção | node: 69 + 34 + 37 + 88 + 55 = 283 subáreas e 11 seções de interseção, nenhuma sem os três campos; páginas conferidas no navegador |
+| 2026-10-20 | C | revisão de concordância, nomes de arma por tipo, conexões entre áreas nas páginas e texto das 23 seções sem subárea | node: 283 subáreas e 34 seções de trilha cobertas, nomes únicos, conexões em 283 páginas; navegador local: catálogo 15/15, prova final 6/6, refino 9/9, conta 23/23, GOD 13/13, celular 3/3; 60 fps e 791 ms de DOM |
 | 2026-10-20 | A | registro de identidade, pisos, fauna, itens, NPC, missões, trajes e cavernas | node: 86 biomas e 86 tipos de piso únicos, 258 monstros e 258 itens sem repetição, 86 trajes, 172 missões de área, 194 NPCs com aparência distinta, 86 cavernas com fauna e paleta da área; navegador: catálogo 15/15, prova final 6/6, 60 fps | 

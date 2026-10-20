@@ -3,7 +3,7 @@
 // das áreas antigas usarem exatamente o mesmo formato.
 
 import { SECTION_TOPICS } from "./catalog-topics.js";
-import { DISCIPLINES } from "./catalog.js";
+import { CATALOG_BY_ID, DISCIPLINES, catalogNeighbors } from "./catalog.js";
 import { MATH_TEXT } from "./text/math.js";
 import { PHYSICS_TEXT } from "./text/physics.js";
 import { CHEM_TEXT } from "./text/chem.js";
@@ -89,7 +89,7 @@ const hashText = (text) => {
 };
 
 // Corpo da página: a subárea, o que o catálogo lista nela e as vizinhas.
-export function subareaBody({ sectionNum, sectionName, discipline, name, topics, siblings = [] }) {
+export function subareaBody({ sectionNum, sectionName, discipline, name, topics, siblings = [], catalogId = null }) {
   const disc = DISCIPLINES[discipline]?.name || DISCIPLINES.math.name;
   const lista = topics.map((t) => `<li>${html(t)}</li>`).join("");
   const vizinhas = siblings.filter((s) => s !== name);
@@ -100,7 +100,14 @@ export function subareaBody({ sectionNum, sectionName, discipline, name, topics,
   const abertura = curado ? `<p>${curado.abre}</p>` : "";
   const pratica = curado ? `<p><strong>Prática:</strong> ${curado.pratica}</p>` : "";
   const erro = curado ? `<p><strong>Erro comum:</strong> ${curado.erro}</p>` : "";
-  return `<p>Estação da subárea <strong>${html(name)}</strong>, na seção <strong>${html(sectionName)}</strong> de ${html(disc)}. O catálogo reúne aqui ${topics.length} ${topics.length === 1 ? "tópico" : "tópicos"}.</p>${abertura}<ul>${lista}</ul>${pratica}${erro}${linha}`;
+  // as conexões são as áreas ligadas por ponte ou túnel no mapa
+  const areasVizinhas = catalogId
+    ? catalogNeighbors(catalogId).slice(0, 4).map((id) => CATALOG_BY_ID.get(id)?.short).filter(Boolean)
+    : [];
+  const conexoes = areasVizinhas.length
+    ? `<p><strong>Conexões:</strong> ${areasVizinhas.map((v) => `<em>${html(v)}</em>`).join(", ")}.</p>`
+    : "";
+  return `<p>Estação da subárea <strong>${html(name)}</strong>, na seção <strong>${html(sectionName)}</strong> de ${html(disc)}. O catálogo reúne aqui ${topics.length} ${topics.length === 1 ? "tópico" : "tópicos"}.</p>${abertura}<ul>${lista}</ul>${pratica}${erro}${conexoes}${linha}`;
 }
 
 // Todas as subáreas de uma disciplina, para tirar alternativas quando a seção

@@ -34,6 +34,7 @@ const { CS_A_TEXT } = await import("../js/text/cs-a.js");
 const { CS_B_TEXT } = await import("../js/text/cs-b.js");
 const { LINGUA_TEXT } = await import("../js/text/lingua.js");
 const { INTER_TEXT } = await import("../js/text/inter.js");
+const { SECAO_TEXT } = await import("../js/text/secoes.js");
 const textosCurados = { math: MATH_TEXT, physics: PHYSICS_TEXT, chem: CHEM_TEXT, cs: { ...CS_A_TEXT, ...CS_B_TEXT }, lingua: LINGUA_TEXT };
 const ready = CATALOG_CONTENT.areas.length;
 const { CATALOG_AREAS, CATALOG_BRIDGES, CATALOG_TUNNELS } = await import("../js/catalog-layout.js");
@@ -691,6 +692,22 @@ for (const mapa of [...Object.values(textosCurados), INTER_TEXT]) {
   }
 }
 check(textoForaDaPagina.length === 0, `texto curado sem página: ${textoForaDaPagina.slice(0, 5).join(", ")}`);
+
+// F18: seção sem subárea também tem texto curado (trilhas)
+let secoesSemSub = 0;
+const secaoSemTexto = [];
+for (const [num, sec] of Object.entries(SECTION_TOPICS)) {
+  if (num.startsWith("6.") || (sec.subareas || []).length) continue;
+  secoesSemSub++;
+  const texto = SECAO_TEXT[num];
+  if (!texto?.abre || !texto?.pratica || !texto?.erro) secaoSemTexto.push(num);
+}
+check(secoesSemSub === 23, `seções sem subárea: ${secoesSemSub}, esperado 23`);
+check(secaoSemTexto.length === 0, `seções sem subárea e sem texto: ${secaoSemTexto.join(", ")}`);
+
+// F19: toda página de subárea aponta as áreas vizinhas
+const comConexoes = Object.values(POSTS).filter((p) => p.body.includes("<strong>Conexões:</strong>")).length;
+check(comConexoes >= 283, `páginas com conexões: ${comConexoes}, esperado ao menos 283`);
 
 // F10: identidade de cada área, sem repetir bioma, bicho, item, guardião ou caverna
 check(IDENTITY_AREAS.length === 86, `identidade: ${IDENTITY_AREAS.length} áreas, esperado 86`);
