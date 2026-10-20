@@ -29,6 +29,42 @@ export const OUTFITS = [
     desc: "para quem viaja de madrugada",
     colors: { hair: "#3a2a55", skin: "#f0c9a8", shirt: "#3a4466", pants: "#1b1c2c", accent: "#6bd5ff" },
   },
+  // os trajes que não se compram: só saem de missão concluída
+  {
+    id: "faroleiro",
+    name: "Faroleiro",
+    quest: "sete-farois",
+    desc: "acendeu os sete faróis e ficou com a luz no ombro",
+    colors: { shirt: "#ffc857", pants: "#3a2a33", accent: "#fff3d1", trim: "#8a5a1a" },
+  },
+  {
+    id: "cacador",
+    name: "Caçador",
+    quest: "cacador",
+    desc: "couro gasto de quem já respondeu muita pergunta no escuro",
+    colors: { shirt: "#8a6a4a", pants: "#2b2118", accent: "#ffc857", trim: "#5c4028" },
+  },
+  {
+    id: "prisma",
+    name: "Traje de Prisma",
+    quest: "branco-e-multidao",
+    desc: "a luz entra branca e sai colorida, e o pano lembra o caminho",
+    colors: { shirt: "#ff7aa8", pants: "#2a2340", accent: "#6bd5ff", trim: "#b48cff" },
+  },
+  {
+    id: "chaveiro",
+    name: "Chaveiro",
+    quest: "segredo-em-publico",
+    desc: "bolsos fundos para chaves que ninguém deve ver",
+    colors: { shirt: "#243b32", pants: "#1b1c2c", accent: "#ffc857", trim: "#7ee787" },
+  },
+  {
+    id: "capote",
+    name: "Capote do Vale",
+    quest: "vale-das-letras",
+    desc: "pano de quem atravessou o vale inteiro e voltou falando",
+    colors: { shirt: "#e8c07a", pants: "#4a3a22", accent: "#fff3d1", trim: "#8a7440" },
+  },
   {
     id: "silicio",
     name: "Aprendiz de Silício",
@@ -63,6 +99,13 @@ export const OUTFITS = [
     continent: "music",
     desc: "casaca curta e ouvido treinado",
     colors: { hair: "#3a2438", skin: "#f0c9a8", shirt: "#ffb26b", pants: "#2b2140", accent: "#ff7aa8", trim: "#8a4a2a" },
+  },
+  {
+    id: "trovador",
+    name: "Trovador do Vale",
+    continent: "lingua",
+    desc: "verso no bolso e a frase certa na ponta da língua",
+    colors: { hair: "#3a2a55", skin: "#f0c9a8", shirt: "#e8c07a", pants: "#4a3a22", accent: "#ff7aa8", trim: "#8a7440" },
   },
   {
     id: "adivinho",

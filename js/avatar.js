@@ -21,6 +21,7 @@ export const HAIRS = [
   { id: "tranca", name: "trança", unlock: "chem", cap: 3, side: 3, braid: 3 },
   { id: "topete", name: "topete", unlock: "ai", cap: 2, side: 1, pompadour: 4 },
   { id: "ondas", name: "ondas", unlock: "physics", cap: 3, side: 6, wave: true },
+  { id: "chiquinha", name: "chiquinha", quest: "mao-na-massa", cap: 3, side: 2, tail: 5, tailY: -15 },
 ];
 
 export const SKINS = ["#f6d5b8", "#f0c9a8", "#e2b189", "#c68a5e", "#9a6242", "#6b422c"];
@@ -53,6 +54,11 @@ export function normalizeAvatar(raw, base = AVATAR_DEFAULT) {
 // cabelo fechado devolve o continente que abre; cabelo livre devolve null
 export function hairUnlock(id) {
   return hairById(id).unlock;
+}
+
+// cabelo que abre com missão concluída; sem missão devolve ""
+export function hairQuest(id) {
+  return hairById(id).quest || "";
 }
 
 // o desenho recebe só o que ele usa, com a cor final já resolvida

@@ -110,14 +110,15 @@ export function drawHuman(ctx, px, py, dir, moving, time, colors, scale = 1, loo
   }
 
   if (hair.tail) {
+    const tailY = hair.tailY ?? -18;
     if (dir === 0) {
-      ctx.fillRect(-8, -18, 3, hair.tail);
-      ctx.fillRect(5, -18, 3, hair.tail);
+      ctx.fillRect(-8, tailY, 3, hair.tail);
+      ctx.fillRect(5, tailY, 3, hair.tail);
     } else if (dir === 3) {
-      ctx.fillRect(-3, -17, 6, hair.tail - 1);
+      ctx.fillRect(-3, tailY + 1, 6, hair.tail - 1);
     } else {
       const tx = dir === 1 ? 4 : -9;
-      ctx.fillRect(tx, -18, 5, hair.tail);
+      ctx.fillRect(tx, tailY, 5, hair.tail);
     }
   }
   // rosto: olho e nariz do lado para onde anda

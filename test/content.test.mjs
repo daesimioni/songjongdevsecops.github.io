@@ -19,7 +19,8 @@ const { POSTS, NPCS } = await import("../js/content.js");
 const { QUESTS } = await import("../js/quests.js");
 const { RPG } = await import("../js/rpg.js");
 const { isAdminKey } = await import("../js/admin.js");
-const { HAIRS, AVATAR_DEFAULT, normalizeAvatar, avatarColors, avatarCode, avatarFromCode, hairUnlock } = await import("../js/avatar.js");
+const { HAIRS, AVATAR_DEFAULT, normalizeAvatar, avatarColors, avatarCode, avatarFromCode, hairUnlock, hairQuest } = await import("../js/avatar.js");
+const { OUTFITS } = await import("../js/outfits.js");
 const { createWorld } = await import("../js/world.js");
 
 const source = (rel) => readFileSync(new URL(rel, import.meta.url), "utf8");
@@ -175,9 +176,22 @@ check(!!volta && volta.hair === "rabo" && volta.skin === 3 && volta.hairColor ==
 check(avatarFromCode("lixo") === null, "código de personagem inválido virou personagem");
 const cores = avatarColors(lookBase);
 check(!!cores.skin && !!cores.hair && !!cores.eyes, "avatarColors não devolveu as cores do corpo");
-check(HAIRS.length === 11, `cabelos: ${HAIRS.length}, esperado 11`);
-check(HAIRS.filter((h) => !h.unlock).length === 4, "a lista de cabelo básico mudou de tamanho");
+check(HAIRS.length === 12, `cabelos: ${HAIRS.length}, esperado 12`);
+check(HAIRS.filter((h) => !h.unlock && !h.quest).length === 4, "a lista de cabelo básico mudou de tamanho");
+check(HAIRS.filter((h) => h.quest).length === 1, "cabelo de missão a mais ou a menos");
 check(hairUnlock("moicano") === "cs" && hairUnlock("curto") === null, "trava do cabelo errada");
+check(hairQuest("chiquinha") === "mao-na-massa", "cabelo de missão sem missão");
+
+// guarda-roupa: todo traje e cabelo fechado aponta para continente ou missão que existe
+const questIds = new Set(QUESTS.map((q) => q.id));
+const continentIds = new Set(continents);
+for (const item of [...OUTFITS, ...HAIRS]) {
+  if (item.quest) check(questIds.has(item.quest), `${item.name} pede missão inexistente ${item.quest}`);
+  if (item.unlock) check(continentIds.has(item.unlock), `${item.name} pede continente inexistente ${item.unlock}`);
+}
+check(OUTFITS.filter((o) => o.quest).length === 5, `trajes de missão: ${OUTFITS.filter((o) => o.quest).length}, esperado 5`);
+check(OUTFITS.length === 16, `trajes: ${OUTFITS.length}, esperado 16`);
+check(OUTFITS.filter((o) => o.continent === "hub").length === 4, "trajes básicos livres mudaram de tamanho");
 
 // cada bicho desenhado tem um jeito de atrapalhar o duelo, e o chefe morre por fase
 const creatureKinds = [...source("../js/creature.js").matchAll(/kind === "([a-z]+)"/g)].map((m) => m[1]);

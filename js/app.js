@@ -9,12 +9,12 @@ import { createAudio } from "./audio.js";
 import { POSTS, NPCS } from "./content.js";
 import { Net } from "./net.js";
 import { Rede } from "./nostr.js";
-import { Quests } from "./quests.js";
+import { Quests, QUESTS } from "./quests.js";
 import { createSocial } from "./social.js";
 import { createBackup } from "./backup.js";
 import { createPvp } from "./pvp.js";
 import { OUTFITS, outfitById, outfitColors } from "./outfits.js";
-import { AVATAR_DEFAULT, normalizeAvatar, avatarColors, avatarCode } from "./avatar.js";
+import { AVATAR_DEFAULT, normalizeAvatar, avatarColors, avatarCode, HAIRS } from "./avatar.js";
 import { renderCharacterEditor } from "./character.js";
 import { copyText } from "./social.js";
 import { isAdminKey } from "./admin.js";
@@ -420,11 +420,25 @@ function applyLook(next) {
 }
 
 function outfitUnlocked(outfit) {
+  if (outfit.quest) return quests.isDone(outfit.quest);
   return outfit.continent === "hub" || provinceComplete(outfit.continent);
 }
 
-function hairOpen(continent) {
-  return provinceComplete(continent);
+// o cabelo abre por continente completo ou por missão concluída
+function hairOpen(hair) {
+  if (hair.quest) return quests.isDone(hair.quest);
+  return !hair.unlock || provinceComplete(hair.unlock);
+}
+
+function questTitle(id) {
+  return QUESTS.find((q) => q.id === id)?.title || "uma missão";
+}
+
+// texto da trava, para o cadeado não ficar mudo
+function lockHint(item) {
+  if (item.quest) return `missão: ${questTitle(item.quest)}`;
+  if (item.unlock) return `complete ${CONTINENTS[item.unlock]?.name || item.unlock}`;
+  return "complete as estações do continente";
 }
 
 function applyOutfit(id) {
@@ -449,7 +463,7 @@ function openOutfits() {
   const unlocked = OUTFITS.filter(outfitUnlocked).length;
   $("outfits-sub").textContent = unlocked === OUTFITS.length
     ? "todos os trajes abertos. A roupa vale no mapa e na caverna."
-    : `${unlocked} de ${OUTFITS.length} trajes. Cada continente completo abre o traje dele.`;
+    : `${unlocked} de ${OUTFITS.length} trajes. Cada continente completo e cada missão certa abrem um traje.`;
   const body = $("outfits-body");
   body.textContent = "";
   const grid = el("div", "outfit-grid");
@@ -467,7 +481,7 @@ function openOutfits() {
     card.append(
       swatch,
       el("b", "", outfit.name),
-      el("span", "", open ? outfit.desc : `complete as 5 estações de ${CONTINENTS[outfit.continent]?.name || "um continente"}`),
+      el("span", "", open ? outfit.desc : lockHint(outfit)),
     );
     if (open) {
       card.addEventListener("click", () => {
@@ -496,8 +510,9 @@ function openLook() {
     colors: player.colors,
     outfits: OUTFITS,
     outfit: player.outfitId,
-    isLocked: (continent) => !hairOpen(continent),
+    isHairLocked: (item) => !hairOpen(item),
     isOutfitLocked: (item) => !outfitUnlocked(item),
+    lockHint,
     onChange: (patch) => { applyLook(patch); audio.blip(); draw(); },
     onOutfit: (id) => {
       if (!applyOutfit(id)) return;
@@ -734,7 +749,12 @@ function questCard(q, npc) {
     btn.addEventListener("click", () => {
       const res = quests.complete(q.id);
       if (!res.ok) return;
-      toast(`Missão concluída: ${q.title}. +${res.xp} XP${res.title ? ` · título ${res.title}` : ""}`, 5200);
+      const ganhos = [
+        ...OUTFITS.filter((o) => o.quest === q.id).map((o) => `traje ${o.name}`),
+        ...HAIRS.filter((h) => h.quest === q.id).map((h) => `cabelo ${h.name}`),
+      ];
+      const extra = ganhos.length ? ` · você ganhou ${ganhos.join(" e ")}` : "";
+      toast(`Missão concluída: ${q.title}. +${res.xp} XP${res.title ? ` · título ${res.title}` : ""}${extra}`, 6200);
       audio.chime();
       renderer.kick(0.5);
       buildNpc(npc);
@@ -2160,8 +2180,9 @@ function renderIntroLook() {
     colors: player.colors,
     outfits: OUTFITS,
     outfit: player.outfitId,
-    isLocked: (continent) => !hairOpen(continent),
+    isHairLocked: (item) => !hairOpen(item),
     isOutfitLocked: (item) => !outfitUnlocked(item),
+    lockHint,
     onChange: (patch) => { applyLook(patch); draw(); },
     onOutfit: (id) => { applyOutfit(id); draw(); },
   });

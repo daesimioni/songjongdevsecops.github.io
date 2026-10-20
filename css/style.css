@@ -642,6 +642,7 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
 }
 .look-chip.on, .look-hair.on { border-color: var(--mint); background: rgba(97, 244, 192, 0.14); color: var(--mint); }
 .look-hair.locked, .look-chip.locked { opacity: 0.42; cursor: not-allowed; }
+.look-chip.quest { border-style: dashed; }
 .look-swatches { display: flex; flex-wrap: wrap; gap: 7px; padding-top: 3px; }
 .look-swatch {
   width: 26px;
