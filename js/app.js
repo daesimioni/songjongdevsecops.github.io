@@ -766,6 +766,25 @@ function saveNpcMemory() { writeJSON(STORAGE.npc, state.npcMemory); }
 function saveDocks() { writeJSON(STORAGE.docks, Array.from(state.docks)); }
 function saveXp() { writeJSON(STORAGE.xp, state.xp); }
 
+let questTrackAt = 0;
+function updateQuestTrack(now = 0) {
+  if (now && now - questTrackAt < 900) return;
+  questTrackAt = now;
+  const box = $("quest-track");
+  if (!box) return;
+  const active = state.started ? quests.active() : [];
+  if (!active.length) { box.hidden = true; return; }
+  box.hidden = false;
+  box.textContent = "";
+  box.appendChild(el("b", "", "missões em andamento"));
+  for (const quest of active.slice(0, 3)) {
+    const { have, need } = quests.progress(quest);
+    const line = el("span", "");
+    line.append(document.createTextNode(quest.title), el("i", "", ` ${have}/${need}`));
+    box.appendChild(line);
+  }
+}
+
 function updateProgress() {
   $("progress-text").textContent = `${openedCount()}/${TOTAL}`;
   $("level-text").textContent = `Nv ${level()}`;
@@ -1739,6 +1758,7 @@ function loop(now) {
       if (state.path) updateAutoWalk(dt);
       else updateMovement(dt);
       updateZone();
+      updateQuestTrack(now);
       world.updateNpcs(dt, now);
     } else {
       player.moving = false;
