@@ -51,7 +51,7 @@ async function copyText(text) {
   }
 }
 
-export function createSocial({ rede, backup, quests, player, getPeers, getLevel, getTitle, setName, toast, audio, onChallenge }) {
+export function createSocial({ rede, backup, quests, player, getPeers, getNet, getLevel, getTitle, setName, toast, audio, onChallenge }) {
   const ui = {
     open: false,
     tab: "mundo",
@@ -62,6 +62,8 @@ export function createSocial({ rede, backup, quests, player, getPeers, getLevel,
     offline: false,
     secretShown: false,
     profileAbout: "",
+    party: null,
+    partyInvite: null,
   };
 
   const body = $("rede-body");
@@ -408,9 +410,129 @@ export function createSocial({ rede, backup, quests, player, getPeers, getLevel,
   }
 
   // ---------- pessoas ----------
+  function myNet() { return getNet?.() || null; }
+
+  function partyMembersText(members) {
+    return (members || []).map((m) => m.name || m.id).join(", ");
+  }
+
+  function sendParty(payload) {
+    return !!myNet()?.sendParty?.(payload);
+  }
+
+  function inviteToParty(peer) {
+    const net = myNet();
+    if (!net || !peer?.id || peer.id === net.id) return;
+    if (!ui.party) {
+      ui.party = {
+        id: `party_${Math.random().toString(36).slice(2, 10)}`,
+        leader: net.id,
+        members: [{ id: net.id, name: player.name || "você" }],
+      };
+    }
+    if (ui.party.members.some((m) => m.id === peer.id)) {
+      toast(`${peer.name || "Essa pessoa"} já está na party.`, 2200);
+      return;
+    }
+    sendParty({
+      act: "invite", to: peer.id, party: ui.party.id, leader: ui.party.leader,
+    });
+    toast(`Convite de party enviado para ${peer.name || "o jogador"}.`, 2600);
+    renderPeople();
+  }
+
+  function acceptPartyInvite() {
+    const invite = ui.partyInvite;
+    if (!invite) return;
+    ui.party = {
+      id: invite.party, leader: invite.leader,
+      members: [{ id: invite.leader, name: invite.fromName }, { id: myNet()?.id || "eu", name: player.name || "você" }],
+    };
+    ui.partyInvite = null;
+    sendParty({ act: "accept", to: invite.fromId, party: invite.party });
+    toast("Você entrou na party.", 2600);
+    renderPeople();
+  }
+
+  function leaveParty() {
+    if (!ui.party) return;
+    sendParty({ act: "leave", party: ui.party.id });
+    ui.party = null;
+    toast("Você saiu da party.", 2200);
+    renderPeople();
+  }
+
+  function partyEvent(peer, msg) {
+    if (!peer?.id || !msg) return;
+    if (msg.act === "invite") {
+      if (ui.party) { sendParty({ act: "leave", to: peer.id, party: msg.party }); return; }
+      ui.partyInvite = { fromId: peer.id, fromName: peer.name || "viajante", party: msg.party, leader: msg.leader || peer.id };
+      toast(`${peer.name || "Alguém"} convidou você para uma party.`, 3800);
+      if (ui.open && ui.tab === "pessoas") renderPeople();
+      return;
+    }
+    if (msg.act === "accept") {
+      if (!ui.party || msg.party !== ui.party.id) return;
+      if (!ui.party.members.some((m) => m.id === peer.id)) ui.party.members.push({ id: peer.id, name: peer.name || "viajante" });
+      sendParty({ act: "sync", to: peer.id, party: ui.party.id, leader: ui.party.leader, members: ui.party.members });
+      toast(`${peer.name || "Alguém"} entrou na party.`, 2600);
+      if (ui.open && ui.tab === "pessoas") renderPeople();
+      return;
+    }
+    if (msg.act === "sync") {
+      if (!ui.party || msg.party !== ui.party.id) return;
+      if (Array.isArray(msg.members)) {
+        ui.party.members = msg.members
+          .filter((m) => m && typeof m.id === "string")
+          .slice(0, 8)
+          .map((m) => ({ id: m.id, name: String(m.name || "viajante").slice(0, 16) }));
+      }
+      if (msg.leader) ui.party.leader = msg.leader;
+      if (ui.open && ui.tab === "pessoas") renderPeople();
+      return;
+    }
+    if (msg.act === "leave") {
+      if (!ui.party) return;
+      if (msg.id === ui.party.leader) {
+        ui.party = null;
+        toast("O líder saiu e a party terminou.", 3000);
+      } else {
+        ui.party.members = ui.party.members.filter((m) => m.id !== peer.id);
+      }
+      if (ui.open && ui.tab === "pessoas") renderPeople();
+    }
+  }
+
   function renderPeople() {
     body.textContent = "";
     const wrap = el("div", "rede-pane");
+    if (ui.partyInvite) {
+      const banner = el("div", "rede-card party-invite");
+      banner.appendChild(el("h3", "rede-sec", "Convite de party"));
+      banner.appendChild(el("p", "rede-hint", `${ui.partyInvite.fromName} chamou você para uma party.`));
+      const row = el("div", "rede-keyrow");
+      const yes = el("button", "rede-send", "entrar na party");
+      yes.type = "button";
+      yes.addEventListener("click", acceptPartyInvite);
+      const no = el("button", "rede-mini", "recusar");
+      no.type = "button";
+      no.addEventListener("click", () => { ui.partyInvite = null; renderPeople(); });
+      row.append(yes, no);
+      banner.appendChild(row);
+      wrap.appendChild(banner);
+    }
+    const party = el("div", "rede-people");
+    party.appendChild(el("h3", "rede-sec", ui.party ? `Sua party (${ui.party.members.length})` : "Sua party"));
+    if (ui.party) {
+      party.appendChild(el("p", "rede-hint", partyMembersText(ui.party.members)));
+      const out = el("button", "rede-mini", "sair da party");
+      out.type = "button";
+      out.addEventListener("click", leaveParty);
+      party.appendChild(out);
+    } else {
+      party.appendChild(el("p", "rede-empty", "Sem party. Convide alguém da sua sala pelo botão ao lado do nome."));
+    }
+    wrap.appendChild(party);
     const online = rede.presenceList();
     const section = el("div", "rede-people");
     section.appendChild(el("h3", "rede-sec", `No mundo agora (${Math.max(0, online.length - 1)})`));
@@ -438,10 +560,16 @@ export function createSocial({ rede, backup, quests, player, getPeers, getLevel,
       duel.title = "duelo de perguntas, sem perder vida";
       duel.addEventListener("click", () => {
         if (!onChallenge) return;
-        onChallenge({ id: p.id, name: p.name });
+        onChallenge({ id: p.id, name: p.name, pubkey: p.pubkey || "" });
         close();
       });
       row.appendChild(duel);
+      if (p.id !== myNet()?.id) {
+        const invite = el("button", "rede-mini", ui.party ? "convidar" : "montar party");
+        invite.type = "button";
+        invite.addEventListener("click", () => inviteToParty(p));
+        row.appendChild(invite);
+      }
       room.appendChild(row);
     }
     wrap.appendChild(room);
@@ -661,5 +789,5 @@ export function createSocial({ rede, backup, quests, player, getPeers, getLevel,
 
   bind();
   updateBadge();
-  return { open, close, connect, updateBadge, get thread() { return ui.thread; } };
+  return { open, close, connect, updateBadge, partyEvent, inviteParty: inviteToParty, acceptParty: acceptPartyInvite, leaveParty, get thread() { return ui.thread; }, get party() { return ui.party; } };
 }

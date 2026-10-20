@@ -154,6 +154,28 @@ export class Rede {
     try { return this.nt.nip19.nsecEncode(this.sk); } catch { return ""; }
   }
 
+  // assinatura de prova para o PvP: o evento não é publicado, só usado para
+  // provar que quem enviou o convite tem a chave que diz ter.
+  async signText(text) {
+    if (!this.ready || !this.nt || !this.sk) return null;
+    try {
+      return this.nt.finalizeEvent({
+        kind: 1,
+        created_at: Math.floor(Date.now() / 1000),
+        tags: [["t", "mundo-song-pvp"]],
+        content: String(text || "").slice(0, 400),
+      }, this.sk);
+    } catch { return null; }
+  }
+
+  async verifyText(event, text) {
+    if (!this.ready || !this.nt || !event || typeof event !== "object") return false;
+    if (event.kind !== 1 || event.content !== String(text || "").slice(0, 400)) return false;
+    if (!Array.isArray(event.tags) || !event.tags.some((tag) => tag[0] === "t" && tag[1] === "mundo-song-pvp")) return false;
+    if (Math.abs(Number(event.created_at) - Math.floor(Date.now() / 1000)) > 300) return false;
+    try { return this.nt.verifyEvent(event); } catch { return false; }
+  }
+
   async importSecret(raw) {
     await this.init();
     const input = String(raw || "").trim();

@@ -10,7 +10,7 @@ ordem pedida pelo dono é: conceito, desenho detalhado, revisão, só então có
 - 29 NPCs de história, 21 instrutores, 40 missões e 600 perguntas.
 - Duelo de perguntas, XP, perícias, 49 peças de equipamento, forja, encantos,
   comida, bicho, horta, veios e minmapa.
-- Chat/Nostr/MQTT, presença e DMs.
+- Chat/Nostr/MQTT, presença, DMs, PvP com prova de identidade e party de até 8 pessoas.
 - 42 bocas pareadas, dois sentidos por caverna e camada `subsolo -1` no HUD.
 - Testes: `node test/*.test.mjs` e suíte de navegador (CDP).
 

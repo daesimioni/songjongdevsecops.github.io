@@ -25,7 +25,7 @@ function validOutfit(o) {
 }
 
 export class Net {
-  constructor({ room, name, color, outfit, onPeers, onStatus, onChat, onPvp, onError }) {
+  constructor({ room, name, color, outfit, onPeers, onStatus, onChat, onPvp, onParty, onError }) {
     this.room = room;
     this.name = clean(name, 16) || "viajante";
     this.color = validColor(color);
@@ -35,6 +35,7 @@ export class Net {
     this.onStatus = onStatus;
     this.onChat = onChat;
     this.onPvp = onPvp;
+    this.onParty = onParty;
     this.onError = onError;
     this.lastPvp = 0;
     this.lastPvpSend = 0;
@@ -86,6 +87,7 @@ export class Net {
           this.topic("state"),
           this.topic("chat"),
           this.topic("pvp"),
+          this.topic("party"),
           this.topic("bye"),
         ], { qos: 0 }, (err, granted) => {
           if (err) { this.fail("sem sinal"); if (!settled) { settled = true; resolve(false); } return; }
@@ -193,6 +195,14 @@ export class Net {
       return;
     }
 
+    if (topic.endsWith("/party")) {
+      if (msg.to !== this.id) return;
+      if (!["invite", "accept", "leave", "sync"].includes(msg.act)) return;
+      const peer = this.peers.get(msg.id) || { id: msg.id, name: clean(msg.n, 16) || "viajante" };
+      this.onParty?.(peer, msg);
+      return;
+    }
+
     if (topic.endsWith("/chat")) {
       const peer = this.peers.get(msg.id);
       if (!peer) return;
@@ -275,6 +285,15 @@ export class Net {
     if (now - this.lastPvpSend < 150 && kind !== "end") return false;
     this.lastPvpSend = now;
     this.client.publish(this.topic("pvp"), JSON.stringify({
+      ...payload, id: this.id, n: this.name,
+    }), { qos: 0 });
+    return true;
+  }
+
+  sendParty(payload) {
+    if (!this.connected || !this.client || !payload || typeof payload !== "object") return false;
+    if (!["invite", "accept", "leave", "sync"].includes(payload.act)) return false;
+    this.client.publish(this.topic("party"), JSON.stringify({
       ...payload, id: this.id, n: this.name,
     }), { qos: 0 });
     return true;

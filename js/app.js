@@ -240,6 +240,8 @@ const pvpUi = createPvp({
   player,
   getNet: () => state.net,
   isBusy: () => !!(state.panelOpen || state.chatOpen || dungeon?.isOpen() || (state.modal && state.modal !== "pvp")),
+  signer: (text) => rede.signText(text),
+  verifier: (event, text) => rede.verifyText(event, text),
   openPanel: () => openModal("pvp"),
   closePanel: () => closeModal("pvp"),
   onDown: (ms) => knockDown(ms),
@@ -369,6 +371,7 @@ function bootSocial() {
     quests,
     player,
     getPeers: () => state.peers,
+    getNet: () => state.net,
     getLevel: level,
     getTitle: () => quests.title,
     setName: adoptName,
@@ -928,6 +931,7 @@ function startNet() {
       pushChatMessage(peer.name, text, peer.color);
     },
     onPvp: (peer, msg) => pvpUi.handle(peer, msg),
+    onParty: (peer, msg) => social?.partyEvent?.(peer, msg),
     onError: () => {},
   });
   state.net.connect();
@@ -2036,6 +2040,6 @@ window.addEventListener("beforeunload", () => {
   setNetStatus({ state: "solo", count: 1 });
   requestAnimationFrame(loop);
   if (new URLSearchParams(location.search).has("debug")) {
-    window.__mundo = { player, state, world, renderer, audio, quests, rede, backup, rpg, sheetUi, duelUi, dungeon, pvpUi, knockDown, social };
+    window.__mundo = { player, state, world, renderer, audio, quests, rede, backup, rpg, sheetUi, duelUi, dungeon, pvpUi, knockDown, get social() { return social; } };
   }
 })();

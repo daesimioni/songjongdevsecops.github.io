@@ -21,7 +21,7 @@ function el(tag, cls, text) {
   return node;
 }
 
-export function createPvp({ rpg, toast, audio, player, getNet, isBusy, openPanel, closePanel, onDown }) {
+export function createPvp({ rpg, toast, audio, player, getNet, isBusy, openPanel, closePanel, onDown, signer, verifier }) {
   const state = {
     phase: "idle",
     peer: null,
@@ -32,6 +32,7 @@ export function createPvp({ rpg, toast, audio, player, getNet, isBusy, openPanel
     damage: 0,
     nonce: null,
     finished: false,
+    verified: false,
     closing: false,
     timer: null,
     countdown: null,
@@ -88,7 +89,7 @@ export function createPvp({ rpg, toast, audio, player, getNet, isBusy, openPanel
 
   function setHead(title, sub) {
     $("pvp-title").textContent = title;
-    $("pvp-sub").textContent = sub;
+    $("pvp-sub").textContent = state.verified ? `${sub} · identidade verificada` : sub;
   }
 
   function render() {
@@ -398,7 +399,7 @@ export function createPvp({ rpg, toast, audio, player, getNet, isBusy, openPanel
     render();
   }
 
-  function challenge(peer) {
+  async function challenge(peer) {
     const net = getNet?.();
     if (!net) {
       toast("A Rede não está ligada. Entre na praça para desafiar alguém.", 3400);
@@ -413,11 +414,12 @@ export function createPvp({ rpg, toast, audio, player, getNet, isBusy, openPanel
       toast("Feche o que está aberto antes de desafiar.", 2800);
       return false;
     }
-    if (!net.sendPvp?.({ kind: "challenge", to: peer.id })) {
-      toast("Não consegui enviar o convite agora.", 3000);
-      return false;
-    }
-    state.peer = { id: String(peer.id).slice(0, 40), name: String(peer.name || "viajante").slice(0, 16) };
+    state.peer = {
+      id: String(peer.id).slice(0, 40),
+      name: String(peer.name || "viajante").slice(0, 16),
+      pubkey: peer.pubkey || "",
+    };
+    state.verified = false;
     state.phase = "challenging";
     open();
     later(CHALLENGE_MS, () => {
@@ -427,6 +429,22 @@ export function createPvp({ rpg, toast, audio, player, getNet, isBusy, openPanel
         close();
       }
     });
+    // a assinatura pode demorar (a chave carrega sob demanda): o convite
+    // aparece na hora e a prova entra assim que fica pronta.
+    const proofText = `mundo-song:pvp:v1|challenge|${net.id}|${peer.id}|${Date.now()}`;
+    const sendInvite = (proof) => {
+      if (state.phase !== "challenging" || state.peer?.id !== String(peer.id).slice(0, 40)) return;
+      const sent = net.sendPvp?.({
+        kind: "challenge", to: peer.id,
+        proof, proofText: proof ? proofText : "",
+      });
+      if (!sent) {
+        toast("Não consegui enviar o convite agora.", 3000);
+        close();
+      }
+    };
+    if (signer) Promise.resolve(signer(proofText)).then(sendInvite).catch(() => sendInvite(null));
+    else sendInvite(null);
     return true;
   }
 
@@ -440,7 +458,20 @@ export function createPvp({ rpg, toast, audio, player, getNet, isBusy, openPanel
         getNet?.()?.sendPvp?.({ kind: "decline", to: peer.id });
         return;
       }
-      state.peer = { id: peer.id, name: String(peer.name || "viajante").slice(0, 16) };
+      state.peer = {
+        id: peer.id,
+        name: String(peer.name || "viajante").slice(0, 16),
+        pubkey: peer.pubkey || "",
+      };
+      state.verified = false;
+      if (msg.proof && msg.proofText && peer.pubkey && msg.proof.pubkey === peer.pubkey) {
+        verifier?.(msg.proof, msg.proofText).then((ok) => {
+          if (ok && state.peer?.id === peer.id) {
+            state.verified = true;
+            render();
+          }
+        }).catch(() => {});
+      }
       state.phase = "incoming";
       open();
       later(CHALLENGE_MS, () => {
