@@ -1,8 +1,9 @@
 # Mundo de Song: pasta de conceito
 
-Esta pasta é a fase de **conceito e desenho macro** do jogo. Nada aqui virou
-código. O site atual continua no ar; estas ideias só entram na implementação
-depois do aval do dono e de um desenho detalhado por área.
+Esta pasta é a fase de **conceito e desenho macro** do jogo. A implementação
+começou em 2026-10-20, a pedido do dono: o que já está no ar e o que falta está
+em `11-ESTADO-2026-10-20.md`. O restante continua sendo desenho; nada entra no
+jogo sem virar tarefa e teste.
 
 ## 1. O jogo em uma página
 
@@ -27,6 +28,8 @@ aberto, bestiário, slots, magias, cidades, NPCs), não no grind nem na puniçã
 9. `08-INTERFACE.md`: telas, HUD, batalha, ficha, caderno, mapa, mobile.
 10. `09-LORE.md`: o Silêncio, as culturas, a Grande Prova, o tom.
 11. `10-ESTACOES.md`: as 32 estações, conceitos e auditoria.
+12. `11-ESTADO-2026-10-20.md`: o que já virou código, equipamento, bestiário,
+    camadas, conurbação e as perguntas abertas para o dono.
 
 ## 3. O que está decidido (proposta)
 

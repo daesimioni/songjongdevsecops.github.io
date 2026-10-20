@@ -66,6 +66,7 @@ function emptyData() {
     buffs: {},
     pet: { bond: 0 },
     equipped: {},
+    seen: {},
     plots: {},
     plotGift: {},
   };
@@ -102,6 +103,16 @@ function readData() {
     data.pet.bond = clamp(Number(obj.pet?.bond) || 0, 0, 3);
     for (const [slot, id] of Object.entries(obj.equipped || {})) {
       if (ITEMS[id]?.slot === slot && Number(data.items[id]) > 0) data.equipped[slot] = id;
+    }
+    for (const [kind, entry] of Object.entries(obj.seen || {})) {
+      if (!/^[a-z]{3,10}$/.test(kind) || !entry || typeof entry !== "object") continue;
+      const count = clamp(Number(entry.count) || 0, 0, 9999);
+      if (!count) continue;
+      data.seen[kind] = {
+        count,
+        name: String(entry.name || "").replace(/[<>\u0000-\u001f]/g, "").slice(0, 24) || kind,
+        tier: clamp(Number(entry.tier) || 1, 1, 4),
+      };
     }
     for (const [key, plot] of Object.entries(obj.plots || {})) {
       if (typeof key !== "string" || key.length > 40 || !plot || typeof plot !== "object") continue;
@@ -169,6 +180,25 @@ export class RPG {
     return Object.entries(this.data.items)
       .filter(([id, qty]) => qty > 0 && ITEMS[id]?.relic)
       .length;
+  }
+
+  noteMonster(monster) {
+    if (!monster?.kind) return;
+    const kind = String(monster.kind).toLowerCase().replace(/[^a-z]/g, "").slice(0, 10);
+    if (!kind) return;
+    const entry = this.data.seen[kind] || { count: 0, name: monster.name || kind, tier: monster.tier || 1 };
+    entry.count = Math.min(9999, entry.count + 1);
+    entry.name = String(monster.name || entry.name).replace(/[<>\u0000-\u001f]/g, "").slice(0, 24);
+    entry.tier = clamp(Number(monster.tier) || entry.tier || 1, 1, 4);
+    this.data.seen[kind] = entry;
+    this.save();
+  }
+
+  seenView() {
+    const labels = { slime: "gosma", eye: "olho", golem: "golem", bat: "morcego", spider: "aranha", boss: "chefe" };
+    return Object.entries(this.data.seen)
+      .map(([kind, entry]) => ({ kind, label: labels[kind] || kind, ...entry }))
+      .sort((a, b) => b.tier - a.tier || b.count - a.count || a.kind.localeCompare(b.kind));
   }
 
   equipmentBonus() {

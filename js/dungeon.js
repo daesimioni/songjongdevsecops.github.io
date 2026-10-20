@@ -1365,6 +1365,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
   }
 
   function startAlert(m, t) {
+    rpg.noteMonster?.(m);
     state.paused = true;
     state.path = null;
     state.pending = null;

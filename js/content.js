@@ -484,6 +484,8 @@ export const NPCS = {
       "O diário guarda o que você já viu. Não precisa decorar nada.",
       "Ao lado de cada acampamento de caça tem uma boca de caverna. Lá embaixo o bicho não espera você apertar F: ele vê primeiro.",
       "Na cidade do fundo tem forja, horta, mesa de encanto e um bicho. Nada é de graça: tudo cobra material.",
+      "Cada continente tem duas bocas de caverna. A escada do fundo sai na outra. É o túnel que liga as duas.",
+      "Complete as cinco estações de um continente e o traje dele abre na Ficha. Roupa é escolha, não prêmio de força.",
     ],
   },
   ada: {
@@ -492,6 +494,8 @@ export const NPCS = {
       "Um somador é só uma frase feita de fios. Aprenda a ler a frase e o processador inteiro começa a fazer sentido.",
       "A memória do circuito é o que separa contar de lembrar.",
       "A boca de pedra ao lado do acampamento desce fundo. Lá embaixo o Bit não espera você apertar F: ele sente primeiro.",
+      "O baú da caverna às vezes guarda uma chave de fenda longa. Equipe na Ficha: a arma soma dano, não resolve a pergunta.",
+      "O olho vê longe e estreito. Chegue por trás e ele continua olhando o corredor vazio.",
     ],
   },
   hypatia: {
@@ -500,6 +504,8 @@ export const NPCS = {
       "Não tenha pressa no infinito. Ele não tem pressa com você.",
       "A curva que você vê é um acordo entre uma fórmula e a tela. A fórmula é a parte que importa.",
       "A caverna dos números guarda o infinito num poço. Não fique olhando por muito tempo.",
+      "Um desvio no meio do túnel não é enfeite: é onde o lema te espera de lado.",
+      "A espada da prova corta o problema em casos menores. O primeiro caso é sempre ler o enunciado.",
     ],
   },
   marie: {
@@ -508,6 +514,8 @@ export const NPCS = {
       "Mude a velocidade de lançamento e veja o corpo cair ou escapar. A órbita mora num intervalo muito estreito.",
       "Uma medida é sempre uma conversa entre o mundo e o instrumento. O instrumento nunca é mudo.",
       "A caverna mede o que a luz faz no escuro. Leve tocha, e desconfie do que ela ilumina.",
+      "O corredor largo é uma arena. O estreito é uma armadilha. Escolha a pergunta antes de escolher o caminho.",
+      "As lentes de prisma protegem os olhos e separam a luz. A física é isso: olhar de novo com outro instrumento.",
     ],
   },
   pythagoras: {
@@ -516,6 +524,8 @@ export const NPCS = {
       "O som é número se movendo. Razões pequenas soam bem porque as ondas se encontram com frequência.",
       "Uma oitava é 2 para 1. Não inventei isso: o ar já sabia.",
       "O conservatório embaixo da terra tem acústica de pedra. Os monstros chamam aquilo de dissonância.",
+      "A serpente do túnel marca o compasso. Se você correr no contratempo, ela ouve.",
+      "A casaca de harmonia tem bolso para partitura e para o medo. Os dois cabem.",
     ],
   },
   turing: {
@@ -524,6 +534,8 @@ export const NPCS = {
       "A pergunta interessante não é se a máquina pensa. É o que ela consegue fazer com o que recebeu.",
       "Dados ruins produzem confiança boa. É a combinação mais perigosa que existe.",
       "A rede profunda é uma cidade que aprende sozinha. Não confie no que ela diz que lembra.",
+      "O corredor estreito é o preferido da aranha. Um passo largo e você já está na teia.",
+      "O cajado de vetores aponta o gradiente. Ele não promete que a descida é curta.",
     ],
   },
   mendeleev: {
@@ -532,6 +544,8 @@ export const NPCS = {
       "Eu deixei buracos na tabela e apostei que eles seriam ocupados. Dois foram. A natureza me devia essa.",
       "Se você entende por que uma coluna se parece por dentro, já entende metade da química.",
       "A mina tem cristal de veio. A forja da cidade subterrânea transforma o veio em chave.",
+      "O avental de alquimista já viu reação que deu errado. É por isso que ele é grosso.",
+      "No cruzamento dos túneis, a química muda de lado. O equilíbrio também.",
     ],
   },
   "trainer-cs": {

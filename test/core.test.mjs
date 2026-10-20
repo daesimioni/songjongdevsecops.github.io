@@ -199,6 +199,17 @@ assert.equal(gearAgain.unequip("armor").ok, true);
 assert.equal(gearAgain.hpMax(), bareHp, "tirar a armadura devolve a vida");
 assert.equal(gearAgain.equip("pocao").ok, false, "poção não é equipamento");
 
+// bestiário registra espécie, nome e contagem e persiste
+const beastRpg = new RPG({ getLevel: () => 1, gainXp: () => {}, toast: () => {}, audio: {} });
+beastRpg.noteMonster({ kind: "bat", name: "Morcego", tier: 2 });
+beastRpg.noteMonster({ kind: "bat", name: "Morcego", tier: 2 });
+beastRpg.noteMonster({ kind: "boss", name: "O Compilador Ancestral", tier: 4 });
+const seen = beastRpg.seenView();
+assert.equal(seen.find((s) => s.kind === "bat")?.count, 2, "bestiário conta encontros");
+assert.equal(seen.find((s) => s.kind === "boss")?.tier, 4, "chefe entra no bestiário");
+const beastAgain = new RPG({ getLevel: () => 1, gainXp: () => {}, toast: () => {}, audio: {} });
+assert.equal(beastAgain.seenView().find((s) => s.kind === "bat")?.count, 2, "bestiário persiste");
+
 // save corrompido não vira save vazio sem deixar cópia
 const corruptKey = STORAGE.rpg;
 const goodRaw = store.get(corruptKey);

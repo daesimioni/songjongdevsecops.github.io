@@ -354,6 +354,7 @@ function applyOutfit(id) {
   player.color = player.colors.shirt;
   writeJSON(STORAGE.outfit, outfit.id);
   state.net?.setOutfit?.(outfit.id);
+  state.net?.setColor?.(player.color);
   renderer.kick(0.25);
   return true;
 }
@@ -818,7 +819,30 @@ function openJournal() {
   audio.open();
 }
 
+function buildJournalBestiary() {
+  const box = $("journal-bestiary");
+  if (!box) return;
+  box.textContent = "";
+  const seen = rpg.seenView();
+  if (!seen.length) {
+    box.appendChild(el("p", "journal-empty", "Nenhum bicho visto ainda. Os monstros moram nas cavernas; a superfície é sala de aula."));
+    return;
+  }
+  const grid = el("div", "bestiary-grid");
+  for (const entry of seen) {
+    const card = el("div", `bestiary-card t${entry.tier}`);
+    card.append(
+      el("b", "", entry.name),
+      el("span", "", `${entry.label} · andar ${entry.tier === 4 ? "chefe" : entry.tier}`),
+      el("i", "", `${entry.count} encontro${entry.count === 1 ? "" : "s"}`),
+    );
+    grid.appendChild(card);
+  }
+  box.appendChild(grid);
+}
+
 function buildJournal() {
+  buildJournalBestiary();
   const list = $("journal-list");
   list.textContent = "";
   const found = openedCount();

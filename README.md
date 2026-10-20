@@ -97,13 +97,36 @@ Estações, pedras, NPCs e mobília barram a passagem; na superfície não há m
 solto. O desenho é ordenado por profundidade, então uma fonte, árvore ou parede na
 frente do boneco cobre o corpo dele em vez de ficar sempre atrás.
 
+## Nave, traje e equipamento
+
+A nave fica 4,4 vezes mais rápida que o passo e agora também funciona dentro da
+caverna: segure `Espaço` (ou o botão **turbo** no topo da caverna). O boneco vai
+parado no casco, sem perna alternando, e o passo é dividido em pedaços para não
+atravessar parede na velocidade nova.
+
+O traje é escolha da pessoa, não do lugar. São sete: o **Viajante** desde o
+começo e um por continente, aberto ao completar as cinco estações. A **Ficha**
+(`C`) abre o editor; a mesma roupa aparece na superfície, na caverna, no duelo e
+para os outros jogadores pela rede.
+
+A Ficha também tem **equipamento**: arma, elmo, armadura, pernas, botas, escudo,
+anel e colar. Cada peça soma pouco (arma +1 ou +2 de dano; armadura +4 ou +5 de
+vida) e cai de baú de caverna ou de chefe. A ideia é fôlego e vocabulário, nunca
+resolver a pergunta pelo número.
+
 ## As cavernas
 
-Ao lado de cada clareira de caça existe uma boca de caverna; no minimapa ela
-aparece como um quadradinho vazado. `F` nela entra num mapa próprio, em tela
-cheia: salas ligadas por túneis de três tiles que se cruzam em anel, entrada
-embaixo, cidade no fundo. São seis temas, um por continente, com paleta, nomes de
-sala e bichos próprios; metade delas tem as salas laterais espelhadas.
+Cada continente tem **duas bocas de caverna**, uma perto da clareira e outra a
+alguns tiles. Elas são pareadas pelo túnel: a escada da entrada volta para a boca
+por onde você desceu, a escada do fundo (na cidade subterrânea) sai na outra
+boca, e a pedra de retorno devolve à entrada. No minimapa cada boca é um
+quadradinho vazado.
+
+`F` numa boca entra no mapa em tela cheia: salas ligadas por túneis, entrada
+embaixo, cidade no fundo. Seis temas, um por continente, com paleta, nomes e
+bichos próprios, e seis traçados de túnel diferentes: em cotovelo, desvio no
+meio, largo, cruzado, serpente e estreito. Metade das cavernas espelha as salas
+laterais. O HUD marca a camada (`subsolo -1`).
 
 Lá embaixo valem as mesmas regras do mundo, com uma diferença: o bicho que vê
 você começa a batalha sozinho. Ele anda em volta do ninho, tem um raio de visão
@@ -119,7 +142,7 @@ faz na forja. A caverna dá ferro, erva, cristal de veio e madeira; os **veios d
 cristal** presos nas salas só se abrem com uma **picareta**, que também se forja.
 
 Na cidade subterrânea há forja, altar que devolve vida, três canteiros de erva,
-mesa de encantamento, um bicho e a pedra de retorno. A horta se planta com
+mesa de encantamento, um bicho, a pedra de retorno e a escada para a outra boca. A horta se planta com
 semente e cresce em 45 segundos; a primeira horta de cada caverna nasce com uma
 erva de presente (e devolve uma semente), para o ciclo começar, e o que você
 planta continua plantado na próxima descida. A mesa grava três encantos permanentes: mais
@@ -244,9 +267,10 @@ pergunta que casa com o tema. O duelo entre jogadores entra pela mesma prova: as
 cinco cartas, a dificuldade que vira dano e a compostura.
 
 A segunda confere o conteúdo inteiro: as 32 estações e seus textos, falas de NPC,
-18 missões, itens, relíquias por continente, receitas, encantos, as 60 perguntas
-(sem repetição e com resposta válida), as cinco cartas do PvP por continente, as
-seis cavernas e o mundo montado (seis instrutores, nenhum monstro na superfície).
+18 missões, itens, equipamento, relíquias por continente, receitas, encantos, as
+78 perguntas (sem repetição e com resposta válida), as cinco cartas do PvP por
+continente, as seis cavernas e o mundo montado (seis instrutores, doze bocas,
+nenhum monstro na superfície).
 
 A terceira confere a casca: id repetido ou faltando, import que não resolve,
 botão sem `type`, imagem sem `alt`, link `_blank` sem `rel`, `aria-labelledby`

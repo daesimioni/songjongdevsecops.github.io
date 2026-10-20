@@ -246,6 +246,11 @@ export class Net {
     this.publishState(true);
   }
 
+  setColor(color) {
+    this.color = validColor(color);
+    this.publishState(true);
+  }
+
   publishState(force) {
     if (!this.connected || !this.client) return;
     this.seq = (this.seq + 1) % 1000000000;
