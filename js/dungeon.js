@@ -560,6 +560,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
     alert: null,
     pack: [],
     partnerMonsters: [],
+    duelMonster: null,
     encounterLockUntil: 0,
     torchUntil: 0,
     altarAt: 0,
@@ -640,7 +641,8 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
     def.rooms.forEach((room) => {
       if (room.kind === "entrance" || room.kind === "city") return;
       const tier = clamp(room.tier || 1, 1, 3);
-      const count = tier >= 3 ? 3 : 2;
+      // menos bichos por sala e mais espalhados: briga atrás de briga cansa
+      const count = tier >= 3 ? 2 : 1;
       for (let k = 0; k < count; k++) {
         const id = `dg-${def.continent}-${room.id}-m${k}`;
         if (!rpg.monsterAlive(id)) continue;
@@ -1338,7 +1340,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
   function pickWander(m) {
     for (let i = 0; i < 8; i++) {
       const a = Math.random() * Math.PI * 2;
-      const r = 0.6 + Math.random() * 2.8;
+      const r = 0.6 + Math.random() * 1.8;
       const tx = m.hx + Math.cos(a) * r;
       const ty = m.hy + Math.sin(a) * r;
       if (boxFree(state.map, tx, ty, PATH_PAD, state.solids)) {
@@ -1403,7 +1405,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
   function startAlert(m, t) {
     rpg.noteMonster?.(m);
     state.pack = state.monsters
-      .filter((o) => o !== m && o.alive && !o.boss && canSeePlayer(o) && Math.hypot(o.x - state.player.x, o.y - state.player.y) < 5.5)
+      .filter((o) => o !== m && o.alive && !o.boss && canSeePlayer(o) && Math.hypot(o.x - state.player.x, o.y - state.player.y) < 3.6)
       .slice(0, 2);
     if (state.pack.length) say(`Matilha: ${state.pack.length} bicho(s) entram junto com este.`, 3200);
     state.paused = true;
@@ -1426,6 +1428,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
     // até dois bichos da matilha entram juntos com o primeiro; o resto vira fila
     const extras = m.boss ? [] : state.pack.splice(0, 2);
     state.partnerMonsters = extras;
+    state.duelMonster = m;
     const ok = onEncounter?.(m, state.ground, !!m.boss, extras);
     if (!ok) {
       state.pendingMonster = null;
@@ -1436,9 +1439,14 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
 
   function onDuelClosed() {
     if (!state.open) return;
-    const m = state.pendingMonster;
+    // reserva: se o pending foi limpo por outro caminho, o duelo ainda sabe
+    // quem era o bicho da frente
+    const m = state.pendingMonster || state.duelMonster;
     state.pendingMonster = null;
+    state.duelMonster = null;
     state.paused = false;
+    // respiro depois da briga: o vizinho não pode puxar duelo no mesmo passo
+    state.encounterLockUntil = clock() + 6000;
     const partners = state.partnerMonsters || [];
     state.partnerMonsters = [];
     for (const partner of partners) {
@@ -1463,6 +1471,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
           if (next?.alive) {
             state.paused = true;
             state.pendingMonster = next;
+            state.duelMonster = next;
             setTimeout(() => {
               if (!state.open || !state.paused) return;
               state.encounterLockUntil = 0;

@@ -1623,7 +1623,9 @@ window.addEventListener("keydown", (e) => {
   if (gameActive && ["arrowup", "arrowdown", "arrowleft", "arrowright", " "].includes(k)) e.preventDefault();
   if (!state.started) return;
   if (state.modal === "duel" && duelUi) {
-    if (/^[1-4]$/.test(k)) { e.preventDefault(); duelUi.answer(Number(k) - 1); return; }
+    const letter = /^[a-f]$/.test(k) ? k.charCodeAt(0) - 97 : -1;
+    if (/^[1-6]$/.test(k)) { e.preventDefault(); duelUi.answer(Number(k) - 1); return; }
+    if (letter >= 0) { e.preventDefault(); duelUi.answer(letter); return; }
     if (k === "enter" || k === " ") { e.preventDefault(); duelUi.advance(); return; }
   }
   if (k === "escape") {

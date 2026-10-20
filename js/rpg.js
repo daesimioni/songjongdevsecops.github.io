@@ -172,6 +172,32 @@ function shuffle(list) {
   return a;
 }
 
+const OPTION_COUNT = 6;
+const NUMERIC_OPTION = /^-?\d+(?:[.,]\d+)?\s*%?$/;
+
+function looksNumeric(text) {
+  return NUMERIC_OPTION.test(String(text).trim());
+}
+
+function numericDistractors(text) {
+  const m = String(text).trim().match(/^(-?\d+(?:[.,]\d+)?)(\s*%?)$/);
+  if (!m) return [];
+  const raw = m[1].replace(",", ".");
+  const value = Number(raw);
+  if (!Number.isFinite(value)) return [];
+  const suffix = m[2] || "";
+  const decimals = raw.includes(".") ? 1 : 0;
+  const out = [];
+  const push = (n) => {
+    if (!Number.isFinite(n)) return;
+    const s = (decimals ? n.toFixed(1) : String(Math.round(n))).replace(".", ",") + suffix;
+    if (s !== text && !out.includes(s)) out.push(s);
+  };
+  for (const d of [1, -1, 2, -2, 3, -3, 10, -10]) push(value + d);
+  if (value !== 0) { push(value * 2); push(Math.round(value / 2)); }
+  return out;
+}
+
 const QUESTION_INDEX = new Map();
 function indexQuestions() {
   for (const [continent, tiers] of Object.entries(QUESTIONS)) {
@@ -592,7 +618,10 @@ export class RPG {
     if (this.data.enchants.furor) damage++;
     if (this.buffActive("damage")) damage++;
     damage += Number(this.activePet()?.passive.damage) || 0;
-    return damage + this.equipmentBonus().damage;
+    damage += this.equipmentBonus().damage;
+    // ponytail: teto de 3 por acerto; sem isso o bicho difícil de 12 vira
+    // uma pergunta só para quem tem equipamento completo
+    return Math.min(3, damage);
   }
 
   // ---------- itens ----------
@@ -813,6 +842,52 @@ export class RPG {
 
   // As salas têm tema. A pergunta que combina com o tema vai para a frente do
   // baralho; o resto continua no sorteio. Sem tema, é sorteio puro.
+  optionPool(continent, tier) {
+    if (!this.pool) this.pool = new Map();
+    const key = `${continent}:${tier}`;
+    if (this.pool.has(key)) return this.pool.get(key);
+    const pool = [];
+    const seen = new Set();
+    const bank = QUESTION_INDEX.get(continent) || {};
+    for (const t of [tier, 1, 2, 3]) {
+      for (const q of bank[t] || []) {
+        for (const text of q.options) {
+          const clean = String(text).trim();
+          if (!clean || clean.length > 44) continue;
+          const low = clean.toLowerCase();
+          if (seen.has(low)) continue;
+          seen.add(low);
+          pool.push(clean);
+        }
+      }
+    }
+    this.pool.set(key, pool);
+    return pool;
+  }
+
+  // toda pergunta oferece seis alternativas, A a F: com três o chute acerta
+  // demais. As que faltam vêm do próprio banco do continente, e pergunta
+  // numérica ganha número, não palavra.
+  padOptions(options, answer, continent, tier) {
+    const list = options.slice();
+    const correct = String(list[answer] ?? "");
+    const seen = new Set(list.map((s) => String(s).trim().toLowerCase()));
+    const push = (text) => {
+      const clean = String(text).trim();
+      if (!clean || list.length >= OPTION_COUNT) return;
+      const low = clean.toLowerCase();
+      if (seen.has(low)) return;
+      seen.add(low);
+      list.push(clean);
+    };
+    if (looksNumeric(correct)) for (const n of numericDistractors(correct)) push(n);
+    const pool = this.optionPool(continent, tier);
+    const numeric = looksNumeric(correct);
+    for (const text of shuffle(pool.filter((s) => looksNumeric(s) === numeric))) push(text);
+    for (const text of shuffle(pool)) push(text);
+    return { options: list, answer };
+  }
+
   themeScore(text, hint) {
     if (!hint) return 0;
     const body = String(text).toLowerCase();
@@ -830,10 +905,11 @@ export class RPG {
       for (const q of bank) {
         const options = q.options.map((text, i) => ({ text, ok: i === q.a }));
         const mixed = shuffle(options);
+        const filled = this.padOptions(mixed.map((o) => o.text), mixed.findIndex((o) => o.ok), continent, tier);
         deck.push({
           q: q.q,
-          options: mixed.map((o) => o.text),
-          answer: mixed.findIndex((o) => o.ok),
+          options: filled.options,
+          answer: filled.answer,
           why: q.why,
           tier,
           score: this.themeScore(`${q.q} ${q.why}`, hint),
@@ -843,6 +919,20 @@ export class RPG {
     return shuffle(deck).sort((a, b) => b.score - a.score);
   }
 
+  duelDeck(continent, tier, hint = "") {
+    const order = tier >= 3 ? [3, 2, 1] : tier === 2 ? [2, 1, 3] : [1, 2, 3];
+    const seen = new Set();
+    const deck = [];
+    for (const t of order) {
+      for (const item of this.buildDeck(continent, [t], hint)) {
+        if (seen.has(item.q)) continue;
+        seen.add(item.q);
+        deck.push(item);
+      }
+    }
+    return deck;
+  }
+
   startDuel(monster, ground, boss = false, partner = null) {
     if (boss ? !this.bossAlive(ground) : !this.monsterAlive(monster.id)) {
       return { ok: false, reason: "Este monstro não está mais aqui." };
@@ -850,8 +940,7 @@ export class RPG {
     const extras = (Array.isArray(partner) ? partner : partner ? [partner] : [])
       .filter((p) => p && p.id !== monster.id && this.monsterAlive(p.id))
       .slice(0, 2);
-    const tiers = boss ? [2, 3] : [monster.tier];
-    const deck = this.buildDeck(ground.continent, tiers, monster?.theme || ground.theme);
+    const deck = this.duelDeck(ground.continent, boss ? 3 : monster.tier, monster?.theme || ground.theme);
     if (!deck.length) return { ok: false, reason: "As perguntas deste continente ainda não foram escritas." };
     const hp = boss ? TIERS[4].hp : TIERS[monster.tier].hp;
     this.duel = {
@@ -873,7 +962,7 @@ export class RPG {
     };
     for (const p of extras) {
       const ptier = clamp(Number(p.tier) || 1, 1, 3);
-      const pdeck = this.buildDeck(ground.continent, [ptier], p.theme || ground.theme);
+      const pdeck = this.duelDeck(ground.continent, ptier, p.theme || ground.theme);
       if (!pdeck.length) continue;
       this.duel.partners.push({
         monster: p,

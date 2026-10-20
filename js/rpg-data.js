@@ -12,10 +12,12 @@ export const SKILLS = {
 };
 
 export const TIERS = {
-  1: { name: "fácil", stars: "★", hp: 2, xp: 10, damage: 2 },
-  2: { name: "médio", stars: "★★", hp: 3, xp: 18, damage: 3 },
-  3: { name: "difícil", stars: "★★★", hp: 3, xp: 30, damage: 4 },
-  4: { name: "chefe", stars: "☠", hp: 4, xp: 60, damage: 6 },
+  // hp é quantas perguntas certas o bicho aguenta; dano é o que ele tira
+  // quando você erra. Fácil pede 3, médio 7, difícil 12, chefe 18.
+  1: { name: "fácil", stars: "★", hp: 3, xp: 10, damage: 2 },
+  2: { name: "médio", stars: "★★", hp: 7, xp: 18, damage: 3 },
+  3: { name: "difícil", stars: "★★★", hp: 12, xp: 30, damage: 4 },
+  4: { name: "chefe", stars: "☠", hp: 18, xp: 60, damage: 6 },
 };
 
 export const ITEMS = {

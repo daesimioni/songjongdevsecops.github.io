@@ -128,7 +128,9 @@ const rpg = new RPG({
 const ground = GROUNDS.find((g) => g.id === "cs");
 const easy = ground.monsters[0];
 assert.equal(rpg.startDuel(easy, ground).ok, true);
-for (let i = 0; i < 6 && rpg.duel.phase !== "victory"; i++) {
+assert.equal(rpg.duel.monsterHpMax, 3, "monstro fácil pede 3 acertos");
+assert.equal(rpg.duel.question.options.length, 6, "pergunta traz seis alternativas");
+for (let i = 0; i < 20 && rpg.duel.phase !== "victory"; i++) {
   if (rpg.duel.phase === "question") rpg.answer(rpg.duel.question.answer);
   else rpg.next();
 }
@@ -139,6 +141,18 @@ assert.equal(rpg.hpMax(), 30, "item comum não é relíquia");
 assert.equal(xpGanho > 0, true);
 rpg.next();
 assert.equal(rpg.duel, null);
+
+// toda pergunta do duelo vem com seis alternativas A-F, sem repetir
+for (const g of GROUNDS) {
+  for (const tier of [1, 2, 3]) {
+    for (const item of rpg.buildDeck(g.continent, [tier], "")) {
+      assert.equal(item.options.length, 6, `pergunta de ${g.continent} tier ${tier} sem seis alternativas`);
+      assert.equal(new Set(item.options.map((o) => o.toLowerCase())).size, 6, "alternativas repetidas");
+      assert.ok(item.answer >= 0 && item.answer < 6, "resposta fora das alternativas");
+      assert.ok(item.options[item.answer].length > 0, "resposta vazia");
+    }
+  }
+}
 
 // errar tira vida
 const medium = ground.monsters[1];
@@ -157,7 +171,7 @@ assert.equal(rpg.allMonstersDown(ground), true);
 assert.equal(rpg.pullLever(ground).ok, true);
 assert.equal(rpg.bossAlive(ground), true);
 assert.equal(rpg.startDuel(ground.boss, ground, true).ok, true);
-for (let i = 0; i < 12 && rpg.duel.phase !== "victory"; i++) {
+for (let i = 0; i < 60 && rpg.duel.phase !== "victory"; i++) {
   if (rpg.duel.phase === "question") rpg.answer(rpg.duel.question.answer);
   else rpg.next();
 }
@@ -230,20 +244,20 @@ const duoMain = { id: "duo-main", name: "Bit", kind: "slime", tier: 1, theme: "l
 const duoPartner = { id: "duo-partner", name: "Olho", kind: "eye", tier: 2, theme: "memória" };
 assert.equal(duoRpg.startDuel(duoMain, duoGround, false, duoPartner).ok, true);
 assert.equal(duoRpg.duel.partner?.monster.id, "duo-partner", "segundo monstro entra no duelo");
-assert.equal(duoRpg.duel.partner.hp, 3, "vida do segundo monstro");
+assert.equal(duoRpg.duel.partner.hp, 7, "vida do segundo monstro");
 const partnerQuestion = duoRpg.duel.partner.question.q;
 duoRpg.answerPartner(duoRpg.duel.partner.question.answer);
 assert.equal(duoRpg.duel.partner.feedback?.correct, true, "acerto no segundo monstro");
 duoRpg.partnerNext();
 assert.equal(!!duoRpg.duel.partner.question, true, "segunda pergunta do parceiro");
-for (let i = 0; i < 6 && !duoRpg.duel.partner.done; i++) {
+for (let i = 0; i < 40 && !duoRpg.duel.partner.done; i++) {
   const p = duoRpg.duel.partner;
   duoRpg.answerPartner(p.question.answer);
   duoRpg.partnerNext();
 }
 assert.equal(duoRpg.duel.partner.done, true, "segundo monstro cai");
 assert.equal(duoRpg.monsterAlive("duo-partner"), false, "segundo monstro fica derrotado");
-for (let i = 0; i < 8 && duoRpg.duel.phase !== "victory"; i++) {
+for (let i = 0; i < 20 && duoRpg.duel.phase !== "victory"; i++) {
   if (duoRpg.duel.phase === "question") duoRpg.answer(duoRpg.duel.question.answer);
   else duoRpg.next();
 }
@@ -274,16 +288,16 @@ const trio = trioRpg.startDuel(
 );
 assert.equal(trio.ok, true, "duelo com matilha abre");
 assert.equal(trioRpg.duel.partners.length, 2, "dois parceiros entram juntos");
-assert.equal(trioRpg.duel.partners[1].hpMax, 3, "vida do terceiro bicho");
+assert.equal(trioRpg.duel.partners[1].hpMax, 12, "vida do terceiro bicho");
 for (let who = 0; who < 2; who++) {
-  for (let i = 0; i < 14 && !trioRpg.duel.partners[who].done; i++) {
+  for (let i = 0; i < 60 && !trioRpg.duel.partners[who].done; i++) {
     const p = trioRpg.duel.partners[who];
     if (p.feedback) trioRpg.partnerNext(who);
     else trioRpg.answerPartner(p.question.answer, who);
   }
   assert.equal(trioRpg.duel.partners[who].done, true, `parceiro ${who + 1} cai`);
 }
-for (let i = 0; i < 10 && trioRpg.duel.phase !== "victory"; i++) {
+for (let i = 0; i < 30 && trioRpg.duel.phase !== "victory"; i++) {
   if (trioRpg.duel.phase === "question") trioRpg.answer(trioRpg.duel.question.answer);
   else trioRpg.next();
 }
@@ -307,9 +321,13 @@ const spellRpg = new RPG({ getLevel: () => 1, gainXp: () => {}, toast: () => {},
 const spellGround = { id: "runa-test", continent: "cs", name: "Runas", dungeon: true, loot: ["parafuso", "chip", "fita"], bossLoot: "nucleo", material: "ferro" };
 const spellMain = (id, tier = 1) => ({ id, name: id, kind: "slime", tier, theme: "lógica" });
 spellRpg.data.hp = 5;
-spellRpg.addItem("runa-trovao", 1);
+spellRpg.addItem("runa-trovao", 2);
 spellRpg.startDuel(spellMain("runa-main-1"), spellGround, false);
-assert.equal(spellRpg.useItem("runa-trovao").victory, true, "trovao derruba o da frente");
+const trovao1 = spellRpg.useItem("runa-trovao");
+assert.equal(trovao1.victory, false, "trovao sozinho nao derruba o facil");
+assert.equal(spellRpg.duel.monsterHp, 1, "trovao tira 2 do monstro de 3");
+spellRpg.next();
+assert.equal(spellRpg.useItem("runa-trovao").victory, true, "segundo trovao derruba o da frente");
 assert.equal(spellRpg.duel.phase, "victory", "trovao pode vencer o duelo");
 assert.equal(spellRpg.itemCount("runa-trovao"), 0, "trovao some ao usar");
 spellRpg.next();
@@ -349,16 +367,19 @@ assert.equal(spellRpg.useItem("runa-faisca").spark, true, "faisca avisa o duelo"
 assert.equal(spellRpg.itemCount("runa-faisca"), 0, "faisca some ao usar");
 spellRpg.duel = null;
 
-spellRpg.addItem("runa-fogo", 2);
+spellRpg.addItem("runa-fogo", 3);
 spellRpg.startDuel(spellMain("runa-main-6", 3), spellGround, false, [spellMain("runa-p1", 1), spellMain("runa-p2", 3)]);
 const fogo = spellRpg.useItem("runa-fogo");
 assert.equal(fogo.ok, true, "fogo usa");
-assert.equal(spellRpg.duel.monsterHp, 2, "fogo tira 1 do principal");
+assert.equal(spellRpg.duel.monsterHp, 11, "fogo tira 1 do principal");
 assert.equal(spellRpg.duel.partners.every((p) => p.hp < p.hpMax), true, "fogo tira 1 da matilha");
-assert.equal(spellRpg.duel.partners[0].done, false, "parceiro de vida 2 aguenta o primeiro fogo");
+assert.equal(spellRpg.duel.partners[0].done, false, "parceiro de vida 3 aguenta o primeiro fogo");
 spellRpg.next();
 spellRpg.useItem("runa-fogo");
-assert.equal(spellRpg.duel.partners[0].done, true, "segundo fogo derruba o parceiro de vida 2");
+assert.equal(spellRpg.duel.partners[0].done, false, "parceiro de vida 3 aguenta o segundo fogo");
+spellRpg.next();
+spellRpg.useItem("runa-fogo");
+assert.equal(spellRpg.duel.partners[0].done, true, "terceiro fogo derruba o parceiro de vida 3");
 assert.equal(spellRpg.monsterAlive("runa-p1"), false, "parceiro queimado fica derrotado");
 spellRpg.duel = null;
 

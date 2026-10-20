@@ -76,11 +76,19 @@ A superfície é sala de aula. Em cada clareira com bandeira fica um **instrutor
 baralho da caverna daquele continente. No treino, errar **não tira vida**, a
 vitória **não dá loot** e a perícia do continente continua subindo.
 
-Quem paga é o bicho da caverna. Cada monstro abre uma prova de perguntas:
+Quem paga é o bicho da caverna. Cada monstro abre uma prova de perguntas,
+sempre com **seis alternativas, de A a F**, e a vida do bicho é o número de
+acertos que ele aguenta:
 
-- **fácil**: duas respostas certas derrubam, errar tira 2 de vida.
-- **médio**: três certas, errar tira 3.
-- **difícil**: três certas, errar tira 4.
+- **fácil**: 3 acertos, errar tira 2 de vida.
+- **médio**: 7 acertos, errar tira 3.
+- **difícil**: 12 acertos, errar tira 4.
+- **chefe**: 18 acertos, errar tira 6.
+
+O dano por acerto tem teto de 3, então o difícil continua sendo uma conversa
+longa mesmo com equipamento completo. O baralho do duelo começa pelas perguntas
+do andar do bicho e completa com as dos outros andares do continente, sem
+repetir pergunta no mesmo duelo.
 
 Acertar também sobe a perícia do continente (Lógica, Abstração, Mecânica,
 Reação, Harmonia, Inferência). A perícia aumenta o dano. Cada vitória dá XP e

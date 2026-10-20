@@ -4,6 +4,7 @@ import { ITEMS, TIERS } from "./rpg-data.js";
 import { drawCreature } from "./creature.js";
 
 const $ = (id) => document.getElementById(id);
+const LETTERS = "ABCDEF";
 let lastPick = null;
 let sparked = null;
 let hinted = null;
@@ -163,7 +164,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
     q.options.forEach((text, i) => {
       const b = el("button", "duel-option");
       b.type = "button";
-      b.appendChild(el("kbd", "", String(i + 1)));
+      b.appendChild(el("kbd", "", LETTERS[i] || String(i + 1)));
       b.appendChild(el("span", "", text));
       if (hinted === i) b.classList.add("hinted");
       if (sparked === i) {
@@ -220,7 +221,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
         main.appendChild(bar);
       }
       if (petInfo) main.appendChild(el("p", "duel-petinfo", petInfo));
-      const foot = el("p", "duel-hint", "Toque numa alternativa (ou 1, 2 e 3 no teclado). Errar tira vida; acertar tira vida do monstro.");
+      const foot = el("p", "duel-hint", "Toque numa alternativa (ou A a F no teclado). Errar tira vida; acertar tira vida do monstro.");
       main.appendChild(foot);
     }
     if (live.length) {
@@ -256,7 +257,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
       p.question.options.forEach((text, i) => {
         const b = el("button", "duel-option");
         b.type = "button";
-        b.appendChild(el("kbd", "", String(i + 1)));
+        b.appendChild(el("kbd", "", LETTERS[i] || String(i + 1)));
         b.appendChild(el("span", "", text));
         b.addEventListener("click", () => {
           const res = rpg.answerPartner(i, who);
