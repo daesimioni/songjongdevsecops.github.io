@@ -14,6 +14,7 @@ import { createSocial } from "./social.js";
 import { createBackup } from "./backup.js";
 import { createPvp } from "./pvp.js";
 import { OUTFITS, outfitById, outfitColors } from "./outfits.js";
+import { isAdminKey } from "./admin.js";
 import { findPath, nearestWalkable } from "./path.js";
 import { feedPeer, peerRenderPosition } from "./interp.js";
 import { RPG } from "./rpg.js";
@@ -765,6 +766,20 @@ function saveCards() { writeJSON(STORAGE.cards, Array.from(state.cards)); }
 function saveNpcMemory() { writeJSON(STORAGE.npc, state.npcMemory); }
 function saveDocks() { writeJSON(STORAGE.docks, Array.from(state.docks)); }
 function saveXp() { writeJSON(STORAGE.xp, state.xp); }
+
+let adminShown = null;
+function syncAdmin() {
+  if (!rede.pk && !rede.npub) {
+    $("admin-badge").hidden = true;
+    adminShown = false;
+    return;
+  }
+  const admin = isAdminKey(rede.pk, rede.npub);
+  if (adminShown === admin) return;
+  adminShown = admin;
+  $("admin-badge").hidden = !admin;
+  document.body.classList.toggle("is-admin", admin);
+}
 
 let questTrackAt = 0;
 function updateQuestTrack(now = 0) {
@@ -1774,6 +1789,7 @@ function loop(now) {
       else updateMovement(dt);
       updateZone();
       updateQuestTrack(now);
+      if (now % 2000 < 20) syncAdmin();
       world.updateNpcs(dt, now);
     } else {
       player.moving = false;

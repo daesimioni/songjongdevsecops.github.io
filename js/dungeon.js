@@ -716,8 +716,10 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
     def.rooms.forEach((room) => {
       if (room.kind === "entrance" || room.kind === "city") return;
       const tier = clamp(room.tier || 1, 1, 3);
-      // menos bichos por sala e mais espalhados: briga atrás de briga cansa
-      const count = tier >= 3 ? 2 : 1;
+      // Regra da construção: um bicho por sala. A sala já é a unidade de
+      // encontro; dois no mesmo cômodo viram monte e quebram a leitura do
+      // espaço. O chefe fica na sala dele, separado dos comuns.
+      const count = 1;
       for (let k = 0; k < count; k++) {
         const id = `dg-${def.continent}-${room.id}-m${k}`;
         if (!rpg.monsterAlive(id)) continue;
@@ -726,7 +728,12 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
       }
       n += count;
     });
-    return out;
+    // regra da construção: nenhum par de bichos comuns a menos de 4 tiles.
+    // Se uma planta futura criar salas vizinhas demais, o segundo sai.
+    return out.filter((m, i) => out.slice(0, i).every((other) => {
+      const gap = Math.hypot(m.x - other.x, m.y - other.y);
+      return gap >= 4;
+    }));
   }
 
   function spawnBoss(def) {

@@ -273,6 +273,25 @@ export function createWorld() {
     return false;
   };
 
+  const decoForArea = {
+    "cs-arch": ["rack", "pillar", "terminal"],
+    "cs-net": ["antenna", "rack", "node"],
+    "cs-security": ["lock", "rack", "crystal"],
+    "math-analysis": ["compass", "book", "star"],
+    "math-prob": ["die", "orb", "star"],
+    "physics-em": ["coil", "crystal", "wave"],
+    "physics-thermo": ["gauge", "coil", "crystal"],
+    "physics-optics": ["lens", "crystal", "star"],
+    "chem-organic": ["molecule", "mushroom", "bubble"],
+    "chem-analytical": ["flask", "molecule", "crystal"],
+    "music-acoustics": ["speaker", "wave", "note"],
+    "music-form": ["metronome", "note", "book"],
+    "ai-vision": ["orb", "synapse", "node"],
+    "ai-language": ["book", "synapse", "terminal"],
+    "lingua-literature": ["quill", "book", "flower"],
+    "lingua-semantics": ["mask", "book", "star"],
+  };
+
   const decoFor = {
     hub: ["tree", "tree", "flower", "bench", "lamp", "star"],
     cs: ["terminal", "node", "lamp", "terminal", "crystal"],
@@ -292,7 +311,8 @@ export function createWorld() {
       if (hash2(x, y) > 0.055) continue;
       const c = continentAtTile(x, y);
       if (!c) continue;
-      const kinds = decoFor[c];
+      const area = areaAtTile(x, y);
+      const kinds = (area && decoForArea[area.id]) || decoFor[c];
       const kind = kinds[Math.floor(hash2(x * 7, y * 11) * kinds.length)];
       if (kind === "tree") {
         if (t === SAND) continue;
@@ -304,7 +324,7 @@ export function createWorld() {
         set(x, y, FLOWER);
         continue;
       }
-      decor.push({ type: kind, x: x + 0.5, y: y + 0.5, accent: CONTINENTS[c].accent, hue: hash2(x, y) });
+      decor.push({ type: kind, x: x + 0.5, y: y + 0.5, accent: area?.accent || CONTINENTS[c].accent, hue: hash2(x, y) });
     }
   }
 
@@ -326,6 +346,20 @@ export function createWorld() {
       text: area ? area.name : CONTINENTS[stone.continent].name,
       accent: area ? area.accent : CONTINENTS[stone.continent].accent,
     });
+  }
+
+  // assinatura de cada área: uma fileira do objeto que só ela tem, atrás do farol
+  for (const stone of WAYSTONES) {
+    const area = areaAtTile(stone.x, stone.y);
+    if (!area) continue;
+    const kinds = decoForArea[area.id];
+    if (!kinds) continue;
+    for (let i = 0; i < 3; i++) {
+      decor.push({
+        type: kinds[0], x: stone.x - 3 + i * 3, y: stone.y - 2.2,
+        accent: area.accent, hue: hash2(stone.x + i, stone.y),
+      });
+    }
   }
 
   // ilhas solitárias no oceano

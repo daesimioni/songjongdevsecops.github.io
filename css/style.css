@@ -111,6 +111,19 @@ kbd {
   text-transform: lowercase;
 }
 
+.admin-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  border: 1px solid rgba(255, 200, 87, 0.6);
+  border-radius: 4px;
+  background: rgba(255, 200, 87, 0.14);
+  color: var(--amber);
+  font-family: var(--pixel);
+  font-size: 6.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
 .hud-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
 
 .pill {
@@ -639,7 +652,20 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
 @media (max-width: 980px) {
   .hud { flex-wrap: wrap; gap: 8px; }
   .brand { flex: 1 1 100%; }
-  .hud-actions { width: 100%; justify-content: flex-end; }
+  .admin-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  border: 1px solid rgba(255, 200, 87, 0.6);
+  border-radius: 4px;
+  background: rgba(255, 200, 87, 0.14);
+  color: var(--amber);
+  font-family: var(--pixel);
+  font-size: 6.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.hud-actions { width: 100%; justify-content: flex-end; }
   .hud-btn { font-size: 11px; padding: 6px 8px; }
   .hud-btn kbd { display: none; }
   .pill-progress { display: none; }
@@ -651,7 +677,20 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
   .brand { flex: 1 1 100%; }
   .brand-sub { display: none; }
   .brand-title { font-size: 10px; white-space: nowrap; }
-  .hud-actions { width: 100%; justify-content: flex-end; gap: 5px; }
+  .admin-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  border: 1px solid rgba(255, 200, 87, 0.6);
+  border-radius: 4px;
+  background: rgba(255, 200, 87, 0.14);
+  color: var(--amber);
+  font-family: var(--pixel);
+  font-size: 6.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.hud-actions { width: 100%; justify-content: flex-end; gap: 5px; }
   #net-pill { margin-right: auto; }
   .hud-btn { font-size: 11px; padding: 6px 8px; }
   .hud-btn kbd { display: none; }
@@ -1442,7 +1481,20 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
   .rede-key { max-width: 100%; }
   .rede-msgs { max-height: 34vh; }
   .rede-dm-left span { max-width: 180px; }
-  .hud-actions { flex-wrap: wrap; }
+  .admin-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  border: 1px solid rgba(255, 200, 87, 0.6);
+  border-radius: 4px;
+  background: rgba(255, 200, 87, 0.14);
+  color: var(--amber);
+  font-family: var(--pixel);
+  font-size: 6.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.hud-actions { flex-wrap: wrap; }
 }
 
 /* ---------- ficha e caçadas ---------- */
@@ -2132,7 +2184,20 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
     gap: 6px;
   }
   .brand-title { font-size: 10px; }
-  .hud-actions { flex-wrap: nowrap; gap: 4px; }
+  .admin-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  border: 1px solid rgba(255, 200, 87, 0.6);
+  border-radius: 4px;
+  background: rgba(255, 200, 87, 0.14);
+  color: var(--amber);
+  font-family: var(--pixel);
+  font-size: 6.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.hud-actions { flex-wrap: nowrap; gap: 4px; }
   .hud-btn { min-height: 38px; padding: 0 7px; font-size: 11px; white-space: nowrap; }
   .hud-btn-icon { width: 36px; padding: 0; }
   #btn-sound { width: 38px; padding: 0; justify-content: center; font-size: 0; }

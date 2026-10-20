@@ -17,6 +17,7 @@ const { DUNGEONS } = await import("../js/dungeon-data.js");
 const { POSTS, NPCS } = await import("../js/content.js");
 const { QUESTS } = await import("../js/quests.js");
 const { RPG } = await import("../js/rpg.js");
+const { isAdminKey } = await import("../js/admin.js");
 const { createWorld } = await import("../js/world.js");
 
 const faults = [];
@@ -176,6 +177,11 @@ for (const dungeon of DUNGEONS) {
 }
 
 // o mundo que o jogo monta: instrutores na superfície, bicho só na caverna
+// chave pública do administrador: hex ou npub, nunca a privada
+check(isAdminKey("ab".repeat(32), "npub1teste", ["AB".repeat(32)]), "admin não reconhece a própria chave hex");
+check(isAdminKey("", "npub1teste", ["npub1teste"]), "admin não reconhece o próprio npub");
+check(!isAdminKey("cd".repeat(32), "npub1outro", ["ab".repeat(32)]), "admin reconhece chave errada");
+
 const world = createWorld();
 for (const area of AREAS) {
   check(world.areaAt(area.land.cx, area.land.cy)?.id === area.id, `área ${area.id} não é reconhecida no mapa`);

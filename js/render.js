@@ -21,6 +21,7 @@ function roundRect(ctx, x, y, w, h, r) {
 
 export function createRenderer(canvas, world) {
   const ctx = canvas.getContext("2d", { alpha: false });
+  if (ctx) ctx.imageSmoothingEnabled = false;
   let dpr = 1, vw = 0, vh = 0, zoom = 3;
   let camX = 0, camY = 0, shake = 0;
   let rendererReady = false;
@@ -614,6 +615,84 @@ export function createRenderer(canvas, world) {
         if (i === -8) ctx.moveTo(px + i, yy); else ctx.lineTo(px + i, yy);
       }
       ctx.stroke();
+    } else if (d.type === "antenna") {
+      const a = d.accent || "#6bd5ff";
+      ctx.strokeStyle = "#2a3048"; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(px, py + 10); ctx.lineTo(px, py - 18); ctx.stroke();
+      ctx.strokeStyle = hexA(a, 0.55); ctx.lineWidth = 1;
+      for (let r = 5; r <= 13; r += 4) { ctx.beginPath(); ctx.arc(px, py - 18, r, -2.4, -0.7); ctx.stroke(); }
+      ctx.fillStyle = a; ctx.fillRect(px - 1, py - 20, 2, 2);
+    } else if (d.type === "rack") {
+      const a = d.accent || "#61f4c0";
+      ctx.fillStyle = "#141c2b"; ctx.fillRect(px - 7, py - 20, 14, 30);
+      ctx.fillStyle = "#24324a"; ctx.fillRect(px - 5, py - 18, 10, 26);
+      for (let i = 0; i < 4; i++) {
+        ctx.fillStyle = Math.sin(time * 0.003 + i + d.x) > 0 ? a : "#1c2a3a";
+        ctx.fillRect(px - 4, py - 15 + i * 5, 2, 2);
+        ctx.fillStyle = "#0d1420"; ctx.fillRect(px, py - 15 + i * 5, 3, 2);
+      }
+    } else if (d.type === "lock") {
+      const a = d.accent || "#ffc857";
+      ctx.strokeStyle = "#3a4466"; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(px, py - 10, 5, Math.PI, 0); ctx.stroke();
+      ctx.fillStyle = "#24304a"; ctx.fillRect(px - 7, py - 10, 14, 13);
+      ctx.fillStyle = hexA(a, 0.85); ctx.fillRect(px - 1, py - 5, 2, 4);
+      ctx.fillRect(px - 2, py - 1, 4, 2);
+    } else if (d.type === "compass") {
+      const a = d.accent || "#b48cff";
+      ctx.strokeStyle = "#4a4466"; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.arc(px, py, 8, 0, Math.PI * 2); ctx.stroke();
+      ctx.strokeStyle = hexA(a, 0.9);
+      ctx.beginPath(); ctx.moveTo(px - 5, py + 4); ctx.lineTo(px + 4, py - 5); ctx.stroke();
+      ctx.fillStyle = a; ctx.fillRect(px - 1, py - 1, 2, 2);
+    } else if (d.type === "die") {
+      const a = d.accent || "#b48cff";
+      ctx.fillStyle = "#2a2438"; ctx.fillRect(px - 6, py - 6, 12, 12);
+      ctx.fillStyle = a;
+      for (const [dx, dy] of [[-3,-3],[3,-3],[0,0],[-3,3],[3,3]]) ctx.fillRect(px + dx, py + dy, 2, 2);
+    } else if (d.type === "coil") {
+      const a = d.accent || "#ffb26b";
+      ctx.strokeStyle = hexA(a, 0.7); ctx.lineWidth = 1;
+      for (let i = 0; i < 4; i++) { ctx.beginPath(); ctx.arc(px, py - i * 3, 6, 0, Math.PI * 2); ctx.stroke(); }
+      ctx.fillStyle = "#2a3048"; ctx.fillRect(px - 7, py + 9, 14, 3);
+    } else if (d.type === "gauge") {
+      const a = d.accent || "#ff7aa8";
+      ctx.strokeStyle = "#3a3a55"; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(px, py, 7, Math.PI, 0); ctx.stroke();
+      const ang = -Math.PI + (0.5 + Math.sin(time * 0.002 + d.x) * 0.35) * Math.PI;
+      ctx.strokeStyle = a; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px + Math.cos(ang) * 6, py + Math.sin(ang) * 6); ctx.stroke();
+    } else if (d.type === "lens") {
+      const a = d.accent || "#ff7aa8";
+      ctx.fillStyle = "#1a2434"; ctx.fillRect(px - 1, py - 2, 2, 10);
+      ctx.fillStyle = hexA(a, 0.28); ctx.beginPath(); ctx.ellipse(px, py - 6, 5, 8, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = hexA(a, 0.8); ctx.lineWidth = 1; ctx.beginPath(); ctx.ellipse(px, py - 6, 5, 8, 0, 0, Math.PI * 2); ctx.stroke();
+      ctx.fillStyle = "rgba(255,255,255,0.35)"; ctx.fillRect(px - 2, py - 10, 1, 3);
+    } else if (d.type === "molecule") {
+      const a = d.accent || "#7ee787";
+      ctx.strokeStyle = hexA(a, 0.5); ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(px - 7, py + 5); ctx.lineTo(px, py - 5); ctx.lineTo(px + 7, py + 5); ctx.stroke();
+      ctx.fillStyle = hexA(a, 0.85);
+      for (const [dx, dy] of [[-7,5],[0,-5],[7,5]]) { ctx.beginPath(); ctx.arc(px + dx, py + dy, 2.4, 0, Math.PI * 2); ctx.fill(); }
+    } else if (d.type === "quill") {
+      const a = d.accent || "#e8c07a";
+      ctx.strokeStyle = a; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(px - 5, py + 9); ctx.quadraticCurveTo(px + 2, py - 8, px + 7, py - 12); ctx.stroke();
+      ctx.fillStyle = hexA(a, 0.5); ctx.fillRect(px + 4, py - 13, 4, 2); ctx.fillRect(px + 2, py - 10, 4, 2);
+    } else if (d.type === "mask") {
+      const a = d.accent || "#e8c07a";
+      ctx.fillStyle = "#2a2438"; ctx.fillRect(px - 7, py - 10, 14, 12);
+      ctx.fillStyle = hexA(a, 0.8);
+      ctx.fillRect(px - 5, py - 7, 3, 2); ctx.fillRect(px + 2, py - 7, 3, 2);
+      ctx.beginPath(); ctx.arc(px, py + 1, 4, 0, Math.PI); ctx.fill();
+    } else if (d.type === "metronome") {
+      const a = d.accent || "#ffb26b";
+      ctx.fillStyle = "#2a2438";
+      ctx.beginPath(); ctx.moveTo(px, py - 18); ctx.lineTo(px + 7, py + 10); ctx.lineTo(px - 7, py + 10); ctx.closePath(); ctx.fill();
+      const swing = Math.sin(time * 0.004 + d.x) * 6;
+      ctx.strokeStyle = a; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(px, py + 7); ctx.lineTo(px + swing, py - 14); ctx.stroke();
+      ctx.fillStyle = a; ctx.fillRect(px + swing - 1, py - 15, 2, 2);
     }
   }
 
@@ -1082,38 +1161,11 @@ export function createRenderer(canvas, world) {
     ctx.restore();
   }
 
-  const labelCache = new Map();
-  function npcLabel(npc) {
-    let entry = labelCache.get(npc.id);
-    if (entry) return entry;
-    const text = NPCS[npc.id]?.name || npc.id;
-    const c = document.createElement("canvas");
-    c.width = 120;
-    c.height = 12;
-    const g = c.getContext("2d");
-    g.font = "5px ui-monospace, monospace";
-    const w = Math.ceil(g.measureText(text).width + 6);
-    c.width = Math.max(12, w);
-    const g2 = c.getContext("2d");
-    g2.font = "5px ui-monospace, monospace";
-    g2.textAlign = "center";
-    g2.fillStyle = "rgba(8,10,20,0.72)";
-    roundRect(g2, 0, 0, c.width, 9, 2);
-    g2.fill();
-    g2.fillStyle = "#cfc9e6";
-    g2.fillText(text, c.width / 2, 7);
-    entry = { canvas: c, w: c.width };
-    labelCache.set(npc.id, entry);
-    return entry;
-  }
-
   function drawNpc(npc, time) {
     const px = npc.x * TILE, py = npc.y * TILE;
     const bob = Math.sin(time * 0.002 + npc.bob) * 1.2;
     const colors = { skin: "#d9b08c", hair: "#4a3a55", shirt: npc.accent, pants: "#2f2c45" };
     drawHuman(px, py + bob, npc.facing || 0, !!npc.moving, time, colors, null, 0.9);
-    const label = npcLabel(npc);
-    ctx.drawImage(label.canvas, px - label.w / 2, py - 26);
     if (npc.questMark) {
       const ready = npc.questMark === "ready";
       const color = ready ? "#61f4c0" : "#ffc857";
@@ -1132,6 +1184,32 @@ export function createRenderer(canvas, world) {
     if (npc.bubble && npc.bubble.until > time) {
       drawBubble(npc.bubble.text, px, py, npc.accent || "#ffc857");
     }
+  }
+
+  function drawNpcLabels(npcs, scale, camX, camY) {
+    // rótulos em espaço de tela: o texto é rasterizado no tamanho final, sem
+    // passar pelo zoom do mundo (era isso que deixava o nome embaçado).
+    ctx.save();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.imageSmoothingEnabled = false;
+    const fs = Math.max(8, Math.round(4 * scale));
+    ctx.font = `${fs}px "Press Start 2P", ui-monospace, monospace`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    for (const npc of npcs) {
+      const sx = (npc.x * TILE - camX) * scale;
+      const sy = (npc.y * TILE - 26 - camY) * scale;
+      if (sx < -100 || sx > canvas.width + 100 || sy < -20 || sy > canvas.height + 20) continue;
+      const text = NPCS[npc.id]?.name || npc.id;
+      const w = ctx.measureText(text).width + 4 * scale;
+      const h = fs + 4;
+      ctx.fillStyle = "rgba(8,10,20,0.78)";
+      roundRect(ctx, sx - w / 2, sy, w, h, 2 * scale);
+      ctx.fill();
+      ctx.fillStyle = "#e6e1f5";
+      ctx.fillText(text, sx, sy + h / 2 + 0.5);
+    }
+    ctx.restore();
   }
 
   function skiffRear(dir) {
@@ -1547,6 +1625,7 @@ export function createRenderer(canvas, world) {
       ctx.fillRect(m.x, m.y, m.r, m.r);
     }
 
+    drawNpcLabels(npcs, scale, camX, camY);
     drawMinimap(player, peers);
     const frameEnd = performance.now();
     if (stats._prev) {

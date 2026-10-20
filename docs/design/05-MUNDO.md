@@ -58,7 +58,8 @@ O alvo:
 | Área da Semântica | Língua | 272,135 | 252,120 40x30 |
 
 Cada área tem duas estações, uma pedra de viagem, um NPC com missão, uma
-clareira de caçada, um instrutor e uma caverna própria. Agora são duas áreas por
+clareira de caçada, um instrutor, uma caverna própria e uma decoração
+assinatura (antena, dado, lente, molécula, pena, máscara, relógio etc.). Agora são duas áreas por
 continente, catorze no total. A ponte liga a área ao
 continente ou à área vizinha; o teste de caminho cobre todas as bocas.
 
