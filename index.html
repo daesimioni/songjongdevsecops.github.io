@@ -111,7 +111,7 @@
           <p id="dg-sub" class="dg-sub"></p>
         </div>
         <div class="dg-actions">
-          <button id="dg-sprint" class="dg-exit" type="button" aria-pressed="false">turbo <kbd>Espaço</kbd></button>
+          <button id="dg-sprint" class="dg-exit" type="button" aria-label="ligar ou desligar a nave" aria-pressed="false">turbo <kbd>Espaço</kbd></button>
           <button id="dg-sheet" class="dg-exit" type="button">ficha <kbd>C</kbd></button>
           <button id="dg-exit" class="dg-exit" type="button">sair <kbd>Esc</kbd></button>
         </div>
@@ -130,7 +130,7 @@
       <canvas id="dg-map" width="128" height="96" aria-label="Minimapa da caverna, com o que já foi andado"></canvas>
       <p id="dg-msg" class="dg-msg" role="status" aria-live="polite"></p>
       <div id="dg-prompt" class="dg-prompt" hidden><kbd>F</kbd> <span></span></div>
-      <p id="dg-help" class="dg-help"><span class="kb-only">WASD ou clique para andar · <kbd>F</kbd> interage · <kbd>C</kbd> ficha · <kbd>Espaço</kbd> acende a nave · <kbd>Esc</kbd> sobe</span><span class="touch-only">toque no chão para andar · toque no objeto para interagir · segure turbo para voar · ficha e sair no topo</span></p>
+      <p id="dg-help" class="dg-help"><span class="kb-only">WASD ou clique para andar · <kbd>F</kbd> interage · <kbd>C</kbd> ficha · <kbd>Espaço</kbd> liga e desliga a nave · <kbd>Esc</kbd> sobe</span><span class="touch-only">toque no chão para andar · toque no objeto para interagir · toque em turbo para ligar a nave · ficha e sair no topo</span></p>
     </div>
   </div>
 
@@ -379,7 +379,7 @@
         <div><kbd>C</kbd><span>ficha</span></div>
         <div><kbd>Esc</kbd><span>fechar</span></div>
       </div>
-      <p class="help-note">Segure <kbd>Espaço</kbd> para acender a nave e cruzar o mapa mais rápido; no celular, segure o botão <strong>Turbo</strong>. A nave não atravessa água: as pontes continuam sendo caminho.</p>
+      <p class="help-note">Aperte <kbd>Espaço</kbd> para ligar a nave e cruzar o mapa mais rápido; aperte de novo para desligar. No celular, toque em <strong>Turbo</strong> para ligar ou desligar. A nave não atravessa água: as pontes continuam sendo caminho.</p>
       <p class="help-note"><kbd>Enter</kbd> também abre a conversa; com ela aberta, <kbd>Enter</kbd> envia e fecha.</p>
       <p class="help-note">No celular, use o direcional, o botão A e o Turbo; os botões do topo abrem Falar, Rede, Diário e Ficha, e a conversa sobe junto com o teclado. A praça é pública: quem estiver na mesma sala vê seu apelido, seu boneco e suas mensagens. Use um apelido, não seu nome completo.</p>
       <p class="help-note">As <strong>Pedras do Porto</strong>, os monólitos brilhantes nas docas, abrem a viagem rápida para os continentes que você já visitou. As pontes também funcionam a pé.</p>
@@ -391,7 +391,7 @@
       <p class="help-note">Na <strong>Rede</strong> dá para <strong>desafiar</strong> outro jogador para um duelo de perguntas: você escolhe uma carta (muito fácil a muito difícil), ele responde para se defender. Errar custa compostura, não vida nem item. Quem chega a zero fica 10 segundos desativado.</p>
       <p class="help-note">Na cidade subterrânea: a forja abre a Ficha, a mesa grava encantos permanentes, a horta quer semente e o bicho quer ração. Veios de cristal pedem picareta. A escada do fundo sai na outra boca do continente. A mestra da cidade vende equipamento por material.</p>
       <p class="help-note">Na caverna, dois ou três bichos que veem você viram <strong>matilha</strong>: o próximo ataca depois do primeiro. A <strong>Runa da Faísca</strong> elimina uma alternativa errada da pergunta atual.</p>
-      <p class="help-note">A <strong>Ficha</strong> (<kbd>C</kbd>) agora tem <strong>equipamento</strong> (arma, elmo, armadura, pernas, botas, escudo, anel e colar) e o editor de <strong>trajes</strong>: complete as cinco estações de um continente para abrir o traje dele. A roupa é a mesma na superfície e na caverna. Segure <kbd>Espaço</kbd> (ou o turbo no topo da caverna) para voar baixo.</p>
+      <p class="help-note">A <strong>Ficha</strong> (<kbd>C</kbd>) agora tem <strong>equipamento</strong> (arma, elmo, armadura, pernas, botas, escudo, anel e colar) e o editor de <strong>trajes</strong>: complete as cinco estações de um continente para abrir o traje dele. A roupa é a mesma na superfície e na caverna. Aperte <kbd>Espaço</kbd> (ou toque em turbo no topo da caverna) para ligar a nave; aperte de novo para desligar.</p>
       <p class="help-note">Ao lado de cada clareira há uma <strong>boca de caverna</strong>. Lá dentro o bicho que vê você começa a batalha sozinho, e quanto mais fundo, mais forte. O chão dá ferro, erva, cristal e madeira; a forja da cidade subterrânea faz ferramentas, comida, tocha, chave e bomba. Baú fundo pede chave. <kbd>Esc</kbd> sobe de volta; no celular, toque no chão para andar, toque no objeto para interagir e use <strong>ficha</strong> e <strong>sair</strong> no topo.</p>
       <p class="help-note">A <strong>Rede</strong> é a conversa do mundo: canais por continente, DMs privadas e a lista de quem está por perto. Sua conta é uma chave Nostr criada e guardada neste navegador, sem cadastro e sem servidor meu. Só conteúdo marcado pelo jogo aparece ali. Na aba <strong>Pessoas</strong>, monte uma <strong>party</strong> de até 8 jogadores e veja quem está na sala.</p>
       <p class="help-note">O mapa tem <strong>86 áreas</strong>: as doze antigas e uma para cada seção do catálogo de Matemática, Física, Química, Computação, Língua Portuguesa e das interseções entre elas, com estação, caverna, caçada e missão próprias. Áreas vizinhas se ligam por <strong>ponte</strong>; as interseções descem pelo <strong>túnel da conurbação</strong>, que também leva a qualquer capital já descoberta e ao <strong>Porto Submerso</strong>, a camada -2.</p>
@@ -423,7 +423,7 @@
     <div class="intro-card">
       <p class="intro-eyebrow">um blog jogável · edição 2026</p>
       <h1 id="intro-title">THE<br>LEARNING VALLEY</h1>
-      <p class="intro-lead">Sete continentes, 86 áreas e 454 fragmentos: cada estação é uma página com um instrumento para mexer. Os NPCs dão missões, as caçadas dão itens e a Rede liga você aos outros. Ande, clique no chão e segure Espaço para cruzar o mapa voando baixo.</p>
+      <p class="intro-lead">Sete continentes, 86 áreas e 454 fragmentos: cada estação é uma página com um instrumento para mexer. Os NPCs dão missões, as caçadas dão itens e a Rede liga você aos outros. Ande, clique no chão e aperte Espaço para ligar a nave e cruzar o mapa; aperte de novo para desligar.</p>
 
       <section id="intro-key-step" class="intro-step">
         <div id="intro-saved" class="intro-saved" hidden>
@@ -491,7 +491,7 @@
       <button type="button" data-dir="right" aria-label="direita">▶</button>
     </div>
     <div class="touch-right">
-      <button type="button" id="touch-sprint" class="touch-sprint" aria-label="acender a nave">TURBO</button>
+      <button type="button" id="touch-sprint" class="touch-sprint" aria-label="ligar ou desligar a nave" aria-pressed="false">TURBO</button>
       <button type="button" id="touch-action" class="touch-action" aria-label="interagir">A</button>
     </div>
   </div>

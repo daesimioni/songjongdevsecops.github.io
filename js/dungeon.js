@@ -10,6 +10,7 @@ import { drawHuman } from "./human.js";
 import { findPathIn } from "./path.js";
 import { hash2 } from "./world.js";
 import { drawPetSprite } from "./pet-art.js";
+import { drawSkiff } from "./skiff.js";
 
 const $ = (id) => document.getElementById(id);
 const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
@@ -148,30 +149,17 @@ export function dungeonLineOfSight(map, ax, ay, bx, by) {
 }
 
 // ---------- desenho ----------
-function drawAdventurer(ctx, x, y, dir, moving, t, avatar = {}, ship = false, look = null, gear = null) {
-  // O mesmo boneco da superfície, com capa e lanterna por cima.
+function drawAdventurer(ctx, x, y, dir, moving, t, avatar = {}, look = null, gear = null) {
+  // O mesmo boneco da superfície, com capa e lanterna por cima. A nave é
+  // desenhada por drawSkiff, em skiff.js, para o casco ser o mesmo nos dois
+  // lugares.
   const c = { hair: "#3a2a55", skin: "#f0c9a8", shirt: "#61f4c0", pants: "#2f3a66", ...avatar };
-  const animate = moving && !ship;
+  const animate = moving;
   const frame = animate ? Math.floor(t / 115) % 4 : 0;
   const swing = animate ? [0, 1, 0, -1][frame] : 0;
   const bob = animate && (frame === 1 || frame === 3) ? -1 : 0;
   ctx.save();
   ctx.translate(x, y + bob);
-  // casco da nave: o boneco vai parado dentro dela
-  if (ship) {
-    ctx.fillStyle = "#0b2438";
-    ctx.fillRect(-11, -4, 22, 4);
-    ctx.fillRect(-8, -6, 16, 2);
-    ctx.fillStyle = "#1d6280";
-    ctx.fillRect(-10, -3, 20, 2);
-    ctx.fillStyle = "#6bd5ff";
-    ctx.fillRect(-13, -4, 3, 2);
-    ctx.fillRect(10, -4, 3, 2);
-    ctx.fillStyle = "rgba(107,213,255,0.18)";
-    ctx.beginPath();
-    ctx.ellipse(0, -2, 17, 7, 0, 0, Math.PI * 2);
-    ctx.fill();
-  }
   // capa atrás do corpo, balançando com o passo
   ctx.fillStyle = "#242844";
   ctx.fillRect(-6 + (swing > 0 ? 1 : 0), -15, 12, 11);
@@ -949,7 +937,8 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
     state.path = null;
     state.pending = null;
     state.keys.clear();
-    state.sprint = false;
+    setSprint(false);
+    state.boost = 0;
     state.paused = false;
     state.alert = null;
     state.encounterLockUntil = clock() + 1200;
@@ -1009,7 +998,8 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
     state.path = null;
     state.pending = null;
     state.keys.clear();
-    state.sprint = false;
+    setSprint(false);
+    state.boost = 0;
     $("dungeon").hidden = true;
     setWorldInert(false);
     $("dg-prompt").hidden = true;
@@ -1629,6 +1619,9 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
   // ---- ciclo ----
   function update(dt, t) {
     const p = state.player;
+    // a nave liga e desliga suave, como na superfície
+    state.boost += ((state.sprint ? 1 : 0) - state.boost) * Math.min(1, dt * 8);
+    if (state.boost < 0.01) state.boost = 0;
     const beforeX = p.x;
     const beforeY = p.y;
     if (!state.paused && !blocked()) {
@@ -1829,7 +1822,14 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
     }
     drawables.push({
       y: state.player.y,
-      draw: () => drawAdventurer(ctx, state.player.x * TILE, state.player.y * TILE, state.player.dir, state.player.moving, t, avatar, state.sprint, look, gear ? gear() : null),
+      draw: () => {
+        const px = state.player.x * TILE;
+        const py = state.player.y * TILE;
+        const lift = 5 * state.boost;
+        const bob = Math.sin(t * 0.007) * 1.1 * state.boost;
+        if (state.boost > 0.01) drawSkiff(ctx, px, py, state.player.dir, t, state.boost, state.player.moving);
+        drawAdventurer(ctx, px, py - lift + bob, state.player.dir, state.player.moving && state.boost < 0.35, t, avatar, look, gear ? gear() : null);
+      },
     });
     drawables.sort((a, b) => a.y - b.y);
     for (const d of drawables) d.draw();
@@ -1959,8 +1959,8 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
     }
     if (state.paused) return;
     if (k === " " || e.code === "Space") {
-      state.sprint = true;
-      setSprint(true);
+      if (e.repeat) return;
+      toggleSprint();
       return;
     }
     if (k === "f") {
@@ -1977,9 +1977,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
 
   function onKeyUp(e) {
     if (!state.open) return;
-    const k = e.key.toLowerCase();
-    state.keys.delete(k);
-    if (k === " " || e.code === "Space") setSprint(false);
+    state.keys.delete(e.key.toLowerCase());
   }
 
   function onBlur() {
@@ -2022,10 +2020,11 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
     sprintBtn?.classList.toggle("active", on);
     sprintBtn?.setAttribute("aria-pressed", String(on));
   };
-  sprintBtn?.addEventListener("pointerdown", (e) => { e.preventDefault(); setSprint(true); });
-  sprintBtn?.addEventListener("pointerup", () => setSprint(false));
-  sprintBtn?.addEventListener("pointercancel", () => setSprint(false));
-  sprintBtn?.addEventListener("pointerleave", () => setSprint(false));
+  const toggleSprint = () => {
+    setSprint(!state.sprint);
+    if (state.sprint) audio.boost?.(); else audio.blip?.();
+  };
+  sprintBtn?.addEventListener("click", toggleSprint);
 
   return {
     open,

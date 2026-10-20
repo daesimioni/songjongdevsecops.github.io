@@ -1291,7 +1291,7 @@ function startGame() {
     document.querySelector("#prompt kbd").textContent = "A";
     setTimeout(() => toast("toque no chão para andar, Turbo acelera e A interage. Os botões do topo abrem Falar, Rede, Diário e Ficha.", 5200), 800);
   } else {
-    setTimeout(() => toast("WASD ou clique no chão anda, Espaço acende a nave, F interage, Q fala, E Rede, Z diário, C ficha.", 5400), 800);
+    setTimeout(() => toast("WASD ou clique no chão anda, Espaço liga e desliga a nave, F interage, Q fala, E Rede, Z diário, C ficha.", 5400), 800);
   }
 }
 
@@ -1325,10 +1325,17 @@ function knockDown(ms) {
   }, ms);
 }
 
+function setSprintAtivo(on, som = true) {
+  state.sprint = on;
+  const botao = $("touch-sprint");
+  botao?.classList.toggle("active", on);
+  botao?.setAttribute("aria-pressed", String(on));
+  if (on && som) audio.boost();
+}
+
 function stopSprint() {
-  state.sprint = false;
+  setSprintAtivo(false, false);
   clearPath();
-  $("touch-sprint")?.classList.remove("active");
 }
 
 function openJournal() {
@@ -2349,7 +2356,9 @@ window.addEventListener("keydown", (e) => {
   if (state.panelOpen || state.modal) return;
   if (dungeon?.isOpen()) return;
   if (k === " " || e.code === "Space") {
-    if (!state.sprint) { state.sprint = true; audio.boost(); }
+    e.preventDefault();
+    if (e.repeat) return;
+    setSprintAtivo(!state.sprint);
     return;
   }
   if (k === "enter" || k === "q") {
@@ -2376,13 +2385,11 @@ window.addEventListener("keydown", (e) => {
   state.keys.add(k);
 });
 window.addEventListener("keyup", (e) => {
-  const k = e.key.toLowerCase();
-  state.keys.delete(k);
-  if (k === " " || e.code === "Space") state.sprint = false;
+  state.keys.delete(e.key.toLowerCase());
 });
 window.addEventListener("blur", () => {
   state.keys.clear();
-  state.sprint = false;
+  setSprintAtivo(false, false);
   state.touch.up = state.touch.down = state.touch.left = state.touch.right = false;
 });
 
@@ -2400,19 +2407,11 @@ for (const btn of document.querySelectorAll("#training [data-tier]")) {
 }
 $("touch-action").addEventListener("click", interact);
 const sprintBtn = $("touch-sprint");
-function touchSprint(on) {
-  return (e) => {
-    e.preventDefault();
-    if (!state.started) return;
-    if (on && !state.sprint) { state.sprint = true; audio.boost(); }
-    if (!on) state.sprint = false;
-    sprintBtn.classList.toggle("active", on);
-  };
-}
-sprintBtn.addEventListener("pointerdown", touchSprint(true));
-sprintBtn.addEventListener("pointerup", touchSprint(false));
-sprintBtn.addEventListener("pointerleave", touchSprint(false));
-sprintBtn.addEventListener("pointercancel", touchSprint(false));
+sprintBtn.addEventListener("click", (e) => {
+  e.preventDefault();
+  if (!state.started) return;
+  setSprintAtivo(!state.sprint);
+});
 
 function entityAt(wx, wy) {
   let best = null;
@@ -2911,7 +2910,7 @@ window.addEventListener("beforeunload", () => {
   const coarse = window.matchMedia("(pointer: coarse)").matches;
   if (coarse) {
     const lead = document.querySelector(".intro-lead");
-    if (lead) lead.innerHTML = "Cada continente é uma página. Ande com o direcional, toque no chão para ir até ali, segure <strong>Turbo</strong> para acelerar e toque em <kbd>A</kbd> perto de estações, NPCs e cavernas. Os botões do topo abrem a conversa, a Rede, o Diário e a Ficha.";
+    if (lead) lead.innerHTML = "Cada continente é uma página. Ande com o direcional, toque no chão para ir até ali, toque em <strong>Turbo</strong> para ligar a nave e toque em <kbd>A</kbd> perto de estações, NPCs e cavernas. Os botões do topo abrem a conversa, a Rede, o Diário e a Ficha.";
     const controls = document.querySelector(".intro-controls");
     if (controls) controls.innerHTML = "toque no chão para andar · <strong>Turbo</strong> acelera · <kbd>A</kbd> interage · topo: Falar, Rede, Diário, Ficha";
     const canvas = $("world");

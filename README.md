@@ -43,8 +43,8 @@ central. No subsolo, o túnel da conurbação liga as 21 cidades descobertas, e 
 estação descoberta vira um fragmento no diário e soma experiência. As Pedras do
 Porto, nas docas, abrem a viagem rápida entre os continentes já visitados.
 
-Segure `Espaço` para acender a nave e cruzar o mapa mais rápido; no celular,
-segure o botão **Turbo**. A nave é um pequeno skiff que flutua, balança e deixa
+Aperte `Espaço` para ligar a nave e cruzar o mapa mais rápido; aperte de
+novo para desligar. No celular, toque em **Turbo**. A nave é um pequeno skiff que flutua, balança e deixa
 rastro, mas não atravessa água: as pontes continuam sendo caminho.
 
 No teclado: `WASD` ou setas andam; segure duas direções para andar na diagonal.
@@ -158,9 +158,11 @@ duelo a runa volta para a mochila em vez de desaparecer.
 
 ## Nave, traje e equipamento
 
-A nave fica 4,4 vezes mais rápida que o passo e agora também funciona dentro da
-caverna: segure `Espaço` (ou o botão **turbo** no topo da caverna). O boneco vai
-parado no casco, sem perna alternando, e o passo é dividido em pedaços para não
+A nave fica 4,4 vezes mais rápida que o passo na superfície e 3,6 na
+caverna: aperte `Espaço` (ou toque em **turbo** no topo da caverna) para ligar e
+aperte de novo para desligar, sem precisar segurar. O mesmo casco desenhado em
+`js/skiff.js` aparece nos dois lugares, com halo, motor e linha de velocidade. O
+boneco vai parado em cima dele, e o passo é dividido em pedaços para não
 atravessar parede na velocidade nova.
 
 O traje é escolha da pessoa, não do lugar. São sete: o **Viajante** desde o
@@ -309,7 +311,7 @@ montando o mundo.
 A página é feita para o toque, não adaptada depois:
 
 - **andar**: direcional na base ou toque no chão. Segurar o direcional continua
-  andando; **Turbo** acende a nave.
+  andando; **Turbo** liga a nave.
 - **agir**: o botão **A** interage com estação, NPC, caverna e baú. No celular ele
   troca o `F` do teclado.
 - **tudo à mão**: Falar, Rede, Diário, Bestiário, Mochila, Ficha, som e ajuda
@@ -474,6 +476,7 @@ Depois abra `http://localhost:8000`.
 | `js/app.js` | laço do jogo, entrada, diário, XP, viagem e estado |
 | `js/world.js` | geração do arquipélago, caminhos, pontes, colisão e névoa |
 | `js/render.js` | desenho do mundo, das estações, dos bonecos e do minimapa |
+| `js/skiff.js` | o casco da nave, o mesmo na superfície e na caverna |
 | `js/net.js` | sala compartilhada por MQTT sobre WebSocket |
 | `js/interp.js` | buffer e interpolação da posição dos outros jogadores |
 | `js/nostr.js` | conta, canais, DMs NIP-17, perfis e presença Nostr |
