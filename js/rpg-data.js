@@ -20,6 +20,26 @@ export const TIERS = {
   4: { name: "chefe", stars: "☠", hp: 18, xp: 60, damage: 6 },
 };
 
+// Cada espécie atrapalha o duelo de um jeito. A mesma frase aparece no
+// bestiário, então o que o jogador lê lá é o que acontece aqui.
+export const MONSTER_TRAITS = {
+  slime: { id: "divide", label: "divide: cura um pouco a cada erro seu" },
+  eye: { id: "dodge", label: "vê longe: às vezes desvia do seu acerto" },
+  bat: { id: "haste", label: "voo errático: morde duas vezes quando você erra" },
+  spider: { id: "dodge", label: "teia: às vezes desvia do seu acerto" },
+  wisp: { id: "haste", label: "fogo-fátuo: queima de novo quando você erra" },
+  scorpion: { id: "armor", label: "casco: seu acerto tira um de dano a menos" },
+  golem: { id: "armor", label: "pedra: seu acerto tira um de dano a menos" },
+  ant: { id: "haste", label: "fila: a colônia morde junto quando você erra" },
+  moth: { id: "dodge", label: "asa: some no escuro e desvia" },
+  beetle: { id: "armor", label: "élitro: seu acerto tira um de dano a menos" },
+  crab: { id: "armor", label: "carapaça: seu acerto tira um de dano a menos" },
+  jelly: { id: "divide", label: "gelatina: se recompõe quando você erra" },
+  imp: { id: "haste", label: "trapaça: ataca de novo quando você erra" },
+  sentinel: { id: "armor", label: "placa: seu acerto tira um de dano a menos" },
+  serpent: { id: "divide", label: "troca de pele: cura quando você erra" },
+};
+
 export const ITEMS = {
   parafuso: { name: "Parafuso de Bronze", continent: "cs", desc: "Rosca de latão que nunca espanou. Dizem que veio do primeiro somador." },
   chip: { name: "Chip de Silício", continent: "cs", desc: "Um pedaço de areia que aprendeu a pensar em binário." },

@@ -1665,6 +1665,8 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
 .duel-feedback.good b { color: var(--mint); }
 .duel-feedback.bad { border-color: var(--rose); }
 .duel-feedback.bad b { color: var(--rose); }
+.duel-note { display: block; margin-top: 6px; font-style: normal; color: var(--ink); }
+.duel-phase { display: block; margin-top: 6px; font-style: normal; color: var(--amber); }
 .duel-next {
   width: 100%;
   margin-top: 12px;

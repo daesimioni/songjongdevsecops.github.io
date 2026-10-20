@@ -1064,6 +1064,7 @@ function buildJournalBestiary() {
       el("span", "", `${entry.label} · andar ${entry.tier === 4 ? "chefe" : entry.tier}`),
       el("span", "", entry.theme ? `tema: ${entry.theme}` : "tema: ainda não visto"),
       el("span", "", `fraqueza: ${entry.weakness}`),
+      entry.trait ? el("span", "", `como atrapalha: ${entry.trait}`) : el("span"),
       el("i", "", `${entry.count} encontro${entry.count === 1 ? "" : "s"}`),
     );
     if (entry.sample) card.appendChild(el("em", "bestiary-q", `“${entry.sample}”`));

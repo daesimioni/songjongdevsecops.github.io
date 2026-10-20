@@ -3,7 +3,7 @@
 // só posição e conversa.
 import { backupCorrupt } from "./storage.js";
 import { STORAGE } from "./config.js";
-import { SKILLS, TIERS, ITEMS, QUESTIONS, RECIPES, ENCHANTS, DEEP_QUESTIONS } from "./rpg-data.js";
+import { SKILLS, TIERS, ITEMS, QUESTIONS, RECIPES, ENCHANTS, DEEP_QUESTIONS, MONSTER_TRAITS } from "./rpg-data.js";
 import { BOND_MAX, MANA_MS, PETS, MOUNTS, petById, mountById } from "./pets.js";
 
 const RESPAWN_MS = 5 * 60 * 1000;
@@ -298,7 +298,7 @@ export class RPG {
       serpent: "segue reto, dobra em S",
     };
     return Object.entries(this.data.seen)
-      .map(([kind, entry]) => ({ kind, label: labels[kind] || kind, weakness: weak[kind] || "observar o movimento", ...entry }))
+      .map(([kind, entry]) => ({ kind, label: labels[kind] || kind, weakness: weak[kind] || "observar o movimento", trait: MONSTER_TRAITS[kind]?.label || "", ...entry }))
       .sort((a, b) => b.tier - a.tier || b.count - a.count || a.kind.localeCompare(b.kind));
   }
 
@@ -1030,6 +1030,7 @@ export class RPG {
       question: deck[0],
       monsterHp: hp,
       monsterHpMax: hp,
+      bossPhase: 1,
       shield: false,
       partners: [],
       get partner() { return this.partners[0] || null; },
@@ -1136,6 +1137,7 @@ export class RPG {
       question: deck[0],
       monsterHp: hp,
       monsterHpMax: hp,
+      bossPhase: 1,
       shield: false,
       partners: [],
       get partner() { return this.partners[0] || null; },
@@ -1150,12 +1152,42 @@ export class RPG {
   answer(index) {
     const d = this.duel;
     if (!d || d.phase !== "question") return { ok: false };
+    const trait = MONSTER_TRAITS[d.monster?.kind]?.id || "";
     const correct = Number(index) === d.question.answer;
     if (correct) {
       this.addSkillXp(d.ground.continent, 1);
       this.addMana(Number(this.activePet()?.passive.manaHit) || 0);
-      d.monsterHp = Math.max(0, d.monsterHp - this.damageFor(d.ground.continent));
-      d.feedback = { correct: true, why: d.question.why, damage: 0 };
+      let damage = this.damageFor(d.ground.continent);
+      let note = "";
+      if (trait === "armor") {
+        damage = Math.max(1, damage - 1);
+        note = "O casco aguentou parte do golpe.";
+      }
+      if (trait === "dodge" && Math.random() < 0.18) {
+        damage = 0;
+        note = "Desviou. O golpe passou de raspão.";
+      }
+      d.monsterHp = Math.max(0, d.monsterHp - damage);
+      d.feedback = { correct: true, why: d.question.why, damage: 0, note };
+      // chefe endurece quando a vida cai: fase 2 dói mais, fase 3 só aceita difícil
+      if (d.boss && d.monsterHp > 0) {
+        const ratio = d.monsterHp / d.monsterHpMax;
+        const phase = ratio <= 0.33 ? 3 : ratio <= 0.66 ? 2 : 1;
+        if (phase > (d.bossPhase || 1)) {
+          d.bossPhase = phase;
+          d.feedback.phase = phase;
+          d.feedback.phaseNote = phase === 3
+            ? "Fase 3: encurralado, ele só aceita pergunta difícil e o erro dói mais."
+            : "Fase 2: ferido, ele acelera. O próximo erro dói mais.";
+          if (phase === 3) {
+            const harder = this.duelDeck(d.ground.continent, 3, d.monster?.theme || d.ground.theme);
+            if (harder.length) {
+              d.deck = harder;
+              d.deckIndex = -1;
+            }
+          }
+        }
+      }
       if (d.monsterHp <= 0) {
         d.phase = "victory";
         d.result = this.victory(d);
@@ -1167,14 +1199,27 @@ export class RPG {
     } else {
       const blocked = !!d.shield;
       if (blocked) d.shield = false;
-      const damage = blocked ? 0 : TIERS[d.tier].damage;
+      const phaseBonus = d.boss ? ((d.bossPhase || 1) - 1) * 2 : 0;
+      let damage = TIERS[d.tier].damage + phaseBonus;
+      let note = "";
+      if (trait === "haste") {
+        damage += Math.ceil(TIERS[d.tier].damage / 2);
+        note = "Ele bateu de novo, sem esperar.";
+      }
+      if (trait === "divide" && d.monsterHp > 0) {
+        const heal = Math.max(1, Math.round(d.monsterHpMax * 0.12));
+        const before = d.monsterHp;
+        d.monsterHp = Math.min(d.monsterHpMax, d.monsterHp + heal);
+        note = `O bicho se recompôs: +${d.monsterHp - before} de vida.`;
+      }
+      if (blocked) damage = 0;
       if (d.training) {
-        d.feedback = { correct: false, why: d.question.why, damage, blocked, training: true };
+        d.feedback = { correct: false, why: d.question.why, damage, blocked, note, training: true };
         d.phase = "feedback";
         return { ok: true, correct, phase: d.phase, feedback: d.feedback, duel: d };
       }
       this.data.hp = Math.max(0, this.hp() - damage);
-      d.feedback = { correct: false, why: d.question.why, damage, blocked };
+      d.feedback = { correct: false, why: d.question.why, damage, blocked, note };
       if (this.data.hp <= 0) {
         this.data.hp = this.hpMax();
         d.phase = "defeat";

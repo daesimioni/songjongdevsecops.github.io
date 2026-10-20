@@ -1,6 +1,6 @@
 // A janela do duelo: monstro, vida, pergunta, consequência e recompensa.
 import { CONTINENTS } from "./config.js";
-import { ITEMS, TIERS } from "./rpg-data.js";
+import { ITEMS, TIERS, MONSTER_TRAITS } from "./rpg-data.js";
 import { drawCreature } from "./creature.js";
 
 const $ = (id) => document.getElementById(id);
@@ -125,9 +125,10 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
     }
     const tier = TIERS[d.tier];
     const continent = CONTINENTS[d.ground.continent]?.name || d.ground.name;
+    const phaseLabel = d.boss && (d.bossPhase || 1) > 1 ? ` · fase ${d.bossPhase}` : "";
     $("duel-kicker").textContent = d.training
       ? `TREINO · ${continent}`
-      : `${d.ground.name} · ${d.boss ? "chefe" : tier.name}`;
+      : `${d.ground.name} · ${d.boss ? "chefe" : tier.name}${phaseLabel}`;
     const risk = $("duel-risk");
     if (risk) {
       risk.textContent = d.training
@@ -135,13 +136,16 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
         : ` · risco ${Math.round(rpg.fleeRisk(d.monster) * 100)}%`;
     }
     $("duel-name").textContent = d.monster.name;
-    $("duel-sub").textContent = d.training
+    const trait = MONSTER_TRAITS[d.monster?.kind]?.label || "";
+    const baseSub = d.training
       ? `nível ${d.monster.level} · ${tier.stars} · treino sem dano e sem loot`
       : `nível ${d.monster.level} · ${tier.stars} · ${d.boss ? "pergunta final" : "duelo de perguntas"}`;
+    $("duel-sub").textContent = trait ? `${baseSub} · ${trait}` : baseSub;
     const meta = $("duel-meta");
     meta.textContent = "";
+    const hpLabel = d.boss ? `vida do chefe · fase ${d.bossPhase || 1}` : "vida do monstro";
     meta.append(
-      bar("vida do monstro", d.monsterHp, d.monsterHpMax, "enemy"),
+      bar(hpLabel, d.monsterHp, d.monsterHpMax, "enemy"),
       bar("sua vida", rpg.hp(), rpg.hpMax(), "self"),
     );
     rpg.pulse();
@@ -191,6 +195,8 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
       const label = fb.spell || (fb.blocked ? "O espelho segurou o golpe." : fb.correct ? "Acertou." : wrong);
       box.appendChild(el("b", "", label));
       box.appendChild(el("span", "", fb.why));
+      if (fb.note) box.appendChild(el("em", "duel-note", fb.note));
+      if (fb.phaseNote) box.appendChild(el("em", "duel-phase", fb.phaseNote));
       main.appendChild(box);
       const next = el("button", "duel-next", "continuar");
       next.type = "button";

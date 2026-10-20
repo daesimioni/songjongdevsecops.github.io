@@ -13,7 +13,7 @@ globalThis.localStorage = {
 };
 
 const { CONTINENTS, SITES, WAYSTONES, NPC_SPAWNS, CONTINENT_ORDER, AREAS } = await import("../js/config.js");
-const { QUESTIONS, DEEP_QUESTIONS, GROUNDS, ITEMS, RECIPES, ENCHANTS } = await import("../js/rpg-data.js");
+const { QUESTIONS, DEEP_QUESTIONS, GROUNDS, ITEMS, RECIPES, ENCHANTS, MONSTER_TRAITS } = await import("../js/rpg-data.js");
 const { DUNGEONS } = await import("../js/dungeon-data.js");
 const { POSTS, NPCS } = await import("../js/content.js");
 const { QUESTS } = await import("../js/quests.js");
@@ -21,6 +21,7 @@ const { RPG } = await import("../js/rpg.js");
 const { isAdminKey } = await import("../js/admin.js");
 const { createWorld } = await import("../js/world.js");
 
+const source = (rel) => readFileSync(new URL(rel, import.meta.url), "utf8");
 const faults = [];
 const check = (cond, message) => { if (!cond) faults.push(message); };
 const continents = CONTINENT_ORDER.filter((c) => c !== "hub");
@@ -162,6 +163,39 @@ relicRpg.addItem("infinito", 1);
 relicRpg.addItem("orbita", 1);
 check(relicRpg.pvpQuestions("cs")[4].damage === 7, "duas relíquias somam o teto de 2 de dano no PvP");
 
+// cada bicho desenhado tem um jeito de atrapalhar o duelo, e o chefe morre por fase
+const creatureKinds = [...source("../js/creature.js").matchAll(/kind === "([a-z]+)"/g)].map((m) => m[1]);
+for (const kind of creatureKinds) {
+  if (kind === "boss") continue;
+  check(!!MONSTER_TRAITS[kind], `espécie ${kind} sem jeito de atrapalhar no duelo`);
+}
+const traitIds = new Set(Object.values(MONSTER_TRAITS).map((t) => t.id));
+for (const id of ["armor", "haste", "divide", "dodge"]) check(traitIds.has(id), `nenhuma espécie usa o jeito ${id}`);
+
+const duelRpg = new RPG({ getLevel: () => 1, gainXp: () => {}, toast: () => {}, audio: {} });
+const bossGround = GROUNDS.find((g) => g.dungeon === "dungeon-cs-arch");
+const bossDummy = { id: "dg-teste", name: "Teste", kind: "golem", tier: 3, level: 9 };
+check(!!duelRpg.startDuel(bossDummy, bossGround, true).ok, "chefe de teste não abriu duelo");
+duelRpg.data.hp = duelRpg.hpMax();
+duelRpg.duel.monsterHp = 12; // dois terços da vida do chefe
+let phaseRes = duelRpg.answer(duelRpg.duel.question.answer);
+check(phaseRes.feedback.phase === 2, `chefe não virou fase 2 ao passar de dois terços (${phaseRes.feedback.phase})`);
+duelRpg.next();
+duelRpg.duel.monsterHp = 6; // um terço
+phaseRes = duelRpg.answer(duelRpg.duel.question.answer);
+check(phaseRes.feedback.phase === 3, `chefe não virou fase 3 ao passar de um terço (${phaseRes.feedback.phase})`);
+check(duelRpg.duel.deck.every((item) => duelRpg.duel.deck.includes(item)), "baralho do chefe quebrou na fase 3");
+
+// slime se recompõe no erro e o dano do casco de pedra cai
+const slimeRpg = new RPG({ getLevel: () => 1, gainXp: () => {}, toast: () => {}, audio: {} });
+slimeRpg.startDuel({ id: "dg-slime", name: "Gosma", kind: "slime", tier: 2, level: 6 }, bossGround, false);
+slimeRpg.data.hp = slimeRpg.hpMax();
+slimeRpg.duel.monsterHp = 4;
+const wrongIndex = slimeRpg.duel.question.options.map((_, i) => i).find((i) => i !== slimeRpg.duel.question.answer);
+const wrongRes = slimeRpg.answer(wrongIndex);
+check(slimeRpg.duel.monsterHp > 4, "gosma não se recompôs no erro");
+check(!!wrongRes.feedback.note, "erro sem explicação do jeito da espécie");
+
 // cavernas: seis, com entrada, cidade, monstros e chefe
 check(DUNGEONS.length === 23, `DUNGEONS tem ${DUNGEONS.length} cavernas, esperado 23`);
 for (const dungeon of DUNGEONS) {
@@ -207,7 +241,6 @@ for (const c of continents) {
 }
 
 // bicho-assinatura precisa de desenho e de ficha no bestiário, senão cai no chefe
-const source = (rel) => readFileSync(new URL(rel, import.meta.url), "utf8");
 const sigLine = source("../js/dungeon.js").split("\n").find((l) => l.includes("const signature =")) || "";
 const sigKinds = [...sigLine.matchAll(/"([a-z]+)"/g)].map((m) => m[1]);
 const labelsLine = source("../js/rpg.js").split("\n").find((l) => l.includes("const labels = {")) || "";
