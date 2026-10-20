@@ -421,7 +421,8 @@ continente, as 93 cavernas e o mundo montado (93 instrutores, 186 bocas, nenhum
 monstro na superfície). Confere também a cobertura das 82 seções do catálogo:
 cada uma precisa de área, caverna, NPC com missão e perguntas próprias; e a
 lista inteira de subáreas do catálogo precisa aparecer como estação, com todos
-os tópicos dentro de uma página. A identidade de cada área também é conferida:
+os tópicos dentro de uma página e texto curado de abertura, prática e erro comum
+nas 283 subáreas e nas 11 interseções. A identidade de cada área também é conferida:
 86 biomas únicos, 258 monstros e 258 itens sem repetir nome, um traje por área,
 missão de trilha e de chefe em todas, e caverna com a paleta e a fauna da área.
 

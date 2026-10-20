@@ -51,9 +51,9 @@ Linguagem) entram na conta como qualquer outra.
 - [x] Matemática: 69 subáreas.
 - [x] Física: 34 subáreas.
 - [x] Química: 37 subáreas.
-- [ ] Computação: 88 subáreas.
-- [ ] Língua: 55 subáreas.
-- [ ] Interseções e bônus: 33 estações de trilha e 4 áreas.
+- [x] Computação: 88 subáreas.
+- [x] Língua: 55 subáreas.
+- [x] Interseções e bônus: 11 seções de interseção com abertura, prática e erro; as 4 áreas bônus mantêm as páginas feitas à mão.
 
 Cada subárea ganha, na página: abertura curada (2 a 4 frases), o que o catálogo
 cobre, uma prática concreta, um erro comum e as conexões com as vizinhas. A
@@ -107,5 +107,5 @@ missões novas e nenhum erro de console.
 
 | data | fase | o que entrou | prova |
 |---|---|---|---|
-| 2026-10-20 | B | texto curado de Matemática, Física e Química: 140 subáreas com abertura, prática e erro comum | node: 69 + 34 + 37 subáreas cobertas, nenhuma sem os três campos; páginas de Matemática conferidas no navegador |
+| 2026-10-20 | B | texto curado das cinco disciplinas e das interseções: 283 subáreas com abertura, prática e erro comum, mais 11 aberturas de interseção | node: 69 + 34 + 37 + 88 + 55 = 283 subáreas e 11 seções de interseção, nenhuma sem os três campos; páginas conferidas no navegador |
 | 2026-10-20 | A | registro de identidade, pisos, fauna, itens, NPC, missões, trajes e cavernas | node: 86 biomas e 86 tipos de piso únicos, 258 monstros e 258 itens sem repetição, 86 trajes, 172 missões de área, 194 NPCs com aparência distinta, 86 cavernas com fauna e paleta da área; navegador: catálogo 15/15, prova final 6/6, 60 fps | 

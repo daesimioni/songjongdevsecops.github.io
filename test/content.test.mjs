@@ -30,6 +30,11 @@ const { AREA_ITEMS, AREA_OUTFITS, BIOMES, FAUNA, IDENTITY_AREAS, TILE_STYLE, dun
 const { MATH_TEXT } = await import("../js/text/math.js");
 const { PHYSICS_TEXT } = await import("../js/text/physics.js");
 const { CHEM_TEXT } = await import("../js/text/chem.js");
+const { CS_A_TEXT } = await import("../js/text/cs-a.js");
+const { CS_B_TEXT } = await import("../js/text/cs-b.js");
+const { LINGUA_TEXT } = await import("../js/text/lingua.js");
+const { INTER_TEXT } = await import("../js/text/inter.js");
+const textosCurados = { math: MATH_TEXT, physics: PHYSICS_TEXT, chem: CHEM_TEXT, cs: { ...CS_A_TEXT, ...CS_B_TEXT }, lingua: LINGUA_TEXT };
 const ready = CATALOG_CONTENT.areas.length;
 const { CATALOG_AREAS, CATALOG_BRIDGES, CATALOG_TUNNELS } = await import("../js/catalog-layout.js");
 
@@ -635,6 +640,57 @@ for (const [num, sec] of Object.entries(SECTION_TOPICS)) {
 }
 check(subareasQuimica === 37, `subáreas de Química: ${subareasQuimica}, esperado 37`);
 check(quimicaSemTexto.length === 0, `subáreas de Química sem texto curado: ${quimicaSemTexto.slice(0, 5).join(", ")}`);
+
+// F14: texto curado de Computação
+const CS_TEXT = { ...CS_A_TEXT, ...CS_B_TEXT };
+let subareasCs = 0;
+const csSemTexto = [];
+for (const [num, sec] of Object.entries(SECTION_TOPICS)) {
+  if (!num.startsWith("4.")) continue;
+  for (const [nome] of sec.subareas || []) {
+    subareasCs++;
+    const texto = CS_TEXT[`${num}|${nome}`] || CS_TEXT[nome];
+    if (!texto?.abre || !texto?.pratica || !texto?.erro) csSemTexto.push(`${num}/${nome}`);
+  }
+}
+check(subareasCs === 88, `subáreas de Computação: ${subareasCs}, esperado 88`);
+check(csSemTexto.length === 0, `subáreas de Computação sem texto curado: ${csSemTexto.slice(0, 5).join(", ")}`);
+
+// F15: texto curado de Língua Portuguesa
+let subareasLingua = 0;
+const linguaSemTexto = [];
+for (const [num, sec] of Object.entries(SECTION_TOPICS)) {
+  if (!num.startsWith("5.")) continue;
+  for (const [nome] of sec.subareas || []) {
+    subareasLingua++;
+    const texto = LINGUA_TEXT[nome];
+    if (!texto?.abre || !texto?.pratica || !texto?.erro) linguaSemTexto.push(nome);
+  }
+}
+check(subareasLingua === 55, `subáreas de Língua: ${subareasLingua}, esperado 55`);
+check(linguaSemTexto.length === 0, `subáreas de Língua sem texto curado: ${linguaSemTexto.slice(0, 5).join(", ")}`);
+check(subareasMath + subareasFisica + subareasQuimica + subareasCs + subareasLingua === 283, "as cinco disciplinas não somam as 283 subáreas");
+
+// F16: texto curado das interseções
+let secoesInter = 0;
+const interSemTexto = [];
+for (const [num, sec] of Object.entries(SECTION_TOPICS)) {
+  if (!num.startsWith("6.")) continue;
+  secoesInter++;
+  if (!INTER_TEXT[num]?.abre || !INTER_TEXT[num]?.pratica || !INTER_TEXT[num]?.erro) interSemTexto.push(num);
+}
+check(secoesInter === 11, `interseções: ${secoesInter}, esperado 11`);
+check(interSemTexto.length === 0, `interseções sem texto curado: ${interSemTexto.join(", ")}`);
+
+// F17: todo texto curado chega de fato a uma página
+const corpos = Object.values(POSTS).map((p) => p.body);
+const textoForaDaPagina = [];
+for (const mapa of [...Object.values(textosCurados), INTER_TEXT]) {
+  for (const [nome, texto] of Object.entries(mapa)) {
+    if (!corpos.some((corpo) => corpo.includes(texto.abre.slice(0, 40)))) textoForaDaPagina.push(nome);
+  }
+}
+check(textoForaDaPagina.length === 0, `texto curado sem página: ${textoForaDaPagina.slice(0, 5).join(", ")}`);
 
 // F10: identidade de cada área, sem repetir bioma, bicho, item, guardião ou caverna
 check(IDENTITY_AREAS.length === 86, `identidade: ${IDENTITY_AREAS.length} áreas, esperado 86`);

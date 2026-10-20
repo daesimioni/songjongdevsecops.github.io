@@ -146,6 +146,10 @@ const hash = (text) => {
 };
 const clamp = (v) => Math.max(0, Math.min(255, Math.round(v)));
 // "no Jardim", "na Praça", "nos Mares": o nome do bioma pede a preposição certa
+const DE_BIOMA = { no: "do", na: "da", nos: "dos", nas: "das" };
+export function deBioma(nome) {
+  return DE_BIOMA[prepBioma(nome)] || "do";
+}
 export function prepBioma(nome) {
   const primeira = String(nome).split(" ")[0].toLowerCase();
   if (primeira.endsWith("as")) return "nas";
@@ -409,7 +413,7 @@ export function questsForArea(area, keeper, giver) {
       npc: keeper,
       giver,
       title: `Trilha ${articleOf(area.name).article} ${articleOf(area.name).noun}`,
-      brief: `Abra três estações de ${area.short} e volte para contar o que viu ${prepBioma(bioma.name)} ${bioma.name}. ${area.sub}.`,
+      brief: `Abra três estações de ${area.short} e volte para contar o que viu ${prepBioma(bioma.name)} ${bioma.name}. ${area.sub.charAt(0).toUpperCase()}${area.sub.slice(1)}.`,
       goal: { type: "cards", count: 3, area: area.id },
       reward: { xp: 55, title: `Andarilho ${articleOf(area.name).article} ${articleOf(area.name).noun}` },
     },
@@ -417,10 +421,10 @@ export function questsForArea(area, keeper, giver) {
       id: `chefe-${area.id}`,
       npc: keeper,
       giver,
-      title: `O chefe ${articleOf(area.name).article} ${articleOf(area.name).noun}`,
+      title: `O Chefe ${articleOf(area.name).article} ${articleOf(area.name).noun}`,
       brief: `${fauna[2]?.name || "O guardião"} espera no fundo da caverna de ${area.short}. Desça, responda e volte.`,
       goal: { type: "bosses", count: 1, area: area.id },
-      reward: { xp: 90, title: `Vencedor de ${bioma.name}` },
+      reward: { xp: 90, title: `Vencedor ${deBioma(bioma.name)} ${bioma.name}` },
     },
   ];
 }

@@ -7,9 +7,12 @@ import { DISCIPLINES } from "./catalog.js";
 import { MATH_TEXT } from "./text/math.js";
 import { PHYSICS_TEXT } from "./text/physics.js";
 import { CHEM_TEXT } from "./text/chem.js";
+import { CS_A_TEXT } from "./text/cs-a.js";
+import { CS_B_TEXT } from "./text/cs-b.js";
+import { LINGUA_TEXT } from "./text/lingua.js";
 
 // texto curado por disciplina; o que ainda não tem curadoria usa só a lista
-const CURADO = { math: MATH_TEXT, physics: PHYSICS_TEXT, chem: CHEM_TEXT };
+const CURADO = { math: MATH_TEXT, physics: PHYSICS_TEXT, chem: CHEM_TEXT, cs: { ...CS_A_TEXT, ...CS_B_TEXT }, lingua: LINGUA_TEXT };
 
 const SMALL = new Set(["e", "de", "da", "do", "das", "dos", "em", "no", "na", "nos", "nas", "a", "o", "as", "os", "um", "uma", "para", "com", "por", "ao", "à"]);
 
