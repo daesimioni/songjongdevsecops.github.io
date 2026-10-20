@@ -575,6 +575,9 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
     view: { scale: 3, camX: 0, camY: 0 },
     hudAt: 0,
     keeperLine: 0,
+    quality: 1,
+    perfMs: 0,
+    perfN: 0,
   };
 
   // ---- construção de uma visita ----
@@ -957,7 +960,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
 
   function resize() {
     if (!canvas) return;
-    state.dpr = Math.min(2, window.devicePixelRatio || 1);
+    state.dpr = Math.min(2, window.devicePixelRatio || 1) * state.quality;
     state.vw = window.innerWidth;
     state.vh = window.innerHeight;
     canvas.width = Math.round(state.vw * state.dpr);
@@ -1825,6 +1828,23 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
   function frame(t) {
     if (!state.open) return;
     state.raf = requestAnimationFrame(frame);
+    const rawMs = state.last ? t - state.last : 16;
+    // resolução adaptativa também no subsolo: se o quadro passa de 26 ms por
+    // muito tempo, o canvas reduz a resolução interna e o desenho esquenta menos.
+    state.perfMs += rawMs;
+    state.perfN++;
+    if (state.perfN >= 90) {
+      const avg = state.perfMs / state.perfN;
+      if (avg > 26 && state.quality > 0.65) {
+        state.quality = Math.max(0.65, state.quality - 0.15);
+        resize();
+      } else if (avg < 17 && state.quality < 1) {
+        state.quality = Math.min(1, state.quality + 0.05);
+        resize();
+      }
+      state.perfMs = 0;
+      state.perfN = 0;
+    }
     const dt = state.last ? Math.min(0.05, (t - state.last) / 1000) : 0.016;
     state.last = t;
     update(dt, t);

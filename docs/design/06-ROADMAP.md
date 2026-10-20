@@ -13,6 +13,9 @@ ordem pedida pelo dono é: conceito, desenho detalhado, revisão, só então có
 - Chat/Nostr/MQTT, presença, DMs, PvP com prova de identidade e party de até 8 pessoas.
 - 42 bocas pareadas, dois sentidos por caverna e camada `subsolo -1` no HUD.
 - Testes: `node test/*.test.mjs` e suíte de navegador (CDP).
+- Desempenho: chunks de terreno com LRU, resolução adaptativa na superfície e
+  no subsolo. O atlas de sprites em canvas foi medido e ficou mais lento que o
+  desenho vetorial; o próximo salto é WebGL.
 
 ## 2. Auditoria do que ficou incompleto
 

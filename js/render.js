@@ -1334,6 +1334,12 @@ export function createRenderer(canvas, world) {
   function groundChunk(cx, cy) {
     const key = `${cx}:${cy}`;
     const hit = chunkCache.get(key);
+    if (hit) {
+      // LRU: o chunk visto agora volta para o fim da fila; o mais antigo sai
+      // quando o cache enche, em vez de limpar tudo e travar o próximo quadro.
+      chunkCache.delete(key);
+      chunkCache.set(key, hit);
+    }
     if (hit) return hit;
     const canvasChunk = document.createElement("canvas");
     canvasChunk.width = CHUNK * TILE;
@@ -1354,7 +1360,11 @@ export function createRenderer(canvas, world) {
     }
     // ponytail: cache sem LRU; o mapa é estático e 120 blocos já cobrem
     // muitos minutos de caminhada. Se o mapa crescer, trocar por LRU.
-    if (chunkCache.size > 120) chunkCache.clear();
+    while (chunkCache.size >= 120) {
+      const oldest = chunkCache.keys().next().value;
+      if (oldest === undefined) break;
+      chunkCache.delete(oldest);
+    }
     chunkCache.set(key, canvasChunk);
     return canvasChunk;
   }
