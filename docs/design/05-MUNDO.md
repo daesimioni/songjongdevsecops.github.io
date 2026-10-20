@@ -20,8 +20,11 @@ O que existe hoje (2026-10-20):
 - o HUD do subsolo mostra a camada (`subsolo -1`) e o botão de saída não é o
   único caminho: escada da entrada, escada do fundo e pedra de retorno.
 
-O que falta do alvo abaixo: conurbação entre cidades e a camada -2. O desenho
-fica neste documento; a implementação entra no roadmap.
+O que falta do alvo abaixo: a camada -2 como mapa físico. A **conurbação
+funcional** já está no jogo: cada cidade tem um túnel que lista as outras
+cidades descobertas; viajar troca a caverna e a saída devolve à boca de entrada
+da cidade de destino. Cidades de continentes ainda não visitados ficam
+trancadas.
 
 O alvo:
 

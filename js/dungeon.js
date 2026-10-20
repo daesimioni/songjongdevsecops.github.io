@@ -526,7 +526,7 @@ function drawBuilding(ctx, x, y, w, h, palette, accent) {
 }
 
 // ---------- a caverna em si ----------
-export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeeper, isBlocked, avatar = {} }) {
+export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeeper, onConurbation, isBlocked, avatar = {} }) {
   const canvas = $("dungeon-canvas");
   const ctx = canvas?.getContext("2d", { alpha: false }) || null;
 
@@ -746,6 +746,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
       props.push({ kind: "altar", x: city.x + 3.2, y: city.y + city.h - 3.4, label: "altar que devolve vida", interact: true });
       props.push({ kind: "forge", x: city.x + city.w - 3.2, y: city.y + city.h - 3.4, label: "forja do subsolo", interact: true });
       props.push({ kind: "waystone", x: city.x + city.w / 2 + 3, y: city.y + 2.6, label: "pedra de retorno", interact: true });
+      props.push({ kind: "conurbation", x: city.x + city.w / 2 + 6, y: city.y + 3.2, label: "túnel da conurbação", interact: true });
       props.push({ kind: "keeper", x: city.x + city.w / 2 - 3, y: city.y + city.h - 3.4, label: "conversar com a mestra", interact: true });
       props.push({ kind: "enchanter", x: city.x + city.w / 2, y: city.y + 3.2, label: "mesa de encantamento", interact: true });
       const petId = PET_BY_CONTINENT[def.continent] || "gato";
@@ -919,6 +920,20 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
     audio.open();
     cancelAnimationFrame(state.raf);
     state.raf = requestAnimationFrame(frame);
+    return true;
+  }
+
+  function enterCity() {
+    const city = state.def?.rooms?.find((room) => room.kind === "city");
+    if (!city) return false;
+    state.player.x = city.x + city.w / 2 + 6;
+    state.player.y = city.y + 5;
+    state.player.dir = 0;
+    state.player.moving = false;
+    state.path = null;
+    state.pending = null;
+    state.alert = null;
+    say(`${state.def.name}. A cidade do fundo.`, 3400);
     return true;
   }
 
@@ -1214,6 +1229,10 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
     if (obj.kind === "waystone") {
       say("A pedra puxa você de volta para a boca da caverna.", 1800);
       close("waystone", state.entryCave);
+      return;
+    }
+    if (obj.kind === "conurbation") {
+      onConurbation?.(state.def?.id);
       return;
     }
     if (obj.kind === "altar") {
@@ -1903,6 +1922,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
   return {
     open,
     close,
+    enterCity,
     isOpen: () => state.open,
     onDuelClosed,
     useTorch(ms = 120000) {

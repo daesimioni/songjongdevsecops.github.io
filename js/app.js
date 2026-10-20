@@ -21,7 +21,7 @@ import { ITEMS } from "./rpg-data.js";
 import { createSheet } from "./sheet.js";
 import { createDuel } from "./duel.js";
 import { createDungeon } from "./dungeon.js";
-import { dungeonById } from "./dungeon-data.js";
+import { DUNGEONS, dungeonById } from "./dungeon-data.js";
 
 const $ = (id) => document.getElementById(id);
 let dungeon = null;
@@ -255,6 +255,7 @@ dungeon = createDungeon({
   },
   onSheet: () => openSheet(),
   onKeeper: () => openShop(),
+  onConurbation: () => openTravel("caves"),
   avatar: player.colors,
   onExit: ({ kind, dungeon: def, target }) => {
     rpg.setCave(false);
@@ -1079,10 +1080,16 @@ function buildJournal() {
   buildJournalQuests();
 }
 
-function openTravel() {
+function openTravel(mode = "stones") {
   stopSprint();
   if (state.panelOpen) closePanel();
   closeChat();
+  state.travelMode = mode;
+  const caves = mode === "caves";
+  $("travel-title").textContent = caves ? "Túneis da Conurbação" : "Pedras do Porto";
+  $("travel-lead").textContent = caves
+    ? "As cidades subterrâneas se ligam por túneis antigos. Escolha a cidade de destino; a saída devolve você à boca daquela caverna."
+    : "Os faróis que você já acendeu podem ser alcançados num piscar. Os outros continuam escondidos na névoa.";
   buildTravel();
   openModal("travel");
   audio.open();
@@ -1091,6 +1098,28 @@ function openTravel() {
 function buildTravel() {
   const list = $("travel-list");
   list.textContent = "";
+  if (state.travelMode === "caves") {
+    const here = dungeon?.state?.def?.id;
+    for (const def of DUNGEONS) {
+      const known = state.docks.has(def.continent);
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "travel-item";
+      btn.disabled = def.id === here || !known;
+      const left = document.createElement("span");
+      const b = document.createElement("b");
+      b.textContent = `${CONTINENTS[def.continent]?.name || def.continent} · ${def.name}`;
+      const sub = document.createElement("span");
+      sub.textContent = def.id === here ? "você está nesta cidade" : known ? "túnel aberto" : "abra a pedra do continente primeiro";
+      left.append(b, sub);
+      const right = document.createElement("em");
+      right.textContent = def.id === here ? "aqui" : known ? "ir" : "trancado";
+      btn.append(left, right);
+      if (def.id !== here && known) btn.addEventListener("click", () => travelConurbation(def.id));
+      list.appendChild(btn);
+    }
+    return;
+  }
   for (const cid of CONTINENT_ORDER) {
     const c = CONTINENTS[cid];
     const stones = WAYSTONES.filter((w) => w.continent === cid);
@@ -1119,6 +1148,19 @@ function buildTravel() {
       list.appendChild(btn);
     }
   }
+}
+
+function travelConurbation(defId) {
+  const target = DUNGEONS.find((def) => def.id === defId);
+  if (!target) return;
+  const cave = world.caves.find((c) => c.defId === defId && c.mouth === "entrance");
+  closeModal("travel");
+  dungeon.open(target, cave);
+  dungeon.enterCity();
+  player.continentId = target.continent;
+  state.lastContinent = target.continent;
+  toast(`Túnel da conurbação: ${target.name}.`, 3200);
+  audio.chime();
 }
 
 function travelTo(cid) {

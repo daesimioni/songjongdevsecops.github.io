@@ -21,7 +21,7 @@ uma página com um texto curto e um instrumento interativo.
 
 O mapa tem 300 por 200 tiles, sete continentes e catorze áreas temáticas, ilhas, um anel de pontes entre
 elas e um porto
-central. O minimapa começa coberto por névoa e revela o que você anda. Cada
+central. No subsolo, o túnel da conurbação liga as 21 cidades descobertas. O minimapa começa coberto por névoa e revela o que você anda. Cada
 estação descoberta vira um fragmento no diário e soma experiência. As Pedras do
 Porto, nas docas, abrem a viagem rápida entre os continentes já visitados.
 
