@@ -106,6 +106,7 @@ const state = {
   nearest: null,
   room: sanitizeRoom(saved.room),
   lastContinent: null,
+  lastArea: null,
   zoneTimer: null,
   footstepAt: 0,
   cards: saved.cards,
@@ -922,13 +923,15 @@ function startGame() {
   }
 }
 
-function showZoneCard(continent, first) {
-  if (!continent) return;
+function showZoneCard(region, first, area = false) {
+  if (!region) return;
   const card = $("zone-card");
-  $("zone-eyebrow").textContent = first ? "novo continente descoberto" : "de volta ao";
-  $("zone-name").textContent = continent.name;
-  $("zone-sub").textContent = continent.sub;
-  card.style.setProperty("--zone", continent.accent);
+  $("zone-eyebrow").textContent = first
+    ? (area ? "nova área descoberta" : "novo continente descoberto")
+    : (area ? "de volta à" : "de volta ao");
+  $("zone-name").textContent = region.name;
+  $("zone-sub").textContent = region.sub;
+  card.style.setProperty("--zone", region.accent);
   card.hidden = true;
   void card.offsetWidth;
   card.hidden = false;
@@ -1561,7 +1564,23 @@ function updateCat(dt) {
 
 function updateZone() {
   if (!state.started) return;
+  const area = world.areaAt(player.x, player.y);
   const cid = world.continentAt(player.x, player.y);
+  const areaId = area?.id || null;
+  if (areaId !== state.lastArea) {
+    state.lastArea = areaId;
+    // entrar numa área temática é descobrir um lugar novo, mesmo sem trocar
+    // de continente: o cartão conta a área, não o continente inteiro.
+    if (area) {
+      state.lastContinent = cid;
+      player.continentId = cid;
+      const key = `area:${area.id}`;
+      const first = !state.docks.has(key);
+      markDock(key);
+      showZoneCard(area, first, true);
+      return;
+    }
+  }
   if (!cid || cid === state.lastContinent) return;
   state.lastContinent = cid;
   player.continentId = cid;

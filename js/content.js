@@ -12,7 +12,7 @@ export const POSTS = {
     lab: null,
     body: `
       <p>Este blog não tem índice. Tem <strong>mapa</strong>. Você entra com um boneco, atravessa pontes e escolhe por qual continente começar. Cada estação que encontra é uma página: um texto curto e um instrumento para mexer com as mãos.</p>
-      <p>São sete continentes. A <em>Computação</em> mostra como saímos de interruptores e areia até processadores. <em>Matemática</em> visita o infinito, as formas, a mudança e o acaso. <em>Física</em> testa pêndulos, ondas, calor, luz e órbitas. <em>Química</em> abre a tabela periódica, as ligações, as reações e o equilíbrio. <em>Música</em> mostra a matemática escondida no som. <em>Inteligência Artificial</em> abre os dados, as redes, a linguagem e os limites. O <em>Vale da Língua</em> desce ao português do Brasil: o som, a palavra, a frase e o texto. Ao todo, 37 fragmentos para descobrir.</p>
+      <p>São sete continentes. A <em>Computação</em> mostra como saímos de interruptores e areia até processadores. <em>Matemática</em> visita o infinito, as formas, a mudança e o acaso. <em>Física</em> testa pêndulos, ondas, calor, luz e órbitas. <em>Química</em> abre a tabela periódica, as ligações, as reações e o equilíbrio. <em>Música</em> mostra a matemática escondida no som. <em>Inteligência Artificial</em> abre os dados, as redes, a linguagem e os limites. O <em>Vale da Língua</em> desce ao português do Brasil: o som, a palavra, a frase e o texto. Ao todo, 43 fragmentos para descobrir.</p>
       <p>Cada estação abre uma página e soma experiência. O <strong>Diário</strong> guarda o que você já encontrou. As <strong>Pedras do Porto</strong>, os monólitos brilhantes nas docas, levam você de volta a qualquer continente já visitado. A névoa do minimapa só some onde você anda.</p>
       <blockquote>Não tem pressa. O mapa é grande, mas o caminho é seu.</blockquote>
       <p>Os <strong>NPCs</strong> têm missões. Aperte F perto deles: tem caminhada, pergunta e conversa. Cada missão paga experiência e um título, e o Diário mostra quanto falta para a próxima.</p>
@@ -614,13 +614,47 @@ export const POSTS = {
       <blockquote>Memória é distância. Todo desempenho nasce de encurtar a distância entre a conta e o número.</blockquote>
     `,
   },
+
+  // ---------------- Matemática · análise ----------------
+  limits: {
+    kicker: "matemática · torre dos limites",
+    title: "O valor que ninguém alcança",
+    date: "2026-10-06",
+    read: "6 min",
+    tags: ["análise", "limite", "continuidade"],
+    continent: "math",
+    lab: null,
+    body: `
+      <p>A pergunta que fundou a análise não é "quanto vale no ponto", e sim "para onde a função vai quando chega perto". Em x igual a 2, a função (x² - 4)/(x - 2) nem existe: dá zero dividido por zero. Mas para x perto de 2 ela vale x + 2 disfarçado, e se aproxima de 4. O limite é 4, mesmo sem a função existir ali.</p>
+      <p>Essa distinção parece preciosismo e é a base do cálculo. Derivada é limite de uma razão de variações. Integral é limite de uma soma de retângulos. Sem saber para onde as coisas vão, não se mede velocidade instantânea nem área de curva.</p>
+      <p>A definição rigorosa troca a intuição por um jogo de tolerâncias. Para todo épsilon maior que zero existe um delta maior que zero tal que, se x está a menos de delta do ponto, f(x) está a menos de épsilon do limite. Épsilon é a margem que você aceita no resultado; delta é o quanto precisa se aproximar na entrada para garantir aquela margem. Quem vence o jogo para qualquer épsilon ganha o direito de dizer "o limite é L".</p>
+      <p>Com isso, continuidade fica fácil de enunciar: a função é contínua no ponto quando o limite existe, a função existe ali e os dois coincidem. O gráfico não pula. É a diferença entre uma estrada e uma escada.</p>
+      <blockquote>O limite não pergunta onde você chegou. Pergunta para onde você estava indo.</blockquote>
+    `,
+  },
+  series: {
+    kicker: "matemática · sala das séries",
+    title: "Somar para sempre e chegar a algum lugar",
+    date: "2026-10-02",
+    read: "6 min",
+    tags: ["análise", "séries", "convergência"],
+    continent: "math",
+    lab: null,
+    body: `
+      <p>Somar infinitos números parece pedir uma resposta infinita, mas nem sempre. Some 1/2, depois 1/4, depois 1/8, e assim por diante. Cada metade que falta é preenchida pela seguinte: a soma se aproxima de 1 e nunca passa. A série converge.</p>
+      <p>Agora troque por 1 + 1/2 + 1/3 + 1/4. Os termos também vão a zero, e no entanto a soma cresce sem parar. Essa é a série harmônica, e ela diverge. Termo indo a zero não garante convergência: é a condição mais fácil de checar, e a mais fraca.</p>
+      <p>Por isso existem critérios. Comparar com uma série geométrica resolve muita coisa. O critério da razão olha o tamanho do termo seguinte sobre o atual. O critério da integral troca a soma por uma área. Nenhum deles é receita universal: cada um funciona numa família de casos, e o analista escolhe o que serve.</p>
+      <p>Para o jogo, a lição é a mesma do resto da matemática: o infinito não é um lugar distante, é um processo. Dá para dizer com precisão o que acontece quando ele continua, e é isso que separa "mais ou menos 1" de "converge para 1".</p>
+      <blockquote>Infinitas parcelas podem caber num número finito. O contrário também, e é aí que a coisa fica interessante.</blockquote>
+    `,
+  },
 };
 
 export const NPCS = {
   guia: {
     name: "Dona Zefa",
     lines: [
-      "Bem-vindo ao Porto. Seis continentes, mais terra do que os olhos acreditam.",
+      "Bem-vindo ao Porto. Sete continentes, mais terra do que os olhos acreditam.",
       "Cada farol da doca acende uma Pedra do Porto. Aperte F nas pedras para voltar rápido.",
       "O diário guarda o que você já viu. Não precisa decorar nada.",
       "Ao lado de cada acampamento de caça tem uma boca de caverna. Lá embaixo o bicho não espera você apertar F: ele vê primeiro.",
@@ -801,6 +835,24 @@ export const NPCS = {
       "Treino de arquitetura é aqui, no claro. A galeria cobra caro por erro de cache.",
       "Comece pelo ciclo de instrução: buscar, decodificar, executar. O resto encaixa.",
       "Se travar, pense no endereço. Toda memória tem um, e a pergunta também.",
+    ],
+  },
+  cauchy: {
+    name: "Cauchy",
+    lines: [
+      "Meu nome ficou colado em dois negócios: o critério de convergência e a definição de limite. Os dois começam com a mesma ideia de tolerância.",
+      "Um limite não precisa ser alcançado. Precisa ser perseguido de perto o bastante, para qualquer margem que você aceite.",
+      "Se a série dos módulos converge, a série original converge também. Se ela diverge, não quer dizer que a outra divirja: é só o teste que não decidiu.",
+      "Cuidado com a ordem das operações. Trocar limite e soma sem justificar já custou a cabeça de muita gente boa.",
+      "Aqui do lado fica a estação dos épsilons. Lá dentro, a margem é o próprio chão: escolha errada e a ponte não aparece.",
+    ],
+  },
+  "trainer-math-analysis": {
+    name: "Mestre Weierstrass",
+    lines: [
+      "Treino de análise aqui, no claro e sem soma infinita cobrando juros. O vale é que cobra.",
+      "Comece pela definição de limite: é a pergunta que sustenta quase todas as outras.",
+      "Série geométrica é o teste mais fácil de aplicar e o mais fácil de esquecer a razão certa.",
     ],
   },
   shannon: {

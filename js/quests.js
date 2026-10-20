@@ -54,8 +54,8 @@ export const QUESTS = [
     npc: "guia",
     giver: "Dona Zefa",
     title: "O mundo inteiro",
-    brief: "Trinta e dois fragmentos, seis continentes, uma volta completa. Quando o mapa acabar, o Porto ainda vai estar aqui.",
-    goal: { type: "cards", count: 32 },
+    brief: "Quarenta e três fragmentos, sete continentes, uma volta completa. Quando o mapa acabar, o Porto ainda vai estar aqui.",
+    goal: { type: "cards", count: 43 },
     reward: { xp: 150, title: "Mundo de Song" },
   },
   {
@@ -346,6 +346,25 @@ export const QUESTS = [
     },
     reward: { xp: 32, title: "Arquiteto de Bolso" },
   },
+  {
+    id: "jogo-do-epsilon",
+    npc: "cauchy",
+    giver: "Cauchy",
+    title: "O jogo do épsilon",
+    brief: "A margem que você aceita no resultado decide o quanto precisa se aproximar na entrada.",
+    goal: { type: "quiz" },
+    quiz: {
+      question: "O que a definição épsilon-delta de limite garante?",
+      options: [
+        "Para todo épsilon existe um delta que mantém f(x) perto do limite",
+        "Que a função sempre alcança o limite no ponto",
+        "Que o limite é sempre um número inteiro",
+      ],
+      answer: 0,
+      why: "Você escolhe a margem do resultado, e a definição cobra uma margem na entrada. Se dá para vencer para qualquer épsilon, o limite existe e vale L.",
+    },
+    reward: { xp: 36, title: "Aprendiz de Cauchy" },
+  },
 ];
 
 const QUEST_BY_ID = new Map(QUESTS.map((q) => [q.id, q]));
@@ -420,7 +439,9 @@ export class Quests {
         : this.getCards().size;
     } else if (goal.type === "docks") {
       need = goal.count;
-      have = this.getDocks().size;
+      // área temática também marca doca, com prefixo; o Cartógrafo conta
+      // continentes, não pedaços deles.
+      have = [...this.getDocks()].filter((id) => !id.startsWith("area:")).size;
     } else if (goal.type === "labs") {
       need = goal.count;
       have = this.data.stats.labs.length;

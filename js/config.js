@@ -176,6 +176,7 @@ export const AREAS = [
     id: "physics-em",
     continent: "physics",
     name: "Área do Eletromagnetismo",
+    sub: "corrente, campo e onda morando na pedra",
     land: { cx: 152, cy: 104, rx: 18, ry: 10 },
     rect: { x: 134, y: 94, w: 36, h: 20 },
     base: 14,
@@ -187,12 +188,25 @@ export const AREAS = [
     id: "cs-arch",
     continent: "cs",
     name: "Área da Arquitetura de Computadores",
+    sub: "instruções, registros e o ciclo que não para",
     land: { cx: 204, cy: 20, rx: 26, ry: 14 },
     rect: { x: 178, y: 6, w: 52, h: 28 },
     base: 10,
     floor: 11,
     path: 11,
     accent: "#61f4c0",
+  },
+  {
+    id: "math-analysis",
+    continent: "math",
+    name: "Área da Análise",
+    sub: "limites, séries e o infinito que se persegue",
+    land: { cx: 226, cy: 76, rx: 22, ry: 13 },
+    rect: { x: 202, y: 62, w: 46, h: 27 },
+    base: 12,
+    floor: 13,
+    path: 13,
+    accent: "#b48cff",
   },
 ];
 
@@ -421,6 +435,18 @@ export const SITES = [
     label: "Registradores e Memória", x: 214, y: 25, post: "registers",
     accent: "#6bd5ff", icon: "chip",
   },
+
+  // Matemática · área da análise
+  {
+    id: "limits", continent: "math", name: "Torre dos Limites",
+    label: "Limite e Continuidade", x: 214, y: 71, post: "limits",
+    accent: "#b48cff", icon: "curve",
+  },
+  {
+    id: "series", continent: "math", name: "Sala das Séries",
+    label: "Convergência", x: 236, y: 82, post: "series",
+    accent: "#6bd5ff", icon: "infinity",
+  },
 ];
 
 export const WAYSTONES = [
@@ -434,6 +460,7 @@ export const WAYSTONES = [
   { id: "lingua", continent: "lingua", name: "Farol da Língua", x: 29, y: 103, accent: "#e8c07a" },
   { id: "physics-em", continent: "physics", name: "Farol do Eletromagnetismo", x: 152, y: 104, accent: "#ffb26b" },
   { id: "cs-arch", continent: "cs", name: "Farol da Arquitetura", x: 204, y: 25, accent: "#61f4c0" },
+  { id: "math-analysis", continent: "math", name: "Farol da Análise", x: 226, y: 78, accent: "#b48cff" },
 ];
 
 export const NPC_SPAWNS = [
@@ -454,6 +481,7 @@ export const NPC_SPAWNS = [
   { id: "alzira", continent: "lingua", x: 33, y: 102, accent: "#e8c07a" },
   { id: "faraday", continent: "physics", x: 146, y: 111, accent: "#ffb26b" },
   { id: "vonneumann", continent: "cs", x: 196, y: 29, accent: "#61f4c0" },
+  { id: "cauchy", continent: "math", x: 219, y: 84, accent: "#b48cff" },
 ];
 
 export const CAT_SPAWN = { x: 87, y: 61 };

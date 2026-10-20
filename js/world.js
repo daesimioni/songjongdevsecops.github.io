@@ -42,6 +42,15 @@ export function createWorld() {
     }
   };
 
+  function areaAtTile(tx, ty) {
+    for (const a of AREAS) {
+      const r = a.rect;
+      if (tx >= r.x && tx < r.x + r.w && ty >= r.y && ty < r.y + r.h) return a;
+    }
+    return null;
+  }
+  function areaAt(x, y) { return areaAtTile(Math.floor(x), Math.floor(y)); }
+
   function continentAtTile(tx, ty) {
     for (const c of Object.values(CONTINENTS)) {
       const r = c.rect;
@@ -89,7 +98,7 @@ export function createWorld() {
 
   // 3. clareiras das estações
   for (const site of SITES) {
-    const c = CONTINENTS[site.continent];
+    const c = areaAtTile(Math.round(site.x), Math.round(site.y)) || CONTINENTS[site.continent];
     rect(Math.round(site.x) - 4, Math.round(site.y) - 4, 9, 9, c.floor);
   }
 
@@ -117,8 +126,11 @@ export function createWorld() {
   }
 
   for (const stone of WAYSTONES) {
-    const c = CONTINENTS[stone.continent];
-    for (const site of SITES.filter((s) => s.continent === stone.continent)) {
+    const area = areaAtTile(stone.x, stone.y);
+    const c = area || CONTINENTS[stone.continent];
+    // a pedra de uma área só liga às estações daquela área: o resto fica do
+    // outro lado da água, e caminho não atravessa mar.
+    for (const site of SITES.filter((s) => s.continent === stone.continent && areaAtTile(s.x, s.y) === area)) {
       connect(stone, site, c.path);
     }
   }
@@ -162,6 +174,7 @@ export function createWorld() {
   bridgeLine(43, 108, 74, 112, 3, BRIDGE); // sul e vale da língua
   bridgeLine(112, 104, 136, 104, 3, BRIDGE); // física e eletromagnetismo
   bridgeLine(154, 22, 180, 22, 3, BRIDGE); // nordeste e arquitetura
+  bridgeLine(174, 74, 204, 74, 3, BRIDGE); // direita e análise
   // encontros de ponte com terra
   rect(88, 30, 5, 4, CONTINENTS.cs.path);
   rect(88, 88, 5, 4, CONTINENTS.physics.path);
@@ -179,6 +192,8 @@ export function createWorld() {
   rect(134, 103, 4, 4, CONTINENTS.physics.path);
   rect(152, 21, 4, 4, CONTINENTS.ai.path);
   rect(178, 21, 4, 4, CONTINENTS.cs.path);
+  rect(172, 73, 4, 4, CONTINENTS.math.path);
+  rect(202, 73, 4, 4, CONTINENTS.math.path);
   rect(76, 47, 4, 4, CONTINENTS.hub.floor);
   rect(101, 47, 4, 4, CONTINENTS.hub.floor);
 
@@ -530,7 +545,7 @@ export function createWorld() {
     tiles, decor, props, stations, waystones, npcs, hunters, monsters, caves,
     cat: { ...CAT_SPAWN, facing: 1, t: 0, moving: false },
     get, set, isSolidTile, boxCollides, updateNpcs,
-    continentAt, continentAtTile,
+    continentAt, continentAtTile, areaAt, areaAtTile,
     markExplored, isExplored, setExplored,
     get exploredVersion() { return exploredVersion; },
     get exploredBytes() { return explored; },

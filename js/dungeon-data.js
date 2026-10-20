@@ -254,6 +254,30 @@ const COMMON = {
     monsters: ["Instrução", "Registrador", "Pipeline", "ULA", "Cache", "Barramento", "Clock", "Endereço", "Desvio", "Memória", "Salto"],
     palette: { floor: "#143330", floor2: "#0e2523", wall: "#081716", wallTop: "#1e4a44", accent: "#61f4c0" },
   },
+  "math-analysis": {
+    continent: "math",
+    name: "Vale dos Limites",
+    sub: "onde toda soma infinita tenta chegar a algum lugar",
+    material: "veio",
+    tunnel: "narrow",
+    equipment: ["anel-serie", "manto-limite", "escudo-delta"],
+    shift: { b: [-2, 1], e: [2, -1], h: [-1, -2] },
+    boss: "O Limite Silencioso",
+    rooms: [
+      ["Boca da Sequência", "entrada"],
+      ["Sala dos Épsilons", "épsilon"],
+      ["Corredor das Séries", "séries"],
+      ["Cripta da Convergência", "convergência"],
+      ["Oficina das Derivadas", "derivadas"],
+      ["Poço das Integrais", "integrais"],
+      ["Torre de Cauchy", "cauchy"],
+      ["Praça da Análise", "cidade"],
+      ["Câmara do Delta", "delta"],
+      ["Galeria do Infinito", "infinito"],
+    ],
+    monsters: ["Sequência", "Série", "Épsilon", "Delta", "Derivada", "Integral", "Convergência", "Divergência", "Cauchy", "Continuidade", "Limite"],
+    palette: { floor: "#2c2440", floor2: "#1f1930", wall: "#120f1e", wallTop: "#413463", accent: "#c9a4ff" },
+  },
 };
 
 export const DUNGEONS = Object.entries(COMMON).map(([key, d]) => {

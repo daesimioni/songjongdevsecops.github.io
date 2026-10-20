@@ -11,7 +11,7 @@ globalThis.localStorage = {
   clear: () => store.clear(),
 };
 
-const { CONTINENTS, SITES, WAYSTONES, NPC_SPAWNS, CONTINENT_ORDER } = await import("../js/config.js");
+const { CONTINENTS, SITES, WAYSTONES, NPC_SPAWNS, CONTINENT_ORDER, AREAS } = await import("../js/config.js");
 const { QUESTIONS, DEEP_QUESTIONS, GROUNDS, ITEMS, RECIPES, ENCHANTS } = await import("../js/rpg-data.js");
 const { DUNGEONS } = await import("../js/dungeon-data.js");
 const { POSTS, NPCS } = await import("../js/content.js");
@@ -23,8 +23,8 @@ const faults = [];
 const check = (cond, message) => { if (!cond) faults.push(message); };
 const continents = CONTINENT_ORDER.filter((c) => c !== "hub");
 
-// 37 estações com texto, cinco por continente e duas no porto
-check(SITES.length === 41, `SITES tem ${SITES.length} estações, esperado 41`);
+// 43 estações com texto: cinco por continente, duas no porto e as áreas temáticas
+check(SITES.length === 43, `SITES tem ${SITES.length} estações, esperado 43`);
 check(new Set(SITES.map((s) => s.id)).size === SITES.length, "id de estação repetido");
 check(SITES.filter((s) => s.continent === "hub").length === 2, "o porto precisa de 2 estações");
 for (const site of SITES) {
@@ -150,7 +150,7 @@ relicRpg.addItem("orbita", 1);
 check(relicRpg.pvpQuestions("cs")[4].damage === 7, "duas relíquias somam o teto de 2 de dano no PvP");
 
 // cavernas: seis, com entrada, cidade, monstros e chefe
-check(DUNGEONS.length === 9, `DUNGEONS tem ${DUNGEONS.length} cavernas, esperado 9`);
+check(DUNGEONS.length === 10, `DUNGEONS tem ${DUNGEONS.length} cavernas, esperado 10`);
 for (const dungeon of DUNGEONS) {
   check(continents.includes(dungeon.continent), `caverna ${dungeon.id} em continente inválido`);
   check(dungeon.monsters?.length >= 4, `caverna ${dungeon.id} com poucos monstros`);
@@ -166,9 +166,12 @@ for (const dungeon of DUNGEONS) {
 
 // o mundo que o jogo monta: instrutores na superfície, bicho só na caverna
 const world = createWorld();
-check(world.hunters.length === 9, `mundo com ${world.hunters.length} clareiras`);
+for (const area of AREAS) {
+  check(world.areaAt(area.land.cx, area.land.cy)?.id === area.id, `área ${area.id} não é reconhecida no mapa`);
+}
+check(world.hunters.length === 10, `mundo com ${world.hunters.length} clareiras`);
 check(world.monsters.length === 0, "a superfície ainda tem monstros");
-check(world.npcs.filter((n) => n.trainer).length === 9, "faltam instrutores na superfície");
+check(world.npcs.filter((n) => n.trainer).length === 10, "faltam instrutores na superfície");
 for (const c of continents) {
   check(!!world.caves.find((cave) => cave.continent === c), `continente ${c} sem boca de caverna`);
   check(!!DUNGEONS.find((d) => d.continent === c), `continente ${c} sem caverna definida`);
