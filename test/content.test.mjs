@@ -379,6 +379,26 @@ for (const item of CATALOG_CONTENT.areas) {
 check(AREAS.length === 16 + ready, `mapa com ${AREAS.length} áreas, esperado ${16 + ready}`);
 check(QUESTS.length >= 42 + ready, `missões: ${QUESTS.length}, esperado ao menos ${42 + ready}`);
 
+// toda ponte de catálogo tem caminho seco: nenhum par vizinho cortado pela água
+const spotCentre = new Map(CATALOG_AREAS.map((a) => [a.id, a]));
+let pontesSecas = 0;
+for (const [a, b] of CATALOG_BRIDGES) {
+  const pa = spotCentre.get(a), pb = spotCentre.get(b);
+  if (!pa || !pb) continue;
+  const dx = pb.cx - pa.cx, dy = pb.cy - pa.cy;
+  const len = Math.hypot(dx, dy) || 1;
+  const ux = dx / len, uy = dy / len;
+  let agua = 0;
+  for (let i = 1; i < 40; i++) {
+    const t = i / 40;
+    const x = Math.floor(pa.cx + ux * (len * t));
+    const y = Math.floor(pa.cy + uy * (len * t));
+    if (world.get(x, y) === 3) agua++;
+  }
+  if (agua === 0) pontesSecas++;
+}
+check(pontesSecas === CATALOG_BRIDGES.length, `pontes secas: ${pontesSecas}/${CATALOG_BRIDGES.length}`);
+
 // cobertura do catálogo: as 82 seções têm área, caverna, NPC e missão no jogo
 let cobertas = 0, semCaverna = [], semMissao = [], semArea = [];
 for (const item of CATALOG) {
