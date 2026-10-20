@@ -6,6 +6,7 @@ import { PHYSICS_BANK } from "./catalog-bank-physics.js";
 import { CHEM_BANK } from "./catalog-bank-chem.js";
 import { CS_BANK } from "./catalog-bank-cs.js";
 import { LINGUA_BANK } from "./catalog-bank-lingua.js";
+import { INTER_BANK } from "./catalog-bank-inter.js";
 
 export const BANK = {
   ...MATH_BANK,
@@ -13,4 +14,5 @@ export const BANK = {
   ...CHEM_BANK,
   ...CS_BANK,
   ...LINGUA_BANK,
+  ...INTER_BANK,
 };

@@ -86,7 +86,7 @@ Sem banco preenchido, a área não entra no jogo: o teste cobra cobertura.
 - [x] **F4. Química.** 13 seções (11 novas).
 - [x] **F5. Computação.** 17 seções (13 novas).
 - [x] **F6. Língua.** 15 seções (13 novas).
-- [ ] **F7. Interseções.** 11 áreas com túnel para as duas mães.
+- [x] **F7. Interseções.** 11 áreas com túnel para as duas mães.
 - [ ] **F8. Prova final.** 86 áreas, 82 cavernas, 82 clareiras, 82 NPCs de
       missão, 492 perguntas novas, tudo verde no node, no navegador e ao vivo;
       desempenho medido com o mapa maior.
@@ -101,3 +101,4 @@ Sem banco preenchido, a área não entra no jogo: o teste cobra cobertura.
 | 2026-10-20 | F4 | banco de Química (`catalog-bank-chem.js`): 11 áreas novas, 33 tópicos; títulos com acrônimo preservado (DFT) | node: 48 áreas, 165 estações, 55 cavernas, 55 clareiras, 74 missões, 712 perguntas; navegador: 32/32 áreas do catálogo com pacote completo, 32/32 cavernas abrindo, página e missão de Química funcionando; revisão ao vivo 48/48 |
 | 2026-10-20 | F5 | banco de Computação (`catalog-bank-cs.js`): 14 áreas novas, 42 tópicos; uma pergunta duplicada foi trocada | node: 62 áreas, 207 estações, 69 cavernas, 69 clareiras, 88 missões, 754 perguntas; navegador: 46/46 áreas do catálogo com pacote completo, 46/46 cavernas abrindo, página e missão de Computação; revisão ao vivo 48/48 |
 | 2026-10-20 | F6 | banco de Língua (`catalog-bank-lingua.js`): 13 áreas novas, 39 tópicos | node: 75 áreas, 246 estações, 82 cavernas, 82 clareiras, 101 missões, 793 perguntas; navegador: 59/59 áreas do catálogo com pacote completo, página e missão de Língua; 60 fps com desenho 1,1 ms; revisão ao vivo 48/48 |
+| 2026-10-20 | F7 | banco das Interseções (`catalog-bank-inter.js`): 11 áreas, 33 tópicos; cada interseção foi posicionada entre as duas disciplinas-mãe e ligada pelo túnel da conurbação; pontes de corrente caíram de 64 para 54 | node: 86 áreas, 82 seções cobertas com área, caverna, NPC e missão, 93 cavernas, 93 clareiras, 112 missões, 826 perguntas; navegador: 70/70 áreas do catálogo completas, 70 cavernas abrindo, túnel da interseção listando as capitais das duas mães; 14/14 |

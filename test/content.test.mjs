@@ -314,7 +314,29 @@ for (let i = 0; i < CATALOG_AREAS.length; i++) {
   }
   check(a.cx - a.land.rx > 293 || a.cy - a.land.ry > 191, `${a.id} invadiu o mundo antigo`);
 }
-check(CATALOG_BRIDGES.length === 64, `pontes de catálogo: ${CATALOG_BRIDGES.length}, esperado 64`);
+check(CATALOG_BRIDGES.length === 54, `pontes de catálogo: ${CATALOG_BRIDGES.length}, esperado 54`);
+// a interseção nasce entre as disciplinas que liga: perto o bastante das duas
+const clusterCentre = {};
+for (const d of ["math", "physics", "chem", "cs", "lingua"]) {
+  const list = CATALOG_AREAS.filter((a) => a.discipline === d);
+  clusterCentre[d] = {
+    x: list.reduce((n, a) => n + a.cx, 0) / list.length,
+    y: list.reduce((n, a) => n + a.cy, 0) / list.length,
+  };
+}
+const interById = new Map(CATALOG_AREAS.filter((a) => a.discipline === "inter").map((a) => [a.id, a]));
+for (const [inter, d] of CATALOG_TUNNELS) {
+  const spot = interById.get(inter);
+  check(!!spot, `interseção sem posição: ${inter}`);
+  if (!spot) continue;
+  const centre = clusterCentre[d];
+  const dist = Math.hypot(spot.cx - centre.x, spot.cy - centre.y);
+  // inter-todas junta as cinco, então o alcance dela é o mapa todo
+  const limit = inter === "inter-todas" ? 340 : 240;
+  check(dist < limit, `${inter} longe demais de ${d}: ${Math.round(dist)} tiles`);
+}
+check(CATALOG_TUNNELS.length === 25, `túneis de interseção: ${CATALOG_TUNNELS.length}, esperado 25`);
+check(interById.size === 11, `interseções posicionadas: ${interById.size}, esperado 11`);
 const spotById = new Map(CATALOG_AREAS.map((a) => [a.id, a]));
 for (const [a, b] of CATALOG_BRIDGES) {
   const pa = spotById.get(a), pb = spotById.get(b);
@@ -326,7 +348,6 @@ for (const spot of CATALOG_AREAS) {
   const viz = CATALOG_BRIDGES.filter(([a, b]) => a === spot.id || b === spot.id).length;
   check(viz >= 1 || CATALOG_TUNNELS.some(([t]) => t === spot.id), `${spot.id} sem caminho para ninguém`);
 }
-check(CATALOG_TUNNELS.length === 25, `túneis de interseção: ${CATALOG_TUNNELS.length}, esperado 25`);
 for (const [inter, d] of CATALOG_TUNNELS) {
   check(!!CATALOG_BY_ID.get(inter)?.links, `${inter} não é interseção`);
   check(!!DISCIPLINES[d], `túnel para disciplina inexistente: ${d}`);
@@ -357,6 +378,26 @@ for (const item of CATALOG_CONTENT.areas) {
 }
 check(AREAS.length === 16 + ready, `mapa com ${AREAS.length} áreas, esperado ${16 + ready}`);
 check(QUESTS.length >= 42 + ready, `missões: ${QUESTS.length}, esperado ao menos ${42 + ready}`);
+
+// cobertura do catálogo: as 82 seções têm área, caverna, NPC e missão no jogo
+let cobertas = 0, semCaverna = [], semMissao = [], semArea = [];
+for (const item of CATALOG) {
+  const areaId = item.existing || item.id;
+  const area = AREAS.find((a) => a.id === areaId);
+  if (!area) { semArea.push(item.id); continue; }
+  const dungeon = DUNGEONS.find((d) => d.id === `dungeon-${areaId}`);
+  if (!dungeon) semCaverna.push(item.id);
+  const npcsAqui = NPC_SPAWNS.filter((n) => world.areaAt
+    ? n.x >= area.rect.x && n.x < area.rect.x + area.rect.w && n.y >= area.rect.y && n.y < area.rect.y + area.rect.h
+    : false);
+  const temMissao = npcsAqui.some((n) => QUESTS.some((q) => q.npc === n.id));
+  if (!temMissao) semMissao.push(item.id);
+  cobertas++;
+}
+check(cobertas === 82, `seções cobertas: ${cobertas}, esperado 82`);
+check(semArea.length === 0, `seções sem área: ${semArea.join(", ")}`);
+check(semCaverna.length === 0, `seções sem caverna: ${semCaverna.join(", ")}`);
+check(semMissao.length === 0, `seções sem NPC com missão: ${semMissao.join(", ")}`);
 
 // bicho-assinatura precisa de desenho e de ficha no bestiário, senão cai no chefe
 const sigLine = source("../js/dungeon.js").split("\n").find((l) => l.includes("const signature =")) || "";

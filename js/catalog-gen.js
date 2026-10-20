@@ -101,13 +101,18 @@ export function buildCatalogContent() {
     const discipline = DISCIPLINES[spot.discipline];
     const tiles = TILES[spot.discipline] || TILES.math;
     const accent = discipline.accent;
+    // a interseção pertence ao continente da primeira disciplina que liga, para
+    // perguntas, caçada e duelo caírem num baralho que existe
+    const continent = spot.discipline === "inter"
+      ? DISCIPLINES[area.links?.[0] || "math"].continent
+      : discipline.continent;
     const order = (keeperIndex[spot.discipline] = (keeperIndex[spot.discipline] || 0) + 1) - 1;
     const [keeperId, keeperName] = (KEEPERS[spot.discipline] || KEEPERS.inter)[order % (KEEPERS[spot.discipline] || KEEPERS.inter).length];
     const words = WORDS[spot.discipline] || WORDS.inter;
 
     areas.push({
       id: area.id,
-      continent: discipline.continent,
+      continent,
       name: area.name,
       sub: area.sub,
       land: spot.land,
@@ -122,14 +127,14 @@ export function buildCatalogContent() {
     const families = DECOR[spot.discipline] || DECOR.inter;
     decor[area.id] = families[order % families.length];
 
-    waystones.push({ id: area.id, continent: discipline.continent, name: `Farol da ${area.short}`, x: spot.waystone.x, y: spot.waystone.y, accent });
+    waystones.push({ id: area.id, continent, name: `Farol da ${area.short}`, x: spot.waystone.x, y: spot.waystone.y, accent });
 
     bank.forEach((topic, i) => {
       const postId = `${area.id}-${i + 1}`;
       const siteName = titleCase(topic.name);
       sites.push({
         id: postId,
-        continent: discipline.continent,
+        continent,
         name: siteName,
         label: topic.name,
         x: i === 0 ? spot.sites[0].x : i === 1 ? spot.sites[1].x : spot.waystone.x + 5,
@@ -145,7 +150,7 @@ export function buildCatalogContent() {
         date: "2026-10-20",
         read: "4 min",
         tags: [discipline.name.toLowerCase(), area.short.toLowerCase()],
-        continent: discipline.continent,
+        continent,
         lab: null,
         body,
       };
@@ -164,7 +169,7 @@ export function buildCatalogContent() {
     });
 
     const shortWords = bank.map((t) => t.name.split(" ")[0]);
-    npcSpawns.push({ id: keeperId, continent: discipline.continent, x: spot.npc.x, y: spot.npc.y, accent });
+    npcSpawns.push({ id: keeperId, continent, x: spot.npc.x, y: spot.npc.y, accent });
     npcs[keeperId] = {
       name: keeperName,
       lines: [
@@ -200,7 +205,7 @@ export function buildCatalogContent() {
 
     const roomThemes = [shortWords[0], shortWords[1], shortWords[2], words[0], words[1], words[2], words[3], words[4], words[5], words[6]].map((w) => String(w).toLowerCase());
     dungeons[area.id] = {
-      continent: discipline.continent,
+      continent,
       name: `Cripta da ${area.short}`,
       sub: area.sub,
       material: "veio",
@@ -229,7 +234,7 @@ export function buildCatalogContent() {
     const loot = LOOT[spot.discipline] || LOOT.math;
     grounds.push({
       id: area.id,
-      continent: discipline.continent,
+      continent,
       dungeon: `dungeon-${area.id}`,
       name: `Caçada da ${area.short}`,
       center: { x: spot.hunt.x, y: spot.hunt.y },
