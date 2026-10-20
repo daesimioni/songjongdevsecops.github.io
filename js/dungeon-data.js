@@ -7,6 +7,7 @@
 // parecer repetido.
 
 import { CATALOG_CONTENT } from "./catalog-gen.js";
+import { AREA_ITEMS, BIOMES, FAUNA } from "./identity.js";
 
 export const DUNGEON_LAYOUT = {
   width: 64,
@@ -620,6 +621,21 @@ export const DUNGEONS = Object.entries(COMMON).map(([key, d]) => {
     tunnel: d.tunnel || "elbow",
   };
 });
+
+// toda caverna usa a paleta, o material, o equipamento e a fauna da área
+for (const d of DUNGEONS) {
+  const areaId = d.id.replace(/^dungeon-/, "");
+  const itens = AREA_ITEMS[areaId];
+  const bioma = BIOMES[areaId];
+  const fauna = FAUNA[areaId];
+  if (!itens || !bioma || !fauna) continue;
+  d.equipment = [itens.weapon.id, itens.armor.id, itens.helmet.id];
+  d.palette = { floor: bioma.floor, floor2: bioma.base, wall: "#0b0d18", wallTop: bioma.path, accent: bioma.accent };
+  d.fauna = fauna.map((f) => f.kind);
+  d.faunaAccents = fauna.map((f) => f.accent);
+  d.material = bioma.material;
+  d.bossAccent = bioma.accent;
+}
 
 export function dungeonById(id) {
   return DUNGEONS.find((d) => d.id === id) || (id === CONURBATION.id ? CONURBATION : null);

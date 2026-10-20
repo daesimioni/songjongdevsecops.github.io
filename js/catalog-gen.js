@@ -8,6 +8,7 @@ import { BANK } from "./catalog-bank.js";
 import { SECTION_TOPICS } from "./catalog-topics.js";
 import { ICONS, articleOf, labFor, subareaBody, subareaQuiz, titleCase, trilhaQuiz, trilhas } from "./catalog-text.js";
 import { placeStations } from "./catalog-place.js";
+import { AREA_ITEMS, BIOMES, FAUNA, dungeonIdentity } from "./identity.js";
 
 // cada área tem um tom próprio dentro da cor da disciplina: 14 ilhas da mesma
 // cor seriam quatorze vezes o mesmo lugar
@@ -47,34 +48,6 @@ function quizFor(q, salt) {
   return { question: q.q, options, answer: options.indexOf(correct), why: q.why };
 }
 
-// equipamento que pode cair dos baús de cada disciplina
-// bicho de cada clareira segue a fauna da disciplina
-const KINDS = {
-  math: ["beetle", "eye", "golem"],
-  physics: ["crab", "wisp", "golem"],
-  chem: ["jelly", "eye", "golem"],
-  cs: ["ant", "eye", "golem"],
-  lingua: ["imp", "serpent", "golem"],
-  inter: ["sentinel", "eye", "golem"],
-};
-
-const GEAR = {
-  math: ["espada-prova", "manto-giz", "oculos-estatistica"],
-  physics: ["cajado-luz", "manto-termico", "lentes-prisma"],
-  chem: ["frasco-acido", "avental-alquimista", "oculos-organicos"],
-  cs: ["chave-longa", "colete-malha", "capuz-registrador"],
-  lingua: ["pena-poeta", "sobretudo-pergaminho", "oculos-revisor"],
-};
-
-const LOOT = {
-  math: { loot: ["regua", "teorema", "axioma"], boss: "infinito" },
-  physics: { loot: ["ima", "prisma", "quanta"], boss: "orbita" },
-  chem: { loot: ["frasco", "catalisador", "cristal"], boss: "pedra" },
-  cs: { loot: ["parafuso", "chip", "fita"], boss: "nucleo" },
-  lingua: { loot: ["pergaminho", "tinta", "letra"], boss: "camoes" },
-  inter: { loot: ["regua", "frasco", "pergaminho"], boss: "infinito" },
-};
-
 // nomes de quem habita cada arquipélago; ids únicos no mundo
 const KEEPERS = {
   math: [["gauss", "Gauss"], ["noether", "Noether"], ["cantor", "Cantor"], ["euler", "Euler"], ["riemann", "Riemann"], ["poincare", "Poincaré"], ["ramanujan", "Ramanujan"], ["fibonacci", "Fibonacci"], ["hilbert", "Hilbert"], ["leibniz", "Leibniz"], ["pascal", "Pascal"]],
@@ -93,16 +66,6 @@ const WORDS = {
   lingua: ["Fonema", "Morfema", "Sintagma", "Coesão", "Coerência", "Gênero", "Registro", "Variante", "Semema", "Enunciado", "Estrofe"],
   inter: ["Ponte", "Diálogo", "Modelo", "Método", "Dado", "Linguagem", "Experimento", "Prova", "Sistema", "Hipótese", "Medida"],
 };
-
-// paleta da caverna a partir da cor da disciplina
-function shade(hex, amount) {
-  const n = parseInt(hex.replace("#", ""), 16);
-  const clamp = (v) => Math.max(0, Math.min(255, Math.round(v)));
-  const r = clamp(((n >> 16) & 255) * (1 + amount));
-  const g = clamp(((n >> 8) & 255) * (1 + amount));
-  const b = clamp((n & 255) * (1 + amount));
-  return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, "0")}`;
-}
 
 export function buildCatalogContent() {
   const areas = [];
@@ -134,7 +97,10 @@ export function buildCatalogContent() {
     const tintList = TINTS[spot.discipline] || TINTS.math;
     const accent = tintList[order % tintList.length];
     const [keeperId, keeperName] = (KEEPERS[spot.discipline] || KEEPERS.inter)[order % (KEEPERS[spot.discipline] || KEEPERS.inter).length];
-    const words = WORDS[spot.discipline] || WORDS.inter;
+    const bioma = BIOMES[area.id];
+    const conjunto = AREA_ITEMS[area.id];
+    const fauna = FAUNA[area.id];
+    const caverna = dungeonIdentity(area.id);
 
     areas.push({
       id: area.id,
@@ -253,8 +219,9 @@ export function buildCatalogContent() {
     npcs[keeperId] = {
       name: keeperName,
       lines: [
-        `${area.name}. ${area.sub}.`,
+        `${area.name}. ${area.sub}. Bem-vindo a ${bioma.name}.`,
         `Estude por aqui: ${shortWords.join(", ")}. Cada estação tem o que ler e o que mexer.`,
+        `Cuidado com ${fauna[0].name} e ${fauna[1].name}; os dois moram nesta ilha.`,
         `Cuidado com o engano clássico: ${bank[0].mistake}`,
         `A caverna daqui embaixo guarda o que ainda não foi respondido. Volte com vida.`,
       ],
@@ -278,7 +245,6 @@ export function buildCatalogContent() {
       reward: { xp: 38, title: `Aprendiz de ${keeperName}` },
     });
 
-    const roomThemes = [shortWords[0], shortWords[1], shortWords[2], words[0], words[1], words[2], words[3], words[4], words[5], words[6]].map((w) => String(w).toLowerCase());
     // cada terceira caverna usa outra planta: espelhada e com salas deslocadas
     const SHIFTS = [
       { b: [2, -2], e: [-1, 2], h: [2, 1] },
@@ -289,49 +255,39 @@ export function buildCatalogContent() {
       continent,
       name: `Cripta ${article} ${noun}`,
       sub: area.sub,
-      material: "veio",
+      material: caverna.material,
       mirror: order % 2 === 1,
       shift: SHIFTS[order % 3],
       tunnel: ["wide", "split", "zigzag", "cross"][order % 4],
-      equipment: GEAR[spot.discipline] || GEAR.math,
+      equipment: [conjunto.weapon.id, conjunto.armor.id, conjunto.helmet.id],
       boss: `O Guardião ${article} ${noun}`,
-      rooms: [
-        [`Boca ${article} ${noun}`, "entrada"],
-        [`Sala ${titleCase(shortWords[0])}`, roomThemes[0]],
-        [`Corredor ${titleCase(shortWords[1])}`, roomThemes[1]],
-        [`Cripta ${titleCase(shortWords[2])}`, roomThemes[2]],
-        [`Oficina ${titleCase(words[0])}`, roomThemes[3]],
-        [`Poço ${titleCase(words[1])}`, roomThemes[4]],
-        [`Torre ${titleCase(words[2])}`, roomThemes[5]],
-        [`Praça ${article} ${noun}`, "cidade"],
-        [`Câmara ${titleCase(words[3])}`, roomThemes[6]],
-        [`Galeria ${titleCase(words[4])}`, roomThemes[7]],
-      ],
-      monsters: [
-        shortWords[0], shortWords[1], shortWords[2],
-        words[0], words[1], words[2], words[3], words[4], words[5], words[6], words[7],
-      ],
-      palette: { floor: shade(accent, -0.75), floor2: shade(accent, -0.84), wall: "#0b0d18", wallTop: shade(accent, -0.5), accent },
+      rooms: caverna.rooms,
+      monsters: caverna.monsters,
+      fauna: caverna.fauna,
+      palette: caverna.palette,
     };
 
-    const loot = LOOT[spot.discipline] || LOOT.math;
     grounds.push({
       id: area.id,
       continent,
-      accent,
+      accent: bioma.accent,
       dungeon: `dungeon-${area.id}`,
       name: `Caçada ${article} ${noun}`,
       center: { x: spot.hunt.x, y: spot.hunt.y },
       banner: { x: 0, y: -3 },
       lever: { x: -3, y: 3 },
-      loot: loot.loot,
-      bossLoot: loot.boss,
-      monsters: [
-        { id: `${area.id}-m1`, name: shortWords[0], tier: 1, kind: (KINDS[spot.discipline] || KINDS.math)[0], dx: -3, dy: 1 },
-        { id: `${area.id}-m2`, name: shortWords[1], tier: 2, kind: (KINDS[spot.discipline] || KINDS.math)[1], dx: 3, dy: -1 },
-        { id: `${area.id}-m3`, name: shortWords[2], tier: 3, kind: (KINDS[spot.discipline] || KINDS.math)[2], dx: 0, dy: 3 },
-      ],
-      boss: { id: `${area.id}-boss`, name: `O Guardião ${article} ${noun}`, kind: "boss", dx: 0, dy: 0 },
+      loot: [conjunto.weapon.id, conjunto.armor.id, conjunto.helmet.id],
+      bossLoot: conjunto.helmet.id,
+      monsters: fauna.map((bicho, i) => ({
+        id: `${area.id}-m${i + 1}`,
+        name: bicho.name,
+        tier: i + 1,
+        kind: bicho.kind,
+        accent: bicho.accent,
+        dx: [-3, 3, 0][i],
+        dy: [1, -1, 3][i],
+      })),
+      boss: { id: `${area.id}-boss`, name: `O Guardião ${article} ${noun}`, kind: "boss", accent: bioma.accent, dx: 0, dy: 0 },
       keeper: keeperId,
     });
   }

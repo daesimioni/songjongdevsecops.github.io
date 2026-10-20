@@ -1,9 +1,12 @@
 // Missões: cada NPC tem uma pergunta ou uma tarefa. O objetivo é sempre
 // verificável no estado do jogo, então a missão nunca "acha" que terminou.
 import { backupCorrupt } from "./storage.js";
-import { SITES, STORAGE } from "./config.js";
+import { AREAS, NPC_SPAWNS, SITES, STORAGE } from "./config.js";
 
 import { CATALOG_CONTENT } from "./catalog-gen.js";
+import { GROUNDS } from "./rpg-data.js";
+import { NPCS } from "./content.js";
+import { IDENTITY_AREAS, questsForArea } from "./identity.js";
 
 export const QUESTS = [
   {
@@ -614,6 +617,22 @@ export const QUESTS = [
 
 QUESTS.push(...CATALOG_CONTENT.quests);
 
+// cada área ganha a trilha (abrir estações) e o chefe (descer e vencer)
+for (const area of IDENTITY_AREAS) {
+  const ground = GROUNDS.find((g) => g.id === area.id);
+  if (!ground) continue;
+  // as áreas antigas não guardam o id do guardião na caçada: o NPC é o que
+  // mora dentro do retângulo da área
+  const mapa = AREAS.find((a) => a.id === area.id);
+  const dentro = mapa
+    ? NPC_SPAWNS.find((n) => n.x >= mapa.rect.x && n.x < mapa.rect.x + mapa.rect.w && n.y >= mapa.rect.y && n.y < mapa.rect.y + mapa.rect.h)
+    : null;
+  const keeper = ground.keeper || dentro?.id;
+  if (!keeper) continue;
+  const giver = NPCS[keeper]?.name || "Guardião";
+  QUESTS.push(...questsForArea(area, keeper, giver));
+}
+
 const QUEST_BY_ID = new Map(QUESTS.map((q) => [q.id, q]));
 
 function readData() {
@@ -681,9 +700,16 @@ export class Quests {
     let need = 1;
     if (goal.type === "cards") {
       need = goal.count;
-      have = goal.continent
-        ? SITES.filter((s) => s.continent === goal.continent && this.getCards().has(s.post)).length
-        : this.getCards().size;
+      const cartas = this.getCards();
+      have = goal.area
+        ? SITES.filter((s) => s.post?.startsWith(`${goal.area}-`) && cartas.has(s.post)).length
+        : goal.continent
+          ? SITES.filter((s) => s.continent === goal.continent && cartas.has(s.post)).length
+          : cartas.size;
+    } else if (goal.type === "bosses") {
+      need = goal.count || 1;
+      const mortos = Object.keys(this.data.bosses || {});
+      have = goal.area ? mortos.filter((id) => id === goal.area).length : mortos.length;
     } else if (goal.type === "docks") {
       need = goal.count;
       // área temática também marca doca, com prefixo; o Cartógrafo conta

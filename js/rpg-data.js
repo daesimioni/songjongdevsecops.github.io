@@ -3,6 +3,7 @@
 // objetivo é ensinar, não só vencer.
 
 import { CATALOG_CONTENT } from "./catalog-gen.js";
+import { AREA_ITEMS, BIOMES, FAUNA } from "./identity.js";
 import { LEGACY_CONTENT } from "./config.js";
 
 export const SKILLS = {
@@ -236,6 +237,13 @@ export const ITEMS = {
   semente: { name: "Semente de Erva", continent: "hub", desc: "Planta na horta da cidade subterrânea. Cresce em 45 segundos." },
   racao: { name: "Ração de Caverna", continent: "hub", desc: "A comida do bicho da cidade. Três rações e ele passa a seguir você." },
 };
+
+// itens de cada área: arma, armadura e elmo com nome e história próprios
+for (const conjunto of Object.values(AREA_ITEMS)) {
+  ITEMS[conjunto.weapon.id] = conjunto.weapon;
+  ITEMS[conjunto.armor.id] = conjunto.armor;
+  ITEMS[conjunto.helmet.id] = conjunto.helmet;
+}
 
 export const RECIPES = [
   { id: "pocao", name: "Poção de Café", out: "pocao", qty: 1, need: { erva: 2, veio: 1 } },
@@ -652,7 +660,26 @@ const GROUNDS_RAW = [
 
 GROUNDS_RAW.push(...CATALOG_CONTENT.grounds);
 
-export const GROUNDS = GROUNDS_RAW.map((g) => ({
+export const GROUNDS = GROUNDS_RAW.map((base) => {
+  const itens = AREA_ITEMS[base.id];
+  const fauna = FAUNA[base.id];
+  const bioma = BIOMES[base.id];
+  const g = itens && fauna
+    ? {
+        ...base,
+        loot: [itens.weapon.id, itens.armor.id, itens.helmet.id],
+        bossLoot: itens.helmet.id,
+        accent: bioma?.accent || base.accent,
+        monsters: base.monsters.map((m, i) => ({
+          ...m,
+          name: fauna[i]?.name || m.name,
+          kind: fauna[i]?.kind || m.kind,
+          accent: fauna[i]?.accent || bioma?.accent,
+        })),
+        boss: { ...base.boss, accent: bioma?.accent },
+      }
+    : base;
+  return {
   ...g,
   monsters: g.monsters.map((m) => ({
     ...m,
@@ -671,7 +698,8 @@ export const GROUNDS = GROUNDS_RAW.map((g) => ({
   },
   lever: { x: g.center.x + g.lever.x, y: g.center.y + g.lever.y },
   bannerPos: { x: g.center.x + g.banner.x, y: g.center.y + g.banner.y },
-}));
+  };
+});
 
 export const QUESTIONS = {
   cs: {

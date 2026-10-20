@@ -6,6 +6,7 @@ import { GROUNDS } from "./rpg-data.js";
 import { dungeonById } from "./dungeon-data.js";
 import { CATALOG_CONTENT } from "./catalog-gen.js";
 import { CATALOG_BRIDGES, CATALOG_AREAS } from "./catalog-layout.js";
+import { npcStyle } from "./identity.js";
 
 const { WATER, SAND, GRASS, PATH, TREE, FLOWER, BRIDGE, PLAZA } = K;
 
@@ -475,6 +476,7 @@ export function createWorld() {
     ...trainerNpcs,
   ].map((n) => ({
     ...n,
+    ...npcStyle(n.id, n.accent),
     hx: n.x,
     hy: n.y,
     tx: n.x,

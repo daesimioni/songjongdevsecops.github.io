@@ -415,13 +415,15 @@ pergunta que casa com o tema. O duelo entre jogadores entra pela mesma prova: as
 cinco cartas, a dificuldade que vira dano e a compostura.
 
 A segunda confere o conteúdo inteiro: as 454 estações e seus textos, falas de NPC,
-112 missões, itens, equipamento, relíquias por continente, receitas, encantos, as
+284 missões, 447 itens, equipamento, relíquias por continente, receitas, encantos, as
 1603 perguntas (sem repetição e com resposta válida), as cinco cartas do PvP por
 continente, as 93 cavernas e o mundo montado (93 instrutores, 186 bocas, nenhum
 monstro na superfície). Confere também a cobertura das 82 seções do catálogo:
 cada uma precisa de área, caverna, NPC com missão e perguntas próprias; e a
 lista inteira de subáreas do catálogo precisa aparecer como estação, com todos
-os tópicos dentro de uma página.
+os tópicos dentro de uma página. A identidade de cada área também é conferida:
+86 biomas únicos, 258 monstros e 258 itens sem repetir nome, um traje por área,
+missão de trilha e de chefe em todas, e caverna com a paleta e a fauna da área.
 
 A terceira confere a casca: id repetido ou faltando, import que não resolve,
 botão sem `type`, imagem sem `alt`, link `_blank` sem `rel`, `aria-labelledby`

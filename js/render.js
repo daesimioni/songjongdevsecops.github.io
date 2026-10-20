@@ -7,6 +7,7 @@ import {
 import { hash2 } from "./world.js";
 import { NPCS } from "./content.js";
 import { drawPetSprite } from "./pet-art.js";
+import { BIOMES, TILE_STYLE } from "./identity.js";
 
 const BODY_W = 12;
 const BODY_H = 17;
@@ -63,6 +64,8 @@ export function createRenderer(canvas, world) {
   }
 
   function tileColor(t) {
+    const style = TILE_STYLE[t];
+    if (style) return style.color;
     switch (t) {
       case K.PATH: return "#57462f";
       case K.STONE: return "#3a3f5c";
@@ -84,6 +87,56 @@ export function createRenderer(canvas, world) {
       case K.SYNAPSE: return "#103848";
       default: return "#173225";
     }
+  }
+
+
+  // O padrão do bioma é uma marca discreta no chão: pontos, grade, onda, runa,
+  // rachadura, estrela, duna ou tijolo. Muda por área e não custa por frame,
+  // porque o chunk fica em cache.
+  function drawBiotile(c, px, py, style, h) {
+    c.save();
+    c.fillStyle = style.accent;
+    c.strokeStyle = style.accent;
+    c.lineWidth = 1;
+    c.globalAlpha = style.base ? 0.1 : 0.16;
+    const jx = Math.floor(h * 6);
+    const jy = Math.floor(hash2(px, py) * 6);
+    if (style.pattern === "dots") {
+      c.fillRect(px + 3 + jx, py + 4 + jy, 2, 2);
+      c.fillRect(px + 11 - jx, py + 11 - jy, 1, 1);
+    } else if (style.pattern === "grid") {
+      c.globalAlpha *= 0.7;
+      c.fillRect(px, py, TILE, 1);
+      c.fillRect(px, py, 1, TILE);
+    } else if (style.pattern === "waves") {
+      c.beginPath();
+      c.moveTo(px + 1, py + 8 + jy * 0.4);
+      c.quadraticCurveTo(px + 5, py + 4, px + 8, py + 8);
+      c.quadraticCurveTo(px + 11, py + 12, px + 15, py + 8);
+      c.stroke();
+    } else if (style.pattern === "runes") {
+      c.fillRect(px + 4 + jx, py + 6, 1, 6);
+      c.fillRect(px + 4 + jx, py + 6, 4, 1);
+      c.fillRect(px + 4 + jx, py + 11, 3, 1);
+    } else if (style.pattern === "cracks") {
+      c.beginPath();
+      c.moveTo(px + 2, py + 3 + jy);
+      c.lineTo(px + 7, py + 7);
+      c.lineTo(px + 6, py + 12);
+      c.lineTo(px + 12, py + 14);
+      c.stroke();
+    } else if (style.pattern === "stars") {
+      c.fillRect(px + 7 + jx, py + 3, 1, 5);
+      c.fillRect(px + 5 + jx, py + 5, 5, 1);
+    } else if (style.pattern === "dunes") {
+      c.beginPath();
+      c.arc(px + 8, py + 16, 9, Math.PI * 1.05, Math.PI * 1.95);
+      c.stroke();
+    } else {
+      c.fillRect(px + 1, py + 2 + jy, 6, 4);
+      c.fillRect(px + 9, py + 9 - jy, 6, 4);
+    }
+    c.restore();
   }
 
   function buildMinimapBase() {
@@ -110,6 +163,7 @@ export function createRenderer(canvas, world) {
         else if (t === K.SCORE) c = "#3a2a5c";
         else if (t === K.NEURAL) c = "#103048";
         else if (t === K.SYNAPSE) c = "#175062";
+        else if (TILE_STYLE[t]) c = TILE_STYLE[t].color;
         else if (t === K.TREE) c = "#0c1d15";
         else if (t === K.WALL) c = "#3b3352";
         g.fillStyle = c;
@@ -133,6 +187,11 @@ export function createRenderer(canvas, world) {
     const h = hash2(x, y);
     c.fillStyle = tileColor(t);
     c.fillRect(px, py, TILE, TILE);
+    const biomo = TILE_STYLE[t];
+    if (biomo) {
+      drawBiotile(c, px, py, biomo, h);
+      return;
+    }
 
     if (t === K.GRASS || t === K.FLOWER) {
       // manchas de grama mais nova dão relevo sem custo por frame
@@ -155,7 +214,9 @@ export function createRenderer(canvas, world) {
         c.fillRect(fx, fy - 1, 1, 3);
       }
     } else if (t === K.PATH) {
-      c.fillStyle = "#63513a";
+      const area = world.areaAt(x + 0.5, y + 0.5);
+      const pathColor = area && BIOMES[area.id] ? BIOMES[area.id].path : "#63513a";
+      c.fillStyle = pathColor;
       c.fillRect(px, py, TILE, TILE);
       c.fillStyle = "rgba(43, 33, 22, 0.55)";
       if (world.get(x, y - 1) !== K.PATH) c.fillRect(px, py, TILE, 1);
@@ -1183,8 +1244,8 @@ export function createRenderer(canvas, world) {
   function drawNpc(npc, time) {
     const px = npc.x * TILE, py = npc.y * TILE;
     const bob = Math.sin(time * 0.002 + npc.bob) * 1.2;
-    const colors = { skin: "#d9b08c", hair: "#4a3a55", shirt: npc.accent, pants: "#2f2c45" };
-    drawHuman(ctx, px, py + bob, npc.facing || 0, !!npc.moving, time, colors, 0.9);
+    const colors = npc.colors || { skin: "#d9b08c", hair: "#4a3a55", shirt: npc.accent, pants: "#2f2c45" };
+    drawHuman(ctx, px, py + bob, npc.facing || 0, !!npc.moving, time, colors, 0.9, npc.look || null);
     if (npc.questMark) {
       const ready = npc.questMark === "ready";
       const color = ready ? "#61f4c0" : "#ffc857";

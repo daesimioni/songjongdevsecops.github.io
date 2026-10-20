@@ -26,6 +26,7 @@ const { CATALOG, CATALOG_BY_ID, DISCIPLINES, CATALOG_EXISTING } = await import("
 const { CATALOG_CONTENT } = await import("../js/catalog-gen.js");
 const { SECTION_TOPICS } = await import("../js/catalog-topics.js");
 const { insideLand } = await import("../js/catalog-place.js");
+const { AREA_ITEMS, AREA_OUTFITS, BIOMES, FAUNA, IDENTITY_AREAS, TILE_STYLE, dungeonIdentity, npcStyle } = await import("../js/identity.js");
 const ready = CATALOG_CONTENT.areas.length;
 const { CATALOG_AREAS, CATALOG_BRIDGES, CATALOG_TUNNELS } = await import("../js/catalog-layout.js");
 
@@ -62,7 +63,7 @@ for (const c of continents) {
 for (const npc of NPC_SPAWNS) {
   check(!!NPCS[npc.id]?.lines?.length, `NPC ${npc.id} sem falas`);
 }
-const goalTypes = new Set(["cards", "docks", "labs", "hunts", "social", "quiz"]);
+const goalTypes = new Set(["cards", "docks", "labs", "hunts", "social", "quiz", "bosses"]);
 for (const quest of QUESTS) {
   check(!!NPC_SPAWNS.find((n) => n.id === quest.npc), `missão ${quest.id} aponta NPC inexistente ${quest.npc}`);
   check(goalTypes.has(quest.goal.type), `missão ${quest.id} com meta desconhecida ${quest.goal.type}`);
@@ -198,8 +199,8 @@ for (const item of [...OUTFITS, ...HAIRS]) {
   if (item.quest) check(questIds.has(item.quest), `${item.name} pede missão inexistente ${item.quest}`);
   if (item.unlock) check(continentIds.has(item.unlock), `${item.name} pede continente inexistente ${item.unlock}`);
 }
-check(OUTFITS.filter((o) => o.quest).length === 5, `trajes de missão: ${OUTFITS.filter((o) => o.quest).length}, esperado 5`);
-check(OUTFITS.length === 16, `trajes: ${OUTFITS.length}, esperado 16`);
+check(OUTFITS.filter((o) => o.quest).length === 91, `trajes de missão: ${OUTFITS.filter((o) => o.quest).length}, esperado 91`);
+check(OUTFITS.length === 102, `trajes: ${OUTFITS.length}, esperado 102`);
 check(OUTFITS.filter((o) => o.continent === "hub").length === 4, "trajes básicos livres mudaram de tamanho");
 
 // cada bicho desenhado tem um jeito de atrapalhar o duelo, e o chefe morre por fase
@@ -548,7 +549,7 @@ check(AREAS.length === 86, `áreas no mapa: ${AREAS.length}, esperado 86`);
 check(DUNGEONS.length === 93, `cavernas: ${DUNGEONS.length}, esperado 93`);
 check(GROUNDS.length === 93, `caçadas: ${GROUNDS.length}, esperado 93`);
 check(SITES.length === totalEstacoes, `catações: ${SITES.length}, esperado ${totalEstacoes}`);
-check(QUESTS.length === 112, `missões: ${QUESTS.length}, esperado 112`);
+check(QUESTS.length === 284, `missões: ${QUESTS.length}, esperado 284`);
 check(WAYSTONES.length === 94, `faróis: ${WAYSTONES.length}, esperado 94`);
 // 826 do banco mais as 7 perguntas do fundo que o módulo do duelo injeta
 check(totalQuestions === 1603, `perguntas: ${totalQuestions}, esperado 1603`);
@@ -591,6 +592,59 @@ for (const kind of sigKinds) {
   check(creatureSrc.includes(`kind === "${kind}"`), `sem desenho para ${kind}`);
   check(labelsLine.includes(`${kind}:`), `bestiário sem nome para ${kind}`);
 }
+
+// F10: identidade de cada área, sem repetir bioma, bicho, item, guardião ou caverna
+check(IDENTITY_AREAS.length === 86, `identidade: ${IDENTITY_AREAS.length} áreas, esperado 86`);
+check(Object.keys(BIOMES).length === 86, `biomas: ${Object.keys(BIOMES).length}, esperado 86`);
+const biomaNomes = Object.values(BIOMES).map((b) => b.name);
+const biomaKinds = Object.values(BIOMES).map((b) => b.baseKind);
+const biomaCores = Object.values(BIOMES).map((b) => b.base);
+check(new Set(biomaNomes).size === 86, "nome de bioma repetido");
+check(new Set(biomaKinds).size === 86, "tipo de piso repetido");
+check(new Set(biomaCores).size === 86, `cor de piso repetida: ${new Set(biomaCores).size}`);
+for (const area of IDENTITY_AREAS) {
+  const b = BIOMES[area.id];
+  const noMapa = AREAS.find((a) => a.id === area.id);
+  check(!!b, `${area.id} sem bioma`);
+  check(!!noMapa && noMapa.base === b.baseKind && noMapa.floor === b.floorKind, `${area.id} não usa o piso do bioma`);
+  check(!!TILE_STYLE[b.baseKind] && !!TILE_STYLE[b.floorKind], `${area.id} sem estilo de tile`);
+  const fauna = FAUNA[area.id];
+  check(Array.isArray(fauna) && fauna.length === 3, `${area.id} com fauna de ${fauna?.length}`);
+  check(new Set(fauna.map((f) => f.name)).size === 3, `${area.id} com bicho repetido`);
+  const itens = AREA_ITEMS[area.id];
+  check(!!itens?.weapon && !!itens?.armor && !!itens?.helmet, `${area.id} sem os três itens`);
+  for (const item of [itens.weapon, itens.armor, itens.helmet]) {
+    check(!!ITEMS[item.id], `${area.id} com item fora do registro: ${item.id}`);
+    check(ITEMS[item.id].name === item.name, `${area.id} com nome de item divergente`);
+  }
+  const dg = DUNGEONS.find((d) => d.id === `dungeon-${area.id}`);
+  const ident = dungeonIdentity(area.id);
+  check(!!dg && !!ident, `${area.id} sem caverna de identidade`);
+  if (dg && ident) {
+    check(dg.rooms.length === 10, `${area.id}: caverna com ${dg.rooms.length} salas`);
+    check(dg.equipment.length === 3 && dg.equipment[0] === itens.weapon.id, `${area.id}: equipamento da caverna fora da área`);
+    check((dg.fauna || []).length === 3, `${area.id}: caverna sem fauna da área`);
+    check(dg.palette.accent === b.accent, `${area.id}: paleta da caverna fora do bioma`);
+    check(dg.material === b.material, `${area.id}: material da caverna fora do bioma`);
+  }
+  const trilha = QUESTS.find((q) => q.id === `trilha-${area.id}`);
+  const chefe = QUESTS.find((q) => q.id === `chefe-${area.id}`);
+  check(!!trilha && trilha.goal.type === "cards" && trilha.goal.area === area.id, `${area.id} sem missão de trilha`);
+  check(!!chefe && chefe.goal.type === "bosses" && chefe.goal.area === area.id, `${area.id} sem missão de chefe`);
+  const traje = OUTFITS.find((o) => o.id === `traje-${area.id}`);
+  check(!!traje && traje.quest === `trilha-${area.id}`, `${area.id} sem traje próprio`);
+}
+const bichos = Object.values(FAUNA).flat();
+check(bichos.length === 258, `fauna total: ${bichos.length}, esperado 258`);
+check(new Set(bichos.map((b) => b.name.toLowerCase())).size === 258, "nome de bicho repetido entre áreas");
+const itensArea = Object.values(AREA_ITEMS).flatMap((x) => [x.weapon, x.armor, x.helmet]);
+check(itensArea.length === 258, `itens de área: ${itensArea.length}, esperado 258`);
+check(new Set(itensArea.map((i) => i.id)).size === 258, "id de item de área repetido");
+check(new Set(itensArea.map((i) => i.name.toLowerCase())).size === 258, "nome de item de área repetido");
+check(AREA_OUTFITS.length === 86, `trajes de área: ${AREA_OUTFITS.length}, esperado 86`);
+const looks = new Set(world.npcs.map((n) => JSON.stringify(n.colors)));
+check(looks.size === world.npcs.length, `NPCs com aparência repetida: ${world.npcs.length - looks.size}`);
+for (const npc of world.npcs) check(!!npc.look && !!npc.colors?.skin && !!npc.colors?.hair, `NPC ${npc.id} sem aparência`);
 
 assert.equal(faults.length, 0, `conteúdo com ${faults.length} problema(s):\n- ${faults.join("\n- ")}`);
 console.log("ok conteúdo, estações, NPCs, missões, itens, receitas, perguntas, PvP, cavernas e mundo");

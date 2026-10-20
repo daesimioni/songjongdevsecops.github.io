@@ -178,6 +178,7 @@ import { CATALOG_CONTENT } from "./catalog-gen.js";
 
 import { LEGACY_AREAS } from "./areas.js";
 import { buildLegacyContent } from "./catalog-legacy.js";
+import { BIOMES } from "./identity.js";
 
 export const AREAS = [...LEGACY_AREAS];
 
@@ -688,6 +689,17 @@ export const TILE_KIND = {
   NEURAL: 22,
   SYNAPSE: 23,
 };
+
+// cada área recebe o piso do próprio bioma: dois tipos de tile novos e o
+// caminho tingido na hora de desenhar
+for (const area of AREAS) {
+  const b = BIOMES[area.id];
+  if (!b) continue;
+  area.base = b.baseKind;
+  area.floor = b.floorKind;
+  area.path = TILE_KIND.PATH;
+  area.biome = b;
+}
 
 export const SOLID = new Set([
   TILE_KIND.WATER,

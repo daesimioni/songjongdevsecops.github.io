@@ -21,7 +21,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
   let timer = null;
 
   function accent() {
-    return CONTINENTS[rpg.duel?.ground.continent]?.accent || "#ffc857";
+    return rpg.duel?.monster?.accent || CONTINENTS[rpg.duel?.ground.continent]?.accent || "#ffc857";
   }
 
   function drawSprite() {

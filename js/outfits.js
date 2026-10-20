@@ -1,5 +1,7 @@
 // Trajes do aventureiro. A roupa é uma escolha da pessoa, não do lugar: o mapa
 // de cima e a caverna leem o mesmo objeto de cores.
+import { AREA_OUTFITS } from "./identity.js";
+
 export const OUTFITS = [
   {
     id: "viajante",
@@ -115,6 +117,9 @@ export const OUTFITS = [
     colors: { hair: "#1f2a4a", skin: "#c68a5e", shirt: "#6bd5ff", pants: "#202a48", accent: "#b48cff", trim: "#2f6a8a" },
   },
 ];
+
+// um traje por área, aberto pela trilha de estações daquela área
+OUTFITS.push(...AREA_OUTFITS);
 
 export function outfitById(id) {
   return OUTFITS.find((outfit) => outfit.id === id) || OUTFITS[0];
