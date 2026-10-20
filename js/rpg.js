@@ -745,6 +745,28 @@ export class RPG {
     return { ...res, manaCost: cost };
   }
 
+  // magia no mapa, fora da pergunta do duelo: cura de verdade, o resto é
+  // efeito de cena (luz, faísca, fogo) pago com mana ou carga
+  castWorldSpell(id) {
+    if (!ITEMS[id] || !SPELL_MANA[id]) return { ok: false, reason: "Essa magia não existe." };
+    const cost = SPELL_MANA[id];
+    const temCarga = this.itemCount(id) > 0;
+    if (!temCarga && !this.data.spells[id]) return { ok: false, reason: "Você ainda não aprendeu essa runa. Forje uma na forja." };
+    if (!temCarga && this.mana() < cost) return { ok: false, reason: `Falta mana (${this.mana()}/${cost}).` };
+    if (temCarga) {
+      this.data.items[id]--;
+      if (this.data.items[id] <= 0) delete this.data.items[id];
+      this.data.spells[id] = true;
+    } else {
+      this.data.mana = clamp(this.mana() - cost, 0, this.manaMax());
+    }
+    const item = ITEMS[id];
+    let healed = 0;
+    if (id === "runa-cura") healed = this.heal(10);
+    this.save();
+    return { ok: true, name: item.name, healed, manaCost: temCarga ? 0 : cost, charge: temCarga, effect: id };
+  }
+
   spellbarView() {
     return Object.keys(SPELL_MANA).map((id) => ({
       id,
@@ -758,7 +780,7 @@ export class RPG {
   useItem(id) {
     const item = ITEMS[id];
     const rune = id.startsWith("runa-");
-    if (!item || !(rune || ["pocao", "tocha", "bomba", "caldo", "cafe", "assado", "doce"].includes(id))) {
+    if (!item || !(rune || ["pocao", "pocao-mana", "tocha", "bomba", "caldo", "cafe", "assado", "doce"].includes(id))) {
       return { ok: false, reason: "Este item não se usa agora." };
     }
     if (this.itemCount(id) <= 0) return { ok: false, reason: `Você não tem ${item.name}.` };
@@ -787,15 +809,22 @@ export class RPG {
       return res;
     }
     // comida com efeito pode ser usada de vida cheia: o buff ainda vale
-    if (!item.buff && this.hp() >= this.hpMax()) return { ok: false, reason: "Sua vida já está cheia." };
+    if (!item.buff && item.heal && this.hp() >= this.hpMax() && !item.mana) return { ok: false, reason: "Sua vida já está cheia." };
+    if (item.mana && this.mana() >= this.manaMax() && !item.heal) return { ok: false, reason: "Sua mana já está cheia." };
     this.data.items[id]--;
     if (this.data.items[id] <= 0) delete this.data.items[id];
     const healed = this.heal(item.heal || 0);
+    let mana = 0;
+    if (item.mana) {
+      mana = Math.min(item.mana, this.manaMax() - this.mana());
+      this.data.mana = clamp(this.mana() + mana, 0, this.manaMax());
+    }
     if (item.buff) this.data.buffs[item.buff.id] = now() + item.buff.ms;
     this.save();
     return {
       ok: true,
       healed,
+      mana,
       buff: item.buff ? { id: item.buff.id, name: BUFF_NAMES[item.buff.id] || item.buff.id, ms: item.buff.ms } : null,
     };
   }

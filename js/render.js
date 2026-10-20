@@ -6,6 +6,8 @@ import {
 } from "./config.js";
 import { hash2 } from "./world.js";
 import { NPCS } from "./content.js";
+import { itemIconCanvas } from "./item-art.js";
+import { ITEMS } from "./rpg-data.js";
 import { drawPetSprite } from "./pet-art.js";
 import { BIOMES, TILE_STYLE } from "./identity.js";
 
@@ -1241,6 +1243,31 @@ export function createRenderer(canvas, world) {
     ctx.restore();
   }
 
+  // item largado no chão: ícone desenhado, brilho e um balanço leve
+  function drawGroundItem(g, time) {
+    const item = ITEMS[g.itemId];
+    if (!item) return;
+    const px = g.x * TILE, py = g.y * TILE;
+    const bob = Math.sin(time * 0.002 + g.x * 1.3) * 1.6;
+    const pulse = 0.45 + Math.sin(time * 0.003 + g.y) * 0.25;
+    ctx.fillStyle = "rgba(2,6,10,0.4)";
+    ctx.beginPath();
+    ctx.ellipse(px, py + 6, 7, 3, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = pulse * 0.3;
+    ctx.fillStyle = g.accent || "#ffc857";
+    ctx.beginPath();
+    ctx.arc(px, py - 8 + bob, 13, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.drawImage(itemIconCanvas(item), px - 9, py - 21 + bob, 18, 18);
+    if (Math.sin(time * 0.005 + g.x) > 0.8) {
+      ctx.fillStyle = "rgba(255,243,209,0.9)";
+      ctx.fillRect(px + 5, py - 18 + bob, 1, 1);
+      ctx.fillRect(px + 6, py - 17 + bob, 1, 1);
+    }
+  }
+
   function drawNpc(npc, time) {
     const px = npc.x * TILE, py = npc.y * TILE;
     const bob = Math.sin(time * 0.002 + npc.bob) * 1.2;
@@ -1560,6 +1587,10 @@ export function createRenderer(canvas, world) {
     for (const c of world.caves || []) {
       if (!onScreen(c.x, c.y, 64)) continue;
       drawables.push({ y: c.y * TILE + 8, fn: () => drawCave(c, time) });
+    }
+    for (const g of world.groundItems || []) {
+      if (!onScreen(g.x, g.y, 32)) continue;
+      drawables.push({ y: g.y * TILE + 7, fn: () => drawGroundItem(g, time) });
     }
     for (const s of world.stations) {
       if (!onScreen(s.x, s.y, 80)) continue;

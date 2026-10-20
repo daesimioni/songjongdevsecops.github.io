@@ -2,6 +2,7 @@
 // direita. Funciona com arrastar e soltar no desktop e com toque no celular.
 
 import { itemIconElement, itemAccent } from "./item-art.js";
+import { drawHuman } from "./human.js";
 
 const el = (tag, cls = "", text = "") => {
   const node = document.createElement(tag);
@@ -21,7 +22,7 @@ function statsDe(item) {
   return bits.join(" · ");
 }
 
-export function createInventoryUI({ rpg, toast, audio, onUse, onChange }) {
+export function createInventoryUI({ rpg, toast, audio, onUse, onChange, getAvatar }) {
   let selecionado = null;
   let ultimo = null;
   let gradePreparada = false;
@@ -152,6 +153,23 @@ export function createInventoryUI({ rpg, toast, audio, onUse, onChange }) {
     if (!equipBox || !grid) return;
     equipBox.textContent = "";
     equipBox.appendChild(el("h3", "inv-sec", "equipado"));
+    // o boneco com o que está vestido: a peça muda o desenho na hora
+    if (getAvatar) {
+      const palco = el("div", "inv-avatar-wrap");
+      const canvas = document.createElement("canvas");
+      canvas.width = 132;
+      canvas.height = 176;
+      canvas.className = "inv-avatar";
+      const ctx = canvas.getContext("2d");
+      if (ctx) {
+        const avatar = getAvatar();
+        ctx.imageSmoothingEnabled = false;
+        ctx.translate(66, 118);
+        drawHuman(ctx, 0, 0, 0, false, 0, avatar.colors || {}, 5, avatar.look || null, avatar.gear || null);
+      }
+      palco.appendChild(canvas);
+      equipBox.appendChild(palco);
+    }
     const linha = el("div", "inv-equip-grid");
     equipBox.appendChild(linha);
     const equipados = rpg.equippedView();

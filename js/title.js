@@ -140,6 +140,47 @@ export function startTitle(canvas) {
       ctx.fillRect(x - 2, 146 - h + 3, 5, 2);
     }
 
+    // colinas da frente e fogueira: o vale aparece mesmo com o cartão no meio
+    ctx.fillStyle = "#060a16";
+    ctx.beginPath();
+    ctx.moveTo(0, 168);
+    for (let x = 0; x <= LARGURA; x += 8) {
+      ctx.lineTo(x, 160 + Math.sin(x * 0.05) * 4 + Math.sin(x * 0.013) * 6);
+    }
+    ctx.lineTo(LARGURA, ALTURA);
+    ctx.lineTo(0, ALTURA);
+    ctx.closePath();
+    ctx.fill();
+    for (let i = 0; i < 34; i++) {
+      const x = Math.floor(aleatorio(i + 600) * LARGURA);
+      const y = 164 + Math.floor(aleatorio(i + 700) * 12);
+      ctx.fillStyle = i % 3 ? "#0a1220" : "#122036";
+      ctx.fillRect(x, y, 1, 2);
+    }
+    // árvores grandes nas laterais
+    for (const [bx, by, h] of [[18, 166, 34], [42, 170, 22], [286, 166, 38], [304, 171, 24]]) {
+      ctx.fillStyle = "#040710";
+      ctx.fillRect(bx, by - h, 3, h);
+      ctx.fillRect(bx - 7, by - h, 17, 4);
+      ctx.fillRect(bx - 5, by - h + 4, 13, 3);
+      ctx.fillRect(bx - 3, by - h + 7, 9, 2);
+    }
+    // fogueira acesa à esquerda
+    const fogo = ctx.createRadialGradient(64, 157, 1, 64, 157, 22);
+    fogo.addColorStop(0, "rgba(255, 190, 90, 0.34)");
+    fogo.addColorStop(1, "rgba(255, 190, 90, 0)");
+    ctx.fillStyle = fogo;
+    ctx.fillRect(42, 135, 44, 34);
+    ctx.fillStyle = "#3a2a1c";
+    ctx.fillRect(57, 161, 14, 2);
+    ctx.fillRect(59, 158, 3, 4);
+    ctx.fillStyle = "#ffc857";
+    ctx.fillRect(63, 154 + Math.sin(t * 0.006) * 1.5, 3, 6);
+    ctx.fillStyle = "#fff3d1";
+    ctx.fillRect(64, 156, 1, 3);
+    ctx.fillStyle = "#ff9f6b";
+    ctx.fillRect(66, 157, 2, 4);
+
     // vagalumes
     for (const v of vagalumes) {
       const x = v.x + Math.sin(t * 0.0008 * v.vel + v.fase) * 10;

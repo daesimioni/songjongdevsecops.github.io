@@ -27,6 +27,7 @@ import { ITEMS } from "./rpg-data.js";
 import { createSheet } from "./sheet.js";
 import { createDuel } from "./duel.js";
 import { createInventoryUI } from "./inventory-ui.js";
+import { itemIconElement } from "./item-art.js";
 import { createDungeon } from "./dungeon.js";
 import { CONURBATION, DUNGEONS, dungeonById } from "./dungeon-data.js";
 
@@ -68,6 +69,7 @@ const LIVE = {
 };
 
 const world = createWorld();
+const chaoPego = new Set();
 const renderer = createRenderer($("world"), world);
 const audio = createAudio();
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -243,7 +245,8 @@ const inventoryUi = createInventoryUI({
   toast,
   audio,
   onUse: usarItem,
-  onChange: () => { if (state.modal === "sheet") sheetUi.render(); },
+  getAvatar: () => ({ colors: player.colors, look: player.look, gear: gearAtual() }),
+  onChange: () => { if (state.modal === "sheet") sheetUi.render(); updateSpellbar(); },
 });
 
 let duelUi = null;
@@ -593,6 +596,48 @@ function openSheet() {
   audio.open();
 }
 
+function updateSpellbar() {
+  const bar = $("spellbar");
+  if (!bar) return;
+  const magias = rpg.spellbarView();
+  state.spells = magias;
+  if (!magias.length) { bar.hidden = true; bar.textContent = ""; return; }
+  bar.hidden = false;
+  bar.textContent = "";
+  magias.slice(0, 6).forEach((magia, i) => {
+    const botao = document.createElement("button");
+    botao.type = "button";
+    botao.className = "spell-slot";
+    botao.title = `${magia.name}: ${magia.mana} de mana`;
+    botao.setAttribute("aria-label", `${magia.name}, ${magia.mana} de mana${magia.charges ? `, ${magia.charges} cargas` : ""}`);
+    const tecla = document.createElement("span");
+    tecla.className = "spell-key";
+    tecla.textContent = String(i + 1);
+    const custo = document.createElement("span");
+    custo.className = "spell-mana";
+    custo.textContent = magia.mana;
+    botao.append(tecla, itemIconElement(ITEMS[magia.id] || { id: magia.id }), custo);
+    if (magia.charges) {
+      const carga = document.createElement("span");
+      carga.className = "spell-charge";
+      carga.textContent = `×${magia.charges}`;
+      botao.appendChild(carga);
+    }
+    botao.addEventListener("click", () => usarMagia(magia.id));
+    bar.appendChild(botao);
+  });
+}
+
+function usarMagia(id) {
+  const res = rpg.castWorldSpell(id);
+  if (!res.ok) { toast(res.reason, 3000); return; }
+  if (res.healed) toast(`${res.name} curou ${res.healed} de vida.`, 2800);
+  else toast(`${res.name} conjurada.`, 2400);
+  audio.chime();
+  renderer.kick(0.3);
+  updateSpellbar();
+}
+
 function openInventory() {
   if (!state.started) return;
   stopSprint();
@@ -682,6 +727,7 @@ function interactTarget(target) {
     else openNpc(npc);
   }
   else if (target.kind === "cave") enterCave(target.obj);
+  else if (target.kind === "item") pegarItem(target.obj);
 }
 
 function openRede() {
@@ -1820,6 +1866,7 @@ function findNearest() {
   for (const s of world.stations) near("station", s);
   for (const w of world.waystones) near("waystone", w);
   for (const n of world.npcs) near("npc", n);
+  for (const g of world.groundItems) near("item", g, null, 1.4);
   return best;
 }
 
@@ -1840,6 +1887,7 @@ function updatePrompt() {
       : `falar com ${NPCS[near.obj.id]?.name || "alguém"}`;
   }
   else if (near.kind === "cave") label = `descer em ${near.obj.name}`;
+  else if (near.kind === "item") label = `pegar ${ITEMS[near.obj.itemId]?.name || "item"}`;
   if ($("prompt-label").textContent !== label) $("prompt-label").textContent = label;
   $("prompt").hidden = false;
 }
@@ -2076,6 +2124,7 @@ function loop(now) {
       if (fill) fill.style.width = `${Math.max(0, Math.min(100, (hpNow / Math.max(1, hpMaxNow)) * 100))}%`;
       $("hp-hud")?.closest(".vital")?.classList.toggle("baixo", hpNow / Math.max(1, hpMaxNow) <= 0.3);
     }
+    if (now - (state.spellAt || 0) > 600) { state.spellAt = now; updateSpellbar(); }
     const manaNow = rpg.mana();
     const manaMaxNow = rpg.manaMax();
     if (manaNow !== state.lastMana || manaMaxNow !== state.lastManaMax) {
@@ -2127,6 +2176,31 @@ function loop(now) {
 }
 
 // ---------- névoa persistida ----------
+function loadGround() {
+  try {
+    const ids = JSON.parse(localStorage.getItem(STORAGE.ground) || "[]");
+    for (const id of ids) chaoPego.add(id);
+    // tira do mesmo array que takeGroundItem usa; trocar a referência deixaria
+    // a coleta posterior sem efeito na tela
+    for (let i = world.groundItems.length - 1; i >= 0; i--) {
+      if (chaoPego.has(world.groundItems[i].id)) world.groundItems.splice(i, 1);
+    }
+  } catch { /* sem storage */ }
+}
+function saveGround() {
+  try { localStorage.setItem(STORAGE.ground, JSON.stringify([...chaoPego])); } catch { /* sem storage */ }
+}
+function pegarItem(g) {
+  if (!g || !ITEMS[g.itemId]) return;
+  rpg.addItem(g.itemId, g.qty || 1);
+  chaoPego.add(g.id);
+  saveGround();
+  const tomado = world.takeGroundItem(g.id);
+  if (tomado) state.nearest = null;
+  toast(`${ITEMS[g.itemId].name} na mochila.`, 2400);
+  audio.chime();
+}
+
 function loadFog() {
   try {
     const raw = localStorage.getItem(STORAGE.explored);
@@ -2194,6 +2268,7 @@ window.addEventListener("keydown", (e) => {
     if (k === "enter" || k === " ") { e.preventDefault(); duelUi.advance(); return; }
   }
   if (k === "escape") {
+    if (ctxMenu && !ctxMenu.hidden) { fecharMenu(); return; }
     if (state.panelOpen) closePanel();
     else if (state.modal) closeModal(state.modal);
     else if (state.chatOpen) closeChat();
@@ -2214,6 +2289,11 @@ window.addEventListener("keydown", (e) => {
   if (k === "z") { openJournal(); return; }
   if (k === "c") { openSheet(); return; }
   if (k === "i") { if (state.modal === "inventory") closeModal("inventory"); else openInventory(); return; }
+  if (/^[1-6]$/.test(k) && state.spells?.length) {
+    const magia = state.spells[Number(k) - 1];
+    if (magia) { e.preventDefault(); usarMagia(magia.id); }
+    return;
+  }
   if (k === "f") {
     e.preventDefault();
     interact();
@@ -2275,9 +2355,120 @@ function entityAt(wx, wy) {
   for (const w of world.waystones) hit("waystone", w);
   for (const n of world.npcs) hit("npc", n, null, 1.4);
   for (const c of world.caves) hit("cave", c, null, 1.4);
+  for (const g of world.groundItems) hit("item", g, null, 1.2);
   return best;
 }
 
+// ---------- menu do botão direito ----------
+const ctxMenu = $("ctx-menu");
+function fecharMenu() {
+  if (ctxMenu) ctxMenu.hidden = true;
+}
+function acaoMenu(icone, rotulo, dica, fn) {
+  const botao = document.createElement("button");
+  botao.type = "button";
+  botao.setAttribute("role", "menuitem");
+  const i = document.createElement("i");
+  i.textContent = icone;
+  const span = document.createElement("span");
+  span.textContent = rotulo;
+  botao.append(i, span);
+  if (dica) {
+    const em = document.createElement("em");
+    em.textContent = dica;
+    botao.appendChild(em);
+  }
+  botao.addEventListener("click", () => {
+    fecharMenu();
+    fn();
+  });
+  return botao;
+}
+function olharLugar(wx, wy, alvo) {
+  const area = world.areaAt(wx, wy);
+  const pedaco = area ? `${area.name}, ${area.biome?.name || area.sub}.` : "Água aberta do arquipélago.";
+  if (!alvo) { toast(`${pedaco} ${area?.sub || ""}`, 3600); return; }
+  const obj = alvo.obj;
+  if (alvo.kind === "station") toast(`${obj.label}. ${POSTS[obj.post]?.kicker || ""}. Página aberta com um instrumento.`, 3600);
+  else if (alvo.kind === "npc") toast(`${NPCS[obj.id]?.name || "Alguém"}. ${NPCS[obj.id]?.lines?.[0] || "Mora por aqui."}`, 4200);
+  else if (alvo.kind === "cave") toast(`${obj.name}. Uma escada desce para o subsolo.`, 3200);
+  else if (alvo.kind === "waystone") toast(`${obj.name}. Leva a qualquer farol já descoberto.`, 3200);
+  else if (alvo.kind === "item") {
+    const item = ITEMS[obj.itemId];
+    toast(`${item?.name || "Item"}. ${item?.desc || ""}`, 4200);
+  } else toast(`${pedaco}`, 3600);
+}
+function abrirMenu(e, wx, wy) {
+  if (!ctxMenu) return;
+  const alvo = entityAt(wx, wy);
+  const area = world.areaAt(wx, wy);
+  ctxMenu.textContent = "";
+  const head = document.createElement("div");
+  head.className = "ctx-head";
+  const titulo = document.createElement("b");
+  titulo.textContent = alvo
+    ? (alvo.kind === "npc" ? (NPCS[alvo.obj.id]?.name || "alguém") : alvo.obj.name || alvo.obj.label || "aqui")
+    : (area ? area.name : "o mar");
+  const tipo = document.createElement("span");
+  tipo.textContent = alvo
+    ? { station: "estação", npc: "gente", cave: "caverna", waystone: "farol", item: "item no chão" }[alvo.kind] || "aqui"
+    : (area ? `bioma · ${area.biome?.name || area.sub}` : "água");
+  head.append(titulo, tipo);
+  ctxMenu.appendChild(head);
+  if (alvo) {
+    if (alvo.kind === "station") {
+      ctxMenu.appendChild(acaoMenu("▸", "abrir a página", "F", () => openPost(alvo.obj.post, alvo.obj)));
+    } else if (alvo.kind === "npc") {
+      ctxMenu.appendChild(acaoMenu("…", "falar", "F", () => interactTarget(alvo)));
+      if (alvo.obj.trainer) ctxMenu.appendChild(acaoMenu("★", "treinar", "", () => openTraining(alvo.obj)));
+    } else if (alvo.kind === "cave") {
+      ctxMenu.appendChild(acaoMenu("▼", "descer na caverna", "F", () => enterCave(alvo.obj)));
+    } else if (alvo.kind === "waystone") {
+      ctxMenu.appendChild(acaoMenu("✧", "viajar", "F", () => openTravel()));
+    } else if (alvo.kind === "item") {
+      ctxMenu.appendChild(acaoMenu("✦", "pegar", "F", () => pegarItem(alvo.obj)));
+    }
+    ctxMenu.appendChild(acaoMenu("◉", "olhar de perto", "", () => olharLugar(wx, wy, alvo)));
+    const d = Math.hypot(alvo.obj.x - player.x, alvo.obj.y - player.y);
+    if (d > INTERACT_RADIUS + 0.7) {
+      ctxMenu.appendChild(acaoMenu("➜", "andar até aqui", "", () => {
+        const goal = nearestWalkable(world, alvo.obj.x, alvo.obj.y, 4);
+        if (goal) { clearPath(); setPathTo(goal.x, goal.y, alvo); }
+      }));
+    }
+  } else {
+    const goal = nearestWalkable(world, wx, wy, 5);
+    if (goal) {
+      ctxMenu.appendChild(acaoMenu("➜", "andar até aqui", "", () => {
+        clearPath();
+        setPathTo(goal.x, goal.y, null);
+      }));
+    }
+    ctxMenu.appendChild(acaoMenu("◉", "olhar o chão", "", () => olharLugar(wx, wy, null)));
+  }
+  ctxMenu.hidden = false;
+  const rect = ctxMenu.getBoundingClientRect();
+  const x = Math.min(e.clientX, window.innerWidth - rect.width - 8);
+  const y = Math.min(e.clientY, window.innerHeight - rect.height - 8);
+  ctxMenu.style.left = `${Math.max(8, x)}px`;
+  ctxMenu.style.top = `${Math.max(8, y)}px`;
+  ctxMenu.querySelector("button")?.focus({ preventScroll: true });
+}
+$("world").addEventListener("contextmenu", (e) => {
+  e.preventDefault();
+  if (!state.started || state.panelOpen || state.modal || state.chatOpen || dungeon?.isOpen()) return;
+  const rect = $("world").getBoundingClientRect();
+  const sx = e.clientX - rect.left;
+  const sy = e.clientY - rect.top;
+  const wx = (sx / renderer.zoom + renderer.camX) / 16;
+  const wy = (sy / renderer.zoom + renderer.camY) / 16;
+  abrirMenu(e, wx, wy);
+});
+window.addEventListener("pointerdown", (e) => {
+  if (!ctxMenu || ctxMenu.hidden) return;
+  if (!ctxMenu.contains(e.target)) fecharMenu();
+}, { capture: true });
+window.addEventListener("blur", fecharMenu);
 $("world").addEventListener("pointerdown", (e) => {
   if (!state.started || state.panelOpen || state.modal) return;
   if (performance.now() < state.pvpDownUntil) { toast("Você ainda está desativado.", 2000); return; }
@@ -2556,9 +2747,11 @@ window.addEventListener("beforeunload", () => {
   if (!state.hasIdentity && new URLSearchParams(location.search).has("debug")) {
     rede.init().then(() => markIdentity(rede.hasStoredKey())).catch(() => {});
   }
+  loadGround();
   loadFog();
   world.markExplored(player.x, player.y);
   updateProgress();
+  updateSpellbar();
   setSound(false);
   setNetStatus({ state: "solo", count: 1 });
   requestAnimationFrame(loop);

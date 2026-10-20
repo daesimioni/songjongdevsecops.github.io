@@ -6,7 +6,7 @@ import { GROUNDS } from "./rpg-data.js";
 import { dungeonById } from "./dungeon-data.js";
 import { CATALOG_CONTENT } from "./catalog-gen.js";
 import { CATALOG_BRIDGES, CATALOG_AREAS } from "./catalog-layout.js";
-import { npcStyle } from "./identity.js";
+import { AREA_ITEMS, BIOMES, npcStyle } from "./identity.js";
 
 const { WATER, SAND, GRASS, PATH, TREE, FLOWER, BRIDGE, PLAZA } = K;
 
@@ -691,8 +691,58 @@ export function createWorld() {
   }
   for (const c of caves) addProp(c.x, c.y, 0.78, 0.42);
 
+  // itens no chão: um equipamento e um consumível por área, em terra, longe
+  // das estações, do farol e da boca da caverna. O id é estável para o que já
+  // foi pego não voltar.
+  const groundItems = [];
+  for (const area of AREAS) {
+    const conjunto = AREA_ITEMS[area.id];
+    const bioma = BIOMES[area.id];
+    if (!conjunto || !bioma) continue;
+    const daArea = [
+      ...SITES.filter((s) => areaAtTile(Math.round(s.x), Math.round(s.y))?.id === area.id),
+      ...WAYSTONES.filter((w) => areaAtTile(w.x, w.y)?.id === area.id),
+      ...caves.filter((c) => areaAtTile(c.x, c.y)?.id === area.id),
+    ];
+    const escolhidos = [
+      area.id.length % 2 ? conjunto.armor : conjunto.helmet,
+      null,
+    ];
+    for (let k = 0; k < escolhidos.length; k++) {
+      const comuns = ["pocao", "pocao-mana", "runa-cura", "erva"];
+      const item = escolhidos[k] || { id: comuns[area.id.length % comuns.length] };
+      let pos = null;
+      for (let tentativa = 0; tentativa < 40 && !pos; tentativa++) {
+        const a = hash2(area.land.cx * 3 + k * 11 + tentativa, area.land.cy * 5 - tentativa) * Math.PI * 2;
+        const r = 0.28 + hash2(tentativa + 1, area.land.cx + k) * 0.5;
+        const x = Math.round(area.land.cx + Math.cos(a) * area.land.rx * r);
+        const y = Math.round(area.land.cy + Math.sin(a) * area.land.ry * r);
+        if (get(x, y) === WATER) continue;
+        if (boxCollides(x, y, 0.6, 0.5)) continue;
+        if (daArea.some((s) => Math.max(Math.abs(s.x - x), Math.abs(s.y - y)) < 2)) continue;
+        if (groundItems.some((g) => Math.max(Math.abs(g.x - x), Math.abs(g.y - y)) < 2)) continue;
+        pos = { x, y };
+      }
+      if (!pos) continue;
+      groundItems.push({
+        id: `${area.id}-chao-${k + 1}`,
+        itemId: item.id,
+        qty: 1,
+        x: pos.x,
+        y: pos.y,
+        accent: item.accent || bioma.accent,
+        area: area.id,
+      });
+    }
+  }
+  function takeGroundItem(id) {
+    const i = groundItems.findIndex((g) => g.id === id);
+    if (i < 0) return null;
+    return groundItems.splice(i, 1)[0];
+  }
+
   return {
-    tiles, decor, props, stations, waystones, npcs, hunters, monsters, caves,
+    tiles, decor, props, stations, waystones, npcs, hunters, monsters, caves, groundItems, takeGroundItem,
     cat: { ...CAT_SPAWN, facing: 1, t: 0, moving: false },
     get, set, isSolidTile, boxCollides, updateNpcs,
     continentAt, continentAtTile, areaAt, areaAtTile,

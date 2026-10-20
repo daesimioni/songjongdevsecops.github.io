@@ -108,6 +108,24 @@ q.data.bosses = { "math-algebra": Date.now() };
 assert.deepEqual(q.progress(quest("chefe-math-algebra")), { have: 1, need: 1 });
 assert.equal(q.ready(quest("chefe-math-algebra")), true);
 
+// poção de mana e magia fora do duelo
+const magiaRpg = new RPG({ getLevel: () => 1, gainXp: () => {}, toast: () => {}, audio: {} });
+magiaRpg.addItem("pocao-mana", 1);
+magiaRpg.data.mana = 2;
+const bebeu = magiaRpg.useItem("pocao-mana");
+assert.equal(bebeu.ok, true);
+assert.equal(bebeu.mana, 8);
+assert.equal(magiaRpg.mana(), 10);
+assert.equal(magiaRpg.itemCount("pocao-mana"), 0);
+magiaRpg.data.spells["runa-cura"] = true;
+magiaRpg.data.hp = 10;
+magiaRpg.data.mana = 6;
+const conjurou = magiaRpg.castWorldSpell("runa-cura");
+assert.equal(conjurou.ok, true);
+assert.equal(conjurou.healed, 10);
+assert.equal(magiaRpg.hp(), 20);
+assert.equal(magiaRpg.mana(), 3);
+
 // persistência
 const again = make();
 assert.equal(again.isDone("tres-passos"), true);

@@ -579,6 +579,19 @@ for (const spot of CATALOG_AREAS) {
 }
 check(ilhaNaAgua.length === 0, `ilhas na água: ${ilhaNaAgua.slice(0, 6).join(", ")}`);
 
+// itens no chão: visíveis, coletáveis e estáveis
+check(world.groundItems.length === 172, `itens no chão: ${world.groundItems.length}, esperado 172`);
+check(new Set(world.groundItems.map((g) => g.id)).size === world.groundItems.length, "id de item no chão repetido");
+for (const g of world.groundItems) {
+  check(!!ITEMS[g.itemId], `item no chão fora do registro: ${g.itemId}`);
+  check(world.get(g.x, g.y) !== 3, `item no chão na água: ${g.id}`);
+}
+const amostraChao = world.groundItems[0];
+const tomado = world.takeGroundItem(amostraChao.id);
+check(tomado?.id === amostraChao.id, "takeGroundItem não devolveu o item");
+check(world.groundItems.length === 171, "takeGroundItem não removeu o item");
+world.groundItems.push(amostraChao);
+
 // enfeite nunca flutua no mar
 const decorNaAgua = world.decor.filter((d) => world.get(Math.floor(d.x), Math.floor(d.y)) === 3);
 check(decorNaAgua.length === 0, `decoração na água: ${decorNaAgua.length} (${decorNaAgua.slice(0, 3).map((d) => d.type).join(", ")})`);

@@ -38,6 +38,7 @@ export const STORAGE = {
   avatar: "mundo-song:avatar:v1",
   npc: "mundo-song:npc:v1",
   steps: "mundo-song:steps:v1",
+  ground: "mundo-song:ground:v1",
 };
 
 // O backup da conta viaja como DM NIP-17 para a própria chave: o relay só vê
@@ -49,7 +50,7 @@ export const BACKUP = {
   every: 5 * 60 * 1000,
   days: 30,
   max: 60000,
-  keys: ["cards", "xp", "docks", "explored", "name", "sound", "room", "quests", "rpg", "outfit", "avatar", "npc"],
+  keys: ["cards", "xp", "docks", "explored", "name", "sound", "room", "quests", "rpg", "outfit", "avatar", "npc", "ground"],
 };
 
 // A rede do mundo: relays públicos, canais do jogo e DMs privadas (NIP-17).

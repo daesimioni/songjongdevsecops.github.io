@@ -3205,3 +3205,151 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
 /* o nome novo é mais longo: cabe numa linha no topo */
 .brand-title { font-size: 11px; letter-spacing: 0.07em; white-space: nowrap; }
 @media (max-width: 900px) { .brand-title { font-size: 9px; white-space: normal; } }
+
+/* ---- menu do botão direito ---- */
+.ctx-menu {
+  position: fixed;
+  z-index: 60;
+  min-width: 208px;
+  padding: 6px;
+  border: 1px solid rgba(255, 200, 87, 0.35);
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(14, 18, 42, 0.98), rgba(7, 10, 24, 0.99));
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.7), 0 0 30px rgba(255, 200, 87, 0.08);
+  backdrop-filter: blur(6px);
+}
+.ctx-menu[hidden] { display: none; }
+.ctx-head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 9px 8px;
+  border-bottom: 1px dashed rgba(151, 140, 190, 0.24);
+  margin-bottom: 5px;
+}
+.ctx-head b { font-family: var(--mono); font-size: 12.5px; color: var(--ink); }
+.ctx-head span { font-family: var(--pixel); font-size: 6px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--mint); }
+.ctx-menu button {
+  display: grid;
+  grid-template-columns: 20px 1fr;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 9px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 12.5px;
+  text-align: left;
+  cursor: pointer;
+}
+.ctx-menu button:hover, .ctx-menu button:focus-visible {
+  background: rgba(255, 200, 87, 0.12);
+  outline: none;
+}
+.ctx-menu button i {
+  font-style: normal;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  background: rgba(255, 200, 87, 0.1);
+  color: var(--amber);
+  font-size: 12px;
+}
+.ctx-menu button em { margin-left: auto; font-family: var(--pixel); font-size: 6px; color: var(--muted); font-style: normal; }
+
+/* ---- barra de magias ---- */
+.spellbar {
+  position: absolute;
+  left: 50%;
+  bottom: 74px;
+  transform: translateX(-50%);
+  z-index: 7;
+  display: flex;
+  gap: 7px;
+  padding: 7px;
+  border: 1px solid rgba(151, 140, 190, 0.28);
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(10, 14, 32, 0.82), rgba(7, 10, 24, 0.9));
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+}
+.spellbar[hidden] { display: none; }
+.spell-slot {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(107, 213, 255, 0.35);
+  border-radius: 8px;
+  background: radial-gradient(circle at 50% 35%, rgba(107, 213, 255, 0.14), rgba(8, 11, 24, 0.95));
+  cursor: pointer;
+  transition: border-color 0.12s ease, transform 0.12s ease;
+}
+.spell-slot:hover { border-color: var(--cyan, #6bd5ff); transform: translateY(-1px); }
+.spell-slot:disabled { opacity: 0.42; cursor: default; transform: none; }
+.spell-slot .item-art { width: 34px; height: 34px; }
+.spell-key {
+  position: absolute;
+  top: 3px;
+  left: 4px;
+  font-family: var(--pixel);
+  font-size: 7px;
+  color: var(--amber);
+}
+.spell-mana {
+  position: absolute;
+  right: 3px;
+  bottom: 2px;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: #9fe9ff;
+  background: rgba(4, 6, 14, 0.82);
+  border-radius: 3px;
+  padding: 0 3px;
+}
+.spell-charge {
+  position: absolute;
+  top: 2px;
+  right: 3px;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--ink);
+}
+@media (max-width: 760px) {
+  .spellbar { bottom: 96px; padding: 5px; gap: 5px; }
+  .spell-slot { width: 48px; height: 48px; }
+}
+
+/* sobe o cartão da abertura para o vale aparecer embaixo */
+.splash { place-items: start center; padding-top: clamp(18px, 6vh, 64px); overflow-y: auto; }
+.splash-card { margin: 0 auto; }
+@media (max-height: 640px) {
+  .splash-card { padding-top: 8px; }
+  .splash-logo { font-size: clamp(18px, 4.4vw, 40px); }
+  .splash-tag { margin-bottom: 18px; }
+}
+
+.splash-vignette {
+  background:
+    radial-gradient(80% 70% at 50% 42%, transparent 35%, rgba(4, 6, 14, 0.45) 100%),
+    linear-gradient(180deg, rgba(4, 6, 14, 0.25), transparent 30%, transparent 78%, rgba(4, 6, 14, 0.35));
+}
+
+/* boneco de corpo inteiro dentro da mochila */
+.inv-avatar-wrap {
+  display: grid;
+  place-items: center;
+  margin: 2px 0 10px;
+  padding: 6px;
+  border: 1px solid rgba(255, 200, 87, 0.16);
+  border-radius: 8px;
+  background: radial-gradient(circle at 50% 70%, rgba(255, 200, 87, 0.09), rgba(4, 6, 14, 0.55) 70%);
+}
+.inv-avatar { width: 132px; height: 176px; image-rendering: pixelated; }

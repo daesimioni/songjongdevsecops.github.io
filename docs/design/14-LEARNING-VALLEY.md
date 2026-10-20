@@ -38,28 +38,28 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 
 ### C. Itens no mapa
 
-- [ ] itens do bioma espalhados em terra, desenhados no chão e com brilho
-- [ ] pegar com F, clique ou menu de contexto; mochila cheia recusa
+- [x] itens do bioma espalhados em terra, desenhados no chão e com brilho
+- [x] pegar com F, clique ou menu de contexto; mochila cheia recusa
 - [ ] queda de item ao vencer duelo na caverna
-- [ ] persistência do que já foi pego
+- [x] persistência do que já foi pego
 
 ### D. Botão direito e interação
 
-- [ ] menu de contexto no mapa com ações do alvo embaixo do cursor
-- [ ] olhar descreve área, bioma, NPC, monstro ou item
-- [ ] falar, abrir página, descer, viajar, pegar e andar até aqui
-- [ ] funciona com teclado e toque (menu longo)
+- [x] menu de contexto no mapa com ações do alvo embaixo do cursor
+- [x] olhar descreve área, bioma, NPC, monstro ou item
+- [x] falar, abrir página, descer, viajar, pegar e andar até aqui
+- [x] funciona com teclado e toque (menu longo)
 
 ### E. Magias, poções e runas
 
-- [ ] barra de magias com custo, tempo de recarga e mana
-- [ ] magias de cura, luz, ataque e defesa no duelo
-- [ ] poções de vida e mana, runas de área
-- [ ] teclas 1 a 4 e clique na barra
+- [x] barra de magias com custo, tempo de recarga e mana
+- [x] magias de cura, luz, ataque e defesa no duelo
+- [x] poções de vida e mana, runas de área
+- [x] teclas 1 a 4 e clique na barra
 
 ### F. Prova
 
-- [ ] testes de unidade para inventário, magia, item de chão e menu
+- [x] testes de unidade para inventário, magia, item de chão e menu
 - [ ] navegador local e ao vivo: abertura, HUD, mochila, arrastar, equipar, pegar, magia, botão direito
 - [ ] desempenho e carga medidos
 - [ ] commit e push com evidência
@@ -80,4 +80,5 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 | data | fase | o que entrou | prova |
 |---|---|---|---|
 | 2026-10-20 | A | nome The Learning Valley, metadados, tela de título com vale animado e entrada em etapas | navegador: título com foco no botão, Enter entra, formulário seguinte recebe foco, sem erro de console |
+| 2026-10-20 | C | 172 itens no chão (um equipamento e um consumível por área), com brilho, coleta por F ou botão direito e persistência; menu de contexto com olhar, falar, abrir, descer, viajar, pegar e andar; poção de mana, barra de magias e conjuração fora do duelo | navegador: item no chão pego, localStorage com o id, recarga sem respawn; menu de estação com abrir e olhar; menu de item com pegar e olhar; magia curou 10 com 3 de mana; 172 itens, 171 depois de pegar; sem erro de console |
 | 2026-10-20 | B | barras de vida e mana, mochila em grade com 40 espaços, ícones em canvas, arrastar e soltar, detalhe do item e equipamento desenhado no boneco | navegador: 40 espaços, 8 espaços de equipamento, item equipado pelo detalhe, barras em 53,8% e 40%, equipamento aplicado ao boneco, sem erro de console; node verde |
