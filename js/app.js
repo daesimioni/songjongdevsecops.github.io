@@ -2420,7 +2420,7 @@ function abrirMenu(e, wx, wy) {
       ctxMenu.appendChild(acaoMenu("▸", "abrir a página", "F", () => openPost(alvo.obj.post, alvo.obj)));
     } else if (alvo.kind === "npc") {
       ctxMenu.appendChild(acaoMenu("…", "falar", "F", () => interactTarget(alvo)));
-      if (alvo.obj.trainer) ctxMenu.appendChild(acaoMenu("★", "treinar", "", () => openTraining(alvo.obj)));
+      if (alvo.obj.trainer) ctxMenu.appendChild(acaoMenu("⚔", "atacar (treino)", "", () => openTraining(alvo.obj)));
     } else if (alvo.kind === "cave") {
       ctxMenu.appendChild(acaoMenu("▼", "descer na caverna", "F", () => enterCave(alvo.obj)));
     } else if (alvo.kind === "waystone") {
@@ -2429,6 +2429,18 @@ function abrirMenu(e, wx, wy) {
       ctxMenu.appendChild(acaoMenu("✦", "pegar", "F", () => pegarItem(alvo.obj)));
     }
     ctxMenu.appendChild(acaoMenu("◉", "olhar de perto", "", () => olharLugar(wx, wy, alvo)));
+    const pocao = rpg.inventoryList().find((i) => i.heal > 0);
+    if (pocao) {
+      ctxMenu.appendChild(acaoMenu("✚", `usar ${pocao.name}`, "", () => {
+        const res = rpg.useItem(pocao.id);
+        if (!res.ok) { toast(res.reason, 2600); return; }
+        toast(`${pocao.name}: +${res.healed || 0} de vida.`, 2600);
+        audio.blip();
+        updateSpellbar();
+      }));
+    }
+    const magia = state.spells?.[0];
+    if (magia) ctxMenu.appendChild(acaoMenu("✦", `usar ${magia.name}`, String(magia.mana), () => usarMagia(magia.id)));
     const d = Math.hypot(alvo.obj.x - player.x, alvo.obj.y - player.y);
     if (d > INTERACT_RADIUS + 0.7) {
       ctxMenu.appendChild(acaoMenu("➜", "andar até aqui", "", () => {
@@ -2445,6 +2457,16 @@ function abrirMenu(e, wx, wy) {
       }));
     }
     ctxMenu.appendChild(acaoMenu("◉", "olhar o chão", "", () => olharLugar(wx, wy, null)));
+    const pocao = rpg.inventoryList().find((i) => i.heal > 0);
+    if (pocao) {
+      ctxMenu.appendChild(acaoMenu("✚", `usar ${pocao.name}`, "", () => {
+        const res = rpg.useItem(pocao.id);
+        if (!res.ok) { toast(res.reason, 2600); return; }
+        toast(`${pocao.name}: +${res.healed || 0} de vida.`, 2600);
+        audio.blip();
+        updateSpellbar();
+      }));
+    }
   }
   ctxMenu.hidden = false;
   const rect = ctxMenu.getBoundingClientRect();
