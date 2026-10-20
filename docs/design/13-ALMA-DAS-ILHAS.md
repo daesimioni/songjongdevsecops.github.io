@@ -48,9 +48,9 @@ Linguagem) entram na conta como qualquer outra.
 
 ### B. Texto curado (uma disciplina por rodada)
 
-- [ ] Matemática: 69 subáreas.
-- [ ] Física: 34 subáreas.
-- [ ] Química: 37 subáreas.
+- [x] Matemática: 69 subáreas.
+- [x] Física: 34 subáreas.
+- [x] Química: 37 subáreas.
 - [ ] Computação: 88 subáreas.
 - [ ] Língua: 55 subáreas.
 - [ ] Interseções e bônus: 33 estações de trilha e 4 áreas.
@@ -107,4 +107,5 @@ missões novas e nenhum erro de console.
 
 | data | fase | o que entrou | prova |
 |---|---|---|---|
+| 2026-10-20 | B | texto curado de Matemática, Física e Química: 140 subáreas com abertura, prática e erro comum | node: 69 + 34 + 37 subáreas cobertas, nenhuma sem os três campos; páginas de Matemática conferidas no navegador |
 | 2026-10-20 | A | registro de identidade, pisos, fauna, itens, NPC, missões, trajes e cavernas | node: 86 biomas e 86 tipos de piso únicos, 258 monstros e 258 itens sem repetição, 86 trajes, 172 missões de área, 194 NPCs com aparência distinta, 86 cavernas com fauna e paleta da área; navegador: catálogo 15/15, prova final 6/6, 60 fps | 

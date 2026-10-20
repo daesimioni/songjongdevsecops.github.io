@@ -4,6 +4,12 @@
 
 import { SECTION_TOPICS } from "./catalog-topics.js";
 import { DISCIPLINES } from "./catalog.js";
+import { MATH_TEXT } from "./text/math.js";
+import { PHYSICS_TEXT } from "./text/physics.js";
+import { CHEM_TEXT } from "./text/chem.js";
+
+// texto curado por disciplina; o que ainda não tem curadoria usa só a lista
+const CURADO = { math: MATH_TEXT, physics: PHYSICS_TEXT, chem: CHEM_TEXT };
 
 const SMALL = new Set(["e", "de", "da", "do", "das", "dos", "em", "no", "na", "nos", "nas", "a", "o", "as", "os", "um", "uma", "para", "com", "por", "ao", "à"]);
 
@@ -87,7 +93,11 @@ export function subareaBody({ sectionNum, sectionName, discipline, name, topics,
   const linha = vizinhas.length
     ? `<p>Na mesma área: ${vizinhas.map((s) => `<em>${html(s)}</em>`).join(", ")}.</p>`
     : "";
-  return `<p>Estação da subárea <strong>${html(name)}</strong>, na seção <strong>${html(sectionName)}</strong> de ${html(disc)}. O catálogo reúne aqui ${topics.length} ${topics.length === 1 ? "tópico" : "tópicos"}.</p><ul>${lista}</ul>${linha}`;
+  const curado = CURADO[discipline]?.[`${sectionNum}|${name}`] || CURADO[discipline]?.[name];
+  const abertura = curado ? `<p>${curado.abre}</p>` : "";
+  const pratica = curado ? `<p><strong>Prática:</strong> ${curado.pratica}</p>` : "";
+  const erro = curado ? `<p><strong>Erro comum:</strong> ${curado.erro}</p>` : "";
+  return `<p>Estação da subárea <strong>${html(name)}</strong>, na seção <strong>${html(sectionName)}</strong> de ${html(disc)}. O catálogo reúne aqui ${topics.length} ${topics.length === 1 ? "tópico" : "tópicos"}.</p>${abertura}<ul>${lista}</ul>${pratica}${erro}${linha}`;
 }
 
 // Todas as subáreas de uma disciplina, para tirar alternativas quando a seção

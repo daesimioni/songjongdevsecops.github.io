@@ -27,6 +27,9 @@ const { CATALOG_CONTENT } = await import("../js/catalog-gen.js");
 const { SECTION_TOPICS } = await import("../js/catalog-topics.js");
 const { insideLand } = await import("../js/catalog-place.js");
 const { AREA_ITEMS, AREA_OUTFITS, BIOMES, FAUNA, IDENTITY_AREAS, TILE_STYLE, dungeonIdentity, npcStyle } = await import("../js/identity.js");
+const { MATH_TEXT } = await import("../js/text/math.js");
+const { PHYSICS_TEXT } = await import("../js/text/physics.js");
+const { CHEM_TEXT } = await import("../js/text/chem.js");
 const ready = CATALOG_CONTENT.areas.length;
 const { CATALOG_AREAS, CATALOG_BRIDGES, CATALOG_TUNNELS } = await import("../js/catalog-layout.js");
 
@@ -592,6 +595,46 @@ for (const kind of sigKinds) {
   check(creatureSrc.includes(`kind === "${kind}"`), `sem desenho para ${kind}`);
   check(labelsLine.includes(`${kind}:`), `bestiário sem nome para ${kind}`);
 }
+
+// F11: texto curado de Matemática, subárea por subárea
+let subareasMath = 0;
+const mathSemTexto = [];
+for (const [num, sec] of Object.entries(SECTION_TOPICS)) {
+  if (!num.startsWith("1.")) continue;
+  for (const [nome] of sec.subareas || []) {
+    subareasMath++;
+    if (!MATH_TEXT[nome]?.abre || !MATH_TEXT[nome]?.pratica || !MATH_TEXT[nome]?.erro) mathSemTexto.push(nome);
+  }
+}
+check(subareasMath === 69, `subáreas de Matemática: ${subareasMath}, esperado 69`);
+check(mathSemTexto.length === 0, `subáreas de Matemática sem texto curado: ${mathSemTexto.slice(0, 5).join(", ")}`);
+
+// F12: texto curado de Física
+let subareasFisica = 0;
+const fisicaSemTexto = [];
+for (const [num, sec] of Object.entries(SECTION_TOPICS)) {
+  if (!num.startsWith("2.")) continue;
+  for (const [nome] of sec.subareas || []) {
+    subareasFisica++;
+    if (!PHYSICS_TEXT[nome]?.abre || !PHYSICS_TEXT[nome]?.pratica || !PHYSICS_TEXT[nome]?.erro) fisicaSemTexto.push(nome);
+  }
+}
+check(subareasFisica === 34, `subáreas de Física: ${subareasFisica}, esperado 34`);
+check(fisicaSemTexto.length === 0, `subáreas de Física sem texto curado: ${fisicaSemTexto.slice(0, 5).join(", ")}`);
+
+// F13: texto curado de Química, inclusive as duas "Especializações"
+let subareasQuimica = 0;
+const quimicaSemTexto = [];
+for (const [num, sec] of Object.entries(SECTION_TOPICS)) {
+  if (!num.startsWith("3.")) continue;
+  for (const [nome] of sec.subareas || []) {
+    subareasQuimica++;
+    const texto = CHEM_TEXT[`${num}|${nome}`] || CHEM_TEXT[nome];
+    if (!texto?.abre || !texto?.pratica || !texto?.erro) quimicaSemTexto.push(`${num}/${nome}`);
+  }
+}
+check(subareasQuimica === 37, `subáreas de Química: ${subareasQuimica}, esperado 37`);
+check(quimicaSemTexto.length === 0, `subáreas de Química sem texto curado: ${quimicaSemTexto.slice(0, 5).join(", ")}`);
 
 // F10: identidade de cada área, sem repetir bioma, bicho, item, guardião ou caverna
 check(IDENTITY_AREAS.length === 86, `identidade: ${IDENTITY_AREAS.length} áreas, esperado 86`);
