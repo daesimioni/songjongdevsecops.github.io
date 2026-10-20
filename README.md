@@ -235,6 +235,29 @@ grande. `C` abre a Ficha em qualquer lugar, `Esc` sobe de volta para a boca da
 caverna. Monstros e chefe guardam o tempo de respawn de sempre; os baús e os
 veios se reabrem a cada descida.
 
+## Desempenho
+
+O chão é pintado uma vez em blocos de 16x16 tiles e só o bloco visível é
+copiado por frame; água e magma recebem o brilho animado por cima. Rótulos de
+NPC, brilho de estação e a névoa do minimapa ficam em sprites prontos, e o que
+está fora da tela nem entra na lista de desenho. Não sobra nenhum blend de tela
+cheia: as listras de CRT viraram alpha simples, e em tela de toque o blur de
+fundo dos botões sai fora.
+
+Quando o frame passa de 26 ms, a resolução interna cai em degraus de 15% (até
+60% do tamanho), o que troca nitidez por fluidez em aparelho fraco. No perfil
+medido com o navegador headless e CPU reduzida por CDP:
+
+| condição | antes | agora |
+|---|---|---|
+| CPU 6x mais lenta | ~46 fps | ~46 fps, desenho em ~3 ms e chão em ~1 ms |
+| CPU 12x mais lenta | ~22 fps | 36 a 39 fps com resolução em 0.6 |
+
+O número de 12x é o que mais se parece com celular antigo: o ganho vem da
+resolução adaptativa, do cache de chão e do corte do que não aparece. O boot
+segue em torno de 2,6 s num perfil frio, quase tudo carregando módulo e
+montando o mundo.
+
 ## No celular
 
 A página é feita para o toque, não adaptada depois:

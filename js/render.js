@@ -47,8 +47,10 @@ export function createRenderer(canvas, world) {
   let lastFogBuild = 0;
   buildMinimapBase();
 
+  let quality = 1;
+
   function resize() {
-    dpr = Math.min(2, window.devicePixelRatio || 1);
+    dpr = Math.min(2, window.devicePixelRatio || 1) * quality;
     vw = window.innerWidth;
     vh = window.innerHeight;
     canvas.width = Math.round(vw * dpr);
@@ -123,193 +125,195 @@ export function createRenderer(canvas, world) {
     }
   }
 
-  function drawGround(x, y, t, time) {
+  function drawGroundOn(c, x, y, t, time, animated) {
     const px = x * TILE, py = y * TILE;
     const h = hash2(x, y);
-    ctx.fillStyle = tileColor(t);
-    ctx.fillRect(px, py, TILE, TILE);
+    c.fillStyle = tileColor(t);
+    c.fillRect(px, py, TILE, TILE);
 
     if (t === K.GRASS || t === K.FLOWER) {
-      ctx.fillStyle = "#1d3c2b";
+      c.fillStyle = "#1d3c2b";
       const n = 2 + Math.floor(h * 3);
       for (let i = 0; i < n; i++) {
         const bx = px + 2 + Math.floor(hash2(x + i, y * 3 + i) * 12);
         const by = py + 3 + Math.floor(hash2(x * 5 + i, y) * 11);
-        ctx.fillRect(bx, by, 1, 2);
+        c.fillRect(bx, by, 1, 2);
       }
       if (t === K.FLOWER) {
         const cols = ["#ffc857", "#ff7aa8", "#b48cff", "#6bd5ff"];
-        ctx.fillStyle = cols[Math.floor(h * cols.length)];
+        c.fillStyle = cols[Math.floor(h * cols.length)];
         const fx = px + 6, fy = py + 7;
-        ctx.fillRect(fx - 1, fy, 3, 1);
-        ctx.fillRect(fx, fy - 1, 1, 3);
+        c.fillRect(fx - 1, fy, 3, 1);
+        c.fillRect(fx, fy - 1, 1, 3);
       }
     } else if (t === K.PATH) {
-      ctx.fillStyle = "#63513a";
-      ctx.fillRect(px, py, TILE, 2);
-      ctx.fillStyle = "#4a3b29";
+      c.fillStyle = "#63513a";
+      c.fillRect(px, py, TILE, 2);
+      c.fillStyle = "#4a3b29";
       for (let i = 0; i < 3; i++) {
         const sx = px + Math.floor(hash2(x + i, y + 7) * 14);
         const sy = py + 4 + Math.floor(hash2(x, y + i) * 10);
-        ctx.fillRect(sx, sy, 2, 1);
+        c.fillRect(sx, sy, 2, 1);
       }
     } else if (t === K.STONE || t === K.PLAZA) {
-      ctx.strokeStyle = t === K.PLAZA ? "#4b4f77" : "#2b3049";
-      ctx.lineWidth = 1;
-      ctx.strokeRect(px + 0.5, py + 0.5, TILE - 1, TILE - 1);
+      c.strokeStyle = t === K.PLAZA ? "#4b4f77" : "#2b3049";
+      c.lineWidth = 1;
+      c.strokeRect(px + 0.5, py + 0.5, TILE - 1, TILE - 1);
       if (h > 0.55) {
-        ctx.fillStyle = t === K.PLAZA ? "#565b85" : "#454b6c";
-        ctx.fillRect(px + 3, py + 3, 3, 2);
+        c.fillStyle = t === K.PLAZA ? "#565b85" : "#454b6c";
+        c.fillRect(px + 3, py + 3, 3, 2);
       }
       if (t === K.PLAZA && h > 0.72) {
-        ctx.fillStyle = "rgba(255,200,87,0.28)";
-        ctx.fillRect(px + 8, py + 8, 3, 1);
+        c.fillStyle = "rgba(255,200,87,0.28)";
+        c.fillRect(px + 8, py + 8, 3, 1);
       }
     } else if (t === K.WATER) {
-      ctx.fillStyle = "#0f2c46";
-      ctx.fillRect(px, py, TILE, TILE);
-      ctx.fillStyle = "rgba(107, 213, 255, 0.22)";
+      c.fillStyle = "#0f2c46";
+      c.fillRect(px, py, TILE, TILE);
+      if (!animated) return;
+      c.fillStyle = "rgba(107, 213, 255, 0.22)";
       for (let i = 0; i < 2; i++) {
         const w = 5 + Math.round(Math.sin(time * 0.0016 + x + y + i) * 3);
-        ctx.fillRect(px + 2 + i * 7, py + 4 + i * 5, w, 1);
+        c.fillRect(px + 2 + i * 7, py + 4 + i * 5, w, 1);
       }
     } else if (t === K.SAND) {
-      ctx.fillStyle = "#7a6844";
-      ctx.fillRect(px, py, TILE, 2);
-      ctx.fillStyle = "#5d4f34";
-      ctx.fillRect(px + Math.floor(h * 10), py + 7, 2, 1);
+      c.fillStyle = "#7a6844";
+      c.fillRect(px, py, TILE, 2);
+      c.fillStyle = "#5d4f34";
+      c.fillRect(px + Math.floor(h * 10), py + 7, 2, 1);
     } else if (t === K.CIRCUIT) {
-      ctx.fillStyle = "#0d3438";
-      ctx.fillRect(px + 2, py + 2, TILE - 4, TILE - 4);
-      ctx.strokeStyle = "rgba(97, 244, 192, 0.16)";
-      ctx.lineWidth = 1;
-      ctx.beginPath();
+      c.fillStyle = "#0d3438";
+      c.fillRect(px + 2, py + 2, TILE - 4, TILE - 4);
+      c.strokeStyle = "rgba(97, 244, 192, 0.16)";
+      c.lineWidth = 1;
+      c.beginPath();
       if (h > 0.5) {
-        ctx.moveTo(px + 3, py + 5); ctx.lineTo(px + 10, py + 5); ctx.lineTo(px + 10, py + 12);
+        c.moveTo(px + 3, py + 5); c.lineTo(px + 10, py + 5); c.lineTo(px + 10, py + 12);
       } else {
-        ctx.moveTo(px + 5, py + 3); ctx.lineTo(px + 5, py + 10); ctx.lineTo(px + 13, py + 10);
+        c.moveTo(px + 5, py + 3); c.lineTo(px + 5, py + 10); c.lineTo(px + 13, py + 10);
       }
-      ctx.stroke();
+      c.stroke();
       if (h > 0.82) {
-        ctx.fillStyle = "rgba(97, 244, 192, 0.55)";
-        ctx.fillRect(px + 5, py + 5, 1, 1);
+        c.fillStyle = "rgba(97, 244, 192, 0.55)";
+        c.fillRect(px + 5, py + 5, 1, 1);
       }
     } else if (t === K.DATA) {
-      ctx.fillStyle = "#14504a";
-      ctx.fillRect(px, py, TILE, 3);
-      ctx.fillStyle = "rgba(97, 244, 192, 0.35)";
-      ctx.fillRect(px + 2 + Math.floor(h * 8), py + 6, 4, 1);
-      ctx.fillRect(px + 2 + Math.floor(hash2(y, x) * 8), py + 11, 3, 1);
+      c.fillStyle = "#14504a";
+      c.fillRect(px, py, TILE, 3);
+      c.fillStyle = "rgba(97, 244, 192, 0.35)";
+      c.fillRect(px + 2 + Math.floor(h * 8), py + 6, 4, 1);
+      c.fillRect(px + 2 + Math.floor(hash2(y, x) * 8), py + 11, 3, 1);
     } else if (t === K.GOLD) {
-      ctx.fillStyle = "#4a3c18";
-      ctx.fillRect(px, py, TILE, 2);
-      ctx.strokeStyle = "rgba(255, 200, 87, 0.13)";
-      ctx.beginPath();
-      ctx.moveTo(px + 2, py + 13); ctx.lineTo(px + 8, py + 4); ctx.lineTo(px + 14, py + 11);
-      ctx.stroke();
+      c.fillStyle = "#4a3c18";
+      c.fillRect(px, py, TILE, 2);
+      c.strokeStyle = "rgba(255, 200, 87, 0.13)";
+      c.beginPath();
+      c.moveTo(px + 2, py + 13); c.lineTo(px + 8, py + 4); c.lineTo(px + 14, py + 11);
+      c.stroke();
       if (h > 0.7) {
-        ctx.fillStyle = "rgba(255, 208, 100, 0.55)";
-        ctx.fillRect(px + 4 + Math.floor(h * 8), py + 4, 1, 1);
+        c.fillStyle = "rgba(255, 208, 100, 0.55)";
+        c.fillRect(px + 4 + Math.floor(h * 8), py + 4, 1, 1);
       }
     } else if (t === K.MARBLE) {
-      ctx.fillStyle = "#33315c";
-      ctx.fillRect(px, py, TILE, 2);
-      ctx.strokeStyle = "rgba(180, 140, 255, 0.18)";
-      ctx.beginPath();
-      ctx.moveTo(px + 2, py + 13); ctx.lineTo(px + 7, py + 7); ctx.lineTo(px + 13, py + 9);
-      ctx.stroke();
+      c.fillStyle = "#33315c";
+      c.fillRect(px, py, TILE, 2);
+      c.strokeStyle = "rgba(180, 140, 255, 0.18)";
+      c.beginPath();
+      c.moveTo(px + 2, py + 13); c.lineTo(px + 7, py + 7); c.lineTo(px + 13, py + 9);
+      c.stroke();
     } else if (t === K.BASALT) {
-      ctx.fillStyle = "#3d282c";
-      ctx.fillRect(px, py, TILE, 2);
-      ctx.strokeStyle = "rgba(255, 122, 168, 0.14)";
-      ctx.beginPath();
-      ctx.moveTo(px + 3, py + 4); ctx.lineTo(px + 8, py + 8); ctx.lineTo(px + 6, py + 13);
-      ctx.stroke();
+      c.fillStyle = "#3d282c";
+      c.fillRect(px, py, TILE, 2);
+      c.strokeStyle = "rgba(255, 122, 168, 0.14)";
+      c.beginPath();
+      c.moveTo(px + 3, py + 4); c.lineTo(px + 8, py + 8); c.lineTo(px + 6, py + 13);
+      c.stroke();
     } else if (t === K.MAGMA) {
-      ctx.fillStyle = "#5a2a1c";
-      ctx.fillRect(px, py, TILE, 3);
+      c.fillStyle = "#5a2a1c";
+      c.fillRect(px, py, TILE, 3);
+      if (!animated) return;
       const glow = 0.4 + Math.sin(time * 0.003 + x + y) * 0.18;
-      ctx.fillStyle = `rgba(255, 122, 60, ${glow})`;
-      ctx.fillRect(px + 3 + Math.floor(h * 6), py + 6, 3, 1);
-      ctx.fillRect(px + 6 + Math.floor(hash2(y, x) * 5), py + 10, 2, 1);
+      c.fillStyle = `rgba(255, 122, 60, ${glow})`;
+      c.fillRect(px + 3 + Math.floor(h * 6), py + 6, 3, 1);
+      c.fillRect(px + 6 + Math.floor(hash2(y, x) * 5), py + 10, 2, 1);
     } else if (t === K.MOSS) {
-      ctx.fillStyle = "#173a26";
+      c.fillStyle = "#173a26";
       for (let i = 0; i < 3; i++) {
         const mx = px + 2 + Math.floor(hash2(x * 3 + i, y) * 12);
         const my = py + 3 + Math.floor(hash2(x, y * 5 + i) * 11);
-        ctx.fillRect(mx, my, 2, 1);
+        c.fillRect(mx, my, 2, 1);
       }
       if (h > 0.9) {
-        ctx.fillStyle = "rgba(126, 231, 135, 0.4)";
-        ctx.fillRect(px + 8, py + 8, 1, 1);
+        c.fillStyle = "rgba(126, 231, 135, 0.4)";
+        c.fillRect(px + 8, py + 8, 1, 1);
       }
     } else if (t === K.ACID) {
-      ctx.fillStyle = "#1f4a2c";
-      ctx.fillRect(px, py, TILE, 2);
+      c.fillStyle = "#1f4a2c";
+      c.fillRect(px, py, TILE, 2);
       const bub = 0.35 + Math.sin(time * 0.002 + x * 2 + y) * 0.25;
-      ctx.fillStyle = `rgba(126, 231, 135, ${bub})`;
-      ctx.fillRect(px + 4 + Math.floor(h * 6), py + 5, 2, 2);
-      ctx.fillRect(px + 9, py + 10, 1, 1);
+      c.fillStyle = `rgba(126, 231, 135, ${bub})`;
+      c.fillRect(px + 4 + Math.floor(h * 6), py + 5, 2, 2);
+      c.fillRect(px + 9, py + 10, 1, 1);
     } else if (t === K.BRIDGE) {
-      ctx.fillStyle = "#5a412c";
-      ctx.fillRect(px, py, TILE, TILE);
-      ctx.fillStyle = "#3a2a1c";
-      for (let i = 0; i < 4; i++) ctx.fillRect(px, py + 3 + i * 4, TILE, 1);
-      ctx.fillStyle = "#7a5a3a";
-      ctx.fillRect(px + 1, py + 1, TILE - 2, 1);
-      ctx.fillStyle = "#2b1f16";
-      ctx.fillRect(px + 6, py + 6, 1, 1);
-      ctx.fillRect(px + 12, py + 12, 1, 1);
+      c.fillStyle = "#5a412c";
+      c.fillRect(px, py, TILE, TILE);
+      c.fillStyle = "#3a2a1c";
+      for (let i = 0; i < 4; i++) c.fillRect(px, py + 3 + i * 4, TILE, 1);
+      c.fillStyle = "#7a5a3a";
+      c.fillRect(px + 1, py + 1, TILE - 2, 1);
+      c.fillStyle = "#2b1f16";
+      c.fillRect(px + 6, py + 6, 1, 1);
+      c.fillRect(px + 12, py + 12, 1, 1);
     } else if (t === K.SONIC) {
-      ctx.fillStyle = "#21183a";
-      ctx.fillRect(px, py, TILE, 2);
-      ctx.strokeStyle = "rgba(255,178,107,0.16)";
-      ctx.lineWidth = 1;
-      ctx.beginPath();
+      c.fillStyle = "#21183a";
+      c.fillRect(px, py, TILE, 2);
+      c.strokeStyle = "rgba(255,178,107,0.16)";
+      c.lineWidth = 1;
+      c.beginPath();
       for (let i = 0; i <= 14; i += 2) {
         const yy = py + 8 + Math.sin((i + x * 3) * 0.7) * 2;
-        if (i === 0) ctx.moveTo(px + i, yy); else ctx.lineTo(px + i, yy);
+        if (i === 0) c.moveTo(px + i, yy); else c.lineTo(px + i, yy);
       }
-      ctx.stroke();
+      c.stroke();
       if (h > 0.82) {
-        ctx.fillStyle = "rgba(255,209,102,0.55)";
-        ctx.fillRect(px + 4 + Math.floor(h * 7), py + 3, 1, 1);
+        c.fillStyle = "rgba(255,209,102,0.55)";
+        c.fillRect(px + 4 + Math.floor(h * 7), py + 3, 1, 1);
       }
     } else if (t === K.SCORE) {
-      ctx.fillStyle = "#332452";
-      ctx.fillRect(px, py, TILE, 2);
-      ctx.strokeStyle = "rgba(255,209,102,0.22)";
+      c.fillStyle = "#332452";
+      c.fillRect(px, py, TILE, 2);
+      c.strokeStyle = "rgba(255,209,102,0.22)";
       for (let i = 0; i < 4; i++) {
-        ctx.beginPath(); ctx.moveTo(px + 1, py + 5 + i * 3); ctx.lineTo(px + 15, py + 5 + i * 3); ctx.stroke();
+        c.beginPath(); c.moveTo(px + 1, py + 5 + i * 3); c.lineTo(px + 15, py + 5 + i * 3); c.stroke();
       }
       if (h > 0.6) {
-        ctx.fillStyle = "rgba(255,178,107,0.65)";
-        ctx.fillRect(px + 5 + Math.floor(h * 6), py + 6, 2, 2);
-        ctx.fillRect(px + 7 + Math.floor(h * 6), py + 3, 1, 4);
+        c.fillStyle = "rgba(255,178,107,0.65)";
+        c.fillRect(px + 5 + Math.floor(h * 6), py + 6, 2, 2);
+        c.fillRect(px + 7 + Math.floor(h * 6), py + 3, 1, 4);
       }
     } else if (t === K.NEURAL) {
-      ctx.fillStyle = "#0d2638";
-      ctx.fillRect(px, py, TILE, 2);
-      ctx.strokeStyle = "rgba(107,213,255,0.14)";
-      ctx.beginPath();
-      ctx.moveTo(px + 3, py + 12); ctx.lineTo(px + 8, py + 5); ctx.lineTo(px + 13, py + 9);
-      ctx.stroke();
-      ctx.fillStyle = "rgba(107,213,255,0.45)";
-      ctx.fillRect(px + 7, py + 4, 1, 1);
-      ctx.fillRect(px + 12, py + 8, 1, 1);
+      c.fillStyle = "#0d2638";
+      c.fillRect(px, py, TILE, 2);
+      c.strokeStyle = "rgba(107,213,255,0.14)";
+      c.beginPath();
+      c.moveTo(px + 3, py + 12); c.lineTo(px + 8, py + 5); c.lineTo(px + 13, py + 9);
+      c.stroke();
+      c.fillStyle = "rgba(107,213,255,0.45)";
+      c.fillRect(px + 7, py + 4, 1, 1);
+      c.fillRect(px + 12, py + 8, 1, 1);
     } else if (t === K.SYNAPSE) {
-      ctx.fillStyle = "#154657";
-      ctx.fillRect(px, py, TILE, 2);
-      ctx.strokeStyle = "rgba(97,244,192,0.24)";
-      ctx.beginPath();
-      ctx.moveTo(px + 2, py + 10); ctx.lineTo(px + 7, py + 5); ctx.lineTo(px + 14, py + 7);
-      ctx.stroke();
-      ctx.fillStyle = "rgba(97,244,192,0.7)";
-      ctx.fillRect(px + 6, py + 4, 2, 2);
-      ctx.fillRect(px + 13, py + 6, 1, 1);
+      c.fillStyle = "#154657";
+      c.fillRect(px, py, TILE, 2);
+      c.strokeStyle = "rgba(97,244,192,0.24)";
+      c.beginPath();
+      c.moveTo(px + 2, py + 10); c.lineTo(px + 7, py + 5); c.lineTo(px + 14, py + 7);
+      c.stroke();
+      c.fillStyle = "rgba(97,244,192,0.7)";
+      c.fillRect(px + 6, py + 4, 2, 2);
+      c.fillRect(px + 13, py + 6, 1, 1);
     } else if (t === K.WALL) {
-      ctx.fillStyle = "#241f38";
-      ctx.fillRect(px, py, TILE, TILE);
+      c.fillStyle = "#241f38";
+      c.fillRect(px, py, TILE, TILE);
     }
   }
 
@@ -564,14 +568,29 @@ export function createRenderer(canvas, world) {
     }
   }
 
+  const glowCache = new Map();
+  function glowSprite(accent) {
+    let sprite = glowCache.get(accent);
+    if (sprite) return sprite;
+    sprite = document.createElement("canvas");
+    sprite.width = 72;
+    sprite.height = 72;
+    const g = sprite.getContext("2d");
+    const grad = g.createRadialGradient(36, 36, 2, 36, 36, 34);
+    grad.addColorStop(0, hexA(accent, 0.22));
+    grad.addColorStop(1, hexA(accent, 0));
+    g.fillStyle = grad;
+    g.fillRect(0, 0, 72, 72);
+    glowCache.set(accent, sprite);
+    return sprite;
+  }
+
   function drawStation(s, time) {
     const px = s.x * TILE, py = s.y * TILE;
     const pulse = 0.5 + Math.sin(time * 0.0024 + s.x) * 0.5;
-    const g = ctx.createRadialGradient(px, py, 2, px, py, 34);
-    g.addColorStop(0, hexA(s.accent, 0.15 + pulse * 0.07));
-    g.addColorStop(1, hexA(s.accent, 0));
-    ctx.fillStyle = g;
-    ctx.fillRect(px - 36, py - 36, 72, 72);
+    ctx.globalAlpha = 0.62 + pulse * 0.34;
+    ctx.drawImage(glowSprite(s.accent), px - 36, py - 36);
+    ctx.globalAlpha = 1;
 
     if (s.icon === "fountain") {
       ctx.fillStyle = "rgba(2,6,10,0.4)";
@@ -982,20 +1001,38 @@ export function createRenderer(canvas, world) {
     ctx.restore();
   }
 
+  const labelCache = new Map();
+  function npcLabel(npc) {
+    let entry = labelCache.get(npc.id);
+    if (entry) return entry;
+    const text = NPCS[npc.id]?.name || npc.id;
+    const c = document.createElement("canvas");
+    c.width = 120;
+    c.height = 12;
+    const g = c.getContext("2d");
+    g.font = "5px ui-monospace, monospace";
+    const w = Math.ceil(g.measureText(text).width + 6);
+    c.width = Math.max(12, w);
+    const g2 = c.getContext("2d");
+    g2.font = "5px ui-monospace, monospace";
+    g2.textAlign = "center";
+    g2.fillStyle = "rgba(8,10,20,0.72)";
+    roundRect(g2, 0, 0, c.width, 9, 2);
+    g2.fill();
+    g2.fillStyle = "#cfc9e6";
+    g2.fillText(text, c.width / 2, 7);
+    entry = { canvas: c, w: c.width };
+    labelCache.set(npc.id, entry);
+    return entry;
+  }
+
   function drawNpc(npc, time) {
     const px = npc.x * TILE, py = npc.y * TILE;
     const bob = Math.sin(time * 0.002 + npc.bob) * 1.2;
     const colors = { skin: "#d9b08c", hair: "#4a3a55", shirt: npc.accent, pants: "#2f2c45" };
     drawHuman(px, py + bob, npc.facing || 0, !!npc.moving, time, colors, null, 0.9);
-    ctx.font = "5px ui-monospace, monospace";
-    ctx.textAlign = "center";
-    ctx.fillStyle = "rgba(8,10,20,0.72)";
-    const label = NPCS[npc.id]?.name || npc.id;
-    const w = ctx.measureText(label).width + 6;
-    roundRect(ctx, px - w / 2, py - 26, w, 9, 2);
-    ctx.fill();
-    ctx.fillStyle = "#cfc9e6";
-    ctx.fillText(label, px, py - 19);
+    const label = npcLabel(npc);
+    ctx.drawImage(label.canvas, px - label.w / 2, py - 26);
     if (npc.questMark) {
       const ready = npc.questMark === "ready";
       const color = ready ? "#61f4c0" : "#ffc857";
@@ -1207,7 +1244,44 @@ export function createRenderer(canvas, world) {
     return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${a})`;
   }
 
+  // O chão é estático: pinta uma vez em blocos de 16x16 tiles e só copia o
+  // bloco visível por frame. Água e magma ganham o brilho por cima, animado.
+  const CHUNK = 16;
+  const chunkCache = new Map();
+  const stats = { tiles: 0, chunks: 0, terrainMs: 0, drawMs: 0, fps: 60, quality: 1 };
+
+  function groundChunk(cx, cy) {
+    const key = `${cx}:${cy}`;
+    const hit = chunkCache.get(key);
+    if (hit) return hit;
+    const canvasChunk = document.createElement("canvas");
+    canvasChunk.width = CHUNK * TILE;
+    canvasChunk.height = CHUNK * TILE;
+    const g = canvasChunk.getContext("2d");
+    g.imageSmoothingEnabled = false;
+    const bx = cx * CHUNK;
+    const by = cy * CHUNK;
+    for (let y = 0; y < CHUNK; y++) {
+      for (let x = 0; x < CHUNK; x++) {
+        const tx = bx + x;
+        const ty = by + y;
+        if (tx < 0 || ty < 0 || tx >= MAP_W || ty >= MAP_H) continue;
+        drawGroundOn(g, tx, ty, world.get(tx, ty), 0, false);
+      }
+    }
+    // ponytail: cache sem LRU; o mapa é estático e 120 blocos já cobrem
+    // muitos minutos de caminhada. Se o mapa crescer, trocar por LRU.
+    if (chunkCache.size > 120) chunkCache.clear();
+    chunkCache.set(key, canvasChunk);
+    return canvasChunk;
+  }
+
+  function drawWaterMagma(x, y, t, time) {
+    drawGroundOn(ctx, x, y, t, time, true);
+  }
+
   function draw(now, player, peers, npcs, cat, moving) {
+    const frameStart = performance.now();
     const time = now;
     if (shake > 0) shake = Math.max(0, shake - 0.016);
     const shx = shake ? (Math.random() - 0.5) * shake * 4 : 0;
@@ -1237,11 +1311,28 @@ export function createRenderer(canvas, world) {
     const x1 = Math.min(MAP_W - 1, Math.ceil((camX + viewW) / TILE) + 1);
     const y1 = Math.min(MAP_H - 1, Math.ceil((camY + viewH) / TILE) + 1);
 
-    for (let y = y0; y <= y1; y++) {
-      for (let x = x0; x <= x1; x++) {
-        drawGround(x, y, world.get(x, y), time);
+    const tTerrain = performance.now();
+    const chunkPx = CHUNK * TILE;
+    const cx0 = Math.floor(x0 / CHUNK);
+    const cy0 = Math.floor(y0 / CHUNK);
+    const cx1 = Math.floor(x1 / CHUNK);
+    const cy1 = Math.floor(y1 / CHUNK);
+    let chunks = 0;
+    for (let cy = cy0; cy <= cy1; cy++) {
+      for (let cx = cx0; cx <= cx1; cx++) {
+        ctx.drawImage(groundChunk(cx, cy), cx * chunkPx, cy * chunkPx);
+        chunks++;
       }
     }
+    for (let y = y0; y <= y1; y++) {
+      for (let x = x0; x <= x1; x++) {
+        const tile = world.get(x, y);
+        if (tile === K.WATER || tile === K.MAGMA) drawWaterMagma(x, y, tile, time);
+      }
+    }
+    stats.terrainMs = stats.terrainMs ? stats.terrainMs * 0.9 + (performance.now() - tTerrain) * 0.1 : performance.now() - tTerrain;
+    stats.tiles = (x1 - x0 + 1) * (y1 - y0 + 1);
+    stats.chunks = chunks;
 
     for (const h of world.hunters) drawHunterRing(h, time);
     if (player.pathLine && player.pathLine.length) drawPathLine(player.pathLine);
@@ -1283,22 +1374,32 @@ export function createRenderer(canvas, world) {
           d.y * TILE < camY - 40 || d.y * TILE > camY + viewH + 40) continue;
       drawables.push({ y: d.y * TILE + 14, fn: () => drawDecor(d, time) });
     }
+    const onScreen = (wx, wy, pad = 48) => {
+      const px = wx * TILE;
+      const py = wy * TILE;
+      return px > camX - pad && px < camX + viewW + pad && py > camY - pad && py < camY + viewH + pad;
+    };
     for (const h of world.hunters) {
+      if (!onScreen(h.banner.x, h.banner.y, 80)) continue;
       drawables.push({ y: h.banner.y * TILE + 8, fn: () => drawBanner(h, time) });
     }
     for (const w of world.waystones) {
+      if (!onScreen(w.x, w.y)) continue;
       drawables.push({ y: w.y * TILE + 8, fn: () => drawWaystone(w, time) });
     }
     for (const c of world.caves || []) {
+      if (!onScreen(c.x, c.y, 64)) continue;
       drawables.push({ y: c.y * TILE + 8, fn: () => drawCave(c, time) });
     }
     for (const s of world.stations) {
+      if (!onScreen(s.x, s.y, 80)) continue;
       drawables.push({ y: s.y * TILE + 6, fn: () => drawStation(s, time) });
     }
     for (const n of npcs) {
+      if (!onScreen(n.x, n.y, 60)) continue;
       drawables.push({ y: n.y * TILE, fn: () => drawNpc(n, time) });
     }
-    if (cat) {
+    if (cat && onScreen(cat.x, cat.y, 48)) {
       drawables.push({ y: cat.y * TILE, fn: () => drawCat(cat, cat.moving, time) });
     }
     for (const p of peers) {
@@ -1354,6 +1455,23 @@ export function createRenderer(canvas, world) {
     }
 
     drawMinimap(player, peers);
+    const frameEnd = performance.now();
+    if (stats._prev) {
+      const dt = frameEnd - stats._prev;
+      if (dt > 0 && dt < 250) stats.fps = stats.fps * 0.92 + (1000 / dt) * 0.08;
+    }
+    stats._prev = frameEnd;
+    stats.drawMs = stats.drawMs ? stats.drawMs * 0.9 + (frameEnd - frameStart) * 0.1 : frameEnd - frameStart;
+    stats.quality = quality;
+    // ponytail: resolução adaptativa simples (passos de 15%); troca por
+    // render em camadas quando houver mais efeitos por cima do chão.
+    if (stats.fps < 38 && quality > 0.6) {
+      quality = Math.max(0.6, quality - 0.15);
+      resize();
+    } else if (stats.fps > 56 && quality < 1) {
+      quality = Math.min(1, quality + 0.1);
+      resize();
+    }
   }
 
   function drawNameTag(name, px, py, color) {
@@ -1374,13 +1492,20 @@ export function createRenderer(canvas, world) {
     if (fogVersion !== world.exploredVersion && performance.now() - lastFogBuild > 120) {
       fogVersion = world.exploredVersion;
       lastFogBuild = performance.now();
-      fogCtx.clearRect(0, 0, mmFog.width, mmFog.height);
-      fogCtx.fillStyle = "#04060d";
+      const img = fogCtx.createImageData(mmFog.width, mmFog.height);
+      const data = img.data;
       for (let y = 0; y < MAP_H; y++) {
         for (let x = 0; x < MAP_W; x++) {
-          if (!world.isExplored(x, y)) fogCtx.fillRect(x * 2, y * 2, 2, 2);
+          if (world.isExplored(x, y)) continue;
+          for (let dy = 0; dy < 2; dy++) {
+            let i = ((y * 2 + dy) * mmFog.width + x * 2) * 4;
+            data[i] = 4; data[i + 1] = 6; data[i + 2] = 13; data[i + 3] = 255;
+            i += 4;
+            data[i] = 4; data[i + 1] = 6; data[i + 2] = 13; data[i + 3] = 255;
+          }
         }
       }
+      fogCtx.putImageData(img, 0, 0);
     }
     mctx.drawImage(mmBase, 0, 0);
     mctx.drawImage(mmFog, 0, 0);
@@ -1417,7 +1542,7 @@ export function createRenderer(canvas, world) {
   resize();
   window.addEventListener("resize", resize);
   return {
-    draw, resize, kick,
+    draw, resize, kick, stats,
     get zoom() { return zoom; },
     get camX() { return camX; },
     get camY() { return camY; },

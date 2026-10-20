@@ -75,9 +75,9 @@ kbd {
     linear-gradient(180deg, rgba(5, 8, 20, 0.35), transparent 18%, transparent 82%, rgba(3, 5, 14, 0.5));
 }
 .scanlines {
-  opacity: 0.16;
-  background: repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px 3px);
-  mix-blend-mode: overlay;
+  /* listras sem mix-blend-mode: o blend de tela cheia custa caro em aparelho fraco */
+  opacity: 0.12;
+  background: repeating-linear-gradient(180deg, rgba(0, 0, 0, 0.22) 0 1px, transparent 1px 3px);
 }
 
 .hud {
@@ -2513,3 +2513,12 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
 .duel-question.partner { font-size: 13px; margin-top: 8px; }
 .partner-options .duel-option { padding: 8px 10px; font-size: 11px; }
 .duel-next.small { margin-top: 8px; padding: 8px 10px; font-size: 11px; }
+
+/* aparelho fraco: blur de fundo em elemento fixo é o que mais derruba FPS */
+@media (pointer: coarse), (max-width: 760px) {
+  .pill, .hud-btn, .dpad button, .touch-action, .touch-sprint, .chat-log {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  .scanlines { opacity: 0.08; }
+}
