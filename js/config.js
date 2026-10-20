@@ -22,6 +22,8 @@ export const NET = {
   interpDelay: 200,
 };
 
+// As chaves internas mantêm o prefixo antigo de propósito: renomear apagaria
+// o progresso de quem já jogava. O nome visível é The Learning Valley.
 export const STORAGE = {
   cards: "mundo-song:cards:v2",
   xp: "mundo-song:xp:v2",

@@ -61,11 +61,21 @@ export function createInventoryUI({ rpg, toast, audio, onUse, onChange, getAvata
       });
       acoes.appendChild(botao);
     }
-    const consumivel = item.heal || item.mana || item.use === "light" || item.use === "bomb" || item.use === "spark";
+    const ehRuna = item.id.startsWith("runa-");
+    const consumivel = item.heal || item.mana || item.use === "light" || item.use === "bomb" || item.use === "spark" || ehRuna;
     if (consumivel) {
-      const usar = el("button", "inv-action usar", "usar");
+      const usar = el("button", "inv-action usar", ehRuna ? "conjurar" : "usar");
       usar.type = "button";
       usar.addEventListener("click", () => {
+        if (ehRuna) {
+          const res = rpg.castWorldSpell(item.id);
+          if (!res.ok) { toast(res.reason, 3200); return; }
+          toast(res.healed ? `${res.name} curou ${res.healed} de vida.` : `${res.name} conjurada.`, 2800);
+          audio.chime();
+          render();
+          onChange?.();
+          return;
+        }
         const res = rpg.useItem(item.id);
         if (!res.ok) { toast(res.reason, 3200); return; }
         const aceito = onUse?.(item.id, res) !== false;
@@ -121,7 +131,7 @@ export function createInventoryUI({ rpg, toast, audio, onUse, onChange, getAvata
     return slot;
   }
 
-  function aceitarSolta(target, origem) {
+  function aceitarSolta(target, origem, slotNome = null) {
     target.addEventListener("dragover", (e) => {
       e.preventDefault();
       target.classList.add("alvo");
@@ -133,6 +143,11 @@ export function createInventoryUI({ rpg, toast, audio, onUse, onChange, getAvata
       const dado = e.dataTransfer?.getData("text/plain") || "";
       if (origem === "equip") {
         if (dado.startsWith("slot:")) return;
+        const peca = rpg.inventoryList().find((i) => i.id === dado);
+        if (!peca || peca.slot !== slotNome) {
+          toast("Essa peça não entra nesse espaço.", 2600);
+          return;
+        }
         const res = rpg.equip(dado);
         if (!res.ok) { toast(res.reason, 2600); return; }
         toast(`${res.item.name} equipado.`, 2200);
@@ -177,7 +192,7 @@ export function createInventoryUI({ rpg, toast, audio, onUse, onChange, getAvata
       const wrap = el("div", "equip-wrap");
       wrap.appendChild(el("span", "equip-name", slotInfo.name));
       const slot = botaoSlot(slotInfo.item, "equip", slotInfo.slot);
-      aceitarSolta(slot, "equip");
+      aceitarSolta(slot, "equip", slotInfo.slot);
       if (slotInfo.item) {
         const acoes = el("div", "equip-acoes");
         const off = el("button", "inv-mini", "tirar");

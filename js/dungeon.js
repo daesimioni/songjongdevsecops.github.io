@@ -148,7 +148,7 @@ export function dungeonLineOfSight(map, ax, ay, bx, by) {
 }
 
 // ---------- desenho ----------
-function drawAdventurer(ctx, x, y, dir, moving, t, avatar = {}, ship = false, look = null) {
+function drawAdventurer(ctx, x, y, dir, moving, t, avatar = {}, ship = false, look = null, gear = null) {
   // O mesmo boneco da superfície, com capa e lanterna por cima.
   const c = { hair: "#3a2a55", skin: "#f0c9a8", shirt: "#61f4c0", pants: "#2f3a66", ...avatar };
   const animate = moving && !ship;
@@ -177,7 +177,7 @@ function drawAdventurer(ctx, x, y, dir, moving, t, avatar = {}, ship = false, lo
   ctx.fillRect(-6 + (swing > 0 ? 1 : 0), -15, 12, 11);
   ctx.fillStyle = "#1b1f37";
   ctx.fillRect(-5, -5 + (swing < 0 ? 1 : 0), 10, 2);
-  drawHuman(ctx, 0, 0, dir, animate, t, c, 1, look);
+  drawHuman(ctx, 0, 0, dir, animate, t, c, 1, look, gear);
   // lanterna na mão direita, com halo curto
   ctx.fillStyle = "rgba(255,200,87,0.16)";
   ctx.beginPath();
@@ -533,7 +533,7 @@ function drawBuilding(ctx, x, y, w, h, palette, accent) {
 }
 
 // ---------- a caverna em si ----------
-export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeeper, onConurbation, onPortal, isBlocked, avatar = {}, look = null }) {
+export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeeper, onConurbation, onPortal, isBlocked, avatar = {}, look = null, gear = null }) {
   const canvas = $("dungeon-canvas");
   const ctx = canvas?.getContext("2d", { alpha: false }) || null;
 
@@ -1779,7 +1779,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
     }
     drawables.push({
       y: state.player.y,
-      draw: () => drawAdventurer(ctx, state.player.x * TILE, state.player.y * TILE, state.player.dir, state.player.moving, t, avatar, state.sprint, look),
+      draw: () => drawAdventurer(ctx, state.player.x * TILE, state.player.y * TILE, state.player.dir, state.player.moving, t, avatar, state.sprint, look, gear ? gear() : null),
     });
     drawables.sort((a, b) => a.y - b.y);
     for (const d of drawables) d.draw();

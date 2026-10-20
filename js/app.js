@@ -238,7 +238,7 @@ const sheetUi = createSheet({
       audio.chime();
     }
   },
-  onUse: usarItem,
+  onInventory: () => openInventory(),
 });
 const inventoryUi = createInventoryUI({
   rpg,
@@ -286,6 +286,7 @@ dungeon = createDungeon({
   onPortal: (defId) => portalToCity(defId),
   avatar: player.colors,
   look: player.look,
+  gear: () => gearAtual(),
   onExit: ({ kind, dungeon: def, target }) => {
     rpg.setCave(false);
     if (kind === "death") return;
@@ -2122,6 +2123,8 @@ function loop(now) {
       if (hpEl) hpEl.textContent = `${hpNow}/${hpMaxNow}`;
       const fill = $("hp-fill");
       if (fill) fill.style.width = `${Math.max(0, Math.min(100, (hpNow / Math.max(1, hpMaxNow)) * 100))}%`;
+      $("hp-bar")?.setAttribute("aria-valuemax", String(hpMaxNow));
+      $("hp-bar")?.setAttribute("aria-valuenow", String(hpNow));
       $("hp-hud")?.closest(".vital")?.classList.toggle("baixo", hpNow / Math.max(1, hpMaxNow) <= 0.3);
     }
     if (now - (state.spellAt || 0) > 600) { state.spellAt = now; updateSpellbar(); }
@@ -2134,6 +2137,8 @@ function loop(now) {
       if (manaEl) manaEl.textContent = `${manaNow}/${manaMaxNow}`;
       const fill = $("mana-fill");
       if (fill) fill.style.width = `${Math.max(0, Math.min(100, (manaNow / Math.max(1, manaMaxNow)) * 100))}%`;
+      $("mana-bar")?.setAttribute("aria-valuemax", String(manaMaxNow));
+      $("mana-bar")?.setAttribute("aria-valuenow", String(manaNow));
     }
     for (const n of world.npcs) n.questMark = quests.markFor(n.id);
     const peerStep = PLAYER_SPEED * SPRINT_MULT * 1.1 * dt;
@@ -2407,7 +2412,9 @@ function abrirMenu(e, wx, wy) {
   head.className = "ctx-head";
   const titulo = document.createElement("b");
   titulo.textContent = alvo
-    ? (alvo.kind === "npc" ? (NPCS[alvo.obj.id]?.name || "alguém") : alvo.obj.name || alvo.obj.label || "aqui")
+    ? (alvo.kind === "npc" ? (NPCS[alvo.obj.id]?.name || "alguém")
+      : alvo.kind === "item" ? (ITEMS[alvo.obj.itemId]?.name || "item no chão")
+      : alvo.obj.name || alvo.obj.label || "aqui")
     : (area ? area.name : "o mar");
   const tipo = document.createElement("span");
   tipo.textContent = alvo
@@ -2416,16 +2423,18 @@ function abrirMenu(e, wx, wy) {
   head.append(titulo, tipo);
   ctxMenu.appendChild(head);
   if (alvo) {
-    if (alvo.kind === "station") {
+    const d = Math.hypot(alvo.obj.x - player.x, alvo.obj.y - player.y);
+    const perto = d <= INTERACT_RADIUS + 0.7;
+    if (perto && alvo.kind === "station") {
       ctxMenu.appendChild(acaoMenu("▸", "abrir a página", "F", () => openPost(alvo.obj.post, alvo.obj)));
-    } else if (alvo.kind === "npc") {
+    } else if (perto && alvo.kind === "npc") {
       ctxMenu.appendChild(acaoMenu("…", "falar", "F", () => interactTarget(alvo)));
       if (alvo.obj.trainer) ctxMenu.appendChild(acaoMenu("⚔", "atacar (treino)", "", () => openTraining(alvo.obj)));
-    } else if (alvo.kind === "cave") {
+    } else if (perto && alvo.kind === "cave") {
       ctxMenu.appendChild(acaoMenu("▼", "descer na caverna", "F", () => enterCave(alvo.obj)));
-    } else if (alvo.kind === "waystone") {
+    } else if (perto && alvo.kind === "waystone") {
       ctxMenu.appendChild(acaoMenu("✧", "viajar", "F", () => openTravel()));
-    } else if (alvo.kind === "item") {
+    } else if (perto && alvo.kind === "item") {
       ctxMenu.appendChild(acaoMenu("✦", "pegar", "F", () => pegarItem(alvo.obj)));
     }
     ctxMenu.appendChild(acaoMenu("◉", "olhar de perto", "", () => olharLugar(wx, wy, alvo)));
@@ -2441,8 +2450,7 @@ function abrirMenu(e, wx, wy) {
     }
     const magia = state.spells?.[0];
     if (magia) ctxMenu.appendChild(acaoMenu("✦", `usar ${magia.name}`, String(magia.mana), () => usarMagia(magia.id)));
-    const d = Math.hypot(alvo.obj.x - player.x, alvo.obj.y - player.y);
-    if (d > INTERACT_RADIUS + 0.7) {
+    if (!perto) {
       ctxMenu.appendChild(acaoMenu("➜", "andar até aqui", "", () => {
         const goal = nearestWalkable(world, alvo.obj.x, alvo.obj.y, 4);
         if (goal) { clearPath(); setPathTo(goal.x, goal.y, alvo); }

@@ -3402,3 +3402,17 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
   .inv-avatar { width: 104px; height: 138px; }
   .inv-avatar-wrap { max-height: 154px; overflow: hidden; }
 }
+
+.sheet-bag-resumo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(7, 10, 24, 0.55);
+}
+.sheet-bag-text { display: flex; flex-direction: column; gap: 3px; }
+.sheet-bag-text b { font-family: var(--mono); font-size: 13px; color: var(--ink); }
+.sheet-bag-text span { font-family: var(--mono); font-size: 11px; color: var(--muted); }

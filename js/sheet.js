@@ -1,5 +1,4 @@
 // A ficha do aventureiro: vida, perícias, itens, forja e o que cada coisa faz.
-import { CONTINENTS } from "./config.js";
 import { ITEMS, RECIPES } from "./rpg-data.js";
 
 const $ = (id) => document.getElementById(id);
@@ -9,10 +8,6 @@ function el(tag, cls, text) {
   if (cls) node.className = cls;
   if (text != null) node.textContent = text;
   return node;
-}
-
-function accentOf(continent) {
-  return CONTINENTS[continent]?.accent || "#ffc857";
 }
 
 function passiveText(passive = {}) {
@@ -25,7 +20,7 @@ function passiveText(passive = {}) {
   ].filter(Boolean).join(", ") || "sem passivo";
 }
 
-export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onUse, onOutfits, onLook, onPetAbility }) {
+export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onOutfits, onLook, onPetAbility, onInventory }) {
   function render() {
     const body = $("sheet-body");
     if (!body) return;
@@ -217,41 +212,21 @@ export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onUs
     }
     body.appendChild(grid);
 
+    // a mochila de verdade mora no painel em grade; aqui fica só o resumo
     body.appendChild(el("h3", "sheet-sec", "Mochila"));
     const inv = rpg.inventoryList();
     if (!inv.length) {
-      body.appendChild(el("p", "sheet-empty", "A mochila está vazia. Os monstros das cavernas deixam alguma coisa."));
+      body.appendChild(el("p", "sheet-empty", "A mochila está vazia. Explore o chão e as cavernas para encher."));
     } else {
-      const list = el("div", "sheet-items");
-      for (const item of inv) {
-        const card = el("div", "item-card");
-        card.style.setProperty("--c", accentOf(item.continent));
-        const icon = el("span", "item-icon", item.name.slice(0, 1));
-        const text = el("div", "item-text");
-        text.append(el("b", "", `${item.name} ×${item.qty}`), el("span", "", item.desc));
-        card.append(icon, text);
-        if (item.heal || item.use === "light" || item.use === "bomb" || item.use === "spark") {
-          const use = el("button", "item-use", "usar");
-          use.type = "button";
-          use.addEventListener("click", () => {
-            const res = rpg.useItem(item.id);
-            if (!res.ok) { toast(res.reason, 3200); return; }
-            const accepted = onUse?.(item.id, res) !== false;
-            const bits = [];
-            if (res.healed) bits.push(`+${res.healed} de vida`);
-            if (res.buff) bits.push(`${res.buff.name} ${Math.round(res.buff.ms / 1000)}s`);
-            if (bits.length) toast(bits.join(" · "), 3000);
-            else if ((res.light || res.bomb) && accepted) {
-              toast(res.light ? "A tocha acende." : "A bomba estoura.", 2400);
-            }
-            audio.blip();
-            render();
-          });
-          card.appendChild(use);
-        }
-        list.appendChild(card);
-      }
-      body.appendChild(list);
+      const resumo = el("div", "sheet-bag-resumo");
+      const total = inv.reduce((n, item) => n + item.qty, 0);
+      const texto = el("div", "sheet-bag-text");
+      texto.append(el("b", "", `${inv.length} tipo${inv.length === 1 ? "" : "s"} · ${total} itens`), el("span", "", "grade, equipamento e detalhe do item"));
+      const abrir = el("button", "item-use", "abrir mochila");
+      abrir.type = "button";
+      abrir.addEventListener("click", () => onInventory?.());
+      resumo.append(texto, abrir);
+      body.appendChild(resumo);
     }
 
     body.appendChild(el("h3", "sheet-sec", "Forja e alquimia"));

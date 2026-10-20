@@ -1,4 +1,4 @@
-# Mundo de Song: pasta de conceito
+# The Learning Valley: pasta de conceito
 
 Esta pasta é a fase de **conceito e desenho macro** do jogo. A implementação
 começou em 2026-10-20, a pedido do dono: o que já está no ar e o que falta está
