@@ -71,6 +71,10 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
       fora e inventar distratores aleatórios
 - [x] o preenchimento tenta primeiro alternativas da mesma área, depois do
       continente; pergunta numérica ganha número
+- [x] distrator próximo: troca uma palavra pela oposta (maior/menor,
+      aproxima/afasta, mantém/muda, muitas/poucas)
+- [x] pergunta gerada do catálogo nasce com cinco opções escritas; as de três
+      alternativas ganham as duas próximas antes de qualquer pool
 - [x] conferido: 1603 perguntas de duelo e 35 cartas de PvP, todas com 5
 
 ### K. Formas por nome
@@ -148,7 +152,7 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 
 | data | fase | o que entrou | prova |
 |---|---|---|---|
-| 2026-10-20 | L | perguntas padronizadas em cinco alternativas A-E no duelo e no PvP; a certa embaralha entre as cinco; questão com 6 escritas usa 5; distratores vêm da mesma área antes do continente | node: 1603 perguntas de duelo e 35 cartas de PvP com 5, respostas espalhadas pelas cinco letras, PvP 5; navegador: cinco botões A-E, tecla E responde, quinta marcada, console limpo |
+| 2026-10-20 | L | perguntas padronizadas em cinco alternativas A-E no duelo e no PvP; a certa embaralha entre as cinco; questão com 6 escritas usa 5; distratores próximos por troca de oposto, semelhança com a resposta e mesma área; as 632 perguntas geradas do catálogo passaram a nascer com 5 opções escritas | node: 1603 perguntas e 35 cartas de PvP com 5, respostas espalhadas, distratores conferidos (Cantor, autovalor, grandes números, integração por partes), PvP 5; navegador: cinco botões A-E, tecla E responde, quinta marcada, console limpo |
 | 2026-10-20 | K | a forma do bicho passou a vir do nome: 10 formas novas (livro, símbolo, nota, átomo, cristal, engrenagem, nó, prisma, vetor, frasco), classificador por palavra com disciplina de desempate, e arte, ficha, fraqueza e duelo para todas; 356 nomes cobertos | node: 25 formas com arte/nome/fraqueza, 17 casos de congruência (ácido->frasco, acorde->nota, instrução->engrenagem, autovalores->vetor), sem forma órfã; navegador: bestiário mostra as fichas novas e a separação das 93 cavernas continua com 651 bichos e nenhum ponto visto por dois |
 | 2026-10-20 | J | Espaço e Turbo alternam a nave na superfície e na caverna; o casco passou para js/skiff.js e a caverna usa o mesmo desenho, com boost suave e lift do boneco; soltar a tecla não desliga | navegador: espaço liga e continua ligado, espaço de novo desliga, auto-repeat não pisca, Turbo do celular alterna com aria-pressed, caverna liga/desliga e o casco aparece andando, console limpo; node verde |
 | 2026-10-20 | I | bichos postados no miolo da sala com passeio de 0,8 tile; posição escolhida para a soma das visões mais os passeios caber entre as casas, com margem de 0,4 tile; sala do chefe sem bicho comum; bestiário passa a listar 464 criaturas | navegador: 93 cavernas, 651 bichos comuns, 7 por caverna, chefe sozinho, folga mínima 0,49 tile, 1.142.784 pontos testados e nenhum visto por dois bichos, console limpo; node verde |

@@ -830,6 +830,19 @@ const trainWin = train.next();
 assert.equal(trainWin.result.training, true, "treino não distribui vitória de caçada");
 assert.deepEqual(trainWin.result.loot, [], "treino não dá loot");
 
+// distrator próximo: a alternativa extra troca uma palavra pela oposta, em
+// vez de pescar uma opção de outro assunto
+const deckMat = rpg.buildDeck("math", [1, 2, 3]);
+const achaQ = (trecho) => deckMat.find((q) => q.q.includes(trecho));
+assert.ok(achaQ("teorema de Cantor").options.includes("Ele é sempre menor que o conjunto original"), "Cantor sem o distrator próximo");
+assert.ok(achaQ("autovalor de uma matriz").options.includes("um escalar que muda a direção do autovetor"), "autovalor sem o distrator próximo");
+const grandes = achaQ("lei dos grandes números");
+assert.ok(grandes.options.includes("a média amostral se afasta da esperada com muitas repetições"), "lei dos grandes números sem o afasta");
+assert.ok(grandes.options.includes("a média amostral se aproxima da esperada com poucas repetições"), "lei dos grandes números sem o poucas");
+const partes = achaQ("Integração por partes");
+assert.ok(partes.options.includes("da regra da soma na derivada"), "integração por partes sem o soma");
+assert.ok(partes.options.includes("da regra do produto na integral"), "integração por partes sem a integral");
+
 // duelo entre jogadores: cinco perguntas, uma por dificuldade, dano crescente
 const pvpCards = rpg.pvpQuestions("cs");
 assert.equal(pvpCards.length, 5, "cinco cartas de duelo");

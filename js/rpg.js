@@ -224,6 +224,81 @@ function numericDistractors(text) {
   return out;
 }
 
+const SEM_ACENTO = (texto) => String(texto).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+const PALAVRAS_VAZIAS = new Set("a o as os um uma uns umas de do da dos das no na nos nas em por para com sem sobre entre que se e ou mas como qual quais quando onde quem cujo sua seu suas seus isso isto este esta esse essa ele ela eles elas ao aos à às".split(" "));
+
+function palavrasDe(texto) {
+  return SEM_ACENTO(texto).split(/[^a-z0-9]+/).filter((w) => w.length >= 3 && !PALAVRAS_VAZIAS.has(w));
+}
+
+// Quanto mais perto da resposta certa, melhor para confundir: palavras em
+// comum com a resposta valem mais que palavras em comum com a pergunta, e o
+// mesmo começo (artigo, formato) desempata.
+function semelhanca(candidato, correta, pergunta) {
+  const alvo = new Set(palavrasDe(correta));
+  const enunciado = new Set(palavrasDe(pergunta));
+  let nota = 0;
+  for (const palavra of new Set(palavrasDe(candidato))) {
+    if (alvo.has(palavra)) nota += 3;
+    if (enunciado.has(palavra)) nota += 1;
+  }
+  const inicioCorreta = String(correta).trim().toLowerCase().split(/\s+/)[0];
+  const inicioCandidato = String(candidato).trim().toLowerCase().split(/\s+/)[0];
+  if (inicioCorreta && inicioCorreta === inicioCandidato) nota += 1;
+  return nota;
+}
+
+// Distratores próximos: trocar uma palavra pela oposta gera uma alternativa
+// que parece certa e erra por um detalhe. É melhor que pescar uma opção de
+// outra pergunta, que pode não ter nada a ver com o enunciado.
+const PARES_OPOSTOS = [
+  ["é sempre", "nunca é"], ["se aproxima", "se afasta"], ["se aproximam", "se afastam"],
+  ["é maior", "é menor"], ["é possível", "é impossível"], ["é igual", "é diferente"],
+  ["do produto", "da soma"], ["o produto", "a soma"], ["um produto", "uma soma"],
+  ["maior", "menor"], ["sempre", "nunca"], ["aproxima", "afasta"], ["aproximam", "afastam"],
+  ["aumenta", "diminui"], ["aumentam", "diminuem"], ["mantém", "muda"], ["muitas", "poucas"],
+  ["muito", "pouco"], ["direta", "inversa"], ["possível", "impossível"], ["finito", "infinito"],
+  ["igual", "diferente"], ["verdadeiro", "falso"], ["verdadeira", "falsa"], ["positivo", "negativo"],
+  ["convergente", "divergente"], ["entrada", "saída"], ["derivada", "integral"],
+  ["racional", "irracional"], ["real", "complexo"], ["necessariamente", "opcionalmente"],
+  ["amostral", "populacional"], ["esperada", "observada"],
+];
+
+function escaparRegex(texto) {
+  return String(texto).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function trocarPalavra(texto, de, para) {
+  const re = new RegExp(`(?<![\\p{L}])${escaparRegex(de)}(?![\\p{L}])`, "iu");
+  return String(texto).replace(re, (achado) => {
+    const maiuscula = achado[0] === achado[0].toUpperCase() && achado[0] !== achado[0].toLowerCase();
+    return maiuscula ? para[0].toUpperCase() + para.slice(1) : para;
+  });
+}
+
+function variantesProximas(correta, jaTem) {
+  const out = [];
+  const lower = (t) => String(t).trim().toLowerCase();
+  for (const [a, b] of PARES_OPOSTOS) {
+    for (const [de, para] of [[a, b], [b, a]]) {
+      const variante = trocarPalavra(correta, de, para);
+      if (variante === correta) continue;
+      if (jaTem.has(lower(variante))) continue;
+      if (out.some((v) => lower(v) === lower(variante))) continue;
+      out.push(variante);
+      if (out.length >= 2) return out;
+    }
+  }
+  return out;
+}
+
+function porSemelhanca(pool, correta, pergunta) {
+  return pool
+    .map((text, ordem) => ({ text, nota: semelhanca(text, correta, pergunta), ordem }))
+    .sort((a, b) => b.nota - a.nota || a.ordem - b.ordem)
+    .map((item) => item.text);
+}
+
 const QUESTION_INDEX = new Map();
 function indexQuestions() {
   for (const [continent, tiers] of Object.entries(QUESTIONS)) {
@@ -943,9 +1018,9 @@ export class RPG {
 
   // As salas têm tema. A pergunta que combina com o tema vai para a frente do
   // baralho; o resto continua no sorteio. Sem tema, é sorteio puro.
-  optionPool(continent, tier, area = "") {
+  optionPool(continent, tier, area = "", baseOnly = false) {
     if (!this.pool) this.pool = new Map();
-    const key = `${continent}:${tier}:${area}`;
+    const key = `${continent}:${tier}:${area}:${baseOnly ? "base" : "todos"}`;
     if (this.pool.has(key)) return this.pool.get(key);
     const pool = [];
     const seen = new Set();
@@ -953,6 +1028,7 @@ export class RPG {
     for (const t of [tier, 1, 2, 3]) {
       for (const q of bank[t] || []) {
         if (area && q.area !== area) continue;
+        if (baseOnly && q.area) continue;
         for (const text of q.options) {
           const clean = String(text).trim();
           if (!clean || clean.length > 44) continue;
@@ -970,7 +1046,7 @@ export class RPG {
   // toda pergunta oferece cinco alternativas, A a E: com três o chute acerta
   // demais. As que faltam vêm do próprio banco do continente, e pergunta
   // numérica ganha número, não palavra.
-  padOptions(options, answer, continent, tier, area = "") {
+  padOptions(options, answer, continent, tier, area = "", question = "") {
     const entries = options.map((text, i) => ({ text: String(text).trim(), ok: i === answer }));
     // pergunta com mais alternativas que o padrão: mantém a certa e corta as
     // outras, em vez de descartar as opções escritas à mão e inventar duas
@@ -989,22 +1065,40 @@ export class RPG {
       seen.add(low);
       list.push(clean);
     };
-    if (looksNumeric(correct)) for (const n of numericDistractors(correct)) push(n);
-    const numeric = looksNumeric(correct);
-    // primeiro as alternativas da própria área: um tópico da mesma seção é
-    // distrator plausível; o banco inteiro do continente é a reserva
-    const areaPool = area ? this.optionPool(continent, tier, area) : [];
-    for (const text of shuffle(areaPool.filter((s) => looksNumeric(s) === numeric))) push(text);
-    for (const text of shuffle(areaPool)) push(text);
-    const pool = this.optionPool(continent, tier);
-    for (const text of shuffle(pool.filter((s) => looksNumeric(s) === numeric))) push(text);
-    for (const text of shuffle(pool)) push(text);
     // a resposta certa também embaralha: com o preenchimento no fim, ela
     // ficaria sempre em A, B ou C e o jogador aprenderia a ignorar D e E
-    const finalEntries = escolhidas.map((e) => ({ text: e.text, ok: e.ok }));
-    for (const text of list.slice(escolhidas.length)) finalEntries.push({ text, ok: false });
-    const final = shuffle(finalEntries);
-    return { options: final.map((o) => o.text), answer: final.findIndex((o) => o.ok) };
+    const finalizar = () => {
+      const finalEntries = escolhidas.map((e) => ({ text: e.text, ok: e.ok }));
+      for (const text of list.slice(escolhidas.length)) finalEntries.push({ text, ok: false });
+      const final = shuffle(finalEntries);
+      return { options: final.map((o) => o.text), answer: final.findIndex((o) => o.ok) };
+    };
+    // já tem as cinco escritas à mão: não precisa pescar nem ordenar pool
+    if (list.length >= OPTION_COUNT) return finalizar();
+    const numeric = looksNumeric(correct);
+    if (numeric) for (const n of numericDistractors(correct)) push(n);
+    else for (const variante of variantesProximas(correct, seen)) push(variante);
+    if (list.length >= OPTION_COUNT) return finalizar();
+    // primeiro as alternativas da própria área; para pergunta sem área,
+    // respostas de outras perguntas-base são mais próximas de um enunciado
+    // conceitual do que rótulos de tópico do catálogo
+    if (area) {
+      const areaPool = this.optionPool(continent, tier, area);
+      for (const text of porSemelhanca(areaPool.filter((s) => looksNumeric(s) === numeric), correct, question)) push(text);
+      if (list.length >= OPTION_COUNT) return finalizar();
+      for (const text of porSemelhanca(areaPool, correct, question)) push(text);
+    } else {
+      const basePool = this.optionPool(continent, tier, "", true);
+      for (const text of porSemelhanca(basePool.filter((s) => looksNumeric(s) === numeric), correct, question)) push(text);
+      if (list.length >= OPTION_COUNT) return finalizar();
+      for (const text of porSemelhanca(basePool, correct, question)) push(text);
+    }
+    if (list.length >= OPTION_COUNT) return finalizar();
+    const pool = this.optionPool(continent, tier);
+    for (const text of porSemelhanca(pool.filter((s) => looksNumeric(s) === numeric), correct, question)) push(text);
+    if (list.length >= OPTION_COUNT) return finalizar();
+    for (const text of porSemelhanca(pool, correct, question)) push(text);
+    return finalizar();
   }
 
   themeScore(text, hint) {
@@ -1024,7 +1118,7 @@ export class RPG {
       for (const q of bank) {
         const options = q.options.map((text, i) => ({ text, ok: i === q.a }));
         const mixed = shuffle(options);
-        const filled = this.padOptions(mixed.map((o) => o.text), mixed.findIndex((o) => o.ok), continent, tier, q.area);
+        const filled = this.padOptions(mixed.map((o) => o.text), mixed.findIndex((o) => o.ok), continent, tier, q.area, q.q);
         deck.push({
           q: q.q,
           options: filled.options,
@@ -1133,7 +1227,7 @@ export class RPG {
       if (!q) continue;
       const options = q.options.map((text, i) => ({ text, ok: i === q.a }));
       const mixed = shuffle(options);
-      const filled = this.padOptions(mixed.map((o) => o.text), mixed.findIndex((o) => o.ok), continent, tier, q.area);
+      const filled = this.padOptions(mixed.map((o) => o.text), mixed.findIndex((o) => o.ok), continent, tier, q.area, q.q);
       list.push({
         q: q.q,
         options: filled.options,

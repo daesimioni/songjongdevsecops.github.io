@@ -129,7 +129,7 @@ export function subareaQuiz({ sectionNum, sectionName, discipline, subarea, sibl
   if (!topicos.length) return [];
   const secao = SECTION_TOPICS[sectionNum];
   const irmas = (secao.subareas || []).filter(([n]) => n !== nome);
-  const outras = irmas.length >= 2 ? irmas : [...irmas, ...poolDisciplina(discipline, sectionNum).map((p) => [p.nome, p.topicos])];
+  const outras = [...irmas, ...poolDisciplina(discipline, sectionNum).map((p) => [p.nome, p.topicos])];
   // pergunta 1: de quem é este tópico. Só serve tópico que não se repete em
   // outra subárea da mesma seção, senão a pergunta teria duas respostas.
   const unicos = topicos.filter((t) => {
@@ -149,31 +149,31 @@ export function subareaQuiz({ sectionNum, sectionName, discipline, subarea, sibl
     usados.add(n);
     usados.add(rotulo);
     alternativas.push({ nome: n, topico });
-    if (alternativas.length >= 2) break;
+    if (alternativas.length >= 4) break;
   }
-  if (alternativas.length < 2) return [];
-  const d1 = alternativas[0], d2 = alternativas[1];
-  const opcoes1 = [certo, d1.topico, d2.topico];
-  const pos = hashText(nome + "pos" + salt) % 3;
+  if (alternativas.length < 4) return [];
+  const d1 = alternativas[0];
+  const opcoes1 = [certo, ...alternativas.slice(0, 4).map((a) => a.topico)];
+  const pos = hashText(nome + "pos" + salt) % opcoes1.length;
   const opts1 = [...opcoes1];
   [opts1[0], opts1[pos]] = [opts1[pos], opts1[0]];
   const pergunta1 = {
     q: `Qual destes tópicos o catálogo coloca na subárea ${nome}, dentro de ${sectionName}?`,
     options: opts1.map(topicLabel),
     a: opts1.indexOf(certo),
-    why: `No catálogo, "${topicLabel(certo)}" está em ${nome}, dentro de ${sectionName}. "${topicLabel(d1.topico)}" fica em ${d1.nome} e "${topicLabel(d2.topico)}" em ${d2.nome}.`,
+    why: `No catálogo, "${topicLabel(certo)}" está em ${nome}, dentro de ${sectionName}. As outras opções vêm de subáreas vizinhas, como ${d1.nome}.`,
   };
 
   // pergunta 2: onde mora este tópico
-  const nomes = [nome, d1.nome, d2.nome];
-  const pos2 = hashText(nome + "pos2" + salt) % 3;
+  const nomes = [nome, ...alternativas.slice(0, 4).map((a) => a.nome)];
+  const pos2 = hashText(nome + "pos2" + salt) % nomes.length;
   const opts2 = [...nomes];
   [opts2[0], opts2[pos2]] = [opts2[pos2], opts2[0]];
   const pergunta2 = {
     q: `O tópico "${topicLabel(certo)}" aparece em qual subárea do catálogo?`,
     options: opts2,
     a: opts2.indexOf(nome),
-    why: `${topicLabel(certo)} é um dos tópicos de ${nome}, na seção ${sectionName}. As outras duas opções são ${d1.nome} e ${d2.nome}.`,
+    why: `${topicLabel(certo)} é um dos tópicos de ${nome}, na seção ${sectionName}. As outras opções são subáreas vizinhas, como ${d1.nome}.`,
   };
   return [pergunta1, pergunta2];
 }
@@ -192,26 +192,40 @@ export function trilhaQuiz({ sectionName, groups, index, salt = 0 }) {
   const topicos = groups[index] || [];
   if (!topicos.length || groups.length < 2) return [];
   const certo = topicos[hashText(sectionName + index + salt) % topicos.length];
+  const usados = new Set([topicLabel(certo).toLowerCase()]);
   const outros = [];
-  for (let passo = 1; passo < groups.length && outros.length < 2; passo++) {
+  for (let passo = 1; passo < groups.length && outros.length < 4; passo++) {
     const g = groups[(index + passo) % groups.length];
-    const t = g[hashText(sectionName + passo + salt) % g.length];
-    if (topicLabel(t).toLowerCase() !== topicLabel(certo).toLowerCase()) outros.push(t);
+    for (let k = 0; k < g.length && outros.length < 4; k++) {
+      const t = g[(hashText(sectionName + passo + salt) + k) % g.length];
+      const rotulo = topicLabel(t).toLowerCase();
+      if (usados.has(rotulo)) continue;
+      usados.add(rotulo);
+      outros.push(t);
+    }
   }
-  if (outros.length < 2) return [];
-  const opcoes = [certo, outros[0], outros[1]];
-  const pos = hashText(sectionName + "trilha" + salt) % 3;
+  if (outros.length < 4) return [];
+  const opcoes = [certo, ...outros];
+  const pos = hashText(sectionName + "trilha" + salt) % opcoes.length;
   [opcoes[0], opcoes[pos]] = [opcoes[pos], opcoes[0]];
   const partes = groups.map((_, i) => `Parte ${i + 1}`);
+  for (const extra of ["Todas as partes", "Nenhuma destas partes", "Fora da seção"]) {
+    if (partes.length >= 5) break;
+    partes.push(extra);
+  }
+  const certaParte = `Parte ${index + 1}`;
+  const opcoesParte = [certaParte, ...partes.filter((p) => p !== certaParte).slice(0, 4)];
+  const posParte = hashText(sectionName + "parte" + salt) % opcoesParte.length;
+  [opcoesParte[0], opcoesParte[posParte]] = [opcoesParte[posParte], opcoesParte[0]];
   return [{
     q: `Qual destes tópicos o catálogo lista na parte ${index + 1} da seção ${sectionName}?`,
     options: opcoes.map(topicLabel),
     a: opcoes.indexOf(certo),
-    why: `A seção ${sectionName} está dividida em ${groups.length} partes. "${topicLabel(certo)}" está na parte ${index + 1}; as outras duas opções vêm de outras partes.`,
+    why: `A seção ${sectionName} está dividida em ${groups.length} partes. "${topicLabel(certo)}" está na parte ${index + 1}; as outras opções vêm de partes vizinhas.`,
   }, {
     q: `Em qual parte da seção ${sectionName} o catálogo lista "${topicLabel(certo)}"?`,
-    options: partes,
-    a: index,
+    options: opcoesParte,
+    a: opcoesParte.indexOf(certaParte),
     why: `"${topicLabel(certo)}" aparece na parte ${index + 1} da seção, junto com os outros tópicos daquela trilha.`,
   }];
 }

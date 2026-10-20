@@ -97,7 +97,12 @@ vitória **não dá loot** e a perícia do continente continua subindo.
 
 Quem paga é o bicho da caverna. Cada monstro abre uma prova de perguntas,
 sempre com **cinco alternativas, de A a E**, e a vida do bicho é o número de
-acertos que ele aguenta:
+acertos que ele aguenta. As erradas são próximas de propósito: trocam uma
+palavra pela oposta ("ele nunca é maior", "um escalar que muda a direção", "se
+afasta da esperada"). Quando a pergunta não tem um par óbvio, entram primeiro
+alternativas da mesma área, escolhidas por semelhança com a resposta certa, e
+não um tópico aleatório de outro assunto. As perguntas geradas do catálogo já
+nascem com cinco opções escritas.
 
 - **fácil**: 3 acertos, errar tira 2 de vida.
 - **médio**: 7 acertos, errar tira 3.
