@@ -98,7 +98,7 @@ Estações, pedras, NPCs e mobília barram a passagem; na superfície não há m
 solto. O desenho é ordenado por profundidade, então uma fonte, árvore ou parede na
 frente do boneco cobre o corpo dele em vez de ficar sempre atrás.
 
-## Matilha e runa
+## Matilha e magias
 
 Quando até três monstros veem você na mesma janela, todos perguntam **na mesma
 tela**, em duas colunas: o principal à esquerda e a matilha à direita, cada
@@ -109,9 +109,19 @@ dois primeiros acompanham o principal e o resto entra na fila; o HUD mostra
 está na frente. No celular as colunas empilham, mas as perguntas continuam
 juntas.
 
-A **Runa da Faísca**, feita na forja (veio 2, erva 1), é a magia de bolso do
-duelo: gasta a runa e elimina uma alternativa errada da pergunta atual. Uma por
-pergunta, some ao usar.
+A barra de **magias** do duelo tem seis runas forjáveis (forja da cidade):
+
+| runa | efeito | receita |
+|---|---|---|
+| faísca | risca uma alternativa errada da pergunta | veio 2, erva 1 |
+| trovão | 2 de dano no monstro da frente, sem responder | ferro 1, veio 2 |
+| fogo | 1 de dano em todos os monstros da tela | veio 2, ferro 2 |
+| gelo | passa a pergunta sem responder e sem dano | veio 2, madeira 1 |
+| cura | recupera 12 de vida | erva 2, veio 1 |
+| espelho | o próximo erro não tira vida | veio 3, erva 1 |
+
+Cada uso gasta uma runa; a barra mostra quantas restam. Fora do duelo a runa
+volta para a mochila em vez de desaparecer.
 
 ## Nave, traje e equipamento
 

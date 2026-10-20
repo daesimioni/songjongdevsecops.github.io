@@ -81,6 +81,10 @@ for (const c of continents) {
   for (const id of ground.loot) check(!!ITEMS[id], `loot de ${c} com item inexistente ${id}`);
   check(!!ITEMS[ground.bossLoot], `chefe de ${c} solta item inexistente ${ground.bossLoot}`);
 }
+const runas = Object.keys(ITEMS).filter((id) => id.startsWith("runa-"));
+check(runas.length >= 6, `só ${runas.length} runas, esperado ao menos 6`);
+for (const id of runas) check(RECIPES.some((r) => r.out === id), `runa ${id} sem receita na forja`);
+
 for (const recipe of RECIPES) {
   check(!!ITEMS[recipe.out], `receita ${recipe.id} produz item inexistente ${recipe.out}`);
   check(recipe.qty > 0, `receita ${recipe.id} sem quantidade de saída`);

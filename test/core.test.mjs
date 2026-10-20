@@ -302,6 +302,72 @@ trioFilter.startDuel({ id: mainId, name: "A", kind: "slime", tier: 1 }, trioGrou
 assert.equal(trioFilter.duel.partners.length, 1, "monstro repetido não vira parceiro");
 trioFilter.next();
 
+// as seis runas do duelo, cada uma com efeito proprio
+const spellRpg = new RPG({ getLevel: () => 1, gainXp: () => {}, toast: () => {}, audio: {} });
+const spellGround = { id: "runa-test", continent: "cs", name: "Runas", dungeon: true, loot: ["parafuso", "chip", "fita"], bossLoot: "nucleo", material: "ferro" };
+const spellMain = (id, tier = 1) => ({ id, name: id, kind: "slime", tier, theme: "lógica" });
+spellRpg.data.hp = 5;
+spellRpg.addItem("runa-trovao", 1);
+spellRpg.startDuel(spellMain("runa-main-1"), spellGround, false);
+assert.equal(spellRpg.useItem("runa-trovao").victory, true, "trovao derruba o da frente");
+assert.equal(spellRpg.duel.phase, "victory", "trovao pode vencer o duelo");
+assert.equal(spellRpg.itemCount("runa-trovao"), 0, "trovao some ao usar");
+spellRpg.next();
+
+spellRpg.addItem("runa-gelo", 1);
+spellRpg.startDuel(spellMain("runa-main-2", 2), spellGround, false);
+const geloHp = spellRpg.duel.monsterHp;
+const resGelo = spellRpg.useItem("runa-gelo");
+assert.equal(resGelo.ok, true, "gelo usa");
+assert.equal(spellRpg.duel.phase, "feedback", "gelo vira feedback sem dano");
+assert.equal(spellRpg.duel.monsterHp, geloHp, "gelo nao machuca o monstro");
+spellRpg.next();
+assert.equal(spellRpg.duel.phase, "question", "gelo passa a pergunta");
+spellRpg.next(); // fecha o duelo para os proximos testes
+spellRpg.duel = null;
+
+spellRpg.addItem("runa-cura", 1);
+spellRpg.startDuel(spellMain("runa-main-3"), spellGround, false);
+const cura = spellRpg.useItem("runa-cura");
+assert.equal(cura.healed, 12, "cura devolve 12");
+assert.equal(cura.healed, Math.min(12, spellRpg.hpMax() - 5), "cura respeita o teto");
+spellRpg.duel = null;
+
+spellRpg.data.hp = 5;
+spellRpg.addItem("runa-espelho", 1);
+spellRpg.startDuel(spellMain("runa-main-4"), spellGround, false);
+assert.equal(spellRpg.useItem("runa-espelho").shield, true, "espelho arma");
+const wrongSpell = (spellRpg.duel.question.answer + 1) % spellRpg.duel.question.options.length;
+spellRpg.answer(wrongSpell);
+assert.equal(spellRpg.data.hp, 5, "espelho segura o erro sem tirar vida");
+assert.equal(spellRpg.duel.feedback.blocked, true, "feedback marca o golpe bloqueado");
+spellRpg.duel = null;
+
+spellRpg.addItem("runa-faisca", 1);
+spellRpg.startDuel(spellMain("runa-main-5"), spellGround, false);
+assert.equal(spellRpg.useItem("runa-faisca").spark, true, "faisca avisa o duelo");
+assert.equal(spellRpg.itemCount("runa-faisca"), 0, "faisca some ao usar");
+spellRpg.duel = null;
+
+spellRpg.addItem("runa-fogo", 2);
+spellRpg.startDuel(spellMain("runa-main-6", 3), spellGround, false, [spellMain("runa-p1", 1), spellMain("runa-p2", 3)]);
+const fogo = spellRpg.useItem("runa-fogo");
+assert.equal(fogo.ok, true, "fogo usa");
+assert.equal(spellRpg.duel.monsterHp, 2, "fogo tira 1 do principal");
+assert.equal(spellRpg.duel.partners.every((p) => p.hp < p.hpMax), true, "fogo tira 1 da matilha");
+assert.equal(spellRpg.duel.partners[0].done, false, "parceiro de vida 2 aguenta o primeiro fogo");
+spellRpg.next();
+spellRpg.useItem("runa-fogo");
+assert.equal(spellRpg.duel.partners[0].done, true, "segundo fogo derruba o parceiro de vida 2");
+assert.equal(spellRpg.monsterAlive("runa-p1"), false, "parceiro queimado fica derrotado");
+spellRpg.duel = null;
+
+// runa fora do duelo volta para a mochila, nao some
+spellRpg.addItem("runa-gelo", 1);
+const fora = spellRpg.useItem("runa-gelo");
+assert.equal(fora.ok, false, "runa nao funciona fora do duelo");
+assert.equal(spellRpg.itemCount("runa-gelo"), 1, "runa fora do duelo nao e consumida");
+
 // save corrompido não vira save vazio sem deixar cópia
 const corruptKey = STORAGE.rpg;
 const goodRaw = store.get(corruptKey);

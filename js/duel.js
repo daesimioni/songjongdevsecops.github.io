@@ -55,6 +55,15 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
     timer = null;
   }
 
+  const SPELLS = [
+    ["runa-faisca", "faísca · elimina uma alternativa"],
+    ["runa-trovao", "trovão · 2 de dano no da frente"],
+    ["runa-fogo", "fogo · 1 de dano em todos"],
+    ["runa-gelo", "gelo · passa a pergunta"],
+    ["runa-cura", "cura · recupera 12"],
+    ["runa-espelho", "espelho · o próximo erro não dói"],
+  ];
+
   function open(monster, ground, boss = false, partner = null) {
     const res = rpg.startDuel(monster, ground, boss, partner);
     if (!res.ok) {
@@ -169,7 +178,8 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
       const wrong = fb.training
         ? `Errou. Na caverna isso tiraria ${fb.damage} de vida.`
         : `Errou. Você levou ${fb.damage} de dano.`;
-      box.appendChild(el("b", "", fb.correct ? "Acertou." : wrong));
+      const label = fb.spell || (fb.blocked ? "O espelho segurou o golpe." : fb.correct ? "Acertou." : wrong);
+      box.appendChild(el("b", "", label));
       box.appendChild(el("span", "", fb.why));
       main.appendChild(box);
       const next = el("button", "duel-next", "continuar");
@@ -177,11 +187,17 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
       next.addEventListener("click", advance);
       main.appendChild(next);
     } else {
-      if (sparked === null && rpg.itemCount("runa-faisca") > 0) {
-        const rune = el("button", "duel-rune", "faísca · elimina uma alternativa errada");
-        rune.type = "button";
-        rune.addEventListener("click", spark);
-        main.appendChild(rune);
+      const runes = SPELLS.filter(([id]) => rpg.itemCount(id) > 0);
+      if (runes.length) {
+        const bar = el("div", "duel-spells");
+        for (const [id, label] of runes) {
+          const rune = el("button", "duel-rune", `${label} · ${rpg.itemCount(id)}`);
+          rune.type = "button";
+          if (id === "runa-faisca" && sparked !== null) rune.disabled = true;
+          rune.addEventListener("click", () => castSpell(id));
+          bar.appendChild(rune);
+        }
+        main.appendChild(bar);
       }
       const foot = el("p", "duel-hint", "Toque numa alternativa (ou 1, 2 e 3 no teclado). Errar tira vida; acertar tira vida do monstro.");
       main.appendChild(foot);
@@ -206,7 +222,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
     if (p.feedback) {
       const fb = el("div", `duel-feedback ${p.feedback.correct ? "good" : "bad"}`);
       fb.setAttribute("role", "status");
-      fb.appendChild(el("b", "", p.feedback.correct ? "Acertou." : `Errou. Levou ${p.feedback.damage} de dano.`));
+      fb.appendChild(el("b", "", p.feedback.blocked ? "O espelho segurou o golpe." : p.feedback.correct ? "Acertou." : `Errou. Levou ${p.feedback.damage} de dano.`));
       fb.appendChild(el("span", "", p.feedback.why));
       box.appendChild(fb);
       const next = el("button", "duel-next small", "continuar com este bicho");
@@ -257,6 +273,20 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
     b.type = "button";
     b.addEventListener("click", advance);
     body.appendChild(b);
+  }
+
+  function castSpell(id) {
+    if (!rpg.duel || rpg.duel.phase !== "question") return false;
+    if (id === "runa-faisca") return spark();
+    const res = rpg.useItem(id);
+    if (!res.ok) { toast(res.reason, 2800); return false; }
+    audio.blip();
+    if (rpg.duel.phase === "victory") {
+      audio.chime();
+      if (!rpg.duel.training) onVictory?.();
+    }
+    render();
+    return true;
   }
 
   function spark() {

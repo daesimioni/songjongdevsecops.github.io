@@ -397,7 +397,8 @@ export class RPG {
 
   useItem(id) {
     const item = ITEMS[id];
-    if (!item || !["pocao", "tocha", "bomba", "caldo", "cafe", "assado", "doce", "runa-faisca"].includes(id)) {
+    const rune = id.startsWith("runa-");
+    if (!item || !(rune || ["pocao", "tocha", "bomba", "caldo", "cafe", "assado", "doce"].includes(id))) {
       return { ok: false, reason: "Este item não se usa agora." };
     }
     if (this.itemCount(id) <= 0) return { ok: false, reason: `Você não tem ${item.name}.` };
@@ -413,12 +414,59 @@ export class RPG {
       this.save();
       return { ok: true, bomb: true, name: item.name };
     }
-    if (id === "runa-faisca") {
-      if (!this.duel || this.duel.phase !== "question") return { ok: false, reason: "A runa só funciona na pergunta de um duelo." };
+    if (rune) {
+      const d = this.duel;
+      if (!d || d.phase !== "question") return { ok: false, reason: "A runa só funciona na pergunta de um duelo." };
+      if (id === "runa-espelho" && d.shield) return { ok: false, reason: "O espelho já está armado." };
       this.data.items[id]--;
       if (this.data.items[id] <= 0) delete this.data.items[id];
+      if (id === "runa-faisca") {
+        this.save();
+        return { ok: true, spark: true, name: item.name };
+      }
+      if (id === "runa-cura") {
+        const healed = this.heal(12);
+        this.save();
+        return { ok: true, healed, name: item.name };
+      }
+      if (id === "runa-espelho") {
+        d.shield = true;
+        this.save();
+        return { ok: true, shield: true, name: item.name };
+      }
+      if (id === "runa-gelo") {
+        d.feedback = { correct: true, spell: item.name, damage: 0, why: "O gelo segurou o tempo: a pergunta passou sem resposta e sem dano." };
+        d.phase = "feedback";
+        this.save();
+        return { ok: true, name: item.name };
+      }
+      // trovão acerta o da frente; fogo passa por todos, matilha incluída
+      const dmg = id === "runa-fogo" ? 1 : 2;
+      d.monsterHp = Math.max(0, d.monsterHp - dmg);
+      if (id === "runa-fogo") {
+        for (const p of d.partners || []) {
+          if (p.done) continue;
+          p.hp = Math.max(0, p.hp - dmg);
+          if (p.hp <= 0) {
+            p.done = true;
+            this.data.monsters[p.monster.id] = now();
+          }
+        }
+      }
+      d.feedback = {
+        correct: true,
+        spell: item.name,
+        damage: 0,
+        why: id === "runa-fogo" ? "O fogo passou por todos os bichos da tela." : "O trovão bateu no monstro da frente.",
+      };
+      if (d.monsterHp <= 0) {
+        d.phase = "victory";
+        d.result = this.victory(d);
+      } else {
+        d.phase = "feedback";
+      }
       this.save();
-      return { ok: true, spark: true, name: item.name };
+      return { ok: true, name: item.name, victory: d.phase === "victory" };
     }
     // comida com efeito pode ser usada de vida cheia: o buff ainda vale
     if (!item.buff && this.hp() >= this.hpMax()) return { ok: false, reason: "Sua vida já está cheia." };
@@ -605,6 +653,7 @@ export class RPG {
       question: deck[0],
       monsterHp: hp,
       monsterHpMax: hp,
+      shield: false,
       partners: [],
       get partner() { return this.partners[0] || null; },
       phase: "question",
@@ -709,6 +758,7 @@ export class RPG {
       question: deck[0],
       monsterHp: hp,
       monsterHpMax: hp,
+      shield: false,
       partners: [],
       get partner() { return this.partners[0] || null; },
       phase: "question",
@@ -736,14 +786,16 @@ export class RPG {
         this.save();
       }
     } else {
-      const damage = TIERS[d.tier].damage;
+      const blocked = !!d.shield;
+      if (blocked) d.shield = false;
+      const damage = blocked ? 0 : TIERS[d.tier].damage;
       if (d.training) {
-        d.feedback = { correct: false, why: d.question.why, damage, training: true };
+        d.feedback = { correct: false, why: d.question.why, damage, blocked, training: true };
         d.phase = "feedback";
         return { ok: true, correct, phase: d.phase, feedback: d.feedback, duel: d };
       }
       this.data.hp = Math.max(0, this.hp() - damage);
-      d.feedback = { correct: false, why: d.question.why, damage };
+      d.feedback = { correct: false, why: d.question.why, damage, blocked };
       if (this.data.hp <= 0) {
         this.data.hp = this.hpMax();
         d.phase = "defeat";
@@ -773,9 +825,11 @@ export class RPG {
       this.save();
       return { ok: true, correct, partner: true, who, done: p.done };
     }
-    const damage = TIERS[p.tier].damage;
+    const blocked = !!d.shield;
+    if (blocked) d.shield = false;
+    const damage = blocked ? 0 : TIERS[p.tier].damage;
     this.data.hp = Math.max(0, this.hp() - damage);
-    p.feedback = { correct: false, why: p.question.why, damage };
+    p.feedback = { correct: false, why: p.question.why, damage, blocked };
     if (this.data.hp <= 0) {
       this.data.hp = this.hpMax();
       d.phase = "defeat";

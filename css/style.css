@@ -2359,6 +2359,9 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
   text-align: left;
 }
 .duel-rune:hover { background: rgba(180, 140, 255, 0.16); }
+.duel-rune:disabled { opacity: 0.38; cursor: default; }
+.duel-spells { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+.duel-spells .duel-rune { margin-top: 0; }
 .duel-option.sparked { opacity: 0.42; text-decoration: line-through; }
 
 /* loja da mestra: material por peça, sem moeda */

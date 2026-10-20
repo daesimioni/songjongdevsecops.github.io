@@ -62,6 +62,11 @@ export const ITEMS = {
   "botas-marcha": { name: "Botas de Marcha", continent: "physics", slot: "boots", hp: 2, desc: "Solado de borracha e mola de aço. O caminho parece menor." },
   "escudo-cristal": { name: "Escudo de Cristal", continent: "chem", slot: "shield", hp: 4, desc: "Uma lâmina de cristal de equilíbrio. Segura o golpe e devolve a cor." },
   "runa-faisca": { name: "Runa da Faísca", continent: "hub", use: "spark", desc: "Uma carga de magia: elimina uma alternativa errada na pergunta atual do duelo. Some ao usar." },
+  "runa-trovao": { name: "Runa do Trovão", continent: "hub", use: "thunder", desc: "Dá 2 de dano no monstro da frente sem responder pergunta. Some ao usar." },
+  "runa-fogo": { name: "Runa do Fogo", continent: "hub", use: "fire", desc: "Dá 1 de dano em todos os monstros da tela, inclusive a matilha. Some ao usar." },
+  "runa-gelo": { name: "Runa do Gelo", continent: "hub", use: "ice", desc: "Congela o tempo: passa a pergunta atual sem responder e sem levar dano. Some ao usar." },
+  "runa-cura": { name: "Runa da Cura", continent: "hub", use: "heal", desc: "Recupera 12 de vida durante o duelo. Some ao usar." },
+  "runa-espelho": { name: "Runa do Espelho", continent: "hub", use: "mirror", desc: "O próximo erro não tira vida sua. Some ao usar." },
   "colar-corrente": { name: "Colar de Corrente", continent: "cs", slot: "necklace", hp: 4, desc: "Uma corrente de elos pequenos que nunca emperra." },
   "anel-fractal": { name: "Anel Fractal", continent: "math", slot: "ring", damage: 1, desc: "A mesma forma em todas as escalas. Cabe no dedo e não acaba." },
   "colar-inercia": { name: "Colar de Inércia", continent: "physics", slot: "necklace", hp: 4, desc: "Um peso que insiste em continuar fazendo o que já fazia." },
@@ -98,6 +103,11 @@ export const RECIPES = [
   { id: "assado", name: "Assado de Fundo de Mina", out: "assado", qty: 1, need: { caldo: 1, madeira: 1 } },
   { id: "doce", name: "Doce de Erva", out: "doce", qty: 1, need: { erva: 2, veio: 1 } },
   { id: "runa-faisca", name: "Runa da Faísca", out: "runa-faisca", qty: 1, need: { veio: 2, erva: 1 } },
+  { id: "runa-trovao", name: "Runa do Trovão", out: "runa-trovao", qty: 1, need: { ferro: 1, veio: 2 } },
+  { id: "runa-fogo", name: "Runa do Fogo", out: "runa-fogo", qty: 1, need: { veio: 2, ferro: 2 } },
+  { id: "runa-gelo", name: "Runa do Gelo", out: "runa-gelo", qty: 1, need: { veio: 2, madeira: 1 } },
+  { id: "runa-cura", name: "Runa da Cura", out: "runa-cura", qty: 1, need: { erva: 2, veio: 1 } },
+  { id: "runa-espelho", name: "Runa do Espelho", out: "runa-espelho", qty: 1, need: { veio: 3, erva: 1 } },
 ];
 
 export const ENCHANTS = [
