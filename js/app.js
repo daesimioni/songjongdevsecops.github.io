@@ -17,7 +17,7 @@ import { OUTFITS, outfitById, outfitColors } from "./outfits.js";
 import { AVATAR_DEFAULT, normalizeAvatar, avatarColors, avatarCode, HAIRS } from "./avatar.js";
 import { renderCharacterEditor } from "./character.js";
 import { copyText } from "./social.js";
-import { isAdminKey } from "./admin.js";
+import { isAdminKey, ADMIN_LABEL } from "./admin.js";
 import { findPath, nearestWalkable } from "./path.js";
 import { feedPeer, peerRenderPosition } from "./interp.js";
 import { RPG } from "./rpg.js";
@@ -110,6 +110,7 @@ const state = {
   peers: [],
   net: null,
   hasIdentity: false,
+  god: false,
   nearest: null,
   room: sanitizeRoom(saved.room),
   lastContinent: null,
@@ -848,7 +849,126 @@ function syncAdmin() {
   if (adminShown === admin) return;
   adminShown = admin;
   $("admin-badge").hidden = !admin;
+  $("admin-badge").textContent = ADMIN_LABEL;
   document.body.classList.toggle("is-admin", admin);
+  if (!admin && state.modal === "god") closeModal("god");
+}
+
+// ---------- painel do GOD ----------
+function godPower(label, hint, run) {
+  const card = el("div", "god-row");
+  const text = el("div", "god-text");
+  text.append(el("b", "", label), el("span", "", hint));
+  const button = el("button", "god-btn", "usar");
+  button.type = "button";
+  button.addEventListener("click", () => { run(); audio.blip(); buildGod(); });
+  card.append(text, button);
+  return card;
+}
+
+function openGod() {
+  if (!adminShown) return;
+  stopSprint();
+  closeChat();
+  if (state.panelOpen) closePanel();
+  buildGod();
+  openModal("god");
+  audio.open();
+}
+
+function buildGod() {
+  const body = $("god-body");
+  if (!body) return;
+  body.textContent = "";
+  $("god-sub").textContent = state.god
+    ? "Modo imortal ligado. Os poderes valem só nesta sessão."
+    : "Poderes de quem tem a chave do mundo. Valem só nesta sessão.";
+
+  body.appendChild(godPower("vida e mana cheias", "enche as duas barras agora", () => {
+    rpg.data.hp = rpg.hpMax();
+    rpg.addMana(rpg.manaMax());
+    rpg.save();
+    toast("vida e mana cheias.", 2400);
+  }));
+
+  body.appendChild(godPower("+1000 de experiência", "sobe de nível na hora", () => {
+    gainXp(1000);
+    toast("+1000 de experiência.", 2400);
+  }));
+
+  body.appendChild(godPower("revelar o mapa", "apaga a névoa do mundo inteiro", () => {
+    for (let y = 0; y < MAP_H; y++) {
+      for (let x = 0; x < MAP_W; x++) world.markExplored(x + 0.5, y + 0.5);
+    }
+    state.fogDirty = true;
+    saveFog();
+    renderer.kick(0.4);
+    toast("mapa revelado.", 2600);
+  }));
+
+  body.appendChild(godPower("abrir todas as estações", "todas as páginas do diário de uma vez", () => {
+    for (const site of SITES) state.cards.add(site.id);
+    saveCards();
+    updateProgress();
+    toast(`${SITES.length} estações abertas.`, 2600);
+  }));
+
+  body.appendChild(godPower("bolsa cheia", "ferro, madeira, ração, semente, chave e poção", () => {
+    for (const [id, qty] of [["ferro", 10], ["madeira", 10], ["racao", 10], ["semente", 10], ["chave", 5], ["pocao", 20]]) {
+      rpg.addItem(id, qty);
+    }
+    toast("bolsa cheia.", 2600);
+  }));
+
+  body.appendChild(godPower(state.god ? "desligar o modo imortal" : "ligar o modo imortal",
+    "enquanto ligado, a vida não desce", () => {
+      state.god = !state.god;
+      document.body.classList.toggle("god-mode", state.god);
+      toast(state.god ? "modo imortal ligado." : "modo imortal desligado.", 2600);
+    }));
+
+  if (dungeon?.isOpen()) {
+    body.appendChild(godPower("limpar a caverna", "todos os bichos desta descida caem", () => {
+      for (const m of dungeon.state.monsters || []) m.alive = false;
+      if (dungeon.state.boss) dungeon.state.boss.alive = false;
+      toast("a caverna ficou vazia.", 2800);
+    }));
+  }
+
+  const travel = el("div", "god-row god-travel");
+  const head = el("div", "god-text");
+  head.append(el("b", "", "viajar na hora"), el("span", "", "escolha um farol e vá"));
+  const select = el("select", "god-select");
+  select.setAttribute("aria-label", "farol de destino");
+  for (const stone of WAYSTONES) {
+    const opt = el("option", "", `${stone.name} · ${CONTINENTS[stone.continent]?.name || stone.continent}`);
+    opt.value = stone.id;
+    select.appendChild(opt);
+  }
+  const go = el("button", "god-btn", "ir");
+  go.type = "button";
+  go.addEventListener("click", () => godTravel(select.value));
+  travel.append(head, select, go);
+  body.appendChild(travel);
+}
+
+function godTravel(id) {
+  const stone = WAYSTONES.find((w) => w.id === id);
+  if (!stone) return;
+  if (dungeon?.isOpen()) dungeon.close("god");
+  const spot = nearestWalkable(world, stone.x, stone.y + 1.6) || { x: stone.x, y: stone.y + 1.6 };
+  player.x = spot.x;
+  player.y = spot.y;
+  player.dir = 0;
+  player.moving = false;
+  clearPath();
+  player.continentId = stone.continent;
+  state.lastContinent = stone.continent;
+  world.markExplored(player.x, player.y);
+  saveFog();
+  renderer.kick(0.6);
+  closeModal("god");
+  toast(`GOD: ${stone.name}.`, 3000);
 }
 
 let questTrackAt = 0;
@@ -1872,6 +1992,7 @@ function loop(now) {
       state.fogSavedAt = now;
       saveFog();
     }
+    if (state.god) { rpg.data.hp = rpg.hpMax(); rpg.data.mana = rpg.manaMax(); }
     const hpNow = rpg.hp();
     const hpMaxNow = rpg.hpMax();
     if (hpNow !== state.lastHp || hpMaxNow !== state.lastHpMax) {
@@ -2099,6 +2220,7 @@ $("minimap-canvas").addEventListener("pointerdown", (e) => {
 
 $("btn-chat").addEventListener("click", openChat);
 $("btn-sheet").addEventListener("click", openSheet);
+$("admin-badge").addEventListener("click", openGod);
 $("btn-rede").addEventListener("click", openRede);
 $("panel-live").addEventListener("pointerdown", () => {
   if (state.currentPost) quests.report("lab", state.currentPost);

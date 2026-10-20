@@ -18,7 +18,7 @@ const { DUNGEONS } = await import("../js/dungeon-data.js");
 const { POSTS, NPCS } = await import("../js/content.js");
 const { QUESTS } = await import("../js/quests.js");
 const { RPG } = await import("../js/rpg.js");
-const { isAdminKey } = await import("../js/admin.js");
+const { isAdminKey, ADMIN_PUBKEYS, ADMIN_LABEL } = await import("../js/admin.js");
 const { HAIRS, AVATAR_DEFAULT, normalizeAvatar, avatarColors, avatarCode, avatarFromCode, hairUnlock, hairQuest } = await import("../js/avatar.js");
 const { OUTFITS } = await import("../js/outfits.js");
 const { createWorld } = await import("../js/world.js");
@@ -246,6 +246,14 @@ for (const dungeon of DUNGEONS) {
 check(isAdminKey("ab".repeat(32), "npub1teste", ["AB".repeat(32)]), "admin não reconhece a própria chave hex");
 check(isAdminKey("", "npub1teste", ["npub1teste"]), "admin não reconhece o próprio npub");
 check(!isAdminKey("cd".repeat(32), "npub1outro", ["ab".repeat(32)]), "admin reconhece chave errada");
+
+// o GOD do mundo: chave pública registrada no repositório, privada no cofre
+const GOD_NPUB = "npub1s7869cka00zxj2psrm68cma588kal727v8evm6rwtre03e5pwyaspxalsw";
+check(ADMIN_PUBKEYS.includes(GOD_NPUB), "o npub do GOD não está registrado");
+check(ADMIN_LABEL === "GOD", `rótulo do admin: ${ADMIN_LABEL}, esperado GOD`);
+check(isAdminKey("", GOD_NPUB), "isAdminKey não reconhece o npub do GOD");
+check(!isAdminKey("", "npub1outro"), "isAdminKey reconhece npub que não é do GOD");
+check(!ADMIN_PUBKEYS.some((k) => k.startsWith("nsec1")), "chave privada dentro do repositório");
 
 const world = createWorld();
 for (const area of AREAS) {

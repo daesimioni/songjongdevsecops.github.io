@@ -4,7 +4,13 @@
 // Cole aqui o npub (npub1...) ou a chave pública em hexadecimal (64 caracteres).
 // Exemplo de linha:
 //   "npub1...",
-export const ADMIN_PUBKEYS = [];
+export const ADMIN_PUBKEYS = [
+  "npub1s7869cka00zxj2psrm68cma588kal727v8evm6rwtre03e5pwyaspxalsw",
+];
+
+// o dono da chave não é "administrador", é o GOD do mundo: o crachá e o painel
+// usam este rótulo em todo lugar
+export const ADMIN_LABEL = "GOD";
 
 const HEX64 = /^[0-9a-f]{64}$/i;
 
