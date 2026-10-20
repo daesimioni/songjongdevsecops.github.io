@@ -95,6 +95,21 @@ function desenhar(ctx, item) {
     pintar(ctx, 13, 13, 2, 8, c);
     pintar(ctx, 11, 15, 6, 2, c);
     pintar(ctx, 15, 5, 2, 3, c);
+  } else if (id === "peixe" || id === "peixe-prata" || id === "peixe-raro" || id === "peixe-lendario") {
+    // o peixe aponta para a direita; a cor conta a raridade antes do nome.
+    // Vem antes do galho de cura, senão todo peixe vira poção.
+    const cor = id === "peixe-lendario" ? "#ffc857"
+      : id === "peixe-raro" ? "#6bd5ff"
+      : id === "peixe-prata" ? "#c9d6ff"
+      : c;
+    pintar(ctx, 5, 11, 4, 4, cor);
+    pintar(ctx, 4, 13, 4, 5, cor);
+    pintar(ctx, 8, 12, 15, 9, escuro);
+    pintar(ctx, 9, 13, 13, 7, cor);
+    pintar(ctx, 13, 10, 6, 3, cor);
+    pintar(ctx, 18, 15, 2, 2, "#101426");
+    pintar(ctx, 22, 17, 2, 1, "#101426");
+    pintar(ctx, 9, 14, 11, 1, "rgba(255,255,255,0.35)");
   } else if (item.heal || item.mana || item.use === "light" || item.use === "bomb") {
     pintar(ctx, 10, 10, 12, 16, escuro);
     pintar(ctx, 11, 12, 10, 13, "rgba(220,235,255,0.22)");

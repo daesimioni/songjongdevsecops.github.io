@@ -778,30 +778,45 @@ check(looks.size === world.npcs.length, `NPCs com aparência repetida: ${world.n
 for (const npc of world.npcs) check(!!npc.look && !!npc.colors?.skin && !!npc.colors?.hair, `NPC ${npc.id} sem aparência`);
 
 // coleta: o sorteio é puro e sempre devolve item que existe, com pergunta de
-// tier 1 a 3. Raro pede pergunta difícil, comum pede pergunta fácil.
+// tier 1 a 3. Raro pede pergunta difícil e o lendário pede duas seguidas.
 const { rollGather } = await import("../js/gather.js");
 const roleta = (...vals) => { let i = 0; return () => vals[i++ % vals.length]; };
 const veioComum = rollGather("vein", roleta(0.10, 0.40), {});
-check(veioComum.resource === "veio" && veioComum.qty === 2 && veioComum.tier === 1, "veio comum fora do esperado");
+check(veioComum.resource === "veio" && veioComum.qty === 2 && veioComum.tier === 1 && veioComum.grade === "comum", "veio comum fora do esperado");
 const veioMedio = rollGather("vein", roleta(0.60), { material: "erva" });
-check(veioMedio.resource === "ferro" && veioMedio.tier === 2, "ferro do veio fora do esperado");
+check(veioMedio.resource === "ferro" && veioMedio.tier === 2 && veioMedio.grade === "incomum", "ferro do veio fora do esperado");
 const veioRaro = rollGather("vein", roleta(0.95), { material: "erva" });
-check(veioRaro.resource === "erva" && veioRaro.tier === 3, "material da área não saiu no veio raro");
+check(veioRaro.resource === "erva" && veioRaro.tier === 3 && veioRaro.grade === "raro" && !veioRaro.rounds, "material da área não saiu no veio raro");
+const veioLendario = rollGather("vein", roleta(0.99), { material: "erva" });
+check(veioLendario.resource === "erva" && veioLendario.qty === 2 && veioLendario.tier === 3 && veioLendario.grade === "lendario" && veioLendario.rounds === 2, "veio lendário não pede duas perguntas");
 const veioSemMaterial = rollGather("vein", roleta(0.95), { material: "veio" });
 check(veioSemMaterial.resource === "cristal" && veioSemMaterial.tier === 3, "veio raro sem material de área não caiu no cristal");
 check(rollGather("tree", roleta(0.10, 0.40)).tier === 1, "madeira comum não é pergunta fácil");
 const madeiraRara = rollGather("tree", roleta(0.80, 0.60));
-check(madeiraRara.qty === 2 && madeiraRara.tier === 2, "madeira rara fora do esperado");
-check(rollGather("water", roleta(0.95)).resource === "peixe-raro", "peixe raro não saiu no sorteio alto");
+check(madeiraRara.qty === 2 && madeiraRara.tier === 2 && madeiraRara.grade === "incomum", "madeira rara fora do esperado");
+const madeiraLendaria = rollGather("tree", roleta(0.995));
+check(madeiraLendaria.qty === 6 && madeiraLendaria.grade === "lendario" && madeiraLendaria.rounds === 2, "madeira lendária fora do esperado");
+const peixeComum = rollGather("water", roleta(0.10, 0.40));
+check(peixeComum.resource === "peixe" && peixeComum.qty === 2 && peixeComum.tier === 1, "peixe comum fora do esperado");
+const peixePrata = rollGather("water", roleta(0.70));
+check(peixePrata.resource === "peixe-prata" && peixePrata.tier === 2 && peixePrata.grade === "incomum", "peixe prateado fora do esperado");
+const peixeRaro = rollGather("water", roleta(0.95));
+check(peixeRaro.resource === "peixe-raro" && peixeRaro.tier === 3 && peixeRaro.grade === "raro" && !peixeRaro.rounds, "peixe raro fora do esperado");
+const peixeLendario = rollGather("water", roleta(0.995));
+check(peixeLendario.resource === "peixe-lendario" && peixeLendario.tier === 3 && peixeLendario.grade === "lendario" && peixeLendario.rounds === 2, "peixe lendário fora do esperado");
 for (const kind of ["vein", "tree", "water"]) {
   for (let i = 0; i < 300; i++) {
     const r = rollGather(kind, Math.random, { material: "erva" });
     check(!!ITEMS[r.resource], `coleta ${kind}: recurso ${r.resource} fora de ITEMS`);
     check(r.tier >= 1 && r.tier <= 3, `coleta ${kind}: tier ${r.tier} fora de 1..3`);
-    check(Number.isInteger(r.qty) && r.qty >= 1 && r.qty <= 4, `coleta ${kind}: quantidade ${r.qty}`);
+    check(["comum", "incomum", "raro", "lendario"].includes(r.grade), `coleta ${kind}: grade ${r.grade}`);
+    check(Number.isInteger(r.qty) && r.qty >= 1 && r.qty <= 6, `coleta ${kind}: quantidade ${r.qty}`);
+    check(r.grade === "lendario" ? r.rounds === 2 : !r.rounds, `coleta ${kind}: rodadas do lendário`);
   }
 }
-check(ITEMS.peixe?.heal > 0 && ITEMS["peixe-raro"].heal > ITEMS.peixe.heal, "peixes sem cura crescente");
+const peixes = ["peixe", "peixe-prata", "peixe-raro", "peixe-lendario"].map((id) => ITEMS[id]);
+check(peixes.every((p) => p && p.heal > 0), "peixe sem cura no ITEMS");
+check(peixes.every((p, i) => i === 0 || p.heal > peixes[i - 1].heal), "peixes sem cura crescente");
 
 assert.equal(faults.length, 0, `conteúdo com ${faults.length} problema(s):\n- ${faults.join("\n- ")}`);
 console.log("ok conteúdo, estações, NPCs, missões, itens, receitas, perguntas, PvP, cavernas e mundo");

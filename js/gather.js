@@ -1,5 +1,5 @@
-// Coleta: minerar, pescar e cortar madeira custam uma pergunta do continente
-// em que você está. Quanto mais valioso o achado, mais difícil a pergunta.
+// Coleta: minerar, pescar e cortar madeira custam pergunta do continente.
+// Quanto mais valioso o achado, mais difícil: o lendário pede duas seguidas.
 import { ITEMS } from "./rpg-data.js";
 import { CONTINENTS } from "./config.js";
 import { itemIconElement } from "./item-art.js";
@@ -7,7 +7,7 @@ import { itemIconElement } from "./item-art.js";
 const $ = (id) => document.getElementById(id);
 const LETTERS = "ABCDE";
 const NOMES = { vein: "mineração", tree: "madeira", water: "pesca" };
-const RARIDADE = { 1: "comum", 2: "raro", 3: "muito raro" };
+const RARIDADE = { comum: "comum", incomum: "incomum", raro: "raro", lendario: "lendário" };
 const DIFICULDADE = { 1: "fácil", 2: "média", 3: "difícil" };
 
 function el(tag, cls, text) {
@@ -18,48 +18,65 @@ function el(tag, cls, text) {
 }
 
 // O sorteio é puro: o mesmo tipo sempre devolve um recurso que existe em
-// ITEMS, com tier 1 a 3. O tier é a dificuldade da pergunta.
+// ITEMS e um tier de pergunta de 1 a 3. O lendário pede duas perguntas.
 export function rollGather(kind, rand = Math.random, extra = {}) {
   const r = rand();
   const dois = () => rand() < 0.5;
   if (kind === "vein") {
-    if (r < 0.55) return { resource: "veio", qty: dois() ? 2 : 1, tier: 1 };
-    if (r < 0.85) return { resource: "ferro", qty: 1, tier: 2 };
+    if (r < 0.55) return { resource: "veio", qty: dois() ? 2 : 1, tier: 1, grade: "comum" };
+    if (r < 0.85) return { resource: "ferro", qty: 1, tier: 2, grade: "incomum" };
     const raro = ITEMS[extra.material] && extra.material !== "veio" && extra.material !== "ferro"
       ? extra.material
       : "cristal";
-    return { resource: raro, qty: 1, tier: 3 };
+    if (r < 0.97) return { resource: raro, qty: 1, tier: 3, grade: "raro" };
+    return { resource: raro, qty: 2, tier: 3, grade: "lendario", rounds: 2 };
   }
   if (kind === "tree") {
-    if (r < 0.7) return { resource: "madeira", qty: dois() ? 2 : 1, tier: 1 };
-    if (r < 0.95) return { resource: "madeira", qty: dois() ? 3 : 2, tier: 2 };
-    return { resource: "madeira", qty: 4, tier: 3 };
+    if (r < 0.7) return { resource: "madeira", qty: dois() ? 2 : 1, tier: 1, grade: "comum" };
+    if (r < 0.95) return { resource: "madeira", qty: dois() ? 3 : 2, tier: 2, grade: "incomum" };
+    if (r < 0.99) return { resource: "madeira", qty: 4, tier: 3, grade: "raro" };
+    return { resource: "madeira", qty: 6, tier: 3, grade: "lendario", rounds: 2 };
   }
-  if (r < 0.65) return { resource: "peixe", qty: dois() ? 2 : 1, tier: 1 };
-  if (r < 0.92) return { resource: "peixe", qty: dois() ? 3 : 2, tier: 2 };
-  return { resource: "peixe-raro", qty: 1, tier: 3 };
+  if (r < 0.6) return { resource: "peixe", qty: dois() ? 2 : 1, tier: 1, grade: "comum" };
+  if (r < 0.88) return { resource: "peixe-prata", qty: 1, tier: 2, grade: "incomum" };
+  if (r < 0.98) return { resource: "peixe-raro", qty: 1, tier: 3, grade: "raro" };
+  return { resource: "peixe-lendario", qty: 1, tier: 3, grade: "lendario", rounds: 2 };
 }
 
 export function createGather({ rpg, audio, toast, onClose }) {
   let current = null;
+  let etapa = 0;
   let pick = -1;
   let done = false;
   let resultado = "";
 
-  // A pergunta é do tier do achado. Se aquele tier não tiver pergunta escrita
-  // para o continente, desce para os vizinhos em vez de não abrir a coleta.
-  function questionFor(continent, tier) {
-    const ordem = [tier, 2, 1, 3].filter((t, i, a) => a.indexOf(t) === i);
-    return rpg.buildDeck(continent, ordem)[0] || null;
+  // A pergunta é do tier do achado. O baralho de cada tier é pedido sozinho:
+  // juntar os tiers numa chamada só ordena por tema e poderia servir uma
+  // pergunta difícil num achado comum. Só desce para os vizinhos se o tier
+  // pedido não tiver pergunta escrita para o continente.
+  function perguntasPara(continent, tier, quantas) {
+    const out = [];
+    const tentados = new Set();
+    for (const t of [tier, 2, 1, 3]) {
+      if (tentados.has(t)) continue;
+      tentados.add(t);
+      for (const q of rpg.buildDeck(continent, [t])) {
+        if (out.some((o) => o.q === q.q)) continue;
+        out.push(q);
+        if (out.length >= quantas) return out;
+      }
+    }
+    return out;
   }
 
   function open(ctx) {
-    const question = questionFor(ctx.continent, ctx.reward.tier);
-    if (!question) {
+    const questions = perguntasPara(ctx.continent, ctx.reward.tier, ctx.reward.rounds || 1);
+    if (!questions.length) {
       toast("As perguntas desta região ainda não foram escritas.", 3200);
       return false;
     }
-    current = { ...ctx, question };
+    current = { ...ctx, questions };
+    etapa = 0;
     pick = -1;
     done = false;
     resultado = "";
@@ -76,31 +93,56 @@ export function createGather({ rpg, audio, toast, onClose }) {
     if (!current || done) return;
     done = true;
     pick = i;
-    const { question, reward } = current;
-    if (i === question.answer) {
-      const ok = current.commit ? current.commit(reward) : true;
-      if (ok) {
-        rpg.addItem(reward.resource, reward.qty);
-        rpg.addSkillXp(current.continent, reward.tier);
-        rpg.save();
-        resultado = "levou";
-        audio.chime?.();
-      } else {
-        resultado = "vazio";
-        audio.error?.();
-      }
-    } else {
+    const q = current.questions[etapa];
+    if (i !== q.answer) {
       resultado = "errou";
+      audio.error?.();
+      render();
+      return;
+    }
+    rpg.addSkillXp(current.continent, q.tier);
+    rpg.save();
+    if (etapa < current.questions.length - 1) {
+      resultado = "mais";
+      audio.blip?.();
+      render();
+      return;
+    }
+    const { reward } = current;
+    const ok = current.commit ? current.commit(reward) : true;
+    if (ok) {
+      rpg.addItem(reward.resource, reward.qty);
+      rpg.save();
+      resultado = "levou";
+      audio.chime?.();
+    } else {
+      resultado = "vazio";
       audio.error?.();
     }
     render();
   }
 
+  function advance() {
+    if (!current || !done) return;
+    if (resultado === "mais") {
+      etapa++;
+      pick = -1;
+      done = false;
+      resultado = "";
+      audio.blip?.();
+      render();
+      return;
+    }
+    close();
+  }
+
   function render() {
     if (!current) return;
-    const { kind, continent, reward, question } = current;
+    const { kind, continent, reward } = current;
+    const q = current.questions[etapa];
+    const total = current.questions.length;
     const item = ITEMS[reward.resource] || { name: reward.resource };
-    const certo = pick === question.answer;
+    const certo = pick === q.answer;
     $("gather-kicker").textContent = `COLETA · ${NOMES[kind] || "recurso"} · ${CONTINENTS[continent]?.name || ""}`;
     $("gather-title").textContent = item.name;
     $("gather-sub").textContent = done
@@ -108,8 +150,12 @@ export function createGather({ rpg, audio, toast, onClose }) {
         ? `guardado · +${reward.qty} no inventário`
         : resultado === "vazio"
           ? "o lugar já estava vazio"
-          : "a pergunta venceu · nada foi levado"
-      : `${RARIDADE[reward.tier]} · pergunta ${DIFICULDADE[reward.tier]} · acerte para levar ${reward.qty}×`;
+          : resultado === "mais"
+            ? `${etapa + 1} de ${total} · mais uma`
+            : "a pergunta venceu · nada foi levado"
+      : total > 1
+        ? `${RARIDADE[reward.grade]} · ${total} perguntas seguidas · acerte todas para levar ${reward.qty}×`
+        : `${RARIDADE[reward.grade]} · pergunta ${DIFICULDADE[reward.tier]} · acerte para levar ${reward.qty}×`;
     const art = $("gather-art");
     if (art) {
       art.textContent = "";
@@ -117,16 +163,16 @@ export function createGather({ rpg, audio, toast, onClose }) {
     }
     const body = $("gather-body");
     body.textContent = "";
-    body.appendChild(el("p", "duel-question", question.q));
+    body.appendChild(el("p", "duel-question", q.q));
     const opts = el("div", "duel-options");
-    question.options.forEach((text, i) => {
+    q.options.forEach((text, i) => {
       const b = el("button", "duel-option");
       b.type = "button";
       b.appendChild(el("kbd", "", LETTERS[i] || String(i + 1)));
       b.appendChild(el("span", "", text));
       if (done) {
         b.disabled = true;
-        if (i === question.answer) b.classList.add("right");
+        if (i === q.answer) b.classList.add("right");
         else if (i === pick) b.classList.add("wrong");
       } else {
         b.addEventListener("click", () => escolher(i));
@@ -136,16 +182,23 @@ export function createGather({ rpg, audio, toast, onClose }) {
     body.appendChild(opts);
     if (done) {
       const fb = el("div", `duel-feedback ${certo ? "good" : "bad"}`);
-      fb.appendChild(el("b", "", certo
-        ? resultado === "levou"
-          ? `Acertou. +${reward.qty} ${item.name}.`
-          : "Acertou, mas o lugar já estava vazio."
-        : "Errou. O recurso continua no lugar."));
-      fb.appendChild(el("span", "", question.why));
+      const rotulo = certo
+        ? resultado === "mais"
+          ? "Acertou. Guarde o fôlego: vem outra."
+          : resultado === "levou"
+            ? total > 1
+              ? `Acertou as ${total}. +${reward.qty} ${item.name}.`
+              : `Acertou. +${reward.qty} ${item.name}.`
+            : "Acertou, mas o lugar já estava vazio."
+        : total > 1
+          ? "Errou. O achado fundo escapou."
+          : "Errou. O recurso continua no lugar.";
+      fb.appendChild(el("b", "", rotulo));
+      fb.appendChild(el("span", "", q.why));
       body.appendChild(fb);
-      const next = el("button", "duel-next", "fechar");
+      const next = el("button", "duel-next", resultado === "mais" ? "continuar" : "fechar");
       next.type = "button";
-      next.addEventListener("click", close);
+      next.addEventListener("click", advance);
       body.appendChild(next);
     }
   }
@@ -154,7 +207,7 @@ export function createGather({ rpg, audio, toast, onClose }) {
     open,
     close,
     answer: escolher,
-    advance: () => { if (done) close(); },
+    advance,
     isOpen: () => !!current,
   };
 }

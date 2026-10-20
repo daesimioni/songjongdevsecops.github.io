@@ -66,16 +66,19 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 ### N. Coleta com pergunta
 
 - [x] árvore, água e veio viram alvo de `F`, clique ou menu de contexto
-- [x] minerar, pescar e cortar madeira sorteiam o recurso e pedem a pergunta do
-      tier do achado: comum pede fácil, raro pede média, material do continente
-      pede difícil
+- [x] minerar, pescar e cortar madeira sorteiam o recurso e a raridade: comum
+      pede pergunta fácil, incomum média, raro difícil; o lendário pede duas
+      perguntas seguidas e só entrega se acertar as duas
+- [x] a pergunta de cada tier é pedida ao baralho daquele tier, não ao baralho
+      misturado: achado comum não pode cair em pergunta difícil
 - [x] acertar leva o recurso e XP da perícia; errar não leva nada e não gasta a
       carga do veio
-- [x] peixe e peixe de escama azul entraram como comida (cura 10 e 24, o raro
-      devolve 6 de mana)
-- [x] conferido: 900 sorteios sem recurso fora de ITEMS, tiers 1 a 3; navegador:
-      árvore, pesca e veio com cinco alternativas, acerto deu item e perícia,
-      erro não deu nada, veio gastou uma carga das três
+- [x] peixes como comida com cura crescente: lagoa 10, prateado 16, escama azul
+      24 (+6 mana) e Peixe do Espelho 40 (+12 mana)
+- [x] conferido: 900 sorteios sem recurso fora de ITEMS, tiers 1 a 3 e rodadas do
+      lendário; navegador: árvore, pesca comum, lendário com duas perguntas
+      (acertar as duas entrega, errar a segunda não entrega) e veio gastando uma
+      carga das três
 
 ### M. Mochila na caverna
 
@@ -173,7 +176,7 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 
 | data | fase | o que entrou | prova |
 |---|---|---|---|
-| 2026-10-20 | N | coleta com pergunta: veio da caverna, árvore e água viraram alvos de interação; o achado sorteia o recurso e o tier da pergunta, então material raro pede pergunta difícil; acerto dá item e XP, erro não gasta a carga do veio; peixe e peixe raro entraram como comida | node: 900 sorteios sem recurso fora de ITEMS, tier 1 a 3, casos de fronteira; navegador: prompts de madeira e pesca, cinco alternativas A-E, acerto deu madeira/peixe/cristal e perícia, erro não deu nada, veio gastou 1 de 3 cargas e a caverna continuou aberta, console limpo |
+| 2026-10-20 | N | coleta com pergunta: veio, árvore e água com raridade de quatro degraus (comum, incomum, raro e lendário); a pergunta vem do tier da raridade pedido sozinho, sem misturar baralhos; o lendário pede duas perguntas seguidas e só entrega acertando as duas; peixes lagoa/prateado/escama azul/Peixe do Espelho com cura 10/16/24/40 | node: 900 sorteios sem recurso fora de ITEMS, fronteiras de raridade, rodadas do lendário e cura crescente dos peixes; navegador: pesca comum, lendário com duas perguntas (duas certas entregam, errar a segunda não entrega), veio gastando 1 de 3 cargas, 390 px sem estouro, console limpo |
 | 2026-10-20 | M | mochila no HUD da caverna e tecla I dentro da caverna; o modal abre por cima, Esc fecha só a mochila e a caverna continua; no celular os quatro botões cabem sem cortar sair | navegador: botão visível, clique abriu a mochila com 40 espaços e a caverna atrás, Esc voltou, I abriu, 390 px com turbo/mochila/ficha/sair dentro da tela, console limpo |
 | 2026-10-20 | L | perguntas padronizadas em cinco alternativas A-E no duelo e no PvP; a certa embaralha entre as cinco; questão com 6 escritas usa 5; distratores próximos por troca de oposto, semelhança com a resposta e mesma área; as 632 perguntas geradas do catálogo passaram a nascer com 5 opções escritas | node: 1603 perguntas e 35 cartas de PvP com 5, respostas espalhadas, distratores conferidos (Cantor, autovalor, grandes números, integração por partes), PvP 5; navegador: cinco botões A-E, tecla E responde, quinta marcada, console limpo |
 | 2026-10-20 | K | a forma do bicho passou a vir do nome: 10 formas novas (livro, símbolo, nota, átomo, cristal, engrenagem, nó, prisma, vetor, frasco), classificador por palavra com disciplina de desempate, e arte, ficha, fraqueza e duelo para todas; 356 nomes cobertos | node: 25 formas com arte/nome/fraqueza, 17 casos de congruência (ácido->frasco, acorde->nota, instrução->engrenagem, autovalores->vetor), sem forma órfã; navegador: bestiário mostra as fichas novas e a separação das 93 cavernas continua com 651 bichos e nenhum ponto visto por dois |

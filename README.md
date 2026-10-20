@@ -272,11 +272,13 @@ faz na forja. A caverna dá ferro, erva, cristal de veio e madeira; os **veios d
 cristal** presos nas salas só se abrem com uma **picareta**, que também se forja.
 
 **Coleta é pergunta.** Perto de uma árvore o `F` corta madeira, perto da água
-pesca e, no veio da caverna, minera. O achado sorteia o recurso e o tier da
-pergunta: comum pede pergunta fácil, raro pede média, o material do continente
-pede difícil. Acertar leva o item e XP da perícia; errar deixa o recurso onde
-está e não gasta a carga do veio. Peixe e peixe de escama azul são comida: curam
-10 e 24 (o raro devolve 6 de mana).
+pesca e, no veio da caverna, minera. Cada achado tem uma raridade e uma
+dificuldade: comum pede pergunta fácil, incomum média, raro difícil. O
+**lendário** pede duas perguntas seguidas e só entrega o item se acertar as
+duas. Acertar dá o item e XP da perícia; errar deixa o recurso onde está e não
+gasta a carga do veio. Peixes são comida e sobem com a raridade: lagoa cura 10,
+prateado 16, escama azul 24 (+6 de mana) e o Peixe do Espelho cura 40 (+12 de
+mana).
 
 Na cidade subterrânea há forja, altar que devolve vida, três canteiros de erva,
 mesa de encantamento, um bicho, a pedra de retorno e a escada para a outra boca.
