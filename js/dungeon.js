@@ -39,8 +39,9 @@ function torchGlowSprite() {
 
 // ---------- mapa ----------
 export function buildDungeonMap(def) {
-  const W = DUNGEON_LAYOUT.width;
-  const H = DUNGEON_LAYOUT.height;
+  const layout = def.layout || DUNGEON_LAYOUT;
+  const W = layout.width;
+  const H = layout.height;
   const grid = new Uint8Array(W * H);
   const roomGrid = new Int8Array(W * H).fill(-1);
   const idx = (x, y) => y * W + x;
@@ -64,7 +65,7 @@ export function buildDungeonMap(def) {
     const lo = Math.min(y0, y1), hi = Math.max(y0, y1);
     for (let y = lo; y <= hi; y++) for (let d = -half; d <= half; d++) carve(x + d, y);
   };
-  DUNGEON_LAYOUT.corridors.forEach(([aId, bId], ci) => {
+  layout.corridors.forEach(([aId, bId], ci) => {
     const a = byId.get(aId);
     const b = byId.get(bId);
     if (!a || !b) return;
@@ -526,7 +527,7 @@ function drawBuilding(ctx, x, y, w, h, palette, accent) {
 }
 
 // ---------- a caverna em si ----------
-export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeeper, onConurbation, isBlocked, avatar = {} }) {
+export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeeper, onConurbation, onPortal, isBlocked, avatar = {} }) {
   const canvas = $("dungeon-canvas");
   const ctx = canvas?.getContext("2d", { alpha: false }) || null;
 
@@ -651,6 +652,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
 
   function spawnMonsters(def) {
     const out = [];
+    if (def.hub) return out;
     const names = def.monsters || [];
     let n = 0;
     def.rooms.forEach((room) => {
@@ -670,7 +672,8 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
   }
 
   function spawnBoss(def) {
-    const room = def.rooms.find((r) => r.id === DUNGEON_LAYOUT.bossRoom) || def.rooms[def.rooms.length - 2];
+    if (def.hub || !def.boss) return null;
+    const room = def.rooms.find((r) => r.id === (def.layout || DUNGEON_LAYOUT).bossRoom) || def.rooms[def.rooms.length - 2];
     const x = room.x + room.w / 2;
     const y = room.y + room.h / 2;
     return {
@@ -701,6 +704,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
   }
 
   function makeChests(def) {
+    if (def.hub) return [];
     return def.rooms
       .filter((room) => room.kind !== "entrance")
       .map((room) => ({
@@ -749,7 +753,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
       props.push({ kind: "altar", x: city.x + 3.2, y: city.y + city.h - 3.4, label: "altar que devolve vida", interact: true });
       props.push({ kind: "forge", x: city.x + city.w - 3.2, y: city.y + city.h - 3.4, label: "forja do subsolo", interact: true });
       props.push({ kind: "waystone", x: city.x + city.w / 2 + 3, y: city.y + 2.6, label: "pedra de retorno", interact: true });
-      props.push({ kind: "conurbation", x: city.x + city.w / 2 + 6, y: city.y + 3.2, label: "túnel da conurbação", interact: true });
+      if (!def.hub) props.push({ kind: "conurbation", x: city.x + city.w / 2 + 6, y: city.y + 3.2, label: "túnel da conurbação", interact: true });
       props.push({ kind: "keeper", x: city.x + city.w / 2 - 3, y: city.y + city.h - 3.4, label: "conversar com a mestra", interact: true });
       props.push({ kind: "enchanter", x: city.x + city.w / 2, y: city.y + 3.2, label: "mesa de encantamento", interact: true });
       const petId = PET_BY_CONTINENT[def.continent] || "gato";
@@ -773,7 +777,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
           label: "horta de ervas",
         });
       }
-      props.push({
+      if (!def.hub) props.push({
         kind: "stairs",
         x: city.x + 6,
         y: city.y + city.h - 1.8,
@@ -783,6 +787,18 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
       });
       props.push({ kind: "building", x: city.x + 1.2, y: city.y + 1.2, w: 26, h: 22, solid: true });
       props.push({ kind: "building", x: city.x + city.w - 4.8, y: city.y + 1.2, w: 30, h: 22, solid: true });
+    }
+    if (def.hub) {
+      for (const portal of def.portals || []) {
+        props.push({
+          kind: "portal",
+          portalDef: portal.defId,
+          x: portal.x,
+          y: portal.y,
+          label: portal.label,
+          interact: true,
+        });
+      }
     }
     // veios de cristal: mineração de verdade, com picareta
     for (const id of ["a", "c", "e"]) {
@@ -910,6 +926,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
     $("dungeon").dataset.dungeon = def.continent;
     $("dg-title").textContent = def.name;
     $("dg-sub").textContent = def.sub;
+    $("dg-layer").textContent = def.layer === -2 ? "subsolo -2" : "subsolo -1";
     $("dg-room").textContent = "";
     $("dg-msg").textContent = "";
     $("dg-prompt").hidden = true;
@@ -1236,6 +1253,10 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
     }
     if (obj.kind === "conurbation") {
       onConurbation?.(state.def?.id);
+      return;
+    }
+    if (obj.kind === "portal") {
+      onPortal?.(obj.portalDef);
       return;
     }
     if (obj.kind === "altar") {

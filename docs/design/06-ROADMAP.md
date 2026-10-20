@@ -11,7 +11,8 @@ ordem pedida pelo dono é: conceito, desenho detalhado, revisão, só então có
 - Duelo de perguntas, XP, perícias, 49 peças de equipamento, forja, encantos,
   comida, bicho, horta, veios e minmapa.
 - Chat/Nostr/MQTT, presença, DMs, PvP com prova de identidade e party de até 8 pessoas.
-- 42 bocas pareadas, dois sentidos por caverna e camada `subsolo -1` no HUD.
+- 42 bocas pareadas, dois sentidos por caverna, camada `subsolo -1` e o Porto
+  Submerso na camada -2 com sete portais.
 - Testes: `node test/*.test.mjs` e suíte de navegador (CDP).
 - Desempenho: chunks de terreno com LRU, resolução adaptativa na superfície e
   no subsolo. O atlas de sprites em canvas foi medido e ficou mais lento que o

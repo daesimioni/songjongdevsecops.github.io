@@ -569,5 +569,50 @@ export const DUNGEONS = Object.entries(COMMON).map(([key, d]) => {
 });
 
 export function dungeonById(id) {
-  return DUNGEONS.find((d) => d.id === id) || null;
+  return DUNGEONS.find((d) => d.id === id) || (id === CONURBATION.id ? CONURBATION : null);
 }
+
+// A camada -2: uma praça central sob o mar, com um portal para cada capital
+// subterrânea. Não tem bicho nem chefe: é o nó que liga as cidades.
+const HUB_ROOMS = [
+  { id: "cidade", x: 22, y: 14, w: 20, h: 12, tier: 3, kind: "city", name: "Praça do Porto Submerso", theme: "cidade" },
+  { id: "entrada", x: 28, y: 38, w: 8, h: 5, tier: 0, kind: "entrance", name: "Escada do Porto Submerso", theme: "entrada" },
+  { id: "cs", x: 4, y: 6, w: 8, h: 6, tier: 1, name: "Portal da Computação", theme: "computação" },
+  { id: "math", x: 26, y: 2, w: 12, h: 6, tier: 1, name: "Portal da Matemática", theme: "matemática" },
+  { id: "physics", x: 52, y: 6, w: 8, h: 6, tier: 1, name: "Portal da Física", theme: "física" },
+  { id: "chem", x: 54, y: 22, w: 8, h: 6, tier: 1, name: "Portal da Química", theme: "química" },
+  { id: "music", x: 52, y: 36, w: 8, h: 6, tier: 1, name: "Portal da Música", theme: "música" },
+  { id: "ai", x: 4, y: 34, w: 8, h: 6, tier: 1, name: "Portal da IA", theme: "ia" },
+  { id: "lingua", x: 4, y: 20, w: 8, h: 6, tier: 1, name: "Portal da Língua", theme: "língua" },
+];
+const HUB_CORRIDORS = [
+  ["cidade", "cs"], ["cidade", "math"], ["cidade", "physics"],
+  ["cidade", "chem"], ["cidade", "music"], ["cidade", "ai"],
+  ["cidade", "lingua"], ["cidade", "entrada"],
+];
+
+export const CONURBATION = {
+  id: "dungeon-conurbation",
+  continent: "hub",
+  name: "Porto Submerso",
+  sub: "a camada que liga todas as cidades por baixo do mar",
+  material: "ferro",
+  tunnel: "wide",
+  equipment: [],
+  boss: "",
+  hub: true,
+  layer: -2,
+  rooms: HUB_ROOMS,
+  corridors: HUB_CORRIDORS,
+  layout: { width: 64, height: 48, rooms: HUB_ROOMS, corridors: HUB_CORRIDORS, bossRoom: null },
+  portals: [
+    { defId: "dungeon-cs", x: 8, y: 9, label: "descer à cidade da Computação" },
+    { defId: "dungeon-math", x: 32, y: 5, label: "descer à cidade da Matemática" },
+    { defId: "dungeon-physics", x: 56, y: 9, label: "descer à cidade da Física" },
+    { defId: "dungeon-chem", x: 58, y: 25, label: "descer à cidade da Química" },
+    { defId: "dungeon-music", x: 56, y: 39, label: "descer à cidade da Música" },
+    { defId: "dungeon-ai", x: 8, y: 37, label: "descer à cidade da IA" },
+    { defId: "dungeon-lingua", x: 8, y: 23, label: "descer à cidade da Língua" },
+  ],
+  palette: { floor: "#1a2436", floor2: "#131a29", wall: "#080d16", wallTop: "#2a3a57", accent: "#6bd5ff" },
+};

@@ -20,11 +20,12 @@ O que existe hoje (2026-10-20):
 - o HUD do subsolo mostra a camada (`subsolo -1`) e o botão de saída não é o
   único caminho: escada da entrada, escada do fundo e pedra de retorno.
 
-O que falta do alvo abaixo: a camada -2 como mapa físico. A **conurbação
-funcional** já está no jogo: cada cidade tem um túnel que lista as outras
-cidades descobertas; viajar troca a caverna e a saída devolve à boca de entrada
-da cidade de destino. Cidades de continentes ainda não visitados ficam
-trancadas.
+A **conurbação funcional** está no jogo: cada cidade tem um túnel que lista as
+outras cidades descobertas; viajar troca a caverna e a saída devolve à boca de
+entrada da cidade de destino. Cidades de continentes ainda não visitados ficam
+trancadas. Dali desce-se à **camada -2**, o Porto Submerso: uma praça central
+com sete portais, um para cada capital subterrânea, e a escada de volta à boca
+por onde se desceu.
 
 O alvo:
 

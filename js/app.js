@@ -21,7 +21,7 @@ import { ITEMS } from "./rpg-data.js";
 import { createSheet } from "./sheet.js";
 import { createDuel } from "./duel.js";
 import { createDungeon } from "./dungeon.js";
-import { DUNGEONS, dungeonById } from "./dungeon-data.js";
+import { CONURBATION, DUNGEONS, dungeonById } from "./dungeon-data.js";
 
 const $ = (id) => document.getElementById(id);
 let dungeon = null;
@@ -258,6 +258,7 @@ dungeon = createDungeon({
   onSheet: () => openSheet(),
   onKeeper: () => openShop(),
   onConurbation: () => openTravel("caves"),
+  onPortal: (defId) => portalToCity(defId),
   avatar: player.colors,
   onExit: ({ kind, dungeon: def, target }) => {
     rpg.setCave(false);
@@ -1104,6 +1105,21 @@ function buildTravel() {
   list.textContent = "";
   if (state.travelMode === "caves") {
     const here = dungeon?.state?.def?.id;
+    const under = document.createElement("button");
+    under.type = "button";
+    under.className = "travel-item";
+    under.disabled = here === CONURBATION.id;
+    const underLeft = document.createElement("span");
+    const underTitle = document.createElement("b");
+    underTitle.textContent = "Porto Submerso · camada -2";
+    const underSub = document.createElement("span");
+    underSub.textContent = here === CONURBATION.id ? "você está aqui" : "descer e escolher uma capital";
+    underLeft.append(underTitle, underSub);
+    const underRight = document.createElement("em");
+    underRight.textContent = here === CONURBATION.id ? "aqui" : "descer";
+    under.append(underLeft, underRight);
+    if (here !== CONURBATION.id) under.addEventListener("click", enterUnderworld);
+    list.appendChild(under);
     for (const def of DUNGEONS) {
       const known = state.docks.has(def.continent);
       const btn = document.createElement("button");
@@ -1152,6 +1168,27 @@ function buildTravel() {
       list.appendChild(btn);
     }
   }
+}
+
+function enterUnderworld() {
+  const current = dungeon?.state?.def?.id;
+  const cave = world.caves.find((c) => c.defId === current && c.mouth === "entrance") || dungeon?.state?.entryCave || null;
+  closeModal("travel");
+  dungeon.open(CONURBATION, cave);
+  toast("Porto Submerso. A camada -2 liga as capitais por baixo do mar.", 3600);
+  audio.chime();
+}
+
+function portalToCity(defId) {
+  const target = DUNGEONS.find((def) => def.id === defId);
+  if (!target) return;
+  const cave = world.caves.find((c) => c.defId === defId && c.mouth === "entrance");
+  dungeon.open(target, cave);
+  dungeon.enterCity();
+  player.continentId = target.continent;
+  state.lastContinent = target.continent;
+  toast(`Portal do Porto Submerso: ${target.name}.`, 3200);
+  audio.chime();
 }
 
 function travelConurbation(defId) {
