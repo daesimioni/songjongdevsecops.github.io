@@ -199,6 +199,19 @@ assert.equal(gearAgain.unequip("armor").ok, true);
 assert.equal(gearAgain.hpMax(), bareHp, "tirar a armadura devolve a vida");
 assert.equal(gearAgain.equip("pocao").ok, false, "poção não é equipamento");
 
+// loja da mestra: material por peça, sem moeda e sem duplicar
+const shopRpg = new RPG({ getLevel: () => 1, gainXp: () => {}, toast: () => {}, audio: {} });
+shopRpg.addItem("ferro", 3);
+shopRpg.addItem("veio", 2);
+assert.equal(shopRpg.priceFor("espada-prova")?.ferro, 3, "preço da arma usa ferro");
+const bought = shopRpg.buy("espada-prova");
+assert.equal(bought.ok, true, "compra a arma");
+assert.equal(shopRpg.itemCount("espada-prova"), 1);
+assert.equal(shopRpg.itemCount("ferro"), 0, "compra desconta o ferro");
+assert.equal(shopRpg.itemCount("veio"), 0, "compra desconta o veio");
+assert.equal(shopRpg.buy("espada-prova").ok, false, "não compra a mesma peça duas vezes");
+assert.equal(shopRpg.buy("colete-malha").ok, false, "sem material não compra");
+
 // bestiário registra espécie, nome e contagem e persiste
 const beastRpg = new RPG({ getLevel: () => 1, gainXp: () => {}, toast: () => {}, audio: {} });
 beastRpg.noteMonster({ kind: "bat", name: "Morcego", tier: 2 });
@@ -279,6 +292,13 @@ for (const cave of w.caves) {
   assert.ok(stone, `pedra de ${cave.continent}`);
   assert.ok(findPath(w, stone, cave.exit), `caminho até a caverna de ${cave.continent}`);
 }
+
+// o anel de pontes liga as ilhas sem passar pelo centro
+for (const [x, y] of [[35, 38], [63, 21], [116, 20], [146, 38], [125, 86], [53, 88]]) {
+  assert.equal(w.get(x, y), 18, `ponte do anel em ${x},${y}`);
+}
+assert.ok(findPath(w, { x: 60, y: 21 }, { x: 67, y: 21 }), "atravessa a ponte noroeste/norte");
+assert.ok(findPath(w, { x: 137, y: 81 }, { x: 113, y: 91 }), "atravessa a ponte direita/sul");
 
 // a caverna: salas com chão, entrada que chega na cidade, parede que corta a vista
 const dg = DUNGEONS[0];

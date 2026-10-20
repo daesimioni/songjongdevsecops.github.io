@@ -16,6 +16,7 @@ import { OUTFITS, outfitById, outfitColors } from "./outfits.js";
 import { findPath, nearestWalkable } from "./path.js";
 import { feedPeer, peerRenderPosition } from "./interp.js";
 import { RPG } from "./rpg.js";
+import { ITEMS } from "./rpg-data.js";
 import { createSheet } from "./sheet.js";
 import { createDuel } from "./duel.js";
 import { createDungeon } from "./dungeon.js";
@@ -227,6 +228,7 @@ dungeon = createDungeon({
     return !!rpg.duel;
   },
   onSheet: () => openSheet(),
+  onKeeper: () => openShop(),
   avatar: player.colors,
   onExit: ({ kind, dungeon: def, target }) => {
     if (kind === "death") return;
@@ -404,6 +406,50 @@ function openOutfits() {
   }
   body.appendChild(grid);
   openModal("outfits");
+  audio.open();
+}
+
+function openShop() {
+  const def = dungeon?.state?.def;
+  if (!def) return;
+  const body = $("shop-body");
+  body.textContent = "";
+  const offers = (def.equipment || []).map((id) => ({ id, ...ITEMS[id], price: rpg.priceFor(id) }));
+  $("shop-title").textContent = `Loja de ${CONTINENTS[def.continent]?.name || def.name}`;
+  const mats = ["ferro", "veio", "erva", "madeira"].map((id) => `${ITEMS[id]?.name || id} ${rpg.itemCount(id)}`).join(" · ");
+  $("shop-sub").textContent = `A mestra troca material por peça. ${mats}.`;
+  if (!offers.length) {
+    body.appendChild(el("p", "shop-empty", "A mestra não tem peça desta caverna hoje."));
+  }
+  const grid = el("div", "shop-grid");
+  for (const item of offers) {
+    const owned = rpg.itemCount(item.id) > 0;
+    const can = !owned && Object.entries(item.price || {}).every(([mat, qty]) => rpg.itemCount(mat) >= qty);
+    const card = el("div", `shop-card${owned ? " owned" : ""}`);
+    const bonus = [item.damage ? `+${item.damage} dano` : "", item.hp ? `+${item.hp} vida` : ""].filter(Boolean).join(" · ");
+    card.append(
+      el("b", "", item.name),
+      el("span", "", `${item.slot}${bonus ? ` · ${bonus}` : ""}`),
+      el("i", "", Object.entries(item.price || {}).map(([mat, qty]) => `${ITEMS[mat]?.name || mat} ×${qty}`).join(" · ")),
+    );
+    if (owned) card.appendChild(el("em", "", "já é sua"));
+    else {
+      const buy = el("button", "shop-buy", can ? "comprar" : "falta material");
+      buy.type = "button";
+      buy.disabled = !can;
+      buy.addEventListener("click", () => {
+        const res = rpg.buy(item.id);
+        if (!res.ok) { toast(res.reason, 2800); return; }
+        audio.chime();
+        toast(`${item.name} é sua.`, 2600);
+        openShop();
+      });
+      card.appendChild(buy);
+    }
+    grid.appendChild(card);
+  }
+  body.appendChild(grid);
+  openModal("shop");
   audio.open();
 }
 
@@ -601,6 +647,14 @@ function buildNpc(npc) {
   const body = $("npc-body");
   body.textContent = "";
   const lines = data?.lines || [];
+  const done = quests.done().length;
+  const context = [];
+  if (quests.title) context.push(`Ouvi falar de você: ${quests.title}.`);
+  else if (done) context.push(`Você já fechou ${done} missão(ões). O porto comenta.`);
+  if (npc.continent && continentComplete(npc.continent)) {
+    context.push("Esta ilha já está toda aberta para você. Agora é escolher o que revisitar.");
+  }
+  if (context.length) body.appendChild(el("p", "npc-line npc-context", context[0]));
   if (lines.length) {
     body.appendChild(el("p", "npc-line", lines[(npc.lineIndex || 0) % lines.length]));
   }

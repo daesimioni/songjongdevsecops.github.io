@@ -148,6 +148,13 @@ export function createWorld() {
   // pontes diagonais
   bridgeLine(78, 49, 60, 36, 3, BRIDGE);
   bridgeLine(102, 49, 120, 36, 3, BRIDGE);
+  // anel externo: dá para ir de uma ilha à outra sem passar pelo centro
+  bridgeLine(35, 35, 35, 42, 3, BRIDGE); // esquerda e noroeste
+  bridgeLine(61, 21, 66, 21, 3, BRIDGE); // noroeste e norte
+  bridgeLine(114, 20, 118, 20, 3, BRIDGE); // norte e nordeste
+  bridgeLine(146, 35, 146, 42, 3, BRIDGE); // nordeste e direita
+  bridgeLine(138, 81, 112, 92, 3, BRIDGE); // direita e sul
+  bridgeLine(66, 94, 40, 83, 3, BRIDGE); // sul e esquerda
   // encontros de ponte com terra
   rect(88, 30, 5, 4, CONTINENTS.cs.path);
   rect(88, 88, 5, 4, CONTINENTS.physics.path);

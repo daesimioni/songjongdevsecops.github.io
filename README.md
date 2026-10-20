@@ -18,7 +18,8 @@ uma página com um texto curto e um instrumento interativo.
 | **Música** | polirritmia, intervalos e razões, temperamento e escalas, timbre aditivo e música generativa |
 | **Inteligência Artificial** | regressão linear, rede neural que aprende um círculo, tokens e predição, convolução de imagem e ética |
 
-O mapa tem 180 por 120 tiles, seis continentes, ilhas, pontes e um porto
+O mapa tem 180 por 120 tiles, seis continentes, ilhas, um anel de pontes entre
+elas e um porto
 central. O minimapa começa coberto por névoa e revela o que você anda. Cada
 estação descoberta vira um fragmento no diário e soma experiência. As Pedras do
 Porto, nas docas, abrem a viagem rápida entre os continentes já visitados.
@@ -153,7 +154,10 @@ faz na forja. A caverna dá ferro, erva, cristal de veio e madeira; os **veios d
 cristal** presos nas salas só se abrem com uma **picareta**, que também se forja.
 
 Na cidade subterrânea há forja, altar que devolve vida, três canteiros de erva,
-mesa de encantamento, um bicho, a pedra de retorno e a escada para a outra boca. A horta se planta com
+mesa de encantamento, um bicho, a pedra de retorno e a escada para a outra boca.
+A **mestra** da cidade vende as peças de equipamento do continente por material:
+a arma custa ferro e veio; a armadura custa ferro e erva; pernas, botas, elmo e
+escudo têm preço próprio. Não existe moeda. A horta se planta com
 semente e cresce em 45 segundos; a primeira horta de cada caverna nasce com uma
 erva de presente (e devolve uma semente), para o ciclo começar, e o que você
 planta continua plantado na próxima descida. A mesa grava três encantos permanentes: mais

@@ -526,7 +526,7 @@ function drawBuilding(ctx, x, y, w, h, palette, accent) {
 }
 
 // ---------- a caverna em si ----------
-export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBlocked, avatar = {} }) {
+export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeeper, isBlocked, avatar = {} }) {
   const canvas = $("dungeon-canvas");
   const ctx = canvas?.getContext("2d", { alpha: false }) || null;
 
@@ -1208,6 +1208,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
       ];
       state.keeperLine = (state.keeperLine + 1) % lines.length;
       say(lines[state.keeperLine], 4500);
+      onKeeper?.();
       return;
     }
     if (obj.kind === "plot") {

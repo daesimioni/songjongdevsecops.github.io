@@ -212,6 +212,39 @@ export class RPG {
     return { hp, damage };
   }
 
+  priceFor(id) {
+    const item = ITEMS[id];
+    if (!item?.slot) return null;
+    const table = {
+      weapon: { ferro: 3, veio: 2 },
+      helmet: { ferro: 2, veio: 1 },
+      armor: { ferro: 2, erva: 2 },
+      legs: { veio: 2, erva: 2 },
+      boots: { madeira: 2, veio: 1 },
+      shield: { ferro: 3, veio: 1 },
+      ring: { veio: 3, erva: 2 },
+      necklace: { erva: 3, veio: 2 },
+    };
+    return table[item.slot] ? { ...table[item.slot] } : null;
+  }
+
+  buy(id) {
+    const item = ITEMS[id];
+    const price = this.priceFor(id);
+    if (!price) return { ok: false, reason: "A mestra não vende essa peça." };
+    if (item.slot && this.itemCount(id) > 0) return { ok: false, reason: "Você já tem essa peça." };
+    for (const [mat, qty] of Object.entries(price)) {
+      if (this.itemCount(mat) < qty) return { ok: false, reason: `Falta ${ITEMS[mat]?.name || mat}.` };
+    }
+    for (const [mat, qty] of Object.entries(price)) {
+      this.data.items[mat] -= qty;
+      if (this.data.items[mat] <= 0) delete this.data.items[mat];
+    }
+    this.addItem(id, 1);
+    this.save();
+    return { ok: true, item, price };
+  }
+
   equip(id) {
     const item = ITEMS[id];
     if (!item?.slot) return { ok: false, reason: "Isso não é equipamento." };
