@@ -1004,6 +1004,18 @@ export function createRenderer(canvas, world) {
       ctx.closePath(); ctx.fill();
       ctx.beginPath(); ctx.arc(5, 0, 7, -0.7, 0.7); ctx.stroke();
       ctx.beginPath(); ctx.arc(5, 0, 12, -0.6, 0.6); ctx.stroke();
+    } else if (icon === "terminal") {
+      ctx.strokeRect(-9, -7, 18, 13);
+      ctx.fillRect(-6, -4, 5, 1);
+      ctx.fillRect(-6, -1, 8, 1);
+      ctx.fillRect(-6, 2, 4, 1);
+      ctx.fillRect(-9, 6, 18, 2);
+    } else if (icon === "sign") {
+      ctx.fillRect(-1, -2, 2, 9);
+      ctx.fillRect(-8, -9, 16, 8);
+      ctx.fillStyle = "#0b1024";
+      ctx.fillRect(-5, -6, 10, 1);
+      ctx.fillRect(-5, -4, 6, 1);
     } else if (icon === "chart") {
       ctx.beginPath(); ctx.moveTo(-9, 8); ctx.lineTo(-9, -9); ctx.moveTo(-9, 8); ctx.lineTo(9, 8); ctx.stroke();
       ctx.beginPath();

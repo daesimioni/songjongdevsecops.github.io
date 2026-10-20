@@ -14,8 +14,8 @@ export const POSTS = {
     lab: null,
     body: `
       <p>Este blog não tem índice. Tem <strong>mapa</strong>. Você entra com um boneco, atravessa pontes e escolhe por qual continente começar. Cada estação que encontra é uma página: um texto curto e um instrumento para mexer com as mãos.</p>
-      <p>Nas beiradas do mapa, cada continente ganhou <strong>duas áreas temáticas</strong> (alguns com três), cada uma com ilha, estações, clareira de caçada e caverna próprias: eletromagnetismo, termodinâmica e óptica, arquitetura, redes e segurança, análise e probabilidade, orgânica e analítica, acústica e forma, visão e linguagem, literatura e semântica. São dezesseis lugares a mais para atravessar a pé.</p>
-      <p>São sete continentes. A <em>Computação</em> mostra como saímos de interruptores e areia até processadores. <em>Matemática</em> visita o infinito, as formas, a mudança e o acaso. <em>Física</em> testa pêndulos, ondas, calor, luz e órbitas. <em>Química</em> abre a tabela periódica, as ligações, as reações e o equilíbrio. <em>Música</em> mostra a matemática escondida no som. <em>Inteligência Artificial</em> abre os dados, as redes, a linguagem e os limites. O <em>Vale da Língua</em> desce ao português do Brasil: o som, a palavra, a frase e o texto. Ao todo, 69 fragmentos para descobrir.</p>
+      <p>O mapa cresceu para o <strong>catálogo inteiro</strong>: cada seção de Matemática, Física, Química, Computação e Língua Portuguesa ganhou a sua área, com estação, clareira de caçada, caverna e missão próprias, e as interseções entre as disciplinas ficaram entre as duas mães, ligadas pelo túnel. Ao todo são <strong>86 áreas</strong> e <strong>279 fragmentos</strong>, ligados por ponte quando são vizinhos.</p>
+      <p>São sete continentes. A <em>Computação</em> mostra como saímos de interruptores e areia até processadores. <em>Matemática</em> visita o infinito, as formas, a mudança e o acaso. <em>Física</em> testa pêndulos, ondas, calor, luz e órbitas. <em>Química</em> abre a tabela periódica, as ligações, as reações e o equilíbrio. <em>Música</em> mostra a matemática escondida no som. <em>Inteligência Artificial</em> abre os dados, as redes, a linguagem e os limites. O <em>Vale da Língua</em> desce ao português do Brasil: o som, a palavra, a frase e o texto. Ao todo, 279 fragmentos para descobrir.</p>
       <p>Cada estação abre uma página e soma experiência. O <strong>Diário</strong> guarda o que você já encontrou. As <strong>Pedras do Porto</strong>, os monólitos brilhantes nas docas, levam você de volta a qualquer continente já visitado. A névoa do minimapa só some onde você anda.</p>
       <blockquote>Não tem pressa. O mapa é grande, mas o caminho é seu.</blockquote>
       <p>Os <strong>NPCs</strong> têm missões. Aperte F perto deles: tem caminhada, pergunta e conversa. Cada missão paga experiência e um título, e o Diário mostra quanto falta para a próxima.</p>
@@ -1102,7 +1102,7 @@ export const NPCS = {
     name: "Dona Zefa",
     lines: [
       "Bem-vindo ao Porto. Sete continentes, mais terra do que os olhos acreditam.",
-      "Cada continente tem duas áreas temáticas nas beiradas, alguns com três, com ponte, estação e caverna. Vale a caminhada.",
+      "Cada seção do catálogo virou uma área: estação, caverna e caçada. Área vizinha se liga por ponte; interseção desce pelo túnel. Vale a caminhada.",
       "Cada farol da doca acende uma Pedra do Porto. Aperte F nas pedras para voltar rápido.",
       "O diário guarda o que você já viu. Não precisa decorar nada.",
       "Ao lado de cada acampamento de caça tem uma boca de caverna. Lá embaixo o bicho não espera você apertar F: ele vê primeiro.",

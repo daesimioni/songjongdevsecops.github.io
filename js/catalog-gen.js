@@ -6,6 +6,17 @@ import { CATALOG, DISCIPLINES } from "./catalog.js";
 import { CATALOG_AREAS } from "./catalog-layout.js";
 import { BANK } from "./catalog-bank.js";
 
+// cada área tem um tom próprio dentro da cor da disciplina: 14 ilhas da mesma
+// cor seriam quatorze vezes o mesmo lugar
+const TINTS = {
+  math: ["#b48cff", "#9d7bff", "#c79bff", "#8f6ff0", "#d0a8ff"],
+  physics: ["#ff7aa8", "#ff90b5", "#f06a99", "#ffa3c1", "#e85d8c"],
+  chem: ["#7ee787", "#6ed077", "#8fe89a", "#5fbf6a", "#a3f0aa"],
+  cs: ["#61f4c0", "#55e0b0", "#70f4c8", "#4acfa6", "#8ff7d0"],
+  lingua: ["#e8c07a", "#d9b06a", "#f0cc8a", "#cfa25c", "#f4d49a"],
+  inter: ["#ffc857", "#ffd479", "#e8b34a", "#ffe08f", "#f0b83c"],
+};
+
 const TILES = {
   math: { base: 12, floor: 13, path: 13 },
   physics: { base: 14, floor: 15, path: 15 },
@@ -20,7 +31,7 @@ const DECOR = {
   physics: [["coil", "crystal", "wave"], ["gauge", "coil", "crystal"], ["lens", "star", "orb"]],
   chem: [["molecule", "flask", "bubble"], ["flask", "molecule", "crystal"], ["molecule", "bubble", "star"]],
   cs: [["rack", "terminal", "node"], ["antenna", "rack", "crystal"], ["lock", "terminal", "node"]],
-  lingua: [["quill", "book", "flower"], ["mask", "book", "star"], ["book", "flower", "quill"]],
+  lingua: [["quill", "book", "petal"], ["mask", "book", "star"], ["book", "petal", "quill"]],
   inter: [["book", "orb", "star"], ["crystal", "book", "wave"], ["pillar", "orb", "star"]],
 };
 
@@ -74,6 +85,25 @@ function labFor(topic, discipline, index) {
   const list = LAB_FALLBACK[discipline] || LAB_FALLBACK.math;
   return list[index % list.length];
 }
+
+// equipamento que pode cair dos baús de cada disciplina
+// bicho de cada clareira segue a fauna da disciplina
+const KINDS = {
+  math: ["beetle", "eye", "golem"],
+  physics: ["crab", "wisp", "golem"],
+  chem: ["jelly", "eye", "golem"],
+  cs: ["ant", "eye", "golem"],
+  lingua: ["imp", "serpent", "golem"],
+  inter: ["sentinel", "eye", "golem"],
+};
+
+const GEAR = {
+  math: ["espada-prova", "manto-giz", "oculos-estatistica"],
+  physics: ["cajado-luz", "manto-termico", "lentes-prisma"],
+  chem: ["frasco-acido", "avental-alquimista", "oculos-organicos"],
+  cs: ["chave-longa", "colete-malha", "capuz-registrador"],
+  lingua: ["pena-poeta", "sobretudo-pergaminho", "oculos-revisor"],
+};
 
 const LOOT = {
   math: { loot: ["regua", "teorema", "axioma"], boss: "infinito" },
@@ -158,7 +188,6 @@ export function buildCatalogContent() {
     if (!area || !bank) continue;
     const discipline = DISCIPLINES[spot.discipline];
     const tiles = TILES[spot.discipline] || TILES.math;
-    const accent = discipline.accent;
     const { article, noun } = articleOf(area.name);
     // a interseção pertence ao continente da primeira disciplina que liga, para
     // perguntas, caçada e duelo caírem num baralho que existe
@@ -166,6 +195,8 @@ export function buildCatalogContent() {
       ? DISCIPLINES[area.links?.[0] || "math"].continent
       : discipline.continent;
     const order = (keeperIndex[spot.discipline] = (keeperIndex[spot.discipline] || 0) + 1) - 1;
+    const tintList = TINTS[spot.discipline] || TINTS.math;
+    const accent = tintList[order % tintList.length];
     const [keeperId, keeperName] = (KEEPERS[spot.discipline] || KEEPERS.inter)[order % (KEEPERS[spot.discipline] || KEEPERS.inter).length];
     const words = WORDS[spot.discipline] || WORDS.inter;
 
@@ -207,7 +238,7 @@ export function buildCatalogContent() {
         kicker: `${discipline.name.toLowerCase()} · ${area.short.toLowerCase()}`,
         title: siteName,
         date: "2026-10-20",
-        read: "4 min",
+        read: "2 min",
         tags: [discipline.name.toLowerCase(), area.short.toLowerCase()],
         continent,
         lab: labFor(topic, spot.discipline, i),
@@ -273,7 +304,7 @@ export function buildCatalogContent() {
       mirror: order % 2 === 1,
       shift: SHIFTS[order % 3],
       tunnel: ["wide", "split", "zigzag", "cross"][order % 4],
-      equipment: [],
+      equipment: GEAR[spot.discipline] || GEAR.math,
       boss: `O Guardião ${article} ${noun}`,
       rooms: [
         [`Boca ${article} ${noun}`, "entrada"],
@@ -298,6 +329,7 @@ export function buildCatalogContent() {
     grounds.push({
       id: area.id,
       continent,
+      accent,
       dungeon: `dungeon-${area.id}`,
       name: `Caçada ${article} ${noun}`,
       center: { x: spot.hunt.x, y: spot.hunt.y },
@@ -306,9 +338,9 @@ export function buildCatalogContent() {
       loot: loot.loot,
       bossLoot: loot.boss,
       monsters: [
-        { id: `${area.id}-m1`, name: shortWords[0], tier: 1, kind: "slime", dx: -3, dy: 1 },
-        { id: `${area.id}-m2`, name: shortWords[1], tier: 2, kind: "eye", dx: 3, dy: -1 },
-        { id: `${area.id}-m3`, name: shortWords[2], tier: 3, kind: "golem", dx: 0, dy: 3 },
+        { id: `${area.id}-m1`, name: shortWords[0], tier: 1, kind: (KINDS[spot.discipline] || KINDS.math)[0], dx: -3, dy: 1 },
+        { id: `${area.id}-m2`, name: shortWords[1], tier: 2, kind: (KINDS[spot.discipline] || KINDS.math)[1], dx: 3, dy: -1 },
+        { id: `${area.id}-m3`, name: shortWords[2], tier: 3, kind: (KINDS[spot.discipline] || KINDS.math)[2], dx: 0, dy: 3 },
       ],
       boss: { id: `${area.id}-boss`, name: `O Guardião ${article} ${noun}`, kind: "boss", dx: 0, dy: 0 },
       keeper: keeperId,

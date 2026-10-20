@@ -9,8 +9,8 @@ como consertar os pontos de descida que hoje não têm subida para outro lugar.
 O que existe hoje (2026-10-20):
 
 - mapa 300x200 com o Porto no centro, seis continentes e o Vale da Língua, mais
-  catorze áreas temáticas ligadas por ponte;
-- 23 cavernas, 46 bocas pareadas (duas por caverna), com entrada por qualquer
+  86 áreas no total, ligadas por ponte quando vizinhas;
+- 93 cavernas, 186 bocas pareadas (duas por caverna), com entrada por qualquer
   uma e saída coerente pela escada da outra boca;
 - sete arquétipos de túnel (elbow, split, wide, cross, zigzag, narrow e a
   variação espelhada), com salas laterais, anel de corredores e cidade no fundo;
@@ -60,12 +60,12 @@ O alvo:
 Cada área tem duas estações, uma pedra de viagem, um NPC com missão, uma
 clareira de caçada, um instrutor, uma caverna própria e uma decoração
 assinatura (antena, dado, lente, molécula, pena, máscara, relógio etc.). Agora são duas áreas por
-continente, catorze no total. A ponte liga a área ao
+continente. A ponte liga a área ao
 continente ou à área vizinha; o teste de caminho cobre todas as bocas.
 
 Regra de interação da boca: a distância é medida pelo degrau de saída
 (`cave.exit`), não pelo centro do desenho. Assim um NPC que passeia na frente
-da caverna não rouba o F. O teste de navegador entra e sai pelas 46 bocas, uma
+da caverna não rouba o F. O teste de navegador entra e sai pelas 186 bocas, uma
 a uma, e confere que a volta cai no mesmo degrau.
 
 ## 2. A superfície

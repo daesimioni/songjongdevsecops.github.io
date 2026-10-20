@@ -443,7 +443,7 @@ export function createWorld() {
   // A superfície é sala de aula: sem bicho selvagem. Cada clareira vira uma
   // arena de treino com um instrutor, e o bicho de verdade mora na caverna.
   const hunters = GROUNDS.map((g) => {
-    const accent = CONTINENTS[g.continent]?.accent || "#ffc857";
+    const accent = g.accent || CONTINENTS[g.continent]?.accent || "#ffc857";
     return {
       id: g.id,
       continent: g.continent,

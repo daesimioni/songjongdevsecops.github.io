@@ -98,3 +98,17 @@ for (const file of jsFiles) {
 
 assert.equal(faults.length, 0, `casca com ${faults.length} problema(s):\n- ${faults.join("\n- ")}`);
 console.log("ok casca: ids, imports, botões, rótulos, aria e handlers");
+
+// todo ícone de estação tem desenho (ou tratamento próprio na função da estação)
+{
+  const render = fs.readFileSync(path.join(root, "js/render.js"), "utf8");
+  const start = render.indexOf("function drawStationIcon");
+  const end = render.indexOf("function drawBanner", start);
+  const body = render.slice(start, end);
+  const supported = new Set([...body.matchAll(/icon === "([a-z]+)"/g)].map((m) => m[1]));
+  supported.add("fountain");
+  supported.add("radio");
+  const { SITES } = await import("../js/config.js");
+  const semArte = [...new Set(SITES.map((s) => s.icon))].filter((icon) => !supported.has(icon));
+  assert.equal(semArte.length, 0, `estação com ícone sem desenho: ${semArte.join(", ")}`);
+}

@@ -103,3 +103,18 @@ Sem banco preenchido, a área não entra no jogo: o teste cobra cobertura.
 | 2026-10-20 | F6 | banco de Língua (`catalog-bank-lingua.js`): 13 áreas novas, 39 tópicos | node: 75 áreas, 246 estações, 82 cavernas, 82 clareiras, 101 missões, 793 perguntas; navegador: 59/59 áreas do catálogo com pacote completo, página e missão de Língua; 60 fps com desenho 1,1 ms; revisão ao vivo 48/48 |
 | 2026-10-20 | F7 | banco das Interseções (`catalog-bank-inter.js`): 11 áreas, 33 tópicos; cada interseção foi posicionada entre as duas disciplinas-mãe e ligada pelo túnel da conurbação; pontes de corrente caíram de 64 para 54 | node: 86 áreas, 82 seções cobertas com área, caverna, NPC e missão, 93 cavernas, 93 clareiras, 112 missões, 826 perguntas; navegador: 70/70 áreas do catálogo completas, 70 cavernas abrindo, túnel da interseção listando as capitais das duas mães; 14/14 |
 | 2026-10-20 | F8 | varredura final: cobertura das 82 seções, diário com 86 áreas, lista de túneis por continente, desempenho medido com CPU lenta | node: 86 áreas, 279 estações, 93 cavernas, 93 clareiras, 186 bocas, 112 missões, 833 perguntas, 82/82 seções cobertas, 94 faróis; navegador: 15/15 no catálogo e 6/6 na prova final; 60 fps normal, 47 fps a 4x e 45 fps a 6x de CPU; diário reconhece as áreas e interseções; tudo ao vivo |
+
+## 6. Refinamento depois da primeira entrega
+
+| problema | o que mudou | prova |
+|---|---|---|
+| concordância errada nas etiquetas | artigo derivado do nome da área ("Cripta dos Fundamentos", "Farol dos Fundamentos") | teste de concordância nas 70 áreas |
+| estação nova sem instrumento | cada tópico ganha um instrumento vivo por palavra-chave e, na falta, por disciplina | teste de instrumento e navegador abrindo a bancada |
+| missão com resposta sempre em A | alternativas giradas por área | teste de variação do gabarito |
+| 70 cavernas com a mesma planta | espelho e três deslocamentos alternados | teste exige ao menos 3 plantas |
+| mundo levava 2 s para montar | máscara de espaço usado e índice de área por tile | 42 ms medidos no node |
+| névoa de 269 KB a cada 1,5 s | RLE e salvamento a cada 4 s | 391 caracteres medidos no navegador |
+| 86 áreas numa lista corrida | diário com blocos recolhíveis e túneis com filtro e cabeçalho | teste de navegador e celular |
+| enfeite e placa caindo no mar | ponto puxado para dentro da ilha | teste de decoração na água |
+| nome de NPC repetido e id com acento | elencos separados e ids sem acento | teste de nomes únicos |
+| ícones de estação sem desenho | terminal e placa desenhados | teste de cobertura de ícones |
