@@ -336,6 +336,13 @@ export const NPC_SPAWNS = [
   { id: "mendeleev", continent: "chem", x: 26, y: 60, accent: "#7ee787" },
   { id: "pythagoras", continent: "music", x: 46, y: 28, accent: "#ffb26b" },
   { id: "turing", continent: "ai", x: 136, y: 28, accent: "#6bd5ff" },
+  { id: "teo", continent: "hub", x: 93, y: 59, accent: "#ffd166" },
+  { id: "grace", continent: "cs", x: 85, y: 27, accent: "#7ef0b2" },
+  { id: "euclides", continent: "math", x: 158, y: 61, accent: "#c7a4ff" },
+  { id: "galileu", continent: "physics", x: 85, y: 107, accent: "#ff9cc0" },
+  { id: "lavoisier", continent: "chem", x: 25, y: 63, accent: "#9bf0a8" },
+  { id: "bach", continent: "music", x: 45, y: 31, accent: "#ffc489" },
+  { id: "shannon", continent: "ai", x: 135, y: 31, accent: "#8fe3ff" },
 ];
 
 export const CAT_SPAWN = { x: 87, y: 61 };

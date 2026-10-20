@@ -548,6 +548,76 @@ export const NPCS = {
       "No cruzamento dos túneis, a química muda de lado. O equilíbrio também.",
     ],
   },
+  teo: {
+    name: "Velho Téo",
+    lines: [
+      "O casco do barco é de ferro e a vela é de tecido. O que empurra é o mesmo que empurra pergunta: uma força que você não vê.",
+      "Repare que cada caverna tem duas bocas. Uma perto do acampamento, outra do outro lado do túnel. Descer por uma é subir pela outra.",
+      "A cidade lá embaixo vive de troca: você leva veio, ferro e erva, e volta com pão, runa e encanto. Ninguém usa moeda.",
+      "O gato do porto já viu mais expedição partir do que eu. Ele dorme no mesmo lugar e nunca perde a hora.",
+      "Se a lanterna apagar no meio do corredor, não corra. Pare, ouça e volte pelo caminho que ainda lembra.",
+    ],
+  },
+  grace: {
+    name: "Grace",
+    lines: [
+      "Programa bom é programa que qualquer pessoa consegue ler de novo. O compilador aceita o resto, a manutenção não.",
+      "Antes de perguntar por que o código quebrou, pergunte qual foi a última coisa que você mexeu. Quase sempre é essa.",
+      "Um teste que nunca falhou não é um bom teste. É um teste que ninguém sabe se está vivo.",
+      "A matilha da caverna é como chamada de função com vários argumentos: se um falha, os outros continuam rodando.",
+      "O Chip de Silício é areia que aprendeu a responder sim ou não. O resto é repetição bem feita.",
+    ],
+  },
+  euclides: {
+    name: "Euclides",
+    lines: [
+      "Ponto é o que não tem parte. Parece pouco, mas toda a geometria começa aí.",
+      "Quando a prova embolar, volte às definições. O erro quase nunca está no passo difícil, está no passo que você pulou.",
+      "Duas retas paralelas não se encontram. Se encontrarem, uma das duas não era reta ou o mundo não era este.",
+      "O infinito não é um lugar grande. É uma regra que nunca pede para parar.",
+      "A régua áurea não tem marcação porque a razão está na proporção, não nos riscos.",
+    ],
+  },
+  galileu: {
+    name: "Galileu",
+    lines: [
+      "Não acredite no que eu digo. Vá lá e meça. A natureza responde melhor a instrumento do que a opinião.",
+      "Duas bolas de pesos diferentes caem quase juntas. O quase é o ar atrapalhando a experiência.",
+      "A lua tem manchas e a mancha é montanha. O céu deixou de ser perfeito no dia em que alguém apontou um tubo para ele.",
+      "O prisma separa a luz porque cada cor atravessa o vidro com um desvio diferente. Nada de mágica.",
+      "O pêndulo não se importa com a cor do peso, só com o comprimento e a gravidade. Anote isso antes de esquecer.",
+    ],
+  },
+  lavoisier: {
+    name: "Lavoisier",
+    lines: [
+      "Na natureza nada se cria e nada se perde: tudo se transforma. O que sobra de um lado aparece do outro.",
+      "Se a reação esquenta sozinha, ela está devolvendo energia que guardou nos reagentes.",
+      "O catalisador não entra na conta final. Ele abre caminho e sai como entrou.",
+      "O cristal de equilíbrio se mexe quando a concentração muda. É a tabela respondendo ao que você fez.",
+      "Cuidado com o frasco ácido da caverna. Ele abre caminho e estraga ideia teimosa, mas não é bebida.",
+    ],
+  },
+  bach: {
+    name: "Bach",
+    lines: [
+      "A voz de cima canta, a de baixo responde, e as duas cabem na mesma regra. Isso é contraponto.",
+      "O silêncio entre duas notas é tão medido quanto as notas. Quem não conta o silêncio atrasa a frase.",
+      "O cravo bem temperado resolveu uma briga antiga: doze teclas que soam quase certas em todas as tonalidades.",
+      "Uma oitava dobra a frequência. Uma quinta multiplica por três meios. A música já era matemática antes de ter nome.",
+      "A dissonância não é erro. É tensão pedindo resolução. O monstro do conservatório também pede.",
+    ],
+  },
+  shannon: {
+    name: "Shannon",
+    lines: [
+      "Informação é o que reduz incerteza. Uma pergunta boa tira muita dúvida de uma vez.",
+      "Nove acertos óbvios valem menos que um acerto difícil. Escolha onde colocar a atenção.",
+      "Uma sequência aleatória não comprime. Um padrão comprime. É assim que se separa ruído de mensagem.",
+      "O modelo aprende o que foi dado a ele, inclusive o que ninguém queria ensinar.",
+      "Token é pedaço de palavra. Leia a pergunta em pedaços e a resposta fica menos misteriosa.",
+    ],
+  },
   "trainer-cs": {
     name: "Técnica Lúcia",
     lines: [

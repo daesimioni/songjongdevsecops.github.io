@@ -47,9 +47,10 @@ envia e fecha; depois de fechar, `Enter` ou `Q` abrem de novo. Esc fecha sem env
 
 ## Missões
 
-Os sete NPCs do mapa dão missões. Um `!` flutuante marca quem tem missão para
-dar; quando o objetivo está cumprido, ele vira `?`. Aperte `F` perto deles para
-aceitar, responder e entregar. São três tipos:
+Vinte NPCs vivem no mapa: os sete guias de continente dão missões, seis
+treinadores abrem o treino e sete viajantes só conversam. Um `!` flutuante marca
+quem tem missão para dar; quando o objetivo está cumprido, ele vira `?`. Aperte
+`F` perto deles para aceitar, responder e entregar. São três tipos:
 
 - **caminhada**: abrir estações, acender os sete faróis, mexer em oito
   instrumentos diferentes.
