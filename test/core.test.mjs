@@ -552,7 +552,17 @@ for (const h of w.hunters) {
   const npc = instructors.find((n) => n.continent === h.continent);
   assert.ok(npc, `instrutor de ${h.continent}`);
   assert.ok(Math.hypot(npc.x - h.center.x, npc.y - h.center.y) < 2.5, `instrutor no centro de ${h.continent}`);
-  assert.equal(w.boxCollides(npc.x, npc.y, PLAYER_W, PLAYER_H), true, `instrutor de ${h.continent} ocupa espaço`);
+  assert.ok(Math.hypot(npc.hx - npc.x, npc.hy - npc.y) <= npc.wander + 0.6, `instrutor de ${h.continent} com posto e raio de passeio`);
+  assert.equal(w.boxCollides(npc.x, npc.y, PLAYER_W, PLAYER_H), false, `instrutor de ${h.continent} anda, não é parede`);
+}
+// os NPCs passeiam, mas cada um dentro do seu posto e fora da água
+for (const n of w.npcs) {
+  assert.ok(Number.isFinite(n.hx) && Number.isFinite(n.hy), `npc ${n.id} sem posto`);
+  assert.ok(n.wander > 0, `npc ${n.id} sem raio de passeio`);
+  const t = performance.now() + 30000;
+  for (let i = 0; i < 40; i++) w.updateNpcs(0.12, t + i * 120);
+  assert.ok(Math.hypot(n.x - n.hx, n.y - n.hy) <= n.wander + 0.6, `npc ${n.id} saiu do posto`);
+  assert.equal(w.boxCollides(n.x, n.y, 0.3, 0.24), false, `npc ${n.id} parou em parede ou água`);
 }
 assert.ok(w.props.length > 20, "props de cenário existem");
 for (const stone of w.waystones) {

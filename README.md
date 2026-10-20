@@ -103,9 +103,11 @@ vida zerar, o boneco acorda no Porto com a vida cheia, sem perder item nem XP.
 A **Ficha** (`C`) mostra vida, nível, perícias, mochila e a forja. A vida volta
 devagar fora de duelo; a Poção de Café cura 18, o Caldo de Caverna cura 35.
 
-Estações, pedras, NPCs e mobília barram a passagem; na superfície não há monstro
-solto. O desenho é ordenado por profundidade, então uma fonte, árvore ou parede na
-frente do boneco cobre o corpo dele em vez de ficar sempre atrás.
+Estações, pedras e mobília barram a passagem. Os NPCs não: cada um passeia de
+vez em quando dentro do seu posto (a guia pelo cais, o instrutor pela clareira),
+sempre por chão livre, sem entrar em água, árvore ou parede. Na superfície não
+há monstro solto. O desenho é ordenado por profundidade, então uma fonte, árvore
+ou parede na frente do boneco cobre o corpo dele em vez de ficar sempre atrás.
 
 ## Matilha e magias
 

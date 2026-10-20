@@ -986,7 +986,7 @@ export function createRenderer(canvas, world) {
     const px = npc.x * TILE, py = npc.y * TILE;
     const bob = Math.sin(time * 0.002 + npc.bob) * 1.2;
     const colors = { skin: "#d9b08c", hair: "#4a3a55", shirt: npc.accent, pants: "#2f2c45" };
-    drawHuman(px, py + bob, 0, false, time, colors, null, 0.9);
+    drawHuman(px, py + bob, npc.facing || 0, !!npc.moving, time, colors, null, 0.9);
     ctx.font = "5px ui-monospace, monospace";
     ctx.textAlign = "center";
     ctx.fillStyle = "rgba(8,10,20,0.72)";

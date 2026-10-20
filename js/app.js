@@ -1535,6 +1535,7 @@ function loop(now) {
       if (state.path) updateAutoWalk(dt);
       else updateMovement(dt);
       updateZone();
+      world.updateNpcs(dt, now);
     } else {
       player.moving = false;
     }

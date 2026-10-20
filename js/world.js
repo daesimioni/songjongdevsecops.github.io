@@ -299,7 +299,19 @@ export function createWorld() {
   const npcs = [
     ...NPC_SPAWNS.map((n) => ({ ...n, bob: rand() * Math.PI * 2 })),
     ...trainerNpcs,
-  ];
+  ].map((n) => ({
+    ...n,
+    hx: n.x,
+    hy: n.y,
+    tx: n.x,
+    ty: n.y,
+    // cada um passeia perto do seu posto: guia no cais, instrutor na clareira
+    wander: Number(n.wander) || (n.trainer ? 2.6 : n.continent === "hub" ? 3.2 : 4.6),
+    speed: 0.34 + rand() * 0.22,
+    waitUntil: rand() * 2600,
+    facing: 0,
+    moving: false,
+  }));
 
   // névoa do minimapa
   const explored = new Uint8Array(MAP_W * MAP_H);
@@ -328,6 +340,73 @@ export function createWorld() {
     if (!bytes || bytes.length !== explored.length) return;
     explored.set(bytes);
     exploredVersion++;
+  }
+
+  function npcFree(x, y) {
+    return !boxCollides(x, y, 0.3, 0.24);
+  }
+
+  function pickNpcTarget(n) {
+    for (let i = 0; i < 12; i++) {
+      const a = rand() * Math.PI * 2;
+      const r = 0.8 + rand() * n.wander;
+      const tx = n.hx + Math.cos(a) * r;
+      const ty = n.hy + Math.sin(a) * r;
+      if (!npcFree(tx, ty)) continue;
+      if (!npcFree((n.x + tx) / 2, (n.y + ty) / 2)) continue;
+      n.tx = tx;
+      n.ty = ty;
+      return;
+    }
+    n.tx = n.hx;
+    n.ty = n.hy;
+  }
+
+  function updateNpcs(dt, t) {
+    for (const n of npcs) {
+      if (t < n.waitUntil) {
+        n.moving = false;
+        continue;
+      }
+      const d = Math.hypot(n.tx - n.x, n.ty - n.y);
+      if (d < 0.15) {
+        n.moving = false;
+        n.waitUntil = t + 1400 + rand() * 5200;
+        pickNpcTarget(n);
+        continue;
+      }
+      const step = Math.min(d, n.speed * dt);
+      const nx = n.x + ((n.tx - n.x) / d) * step;
+      const ny = n.y + ((n.ty - n.y) / d) * step;
+      let moved = false;
+      if (npcFree(nx, ny)) {
+        n.x = nx;
+        n.y = ny;
+        moved = true;
+      } else if (npcFree(nx, n.y)) {
+        n.x = nx;
+        moved = true;
+      } else if (npcFree(n.x, ny)) {
+        n.y = ny;
+        moved = true;
+      }
+      if (!moved) {
+        n.moving = false;
+        n.waitUntil = t + 900 + rand() * 1400;
+        continue;
+      }
+      // o passeio nunca perde o posto de vista
+      if (Math.hypot(n.x - n.hx, n.y - n.hy) > n.wander + 0.4) {
+        n.x = n.hx;
+        n.y = n.hy;
+        n.tx = n.hx;
+        n.ty = n.hy;
+      }
+      n.moving = true;
+      const dx = n.tx - n.x;
+      const dy = n.ty - n.y;
+      n.facing = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 2 : 1) : (dy > 0 ? 0 : 3);
+    }
   }
 
   function isSolidTile(tx, ty) { return SOLID.has(get(tx, ty)); }
@@ -363,7 +442,6 @@ export function createWorld() {
     addProp(s.x, s.y, fountain ? 0.9 : 0.7, fountain ? 0.5 : 0.45);
   }
   for (const w of waystones) addProp(w.x, w.y, 0.45, 0.3);
-  for (const n of npcs) addProp(n.x, n.y, 0.28, 0.22);
   const decorSize = {
     lamp: [0.12, 0.12], sign: [0.3, 0.12], bench: [0.55, 0.18],
     terminal: [0.35, 0.25], pillar: [0.3, 0.25], book: [0.2, 0.15],
@@ -436,7 +514,7 @@ export function createWorld() {
   return {
     tiles, decor, props, stations, waystones, npcs, hunters, monsters, caves,
     cat: { ...CAT_SPAWN, facing: 1, t: 0, moving: false },
-    get, set, isSolidTile, boxCollides,
+    get, set, isSolidTile, boxCollides, updateNpcs,
     continentAt, continentAtTile,
     markExplored, isExplored, setExplored,
     get exploredVersion() { return exploredVersion; },
