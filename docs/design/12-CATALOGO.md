@@ -75,7 +75,7 @@ Sem banco preenchido, a área não entra no jogo: o teste cobra cobertura.
 
 ## 4. Fases (cada uma termina em commit e prova)
 
-- [ ] **F1. Catálogo e geografia.** `catalog.js` com as 82 seções, mapa 560 x 360,
+- [x] **F1. Catálogo e geografia.** `catalog.js` com as 82 seções, mapa 560 x 360,
       ilhas posicionadas por disciplina, pontes entre vizinhas, túneis das
       interseções, placas, waystones e bocas. Prova: 86 áreas reconhecidas no
       mapa, 0 sobreposição, toda área com waystone, boca e caminho até vizinha.
@@ -95,4 +95,4 @@ Sem banco preenchido, a área não entra no jogo: o teste cobra cobertura.
 
 | data | fase | o que entrou | prova |
 |---|---|---|---|
-| 2026-10-20 | F1 | catálogo das 82 seções e plano | node conta 82 seções e 6 disciplinas |
+| 2026-10-20 | F1 | catálogo das 82 seções, mapa 560x360, 70 ilhas posicionadas, 64 pontes e 25 túneis | node: 82 seções, 70 posições sem sobreposição, 64 pontes curtas, 25 túneis; navegador ao vivo com 60 fps e 1,3 ms de desenho |
