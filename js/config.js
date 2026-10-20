@@ -52,6 +52,8 @@ export const BACKUP = {
 // Tudo que entra na tela passa por estes dois selos, então nenhum conteúdo
 // de fora do jogo aparece aqui.
 export const NOSTR = {
+  // a chave do jogador fica nesta entrada do navegador
+  storage: "mundo-song:nostr:v1",
   relays: [
     "wss://relay.damus.io",
     "wss://nos.lol",

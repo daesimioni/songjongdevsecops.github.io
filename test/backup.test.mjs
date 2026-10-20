@@ -58,6 +58,8 @@ assert.equal(backup.restore({ v: 1, keys: {} }).ok, false, "backup vazio não é
 assert.equal(backup.localIsEmpty(), false, "conta com progresso não conta como vazia");
 store.clear();
 assert.equal(backup.localIsEmpty(), true, "conta sem nada é vazia");
+store.set(STORAGE.name, JSON.stringify("Nome digitado"));
+assert.equal(backup.localIsEmpty(), true, "nome digitado na abertura não é progresso");
 
 // envio: rede falsa, dedupe e volta
 const sent = [];

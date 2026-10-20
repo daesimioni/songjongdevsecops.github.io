@@ -32,7 +32,21 @@ function bytesOf(hex) {
 }
 function readStore() {
   try {
-    const raw = localStorage.getItem(NOSTR.storage);
+    let raw = localStorage.getItem(NOSTR.storage);
+    if (!raw) {
+      // versões antigas guardavam a chave na string "undefined": adota e limpa
+      const legacy = localStorage.getItem("undefined");
+      if (legacy) {
+        try {
+          const obj = JSON.parse(legacy);
+          if (obj && typeof obj.sk === "string" && HEX64.test(obj.sk)) {
+            localStorage.setItem(NOSTR.storage, legacy);
+            localStorage.removeItem("undefined");
+            raw = legacy;
+          }
+        } catch { /* não era a nossa chave */ }
+      }
+    }
     const obj = raw ? JSON.parse(raw) : null;
     return obj && typeof obj === "object" ? obj : {};
   } catch { return {}; }

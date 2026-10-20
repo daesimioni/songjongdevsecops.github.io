@@ -79,13 +79,13 @@ export function collect() {
 // Conta nova: nada de progresso, nem nome. Só nesse caso o backup entra
 // sozinho no boot, para nunca sobrescrever o que já está no navegador.
 export function localIsEmpty() {
-  const name = readJSON(STORAGE.name, "");
   const xp = Number(readJSON(STORAGE.xp, 0)) || 0;
   const cards = readJSON(STORAGE.cards, []);
   const rpg = readJSON(STORAGE.rpg, null);
   const quests = readJSON(STORAGE.quests, null);
+  // o nome digitado na abertura não é progresso: quem volta num navegador
+  // novo digita o nome antes de a conta ser restaurada da DM
   return (
-    !name &&
     !xp &&
     (!Array.isArray(cards) || cards.length === 0) &&
     countKeys(rpg?.items) === 0 &&
