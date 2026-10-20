@@ -521,7 +521,7 @@ function drawBuilding(ctx, x, y, w, h, palette, accent) {
 }
 
 // ---------- a caverna em si ----------
-export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, onExit, onKeeper, onConurbation, onPortal, isBlocked, avatar = {}, look = null, gear = null }) {
+export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, onGather, onExit, onKeeper, onConurbation, onPortal, isBlocked, avatar = {}, look = null, gear = null }) {
   const canvas = $("dungeon-canvas");
   const ctx = canvas?.getContext("2d", { alpha: false }) || null;
 
@@ -1412,14 +1412,21 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
         audio.error?.();
         return;
       }
-      obj.charges--;
-      const qty = 1 + Math.floor(Math.random() * 2);
-      rpg.addItem("veio", qty);
-      const extra = Math.random() < 0.45;
-      if (extra) rpg.addItem(state.def.material, 1);
-      say(`Picareta na pedra: ${qty} cristal(is) de veio${extra ? ` e ${ITEMS[state.def.material]?.name || "material"}` : ""}.`, 3400);
-      audio.chime();
-      updateHud();
+      // A picareta abre o veio, mas o que sai dele é decidido pela pergunta:
+      // o sorteio é do app (gather.js) e o commit abaixo desconta a carga.
+      onGather?.({
+        kind: "vein",
+        continent: state.def.continent,
+        material: state.def.material,
+        commit: (reward) => {
+          if (obj.charges <= 0) return false;
+          obj.charges--;
+          say(`Picareta na pedra: ${reward.qty} ${ITEMS[reward.resource]?.name || "material"}.`, 3400);
+          audio.chime();
+          updateHud();
+          return true;
+        },
+      });
       return;
     }
     if (obj.kind === "pet") {

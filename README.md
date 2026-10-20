@@ -271,6 +271,13 @@ Cada sala tem baú. Baú fundo é selado e pede uma **Chave de Caverna**, que se
 faz na forja. A caverna dá ferro, erva, cristal de veio e madeira; os **veios de
 cristal** presos nas salas só se abrem com uma **picareta**, que também se forja.
 
+**Coleta é pergunta.** Perto de uma árvore o `F` corta madeira, perto da água
+pesca e, no veio da caverna, minera. O achado sorteia o recurso e o tier da
+pergunta: comum pede pergunta fácil, raro pede média, o material do continente
+pede difícil. Acertar leva o item e XP da perícia; errar deixa o recurso onde
+está e não gasta a carga do veio. Peixe e peixe de escama azul são comida: curam
+10 e 24 (o raro devolve 6 de mana).
+
 Na cidade subterrânea há forja, altar que devolve vida, três canteiros de erva,
 mesa de encantamento, um bicho, a pedra de retorno e a escada para a outra boca.
 A **mestra** da cidade vende as peças de equipamento do continente por material:
@@ -505,6 +512,7 @@ Depois abra `http://localhost:8000`.
 | `js/bestiary.js` | o bestiário: cavernas por continente, silhuetas, descoberta e filtros |
 | `js/sheet.js` | a ficha de aventureiro |
 | `js/duel.js` | a janela de prova contra cada monstro e o treino do instrutor |
+| `js/gather.js` | a coleta com pergunta: sorteio do achado, dificuldade por raridade e a janela de mineração, pesca e madeira |
 | `js/pvp.js` | o duelo de perguntas entre jogadores |
 | `js/social.js` | janela da Rede: canais, DMs, pessoas e conta |
 | `js/audio.js` | síntese, ambiente e sequenciador |

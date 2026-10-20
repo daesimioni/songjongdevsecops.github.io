@@ -279,6 +279,8 @@ export const ITEMS = {
   tocha: { name: "Tocha de Veio", continent: "hub", use: "light", desc: "Acesa, aumenta a luz da caverna por dois minutos." },
   bomba: { name: "Bomba de Ferro", continent: "hub", use: "bomb", desc: "Estoura perto de você e espanta os bichos num raio curto. Não dá XP nem saque." },
   caldo: { name: "Caldo de Caverna", continent: "hub", heal: 35, desc: "Culinária de fundo de mina: cura 35. Erva, café e paciência." },
+  peixe: { name: "Peixe de Lagoa", continent: "hub", heal: 10, desc: "Saiu da água com pergunta e paciência. Cura 10." },
+  "peixe-raro": { name: "Peixe de Escama Azul", continent: "hub", heal: 24, mana: 6, desc: "Escama que reflete o céu. Cura 24 e devolve 6 de mana." },
   cafe: { name: "Café da Madrugada", continent: "hub", heal: 5, buff: { id: "speed", ms: 90000 }, desc: "Cura 5 e acelera os passos por 90 segundos. Gosto de pedra molhada." },
   assado: { name: "Assado de Fundo de Mina", continent: "hub", heal: 45, buff: { id: "damage", ms: 180000 }, desc: "Cura 45 e dá +1 de dano por 3 minutos. Cozinha de expedição." },
   doce: { name: "Doce de Erva", continent: "hub", heal: 15, buff: { id: "maxhp", ms: 180000 }, desc: "Cura 15 e dá +5 de vida máxima por 3 minutos. Sobremesa de caverna." },

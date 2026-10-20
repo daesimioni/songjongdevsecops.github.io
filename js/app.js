@@ -1,7 +1,7 @@
 import {
   AREAS, CONTINENTS, CONTINENT_ORDER, SITES, WAYSTONES, SPAWN,
   PLAYER_SPEED, SPRINT_MULT, PLAYER_W, PLAYER_H, INTERACT_RADIUS,
-  STORAGE, NET, MAP_W, MAP_H,
+  STORAGE, NET, MAP_W, MAP_H, TILE_KIND as K,
 } from "./config.js";
 import { createWorld } from "./world.js";
 import { createRenderer } from "./render.js";
@@ -27,9 +27,10 @@ import { findPath, nearestWalkable } from "./path.js";
 import { feedPeer, peerRenderPosition } from "./interp.js";
 import { startTitle } from "./title.js";
 import { RPG } from "./rpg.js";
-import { ITEMS } from "./rpg-data.js";
+import { ITEMS, QUESTIONS } from "./rpg-data.js";
 import { createSheet } from "./sheet.js";
 import { createDuel } from "./duel.js";
+import { createGather, rollGather } from "./gather.js";
 import { createInventoryUI } from "./inventory-ui.js";
 import { createBestiary } from "./bestiary.js";
 import { itemIconElement } from "./item-art.js";
@@ -267,6 +268,13 @@ duelUi = createDuel({
   onVictory: () => { quests.report("hunts"); markStep("duel"); },
 });
 
+const gatherUi = createGather({
+  rpg,
+  toast,
+  audio,
+  onClose: () => closeModal("gather"),
+});
+
 const pvpUi = createPvp({
   rpg,
   toast,
@@ -291,6 +299,7 @@ dungeon = createDungeon({
   },
   onSheet: () => openSheet(),
   onInventory: () => openInventory(),
+  onGather: (ctx) => openGather(ctx.kind, ctx),
   onKeeper: () => openShop(),
   onConurbation: () => openTravel("caves"),
   onPortal: (defId) => portalToCity(defId),
@@ -734,6 +743,56 @@ function enterCave(cave) {
   toast(cave.name, 3000);
 }
 
+// A coleta da superfície olha os tiles vizinhos: árvore dá madeira, água dá
+// peixe. A pergunta é do continente da área; o tier vem do sorteio do achado.
+function gatherNearby() {
+  const px = Math.floor(player.x);
+  const py = Math.floor(player.y);
+  let best = null;
+  let bestD = Infinity;
+  for (let dy = -1; dy <= 1; dy++) {
+    for (let dx = -1; dx <= 1; dx++) {
+      if (!dx && !dy) continue;
+      const tile = world.get(px + dx, py + dy);
+      const gather = tile === K.TREE ? "tree" : tile === K.WATER ? "water" : "";
+      if (!gather) continue;
+      const x = px + dx + 0.5;
+      const y = py + dy + 0.5;
+      const d = Math.hypot(x - player.x, y - player.y);
+      if (d < bestD) {
+        bestD = d;
+        best = { kind: "gather", gather, obj: { x, y, gather }, ground: null };
+      }
+    }
+  }
+  return best;
+}
+
+function gatherContinent() {
+  const area = world.areaAt(player.x, player.y);
+  if (area && QUESTIONS[area.continent]) return area.continent;
+  let best = "cs";
+  let bestD = Infinity;
+  for (const a of AREAS) {
+    if (!QUESTIONS[a.continent]) continue;
+    const d = Math.hypot(a.land.cx - player.x, a.land.cy - player.y);
+    if (d < bestD) { bestD = d; best = a.continent; }
+  }
+  return best;
+}
+
+function openGather(kind, extra = {}) {
+  const reward = rollGather(kind, Math.random, extra);
+  if (!gatherUi.open({
+    kind,
+    continent: extra.continent || gatherContinent(),
+    reward,
+    commit: extra.commit,
+  })) return;
+  openModal("gather");
+  audio.open();
+}
+
 function interactTarget(target) {
   if (!target) return;
   if (target.kind === "station") openPost(target.obj.post, target.obj);
@@ -749,6 +808,7 @@ function interactTarget(target) {
   }
   else if (target.kind === "cave") enterCave(target.obj);
   else if (target.kind === "item") pegarItem(target.obj);
+  else if (target.kind === "gather") openGather(target.obj.gather || target.gather);
 }
 
 function openRede() {
@@ -1942,6 +2002,10 @@ function findNearest() {
   for (const w of world.waystones) near("waystone", w);
   for (const n of world.npcs) near("npc", n);
   for (const g of world.groundItems) near("item", g, null, 1.4);
+  // 2.2 cobre o tile vizinho inteiro: o corpo pode estar na quina do tile
+  // quando a árvore ou a água está do lado
+  const g = gatherNearby();
+  if (g) near("gather", g.obj, null, 2.2);
   return best;
 }
 
@@ -1963,6 +2027,7 @@ function updatePrompt() {
   }
   else if (near.kind === "cave") label = `descer em ${near.obj.name}`;
   else if (near.kind === "item") label = `pegar ${ITEMS[near.obj.itemId]?.name || "item"}`;
+  else if (near.kind === "gather") label = near.obj.gather === "water" ? "pescar" : "cortar madeira";
   if ($("prompt-label").textContent !== label) $("prompt-label").textContent = label;
   $("prompt").hidden = false;
 }
@@ -2347,6 +2412,11 @@ window.addEventListener("keydown", (e) => {
     if (letter >= 0) { e.preventDefault(); duelUi.answer(letter); return; }
     if (k === "enter" || k === " ") { e.preventDefault(); duelUi.advance(); return; }
   }
+  if (state.modal === "gather" && gatherUi) {
+    const letter = /^[a-e]$/.test(k) ? k.charCodeAt(0) - 97 : -1;
+    if (letter >= 0) { e.preventDefault(); gatherUi.answer(letter); return; }
+    if (k === "enter" || k === " ") { e.preventDefault(); gatherUi.advance(); return; }
+  }
   if (k === "escape") {
     if (ctxMenu && !ctxMenu.hidden) { fecharMenu(); return; }
     if (state.panelOpen) closePanel();
@@ -2433,6 +2503,14 @@ function entityAt(wx, wy) {
   for (const n of world.npcs) hit("npc", n, null, 1.4);
   for (const c of world.caves) hit("cave", c, null, 1.4);
   for (const g of world.groundItems) hit("item", g, null, 1.2);
+  const tile = world.get(Math.floor(wx), Math.floor(wy));
+  if (tile === K.TREE || tile === K.WATER) {
+    hit("gather", {
+      x: Math.floor(wx) + 0.5,
+      y: Math.floor(wy) + 0.5,
+      gather: tile === K.WATER ? "water" : "tree",
+    }, null, 0.75);
+  }
   return best;
 }
 
@@ -2473,6 +2551,10 @@ function olharLugar(wx, wy, alvo) {
   else if (alvo.kind === "item") {
     const item = ITEMS[obj.itemId];
     toast(`${item?.name || "Item"}. ${item?.desc || ""}`, 4200);
+  } else if (alvo.kind === "gather") {
+    toast(obj.gather === "water"
+      ? "Água funda. Dá peixe para quem responde a pergunta certa."
+      : "Árvore de madeira petrificada. O tronco cede com uma pergunta.", 3600);
   } else toast(`${pedaco}`, 3600);
 }
 function abrirMenu(e, wx, wy) {
@@ -2486,11 +2568,12 @@ function abrirMenu(e, wx, wy) {
   titulo.textContent = alvo
     ? (alvo.kind === "npc" ? (NPCS[alvo.obj.id]?.name || "alguém")
       : alvo.kind === "item" ? (ITEMS[alvo.obj.itemId]?.name || "item no chão")
+      : alvo.kind === "gather" ? (alvo.obj.gather === "water" ? "água" : "árvore")
       : alvo.obj.name || alvo.obj.label || "aqui")
     : (area ? area.name : "o mar");
   const tipo = document.createElement("span");
   tipo.textContent = alvo
-    ? { station: "estação", npc: "gente", cave: "caverna", waystone: "farol", item: "item no chão" }[alvo.kind] || "aqui"
+    ? { station: "estação", npc: "gente", cave: "caverna", waystone: "farol", item: "item no chão", gather: "coleta" }[alvo.kind] || "aqui"
     : (area ? `bioma · ${area.biome?.name || area.sub}` : "água");
   head.append(titulo, tipo);
   ctxMenu.appendChild(head);
@@ -2532,6 +2615,9 @@ function abrirMenu(e, wx, wy) {
       ctxMenu.appendChild(acaoMenu("✧", "viajar", "F", () => openTravel()));
     } else if (perto && alvo.kind === "item") {
       ctxMenu.appendChild(acaoMenu("✦", "pegar", "F", () => pegarItem(alvo.obj)));
+    } else if (perto && alvo.kind === "gather") {
+      const verbo = alvo.obj.gather === "water" ? "pescar" : "cortar madeira";
+      ctxMenu.appendChild(acaoMenu(alvo.obj.gather === "water" ? "≈" : "✂", verbo, "F", () => openGather(alvo.obj.gather)));
     }
     ctxMenu.appendChild(acaoMenu("◉", "olhar de perto", "", () => olharLugar(wx, wy, alvo)));
     adicionarUsos();

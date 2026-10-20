@@ -777,5 +777,31 @@ const looks = new Set(world.npcs.map((n) => JSON.stringify(n.colors)));
 check(looks.size === world.npcs.length, `NPCs com aparência repetida: ${world.npcs.length - looks.size}`);
 for (const npc of world.npcs) check(!!npc.look && !!npc.colors?.skin && !!npc.colors?.hair, `NPC ${npc.id} sem aparência`);
 
+// coleta: o sorteio é puro e sempre devolve item que existe, com pergunta de
+// tier 1 a 3. Raro pede pergunta difícil, comum pede pergunta fácil.
+const { rollGather } = await import("../js/gather.js");
+const roleta = (...vals) => { let i = 0; return () => vals[i++ % vals.length]; };
+const veioComum = rollGather("vein", roleta(0.10, 0.40), {});
+check(veioComum.resource === "veio" && veioComum.qty === 2 && veioComum.tier === 1, "veio comum fora do esperado");
+const veioMedio = rollGather("vein", roleta(0.60), { material: "erva" });
+check(veioMedio.resource === "ferro" && veioMedio.tier === 2, "ferro do veio fora do esperado");
+const veioRaro = rollGather("vein", roleta(0.95), { material: "erva" });
+check(veioRaro.resource === "erva" && veioRaro.tier === 3, "material da área não saiu no veio raro");
+const veioSemMaterial = rollGather("vein", roleta(0.95), { material: "veio" });
+check(veioSemMaterial.resource === "cristal" && veioSemMaterial.tier === 3, "veio raro sem material de área não caiu no cristal");
+check(rollGather("tree", roleta(0.10, 0.40)).tier === 1, "madeira comum não é pergunta fácil");
+const madeiraRara = rollGather("tree", roleta(0.80, 0.60));
+check(madeiraRara.qty === 2 && madeiraRara.tier === 2, "madeira rara fora do esperado");
+check(rollGather("water", roleta(0.95)).resource === "peixe-raro", "peixe raro não saiu no sorteio alto");
+for (const kind of ["vein", "tree", "water"]) {
+  for (let i = 0; i < 300; i++) {
+    const r = rollGather(kind, Math.random, { material: "erva" });
+    check(!!ITEMS[r.resource], `coleta ${kind}: recurso ${r.resource} fora de ITEMS`);
+    check(r.tier >= 1 && r.tier <= 3, `coleta ${kind}: tier ${r.tier} fora de 1..3`);
+    check(Number.isInteger(r.qty) && r.qty >= 1 && r.qty <= 4, `coleta ${kind}: quantidade ${r.qty}`);
+  }
+}
+check(ITEMS.peixe?.heal > 0 && ITEMS["peixe-raro"].heal > ITEMS.peixe.heal, "peixes sem cura crescente");
+
 assert.equal(faults.length, 0, `conteúdo com ${faults.length} problema(s):\n- ${faults.join("\n- ")}`);
 console.log("ok conteúdo, estações, NPCs, missões, itens, receitas, perguntas, PvP, cavernas e mundo");

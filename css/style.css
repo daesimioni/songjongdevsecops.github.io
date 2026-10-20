@@ -1939,6 +1939,19 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
   font-size: 10px;
 }
 
+/* coleta: mesma janela do duelo, com o ícone do recurso no lugar do bicho */
+#gather-art {
+  width: 132px;
+  height: 132px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: radial-gradient(70% 70% at 50% 45%, rgba(255, 200, 87, 0.12), rgba(5, 8, 20, 0.4));
+}
+#gather-art canvas { width: 96px; height: 96px; image-rendering: pixelated; }
+
 @media (max-width: 720px) {
   .sheet-top { flex-direction: column; align-items: stretch; gap: 10px; }
   .sheet-vitals { width: 100%; }
