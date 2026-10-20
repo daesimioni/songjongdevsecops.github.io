@@ -7,7 +7,7 @@ ordem pedida pelo dono é: conceito, desenho detalhado, revisão, só então có
 
 - Site estático, sem build, em https://songjongdevsecops.github.io/.
 - 7 continentes e 14 áreas temáticas, 65 estações, 21 caçadas e 21 cavernas.
-- 29 NPCs de história, 21 instrutores, 40 missões e 258 perguntas.
+- 29 NPCs de história, 21 instrutores, 40 missões e 468 perguntas.
 - Duelo de perguntas, XP, perícias, 49 peças de equipamento, forja, encantos,
   comida, bicho, horta, veios e minmapa.
 - Chat/Nostr/MQTT, presença e DMs.
