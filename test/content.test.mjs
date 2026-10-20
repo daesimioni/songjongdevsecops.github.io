@@ -407,6 +407,10 @@ for (const item of CATALOG) {
   if (!area) { semArea.push(item.id); continue; }
   const dungeon = DUNGEONS.find((d) => d.id === `dungeon-${areaId}`);
   if (!dungeon) semCaverna.push(item.id);
+  else {
+    check(dungeon.rooms.length === 10, `${item.id}: caverna com ${dungeon.rooms.length} salas`);
+    check(typeof dungeon.boss === "string" && dungeon.boss.length > 3, `${item.id}: caverna sem chefe`);
+  }
   const npcsAqui = NPC_SPAWNS.filter((n) => world.areaAt
     ? n.x >= area.rect.x && n.x < area.rect.x + area.rect.w && n.y >= area.rect.y && n.y < area.rect.y + area.rect.h
     : false);
