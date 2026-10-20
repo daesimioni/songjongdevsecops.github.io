@@ -6,12 +6,12 @@ ordem pedida pelo dono é: conceito, desenho detalhado, revisão, só então có
 ## 1. O que já existe (baseline)
 
 - Site estático, sem build, em https://songjongdevsecops.github.io/.
-- 7 continentes e 7 áreas temáticas, 51 estações, 14 caçadas e 14 cavernas.
-- 22 NPCs de história, 14 instrutores, 33 missões e 216 perguntas.
+- 7 continentes e 14 áreas temáticas, 65 estações, 21 caçadas e 21 cavernas.
+- 29 NPCs de história, 21 instrutores, 40 missões e 258 perguntas.
 - Duelo de perguntas, XP, perícias, 49 peças de equipamento, forja, encantos,
   comida, bicho, horta, veios e minmapa.
 - Chat/Nostr/MQTT, presença e DMs.
-- 28 bocas pareadas, dois sentidos por caverna e camada `subsolo -1` no HUD.
+- 42 bocas pareadas, dois sentidos por caverna e camada `subsolo -1` no HUD.
 - Testes: `node test/*.test.mjs` e suíte de navegador (CDP).
 
 ## 2. Auditoria do que ficou incompleto

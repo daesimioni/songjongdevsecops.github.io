@@ -123,7 +123,7 @@ jogador escolhe com quem colabora, mas não precisa destruir ninguém.
 
 ## 7. Os NPCs como pessoas
 
-Os 22 NPCs fixos atuais (oito deles nas áreas temáticas) ganham arcos. Os
+Os 29 NPCs fixos atuais (quinze deles nas áreas temáticas) ganham arcos. Os
 principais:
 
 - **Dona Zefa** (Porto): guardiã da memória dos que partem; procura o irmão que
@@ -141,7 +141,10 @@ principais:
 
 Nas áreas temáticas: **Faraday** (eletromagnetismo), **Von Neumann** (pipeline e
 memória), **Cauchy** (limite e série), **Kekulé** (anel do benzeno), **Helmholtz**
-(ressonância), **Marr** (visão em camadas) e **Machado** (narrador não confiável).
+(ressonância), **Marr** (visão em camadas), **Machado** (narrador não confiável),
+**Barán** (redes), **Carnot** (entropia), **Liebig** (análise), **Schoenberg**
+(forma), **Laplace** (probabilidade), **Chomsky** (linguagem) e **Saussure**
+(sentido).
 Cada um dá uma missão curta e comenta o tema da caverna vizinha. Os outros NPCs
 fixos (Téo, Grace, Euclides, Galileu, Lavoisier, Bach, Shannon, Alzira) fazem
 companhia e dão dicas; os 14 instrutores treinam sem dano e sem loot.

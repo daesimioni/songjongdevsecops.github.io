@@ -9,12 +9,12 @@ como consertar os pontos de descida que hoje não têm subida para outro lugar.
 O que existe hoje (2026-10-20):
 
 - mapa 300x200 com o Porto no centro, seis continentes e o Vale da Língua, mais
-  sete áreas temáticas ligadas por ponte;
-- 14 cavernas, 28 bocas pareadas (duas por caverna), com entrada por qualquer
+  catorze áreas temáticas ligadas por ponte;
+- 21 cavernas, 42 bocas pareadas (duas por caverna), com entrada por qualquer
   uma e saída coerente pela escada da outra boca;
 - sete arquétipos de túnel (elbow, split, wide, cross, zigzag, narrow e a
   variação espelhada), com salas laterais, anel de corredores e cidade no fundo;
-- 14 cidades subterrâneas com mestra, forja, altar, mesa, horta e bicho;
+- 21 cidades subterrâneas com mestra, forja, altar, mesa, horta e bicho;
 - anel externo de pontes, ilhas decorativas e caminhos que ligam todas as
   pedras de viagem às suas estações;
 - o HUD do subsolo mostra a camada (`subsolo -1`) e o botão de saída não é o
@@ -37,20 +37,28 @@ O alvo:
 | área | continente | centro | retângulo |
 |---|---|---|---|
 | Área do Eletromagnetismo | Física | 152,104 | 134,94 36x20 |
+| Área da Termodinâmica | Física | 116,139 | 96,124 40x30 |
 | Área da Arquitetura de Computadores | Computação | 204,20 | 178,6 52x28 |
+| Área das Redes | Computação | 252,20 | 232,6 40x28 |
 | Área da Análise | Matemática | 226,76 | 202,62 46x27 |
+| Área da Probabilidade | Matemática | 272,90 | 252,76 40x28 |
 | Área da Química Orgânica | Química | 31,138 | 10,122 44x30 |
+| Área da Química Analítica | Química | 74,139 | 56,124 36x30 |
 | Área da Acústica | Música | 59,63 | 46,44 26x38 |
+| Área da Forma Musical | Música | 272,56 | 252,40 40x32 |
 | Área da Visão Computacional | IA | 168,12 | 159,2 18x21 |
+| Área da Linguagem | IA | 226,135 | 206,120 40x30 |
 | Área da Literatura | Língua | 30,170 | 10,156 42x32 |
+| Área da Semântica | Língua | 272,135 | 252,120 40x30 |
 
 Cada área tem duas estações, uma pedra de viagem, um NPC com missão, uma
-clareira de caçada, um instrutor e uma caverna própria. A ponte liga a área ao
+clareira de caçada, um instrutor e uma caverna própria. Agora são duas áreas por
+continente, catorze no total. A ponte liga a área ao
 continente ou à área vizinha; o teste de caminho cobre todas as bocas.
 
 Regra de interação da boca: a distância é medida pelo degrau de saída
 (`cave.exit`), não pelo centro do desenho. Assim um NPC que passeia na frente
-da caverna não rouba o F. O teste de navegador entra e sai pelas 28 bocas, uma
+da caverna não rouba o F. O teste de navegador entra e sai pelas 42 bocas, uma
 a uma, e confere que a volta cai no mesmo degrau.
 
 ## 2. A superfície

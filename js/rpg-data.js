@@ -41,6 +41,10 @@ export const ITEMS = {
   cadeia: { name: "Cadeia Curta", continent: "chem", desc: "Quatro carbonos em fila. O começo de quase tudo que é vivo." },
   solvente: { name: "Solvente Teimoso", continent: "chem", desc: "Dissolve o que ninguém queria dissolver, inclusive a paciência." },
   "pedra-kekule": { name: "Pedra de Kekulé", continent: "chem", relic: true, desc: "Uma pedra em forma de anel que parece ter duas versões ao mesmo tempo. Relíquia: +5 de vida máxima." },
+  amostra: { name: "Amostra Representativa", continent: "chem", desc: "Pequena, mas honesta: representa o todo sem puxar para um lado." },
+  titulante: { name: "Titulante Azul", continent: "chem", desc: "Cai gota a gota até a cor virar. O ponto final é uma decisão." },
+  espectro: { name: "Espectro de Bolso", continent: "chem", desc: "Uma faixa de cores que denuncia o que está na amostra." },
+  "pedra-liebig": { name: "Pedra de Liebig", continent: "chem", relic: true, desc: "Uma pedra de laboratório com marcas de mil medições. Relíquia: +5 de vida máxima." },
   diapasao: { name: "Diapasão de Bolso", continent: "music", desc: "Um Lá de 440 Hz que cabe na mão e no ouvido." },
   partitura: { name: "Partitura Viva", continent: "music", desc: "Papel que se mexe quando ninguém está lendo." },
   metronomo: { name: "Metrônomo Quebrado", continent: "music", desc: "Marca o tempo certo com uma pequena hesitação humana." },
@@ -49,6 +53,10 @@ export const ITEMS = {
   tubo: { name: "Tubo de Órgão", continent: "music", desc: "Um cano que ressoa numa nota só. Sopre e ele responde." },
   membrana: { name: "Membrana de Tambor", continent: "music", desc: "Pele esticada que guarda o golpe e devolve em onda." },
   "pedra-helmholtz": { name: "Pedra de Helmholtz", continent: "music", relic: true, desc: "Uma esfera oca que ressoa quando o som certo chega. Relíquia: +5 de vida máxima." },
+  motivo: { name: "Motivo Curto", continent: "music", desc: "Três notas que se recusam a sair da cabeça. O começo de uma forma." },
+  tema: { name: "Tema Inteiro", continent: "music", desc: "Um motivo que cresceu e ganhou personalidade própria." },
+  coda: { name: "Coda Final", continent: "music", desc: "O que vem depois do fim para confirmar que acabou." },
+  "pedra-hildegard": { name: "Pedra de Hildegard", continent: "music", relic: true, desc: "Uma pedra com uma melodia gravada em espiral. Relíquia: +5 de vida máxima." },
   peso: { name: "Peso Sináptico", continent: "ai", desc: "Um número pequeno que muda de valor toda vez que você aprende." },
   embedding: { name: "Vetor de Significado", continent: "ai", desc: "Uma seta que aponta para o lugar onde as palavras se parecem." },
   matriz: { name: "Matriz Esparsa", continent: "ai", desc: "Uma tabela cheia de zeros que aprendeu a guardar só o que importa." },
@@ -57,6 +65,10 @@ export const ITEMS = {
   borda: { name: "Borda Afiada", continent: "ai", desc: "Onde uma cor acaba e outra começa. É por aí que a máquina começa a enxergar." },
   kernel: { name: "Kernel de Bolso", continent: "ai", desc: "Uma matriz pequena que desliza pela imagem procurando padrão." },
   "pedra-marr": { name: "Pedra de Marr", continent: "ai", relic: true, desc: "Uma pedra com camadas de bordas gravadas. Relíquia: +5 de vida máxima." },
+  prompt: { name: "Prompt Curto", continent: "ai", desc: "Uma instrução que cabe numa linha e muda tudo o que vem depois." },
+  contexto: { name: "Contexto Longo", continent: "ai", desc: "Uma janela que guarda o começo da conversa até o fim." },
+  vocabulario: { name: "Vocabulário Vivo", continent: "ai", desc: "Lista de pedaços de palavra que cresce a cada texto lido." },
+  "pedra-chomsky": { name: "Pedra de Chomsky", continent: "ai", relic: true, desc: "Uma pedra com uma gramática gravada em camadas. Relíquia: +5 de vida máxima." },
   pergaminho: { name: "Pergaminho Velho", continent: "lingua", desc: "Folha que guardou uma frase por tempo demais. A tinta ainda pega no dedo." },
   tinta: { name: "Tinta Ferrogálica", continent: "lingua", desc: "Escurece com o tempo. Escreve, mancha e não sai fácil." },
   letra: { name: "Letra Solta", continent: "lingua", desc: "Uma letra que se desprendeu da palavra e ainda procura o lugar dela." },
@@ -65,19 +77,35 @@ export const ITEMS = {
   estrofe: { name: "Estrofe Inteira", continent: "lingua", desc: "Quatro versos que decidiram ficar juntos." },
   pagina: { name: "Página em Branco", continent: "lingua", desc: "O lugar onde a história ainda pode ser qualquer uma." },
   "pedra-machado": { name: "Pedra de Machado", continent: "lingua", relic: true, desc: "Uma pedra com um narrador gravado que jura estar contando a verdade. Relíquia: +5 de vida máxima." },
+  sentido: { name: "Sentido Duplo", continent: "lingua", desc: "Uma palavra que aponta para dois lados ao mesmo tempo." },
+  ironia: { name: "Ironia Fina", continent: "lingua", desc: "Diz o contrário do que quer dizer e espera que você perceba." },
+  implicatura: { name: "Implicatura", continent: "lingua", desc: "O que foi sugerido sem ser dito. Mora no intervalo entre as linhas." },
+  "pedra-saussure": { name: "Pedra de Saussure", continent: "lingua", relic: true, desc: "Uma pedra com significante de um lado e significado do outro. Relíquia: +5 de vida máxima." },
   cobre: { name: "Cobre Enrolado", continent: "physics", desc: "Fio brilhante que conduz corrente e paciência." },
   bobina: { name: "Bobina de Cobre", continent: "physics", desc: "Espiral de fio que transforma movimento em corrente." },
   fusivel: { name: "Fusível Queimado", continent: "physics", desc: "Morreu para salvar o resto. Merece um lugar na mochila." },
   capacitor: { name: "Capacitor de Vidro", continent: "physics", desc: "Guarda carga por um instante e devolve de uma vez." },
   "pedra-faraday": { name: "Pedra de Faraday", continent: "physics", relic: true, desc: "Uma gaiola de metal em miniatura que afasta o barulho elétrico. Relíquia: +5 de vida máxima." },
+  calor: { name: "Calor de Bolso", continent: "physics", desc: "Energia em trânsito, nunca parada. Esquenta a mão e a pergunta." },
+  ciclo: { name: "Ciclo Fechado", continent: "physics", desc: "Um caminho que volta ao começo, mas nunca de graça." },
+  entropia: { name: "Entropia Solta", continent: "physics", desc: "Uma medida de bagunça que só aumenta quando ninguém arruma." },
+  "pedra-carnot": { name: "Pedra de Carnot", continent: "physics", relic: true, desc: "Uma pedra que promete o melhor rendimento possível e não entrega mais que isso. Relíquia: +5 de vida máxima." },
   instrucao: { name: "Instrução Perdida", continent: "cs", desc: "Um pedaço de programa que se soltou no meio do ciclo." },
   registrador: { name: "Registrador Dourado", continent: "cs", desc: "Guarda um número inteiro e não deixa ninguém ler sem permissão." },
   barramento: { name: "Barramento Largo", continent: "cs", desc: "Fios paralelos por onde os dados viajam em fila." },
   "pedra-von-neumann": { name: "Pedra de Von Neumann", continent: "cs", relic: true, desc: "Um pequeno programa gravado em pedra. Relíquia: +5 de vida máxima." },
+  pacote: { name: "Pacote Perdido", continent: "cs", desc: "Um envelope de dados com endereço de origem e destino. Chegou atrasado, mas chegou." },
+  datagrama: { name: "Datagrama Solto", continent: "cs", desc: "Vai sem prometer ordem nem entrega. Às vezes é exatamente o que se precisa." },
+  handshake: { name: "Aperto de Mão", continent: "cs", desc: "Três mensagens para começar uma conversa. Nenhuma delas é pessoal." },
+  "pedra-baran": { name: "Pedra de Barán", continent: "cs", relic: true, desc: "Uma pedra dividida em pedaços que sempre acham o caminho. Relíquia: +5 de vida máxima." },
   limite: { name: "Limite de Bolso", continent: "math", desc: "Um valor que nunca chega, mas chega perto o bastante." },
   serie: { name: "Série Infinita", continent: "math", desc: "Uma soma que continua mesmo depois de você desistir." },
   epsilon: { name: "Épsilon de Vidro", continent: "math", desc: "Pequeno o suficiente para caber em qualquer tolerância." },
   "pedra-cauchy": { name: "Pedra de Cauchy", continent: "math", relic: true, desc: "Uma pedra que se aproxima da resposta sem nunca encostar. Relíquia: +5 de vida máxima." },
+  dado: { name: "Dado Viciado", continent: "math", desc: "Cai seis com frequência suspeita. A probabilidade não acredita em sorte." },
+  amostra: { name: "Amostra Aleatória", continent: "math", desc: "Pequena, mas sorteada sem preferência. Fala do todo com margem." },
+  outlier: { name: "Outlier Teimoso", continent: "math", desc: "Um ponto que se afasta da média e puxa a conversa para o lado dele." },
+  "pedra-laplace": { name: "Pedra de Laplace", continent: "math", relic: true, desc: "Uma pedra que calcula o futuro se souber tudo do presente. Relíquia: +5 de vida máxima." },
   // equipamento temático: cada continente deixa uma arma e uma peça de roupa
   "chave-longa": { name: "Chave de Fenda Longa", continent: "cs", slot: "weapon", weapon: "club", damage: 1, desc: "Um clube de oficina. Aperta parafuso e ideia teimosa." },
   "colete-malha": { name: "Colete de Malha", continent: "cs", slot: "armor", hp: 5, desc: "Anéis de cobre trançados. Pesa, mas segura o tranco." },
@@ -99,15 +127,27 @@ export const ITEMS = {
   "caneta-narrativa": { name: "Caneta Narrativa", continent: "lingua", slot: "weapon", weapon: "rod", damage: 2, desc: "Escreve o golpe antes de ele acontecer. A tinta decide o ponto de vista." },
   "casaco-personagem": { name: "Casaco de Personagem", continent: "lingua", slot: "armor", hp: 5, desc: "Tem bolsos para segredos e um forro que muda de acordo com quem veste." },
   "oculos-narrador": { name: "Óculos do Narrador", continent: "lingua", slot: "helmet", hp: 3, desc: "Enxergam a cena por dentro da cabeça de quem está contando." },
+  "anel-sentido": { name: "Anel de Sentido", continent: "lingua", slot: "ring", damage: 1, desc: "Encontra o segundo sentido do golpe antes de ele terminar." },
+  "manto-pragmatica": { name: "Manto de Pragmática", continent: "lingua", slot: "armor", hp: 4, desc: "Muda de significado conforme a situação. O impacto não sabe o que vestir." },
+  "oculos-ironia": { name: "Óculos de Ironia", continent: "lingua", slot: "helmet", hp: 3, desc: "Veem o contrário do que está escrito. O ataque perde a piada." },
   "anel-bobina": { name: "Anel de Bobina", continent: "physics", slot: "ring", damage: 1, desc: "Uma espira de cobre no dedo. Gira o golpe junto com o campo." },
   "escudo-capacitor": { name: "Escudo de Capacitor", continent: "physics", slot: "shield", hp: 4, desc: "Segura a carga do golpe e devolve depois, devagar." },
+  "anel-carnot": { name: "Anel de Carnot", continent: "physics", slot: "ring", damage: 1, desc: "Aproveita a diferença de temperatura do golpe e não desperdiça." },
+  "manto-termico": { name: "Manto Térmico", continent: "physics", slot: "armor", hp: 4, desc: "Isola o corpo para o calor não sair. O frio também não entra." },
+  "capuz-entropia": { name: "Capuz de Entropia", continent: "physics", slot: "helmet", hp: 3, desc: "Desorganiza a mira do inimigo. A bagunça trabalha a seu favor." },
   "manto-dieletrico": { name: "Manto Dielétrico", continent: "physics", slot: "armor", hp: 4, desc: "Tecido que não conduz. Bom para quem trabalha perto de corrente." },
   "anel-pipeline": { name: "Anel de Pipeline", continent: "cs", slot: "ring", damage: 1, desc: "Uma volta de fio que adianta a próxima etapa antes de a atual acabar." },
   "capuz-registrador": { name: "Capuz de Registrador", continent: "cs", slot: "helmet", hp: 3, desc: "Guarda a última ideia bem quentinha, pronta para o próximo ciclo." },
   "escudo-barramento": { name: "Escudo de Barramento", continent: "cs", slot: "shield", hp: 4, desc: "Largo e cheio de vias. Segura o impacto e distribui o resto." },
+  "anel-roteador": { name: "Anel Roteador", continent: "cs", slot: "ring", damage: 1, desc: "Encontra o próximo salto do golpe antes de ele sair." },
+  "manto-malha": { name: "Manto de Malha", continent: "cs", slot: "armor", hp: 4, desc: "Uma malha de nós que redireciona o impacto por vários caminhos." },
+  "capuz-latencia": { name: "Capuz de Latência", continent: "cs", slot: "helmet", hp: 3, desc: "Guarda a resposta até o momento certo. O susto chega atrasado." },
   "anel-serie": { name: "Anel de Série", continent: "math", slot: "ring", damage: 1, desc: "Uma soma infinita enrolada no dedo. Converge para um golpe." },
   "manto-limite": { name: "Manto de Limite", continent: "math", slot: "armor", hp: 4, desc: "Chega tão perto do corpo que quase é o corpo." },
   "escudo-delta": { name: "Escudo de Delta", continent: "math", slot: "shield", hp: 4, desc: "A tolerância que segura o golpe e ainda deixa passar o essencial." },
+  "anel-probavel": { name: "Anel Provável", continent: "math", slot: "ring", damage: 1, desc: "Aposta no golpe mais provável e acerta com frequência." },
+  "manto-amostra": { name: "Manto de Amostra", continent: "math", slot: "armor", hp: 4, desc: "Cobre uma parte do corpo e representa o todo." },
+  "oculos-estatistica": { name: "Óculos de Estatística", continent: "math", slot: "helmet", hp: 3, desc: "Veem a tendência no meio do ruído. Um ponto fora da curva não engana." },
   "anel-sinapse": { name: "Anel de Sinapse", continent: "hub", slot: "ring", damage: 1, desc: "Um anel que lembra o último caminho. Relíquia de chefe da Computação." },
   "colar-constante": { name: "Colar da Constante", continent: "hub", slot: "necklace", hp: 5, desc: "A conta que não muda quando o mundo muda. Relíquia de chefe de Música." },
   "pernas-reforcadas": { name: "Perneiras de Cálculo", continent: "math", slot: "legs", hp: 3, desc: "Joelheiras de couro com fórmulas gravadas. Ajudam a subir a escada." },
@@ -116,12 +156,21 @@ export const ITEMS = {
   "oculos-organicos": { name: "Óculos Orgânicos", continent: "chem", slot: "helmet", hp: 3, desc: "Lentes que enxergam a cadeia inteira, não só o carbono da ponta." },
   "jaleco-organico": { name: "Jaleco Orgânico", continent: "chem", slot: "armor", hp: 5, desc: "Tecido de fibra longa, feito de cadeias que aprenderam a não rasgar." },
   "colar-quiral": { name: "Colar Quiral", continent: "chem", slot: "necklace", hp: 5, desc: "Duas metades que só encaixam de um jeito. O golpe erra a mão." },
+  "anel-analitico": { name: "Anel Analítico", continent: "chem", slot: "ring", damage: 1, desc: "Mede a pureza do golpe antes de aplicar. Nada de reagente desperdiçado." },
+  "avental-analitico": { name: "Avental Analítico", continent: "chem", slot: "armor", hp: 4, desc: "Bolsos para tubos, pinças e amostras que não podem se misturar." },
+  "oculos-espectro": { name: "Óculos de Espectro", continent: "chem", slot: "helmet", hp: 3, desc: "Enxergam a cor exata do que está vindo. O veneno perde o disfarce." },
   "anel-harmonico": { name: "Anel Harmônico", continent: "music", slot: "ring", damage: 1, desc: "Quando o golpe encontra a frequência certa, o anel responde junto." },
   "manto-acustico": { name: "Manto Acústico", continent: "music", slot: "armor", hp: 4, desc: "Tecido que absorve o eco e deixa o corpo mais quieto." },
   "fones-eco": { name: "Fones do Eco", continent: "music", slot: "helmet", hp: 3, desc: "Auscultam o que vem antes de chegar. O susto perde a vantagem." },
+  "anel-forma": { name: "Anel de Forma", continent: "music", slot: "ring", damage: 1, desc: "Fecha o golpe numa cadência que o inimigo não esperava." },
+  "manto-contraponto": { name: "Manto de Contraponto", continent: "music", slot: "armor", hp: 4, desc: "Duas camadas de tecido que se movem em vozes independentes." },
+  "oculos-forma": { name: "Óculos de Forma", continent: "music", slot: "helmet", hp: 3, desc: "Enxergam o motivo escondido no meio da bagunça." },
   "lente-convolucao": { name: "Lente de Convolução", continent: "ai", slot: "helmet", hp: 3, desc: "Passeia pelo mundo procurando bordas. O detalhe aparece antes do susto." },
   "manto-pixels": { name: "Manto de Pixels", continent: "ai", slot: "armor", hp: 4, desc: "Coberto de quadradinhos que trocam de cor e confundem a mira." },
   "anel-detector": { name: "Anel Detector", continent: "ai", slot: "ring", damage: 1, desc: "Uma caixinha em volta do alvo. O golpe já sabe onde acertar." },
+  "anel-contexto": { name: "Anel de Contexto", continent: "ai", slot: "ring", damage: 1, desc: "Lembra do último golpe e ajusta o próximo. A conversa tem memória curta." },
+  "manto-tokens": { name: "Manto de Tokens", continent: "ai", slot: "armor", hp: 4, desc: "Costurado com pedaços de palavras. Cada rasgo vira uma nova frase." },
+  "capuz-prompt": { name: "Capuz de Prompt", continent: "ai", slot: "helmet", hp: 3, desc: "Uma instrução bordada na aba. Quem veste pede antes de apanhar." },
   "runa-faisca": { name: "Runa da Faísca", continent: "hub", use: "spark", desc: "Uma carga de magia: elimina uma alternativa errada na pergunta atual do duelo. Some ao usar." },
   "runa-trovao": { name: "Runa do Trovão", continent: "hub", use: "thunder", desc: "Dá 2 de dano no monstro da frente sem responder pergunta. Some ao usar." },
   "runa-fogo": { name: "Runa do Fogo", continent: "hub", use: "fire", desc: "Dá 1 de dano em todos os monstros da tela, inclusive a matilha. Some ao usar." },
@@ -408,6 +457,125 @@ const GROUNDS_RAW = [
       { id: "lingua-literature-m3", name: "Narrador", tier: 3, kind: "golem", dx: 0, dy: 3 },
     ],
     boss: { id: "lingua-literature-boss", name: "O Narrador Não Confiável", kind: "boss", dx: 0, dy: 0 },
+  },
+  {
+    id: "cs-net",
+    continent: "cs",
+    dungeon: "dungeon-cs-net",
+    name: "Caçada dos Pacotes",
+    center: { x: 256, y: 18 },
+    banner: { x: 0, y: -3 },
+    lever: { x: -3, y: 3 },
+    loot: ["pacote", "datagrama", "handshake"],
+    bossLoot: "pedra-baran",
+    monsters: [
+      { id: "cs-net-m1", name: "Pacote", tier: 1, kind: "slime", dx: -3, dy: 2 },
+      { id: "cs-net-m2", name: "Datagrama", tier: 2, kind: "eye", dx: 3, dy: 2 },
+      { id: "cs-net-m3", name: "Roteador", tier: 3, kind: "golem", dx: 0, dy: 4 },
+    ],
+    boss: { id: "cs-net-boss", name: "O Roteador Antigo", kind: "boss", dx: 0, dy: 0 },
+  },
+  {
+    id: "physics-thermo",
+    continent: "physics",
+    dungeon: "dungeon-physics-thermo",
+    name: "Caçada do Calor",
+    center: { x: 120, y: 142 },
+    banner: { x: 0, y: -3 },
+    lever: { x: -3, y: 3 },
+    loot: ["calor", "ciclo", "entropia"],
+    bossLoot: "pedra-carnot",
+    monsters: [
+      { id: "physics-thermo-m1", name: "Calor", tier: 1, kind: "wisp", dx: -3, dy: 2 },
+      { id: "physics-thermo-m2", name: "Ciclo", tier: 2, kind: "eye", dx: 3, dy: 2 },
+      { id: "physics-thermo-m3", name: "Entropia", tier: 3, kind: "golem", dx: 0, dy: 4 },
+    ],
+    boss: { id: "physics-thermo-boss", name: "O Motor Perfeito", kind: "boss", dx: 0, dy: 0 },
+  },
+  {
+    id: "chem-analytical",
+    continent: "chem",
+    dungeon: "dungeon-chem-analytical",
+    name: "Caçada dos Vestígios",
+    center: { x: 78, y: 142 },
+    banner: { x: 0, y: -3 },
+    lever: { x: -3, y: 3 },
+    loot: ["amostra", "titulante", "espectro"],
+    bossLoot: "pedra-liebig",
+    monsters: [
+      { id: "chem-analytical-m1", name: "Amostra", tier: 1, kind: "slime", dx: -3, dy: 2 },
+      { id: "chem-analytical-m2", name: "Titulante", tier: 2, kind: "eye", dx: 3, dy: 2 },
+      { id: "chem-analytical-m3", name: "Espectro", tier: 3, kind: "wisp", dx: 0, dy: 4 },
+    ],
+    boss: { id: "chem-analytical-boss", name: "O Reagente Puro", kind: "boss", dx: 0, dy: 0 },
+  },
+  {
+    id: "music-form",
+    continent: "music",
+    dungeon: "dungeon-music-form",
+    name: "Caçada da Forma",
+    center: { x: 276, y: 58 },
+    banner: { x: 0, y: -3 },
+    lever: { x: -3, y: 3 },
+    loot: ["motivo", "tema", "coda"],
+    bossLoot: "pedra-hildegard",
+    monsters: [
+      { id: "music-form-m1", name: "Motivo", tier: 1, kind: "slime", dx: -3, dy: 2 },
+      { id: "music-form-m2", name: "Tema", tier: 2, kind: "eye", dx: 3, dy: 2 },
+      { id: "music-form-m3", name: "Fuga", tier: 3, kind: "wisp", dx: 0, dy: 4 },
+    ],
+    boss: { id: "music-form-boss", name: "A Fuga Final", kind: "boss", dx: 0, dy: 0 },
+  },
+  {
+    id: "math-prob",
+    continent: "math",
+    dungeon: "dungeon-math-prob",
+    name: "Caçada do Acaso",
+    center: { x: 276, y: 88 },
+    banner: { x: 0, y: -3 },
+    lever: { x: -3, y: 3 },
+    loot: ["dado", "amostra", "outlier"],
+    bossLoot: "pedra-laplace",
+    monsters: [
+      { id: "math-prob-m1", name: "Dado", tier: 1, kind: "slime", dx: -3, dy: 1 },
+      { id: "math-prob-m2", name: "Amostra", tier: 2, kind: "eye", dx: 3, dy: 1 },
+      { id: "math-prob-m3", name: "Outlier", tier: 3, kind: "golem", dx: 0, dy: 3 },
+    ],
+    boss: { id: "math-prob-boss", name: "O Acaso", kind: "boss", dx: 0, dy: 0 },
+  },
+  {
+    id: "ai-language",
+    continent: "ai",
+    dungeon: "dungeon-ai-language",
+    name: "Caçada dos Tokens",
+    center: { x: 226, y: 142 },
+    banner: { x: 0, y: -3 },
+    lever: { x: -3, y: 3 },
+    loot: ["prompt", "contexto", "vocabulario"],
+    bossLoot: "pedra-chomsky",
+    monsters: [
+      { id: "ai-language-m1", name: "Token", tier: 1, kind: "slime", dx: -3, dy: 1 },
+      { id: "ai-language-m2", name: "Prompt", tier: 2, kind: "eye", dx: 3, dy: 1 },
+      { id: "ai-language-m3", name: "Alucinação", tier: 3, kind: "wisp", dx: 0, dy: 3 },
+    ],
+    boss: { id: "ai-language-boss", name: "O Papagaio Estatístico", kind: "boss", dx: 0, dy: 0 },
+  },
+  {
+    id: "lingua-semantics",
+    continent: "lingua",
+    dungeon: "dungeon-lingua-semantics",
+    name: "Caçada do Sentido",
+    center: { x: 276, y: 142 },
+    banner: { x: 0, y: -3 },
+    lever: { x: -3, y: 3 },
+    loot: ["sentido", "ironia", "implicatura"],
+    bossLoot: "pedra-saussure",
+    monsters: [
+      { id: "lingua-semantics-m1", name: "Sentido", tier: 1, kind: "slime", dx: -3, dy: 1 },
+      { id: "lingua-semantics-m2", name: "Ironia", tier: 2, kind: "eye", dx: 3, dy: 1 },
+      { id: "lingua-semantics-m3", name: "Ambiguidade", tier: 3, kind: "wisp", dx: 0, dy: 3 },
+    ],
+    boss: { id: "lingua-semantics-boss", name: "O Duplo Sentido", kind: "boss", dx: 0, dy: 0 },
   },
 ];
 
@@ -917,5 +1085,159 @@ export const EXTRA_QUESTIONS_4 = {
 };
 
 for (const [continent, tiers] of Object.entries(EXTRA_QUESTIONS_4)) {
+  for (const [tier, list] of Object.entries(tiers)) QUESTIONS[continent][tier].push(...list);
+}
+
+// Redes: mais duas perguntas por dificuldade para a área da Computação.
+export const EXTRA_QUESTIONS_5 = {
+  cs: {
+    1: [
+      { q: "Um pacote de rede leva...", options: ["endereço de origem e destino", "só o texto", "uma senha"], a: 0, why: "O cabeçalho do pacote diz de onde veio e para onde vai. O conteúdo é a carga útil." },
+      { q: "Um endereço IP identifica...", options: ["uma máquina na rede", "um arquivo no disco", "um tipo de cabo"], a: 0, why: "O IP é o endereço lógico usado para entregar pacotes. O nome do arquivo é outra camada." },
+    ],
+    2: [
+      { q: "TCP difere de UDP porque...", options: ["garante entrega e ordem", "é sempre mais rápido", "não usa porta"], a: 0, why: "TCP confirma, reordena e retransmite. UDP só envia; quem precisa de garantia implementa por cima." },
+      { q: "O DNS serve para...", options: ["traduzir nome em endereço IP", "criptografar o tráfego", "medir a latência"], a: 0, why: "O DNS é a lista telefônica da rede: nome legível vira IP. Criptografia é outra camada." },
+    ],
+    3: [
+      { q: "Comutação de pacotes ganha de circuito porque...", options: ["compartilha a rede sem reservar caminho", "garante banda fixa", "não precisa de endereço"], a: 0, why: "Vários fluxos usam o mesmo enlace, cada pacote escolhe o caminho. É mais eficiente para dados em rajada." },
+      { q: "Congestionamento acontece quando...", options: ["a demanda passa da capacidade do enlace", "o cabo é novo", "o pacote é pequeno"], a: 0, why: "Filas crescem, pacotes atrasam e são descartados. TCP recua para aliviar; UDP não." },
+    ],
+  },
+};
+
+for (const [continent, tiers] of Object.entries(EXTRA_QUESTIONS_5)) {
+  for (const [tier, list] of Object.entries(tiers)) QUESTIONS[continent][tier].push(...list);
+}
+
+// Termodinâmica: duas perguntas por dificuldade.
+export const EXTRA_QUESTIONS_6 = {
+  physics: {
+    1: [
+      { q: "Calor é...", options: ["energia em trânsito por diferença de temperatura", "a temperatura de um corpo", "uma substância que esquenta"], a: 0, why: "Calor é energia que passa de um corpo a outro por diferença de temperatura. Não é o que o corpo contém." },
+      { q: "A temperatura mede...", options: ["a agitação média das partículas", "o calor total do corpo", "a pressão do gás"], a: 0, why: "Temperatura é uma medida da energia cinética média das partículas. Calor total depende também da massa." },
+    ],
+    2: [
+      { q: "A primeira lei da termodinâmica diz que...", options: ["a energia se conserva, contando calor e trabalho", "a entropia sempre aumenta", "o calor nunca passa"], a: 0, why: "A variação de energia interna é o calor recebido menos o trabalho realizado. É conservação de energia." },
+      { q: "A segunda lei da termodinâmica diz que...", options: ["a entropia total de um sistema isolado não diminui", "a energia pode sumir", "o calor vai do frio ao quente sozinho"], a: 0, why: "Processos espontâneos aumentam a entropia total. O calor só vai do frio ao quente com trabalho externo." },
+    ],
+    3: [
+      { q: "O rendimento de Carnot depende de...", options: ["das temperaturas das fontes quente e fria", "da massa do gás", "da cor do material"], a: 0, why: "O limite é 1 - Tf/Tq, em kelvin. Nenhuma máquina entre essas temperaturas supera esse valor." },
+      { q: "Entropia pode ser vista como...", options: ["o número de arranjos compatíveis com o macroestado", "a energia total do sistema", "a temperatura absoluta"], a: 0, why: "Quanto mais arranjos microscópicos produzem o mesmo estado macroscópico, maior a entropia. Boltzmann ligou as duas escalas." },
+    ],
+  },
+};
+
+for (const [continent, tiers] of Object.entries(EXTRA_QUESTIONS_6)) {
+  for (const [tier, list] of Object.entries(tiers)) QUESTIONS[continent][tier].push(...list);
+}
+
+// Química analítica: duas perguntas por dificuldade.
+export const EXTRA_QUESTIONS_7 = {
+  chem: {
+    1: [
+      { q: "Uma amostra representativa...", options: ["reflete o todo sem puxar para um lado", "é sempre a maior possível", "é a mais colorida"], a: 0, why: "A amostra precisa conter a mesma proporção do que se quer medir. Tamanho não conserta coleta tendenciosa." },
+      { q: "Um indicador ácido-base muda de cor...", options: ["perto do ponto de virada do pH", "quando esquenta", "sempre em pH 7"], a: 0, why: "Cada indicador tem uma faixa de virada. Escolher o indicador errado dá o ponto final no lugar errado." },
+    ],
+    2: [
+      { q: "Na titulação, o ponto de equivalência é...", options: ["quando o titulante neutraliza o analito", "o começo da reação", "quando a solução ferve"], a: 0, why: "É a proporção estequiométrica entre titulante e analito. O indicador só sinaliza perto dele." },
+      { q: "A cromatografia separa por...", options: ["diferença de afinidade entre as fases", "peso atômico", "cor apenas"], a: 0, why: "Cada componente interage de um jeito com a fase estacionária e a móvel, e por isso anda em velocidades diferentes." },
+    ],
+    3: [
+      { q: "A espectrometria identifica substâncias por...", options: ["padrão de absorção ou emissão de luz", "cheiro", "densidade apenas"], a: 0, why: "Cada espécie absorve ou emite comprimentos de onda característicos. O espectro é uma impressão digital." },
+      { q: "Um erro sistemático...", options: ["desloca todas as medidas no mesmo sentido", "varia ao acaso", "não afeta a média"], a: 0, why: "Ele é enviesado: balança descalibrada, reagente impuro. Repetir não resolve; calibrar sim." },
+    ],
+  },
+};
+
+for (const [continent, tiers] of Object.entries(EXTRA_QUESTIONS_7)) {
+  for (const [tier, list] of Object.entries(tiers)) QUESTIONS[continent][tier].push(...list);
+}
+
+// Forma musical: duas perguntas por dificuldade.
+export const EXTRA_QUESTIONS_8 = {
+  music: {
+    1: [
+      { q: "Um motivo musical é...", options: ["uma ideia curta e reconhecível", "a música inteira", "o silêncio entre notas"], a: 0, why: "O motivo é a menor célula com identidade. Ele pode ser repetido, invertido e combinado para construir a forma." },
+      { q: "A forma binária organiza a música em...", options: ["duas partes, A e B", "um refrão só", "doze compassos iguais"], a: 0, why: "AB é a forma binária: uma seção apresenta, a outra contrasta. Não é o mesmo que verso e refrão." },
+    ],
+    2: [
+      { q: "A forma sonata costuma apresentar...", options: ["exposição, desenvolvimento e reexposição", "só improviso", "apenas um acorde"], a: 0, why: "Os temas aparecem, são transformados no desenvolvimento e voltam na reexposição, em geral na tônica." },
+      { q: "No contraponto, as vozes...", options: ["têm contorno próprio e soam juntas", "fazem sempre a mesma nota", "não se relacionam"], a: 0, why: "Cada linha melódica tem independência, mas o conjunto precisa soar coerente. É diferente de melodia com acompanhamento." },
+    ],
+    3: [
+      { q: "Na fuga, o sujeito...", options: ["entra em vozes sucessivas", "é um acorde final", "não se repete"], a: 0, why: "O sujeito aparece numa voz e depois nas outras, sobreposto. A fuga é contraponto em forma de composição." },
+      { q: "Uma variação musical mantém...", options: ["a identidade do tema, mudando a superfície", "sempre a mesma instrumentação", "o mesmo andamento obrigatório"], a: 0, why: "Variação reconhece o tema apesar das mudanças de ritmo, harmonia ou timbre. A identidade está na estrutura." },
+    ],
+  },
+};
+
+for (const [continent, tiers] of Object.entries(EXTRA_QUESTIONS_8)) {
+  for (const [tier, list] of Object.entries(tiers)) QUESTIONS[continent][tier].push(...list);
+}
+
+// Probabilidade: duas perguntas por dificuldade.
+export const EXTRA_QUESTIONS_9 = {
+  math: {
+    1: [
+      { q: "A probabilidade de um evento varia entre...", options: ["0 e 1", "0 e 100", "-1 e 1"], a: 0, why: "Probabilidade é uma proporção entre 0 e 1. Em porcentagem, vai de 0% a 100%, mas o valor matemático é 0 a 1." },
+      { q: "Jogar uma moeda justa duas vezes, a probabilidade de duas caras é...", options: ["1/4", "1/2", "1"], a: 0, why: "Os lançamentos são independentes: 1/2 vezes 1/2 dá 1/4. O resultado anterior não muda o próximo." },
+    ],
+    2: [
+      { q: "A probabilidade condicional P(A|B) mede...", options: ["a chance de A sabendo que B ocorreu", "a chance de B sem saber de A", "a soma de A e B"], a: 0, why: "O espaço amostral encolhe para B. P(A|B) = P(A e B)/P(B), quando P(B) não é zero." },
+      { q: "A lei dos grandes números diz que...", options: ["a média amostral se aproxima da esperada com muitas repetições", "todo jogo tem sorte garantida", "a variância sempre diminui"], a: 0, why: "Com n grande, a média das amostras tende à média da distribuição. Não garante resultado em uma rodada." },
+    ],
+    3: [
+      { q: "A variância mede...", options: ["o espalhamento em torno da média", "o valor mais frequente", "a soma dos dados"], a: 0, why: "Variância é a média dos quadrados dos desvios. Duas séries com a mesma média podem ter variâncias bem diferentes." },
+      { q: "O teorema de Bayes permite...", options: ["atualizar a probabilidade com informação nova", "prever o futuro sem dados", "provar que todo evento é independente"], a: 0, why: "Bayes combina a crença anterior com a verossimilhança do dado observado para produzir a posterior." },
+    ],
+  },
+};
+
+for (const [continent, tiers] of Object.entries(EXTRA_QUESTIONS_9)) {
+  for (const [tier, list] of Object.entries(tiers)) QUESTIONS[continent][tier].push(...list);
+}
+
+// Linguagem de máquina: duas perguntas por dificuldade.
+export const EXTRA_QUESTIONS_10 = {
+  ai: {
+    1: [
+      { q: "Um token, para um modelo de linguagem, é...", options: ["um pedaço de texto", "uma GPU", "uma senha"], a: 0, why: "O texto é cortado em tokens, que podem ser palavras ou pedaços de palavra. Cada token vira um número." },
+      { q: "Um modelo de linguagem aprende principalmente a...", options: ["prever o próximo token", "traduzir sem dados", "desenhar imagens"], a: 0, why: "O treino é prever o que vem depois, dado o contexto. Dessa tarefa simples emergem outras capacidades." },
+    ],
+    2: [
+      { q: "A janela de contexto define...", options: ["quanto texto o modelo consegue considerar de uma vez", "o número de camadas", "a velocidade da GPU"], a: 0, why: "Tudo o que está fora da janela não entra no cálculo. Por isso conversas longas precisam resumir ou recuperar trechos." },
+      { q: "A temperatura na geração controla...", options: ["o grau de aleatoriedade na escolha do próximo token", "a velocidade do treino", "o tamanho do vocabulário"], a: 0, why: "Temperatura baixa escolhe quase sempre o mais provável; alta distribui a escolha e aumenta a variedade." },
+    ],
+    3: [
+      { q: "Perplexidade mede...", options: ["o quanto o modelo se surpreende com o texto", "a quantidade de parâmetros", "a memória usada"], a: 0, why: "Quanto menor a perplexidade, melhor o modelo prevê aquele texto. É uma medida de surpresa média." },
+      { q: "Uma alucinação de modelo de linguagem é...", options: ["uma resposta fluente sem base nos fatos", "um erro de digitação", "uma falha de energia"], a: 0, why: "O modelo gera o que é provável no texto, não o que é verdadeiro. Fluência e verdade são coisas diferentes." },
+    ],
+  },
+};
+
+for (const [continent, tiers] of Object.entries(EXTRA_QUESTIONS_10)) {
+  for (const [tier, list] of Object.entries(tiers)) QUESTIONS[continent][tier].push(...list);
+}
+
+// Semântica e pragmática: duas perguntas por dificuldade.
+export const EXTRA_QUESTIONS_11 = {
+  lingua: {
+    1: [
+      { q: "A semântica estuda...", options: ["o significado das palavras e frases", "a pronúncia", "a pontuação apenas"], a: 0, why: "Semântica é o estudo do significado literal. Pragmática é o uso do significado na situação." },
+      { q: "Duas palavras sinônimas...", options: ["têm sentido parecido em muitos contextos", "têm sempre o mesmo som", "nunca mudam de sentido"], a: 0, why: "Sinônimos se aproximam, mas raramente são intercambiáveis em todo contexto. Registrar e ironia mudam a escolha." },
+    ],
+    2: [
+      { q: "Referência e sentido são diferentes porque...", options: ["duas expressões podem apontar para o mesmo objeto com sentidos distintos", "sentido é o som da palavra", "referência é a classe gramatical"], a: 0, why: "Estrela da manhã e estrela da tarde apontam para Vênus, mas apresentam modos diferentes de chegar lá." },
+      { q: "Uma implicatura conversacional é...", options: ["um sentido sugerido sem ser dito literalmente", "uma mentira", "um erro de concordância"], a: 0, why: "O falante sugere algo e o ouvinte infere pelo contexto. Cancelar a implicatura é possível; cancelar a verdade literal não." },
+    ],
+    3: [
+      { q: "Uma pressuposição é...", options: ["uma informação tomada como dada pela frase", "uma pergunta indireta", "um sinônimo perfeito"], a: 0, why: "“Você parou de fumar?” pressupõe que a pessoa fumava. A negação mantém a pressuposição." },
+      { q: "Um ato de fala é...", options: ["a ação realizada ao dizer algo, como prometer ou pedir", "a pronúncia correta", "o número de sílabas"], a: 0, why: "Falar é agir: pedir, prometer, batizar, advertir. A pragmática estuda essas ações e suas condições." },
+    ],
+  },
+};
+
+for (const [continent, tiers] of Object.entries(EXTRA_QUESTIONS_11)) {
   for (const [tier, list] of Object.entries(tiers)) QUESTIONS[continent][tier].push(...list);
 }

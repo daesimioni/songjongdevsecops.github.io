@@ -7,7 +7,7 @@ hoje?".
 ## 0. O que já existe (2026-10-20)
 
 - 8 espaços equipáveis (arma, elmo, armadura, pernas, botas, escudo, anel,
-  colar), 49 peças com bônus passivo e 6 runas consumíveis.
+  colar), 70 peças com bônus passivo e 6 runas consumíveis.
 - Cada continente tem arma, armadura e uma peça de acessório ou escudo; as
   áreas temáticas acrescentaram mais três peças cada.
 - Acesso: baú de caverna, chefe, forja (materiais) e loja da mestra na cidade

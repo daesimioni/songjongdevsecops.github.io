@@ -12,8 +12,8 @@ export const POSTS = {
     lab: null,
     body: `
       <p>Este blog não tem índice. Tem <strong>mapa</strong>. Você entra com um boneco, atravessa pontes e escolhe por qual continente começar. Cada estação que encontra é uma página: um texto curto e um instrumento para mexer com as mãos.</p>
-      <p>Nas beiradas do mapa, cada continente ganhou uma <strong>área temática</strong> com ilha, estações, clareira de caçada e caverna próprias: eletromagnetismo, arquitetura de computadores, análise, química orgânica, acústica, visão computacional e literatura. São sete lugares a mais para atravessar a pé.</p>
-      <p>São sete continentes. A <em>Computação</em> mostra como saímos de interruptores e areia até processadores. <em>Matemática</em> visita o infinito, as formas, a mudança e o acaso. <em>Física</em> testa pêndulos, ondas, calor, luz e órbitas. <em>Química</em> abre a tabela periódica, as ligações, as reações e o equilíbrio. <em>Música</em> mostra a matemática escondida no som. <em>Inteligência Artificial</em> abre os dados, as redes, a linguagem e os limites. O <em>Vale da Língua</em> desce ao português do Brasil: o som, a palavra, a frase e o texto. Ao todo, 51 fragmentos para descobrir.</p>
+      <p>Nas beiradas do mapa, cada continente ganhou uma <strong>área temática</strong> com ilha, estações, clareira de caçada e caverna próprias: eletromagnetismo, arquitetura de computadores, análise, química orgânica, acústica, visão computacional e literatura. São catorze lugares a mais para atravessar a pé.</p>
+      <p>São sete continentes. A <em>Computação</em> mostra como saímos de interruptores e areia até processadores. <em>Matemática</em> visita o infinito, as formas, a mudança e o acaso. <em>Física</em> testa pêndulos, ondas, calor, luz e órbitas. <em>Química</em> abre a tabela periódica, as ligações, as reações e o equilíbrio. <em>Música</em> mostra a matemática escondida no som. <em>Inteligência Artificial</em> abre os dados, as redes, a linguagem e os limites. O <em>Vale da Língua</em> desce ao português do Brasil: o som, a palavra, a frase e o texto. Ao todo, 65 fragmentos para descobrir.</p>
       <p>Cada estação abre uma página e soma experiência. O <strong>Diário</strong> guarda o que você já encontrou. As <strong>Pedras do Porto</strong>, os monólitos brilhantes nas docas, levam você de volta a qualquer continente já visitado. A névoa do minimapa só some onde você anda.</p>
       <blockquote>Não tem pressa. O mapa é grande, mas o caminho é seu.</blockquote>
       <p>Os <strong>NPCs</strong> têm missões. Aperte F perto deles: tem caminhada, pergunta e conversa. Cada missão paga experiência e um título, e o Diário mostra quanto falta para a próxima.</p>
@@ -785,6 +785,244 @@ export const POSTS = {
       <blockquote>O corte do verso é uma pausa que o poeta escolhe. O leitor obedece com o corpo.</blockquote>
     `,
   },
+
+  // ---------------- Computação · redes ----------------
+  networks: {
+    kicker: "computação · sala dos pacotes",
+    title: "Nenhuma mensagem viaja inteira",
+    date: "2026-10-08",
+    read: "5 min",
+    tags: ["redes", "pacotes", "camadas"],
+    continent: "cs",
+    lab: null,
+    body: `
+      <p>Quando você envia uma foto, ela não sai como um bloco único. O arquivo é cortado em pedaços, cada pedaço ganha um cabeçalho com origem, destino e ordem, e cada um segue por conta própria. Esses pedaços são os pacotes.</p>
+      <p>A rede é organizada em camadas. O cabo e o rádio cuidam dos bits; o IP cuida do endereço e do caminho entre redes; o TCP ou UDP cuida da conversa entre programas; o HTTP, o DNS e o resto cuidam do significado. Cada camada só conversa com a de cima e a de baixo, e é isso que permite trocar o Wi-Fi sem reescrever o navegador.</p>
+      <p>O roteador olha o endereço de destino e escolhe o próximo salto. Não sabe o caminho inteiro; sabe para quem entregar agora. Repetindo esse passo, o pacote atravessa o mundo. Se um enlace cai, a rota muda e a conversa continua.</p>
+      <p>A beleza do desenho é a resiliência: não existe um fio único que, cortado, derruba tudo. A bagunça também é a fraqueza: pacotes atrasam, somem, chegam fora de ordem, e alguém precisa lidar com isso.</p>
+      <blockquote>A rede não leva a mensagem. Leva pedaços que, juntos, viram mensagem.</blockquote>
+    `,
+  },
+  protocols: {
+    kicker: "computação · torre dos protocolos",
+    title: "O acordo que faz dois estranhos conversarem",
+    date: "2026-10-10",
+    read: "5 min",
+    tags: ["redes", "tcp", "dns"],
+    continent: "cs",
+    lab: null,
+    body: `
+      <p>Protocolo é combinação prévia. Duas máquinas que nunca se viram conseguem conversar porque ambas seguem o mesmo formato: quem fala primeiro, como se identifica, o que significa cada resposta, como encerrar. Sem acordo, cada uma falaria a própria língua.</p>
+      <p>TCP e UDP resolvem o transporte de jeitos opostos. TCP abre conexão, numera, confirma, retransmite e ordena. UDP só entrega o datagrama e segue. Para uma planilha, TCP; para uma chamada de vídeo, UDP costuma bastar, porque atraso vale menos que espera.</p>
+      <p>O DNS é o primeiro acordo de quase toda conversa: transformar um nome legível em endereço. A consulta sobe por servidores até alguém que saiba a resposta, e o resultado fica em cache por um tempo. Cache errado explica muita página que "não existe".</p>
+      <p>Depois vêm as camadas de aplicação, cada uma com seu ritual. O aperto de mão, a chave, o pedido, a resposta e o encerramento. Quando algo falha, a pergunta útil é sempre a mesma: em qual camada essa conversa quebrou?</p>
+      <blockquote>Dois computadores não precisam se conhecer. Precisam concordar sobre o que cada som significa.</blockquote>
+    `,
+  },
+
+  // ---------------- Física · termodinâmica ----------------
+  heat: {
+    kicker: "física · forja do calor",
+    title: "Calor não é a mesma coisa que temperatura",
+    date: "2026-09-06",
+    read: "5 min",
+    tags: ["termodinâmica", "calor", "temperatura"],
+    continent: "physics",
+    lab: null,
+    body: `
+      <p>Uma panela com água ferve a 100 °C. Uma colher de água na mesma temperatura tem a mesma temperatura e muito menos calor. Temperatura é intensidade média do movimento das partículas; calor é energia em trânsito por diferença de temperatura. Confundir os dois é o erro mais comum da cozinha e da física.</p>
+      <p>Quando o calor chega, ele pode elevar a temperatura, mudar o estado ou os dois. O gelo derretendo fica a 0 °C enquanto absorve energia. Essa energia rompe ligações, não acelera moléculas. É o calor latente.</p>
+      <p>O calor se propaga por condução, convecção e radiação. A condução precisa de contato; a convecção move o fluido; a radiação viaja até sem meio. O Sol aquece a Terra por radiação, não por condução através do vácuo.</p>
+      <p>Máquinas térmicas transformam parte desse trânsito em trabalho. Sempre sobra calor rejeitado para a fonte fria. A pergunta de Carnot foi qual é o máximo possível, e a resposta depende só das duas temperaturas.</p>
+      <blockquote>Temperatura diz o quão quente. Calor diz quanta energia atravessou.</blockquote>
+    `,
+  },
+  entropy: {
+    kicker: "física · poço da entropia",
+    title: "A seta do tempo que ninguém desenhou",
+    date: "2026-09-02",
+    read: "6 min",
+    tags: ["termodinâmica", "entropia", "tempo"],
+    continent: "physics",
+    lab: null,
+    body: `
+      <p>As leis do movimento funcionam igual para frente e para trás. Um vídeo de duas bolas de bilhar colidindo não denuncia a direção do tempo. Então por que o mundo parece ter uma seta? Porque há estados prováveis e estados improváveis, e o número de arranjos importa.</p>
+      <p>Entropia conta quantos arranjos microscópicos produzem o mesmo estado macroscópico. Espalhar moléculas de tinta pela água tem muito mais arranjos do que mantê-las juntas. O espalhamento não é uma força: é estatística.</p>
+      <p>A segunda lei diz que a entropia total de um sistema isolado não diminui. Um ovo pode quebrar e não se remontar sozinho, não porque a física proíba, mas porque o estado remontado é um entre tantos que seria preciso esperar mais que a idade do universo.</p>
+      <p>Máquinas térmicas vivem dessa diferença. Carnot mostrou que nem a máquina perfeita converte todo o calor em trabalho: sempre há uma fonte fria para onde rejeitar parte. O rendimento depende das temperaturas, não do capricho do engenheiro.</p>
+      <blockquote>A seta do tempo é a estatística apontando para o lado provável.</blockquote>
+    `,
+  },
+
+  // ---------------- Química · analítica ----------------
+  analysis: {
+    kicker: "química · bancada analítica",
+    title: "Medir é decidir o que conta como amostra",
+    date: "2026-08-30",
+    read: "5 min",
+    tags: ["química", "analítica", "titulação"],
+    continent: "chem",
+    lab: null,
+    body: `
+      <p>Antes de medir, é preciso decidir o que medir. Uma amostra representativa tem a mesma composição do todo. Se o rio tem dois braços e você coleta só num deles, o resultado é preciso e errado ao mesmo tempo.</p>
+      <p>A titulação é uma conversa controlada. Uma solução de concentração conhecida cai gota a gota sobre a amostra até reagir por completo. Sabendo o volume gasto e a estequiometria, calcula-se quanto havia. O indicador muda de cor perto do ponto de virada e avisa que a conta fechou.</p>
+      <p>Todo método tem erro. O aleatório varia para os dois lados e some na média. O sistemático desloca tudo no mesmo sentido e não some com repetição: balança descalibrada, reagente vencido, vidraria suja. Reconhecer o tipo de erro é metade do diagnóstico.</p>
+      <p>No fim, análise química é uma afirmação com incerteza. "Há 12 mg/L" sem margem é uma frase incompleta. O trabalho é dizer quanto, com que confiança e por qual método.</p>
+      <blockquote>Medir não é achar a verdade. É reduzir a dúvida com um número e uma margem.</blockquote>
+    `,
+  },
+  spectrum: {
+    kicker: "química · sala do espectro",
+    title: "A luz conta o que a amostra esconde",
+    date: "2026-08-26",
+    read: "5 min",
+    tags: ["química", "espectro", "instrumentos"],
+    continent: "chem",
+    lab: null,
+    body: `
+      <p>Cada substância absorve e emite luz em comprimentos de onda próprios. O espectro é uma impressão digital: picos em posições certas denunciam quais ligações e elementos estão ali. Não é preciso dissolver a amostra para saber do que ela é feita.</p>
+      <p>Na absorção, a luz atravessa a amostra e o que falta no espectro foi absorvido. Na emissão, a amostra é excitada e devolve luz em frequências características. Chama, arco elétrico e plasma são formas de excitar.</p>
+      <p>A cromatografia faz o trabalho complementar: separa a mistura para que cada componente chegue sozinho ao detector. A fase móvel carrega, a estacionária segura, e cada substância anda conforme sua afinidade. Papel, coluna e gás são variações da mesma ideia.</p>
+      <p>Juntando separação e detecção, dá para dizer não só o que tem, mas quanto. O limite é o ruído: abaixo de certa quantidade, o sinal some no barulho do instrumento.</p>
+      <blockquote>A amostra fala em luz. O espectrômetro só aprendeu a ouvir.</blockquote>
+    `,
+  },
+
+  // ---------------- Música · forma ----------------
+  form: {
+    kicker: "música · sala da forma",
+    title: "A mesma ideia, três vezes diferente",
+    date: "2026-08-22",
+    read: "5 min",
+    tags: ["música", "forma", "sonata"],
+    continent: "music",
+    lab: null,
+    body: `
+      <p>Uma música precisa de memória e surpresa ao mesmo tempo. O motivo é a menor ideia reconhecível: três ou quatro notas com um contorno. A frase junta motivos e respira; a forma junta frases e cria expectativa.</p>
+      <p>Repetir sem mudar cansa; mudar sem repetir desorienta. A forma nasce desse equilíbrio. Binária é AB, duas seções que se contrastam. Ternária é ABA, com retorno. Rondó faz o tema voltar entre episódios. Cada uma é uma promessa feita ao ouvido.</p>
+      <p>A forma sonata é o grande teatro do classicismo: exposição apresenta os temas, desenvolvimento os transforma e reexposição os resolve. O retorno não é cópia, porque o caminho até ele mudou o sentido de cada tema.</p>
+      <p>Forma não é gaveta. É a expectativa do ouvinte sendo construída e atendida, ou frustrada de propósito. Quando a coda chega, o corpo já sabe que acabou antes de a última nota soar.</p>
+      <blockquote>Forma é memória mais surpresa, dosadas na proporção certa.</blockquote>
+    `,
+  },
+  counterpoint: {
+    kicker: "música · galeria do contraponto",
+    title: "Duas melodias conversando ao mesmo tempo",
+    date: "2026-08-18",
+    read: "5 min",
+    tags: ["música", "contraponto", "fuga"],
+    continent: "music",
+    lab: null,
+    body: `
+      <p>Melodia com acompanhamento tem uma voz principal e um fundo. Contraponto é outra coisa: duas ou mais linhas com contorno próprio, soando juntas sem que uma seja apenas sombra da outra. O ouvinte consegue seguir qualquer uma delas.</p>
+      <p>Isso exige cuidado com os intervalos. Alguns soam estáveis, outros pedem resolução. O contraponto de espécies ensina a combinar uma nota contra outra, depois duas contra uma, até o movimento livre. É exercício de atenção dividida.</p>
+      <p>O cânone é a forma mais direta: a mesma melodia entra em vozes defasadas. A fuga leva isso ao limite, com sujeito, resposta, episódios e stretti. Não é matemática por acaso: é uma arquitetura de entradas previsíveis e variações imprevisíveis.</p>
+      <p>Na música popular, o contraponto aparece em segunda voz, em arranjo de metais e em coros. Não é relíquia de conservatório: é o que faz duas linhas se completarem sem uma apagar a outra.</p>
+      <blockquote>Contraponto é a arte de fazer duas vozes dizerem coisas diferentes e ainda assim conversarem.</blockquote>
+    `,
+  },
+
+  // ---------------- Matemática · probabilidade ----------------
+  chance: {
+    kicker: "matemática · sala do acaso",
+    title: "O acaso tem regras, só não tem memória",
+    date: "2026-08-14",
+    read: "6 min",
+    tags: ["probabilidade", "acaso", "esperança"],
+    continent: "math",
+    lab: null,
+    body: `
+      <p>Probabilidade é uma medida entre 0 e 1. Zero é o impossível, um é o certo, e o meio é a incerteza. Jogar uma moeda justa dá 1/2 para cada lado, não porque a moeda "lembra" o resultado anterior, mas porque os resultados são independentes.</p>
+      <p>Independência é uma afirmação forte: saber que deu cara não muda a chance da próxima. Quando dois eventos são independentes, a probabilidade dos dois é o produto. Quando não são, é preciso a condicional, que encolhe o espaço amostral para o evento conhecido.</p>
+      <p>O valor esperado é a média de longo prazo. Um dado justo tem esperança 3,5, mesmo sem face 3,5. Em um jogo, multiplicar prêmio pela probabilidade e subtrair o custo mostra se a aposta vale a pena.</p>
+      <p>A falácia do apostador nasce de confundir independência com compensação. Depois de dez caras, a moeda justa não "deve" coroa. O que muda é a média de muitas jogadas, não a próxima.</p>
+      <blockquote>O acaso não compensa. Ele apenas se distribui.</blockquote>
+    `,
+  },
+  statistics: {
+    kicker: "matemática · torre das estatísticas",
+    title: "A amostra fala, mas com sotaque",
+    date: "2026-08-10",
+    read: "6 min",
+    tags: ["estatística", "amostra", "variância"],
+    continent: "math",
+    lab: null,
+    body: `
+      <p>Não dá para medir todo mundo. A estatística trabalha com amostras e precisa dizer o quanto a amostra pode estar errada. Amostra aleatória é a que dá a cada elemento a mesma chance de entrar; amostra de conveniência é a que está ao alcance e costuma mentir.</p>
+      <p>Média, mediana e moda resumem de jeitos diferentes. Um outlier puxa a média e quase não mexe na mediana. Por isso salário e preço de casa costumam ser apresentados pela mediana.</p>
+      <p>Variância e desvio padrão medem espalhamento. Duas turmas com a mesma média podem ter desempenhos completamente diferentes. Sem a medida de dispersão, a média esconde a história.</p>
+      <p>Um intervalo de confiança não diz que há 95% de chance de o parâmetro estar ali. Diz que, repetindo o experimento muitas vezes, 95% dos intervalos construídos assim conteriam o valor. A diferença parece pequena e muda a interpretação.</p>
+      <blockquote>Um número sem margem é uma opinião com casas decimais.</blockquote>
+    `,
+  },
+
+  // ---------------- IA · linguagem ----------------
+  tokens: {
+    kicker: "ia · sala dos tokens",
+    title: "A máquina lê pedaços, não palavras",
+    date: "2026-08-06",
+    read: "5 min",
+    tags: ["ia", "tokens", "linguagem"],
+    continent: "ai",
+    lab: null,
+    body: `
+      <p>Antes de prever texto, o modelo precisa transformar texto em números. O corte é feito em tokens: palavras inteiras, pedaços de palavra, pontuação. "Inacreditável" pode virar "in", "acredit", "ável". O vocabulário é uma lista fixa, e cada token tem um número.</p>
+      <p>A tarefa de treino é simples de enunciar: dado o contexto, prever o próximo token. Repetida bilhões de vezes em texto suficiente, essa tarefa força o modelo a representar gramática, estilo, fatos e relações. Ninguém programou a regra do plural; ela emerge da estatística.</p>
+      <p>Na geração, o modelo produz uma distribuição de probabilidade sobre o vocabulário. A escolha do próximo token pode ser a mais provável ou uma amostra. Temperatura, top-k e top-p controlam o quanto a saída se arrisca.</p>
+      <p>Token não é letra nem sílaba. É a unidade que o tokenizador escolheu. Por isso o mesmo texto pode gastar mais tokens em um idioma do que em outro, e por isso "contar letras" é uma tarefa estranha para o modelo.</p>
+      <blockquote>O modelo não vê letras. Vê pedaços que aprendeu a associar.</blockquote>
+    `,
+  },
+  context: {
+    kicker: "ia · torre do contexto",
+    title: "Tudo o que a máquina lembra cabe numa janela",
+    date: "2026-08-02",
+    read: "5 min",
+    tags: ["ia", "contexto", "atenção"],
+    continent: "ai",
+    lab: null,
+    body: `
+      <p>Um modelo de linguagem não tem memória permanente da conversa. A cada resposta, ele recebe um texto de entrada com o histórico recente e produz a continuação. A janela de contexto é o limite do que cabe nessa entrada.</p>
+      <p>A atenção permite que cada token pese os outros tokens da janela. É assim que o modelo liga um pronome ao nome certo ou percebe que a pergunta mudou de assunto. Fora da janela, nada disso existe: o modelo simplesmente não vê.</p>
+      <p>Conversas longas exigem estratégias: resumir o que passou, recuperar trechos relevantes de uma base e reinjetar no contexto. Isso não é memória de verdade; é curadoria do que entra na janela.</p>
+      <p>Quando o texto gerado soa confiante e está errado, é alucinação. O modelo foi treinado para produzir continuação plausível, não para consultar a verdade. Fluência não é garantia de fato.</p>
+      <blockquote>O contexto é a memória de trabalho da máquina. Fora dele, é como se a conversa nunca tivesse acontecido.</blockquote>
+    `,
+  },
+
+  // ---------------- Língua · semântica ----------------
+  meaning: {
+    kicker: "língua · sala do sentido",
+    title: "A palavra não carrega o mundo inteiro",
+    date: "2026-07-30",
+    read: "5 min",
+    tags: ["semântica", "significado", "referência"],
+    continent: "lingua",
+    lab: null,
+    body: `
+      <p>Uma palavra tem significante e significado: o som ou a forma, e o conceito que ela evoca. O significante "cachorro" não é o animal; é o som que a língua associa a ele. A relação é convencional, não natural.</p>
+      <p>Sentido e referência não são a mesma coisa. "Estrela da manhã" e "estrela da tarde" apontam para o mesmo planeta, Vênus, mas apresentam modos diferentes de chegar lá. Quem não sabe disso pode achar que são dois objetos.</p>
+      <p>Sinônimos se aproximam sem se colar. "Casa" e "lar" têm extensão parecida e sentidos afetivos diferentes. "Matar" e "abater" descrevem ações próximas com enquadramentos distintos. A escolha nunca é neutra.</p>
+      <p>Ambiguidade pode ser lexical, quando a palavra tem mais de um sentido, ou estrutural, quando a sintaxe permite mais de uma leitura. "Vi a moça com o binóculo" não diz quem tinha o binóculo. O contexto resolve ou a frase fica brincando.</p>
+      <blockquote>O significado não está só na palavra. Está na relação entre palavra, mundo e uso.</blockquote>
+    `,
+  },
+  pragmatics: {
+    kicker: "língua · torre da pragmática",
+    title: "O que a frase faz além de dizer",
+    date: "2026-07-26",
+    read: "5 min",
+    tags: ["pragmática", "intenção", "contexto"],
+    continent: "lingua",
+    lab: null,
+    body: `
+      <p>Dizer "está calor aqui" pode ser uma constatação ou um pedido para abrir a janela. A semântica dá o conteúdo literal; a pragmática explica o que o falante quis fazer com ele. O contexto não é enfeite: é parte do significado.</p>
+      <p>Grice mostrou que a conversa segue expectativas de cooperação. Quando alguém responde "é longe" a um convite, o ouvinte infere uma recusa sem que ela tenha sido dita. Essa inferência é a implicatura. Ela pode ser cancelada: "é longe, mas eu vou".</p>
+      <p>A pressuposição é diferente. "Você parou de fumar?" toma como dado que a pessoa fumava. Negar a pergunta não desfaz o pressuposto. Já a implicatura depende do contexto e pode desaparecer.</p>
+      <p>Falar também é agir. Prometer, pedir, batizar, advertir e declarar são atos de fala com condições próprias. "Eu vos declaro casados" só funciona se quem fala tem o papel e a situação permite. Fora disso, é frase sem efeito.</p>
+      <blockquote>Entender uma frase é entender o que ela diz e o que ela faz.</blockquote>
+    `,
+  },
 };
 
 export const NPCS = {
@@ -792,7 +1030,7 @@ export const NPCS = {
     name: "Dona Zefa",
     lines: [
       "Bem-vindo ao Porto. Sete continentes, mais terra do que os olhos acreditam.",
-      "Cada continente tem uma área temática nas beiradas, com ponte, estação e caverna. Vale a caminhada.",
+      "Cada continente tem duas áreas temáticas nas beiradas, com ponte, estação e caverna. Vale a caminhada.",
       "Cada farol da doca acende uma Pedra do Porto. Aperte F nas pedras para voltar rápido.",
       "O diário guarda o que você já viu. Não precisa decorar nada.",
       "Ao lado de cada acampamento de caça tem uma boca de caverna. Lá embaixo o bicho não espera você apertar F: ele vê primeiro.",
@@ -1063,6 +1301,132 @@ export const NPCS = {
       "Treino de literatura aqui, no claro e sem rima forçada. A biblioteca é que cobra.",
       "Comece pelo narrador: quem conta, de onde conta e o que sabe. Metade das perguntas sai daí.",
       "Verso livre não é verso sem regra. É verso que escolhe as regras a cada linha.",
+    ],
+  },
+  baran: {
+    name: "Barán",
+    lines: [
+      "Nenhuma mensagem precisa de um caminho reservado. Corte em pacotes e deixe a rede decidir.",
+      "O roteador só conhece o próximo salto. O caminho inteiro emerge da soma de decisões locais.",
+      "Se um enlace cai, o pacote desvia. Foi para isso que a rede nasceu descentralizada.",
+      "TCP confirma tudo; UDP confia. Escolher entre os dois é escolher que tipo de erro você aceita.",
+      "A malha ao lado ainda tenta entregar um pacote perdido. Lá dentro, a pergunta é sobre caminho.",
+    ],
+  },
+  "trainer-cs-net": {
+    name: "Mestre Postel",
+    lines: [
+      "Treino de redes aqui, no claro e sem cabo solto. A malha é que cobra.",
+      "Comece pelas camadas: saber onde o problema mora resolve metade da pergunta.",
+      "Seja conservador no que envia e liberal no que aceita. O resto é diagnóstico.",
+    ],
+  },
+  carnot: {
+    name: "Carnot",
+    lines: [
+      "Nenhuma máquina entre duas temperaturas supera o limite que calculei. Não é falta de talento: é a segunda lei.",
+      "Calor não é temperatura. A panela e a colher podem estar a 100 °C com quantidades de energia muito diferentes.",
+      "O ciclo ideal tem quatro etapas e nenhuma perda por atrito. No mundo real, o atrito cobra o dele.",
+      "A entropia não é desordem poética: é contagem de arranjos. O estado provável vence por maioria esmagadora.",
+      "A fornalha ao lado tenta fechar o ciclo sem rejeitar calor. Lá dentro, a pergunta é sobre o que sobra.",
+    ],
+  },
+  "trainer-physics-thermo": {
+    name: "Mestra Clausius",
+    lines: [
+      "Treino de termodinâmica aqui, no claro e com temperatura amena. A fornalha é que cobra.",
+      "Comece pela primeira lei: energia interna é calor menos trabalho. O sinal errado derruba a conta.",
+      "Entropia e rendimento são as perguntas que mais aparecem. Guarde o limite de Carnot.",
+    ],
+  },
+  liebig: {
+    name: "Liebig",
+    lines: [
+      "Uma análise começa antes do frasco: escolha uma amostra que represente o todo.",
+      "O indicador não decide o fim da reação. Ele só avisa quando você chegou perto do ponto.",
+      "Erro sistemático não some repetindo a medida. Calibre o instrumento e refaça a coleta.",
+      "O espectro ao lado separa a mistura e mostra o que cada parte absorve. Nada de adivinhar.",
+      "A pureza é uma afirmação com margem. Sem incerteza, o número mente.",
+    ],
+  },
+  "trainer-chem-analytical": {
+    name: "Mestre Bunsen",
+    lines: [
+      "Treino de analítica aqui, no claro e sem reagente vencido. O laboratório é que cobra.",
+      "Comece pela titulação: volume, concentração e estequiometria resolvem a maioria.",
+      "Se a medida não bate, pergunte primeiro se a amostra representava o todo.",
+    ],
+  },
+  schoenberg: {
+    name: "Schoenberg",
+    lines: [
+      "Forma é expectativa. Repita o motivo até o ouvido pedir a volta, e então mude.",
+      "A sonata não é uma gaveta: é uma promessa de retorno que o desenvolvimento adia.",
+      "Contraponto não é empilhar notas. É fazer cada voz ter razão de existir sozinha.",
+      "A fuga ao lado entra em vozes sucessivas. Lá dentro, siga o sujeito e não se perca.",
+      "Não confunda variação com repetição. A identidade do tema sobrevive à mudança.",
+    ],
+  },
+  "trainer-music-form": {
+    name: "Mestra Hildegard",
+    lines: [
+      "Treino de forma aqui, no claro e sem partitura rasgada. O palácio é que cobra.",
+      "Comece pelo motivo: se você reconhece a célula, a forma inteira fica mais fácil.",
+      "Contraponto é a pergunta que mais aparece. Guarde: vozes independentes, não acompanhamento.",
+    ],
+  },
+  laplace: {
+    name: "Laplace",
+    lines: [
+      "Probabilidade é a razão entre casos favoráveis e casos possíveis, quando todos são igualmente prováveis.",
+      "Independência não tem memória. Dez caras seguidas não tornam coroa mais provável na próxima.",
+      "Valor esperado é média de longo prazo. Uma rodada pode contrariar; mil rodadas dificilmente.",
+      "A amostra precisa ser aleatória. Se você só olha para quem está perto, o resultado é preciso e enviesado.",
+      "O cassino ao lado cobra a aposta. Lá dentro, a pergunta é sobre esperança e variância.",
+    ],
+  },
+  "trainer-math-prob": {
+    name: "Mestre Bayes",
+    lines: [
+      "Treino de probabilidade aqui, no claro e sem aposta. O cassino é que cobra.",
+      "Comece pela condicional: P(A|B) não é P(B|A). A ordem importa.",
+      "Se a pergunta fala em atualizar crença com dado novo, é Bayes. Guarde a fórmula.",
+    ],
+  },
+  chomsky: {
+    name: "Chomsky",
+    lines: [
+      "A máquina aprende distribuições de pedaços de texto. Isso não é o mesmo que conhecer a língua.",
+      "Um token não é uma palavra. O corte é uma decisão do tokenizador, com consequências.",
+      "A janela de contexto é curta. O que fica fora dela não influencia a resposta, por mais importante que seja.",
+      "Fluência e verdade são eixos diferentes. Um texto pode ser perfeito e falso.",
+      "A floresta ao lado prevê o próximo token. Lá dentro, a pergunta é sobre contexto e alucinação.",
+    ],
+  },
+  "trainer-ai-language": {
+    name: "Mestre Viterbi",
+    lines: [
+      "Treino de linguagem aqui, no claro e sem alucinação. A floresta é que cobra.",
+      "Comece pela janela de contexto: se a informação não cabe, o modelo não a usa.",
+      "Temperatura não conserta fato. Ela só muda o quanto a escolha se arrisca.",
+    ],
+  },
+  saussure: {
+    name: "Saussure",
+    lines: [
+      "O signo tem dois lados: significante e significado. O som não é a coisa, e a coisa não está na palavra.",
+      "Sentido e referência não se confundem. Dois caminhos podem levar ao mesmo objeto com descrições diferentes.",
+      "Sinônimo perfeito quase não existe. A escolha da palavra muda o enquadramento.",
+      "A ambiguidade pode estar na palavra ou na estrutura. Ler devagar é o primeiro remédio.",
+      "A câmara ao lado brinca com duplo sentido. Lá dentro, pergunte o que a frase faz, não só o que ela diz.",
+    ],
+  },
+  "trainer-lingua-semantics": {
+    name: "Mestre Austin",
+    lines: [
+      "Treino de semântica aqui, no claro e sem ironia. A câmara é que cobra.",
+      "Comece pela diferença entre sentido literal e intenção. Metade das perguntas vive aí.",
+      "Se a frase promete, pede ou declara, é ato de fala. O contexto decide se funciona.",
     ],
   },
   shannon: {

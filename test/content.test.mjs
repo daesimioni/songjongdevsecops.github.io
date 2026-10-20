@@ -24,7 +24,7 @@ const check = (cond, message) => { if (!cond) faults.push(message); };
 const continents = CONTINENT_ORDER.filter((c) => c !== "hub");
 
 // 43 estações com texto: cinco por continente, duas no porto e as áreas temáticas
-check(SITES.length === 51, `SITES tem ${SITES.length} estações, esperado 51`);
+check(SITES.length === 65, `SITES tem ${SITES.length} estações, esperado 65`);
 check(new Set(SITES.map((s) => s.id)).size === SITES.length, "id de estação repetido");
 check(SITES.filter((s) => s.continent === "hub").length === 2, "o porto precisa de 2 estações");
 for (const site of SITES) {
@@ -155,7 +155,7 @@ relicRpg.addItem("orbita", 1);
 check(relicRpg.pvpQuestions("cs")[4].damage === 7, "duas relíquias somam o teto de 2 de dano no PvP");
 
 // cavernas: seis, com entrada, cidade, monstros e chefe
-check(DUNGEONS.length === 14, `DUNGEONS tem ${DUNGEONS.length} cavernas, esperado 14`);
+check(DUNGEONS.length === 21, `DUNGEONS tem ${DUNGEONS.length} cavernas, esperado 21`);
 for (const dungeon of DUNGEONS) {
   check(continents.includes(dungeon.continent), `caverna ${dungeon.id} em continente inválido`);
   check(dungeon.monsters?.length >= 4, `caverna ${dungeon.id} com poucos monstros`);
@@ -174,9 +174,9 @@ const world = createWorld();
 for (const area of AREAS) {
   check(world.areaAt(area.land.cx, area.land.cy)?.id === area.id, `área ${area.id} não é reconhecida no mapa`);
 }
-check(world.hunters.length === 14, `mundo com ${world.hunters.length} clareiras`);
+check(world.hunters.length === 21, `mundo com ${world.hunters.length} clareiras`);
 check(world.monsters.length === 0, "a superfície ainda tem monstros");
-check(world.caves.length === 28, `mundo com ${world.caves.length} bocas de caverna, esperado 28`);
+check(world.caves.length === 42, `mundo com ${world.caves.length} bocas de caverna, esperado 42`);
 for (const cave of world.caves) {
   const pair = world.caves.find((c) => c.id === cave.pairId);
   check(!!pair, `boca ${cave.id} sem par`);
@@ -185,7 +185,7 @@ for (const cave of world.caves) {
     check(pair.mouth !== cave.mouth, `boca ${cave.id} pareada com a mesma boca`);
   }
 }
-check(world.npcs.filter((n) => n.trainer).length === 14, "faltam instrutores na superfície");
+check(world.npcs.filter((n) => n.trainer).length === 21, "faltam instrutores na superfície");
 for (const c of continents) {
   check(!!world.caves.find((cave) => cave.continent === c), `continente ${c} sem boca de caverna`);
   check(!!DUNGEONS.find((d) => d.continent === c), `continente ${c} sem caverna definida`);

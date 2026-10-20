@@ -179,6 +179,13 @@ export function createWorld() {
   bridgeLine(59, 33, 59, 46, 3, BRIDGE); // música e acústica
   bridgeLine(154, 18, 162, 18, 3, BRIDGE); // nordeste e visão
   bridgeLine(31, 148, 31, 160, 3, BRIDGE); // orgânica e literatura
+  bridgeLine(229, 20, 236, 20, 3, BRIDGE); // arquitetura e redes
+  bridgeLine(106, 113, 106, 126, 3, BRIDGE); // física e termodinâmica
+  bridgeLine(47, 138, 58, 138, 3, BRIDGE); // orgânica e analítica
+  bridgeLine(256, 31, 256, 50, 3, BRIDGE); // redes e forma
+  bridgeLine(247, 80, 260, 80, 3, BRIDGE); // análise e probabilidade
+  bridgeLine(226, 88, 226, 126, 3, BRIDGE); // análise e linguagem
+  bridgeLine(244, 135, 254, 135, 3, BRIDGE); // linguagem e semântica
   // encontros de ponte com terra
   rect(88, 30, 5, 4, CONTINENTS.cs.path);
   rect(88, 88, 5, 4, CONTINENTS.physics.path);
@@ -206,6 +213,20 @@ export function createWorld() {
   rect(161, 17, 4, 4, CONTINENTS.ai.path);
   rect(30, 147, 4, 4, CONTINENTS.chem.path);
   rect(30, 159, 4, 4, CONTINENTS.lingua.floor);
+  rect(227, 19, 4, 4, CONTINENTS.cs.path);
+  rect(234, 19, 4, 4, CONTINENTS.cs.path);
+  rect(105, 112, 4, 4, CONTINENTS.physics.path);
+  rect(105, 125, 4, 4, CONTINENTS.physics.path);
+  rect(46, 137, 4, 4, CONTINENTS.chem.path);
+  rect(57, 137, 4, 4, CONTINENTS.chem.path);
+  rect(255, 30, 4, 4, CONTINENTS.cs.path);
+  rect(255, 49, 4, 4, CONTINENTS.music.path);
+  rect(246, 79, 4, 4, CONTINENTS.math.path);
+  rect(259, 79, 4, 4, CONTINENTS.math.path);
+  rect(225, 87, 4, 4, CONTINENTS.math.path);
+  rect(225, 125, 4, 4, CONTINENTS.ai.path);
+  rect(243, 134, 4, 4, CONTINENTS.ai.path);
+  rect(253, 134, 4, 4, CONTINENTS.lingua.floor);
   rect(76, 47, 4, 4, CONTINENTS.hub.floor);
   rect(101, 47, 4, 4, CONTINENTS.hub.floor);
 

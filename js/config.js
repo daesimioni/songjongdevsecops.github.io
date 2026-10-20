@@ -256,6 +256,90 @@ export const AREAS = [
     path: 1,
     accent: "#e8c07a",
   },
+  {
+    id: "cs-net",
+    continent: "cs",
+    name: "Área das Redes",
+    sub: "pacotes, camadas e o caminho até o outro lado",
+    land: { cx: 252, cy: 20, rx: 18, ry: 12 },
+    rect: { x: 232, y: 6, w: 40, h: 28 },
+    base: 10,
+    floor: 11,
+    path: 11,
+    accent: "#61f4c0",
+  },
+  {
+    id: "physics-thermo",
+    continent: "physics",
+    name: "Área da Termodinâmica",
+    sub: "calor, entropia e o que não volta",
+    land: { cx: 116, cy: 139, rx: 18, ry: 11 },
+    rect: { x: 96, y: 124, w: 40, h: 30 },
+    base: 14,
+    floor: 15,
+    path: 15,
+    accent: "#ff7aa8",
+  },
+  {
+    id: "chem-analytical",
+    continent: "chem",
+    name: "Área da Química Analítica",
+    sub: "separar, medir e saber o que tem dentro",
+    land: { cx: 74, cy: 139, rx: 16, ry: 11 },
+    rect: { x: 56, y: 124, w: 36, h: 30 },
+    base: 16,
+    floor: 17,
+    path: 17,
+    accent: "#7ee787",
+  },
+  {
+    id: "music-form",
+    continent: "music",
+    name: "Área da Forma Musical",
+    sub: "frases que voltam, variam e surpreendem",
+    land: { cx: 272, cy: 56, rx: 18, ry: 12 },
+    rect: { x: 252, y: 40, w: 40, h: 32 },
+    base: 20,
+    floor: 21,
+    path: 21,
+    accent: "#ffb26b",
+  },
+  {
+    id: "math-prob",
+    continent: "math",
+    name: "Área da Probabilidade",
+    sub: "acaso, esperança e o que se repete",
+    land: { cx: 272, cy: 90, rx: 18, ry: 11 },
+    rect: { x: 252, y: 76, w: 40, h: 28 },
+    base: 12,
+    floor: 13,
+    path: 13,
+    accent: "#b48cff",
+  },
+  {
+    id: "ai-language",
+    continent: "ai",
+    name: "Área da Linguagem",
+    sub: "tokens, contexto e o que a máquina aprende a dizer",
+    land: { cx: 226, cy: 135, rx: 18, ry: 11 },
+    rect: { x: 206, y: 120, w: 40, h: 30 },
+    base: 22,
+    floor: 23,
+    path: 23,
+    accent: "#6bd5ff",
+  },
+  {
+    id: "lingua-semantics",
+    continent: "lingua",
+    name: "Área da Semântica",
+    sub: "sentido, ambiguidade e o que a frase quer dizer",
+    land: { cx: 272, cy: 135, rx: 18, ry: 11 },
+    rect: { x: 252, y: 120, w: 40, h: 30 },
+    base: 0,
+    floor: 12,
+    path: 1,
+    accent: "#e8c07a",
+  },
 ];
 
 export const SITES = [
@@ -543,6 +627,90 @@ export const SITES = [
     label: "Poesia e Métrica", x: 39, y: 175, post: "poetry",
     accent: "#ffd166", icon: "text",
   },
+
+  // Computação · área das redes
+  {
+    id: "networks", continent: "cs", name: "Sala dos Pacotes",
+    label: "Pacotes e Camadas", x: 244, y: 14, post: "networks",
+    accent: "#61f4c0", icon: "network",
+  },
+  {
+    id: "protocols", continent: "cs", name: "Torre dos Protocolos",
+    label: "TCP, UDP e DNS", x: 260, y: 26, post: "protocols",
+    accent: "#6bd5ff", icon: "cpu",
+  },
+
+  // Física · área da termodinâmica
+  {
+    id: "heat", continent: "physics", name: "Forja do Calor",
+    label: "Calor e Temperatura", x: 106, y: 132, post: "heat",
+    accent: "#ff7aa8", icon: "heat",
+  },
+  {
+    id: "entropy", continent: "physics", name: "Poço da Entropia",
+    label: "Entropia e Ciclos", x: 126, y: 146, post: "entropy",
+    accent: "#ffb26b", icon: "fire",
+  },
+
+  // Química · área analítica
+  {
+    id: "analysis", continent: "chem", name: "Bancada Analítica",
+    label: "Amostra e Titulação", x: 66, y: 132, post: "analysis",
+    accent: "#7ee787", icon: "flask",
+  },
+  {
+    id: "spectrum", continent: "chem", name: "Sala do Espectro",
+    label: "Luz e Identidade", x: 84, y: 146, post: "spectrum",
+    accent: "#6bd5ff", icon: "prism",
+  },
+
+  // Música · área da forma
+  {
+    id: "form", continent: "music", name: "Sala da Forma",
+    label: "Motivo e Sonata", x: 262, y: 50, post: "form",
+    accent: "#ffb26b", icon: "note",
+  },
+  {
+    id: "counterpoint", continent: "music", name: "Galeria do Contraponto",
+    label: "Vozes Simultâneas", x: 280, y: 62, post: "counterpoint",
+    accent: "#ffd166", icon: "piano",
+  },
+
+  // Matemática · área da probabilidade
+  {
+    id: "chance", continent: "math", name: "Sala do Acaso",
+    label: "Probabilidade e Esperança", x: 262, y: 84, post: "chance",
+    accent: "#b48cff", icon: "dice",
+  },
+  {
+    id: "statistics", continent: "math", name: "Torre das Estatísticas",
+    label: "Média, Variância e Amostra", x: 280, y: 96, post: "statistics",
+    accent: "#6bd5ff", icon: "chart",
+  },
+
+  // IA · área da linguagem
+  {
+    id: "tokens", continent: "ai", name: "Sala dos Tokens",
+    label: "Token e Predição", x: 216, y: 128, post: "tokens",
+    accent: "#6bd5ff", icon: "text",
+  },
+  {
+    id: "context", continent: "ai", name: "Torre do Contexto",
+    label: "Janela e Memória", x: 236, y: 140, post: "context",
+    accent: "#8fe3ff", icon: "book",
+  },
+
+  // Língua · área da semântica
+  {
+    id: "meaning", continent: "lingua", name: "Sala do Sentido",
+    label: "Referência e Sentido", x: 262, y: 128, post: "meaning",
+    accent: "#e8c07a", icon: "book",
+  },
+  {
+    id: "pragmatics", continent: "lingua", name: "Torre da Pragmática",
+    label: "Intenção e Contexto", x: 280, y: 140, post: "pragmatics",
+    accent: "#ffd166", icon: "text",
+  },
 ];
 
 export const WAYSTONES = [
@@ -561,6 +729,13 @@ export const WAYSTONES = [
   { id: "music-acoustics", continent: "music", name: "Farol da Acústica", x: 59, y: 63, accent: "#ffb26b" },
   { id: "ai-vision", continent: "ai", name: "Farol da Visão", x: 168, y: 12, accent: "#6bd5ff" },
   { id: "lingua-literature", continent: "lingua", name: "Farol da Literatura", x: 30, y: 170, accent: "#e8c07a" },
+  { id: "cs-net", continent: "cs", name: "Farol das Redes", x: 252, y: 20, accent: "#61f4c0" },
+  { id: "physics-thermo", continent: "physics", name: "Farol da Termodinâmica", x: 116, y: 139, accent: "#ff7aa8" },
+  { id: "chem-analytical", continent: "chem", name: "Farol da Analítica", x: 74, y: 139, accent: "#7ee787" },
+  { id: "music-form", continent: "music", name: "Farol da Forma", x: 272, y: 56, accent: "#ffb26b" },
+  { id: "math-prob", continent: "math", name: "Farol da Probabilidade", x: 272, y: 90, accent: "#b48cff" },
+  { id: "ai-language", continent: "ai", name: "Farol da Linguagem", x: 226, y: 135, accent: "#6bd5ff" },
+  { id: "lingua-semantics", continent: "lingua", name: "Farol da Semântica", x: 272, y: 135, accent: "#e8c07a" },
 ];
 
 export const NPC_SPAWNS = [
@@ -586,6 +761,13 @@ export const NPC_SPAWNS = [
   { id: "helmholtz", continent: "music", x: 55, y: 59, accent: "#ffb26b" },
   { id: "marr", continent: "ai", x: 164, y: 15, accent: "#6bd5ff" },
   { id: "machado", continent: "lingua", x: 27, y: 174, accent: "#e8c07a" },
+  { id: "baran", continent: "cs", x: 248, y: 23, accent: "#61f4c0" },
+  { id: "carnot", continent: "physics", x: 111, y: 143, accent: "#ff7aa8" },
+  { id: "liebig", continent: "chem", x: 69, y: 143, accent: "#7ee787" },
+  { id: "schoenberg", continent: "music", x: 267, y: 60, accent: "#ffb26b" },
+  { id: "laplace", continent: "math", x: 267, y: 94, accent: "#b48cff" },
+  { id: "chomsky", continent: "ai", x: 221, y: 139, accent: "#6bd5ff" },
+  { id: "saussure", continent: "lingua", x: 267, y: 139, accent: "#e8c07a" },
 ];
 
 export const CAT_SPAWN = { x: 87, y: 61 };
