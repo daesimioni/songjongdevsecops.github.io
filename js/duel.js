@@ -5,6 +5,7 @@ import { drawCreature } from "./creature.js";
 
 const $ = (id) => document.getElementById(id);
 let lastPick = null;
+let sparked = null;
 
 function el(tag, cls, text) {
   const node = document.createElement(tag);
@@ -61,6 +62,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
       return false;
     }
     lastPick = null;
+    sparked = null;
     render();
     startSprite();
     return true;
@@ -70,6 +72,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
     stopSprite();
     rpg.flee();
     lastPick = null;
+    sparked = null;
   }
 
   function openTraining(continent, tier, theme, monster) {
@@ -79,6 +82,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
       return false;
     }
     lastPick = null;
+    sparked = null;
     render();
     startSprite();
     return true;
@@ -140,7 +144,10 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
       b.type = "button";
       b.appendChild(el("kbd", "", String(i + 1)));
       b.appendChild(el("span", "", text));
-      if (d.phase === "feedback") {
+      if (sparked === i) {
+        b.disabled = true;
+        b.classList.add("sparked");
+      } else if (d.phase === "feedback") {
         b.disabled = true;
         if (i === q.answer) b.classList.add("right");
         else if (i === lastPick) b.classList.add("wrong");
@@ -166,6 +173,12 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
       next.addEventListener("click", advance);
       body.appendChild(next);
     } else {
+      if (sparked === null && rpg.itemCount("runa-faisca") > 0) {
+        const rune = el("button", "duel-rune", "faísca · elimina uma alternativa errada");
+        rune.type = "button";
+        rune.addEventListener("click", spark);
+        body.appendChild(rune);
+      }
       const foot = el("p", "duel-hint", "Toque numa alternativa (ou 1, 2 e 3 no teclado). Errar tira vida; acertar tira vida do monstro.");
       body.appendChild(foot);
     }
@@ -196,8 +209,22 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
     body.appendChild(b);
   }
 
+  function spark() {
+    if (!rpg.duel || rpg.duel.phase !== "question" || sparked !== null) return false;
+    const res = rpg.useItem("runa-faisca");
+    if (!res.ok) { toast(res.reason, 2800); return false; }
+    const q = rpg.duel.question;
+    const wrong = q.options.map((_, i) => i).filter((i) => i !== q.answer);
+    if (!wrong.length) return false;
+    sparked = wrong[Math.floor(Math.random() * wrong.length)];
+    audio.blip();
+    render();
+    return true;
+  }
+
   function answer(index) {
     if (!rpg.duel || rpg.duel.phase !== "question") return;
+    if (sparked === index) return;
     lastPick = index;
     const res = rpg.answer(index);
     if (res.correct) audio.blip();
@@ -218,9 +245,10 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
       onClose?.();
       return;
     }
+    sparked = null;
     const res = rpg.next();
     if (res?.phase === "question") render();
   }
 
-  return { open, openTraining, close, answer, advance, render, drawSprite };
+  return { open, openTraining, close, answer, advance, render, drawSprite, spark };
 }

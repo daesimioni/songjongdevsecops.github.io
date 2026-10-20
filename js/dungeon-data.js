@@ -73,7 +73,7 @@ const COMMON = {
     sub: "corredores que não terminam na primeira volta",
     material: "veio",
     tunnel: "split",
-    equipment: ["espada-prova", "manto-giz"],
+    equipment: ["espada-prova", "manto-giz", "pernas-reforcadas"],
     shift: { b: [2, 1], d: [-2, -2], h: [-1, 2] },
     boss: "O Infinito Profundo",
     rooms: [
@@ -96,7 +96,7 @@ const COMMON = {
     sub: "o calor, a luz e a queda moram aqui embaixo",
     material: "ferro",
     tunnel: "wide",
-    equipment: ["cajado-luz", "lentes-prisma"],
+    equipment: ["cajado-luz", "lentes-prisma", "botas-marcha"],
     shift: { a: [2, 2], c: [-2, 2], e: [1, -1], h: [-2, 1] },
     boss: "O Observador Cego",
     rooms: [
@@ -119,7 +119,7 @@ const COMMON = {
     sub: "um labirinto que muda de cor conforme o pH",
     material: "erva",
     tunnel: "cross",
-    equipment: ["frasco-acido", "avental-alquimista"],
+    equipment: ["frasco-acido", "avental-alquimista", "escudo-cristal"],
     shift: { b: [-2, 2], d: [2, 1], g: [-1, -2] },
     boss: "O Catalisador",
     rooms: [

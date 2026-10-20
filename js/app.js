@@ -189,6 +189,11 @@ const sheetUi = createSheet({
       toast("A bomba é para a caverna. Guardei de volta.", 2800);
       return false;
     }
+    if (id === "runa-faisca") {
+      rpg.addItem("runa-faisca", 1);
+      toast("A runa é para a pergunta do duelo. Guardei de volta.", 2800);
+      return false;
+    }
     return true;
   },
 });

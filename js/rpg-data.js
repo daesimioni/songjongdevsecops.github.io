@@ -58,6 +58,10 @@ export const ITEMS = {
   "capuz-dados": { name: "Capuz de Dados", continent: "ai", slot: "helmet", hp: 3, desc: "Um capuz cheio de pesos pequenos. Aquece a cabeça e a inferência." },
   "anel-sinapse": { name: "Anel de Sinapse", continent: "hub", slot: "ring", damage: 1, desc: "Um anel que lembra o último caminho. Relíquia de chefe de Computaria." },
   "colar-constante": { name: "Colar de Constante", continent: "hub", slot: "necklace", hp: 5, desc: "A conta que não muda quando o mundo muda. Relíquia de chefe de Música." },
+  "pernas-reforcadas": { name: "Perneiras de Cálculo", continent: "math", slot: "legs", hp: 3, desc: "Joelheiras de couro com fórmulas gravadas. Ajudam a subir a escada." },
+  "botas-marcha": { name: "Botas de Marcha", continent: "physics", slot: "boots", hp: 2, desc: "Solado de borracha e mola de aço. O caminho parece menor." },
+  "escudo-cristal": { name: "Escudo de Cristal", continent: "chem", slot: "shield", hp: 4, desc: "Uma lâmina de cristal de equilíbrio. Segura o golpe e devolve a cor." },
+  "runa-faisca": { name: "Runa da Faísca", continent: "hub", use: "spark", desc: "Uma carga de magia: elimina uma alternativa errada na pergunta atual do duelo. Some ao usar." },
   pocao: { name: "Poção de Café", continent: "hub", heal: 18, desc: "Recupera 18 de vida. Gosto de fio elétrico, efeito de segunda-feira." },
   ferro: { name: "Ferro Bruto", continent: "hub", desc: "Um pedaço de veio escuro. A forja transforma em ferramenta." },
   erva: { name: "Erva de Caverna", continent: "hub", desc: "Cresce onde a luz não chega. Cheira a remédio e a terra molhada." },
@@ -87,6 +91,7 @@ export const RECIPES = [
   { id: "cafe", name: "Café da Madrugada", out: "cafe", qty: 1, need: { erva: 1, pocao: 1 } },
   { id: "assado", name: "Assado de Fundo de Mina", out: "assado", qty: 1, need: { caldo: 1, madeira: 1 } },
   { id: "doce", name: "Doce de Erva", out: "doce", qty: 1, need: { erva: 2, veio: 1 } },
+  { id: "runa-faisca", name: "Runa da Faísca", out: "runa-faisca", qty: 1, need: { veio: 2, erva: 1 } },
 ];
 
 export const ENCHANTS = [
@@ -433,5 +438,42 @@ export const EXTRA_QUESTIONS = {
 };
 
 for (const [continent, tiers] of Object.entries(EXTRA_QUESTIONS)) {
+  for (const [tier, list] of Object.entries(tiers)) QUESTIONS[continent][tier].push(...list);
+}
+
+export const EXTRA_QUESTIONS_2 = {
+  cs: {
+    1: [{ q: "Qual número binário vem depois de 101?", options: ["110", "100", "111"], a: 0, why: "101 é 5; somando 1 dá 6, que em binário é 110." }],
+    2: [{ q: "O que é um deadlock?", options: ["Processos esperando recursos uns dos outros", "Um erro de digitação", "Uma memória cheia"], a: 0, why: "Cada processo segura um recurso e espera outro; sem ordem, ninguém solta e todos param." }],
+    3: [{ q: "O que significa NP-completo?", options: ["Um problema tão difícil quanto os mais difíceis de NP", "Um problema impossível", "Um problema de soma"], a: 0, why: "Se um NP-completo tiver solução rápida, todos os problemas de NP também têm." }],
+  },
+  math: {
+    1: [{ q: "Qual é a raiz quadrada de 81?", options: ["8", "9", "11"], a: 1, why: "9 × 9 = 81. A raiz é o número que, multiplicado por si, dá o radicando." }],
+    2: [{ q: "O que é uma função injetora?", options: ["Cada saída vem de no máximo uma entrada", "Toda entrada tem duas saídas", "Uma função constante"], a: 0, why: "Injetora não repete saída: entradas diferentes levam a saídas diferentes." }],
+    3: [{ q: "O que o teorema fundamental do cálculo liga?", options: ["Derivada e integral", "Primos e frações", "Seno e cosseno"], a: 0, why: "Derivar e integrar são operações inversas; a área sob a curva e a taxa de variação se conectam." }],
+  },
+  physics: {
+    1: [{ q: "Qual é a unidade de potência no SI?", options: ["joule", "watt", "newton"], a: 1, why: "Potência é energia por tempo, medida em watt. Joule é energia e newton é força." }],
+    2: [{ q: "O que é inércia?", options: ["A tendência de manter o movimento", "A força da gravidade", "O atrito do ar"], a: 0, why: "Um corpo sem força resultante continua parado ou em velocidade constante. É a primeira lei de Newton." }],
+    3: [{ q: "A dualidade onda-partícula diz que...", options: ["A matéria e a luz mostram onda ou partícula conforme o experimento", "Só a luz é onda", "A partícula não existe"], a: 0, why: "O comportamento depende do arranjo experimental; os dois modelos são necessários." }],
+  },
+  chem: {
+    1: [{ q: "Qual gás as plantas absorvem na fotossíntese?", options: ["oxigênio", "gás carbônico", "nitrogênio"], a: 1, why: "As plantas usam CO2 e água, com luz, para produzir glicose e liberar oxigênio." }],
+    2: [{ q: "Um ácido de Brønsted é uma espécie que...", options: ["doa próton", "recebe elétron", "doa nêutron"], a: 0, why: "Na definição de Brønsted, ácido doa H+ e base recebe H+. Elétron é a definição de Lewis." }],
+    3: [{ q: "O que a energia de ligação mede?", options: ["A energia para quebrar uma ligação", "O pH da solução", "A massa do átomo"], a: 0, why: "É a energia necessária para separar os átomos ligados. Ligação mais forte, energia maior." }],
+  },
+  music: {
+    1: [{ q: "Quantos tempos tem um compasso 4/4?", options: ["2", "4", "8"], a: 1, why: "O numerador diz quatro tempos por compasso; o denominador diz que a semínima vale um tempo." }],
+    2: [{ q: "O que é uma cadência?", options: ["Uma fórmula de encerramento musical", "Um instrumento de sopro", "Uma nota alterada"], a: 0, why: "A cadência é o gesto que fecha ou suspende a frase, como a pontuação de uma oração." }],
+    3: [{ q: "O que é modulação?", options: ["Mudar de tonalidade dentro da música", "Aumentar o volume", "Afinar o instrumento"], a: 0, why: "A música muda o centro tonal, às vezes de forma preparada, às vezes abrupta." }],
+  },
+  ai: {
+    1: [{ q: "Em classificação, o que é uma classe?", options: ["Uma categoria de resposta", "Uma camada da rede", "Um tipo de GPU"], a: 0, why: "O modelo escolhe entre classes, como gato ou cachorro. A camada é estrutura, não resposta." }],
+    2: [{ q: "Para que serve a regularização?", options: ["Penalizar complexidade e reduzir overfitting", "Aumentar o número de classes", "Apagar os dados"], a: 0, why: "A regularização desencoraja pesos grandes e ajuda o modelo a generalizar, não a decorar." }],
+    3: [{ q: "O que é um modelo generativo?", options: ["Um modelo que aprende a produzir dados parecidos com os de treino", "Um modelo que só classifica", "Um banco de dados"], a: 0, why: "Ele aprende a distribuição dos dados e gera novas amostras, como texto, imagem ou som." }],
+  },
+};
+
+for (const [continent, tiers] of Object.entries(EXTRA_QUESTIONS_2)) {
   for (const [tier, list] of Object.entries(tiers)) QUESTIONS[continent][tier].push(...list);
 }

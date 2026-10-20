@@ -128,7 +128,7 @@ export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onUs
         const text = el("div", "item-text");
         text.append(el("b", "", `${item.name} ×${item.qty}`), el("span", "", item.desc));
         card.append(icon, text);
-        if (item.heal || item.use === "light" || item.use === "bomb") {
+        if (item.heal || item.use === "light" || item.use === "bomb" || item.use === "spark") {
           const use = el("button", "item-use", "usar");
           use.type = "button";
           use.addEventListener("click", () => {

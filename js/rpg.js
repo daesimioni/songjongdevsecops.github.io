@@ -364,7 +364,7 @@ export class RPG {
 
   useItem(id) {
     const item = ITEMS[id];
-    if (!item || !["pocao", "tocha", "bomba", "caldo", "cafe", "assado", "doce"].includes(id)) {
+    if (!item || !["pocao", "tocha", "bomba", "caldo", "cafe", "assado", "doce", "runa-faisca"].includes(id)) {
       return { ok: false, reason: "Este item não se usa agora." };
     }
     if (this.itemCount(id) <= 0) return { ok: false, reason: `Você não tem ${item.name}.` };
@@ -379,6 +379,13 @@ export class RPG {
       if (this.data.items[id] <= 0) delete this.data.items[id];
       this.save();
       return { ok: true, bomb: true, name: item.name };
+    }
+    if (id === "runa-faisca") {
+      if (!this.duel || this.duel.phase !== "question") return { ok: false, reason: "A runa só funciona na pergunta de um duelo." };
+      this.data.items[id]--;
+      if (this.data.items[id] <= 0) delete this.data.items[id];
+      this.save();
+      return { ok: true, spark: true, name: item.name };
     }
     // comida com efeito pode ser usada de vida cheia: o buff ainda vale
     if (!item.buff && this.hp() >= this.hpMax()) return { ok: false, reason: "Sua vida já está cheia." };

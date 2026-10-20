@@ -558,6 +558,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
     sprint: false,
     paused: false,
     alert: null,
+    pack: [],
     encounterLockUntil: 0,
     torchUntil: 0,
     altarAt: 0,
@@ -794,6 +795,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
     if (!def || !canvas || !ctx) return false;
     state.def = def;
     state.entryCave = entryCave || null;
+    state.pack = [];
     state.map = buildDungeonMap(def);
     state.seen = new Uint8Array(state.map.W * state.map.H);
     state.minimapAt = 0;
@@ -952,6 +954,11 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
     if (buffNode) buffNode.hidden = buffs.length === 0;
     const room = state.map ? state.map.rooms[state.roomIndex] : null;
     setText("dg-room", room ? room.name : "");
+    const pack = $("dg-pack");
+    if (pack) {
+      pack.hidden = state.pack.length === 0;
+      pack.textContent = state.pack.length ? `matilha ${state.pack.length}` : "";
+    }
   }
 
   function markSeen(t) {
@@ -1320,6 +1327,17 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
     m.ty = m.hy;
   }
 
+  function canSeePlayer(m) {
+    if (!m?.alive) return false;
+    const d = Math.hypot(state.player.x - m.x, state.player.y - m.y);
+    if (d > m.vision) return false;
+    const vx = m.dir === 1 ? -1 : m.dir === 2 ? 1 : 0;
+    const vy = m.dir === 0 ? 1 : m.dir === 3 ? -1 : 0;
+    const facing = d > 0.001 ? (vx * (state.player.x - m.x) + vy * (state.player.y - m.y)) / d : 1;
+    if (facing < Math.cos(m.fov || 1.2)) return false;
+    return dungeonLineOfSight(state.map, m.x, m.y, state.player.x, state.player.y);
+  }
+
   function updateMonsters(dt, t) {
     const list = state.boss ? [...state.monsters, state.boss] : state.monsters;
     for (const m of list) {
@@ -1352,13 +1370,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
       }
       // o campo de visão: perto e com linha reta até você
       if (t < state.encounterLockUntil) continue;
-      const d = Math.hypot(state.player.x - m.x, state.player.y - m.y);
-      if (d > m.vision) continue;
-      const vx = m.dir === 1 ? -1 : m.dir === 2 ? 1 : 0;
-      const vy = m.dir === 0 ? 1 : m.dir === 3 ? -1 : 0;
-      const facing = d > 0.001 ? (vx * (state.player.x - m.x) + vy * (state.player.y - m.y)) / d : 1;
-      if (facing < Math.cos(m.fov)) continue;
-      if (!dungeonLineOfSight(state.map, m.x, m.y, state.player.x, state.player.y)) continue;
+      if (!canSeePlayer(m)) continue;
       startAlert(m, t);
       return;
     }
@@ -1366,6 +1378,10 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
 
   function startAlert(m, t) {
     rpg.noteMonster?.(m);
+    state.pack = state.monsters
+      .filter((o) => o !== m && o.alive && !o.boss && canSeePlayer(o) && Math.hypot(o.x - state.player.x, o.y - state.player.y) < 5.5)
+      .slice(0, 2);
+    if (state.pack.length) say(`Matilha: mais ${state.pack.length} bicho(s) entra(m) depois deste.`, 3200);
     state.paused = true;
     state.path = null;
     state.pending = null;
@@ -1407,7 +1423,22 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
         } else {
           say(`${m.name} virou pó. A passagem segue.`, 2200);
         }
+        if (!m.boss && state.pack.length) {
+          const next = state.pack.shift();
+          if (next?.alive) {
+            state.paused = true;
+            state.pendingMonster = next;
+            setTimeout(() => {
+              if (!state.open || !state.paused) return;
+              state.encounterLockUntil = 0;
+              const ok = onEncounter?.(next, state.ground, false);
+              if (!ok) { state.pendingMonster = null; state.paused = false; }
+            }, 700);
+          }
+          updateHud();
+        }
       } else {
+        state.pack = [];
         // fugir custa: a chance de levar um golpe cresce com a dificuldade
         const risk = rpg.fleeRisk(m);
         if (Math.random() < risk) {

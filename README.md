@@ -97,6 +97,17 @@ Estações, pedras, NPCs e mobília barram a passagem; na superfície não há m
 solto. O desenho é ordenado por profundidade, então uma fonte, árvore ou parede na
 frente do boneco cobre o corpo dele em vez de ficar sempre atrás.
 
+## Matilha e runa
+
+Quando dois ou três monstros veem você na mesma janela, o primeiro ataca e os
+outros entram na **matilha**: o HUD mostra `matilha N`, e cada um assume a vez
+depois que o anterior cai. Fugir do primeiro limpa a fila; fugir do segundo rola
+o risco do bicho que está na frente.
+
+A **Runa da Faísca**, feita na forja (veio 2, erva 1), é a magia de bolso do
+duelo: gasta a runa e elimina uma alternativa errada da pergunta atual. Uma por
+pergunta, some ao usar.
+
 ## Nave, traje e equipamento
 
 A nave fica 4,4 vezes mais rápida que o passo e agora também funciona dentro da
@@ -268,7 +279,7 @@ cinco cartas, a dificuldade que vira dano e a compostura.
 
 A segunda confere o conteúdo inteiro: as 32 estações e seus textos, falas de NPC,
 18 missões, itens, equipamento, relíquias por continente, receitas, encantos, as
-78 perguntas (sem repetição e com resposta válida), as cinco cartas do PvP por
+96 perguntas (sem repetição e com resposta válida), as cinco cartas do PvP por
 continente, as seis cavernas e o mundo montado (seis instrutores, doze bocas,
 nenhum monstro na superfície).
 
