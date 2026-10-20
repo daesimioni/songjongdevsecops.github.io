@@ -32,7 +32,7 @@ profundidade, não para inventar do zero.
 
 O hub ensina o básico: andar, interagir, mapa, ficha, caderno, primeira caçada.
 
-## 3. Computaria
+## 3. Computação
 
 | estação | conceito | aula | prática | gancho |
 |---|---|---|---|---|

@@ -74,7 +74,7 @@ magias; morte suave; 5 testadores completam a primeira hora.
 - Elevadores, mapas, névoa, cartografia.
 - Migração do mapa atual sem quebrar o save.
 
-Critério: descer em Computaria e emergir em Matemática a pé; nenhuma boca sem
+Critério: descer em Computação e emergir em Matemática a pé; nenhuma boca sem
 subida; mapa revelado coerente.
 
 ### Fase 4: conteúdo (6 a 10 semanas)

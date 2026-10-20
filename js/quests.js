@@ -78,7 +78,7 @@ export const QUESTS = [
     npc: "ada",
     giver: "Ada",
     title: "Fios vivos",
-    brief: "Abra as cinco estações de Computaria. Um processador só faz sentido quando as partes conversam.",
+    brief: "Abra as cinco estações da Computação. Um processador só faz sentido quando as partes conversam.",
     goal: { type: "cards", continent: "cs", count: 5 },
     reward: { xp: 40, title: "Fios Vivos" },
   },

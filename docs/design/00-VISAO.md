@@ -114,7 +114,7 @@ jogadores, deixar a própria marca no mundo (mapa, biblioteca, guilda).
    encanto e um bicho. O jogador forja uma picareta, planta uma semente e vê o
    primeiro encanto no bolso.
 4. **Primeira ponte (30 a 40 min).** Uma ponte de fios liga o Porto a
-   Computaria. O jogador vê o mapa crescer e escolhe para onde ir.
+   Computação. O jogador vê o mapa crescer e escolhe para onde ir.
 5. **Primeira noite (40 a 60 min).** A taverna, o descanso, o caderno com os
    erros do dia, a promessa de voltar amanhã. O jogo não cobra a volta.
 

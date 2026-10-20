@@ -8,7 +8,7 @@ jogo sem virar tarefa e teste.
 ## 1. O jogo em uma página
 
 Um arquipélago educativo em pixel art, jogado a pé, com seis disciplinas
-(Computaria, Matemática, Física, Química, Música e IA), duas camadas de mundo
+(Computação, Matemática, Física, Química, Música e IA), duas camadas de mundo
 (superfície e subsolo), cidades conurbadas, bestiário, equipamento, magias,
 ofícios e um motor de aprendizagem por conceito. O combate é a pergunta; o
 mundo responde ao entendimento. A inspiração é o Tibia na estrutura (mundo

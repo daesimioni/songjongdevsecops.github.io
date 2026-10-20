@@ -11,7 +11,7 @@ uma página com um texto curto e um instrumento interativo.
 | continente | estações |
 |---|---|
 | **Porto do Início** | a fonte de boas-vindas e o rádio com um sequenciador de oito passos |
-| **Computaria** | portas lógicas, somador de quatro bits, flip-flop e contador, CPU de brinquedo e uma linha do tempo da computação |
+| **Computação** | portas lógicas, somador de quatro bits, flip-flop e contador, CPU de brinquedo e uma linha do tempo da computação |
 | **Matemática** | paradoxos do infinito, sólidos platônicos em 3D, derivada e integral, máquina de Galton e fractais |
 | **Física** | pêndulo, série de Fourier, gás ideal, prisma de Newton e órbitas gravitacionais |
 | **Química** | tabela periódica interativa, moléculas em 3D, titulação, energia de reação e balanceamento |

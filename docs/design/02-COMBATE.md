@@ -179,7 +179,7 @@ Chefes planejados (detalhe em `04-BESTIARIO.md`):
 
 | continente | chefe | tema | fases |
 |---|---|---|---|
-| Computaria | O Compilador Ancestral | lógica, memória, concorrência | 3 |
+| Computação | O Compilador Ancestral | lógica, memória, concorrência | 3 |
 | Matemática | O Infinito Profundo | limites, infinito, prova | 3 |
 | Física | O Observador Cego | luz, órbitas, medida | 3 |
 | Química | O Catalisador | equilíbrio, energia, ligação | 3 |

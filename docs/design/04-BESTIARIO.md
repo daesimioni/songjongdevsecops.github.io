@@ -8,7 +8,7 @@ Não são 40 skins do mesmo slime: são 8 ecologias.
 
 | família | disciplina | ideia | visão | grupo |
 |---|---|---|---|---|
-| **Falhas** | Computaria | o erro que insiste em rodar | curta, rápido alerta | enxame e matilha |
+| **Falhas** | Computação | o erro que insiste em rodar | curta, rápido alerta | enxame e matilha |
 | **Formas** | Matemática | a regra que se esconde na figura | longa, estreita | corte e guarda |
 | **Forças** | Física | o empurrão que o mundo dá | longa, muito estreita | guarda |
 | **Reagentes** | Química | a transformação que não pede licença | larga, curta | corte e poça |
@@ -26,7 +26,7 @@ Legenda: **T** = tier (1 a 3), **V** = vida em respostas certas, **D** = dano
 por erro, **Visão** = ângulo/alcance, **Formato** = formato de pergunta que
 prefere. Nomes de loot são exemplos; a tabela completa fica no dado.
 
-### Falhas (Computaria)
+### Falhas (Computação)
 
 | espécie | T | V | D | visão | comportamento | formato | loot |
 |---|---|---|---|---|---|---|---|

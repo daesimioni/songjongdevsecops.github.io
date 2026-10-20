@@ -54,7 +54,7 @@ dia.
 
 ## 4. As seis culturas
 
-### Computaria
+### Computação
 
 Engenheiros que aprenderam a fazer a pedra pensar. A ilha tem fábricas de
 silício, torres de clock e catacumbas de fios. Eles acreditam que qualquer
@@ -127,7 +127,7 @@ Os sete NPCs atuais ganham arcos:
 
 - **Dona Zefa** (Porto): guardiã da memória dos que partem; procura o irmão que
   desceu e não voltou.
-- **Ada** (Computaria): engenheira que quer fazer a primeira máquina que
+- **Ada** (Computação): engenheira que quer fazer a primeira máquina que
   pergunta de volta; o irmão dela é um dos Ecos.
 - **Hypatia** (Matemática): astrônoma que perdeu a vista de tanto ler; quer
   provar que o infinito não é um lugar.
@@ -170,7 +170,7 @@ aprendizado no mapa, não só na barra.
 
 ## 10. Nomes e convenções
 
-- Ilhas: nomes claros e um pouco poéticos (Computaria, Matemática, Física,
+- Ilhas: nomes claros e um pouco poéticos (Computação, Matemática, Física,
   Química, Música, IA; o Porto).
 - Cidades subterrâneas: Cidade do Nó, Estação dos Fios, Mercado dos Axiomas,
   Forja Funda, Praça da Ópera, Sala dos Pesos, Porto Submerso.

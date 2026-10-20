@@ -66,7 +66,7 @@ export const NOSTR = {
   client: "mundo-song",
   channels: [
     { id: "geral", name: "Praça do Mundo", sub: "a conversa de todo mundo" },
-    { id: "cs", name: "Computaria", sub: "fios, portas e processadores" },
+    { id: "cs", name: "Computação", sub: "fios, portas e processadores" },
     { id: "math", name: "Matemática", sub: "formas, infinito e acaso" },
     { id: "physics", name: "Física", sub: "pêndulos, luz e órbitas" },
     { id: "chem", name: "Química", sub: "átomos trocando de roupa" },
@@ -90,7 +90,7 @@ export const CONTINENTS = {
   },
   cs: {
     id: "cs",
-    name: "Computaria",
+    name: "Computação",
     sub: "da areia ao silício, do interruptor ao processador",
     accent: "#61f4c0",
     land: { cx: 90, cy: 18, rx: 24, ry: 13 },
@@ -169,7 +169,7 @@ export const SITES = [
     accent: "#ffb26b", icon: "radio",
   },
 
-  // Computaria
+  // Computação
   {
     id: "logic", continent: "cs", name: "Vale da Lógica",
     label: "Bancada das Portas", x: 78, y: 18, post: "logic",
@@ -334,7 +334,7 @@ export const SITES = [
 
 export const WAYSTONES = [
   { id: "hub", continent: "hub", name: "Pedra do Porto", x: 98, y: 64, accent: "#ffc857" },
-  { id: "cs", continent: "cs", name: "Farol de Computaria", x: 96, y: 28, accent: "#61f4c0" },
+  { id: "cs", continent: "cs", name: "Farol da Computação", x: 96, y: 28, accent: "#61f4c0" },
   { id: "math", continent: "math", name: "Farol da Matemática", x: 142, y: 64, accent: "#b48cff" },
   { id: "physics", continent: "physics", name: "Farol da Física", x: 96, y: 89, accent: "#ff7aa8" },
   { id: "chem", continent: "chem", name: "Farol da Química", x: 38, y: 64, accent: "#7ee787" },

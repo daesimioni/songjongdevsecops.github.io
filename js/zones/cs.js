@@ -1,11 +1,11 @@
-// Computaria: somadores, memória, processador de brinquedo e linha do tempo.
+// Computação: somadores, memória, processador de brinquedo e linha do tempo.
 
 export async function mount(el, api, variant) {
   if (variant === "adder") return mountAdder(el, api);
   if (variant === "state") return mountState(el, api);
   if (variant === "cpu") return mountCpu(el, api);
   if (variant === "timeline") return mountTimeline(el, api);
-  el.innerHTML = '<p class="widget-fail">Instrumento de Computaria desconhecido.</p>';
+  el.innerHTML = '<p class="widget-fail">Instrumento da Computação desconhecido.</p>';
   return () => {};
 }
 

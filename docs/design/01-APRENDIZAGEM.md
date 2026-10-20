@@ -54,7 +54,7 @@ Exemplos de conceitos:
 
 | continente | conceitos (amostra) |
 |---|---|
-| Computaria | bit e byte, portas lógicas, complemento de dois, memória, pilha, fila, algoritmo, complexidade, hash, concorrência |
+| Computação | bit e byte, portas lógicas, complemento de dois, memória, pilha, fila, algoritmo, complexidade, hash, concorrência |
 | Matemática | primos, divisibilidade, proporção, funções, derivada, integral, limite, probabilidade, geometria, infinito, prova |
 | Física | cinemática, forças, energia, quantidade de movimento, ondas, calor, luz, óptica, gravitação, órbitas |
 | Química | átomo, tabela periódica, ligação, mol, estequiometria, ácido-base, equilíbrio, energia de reação, solubilidade |

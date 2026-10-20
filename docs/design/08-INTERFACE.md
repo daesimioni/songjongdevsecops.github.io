@@ -185,7 +185,7 @@ O coração educativo, fora do combate.
 │ [revisar agora]  [por continente]  [por erro]  [exportar]    │
 │                                                              │
 │ mapa de domínio:                                             │
-│   Computaria  ███░░  bits, portas, memória                    │
+│   Computação  ███░░  bits, portas, memória                    │
 │   Matemática  ██░░░  primos, limites                          │
 │   ...                                                        │
 │                                                              │

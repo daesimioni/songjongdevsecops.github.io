@@ -56,7 +56,7 @@ Exemplos de nomes (um por categoria e continente, para dar identidade):
 
 | continente | espada | clube | machado | arco | varinha | cajado |
 |---|---|---|---|---|---|---|
-| Computaria | Lâmina de Cobre | Martelo de Clock | Machado de Barramento | Arco de Pulso | Varinha de Silício | Cajado do Compilador |
+| Computação | Lâmina de Cobre | Martelo de Clock | Machado de Barramento | Arco de Pulso | Varinha de Silício | Cajado do Compilador |
 | Matemática | Espada da Razão | Clava do Axioma | Machado Fractal | Arco de Compasso | Varinha do Infinito | Cajado da Prova |
 | Física | Lâmina de Vetor | Martelo de Massa | Machado de Entropia | Arco de Órbita | Varinha de Fóton | Cajado do Campo |
 | Química | Espada de Valência | Clava do Reagente | Machado de Ligação | Arco de Cristal | Varinha de pH | Cajado do Equilíbrio |

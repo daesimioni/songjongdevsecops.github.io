@@ -33,7 +33,7 @@ O alvo:
 | ilha | papel | nível | marco |
 |---|---|---|---|
 | Porto do Início | hub, tutorial, taverna, banco | 1 a 8 | farol e cais |
-| Computaria | lógica, circuitos, processos | 5 a 15 | fábrica de silício |
+| Computação | lógica, circuitos, processos | 5 a 15 | fábrica de silício |
 | Matemática | formas, infinito, prova | 8 a 18 | observatório de espelhos |
 | Física | forças, luz, órbitas | 10 a 20 | farol de prisma |
 | Química | matéria, reação, equilíbrio | 12 a 22 | mina de cristais |
@@ -49,10 +49,10 @@ Oito ligações de superfície, algumas fechadas por missão:
 
 | ligação | nome | tipo | abre com |
 |---|---|---|---|
-| Porto ↔ Computaria | Ponte dos Fios | ponte de ferro | início |
+| Porto ↔ Computação | Ponte dos Fios | ponte de ferro | início |
 | Porto ↔ Matemática | Ponte do Cálculo | ponte de pedra | início |
-| Computaria ↔ IA | Ponte da Rede | passarela de cabos | missão da Ada |
-| Computaria ↔ Música | Ponte dos Compassos | ponte de madeira | missão do conservatório |
+| Computação ↔ IA | Ponte da Rede | passarela de cabos | missão da Ada |
+| Computação ↔ Música | Ponte dos Compassos | ponte de madeira | missão do conservatório |
 | Matemática ↔ Física | Ponte das Marés | ponte baixa, some na maré | missão do observatório |
 | Física ↔ Química | Ponte dos Reagentes | tubo de vidro | missão da mina |
 | Química ↔ Música | Ponte das Folhas | raiz gigante | exploração |
@@ -91,7 +91,7 @@ elevador e emerge noutra ilha. A rede é o "metrô" do mundo, mas a pé.
 
 ```mermaid
 flowchart LR
-  CS[Computaria] ---|Boca do Silício| EF[Estação dos Fios]
+  CS[Computação] ---|Boca do Silício| EF[Estação dos Fios]
   EF --- NO[Cidade do Nó]
   NO --- MA[Mercado dos Axiomas]
   MA ---|Boca dos Números| MATH[Matemática]
@@ -113,8 +113,8 @@ boca ou cidade. Nada de descida sem subida.
 
 | boca | ilha | desce para | saídas |
 |---|---|---|---|
-| Boca do Silício | Computaria norte | Estação dos Fios | volta; Cidade do Nó |
-| Fenda do Clock | Computaria leste | Túnel dos Relés | volta; Forja Funda |
+| Boca do Silício | Computação norte | Estação dos Fios | volta; Cidade do Nó |
+| Fenda do Clock | Computação leste | Túnel dos Relés | volta; Forja Funda |
 | Poço do Porto | Porto | Porto Submerso | volta; Cidade do Nó |
 | Boca dos Números | Matemática oeste | Mercado dos Axiomas | volta; Cidade do Nó |
 | Cripta dos Limites | Matemática sul | Poço do Infinito | volta; Praça da Ópera |
