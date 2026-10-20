@@ -1579,3 +1579,239 @@ export const EXTRA_QUESTIONS_13 = {
 for (const [continent, tiers] of Object.entries(EXTRA_QUESTIONS_13)) {
   for (const [tier, list] of Object.entries(tiers)) QUESTIONS[continent][tier].push(...list);
 }
+
+// Terceiro lote: seis por dificuldade em quatro continentes.
+export const EXTRA_QUESTIONS_14 = {
+  cs: {
+    1: [
+      { q: "O que é a memória ROM?", options: ["Memória não volátil de leitura", "Memória que apaga ao desligar", "Um tipo de processador"], a: 0, why: "A ROM guarda firmware e não perde o conteúdo sem energia. A RAM é volátil." },
+      { q: "O mouse é um periférico de...", options: ["entrada", "saída", "armazenamento"], a: 0, why: "Ele envia posição e cliques. Monitor e impressora são saída." },
+      { q: "Uma pasta serve para...", options: ["organizar arquivos", "executar programas", "aumentar a memória"], a: 0, why: "A pasta é uma estrutura de organização, não um programa nem hardware." },
+      { q: "HTTP é um protocolo de...", options: ["transferência de hipertexto", "compactação de arquivos", "senha"], a: 0, why: "É o acordo usado na web para pedir e receber recursos." },
+      { q: "Um servidor é...", options: ["uma máquina que fornece serviços a clientes", "um tipo de teclado", "um arquivo"], a: 0, why: "O cliente pede, o servidor responde. Podem ser programas na mesma máquina." },
+      { q: "Uma senha forte é...", options: ["longa e única", "igual em todos os sites", "o nome do cachorro"], a: 0, why: "Comprimento e exclusividade dificultam adivinhação e reuso em vazamentos." },
+    ],
+    2: [
+      { q: "Um banco relacional organiza dados em...", options: ["tabelas com chaves", "arquivos soltos", "vetores apenas"], a: 0, why: "Tabelas, linhas e colunas com chaves primárias e estrangeiras definem as relações." },
+      { q: "Um índice de banco serve para...", options: ["acelerar buscas", "compactar o disco", "criptografar"], a: 0, why: "Ele mantém uma estrutura ordenada que evita varrer a tabela inteira." },
+      { q: "Uma função pura...", options: ["dá a mesma saída para a mesma entrada e não tem efeito colateral", "modifica o estado global", "usa números aleatórios"], a: 0, why: "Pureza facilita teste e raciocínio. Efeito colateral e aleatoriedade quebram a promessa." },
+      { q: "Uma exceção em programação é...", options: ["um evento que interrompe o fluxo normal e pode ser tratado", "um erro de digitação", "uma variável"], a: 0, why: "O tratamento evita que a falha derrube o programa inteiro." },
+      { q: "Depurar é...", options: ["encontrar e corrigir defeitos", "apagar o código", "compilar mais rápido"], a: 0, why: "Depuração investiga o comportamento real contra o esperado e corrige a causa." },
+      { q: "GET em HTTP serve para...", options: ["pedir um recurso", "apagar um recurso", "enviar senha no corpo"], a: 0, why: "GET lê. POST cria, PUT substitui e DELETE remove." },
+    ],
+    3: [
+      { q: "Uma transação de banco é...", options: ["uma unidade atômica de trabalho", "uma consulta qualquer", "um backup"], a: 0, why: "Ela confirma tudo ou desfaz tudo, mantendo consistência mesmo com falha." },
+      { q: "Uma árvore binária de busca mantém...", options: ["menores à esquerda e maiores à direita", "todos os nós iguais", "só um filho"], a: 0, why: "A ordenação permite descartar metade a cada comparação, se a árvore estiver equilibrada." },
+      { q: "Um mutex serve para...", options: ["garantir exclusão mútua numa região crítica", "apagar memória", "aumentar a rede"], a: 0, why: "Só uma thread entra por vez, evitando condição de corrida." },
+      { q: "Paginação divide a memória em...", options: ["páginas de tamanho fixo", "variáveis contínuas", "discos"], a: 0, why: "Páginas simplificam o mapeamento e permitem trocar blocos para o disco." },
+      { q: "Injeção de SQL acontece quando...", options: ["entrada maliciosa vira comando no banco", "o banco está vazio", "a consulta é lenta"], a: 0, why: "Consultas montadas por concatenação deixam a entrada virar código. Prepared statements evitam." },
+      { q: "Custo amortizado descreve...", options: ["o custo médio ao longo de muitas operações", "o pior caso isolado", "o custo de memória"], a: 0, why: "Uma operação cara pode pagar por muitas baratas, como no vetor dinâmico." },
+    ],
+  },
+  math: {
+    1: [
+      { q: "Quantos lados tem um hexágono?", options: ["6", "5", "8"], a: 0, why: "Hexa significa seis. O hexágono regular tem seis lados e seis ângulos iguais." },
+      { q: "10% de 250 é...", options: ["25", "10", "50"], a: 0, why: "10% é dividir por 10: 250/10 = 25." },
+      { q: "O dobro de 3/4 é...", options: ["3/2", "3/8", "6/8"], a: 0, why: "Multiplicar por 2: 6/4, que simplifica para 3/2." },
+      { q: "Um número par é...", options: ["divisível por 2", "primo sempre", "negativo sempre"], a: 0, why: "A divisão por 2 dá resto zero. Zero também é par." },
+      { q: "Quanto é 5!?", options: ["120", "25", "60"], a: 0, why: "5! = 5 × 4 × 3 × 2 × 1 = 120." },
+      { q: "A soma dos ângulos internos de um quadrilátero é...", options: ["360 graus", "180 graus", "540 graus"], a: 0, why: "A fórmula (n-2)·180 dá 360 para n=4." },
+    ],
+    2: [
+      { q: "Uma progressão aritmética tem...", options: ["diferença constante entre termos", "razão constante", "termos aleatórios"], a: 0, why: "Soma-se sempre a mesma razão. A geométrica multiplica por razão constante." },
+      { q: "Uma progressão geométrica tem...", options: ["razão constante entre termos", "diferença constante", "só termos positivos"], a: 0, why: "Cada termo é o anterior vezes a razão. Pode alternar de sinal." },
+      { q: "A área do círculo é...", options: ["πr²", "2πr", "πd"], a: 0, why: "2πr é o comprimento da circunferência. A área cresce com o quadrado do raio." },
+      { q: "Um número primo tem...", options: ["exatamente dois divisores positivos", "um divisor", "infinitos divisores"], a: 0, why: "Um e ele mesmo. O número 1 não é primo porque só tem um divisor." },
+      { q: "A mediana é...", options: ["o valor central dos dados ordenados", "o mais frequente", "a média"], a: 0, why: "Com quantidade par, é a média dos dois centrais. Outliers afetam menos que a média." },
+      { q: "A função inversa...", options: ["desfaz a operação da função original", "é sempre quadrática", "não existe"], a: 0, why: "Compor f com sua inversa devolve a entrada, quando a inversa existe." },
+    ],
+    3: [
+      { q: "Um limite no infinito descreve...", options: ["o comportamento quando x cresce sem parar", "o valor no ponto zero", "a derivada"], a: 0, why: "Pode tender a um número, a infinito ou não existir. É sobre tendência, não sobre chegar." },
+      { q: "Uma derivada parcial mede...", options: ["a taxa de variação em relação a uma variável, mantendo as outras fixas", "a área total", "o máximo global"], a: 0, why: "É o cálculo multivariável: cada direção tem sua taxa." },
+      { q: "A matriz identidade tem...", options: ["1 na diagonal e 0 fora dela", "todos os elementos 1", "só zeros"], a: 0, why: "Multiplicar por ela não muda o vetor, como o número 1 na multiplicação." },
+      { q: "A lei dos cossenos generaliza...", options: ["o teorema de Pitágoras para qualquer triângulo", "a média", "a derivada"], a: 0, why: "Ela inclui o cosseno do ângulo e se reduz a Pitágoras quando o ângulo é reto." },
+      { q: "A distribuição de Poisson modela...", options: ["contagem de eventos raros num intervalo", "altura de pessoas", "soma de dados"], a: 0, why: "É usada para chamadas por minuto, defeitos por lote e eventos independentes no tempo." },
+      { q: "O espaço amostral é...", options: ["o conjunto de todos os resultados possíveis", "um resultado só", "a média"], a: 0, why: "A probabilidade é definida sobre subconjuntos do espaço amostral." },
+    ],
+  },
+  physics: {
+    1: [
+      { q: "A unidade de tempo no SI é...", options: ["segundo", "minuto", "hora"], a: 0, why: "O SI usa o segundo. Minuto e hora são aceitos, mas não são a unidade base." },
+      { q: "Massa mede...", options: ["a quantidade de matéria", "o peso", "a velocidade"], a: 0, why: "Massa é propriedade do corpo; peso é a força gravitacional sobre ele." },
+      { q: "Um ímã produz...", options: ["campo magnético", "campo elétrico apenas", "luz"], a: 0, why: "Cargas em movimento e ímãs geram campo magnético, que atrai materiais ferromagnéticos." },
+      { q: "A luz branca é...", options: ["uma mistura de cores", "uma cor pura", "invisível"], a: 0, why: "O prisma separa a mistura. Cada cor tem seu comprimento de onda." },
+      { q: "Fusão é a passagem de...", options: ["sólido para líquido", "líquido para gás", "gás para sólido"], a: 0, why: "Derreter é fundir. Líquido para gás é vaporização." },
+      { q: "Um condutor é um material que...", options: ["permite a passagem de corrente", "bloqueia a corrente", "só conduz calor"], a: 0, why: "Metais têm elétrons livres. Isolantes dificultam a corrente." },
+    ],
+    2: [
+      { q: "Frequência é...", options: ["ciclos por segundo", "altura da onda", "distância percorrida"], a: 0, why: "Medida em hertz. Período é o tempo de um ciclo e é o inverso da frequência." },
+      { q: "Amplitude é...", options: ["o deslocamento máximo da onda", "a distância entre cristas", "a velocidade"], a: 0, why: "A amplitude se relaciona à energia e ao volume. Comprimento de onda é a repetição espacial." },
+      { q: "Energia potencial gravitacional é...", options: ["mgh", "mv²/2", "ma"], a: 0, why: "Depende da massa, da gravidade e da altura. A cinética é mv²/2." },
+      { q: "Corrente alternada...", options: ["muda de sentido periodicamente", "só vai num sentido", "não tem tensão"], a: 0, why: "A rede elétrica usa CA porque facilita transformadores e transmissão." },
+      { q: "Um espelho plano forma...", options: ["imagem virtual do mesmo tamanho", "imagem real invertida", "nenhuma imagem"], a: 0, why: "A imagem fica atrás do espelho, direita e simétrica." },
+      { q: "Calor específico é...", options: ["energia para variar 1 grau por unidade de massa", "calor total", "temperatura máxima"], a: 0, why: "Materiais diferentes esquentam em ritmos diferentes para a mesma energia." },
+    ],
+    3: [
+      { q: "A lei de Faraday diz que...", options: ["variação de fluxo magnético induz tensão", "carga gera campo elétrico", "ação e reação"], a: 0, why: "A fem induzida é proporcional à taxa de variação do fluxo. É a base do gerador." },
+      { q: "Um campo conservativo tem...", options: ["trabalho independente do caminho", "trabalho sempre nulo", "força variável"], a: 0, why: "Só depende dos pontos inicial e final. A gravidade é conservativa." },
+      { q: "Dilatação térmica é...", options: ["aumento de dimensões com a temperatura", "mudança de massa", "perda de carga"], a: 0, why: "As partículas vibram mais e se afastam. Trilhos e pontes precisam de folga." },
+      { q: "O princípio de Pascal diz que...", options: ["pressão aplicada a um fluido se transmite igualmente", "a pressão some no fundo", "o fluido não exerce força"], a: 0, why: "É a base do elevador hidráulico: força pequena em área pequena vira força grande." },
+      { q: "Um semicondutor tem...", options: ["condutividade entre condutor e isolante", "resistência infinita", "supercondutividade sempre"], a: 0, why: "Silício e germânio conduzem sob condições controladas, o que permite transistores." },
+      { q: "A constante de Planck relaciona...", options: ["energia e frequência", "massa e peso", "força e área"], a: 0, why: "E = hf. É a constante que marca a escala quântica." },
+    ],
+  },
+  chem: {
+    1: [
+      { q: "Qual é o símbolo do carbono?", options: ["C", "Ca", "Co"], a: 0, why: "C é carbono; Ca é cálcio e Co é cobalto." },
+      { q: "Uma base...", options: ["recebe prótons ou libera OH-", "libera H+", "não reage"], a: 0, why: "Na definição de Brønsted, base recebe H+. Em água, isso aumenta o pH." },
+      { q: "Evaporação é a passagem de...", options: ["líquido para gás", "gás para líquido", "sólido para gás"], a: 0, why: "Acontece na superfície, mesmo abaixo do ponto de ebulição." },
+      { q: "Uma liga é...", options: ["uma mistura de metais", "um elemento puro", "um ácido"], a: 0, why: "Bronze e aço são ligas. As propriedades mudam em relação aos metais puros." },
+      { q: "Qual gás usamos para respirar?", options: ["Oxigênio", "Nitrogênio", "Hélio"], a: 0, why: "A célula usa O2 na respiração celular. O nitrogênio é a maior parte do ar, mas não é consumido." },
+      { q: "Uma molécula é...", options: ["um conjunto de átomos ligados", "um átomo isolado", "um íon"], a: 0, why: "A ligação pode ser covalente ou iônica; a molécula é a unidade resultante." },
+    ],
+    2: [
+      { q: "Concentração é...", options: ["quantidade de soluto por volume de solução", "massa do solvente", "cor da solução"], a: 0, why: "Pode ser em mol/L, g/L ou outra razão. É a base da estequiometria em solução." },
+      { q: "Neutralização é a reação entre...", options: ["ácido e base", "dois ácidos", "dois metais"], a: 0, why: "Forma sal e água, com variação de pH em direção ao neutro." },
+      { q: "A eletrólise usa...", options: ["corrente elétrica para forçar uma reação", "calor apenas", "luz"], a: 0, why: "É o contrário da pilha: energia elétrica impulsiona a reação não espontânea." },
+      { q: "Um hidrocarboneto saturado tem...", options: ["só ligações simples entre carbonos", "ligações duplas", "anéis aromáticos"], a: 0, why: "Saturado significa sem ligações duplas ou triplas. Alcanos são exemplos." },
+      { q: "Uma solução saturada está...", options: ["no limite de soluto dissolvido", "sem soluto", "sempre diluída"], a: 0, why: "Mais soluto não dissolve e precipita. Aquecer pode aumentar o limite." },
+      { q: "Redução é...", options: ["ganho de elétrons", "perda de elétrons", "perda de massa"], a: 0, why: "Reduzir carga positiva. Oxidação é perda de elétrons; as duas andam juntas." },
+    ],
+    3: [
+      { q: "Entalpia mede...", options: ["energia térmica a pressão constante", "entropia", "massa molar"], a: 0, why: "A variação de entalpia indica calor trocado em pressão constante." },
+      { q: "Energia de ativação é...", options: ["a barreira mínima para a reação começar", "a energia dos produtos", "o calor total"], a: 0, why: "O catalisador abaixa essa barreira sem mudar os estados inicial e final." },
+      { q: "O estado de transição é...", options: ["a configuração de maior energia no caminho", "o produto final", "o reagente inicial"], a: 0, why: "É o ponto mais alto do caminho de reação, instável e transitório." },
+      { q: "Um grupo funcional é...", options: ["um conjunto de átomos que define o comportamento", "a cadeia inteira", "um isótopo"], a: 0, why: "Álcool, cetona e amina têm grupos diferentes e reagem de jeitos diferentes." },
+      { q: "Polaridade de uma molécula depende...", options: ["da distribuição de carga e da geometria", "só da massa", "do nome"], a: 0, why: "Ligações polares podem se cancelar numa geometria simétrica, como no CO2." },
+      { q: "A conservação da massa diz que...", options: ["a massa total dos reagentes é a dos produtos", "a massa some", "só vale para sólidos"], a: 0, why: "Em sistema fechado, os átomos se rearranjam mas não desaparecem." },
+    ],
+  },
+};
+
+for (const [continent, tiers] of Object.entries(EXTRA_QUESTIONS_14)) {
+  for (const [tier, list] of Object.entries(tiers)) QUESTIONS[continent][tier].push(...list);
+}
+
+// Quarto lote: fecha a meta de 600 perguntas.
+export const EXTRA_QUESTIONS_15 = {
+  music: {
+    1: [
+      { q: "Uma nota musical é...", options: ["um som com altura definida", "um ritmo", "um silêncio"], a: 0, why: "A nota tem frequência reconhecível. Ruído não tem altura definida." },
+      { q: "Ritmo é...", options: ["a organização das durações", "a altura das notas", "o timbre"], a: 0, why: "O ritmo distribui sons e silêncios no tempo, com pulso e acentuação." },
+      { q: "Melodia é...", options: ["uma sequência de notas", "um acorde", "um instrumento"], a: 0, why: "É a linha horizontal, percebida como ideia musical." },
+      { q: "Um violão comum tem...", options: ["seis cordas", "quatro cordas", "doze cordas"], a: 0, why: "O violão clássico tem seis. O baixo tem quatro e a guitarra pode ter seis." },
+      { q: "Um refrão é...", options: ["a parte que se repete", "o início instrumental", "o solo"], a: 0, why: "Ele volta com a mesma letra ou melodia e ancora a forma." },
+      { q: "Afinação é...", options: ["ajustar as alturas ao padrão", "aumentar o volume", "mudar o ritmo"], a: 0, why: "Cada corda ou tubo é ajustado para a frequência de referência." },
+    ],
+    2: [
+      { q: "Uma terça é um intervalo de...", options: ["três graus", "duas oitavas", "um semitom"], a: 0, why: "De Dó a Mi há três graus. Pode ser maior ou menor." },
+      { q: "Uma tríade é um acorde de...", options: ["três notas", "duas notas", "quatro notas"], a: 0, why: "Tônica, terça e quinta. A sétima forma acordes de quatro notas." },
+      { q: "Compasso composto tem...", options: ["subdivisão ternária", "só dois tempos", "subdivisão binária"], a: 0, why: "6/8, 9/8 e 12/8 dividem cada tempo em três." },
+      { q: "O que é uma anacruse?", options: ["Nota ou notas antes do primeiro tempo forte", "Uma pausa no fim", "Um acorde de três notas"], a: 0, why: "A anacruse prepara a entrada do compasso e não conta como tempo forte." },
+      { q: "A escala cromática tem...", options: ["doze semitons", "sete notas", "cinco notas"], a: 0, why: "Percorre todas as teclas dentro de uma oitava, sem pular semitons." },
+      { q: "Dinâmica musical é...", options: ["a variação de intensidade", "a altura", "o timbre"], a: 0, why: "Forte e piano são dinâmicas. Não mudam a nota, mudam o volume." },
+    ],
+    3: [
+      { q: "Uma nona é...", options: ["uma extensão de acorde além da oitava", "um intervalo de dois semitons", "um ritmo"], a: 0, why: "Acordes de jazz e bossa usam nonas, décimas primeiras e décimas terceiras." },
+      { q: "Baixo cifrado é...", options: ["uma notação de harmonia com números sobre o baixo", "um instrumento", "uma escala"], a: 0, why: "Os números indicam intervalos acima da nota do baixo, típicos do barroco." },
+      { q: "Imitação em contraponto é...", options: ["repetir um motivo em outra voz", "tocar mais forte", "mudar o timbre"], a: 0, why: "A segunda voz retoma a ideia, às vezes transposta ou invertida." },
+      { q: "Modulação diatônica é...", options: ["mudança para um tom próximo", "volta à tônica", "mudança de instrumento"], a: 0, why: "Geralmente para a dominante ou relativa, com acordes comuns aos dois tons." },
+      { q: "Uma obra cíclica...", options: ["faz temas voltarem em movimentos diferentes", "não tem forma", "é sempre improvisada"], a: 0, why: "O retorno do tema une os movimentos, como na Sinfonia Fantástica." },
+      { q: "Ruído branco tem...", options: ["energia parecida em todas as frequências", "só uma frequência", "volume zero"], a: 0, why: "O espectro é plano. Ruído rosa distribui a energia de outro jeito." },
+    ],
+  },
+  ai: {
+    1: [
+      { q: "Inteligência artificial é...", options: ["um campo que constrói sistemas para tarefas cognitivas", "um único algoritmo", "um banco de dados"], a: 0, why: "O campo inclui busca, aprendizado, visão, linguagem e planejamento." },
+      { q: "Um algoritmo de busca serve para...", options: ["explorar opções até encontrar uma solução", "compactar dados", "desenhar imagens"], a: 0, why: "Pode ser cego, heurístico ou informado, conforme usa informação do problema." },
+      { q: "Um assistente virtual é...", options: ["uma interface conversacional para tarefas", "um hardware", "um banco"], a: 0, why: "Ele interpreta pedidos e responde ou executa ações." },
+      { q: "Reconhecimento de voz converte...", options: ["fala em texto", "texto em fala", "imagem em texto"], a: 0, why: "Texto para fala é síntese. Imagem para texto é OCR ou legenda." },
+      { q: "Tradução automática...", options: ["converte texto entre idiomas", "resume", "classifica"], a: 0, why: "Modelos neurais aprendem correspondências entre línguas a partir de pares de frases." },
+      { q: "Dado estruturado está...", options: ["organizado em tabelas ou esquemas", "em texto livre", "em áudio"], a: 0, why: "Colunas e tipos definidos facilitam consulta e treino." },
+    ],
+    2: [
+      { q: "Validação cruzada...", options: ["divide os dados em dobras para avaliar", "aumenta o modelo", "apaga outliers"], a: 0, why: "Cada dobra serve de teste enquanto as outras treinam, reduzindo a dependência de uma divisão." },
+      { q: "Acurácia mede...", options: ["a proporção de acertos", "a velocidade", "a memória"], a: 0, why: "Pode enganar em classes desbalanceadas; precisão e recall complementam." },
+      { q: "Regressão prevê...", options: ["um número", "uma classe", "um texto"], a: 0, why: "Classificação prevê categoria; regressão prevê valor contínuo." },
+      { q: "Classificação binária tem...", options: ["duas classes", "dez classes", "nenhuma classe"], a: 0, why: "Sim ou não, spam ou não. Multiclassa tem três ou mais." },
+      { q: "Engenharia de features é...", options: ["criar variáveis úteis para o modelo", "apagar colunas", "trocar a GPU"], a: 0, why: "Boas features carregam informação que o modelo consegue usar." },
+      { q: "Um pipeline de ML organiza...", options: ["as etapas de dados, treino e avaliação", "só o deploy", "só a coleta"], a: 0, why: "Repetir as mesmas etapas de forma consistente evita vazamento e erro manual." },
+    ],
+    3: [
+      { q: "Regularização L2...", options: ["penaliza a soma dos quadrados dos pesos", "remove dados", "aumenta a taxa"], a: 0, why: "Pesos grandes são desencorajados, o que suaviza o modelo e reduz overfitting." },
+      { q: "Um autoencoder aprende...", options: ["uma representação comprimida dos dados", "a classificar apenas", "a gerar rótulos"], a: 0, why: "Ele reconstrói a entrada a partir de um gargalo, forçando uma representação útil." },
+      { q: "Aprendizado auto-supervisionado...", options: ["cria o alvo a partir dos próprios dados", "usa rótulos humanos", "só usa reforço"], a: 0, why: "Prever a próxima palavra ou completar uma parte são tarefas auto-supervisionadas." },
+      { q: "Destilação de modelo...", options: ["treina um modelo menor para imitar o maior", "apaga o modelo", "aumenta camadas"], a: 0, why: "O aluno aprende as saídas do professor e fica mais leve para servir." },
+      { q: "Busca em feixe mantém...", options: ["as k melhores hipóteses a cada passo", "só uma hipótese", "todas as hipóteses"], a: 0, why: "É um meio-termo entre guloso e exaustivo, comum em tradução." },
+      { q: "Calibração de probabilidade verifica...", options: ["se a confiança corresponde à frequência de acerto", "a velocidade", "o tamanho"], a: 0, why: "Um modelo calibrado que diz 80% deve acertar cerca de 80% desses casos." },
+    ],
+  },
+  lingua: {
+    1: [
+      { q: "Um verbo indica...", options: ["ação ou estado", "nome", "qualidade"], a: 0, why: "Correr é ação; ser é estado. Substantivo nomeia e adjetivo qualifica." },
+      { q: "Uma sílaba é...", options: ["uma unidade sonora com vogal", "uma palavra", "uma frase"], a: 0, why: "A vogal é o núcleo. Consoantes se agrupam em torno dela." },
+      { q: "O artigo indefinido é...", options: ["um, uma", "o, a", "este, esta"], a: 0, why: "Indefinido generaliza; definido especifica." },
+      { q: "Rima é...", options: ["semelhança de som no fim ou interior do verso", "repetição de palavra", "pausa"], a: 0, why: "Pode ser consoante ou toante, conforme os sons que coincidem." },
+      { q: "Um parágrafo organiza...", options: ["um bloco de ideias", "uma sílaba", "uma letra"], a: 0, why: "Cada parágrafo desenvolve uma unidade e ajuda o leitor a acompanhar." },
+      { q: "Um título...", options: ["nomeia e orienta a leitura", "encerra o texto", "substitui o primeiro parágrafo"], a: 0, why: "Ele antecipa o assunto e ajuda a decidir se vale ler." },
+    ],
+    2: [
+      { q: "Sujeito composto tem...", options: ["mais de um núcleo", "um núcleo", "nenhum núcleo"], a: 0, why: "João e Maria chegaram: dois núcleos. O verbo fica no plural." },
+      { q: "Verbo transitivo é...", options: ["o que precisa de complemento", "o que não precisa", "o que é sempre impessoal"], a: 0, why: "Transitivo direto pede objeto direto; indireto pede preposição." },
+      { q: "Oração subordinada é...", options: ["a que exerce função na principal", "a independente", "a sem verbo"], a: 0, why: "Ela completa, qualifica ou indica circunstância da oração principal." },
+      { q: "Um conectivo...", options: ["liga ideias e estabelece relação", "nomeia objetos", "marca plural"], a: 0, why: "E, mas, porque e portanto indicam adição, oposição, causa e conclusão." },
+      { q: "Uma comparação...", options: ["aproxima dois termos com como", "substitui um termo", "exagera"], a: 0, why: "A metáfora dispensa o como; a comparação explicita a semelhança." },
+      { q: "Texto injuntivo...", options: ["instrui ou orienta", "narra", "argumenta"], a: 0, why: "Receitas e manuais são injuntivos: dizem o que fazer." },
+    ],
+    3: [
+      { q: "Coordenação ocorre entre orações...", options: ["independentes", "dependentes", "sem verbo"], a: 0, why: "Nenhuma exerce função na outra; podem ser ligadas por conjunção." },
+      { q: "Regência verbal estuda...", options: ["a relação entre verbo e complemento", "a acentuação", "a pontuação"], a: 0, why: "Define se o complemento pede preposição e qual." },
+      { q: "Concordância nominal...", options: ["faz adjetivo e artigo acompanharem o substantivo", "concorda o verbo com o sujeito", "marca o plural"], a: 0, why: "É a harmonia de gênero e número dentro do grupo nominal." },
+      { q: "Coesão referencial...", options: ["retoma termos por pronome, sinônimo ou elipse", "usa só conectivos", "marca parágrafos"], a: 0, why: "Ela mantém o fio do texto sem repetir sempre a mesma palavra." },
+      { q: "Argumento de causa e consequência...", options: ["liga um fato ao efeito dele", "cita autoridade", "compara casos"], a: 0, why: "A força depende de mostrar que a causa realmente produz o efeito." },
+      { q: "Intertextualidade implícita...", options: ["referencia outro texto sem citar", "copia com aspas", "resume"], a: 0, why: "A paródia e a alusão exigem que o leitor reconheça a obra de origem." },
+    ],
+  },
+};
+
+for (const [continent, tiers] of Object.entries(EXTRA_QUESTIONS_15)) {
+  for (const [tier, list] of Object.entries(tiers)) QUESTIONS[continent][tier].push(...list);
+}
+
+// Seis perguntas de fecho para bater 600.
+export const EXTRA_QUESTIONS_16 = {
+  cs: {
+    2: [
+      { q: "Um vetor dinâmico é...", options: ["um array que cresce quando precisa", "uma lista ligada", "um banco de dados"], a: 0, why: "Ele guarda em bloco contíguo e realoca quando enche, com custo amortizado." },
+    ],
+  },
+  math: {
+    3: [
+      { q: "Um número transcendente é...", options: ["não é raiz de polinômio com coeficientes inteiros", "sempre racional", "sempre infinito"], a: 0, why: "π e e são transcendentes. Todo transcendente é irracional, mas nem todo irracional é transcendente." },
+    ],
+  },
+  physics: {
+    3: [
+      { q: "Um fóton é...", options: ["o quantum de luz", "uma partícula com carga", "uma onda sonora"], a: 0, why: "É a unidade de energia da radiação eletromagnética, sem massa de repouso." },
+    ],
+  },
+  chem: {
+    2: [
+      { q: "Um indicador redox muda de cor conforme...", options: ["o potencial de oxidação", "a temperatura", "a massa"], a: 0, why: "Ele alterna entre formas oxidadas e reduzidas com cores diferentes." },
+    ],
+  },
+  music: {
+    2: [
+      { q: "Uma clave é...", options: ["um símbolo que fixa as alturas no pentagrama", "um acorde", "um andamento"], a: 0, why: "A clave de sol, fá ou dó define qual nota fica em cada linha." },
+    ],
+  },
+  ai: {
+    3: [
+      { q: "Inferência é...", options: ["usar um modelo treinado para prever", "treinar o modelo", "coletar dados"], a: 0, why: "Treino ajusta pesos; inferência aplica o modelo a uma entrada nova." },
+    ],
+  },
+};
+
+for (const [continent, tiers] of Object.entries(EXTRA_QUESTIONS_16)) {
+  for (const [tier, list] of Object.entries(tiers)) QUESTIONS[continent][tier].push(...list);
+}

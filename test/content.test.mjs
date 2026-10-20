@@ -129,6 +129,12 @@ for (const c of continents) {
   check(texts.length >= 22, `${c}: só ${texts.length} perguntas no continente`);
 }
 
+const totalQuestions = continents.reduce(
+  (sum, c) => sum + [1, 2, 3].reduce((n, t) => n + (QUESTIONS[c]?.[t]?.length || 0), 0),
+  0,
+);
+check(totalQuestions >= 600, `banco com ${totalQuestions} perguntas, esperado ao menos 600`);
+
 // duelo entre jogadores: uma carta por dificuldade, dano crescente
 const rpg = new RPG({ getLevel: () => 1, gainXp: () => {}, toast: () => {}, audio: {} });
 for (const c of continents) {
