@@ -18,6 +18,7 @@ import { AVATAR_DEFAULT, normalizeAvatar, avatarColors, avatarCode, HAIRS } from
 import { renderCharacterEditor } from "./character.js";
 import { copyText } from "./social.js";
 import { isAdminKey, ADMIN_LABEL } from "./admin.js";
+import { CATALOG_CONTENT } from "./catalog-gen.js";
 import { findPath, nearestWalkable } from "./path.js";
 import { feedPeer, peerRenderPosition } from "./interp.js";
 import { RPG } from "./rpg.js";
@@ -2452,6 +2453,6 @@ window.addEventListener("beforeunload", () => {
   setNetStatus({ state: "solo", count: 1 });
   requestAnimationFrame(loop);
   if (new URLSearchParams(location.search).has("debug")) {
-    window.__mundo = { player, state, world, renderer, audio, quests, rede, backup, rpg, sheetUi, duelUi, dungeon, pvpUi, knockDown, findPath, openPost: (id) => openPost(id), get social() { return social; } };
+    window.__mundo = { player, state, world, renderer, audio, quests, rede, backup, rpg, sheetUi, duelUi, dungeon, pvpUi, knockDown, findPath, openPost: (id) => openPost(id), catalog: CATALOG_CONTENT, get social() { return social; } };
   }
 })();
