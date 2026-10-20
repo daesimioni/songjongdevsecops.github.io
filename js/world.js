@@ -187,6 +187,7 @@ export function createWorld() {
   bridgeLine(226, 88, 226, 126, 3, BRIDGE); // análise e linguagem
   bridgeLine(244, 135, 254, 135, 3, BRIDGE); // linguagem e semântica
   bridgeLine(74, 151, 78, 162, 3, BRIDGE); // analítica e óptica
+  bridgeLine(226, 145, 226, 162, 3, BRIDGE); // linguagem e segurança
   // encontros de ponte com terra
   rect(88, 30, 5, 4, CONTINENTS.cs.path);
   rect(88, 88, 5, 4, CONTINENTS.physics.path);
@@ -230,6 +231,8 @@ export function createWorld() {
   rect(253, 134, 4, 4, CONTINENTS.lingua.floor);
   rect(73, 150, 4, 4, CONTINENTS.chem.path);
   rect(77, 161, 4, 4, CONTINENTS.physics.path);
+  rect(225, 144, 4, 4, CONTINENTS.ai.path);
+  rect(225, 161, 4, 4, CONTINENTS.cs.path);
   rect(76, 47, 4, 4, CONTINENTS.hub.floor);
   rect(101, 47, 4, 4, CONTINENTS.hub.floor);
 

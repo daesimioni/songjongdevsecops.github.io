@@ -353,6 +353,18 @@ export const AREAS = [
     path: 15,
     accent: "#ff7aa8",
   },
+  {
+    id: "cs-security",
+    continent: "cs",
+    name: "Área da Segurança",
+    sub: "cifras, chaves e o que não pode vazar",
+    land: { cx: 226, cy: 173, rx: 18, ry: 10 },
+    rect: { x: 206, y: 158, w: 40, h: 30 },
+    base: 10,
+    floor: 11,
+    path: 11,
+    accent: "#61f4c0",
+  },
 ];
 
 export const SITES = [
@@ -736,6 +748,18 @@ export const SITES = [
     label: "Dispersão e Espectro", x: 88, y: 180, post: "rainbow",
     accent: "#ffd166", icon: "eye",
   },
+
+  // Computação · área da segurança
+  {
+    id: "security", continent: "cs", name: "Sala da Cifra",
+    label: "Criptografia", x: 216, y: 166, post: "security",
+    accent: "#61f4c0", icon: "chip",
+  },
+  {
+    id: "crypto", continent: "cs", name: "Torre das Chaves",
+    label: "Chaves e Assinaturas", x: 236, y: 178, post: "crypto",
+    accent: "#6bd5ff", icon: "cpu",
+  },
 ];
 
 export const WAYSTONES = [
@@ -762,6 +786,7 @@ export const WAYSTONES = [
   { id: "ai-language", continent: "ai", name: "Farol da Linguagem", x: 226, y: 135, accent: "#6bd5ff" },
   { id: "lingua-semantics", continent: "lingua", name: "Farol da Semântica", x: 272, y: 135, accent: "#e8c07a" },
   { id: "physics-optics", continent: "physics", name: "Farol da Óptica", x: 78, y: 174, accent: "#ff7aa8" },
+  { id: "cs-security", continent: "cs", name: "Farol da Segurança", x: 226, y: 173, accent: "#61f4c0" },
 ];
 
 export const NPC_SPAWNS = [
@@ -795,6 +820,7 @@ export const NPC_SPAWNS = [
   { id: "chomsky", continent: "ai", x: 221, y: 139, accent: "#6bd5ff" },
   { id: "saussure", continent: "lingua", x: 267, y: 139, accent: "#e8c07a" },
   { id: "huygens", continent: "physics", x: 73, y: 178, accent: "#ff7aa8" },
+  { id: "diffie", continent: "cs", x: 221, y: 177, accent: "#61f4c0" },
 ];
 
 export const CAT_SPAWN = { x: 87, y: 61 };

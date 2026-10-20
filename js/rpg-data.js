@@ -102,6 +102,10 @@ export const ITEMS = {
   datagrama: { name: "Datagrama Solto", continent: "cs", desc: "Vai sem prometer ordem nem entrega. Às vezes é exatamente o que se precisa." },
   handshake: { name: "Aperto de Mão", continent: "cs", desc: "Três mensagens para começar uma conversa. Nenhuma delas é pessoal." },
   "pedra-baran": { name: "Pedra de Barán", continent: "cs", relic: true, desc: "Uma pedra dividida em pedaços que sempre acham o caminho. Relíquia: +5 de vida máxima." },
+  cifra: { name: "Cifra Antiga", continent: "cs", desc: "Um alfabeto trocado que já foi segredo de guerra e hoje é exercício." },
+  assinatura: { name: "Assinatura Digital", continent: "cs", desc: "Um selo que prova autoria sem revelar a chave." },
+  segredo: { name: "Segredo Compartilhado", continent: "cs", desc: "Um número que duas partes conhecem e o resto do mundo não." },
+  "pedra-diffie": { name: "Pedra de Diffie", continent: "cs", relic: true, desc: "Duas pedras que combinam um segredo em público sem dizer o segredo. Relíquia: +5 de vida máxima." },
   limite: { name: "Limite de Bolso", continent: "math", desc: "Um valor que nunca chega, mas chega perto o bastante." },
   serie: { name: "Série Infinita", continent: "math", desc: "Uma soma que continua mesmo depois de você desistir." },
   epsilon: { name: "Épsilon de Vidro", continent: "math", desc: "Pequeno o suficiente para caber em qualquer tolerância." },
@@ -149,6 +153,9 @@ export const ITEMS = {
   "anel-roteador": { name: "Anel Roteador", continent: "cs", slot: "ring", damage: 1, desc: "Encontra o próximo salto do golpe antes de ele sair." },
   "manto-malha": { name: "Manto de Malha", continent: "cs", slot: "armor", hp: 4, desc: "Uma malha de nós que redireciona o impacto por vários caminhos." },
   "capuz-latencia": { name: "Capuz de Latência", continent: "cs", slot: "helmet", hp: 3, desc: "Guarda a resposta até o momento certo. O susto chega atrasado." },
+  "anel-seguro": { name: "Anel Seguro", continent: "cs", slot: "ring", damage: 1, desc: "Assina o golpe para que ninguém possa dizê-lo de outra pessoa." },
+  "manto-cifra": { name: "Manto de Cifra", continent: "cs", slot: "armor", hp: 4, desc: "O impacto entra, vira ruído e sai sem sentido para quem não tem a chave." },
+  "capuz-chave": { name: "Capuz de Chave", continent: "cs", slot: "helmet", hp: 3, desc: "Guarda a chave privada onde ninguém alcança." },
   "anel-serie": { name: "Anel de Série", continent: "math", slot: "ring", damage: 1, desc: "Uma soma infinita enrolada no dedo. Converge para um golpe." },
   "manto-limite": { name: "Manto de Limite", continent: "math", slot: "armor", hp: 4, desc: "Chega tão perto do corpo que quase é o corpo." },
   "escudo-delta": { name: "Escudo de Delta", continent: "math", slot: "shield", hp: 4, desc: "A tolerância que segura o golpe e ainda deixa passar o essencial." },
@@ -600,6 +607,23 @@ const GROUNDS_RAW = [
       { id: "physics-optics-m3", name: "Espectro", tier: 3, kind: "golem", dx: 0, dy: 3 },
     ],
     boss: { id: "physics-optics-boss", name: "O Espectro Branco", kind: "boss", dx: 0, dy: 0 },
+  },
+  {
+    id: "cs-security",
+    continent: "cs",
+    dungeon: "dungeon-cs-security",
+    name: "Caçada da Chave",
+    center: { x: 230, y: 176 },
+    banner: { x: 0, y: -3 },
+    lever: { x: -3, y: 3 },
+    loot: ["cifra", "assinatura", "segredo"],
+    bossLoot: "pedra-diffie",
+    monsters: [
+      { id: "cs-security-m1", name: "Cifra", tier: 1, kind: "slime", dx: -3, dy: 1 },
+      { id: "cs-security-m2", name: "Assinatura", tier: 2, kind: "eye", dx: 3, dy: 1 },
+      { id: "cs-security-m3", name: "Firewall", tier: 3, kind: "golem", dx: 0, dy: 3 },
+    ],
+    boss: { id: "cs-security-boss", name: "A Chave Mestra", kind: "boss", dx: 0, dy: 0 },
   },
 ];
 
@@ -1861,5 +1885,29 @@ export const EXTRA_QUESTIONS_17 = {
 };
 
 for (const [continent, tiers] of Object.entries(EXTRA_QUESTIONS_17)) {
+  for (const [tier, list] of Object.entries(tiers)) QUESTIONS[continent][tier].push(...list);
+}
+
+// Segurança: duas perguntas por dificuldade.
+export const EXTRA_QUESTIONS_18 = {
+  cs: {
+    1: [
+      { q: "Criptografia simétrica usa...", options: ["a mesma chave para cifrar e decifrar", "duas chaves diferentes", "nenhuma chave"], a: 0, why: "A mesma chave precisa ser compartilhada. Assimétrica usa par de chaves." },
+      { q: "Hash criptográfico serve para...", options: ["resumir dados num tamanho fixo", "cifrar e reverter", "aumentar a rede"], a: 0, why: "O hash é uma impressão digital; não se reverte. Serve para integridade e senhas." },
+      { q: "Reutilizar a mesma senha é perigoso porque...", options: ["um vazamento expõe várias contas", "a senha fica mais curta", "o site esquece a senha"], a: 0, why: "Vazada num serviço, a mesma senha abre as outras contas. Um gerenciador resolve o reuso." },
+    ],
+    2: [
+      { q: "Criptografia assimétrica usa...", options: ["chave pública e chave privada", "só uma chave", "só hash"], a: 0, why: "A pública cifra ou verifica; a privada decifra ou assina." },
+      { q: "Uma assinatura digital prova...", options: ["autoria e integridade", "velocidade da rede", "a senha"], a: 0, why: "Quem tem a privada assina; qualquer um verifica com a pública." },
+      { q: "Salt em senhas serve para...", options: ["impedir tabelas prontas e hashes iguais", "deixar a senha mais curta", "substituir o hash"], a: 0, why: "Um valor aleatório por senha faz o mesmo texto gerar hashes diferentes." },
+    ],
+    3: [
+      { q: "TLS protege...", options: ["a conversa em trânsito", "o disco do servidor", "a senha em repouso"], a: 0, why: "TLS cifra e autentica o canal. Dados guardados pedem cifra em repouso." },
+      { q: "O princípio de Kerckhoffs diz que...", options: ["o sistema deve ser seguro mesmo com o algoritmo público", "a chave deve ser pública", "não se deve usar chave"], a: 0, why: "A segurança mora na chave, não no segredo do desenho." },
+    ],
+  },
+};
+
+for (const [continent, tiers] of Object.entries(EXTRA_QUESTIONS_18)) {
   for (const [tier, list] of Object.entries(tiers)) QUESTIONS[continent][tier].push(...list);
 }

@@ -566,6 +566,30 @@ const COMMON = {
     monsters: ["Reflexo", "Prisma", "Espectro", "Lente", "Raio", "Miragem", "Fóton", "Foco", "Cor", "Sombra", "Brilho"],
     palette: { floor: "#33202a", floor2: "#261820", wall: "#170d13", wallTop: "#4a2c3b", accent: "#ff7aa8" },
   },
+  "cs-security": {
+    continent: "cs",
+    name: "Cofre dos Segredos",
+    sub: "cada porta pede uma chave que você não pode mostrar",
+    material: "ferro",
+    tunnel: "narrow",
+    equipment: ["anel-seguro", "manto-cifra", "capuz-chave"],
+    shift: { a: [2, 2], c: [-1, -2], h: [2, -1] },
+    boss: "A Chave Mestra",
+    rooms: [
+      ["Boca da Cifra", "entrada"],
+      ["Sala das Chaves", "chaves"],
+      ["Corredor do Hash", "hash"],
+      ["Cripta da Assinatura", "assinatura"],
+      ["Oficina do TLS", "tls"],
+      ["Poço do Firewall", "firewall"],
+      ["Torre das Senhas", "senhas"],
+      ["Praça da Segurança", "cidade"],
+      ["Câmara dos Segredos", "segredos"],
+      ["Galeria do Cofre", "cofre"],
+    ],
+    monsters: ["Cifra", "Assinatura", "Firewall", "Chave", "Hash", "Salt", "Token", "Certificado", "Senha", "Cofre", "Ruído"],
+    palette: { floor: "#16302c", floor2: "#102420", wall: "#081715", wallTop: "#21463f", accent: "#61f4c0" },
+  },
 };
 
 export const DUNGEONS = Object.entries(COMMON).map(([key, d]) => {

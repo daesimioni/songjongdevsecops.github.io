@@ -12,8 +12,8 @@ export const POSTS = {
     lab: null,
     body: `
       <p>Este blog não tem índice. Tem <strong>mapa</strong>. Você entra com um boneco, atravessa pontes e escolhe por qual continente começar. Cada estação que encontra é uma página: um texto curto e um instrumento para mexer com as mãos.</p>
-      <p>Nas beiradas do mapa, cada continente ganhou <strong>duas áreas temáticas</strong> (três na Física), cada uma com ilha, estações, clareira de caçada e caverna próprias: eletromagnetismo, termodinâmica e óptica, arquitetura e redes, análise e probabilidade, orgânica e analítica, acústica e forma, visão e linguagem, literatura e semântica. São quinze lugares a mais para atravessar a pé.</p>
-      <p>São sete continentes. A <em>Computação</em> mostra como saímos de interruptores e areia até processadores. <em>Matemática</em> visita o infinito, as formas, a mudança e o acaso. <em>Física</em> testa pêndulos, ondas, calor, luz e órbitas. <em>Química</em> abre a tabela periódica, as ligações, as reações e o equilíbrio. <em>Música</em> mostra a matemática escondida no som. <em>Inteligência Artificial</em> abre os dados, as redes, a linguagem e os limites. O <em>Vale da Língua</em> desce ao português do Brasil: o som, a palavra, a frase e o texto. Ao todo, 67 fragmentos para descobrir.</p>
+      <p>Nas beiradas do mapa, cada continente ganhou <strong>duas áreas temáticas</strong> (alguns com três), cada uma com ilha, estações, clareira de caçada e caverna próprias: eletromagnetismo, termodinâmica e óptica, arquitetura, redes e segurança, análise e probabilidade, orgânica e analítica, acústica e forma, visão e linguagem, literatura e semântica. São dezesseis lugares a mais para atravessar a pé.</p>
+      <p>São sete continentes. A <em>Computação</em> mostra como saímos de interruptores e areia até processadores. <em>Matemática</em> visita o infinito, as formas, a mudança e o acaso. <em>Física</em> testa pêndulos, ondas, calor, luz e órbitas. <em>Química</em> abre a tabela periódica, as ligações, as reações e o equilíbrio. <em>Música</em> mostra a matemática escondida no som. <em>Inteligência Artificial</em> abre os dados, as redes, a linguagem e os limites. O <em>Vale da Língua</em> desce ao português do Brasil: o som, a palavra, a frase e o texto. Ao todo, 69 fragmentos para descobrir.</p>
       <p>Cada estação abre uma página e soma experiência. O <strong>Diário</strong> guarda o que você já encontrou. As <strong>Pedras do Porto</strong>, os monólitos brilhantes nas docas, levam você de volta a qualquer continente já visitado. A névoa do minimapa só some onde você anda.</p>
       <blockquote>Não tem pressa. O mapa é grande, mas o caminho é seu.</blockquote>
       <p>Os <strong>NPCs</strong> têm missões. Aperte F perto deles: tem caminhada, pergunta e conversa. Cada missão paga experiência e um título, e o Diário mostra quanto falta para a próxima.</p>
@@ -888,6 +888,40 @@ export const POSTS = {
     `,
   },
 
+  // ---------------- Computação · segurança ----------------
+  security: {
+    kicker: "computação · sala da cifra",
+    title: "Esconder a mensagem não é esconder a chave",
+    date: "2026-07-14",
+    read: "5 min",
+    tags: ["segurança", "criptografia", "hash"],
+    continent: "cs",
+    lab: null,
+    body: `
+      <p>Segurança tem três perguntas: quem pode ler, quem pode alterar e quem pode dizer que foi você. Confidencialidade, integridade e autenticidade. Criptografia resolve as três, mas cada uma com uma ferramenta diferente.</p>
+      <p>Na cifra simétrica, a mesma chave cifra e decifra. É rápida e serve para o grosso dos dados. O problema é combinar a chave com quem está do outro lado. Na assimétrica, uma chave pública cifra e a privada decifra; a privada também assina e a pública verifica.</p>
+      <p>Hash é outra coisa: transforma qualquer entrada num resumo de tamanho fixo. Não se desfaz. Serve para verificar integridade e para guardar senhas, desde que com salt e um algoritmo lento de propósito.</p>
+      <p>O erro clássico é guardar senha em texto ou com hash simples. Outro é confundir ofuscar com proteger. Esconder o algoritmo não é segurança; a chave é que precisa ser secreta.</p>
+      <blockquote>Criptografia não esconde que existe uma mensagem. Esconde o que ela diz.</blockquote>
+    `,
+  },
+  crypto: {
+    kicker: "computação · torre das chaves",
+    title: "A chave que prova sem se mostrar",
+    date: "2026-07-10",
+    read: "5 min",
+    tags: ["segurança", "assinatura", "tls"],
+    continent: "cs",
+    lab: null,
+    body: `
+      <p>Assinatura digital não é uma imagem da sua letra. É um valor calculado com a chave privada sobre o conteúdo. Qualquer pessoa com a chave pública confere se aquele conteúdo foi assinado por você e se não mudou no caminho.</p>
+      <p>O TLS junta as peças: troca de chaves, certificado, cifra simétrica e verificação. O certificado liga uma chave pública a um nome, assinado por uma autoridade. Sem essa cadeia, o cadeado não prova com quem você está falando.</p>
+      <p>Senhas merecem tratamento próprio. Não se cifra senha para depois decifrar; guarda-se um hash lento com salt. Assim, mesmo quem lê o banco não descobre a senha original, e o mesmo texto em duas contas gera hashes diferentes.</p>
+      <p>O elo mais fraco raramente é a matemática. É a chave no lugar errado, o token no log, a pergunta de recuperação fácil. Criptografia boa com operação ruim continua vazando.</p>
+      <blockquote>A chave privada é a identidade. Quem a tem não precisa pedir licença.</blockquote>
+    `,
+  },
+
   // ---------------- Química · analítica ----------------
   analysis: {
     kicker: "química · bancada analítica",
@@ -1064,7 +1098,7 @@ export const NPCS = {
     name: "Dona Zefa",
     lines: [
       "Bem-vindo ao Porto. Sete continentes, mais terra do que os olhos acreditam.",
-      "Cada continente tem duas áreas temáticas nas beiradas, três na Física, com ponte, estação e caverna. Vale a caminhada.",
+      "Cada continente tem duas áreas temáticas nas beiradas, alguns com três, com ponte, estação e caverna. Vale a caminhada.",
       "Cada farol da doca acende uma Pedra do Porto. Aperte F nas pedras para voltar rápido.",
       "O diário guarda o que você já viu. Não precisa decorar nada.",
       "Ao lado de cada acampamento de caça tem uma boca de caverna. Lá embaixo o bicho não espera você apertar F: ele vê primeiro.",
@@ -1389,6 +1423,24 @@ export const NPCS = {
       "Treino de óptica aqui, no claro e sem ofuscar. A galeria é que cobra.",
       "Comece pela refração: índice, ângulo e velocidade. O resto sai de Snell.",
       "Cor é luz refletida. Se a pergunta fala de objeto escuro sob outra luz, pense no que ele reflete.",
+    ],
+  },
+  diffie: {
+    name: "Diffie",
+    lines: [
+      "Duas pessoas podem combinar um segredo em público. O que fica público não basta para descobri-lo.",
+      "Chave simétrica é rápida; assimétrica resolve o encontro de chaves. Os protocolos usam as duas.",
+      "Hash não é cifra. Não se volta atrás; serve para integridade e senha.",
+      "Assinatura prova autoria e integridade. O conteúdo assinado não pode mudar depois.",
+      "O cofre ao lado guarda chaves que ninguém deve ver. Lá dentro, a pergunta é sobre quem pode ler.",
+    ],
+  },
+  "trainer-cs-security": {
+    name: "Mestre Rivest",
+    lines: [
+      "Treino de segurança aqui, no claro e sem vazar chave. O cofre é que cobra.",
+      "Comece pela diferença entre cifra simétrica e assimétrica. Metade das perguntas sai daí.",
+      "Se a pergunta fala em guardar senha, pense em hash lento com salt, nunca em cifra reversível.",
     ],
   },
   liebig: {

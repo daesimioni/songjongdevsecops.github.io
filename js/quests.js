@@ -54,8 +54,8 @@ export const QUESTS = [
     npc: "guia",
     giver: "Dona Zefa",
     title: "O mundo inteiro",
-    brief: "Sessenta e sete fragmentos, sete continentes, uma volta completa. Quando o mapa acabar, o Porto ainda vai estar aqui.",
-    goal: { type: "cards", count: 67 },
+    brief: "Sessenta e nove fragmentos, sete continentes, uma volta completa. Quando o mapa acabar, o Porto ainda vai estar aqui.",
+    goal: { type: "cards", count: 69 },
     reward: { xp: 150, title: "Mundo de Song" },
   },
   {
@@ -497,6 +497,25 @@ export const QUESTS = [
       why: "Cada frequência muda de velocidade de um jeito e desvia num ângulo diferente. O violeta desvia mais que o vermelho.",
     },
     reward: { xp: 38, title: "Aprendiz de Huygens" },
+  },
+  {
+    id: "segredo-em-publico",
+    npc: "diffie",
+    giver: "Diffie",
+    title: "Segredo em público",
+    brief: "Duas pessoas querem combinar uma chave sem que ninguém que escuta consiga descobri-la. Como?",
+    goal: { type: "quiz" },
+    quiz: {
+      question: "O que a troca de chaves de Diffie-Hellman permite?",
+      options: [
+        "Combinar um segredo por um canal público sem revelá-lo",
+        "Cifrar sem nenhuma chave",
+        "Guardar senhas em texto",
+      ],
+      answer: 0,
+      why: "As duas partes trocam valores públicos e calculam o mesmo segredo. Quem escuta vê os valores, mas não consegue calcular o segredo.",
+    },
+    reward: { xp: 38, title: "Guardião da Chave" },
   },
   {
     id: "amostra-honesta",
