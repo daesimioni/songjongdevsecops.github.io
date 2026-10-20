@@ -4,6 +4,20 @@ Equipamento no Mundo de Song não é número maior. É uma forma de olhar o
 problema. Cada peça responde a uma pergunta: "que tipo de estudante eu quero ser
 hoje?".
 
+## 0. O que já existe (2026-10-20)
+
+- 8 espaços equipáveis (arma, elmo, armadura, pernas, botas, escudo, anel,
+  colar), 49 peças com bônus passivo e 6 runas consumíveis.
+- Cada continente tem arma, armadura e uma peça de acessório ou escudo; as
+  áreas temáticas acrescentaram mais três peças cada.
+- Acesso: baú de caverna, chefe, forja (materiais) e loja da mestra na cidade
+  subterrânea. O bônus entra em `RPG.equipmentBonus()` e para no teto de +4 de
+  dano e +16 de vida por conjunto.
+- Runas: faísca, trovão, fogo, gelo, cura e espelho. O primeiro uso aprende a
+  magia; depois ela sai por mana (2 a 4), sem gastar a carga.
+- O que falta do desenho abaixo: capa, conjuntos de 3 peças, ofícios por
+  continente e leilão. Nada disso está implementado.
+
 ## 1. Slots
 
 | slot | o que faz | exemplos |

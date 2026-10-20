@@ -6,8 +6,11 @@ e como o jogador sai vivo sem perder o que estudou.
 
 ## 1. Do que existe para o que queremos
 
-Hoje: o bicho tem um raio de visão com linha de visão; se o jogador entra, um `!`
-aparece e abre um duelo de uma pergunta por vez. Um monstro por duelo.
+Hoje (2026-10-20): cada espécie tem cone em meia-lua (ângulo e alcance próprios),
+linha de visão e direção; o cone é desenhado no chão. Quando até quatro bichos
+veem o jogador na mesma janela, a batalha abre com todos: principal à esquerda,
+matilha à direita, vida e pergunta por bicho, com 6 s de respiro depois da
+briga. Fugir limpa a fila e cobra o risco do bicho da frente.
 
 Alvo: cada espécie tem um **campo de visão em meia lua** (setor), com ângulo e
 alcance próprios; o jogador pode se aproximar pelas costas. Um grupo pode ver o

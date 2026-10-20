@@ -6,16 +6,22 @@ como consertar os pontos de descida que hoje não têm subida para outro lugar.
 
 ## 1. O diagnóstico
 
-O que existe hoje:
+O que existe hoje (2026-10-20):
 
-- sete regiões num mapa 180x120, com o Porto no centro e as seis disciplinas em
-  volta;
-- uma boca de caverna por continente, ao lado da caçada;
-- a caverna tem uma escada de volta para a mesma boca e mais nada;
-- não há ponte entre todas as ilhas nem caminho subterrâneo entre continentes;
-- a cidade subterrânea é uma sala, não uma rede;
-- o mapa não tem marcos fortes, estradas, rios, ruínas ou atalhos que deem
-  vontade de explorar.
+- mapa 300x200 com o Porto no centro, seis continentes e o Vale da Língua, mais
+  sete áreas temáticas ligadas por ponte;
+- 14 cavernas, 28 bocas pareadas (duas por caverna), com entrada por qualquer
+  uma e saída coerente pela escada da outra boca;
+- sete arquétipos de túnel (elbow, split, wide, cross, zigzag, narrow e a
+  variação espelhada), com salas laterais, anel de corredores e cidade no fundo;
+- 14 cidades subterrâneas com mestra, forja, altar, mesa, horta e bicho;
+- anel externo de pontes, ilhas decorativas e caminhos que ligam todas as
+  pedras de viagem às suas estações;
+- o HUD do subsolo mostra a camada (`subsolo -1`) e o botão de saída não é o
+  único caminho: escada da entrada, escada do fundo e pedra de retorno.
+
+O que falta do alvo abaixo: conurbação entre cidades e a camada -2. O desenho
+fica neste documento; a implementação entra no roadmap.
 
 O alvo:
 
@@ -25,6 +31,22 @@ O alvo:
   lugar do mapa;
 - o jogador pode atravessar o arquipélago por baixo, conhecendo o mundo por
   dentro.
+
+## 1.1 Ilhas e áreas no mapa atual
+
+| área | continente | centro | retângulo |
+|---|---|---|---|
+| Área do Eletromagnetismo | Física | 152,104 | 134,94 36x20 |
+| Área da Arquitetura de Computadores | Computação | 204,20 | 178,6 52x28 |
+| Área da Análise | Matemática | 226,76 | 202,62 46x27 |
+| Área da Química Orgânica | Química | 31,138 | 10,122 44x30 |
+| Área da Acústica | Música | 59,63 | 46,44 26x38 |
+| Área da Visão Computacional | IA | 168,12 | 159,2 18x21 |
+| Área da Literatura | Língua | 30,170 | 10,156 42x32 |
+
+Cada área tem duas estações, uma pedra de viagem, um NPC com missão, uma
+clareira de caçada, um instrutor e uma caverna própria. A ponte liga a área ao
+continente ou à área vizinha; o teste de caminho cobre todas as bocas.
 
 ## 2. A superfície
 

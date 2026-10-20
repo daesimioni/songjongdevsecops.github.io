@@ -176,6 +176,15 @@ for (const area of AREAS) {
 }
 check(world.hunters.length === 14, `mundo com ${world.hunters.length} clareiras`);
 check(world.monsters.length === 0, "a superfície ainda tem monstros");
+check(world.caves.length === 28, `mundo com ${world.caves.length} bocas de caverna, esperado 28`);
+for (const cave of world.caves) {
+  const pair = world.caves.find((c) => c.id === cave.pairId);
+  check(!!pair, `boca ${cave.id} sem par`);
+  if (pair) {
+    check(pair.defId === cave.defId, `boca ${cave.id} pareada com outra caverna`);
+    check(pair.mouth !== cave.mouth, `boca ${cave.id} pareada com a mesma boca`);
+  }
+}
 check(world.npcs.filter((n) => n.trainer).length === 14, "faltam instrutores na superfície");
 for (const c of continents) {
   check(!!world.caves.find((cave) => cave.continent === c), `continente ${c} sem boca de caverna`);

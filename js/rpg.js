@@ -271,14 +271,26 @@ export class RPG {
     entry.count = Math.min(9999, entry.count + 1);
     entry.name = String(monster.name || entry.name).replace(/[<>\u0000-\u001f]/g, "").slice(0, 24);
     entry.tier = clamp(Number(monster.tier) || entry.tier || 1, 1, 4);
+    // o diário mostra de onde o bicho veio e uma pergunta típica da dificuldade
+    const continent = String(monster.continent || "").toLowerCase().slice(0, 12);
+    if (continent) entry.continent = continent;
+    if (monster.theme) entry.theme = String(monster.theme).replace(/[<>\u0000-\u001f]/g, "").slice(0, 20);
+    const bank = QUESTIONS[entry.continent]?.[entry.tier] || [];
+    if (bank.length) entry.sample = bank[entry.count % bank.length].q.slice(0, 90);
     this.data.seen[kind] = entry;
     this.save();
   }
 
   seenView() {
     const labels = { slime: "gosma", eye: "olho", golem: "golem", bat: "morcego", spider: "aranha", wisp: "fogo-fátuo", scorpion: "escorpião", boss: "chefe" };
+    const weak = {
+      slime: "lento, flanco fácil", bat: "voo errático, pouca vida",
+      spider: "espera parada, teia previsível", wisp: "curioso, segue a luz",
+      eye: "vê longe, vira devagar", golem: "lento, guarda o corpo",
+      scorpion: "teimoso, ataca de perto", boss: "arena, sem alavanca",
+    };
     return Object.entries(this.data.seen)
-      .map(([kind, entry]) => ({ kind, label: labels[kind] || kind, ...entry }))
+      .map(([kind, entry]) => ({ kind, label: labels[kind] || kind, weakness: weak[kind] || "observar o movimento", ...entry }))
       .sort((a, b) => b.tier - a.tier || b.count - a.count || a.kind.localeCompare(b.kind));
   }
 

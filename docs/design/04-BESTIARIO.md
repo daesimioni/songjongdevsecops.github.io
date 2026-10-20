@@ -4,6 +4,19 @@ O bestiário é o catálogo do mundo e a lista de misconceptions que o jogador
 enfrenta. Cada família tem um jeito de andar, de ver, de lutar e de perguntar.
 Não são 40 skins do mesmo slime: são 8 ecologias.
 
+## 0. O que já existe (2026-10-20)
+
+Sete espécies desenhadas: gosma, olho, golem, morcego, aranha, fogo-fátuo e
+escorpião. Cada uma tem cone, alcance, velocidade e comportamento próprios; o
+capítulo 3.1 de `11-ESTADO-2026-10-20.md` traz os números. Cada caverna sorteia
+entre essas espécies por andar (4 no fácil, 5 no médio, 4 no difícil) e usa 10 a
+12 nomes temáticos.
+
+O Diário guarda o mini-bestiário: nome, espécie, andar, tema da sala, fraqueza
+de comportamento, uma pergunta típica da dificuldade e o número de encontros.
+Os campos vêm de `rpg.noteMonster()` e `rpg.seenView()`; a fraqueza é uma dica
+de posicionamento, não um multiplicador de dano.
+
 ## 1. As oito famílias
 
 | família | disciplina | ideia | visão | grupo |

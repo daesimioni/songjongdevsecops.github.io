@@ -315,6 +315,13 @@ function continentComplete(cid) {
   return sites.length > 0 && sites.every((s) => state.cards.has(s.post));
 }
 
+// a província é o continente original, sem as áreas temáticas: o traje pede as
+// cinco estações da ilha principal, não as estações extras das beiradas.
+function provinceComplete(cid) {
+  const sites = sitesOf(cid).filter((s) => !world.areaAt(s.x, s.y));
+  return sites.length > 0 && sites.every((s) => state.cards.has(s.post));
+}
+
 const toastQueue = [];
 function toast(message, ms = 2600) {
   if (toastQueue.length >= 3) toastQueue.shift();
@@ -387,7 +394,7 @@ function bootSocial() {
 }
 
 function outfitUnlocked(outfit) {
-  return outfit.continent === "hub" || continentComplete(outfit.continent);
+  return outfit.continent === "hub" || provinceComplete(outfit.continent);
 }
 
 function applyOutfit(id) {
@@ -983,8 +990,11 @@ function buildJournalBestiary() {
     card.append(
       el("b", "", entry.name),
       el("span", "", `${entry.label} · andar ${entry.tier === 4 ? "chefe" : entry.tier}`),
+      el("span", "", entry.theme ? `tema: ${entry.theme}` : "tema: ainda não visto"),
+      el("span", "", `fraqueza: ${entry.weakness}`),
       el("i", "", `${entry.count} encontro${entry.count === 1 ? "" : "s"}`),
     );
+    if (entry.sample) card.appendChild(el("em", "bestiary-q", `“${entry.sample}”`));
     grid.appendChild(card);
   }
   box.appendChild(grid);
