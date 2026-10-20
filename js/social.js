@@ -59,6 +59,7 @@ export function createSocial({ rede, quests, player, getPeers, getLevel, getTitl
     thread: null,
     unread: new Map(),
     connecting: false,
+    offline: false,
     secretShown: false,
     profileAbout: "",
   };
@@ -135,12 +136,25 @@ export function createSocial({ rede, quests, player, getPeers, getLevel, getTitl
     renderAccount();
     body.textContent = "";
     if (!rede.ready) {
-      body.appendChild(el("p", "rede-empty", "A chave ainda está sendo preparada. Os relays podem demorar alguns segundos."));
-      if (!ui.connecting) {
+      body.appendChild(el("p", "rede-empty", ui.offline
+        ? "A Rede não abriu agora. O mundo continua a pé; tente de novo quando o sinal voltar."
+        : "A chave ainda está sendo preparada. Os relays podem demorar alguns segundos."));
+      if (ui.offline) {
+        const retry = el("button", "rede-send", "tentar de novo");
+        retry.type = "button";
+        retry.addEventListener("click", () => {
+          ui.offline = false;
+          ui.connecting = true;
+          rede.init()
+            .then(() => { ui.connecting = false; if (ui.open) render(); })
+            .catch(() => { ui.offline = true; ui.connecting = false; if (ui.open) render(); });
+        });
+        body.appendChild(retry);
+      } else if (!ui.connecting) {
         ui.connecting = true;
         rede.init()
           .then(() => { ui.connecting = false; if (ui.open) render(); })
-          .catch(() => { ui.connecting = false; if (ui.open) render(); });
+          .catch(() => { ui.offline = true; ui.connecting = false; if (ui.open) render(); });
       }
       return;
     }

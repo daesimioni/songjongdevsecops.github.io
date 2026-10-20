@@ -20,7 +20,7 @@ const { buildDungeonMap, dungeonSolid, dungeonLineOfSight } = await import("../j
 const { addPeerSample, feedPeer, peerRenderPosition } = await import("../js/interp.js");
 const { createWorld } = await import("../js/world.js");
 const { findPath } = await import("../js/path.js");
-const { PLAYER_W, PLAYER_H, SPAWN } = await import("../js/config.js");
+const { PLAYER_W, PLAYER_H, SPAWN, STORAGE } = await import("../js/config.js");
 
 const quest = (id) => QUESTS.find((q) => q.id === id);
 const cards = new Set();
@@ -173,6 +173,23 @@ assert.equal(rpg.hp(), 5 + 18, "poção cura 18");
 const againRpg = new RPG({ getLevel: () => 1, gainXp: () => {}, toast: () => {}, audio: {} });
 assert.equal(againRpg.monsterAlive(easy.id), false, "monstro derrotado persiste");
 assert.equal(againRpg.inventoryList().length > 0, true, "item persiste");
+
+// horta persistida por caverna e canteiro
+rpg.data.plots = { "dungeon-cs:0": { planted: true, readyAt: Date.now() + 45000 } };
+rpg.save();
+const plotRpg = new RPG({ getLevel: () => 1, gainXp: () => {}, toast: () => {}, audio: {} });
+assert.equal(plotRpg.data.plots["dungeon-cs:0"]?.planted, true, "horta plantada persiste");
+delete rpg.data.plots;
+rpg.save();
+
+// save corrompido não vira save vazio sem deixar cópia
+const corruptKey = STORAGE.rpg;
+const goodRaw = store.get(corruptKey);
+store.set(corruptKey, goodRaw.slice(0, Math.max(8, goodRaw.length - 5)));
+new RPG({ getLevel: () => 1, gainXp: () => {}, toast: () => {}, audio: {} });
+assert.ok(store.get(`${corruptKey}:bak`), "save corrompido guardado em :bak");
+store.set(corruptKey, goodRaw);
+store.delete(`${corruptKey}:bak`);
 
 // interpolação dos outros jogadores
 const peer = { x: 0, y: 0, samples: [] };

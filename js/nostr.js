@@ -75,6 +75,7 @@ export class Rede {
     this.presenceTimer = null;
     this.presenceInfo = null;
     this.presence = new Map();
+    this.pendingTimers = new Map();
     this.onStatus = null;
     this.onDm = null;
     this.onChannel = null;
@@ -186,8 +187,13 @@ export class Rede {
     this.conversations.clear();
     this.seenMsgs.clear();
     this.seenWraps.clear();
+    for (const timer of this.pendingTimers.values()) clearTimeout(timer);
+    this.pendingTimers.clear();
     this.presence.clear();
     this.stored = { ...readStore(), dmRelays: "" };
+    // Trocar de chave não pode apagar a presença até recarregar a página.
+    const info = this.presenceInfo;
+    if (info) this.connectPresence(info).catch(() => {});
   }
 
   // ---------- perfil ----------
@@ -384,6 +390,8 @@ export class Rede {
         if (pending) break;
       }
       if (!pending) return;
+      const timer = this.pendingTimers.get(pending.id);
+      if (timer) { clearTimeout(timer); this.pendingTimers.delete(pending.id); }
       pending.id = rumor.id;
       pending.at = at;
       pending.pending = false;
@@ -439,6 +447,17 @@ export class Rede {
       pending.pending = false;
       pending.failed = true;
       this.onDm?.({ ...pending, self: true });
+    } else {
+      // Se a cópia para si não voltar do relay, a mensagem não fica "enviando"
+      // para sempre: vira "não saiu" e pode ser reenviada.
+      const timer = setTimeout(() => {
+        this.pendingTimers.delete(pending.id);
+        if (!pending.pending) return;
+        pending.pending = false;
+        pending.failed = true;
+        this.onDm?.({ ...pending, self: true });
+      }, 15000);
+      this.pendingTimers.set(pending.id, timer);
     }
     return { ok: relays > 0, relays, wraps: wraps.length };
   }

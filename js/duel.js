@@ -154,6 +154,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
     if (d.phase === "feedback") {
       const fb = d.feedback;
       const box = el("div", `duel-feedback ${fb.correct ? "good" : "bad"}`);
+      box.setAttribute("role", "status");
       const wrong = fb.training
         ? `Errou. Na caverna isso tiraria ${fb.damage} de vida.`
         : `Errou. Você levou ${fb.damage} de dano.`;

@@ -17,11 +17,19 @@ export async function mount(el, api) {
   const stage = el.querySelector("#solid-stage");
   const readout = el.querySelector("#solid-readout");
 
+  function without3d(reason) {
+    stage.hidden = true;
+    const note = document.createElement("p");
+    note.className = "widget-note";
+    note.textContent = `${reason} O readout e a ideia do sólido continuam aqui.`;
+    stage.before(note);
+  }
+
   let THREE = null;
   try {
     THREE = await import(THREE_CDN);
   } catch (e) {
-    stage.innerHTML = '<p class="widget-fail" style="padding:18px">WebGL não carregou agora. O texto continua aqui; tente recarregar.</p>';
+    without3d("O visualizador 3D não carregou agora.");
     console.error("[solid]", e);
     return () => {};
   }
@@ -30,7 +38,7 @@ export async function mount(el, api) {
   try {
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   } catch (e) {
-    stage.innerHTML = '<p class="widget-fail" style="padding:18px">seu navegador não abriu o contexto WebGL.</p>';
+    without3d("Seu navegador não abriu o contexto WebGL.");
     return () => {};
   }
 

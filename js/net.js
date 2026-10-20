@@ -123,6 +123,7 @@ export class Net {
 
   handle(topic, msg) {
     if (!msg || typeof msg !== "object" || typeof msg.id !== "string") return;
+    if (msg.id.length > 40) return;
     if (msg.id === this.id) return;
     if (this.peers.size > 40) return;
     const now = Date.now();
@@ -174,7 +175,7 @@ export class Net {
           && q.options.every((o) => typeof o === "string" && o.length >= 1 && o.length <= 200)
           && Number.isInteger(q.answer) && q.answer >= 0 && q.answer <= 2
           && typeof q.why === "string" && q.why.length <= 500
-          && Number.isInteger(msg.damage) && msg.damage >= 1 && msg.damage <= 12
+          && Number.isInteger(msg.damage) && msg.damage >= 1 && msg.damage <= 7
           && typeof msg.nonce === "string" && msg.nonce.length >= 1 && msg.nonce.length <= 40;
         if (!ok) return;
       }
@@ -254,10 +255,10 @@ export class Net {
     const kind = payload.kind;
     if (!["challenge", "accept", "decline", "attack", "defend", "end"].includes(kind)) return false;
     const now = Date.now();
-    if (now - this.lastPvpSend < 150) return false;
+    if (now - this.lastPvpSend < 150 && kind !== "end") return false;
     this.lastPvpSend = now;
     this.client.publish(this.topic("pvp"), JSON.stringify({
-      id: this.id, n: this.name, ...payload,
+      ...payload, id: this.id, n: this.name,
     }), { qos: 0 });
     return true;
   }

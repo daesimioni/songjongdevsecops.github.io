@@ -65,18 +65,48 @@ export async function mount(el, api) {
   const stage = el.querySelector("#mol-stage");
   const info = el.querySelector("#mol-info");
   const tabs = el.querySelector("#mol-tabs");
+  // Sem 3D o instrumento continua útil: as abas e a explicação de cada
+  // molécula não dependem de WebGL, só o desenho depende.
+  function showFallback(reason) {
+    stage.hidden = true;
+    const hint = el.querySelector(".widget-hint");
+    if (hint) hint.textContent = "toque nas abas";
+    const note = document.createElement("p");
+    note.className = "widget-note";
+    note.style.padding = "0 0 10px";
+    note.textContent = `${reason} As abas continuam contando a história de cada molécula.`;
+    info.before(note);
+    Object.entries(MOLECULES).forEach(([key, m], i) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "w-tab";
+      b.dataset.mol = key;
+      b.textContent = m.label;
+      b.setAttribute("aria-selected", String(i === 0));
+      b.addEventListener("click", () => {
+        info.textContent = m.info;
+        for (const other of tabs.querySelectorAll("button")) {
+          other.setAttribute("aria-selected", String(other === b));
+        }
+        api.audio.blip();
+      });
+      tabs.appendChild(b);
+    });
+    info.textContent = MOLECULES.water.info;
+  }
+
   let THREE;
   try {
     THREE = await import(THREE_CDN);
   } catch (e) {
-    stage.innerHTML = '<p class="widget-fail" style="padding:18px">WebGL não carregou agora.</p>';
+    showFallback("O visualizador 3D não carregou agora.");
     return () => {};
   }
   let renderer;
   try {
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   } catch {
-    stage.innerHTML = '<p class="widget-fail" style="padding:18px">sem contexto WebGL neste navegador.</p>';
+    showFallback("Seu navegador não abriu o contexto WebGL.");
     return () => {};
   }
   renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));

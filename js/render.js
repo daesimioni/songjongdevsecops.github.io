@@ -3,7 +3,6 @@ import {
 } from "./config.js";
 import { hash2 } from "./world.js";
 import { NPCS } from "./content.js";
-import { drawCreature } from "./creature.js";
 
 const BODY_W = 12;
 const BODY_H = 17;
@@ -887,7 +886,7 @@ export function createRenderer(canvas, world) {
     const py = h.center.y * TILE;
     const pulse = 0.5 + Math.sin(time * 0.002 + h.center.x) * 0.5;
     ctx.save();
-    ctx.fillStyle = hexA(h.accent, h.ready ? 0.1 : 0.055);
+    ctx.fillStyle = hexA(h.accent, 0.075);
     ctx.beginPath();
     ctx.ellipse(px, py, TILE * 3.1, TILE * 2.8, 0, 0, Math.PI * 2);
     ctx.fill();
@@ -921,35 +920,6 @@ export function createRenderer(canvas, world) {
     ctx.fillRect(px - 4, py - 31, 7, 2);
   }
 
-  function drawLever(lever, time) {
-    const px = lever.x * TILE;
-    const py = lever.y * TILE;
-    ctx.fillStyle = "#141827";
-    ctx.fillRect(px - 7, py - 5, 14, 5);
-    ctx.fillStyle = "#3a3f5c";
-    ctx.fillRect(px - 5, py - 10, 10, 5);
-    ctx.fillStyle = "#22263a";
-    ctx.fillRect(px - 2, py - 24, 4, 14);
-    const angle = lever.pulled ? 0.95 : -0.65;
-    const hx = px + Math.sin(angle) * 13;
-    const hy = py - 23 - Math.cos(angle) * 5;
-    ctx.strokeStyle = lever.pulled ? "#7ee787" : "#b48cff";
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.moveTo(px, py - 22);
-    ctx.lineTo(hx, hy);
-    ctx.stroke();
-    ctx.fillStyle = lever.ready ? "#ffc857" : (lever.pulled ? "#7ee787" : "#8b84ad");
-    ctx.fillRect(hx - 3, hy - 3, 6, 6);
-    if (lever.ready) {
-      const glow = 0.5 + Math.sin(time * 0.005) * 0.5;
-      ctx.fillStyle = `rgba(255, 200, 87, ${0.18 + glow * 0.2})`;
-      ctx.beginPath();
-      ctx.ellipse(px, py - 12, 10, 12, 0, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  }
-
   function drawCave(c, time) {
     const px = c.x * TILE;
     const py = c.y * TILE;
@@ -981,17 +951,6 @@ export function createRenderer(canvas, world) {
     ctx.fillRect(px + 14, py - 28, 2, 14);
     ctx.fillStyle = hexA(c.accent, 0.9);
     ctx.fillRect(px + 16, py - 27, 7, 5);
-  }
-
-  function drawMonster(m, time, boss) {
-    const px = m.x * TILE;
-    const py = m.y * TILE;
-    ctx.save();
-    ctx.translate(px, py);
-    drawCreature(ctx, boss ? "boss" : m.kind, m.accent, time, boss ? 1.15 : 1);
-    ctx.restore();
-    const label = boss ? `CHEFE · ${m.name}` : `${m.name} · nv ${m.level}`;
-    drawNameTag(label, px, py - (boss ? 42 : 30), m.accent);
   }
 
   function drawPathLine(points) {

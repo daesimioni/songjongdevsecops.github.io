@@ -1,6 +1,7 @@
 // O estado de RPG: vida, perícias, itens, monstros derrotados e o duelo de
 // perguntas. Tudo vive no localStorage; o mundo compartilhado continua sendo
 // só posição e conversa.
+import { backupCorrupt } from "./storage.js";
 import { STORAGE } from "./config.js";
 import { SKILLS, TIERS, ITEMS, QUESTIONS, RECIPES, ENCHANTS, DEEP_QUESTIONS } from "./rpg-data.js";
 
@@ -64,6 +65,8 @@ function emptyData() {
     enchants: {},
     buffs: {},
     pet: { bond: 0 },
+    plots: {},
+    plotGift: {},
   };
 }
 
@@ -96,6 +99,16 @@ function readData() {
       if (BUFF_NAMES[id] && Number.isFinite(at) && at > now()) data.buffs[id] = at;
     }
     data.pet.bond = clamp(Number(obj.pet?.bond) || 0, 0, 3);
+    for (const [key, plot] of Object.entries(obj.plots || {})) {
+      if (typeof key !== "string" || key.length > 40 || !plot || typeof plot !== "object") continue;
+      if (!plot.planted) continue;
+      const readyAt = Number(plot.readyAt);
+      if (!Number.isFinite(readyAt)) continue;
+      data.plots[key] = { planted: true, readyAt };
+    }
+    for (const [key, used] of Object.entries(obj.plotGift || {})) {
+      if (typeof key === "string" && key.length <= 40 && used) data.plotGift[key] = true;
+    }
     return data;
   } catch {
     return emptyData();
@@ -130,6 +143,7 @@ export class RPG {
     this.audio = audio;
     this.onRespawn = onRespawn || (() => {});
     this.getLevel = getLevel || (() => 1);
+    backupCorrupt(STORAGE.rpg);
     this.data = readData();
     this.duel = null;
     this.lastRegen = now();

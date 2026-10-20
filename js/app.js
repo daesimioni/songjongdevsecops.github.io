@@ -119,6 +119,7 @@ const state = {
   trainingNpc: null,
   pvpDownUntil: 0,
   pvpDownTimer: null,
+  lastFocus: null,
 };
 
 for (const cid of CONTINENT_ORDER) {
@@ -861,23 +862,65 @@ function travelTo(cid) {
   toast(`viajando para ${CONTINENTS[cid].name}`, 2200);
 }
 
+const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
+function focusablesIn(container) {
+  return Array.from(container.querySelectorAll(FOCUSABLE)).filter((node) => node.offsetParent !== null || node === document.activeElement);
+}
+const MODAL_FOCUS_BACK = {
+  journal: "btn-journal",
+  sheet: "btn-sheet",
+  rede: "btn-rede",
+  help: "btn-help",
+  pvp: "btn-rede",
+};
+function restoreFocus(modalName) {
+  const back = state.lastFocus;
+  state.lastFocus = null;
+  if (back?.isConnected && back.offsetParent !== null) {
+    back.focus({ preventScroll: true });
+    return;
+  }
+  const hudId = MODAL_FOCUS_BACK[modalName];
+  if (hudId) $(hudId)?.focus({ preventScroll: true });
+}
 function openModal(name) {
   stopSprint();
+  const opener = document.activeElement?.closest?.("button, a, input, [tabindex]") || document.activeElement;
   if (state.modal !== name) closeModal(state.modal);
+  state.lastFocus = opener && opener !== document.body ? opener : null;
   state.modal = name;
   $(name).hidden = false;
   $("scrim").hidden = false;
-  const focusable = $(name).querySelector("button, input");
+  const focusable = $(name).querySelector(FOCUSABLE) || $(name).querySelector("button, input");
   focusable?.focus();
 }
 function closeModal(name) {
   if (name && $(name)) $(name).hidden = true;
-  if (name === "rede") social?.close();
-  if (name === "duel") { duelUi?.close(); dungeon?.onDuelClosed(); }
-  if (name === "pvp") pvpUi?.abort();
-  if (name === "npc") state.npc = null;
   if (state.modal === name) state.modal = null;
   if (!state.modal && !state.panelOpen) $("scrim").hidden = true;
+  try {
+    if (name === "rede") social?.close();
+    if (name === "duel") { duelUi?.close(); dungeon?.onDuelClosed(); }
+    if (name === "pvp") pvpUi?.abort();
+    if (name === "npc") state.npc = null;
+  } catch (e) {
+    console.error("[modal]", e);
+  } finally {
+    if (!state.modal && !state.panelOpen) restoreFocus(name);
+  }
+}
+function trapFocus(e) {
+  const container = state.modal ? $(state.modal) : state.panelOpen ? $("panel") : null;
+  if (!container) return false;
+  const list = focusablesIn(container);
+  if (!list.length) { e.preventDefault(); return true; }
+  const first = list[0];
+  const last = list[list.length - 1];
+  const active = document.activeElement;
+  if (!container.contains(active)) { e.preventDefault(); (e.shiftKey ? last : first).focus(); return true; }
+  if (e.shiftKey && active === first) { e.preventDefault(); last.focus(); return true; }
+  if (!e.shiftKey && active === last) { e.preventDefault(); first.focus(); return true; }
+  return false;
 }
 
 async function openPost(id, site) {
@@ -887,9 +930,14 @@ async function openPost(id, site) {
     toast("Esta página ainda está sendo escrita.");
     return;
   }
+  let opener = document.activeElement;
+  if (state.modal && MODAL_FOCUS_BACK[state.modal] && $(state.modal)?.contains(opener)) {
+    opener = $(MODAL_FOCUS_BACK[state.modal]);
+  }
   closeModal(state.modal);
   closeChat();
   if (state.panelOpen) closePanel();
+  state.lastFocus = opener && opener !== document.body ? opener : null;
   state.panelOpen = true;
   state.currentPost = id;
   markCard(id);
@@ -929,6 +977,14 @@ async function openPost(id, site) {
           if (c) toast(`${c.name}: ${c.sub}`, 2600);
         },
       }, variant);
+      // Fechar o painel durante o import do instrumento não pode deixar
+      // animação, canvas ou listener rodando escondido.
+      if (!state.panelOpen || state.currentPost !== id) {
+        if (typeof cleanup === "function") {
+          try { cleanup(); } catch { /* limpeza best-effort */ }
+        }
+        return;
+      }
       state.panelCleanup = typeof cleanup === "function" ? cleanup : null;
     } catch (e) {
       live.textContent = "";
@@ -953,6 +1009,7 @@ function closePanel() {
   if (!state.modal) $("scrim").hidden = true;
   $("panel-live").textContent = "";
   audio.close();
+  restoreFocus();
 }
 
 const CHAT_HISTORY_MAX = 30;
@@ -1324,13 +1381,15 @@ function saveFog() {
 
 // ---------- eventos ----------
 window.addEventListener("keydown", (e) => {
+  if (e.key === "Tab" && trapFocus(e)) return;
   const tag = (e.target.tagName || "").toLowerCase();
   if (tag === "input" || tag === "textarea") {
     if (e.key === "Escape") closeChat();
     return;
   }
   const k = e.key.toLowerCase();
-  if (["arrowup", "arrowdown", "arrowleft", "arrowright", " "].includes(k)) e.preventDefault();
+  const gameActive = state.started && !state.panelOpen && !state.modal && !state.chatOpen && !dungeon?.isOpen();
+  if (gameActive && ["arrowup", "arrowdown", "arrowleft", "arrowright", " "].includes(k)) e.preventDefault();
   if (!state.started) return;
   if (state.modal === "duel" && duelUi) {
     if (/^[1-4]$/.test(k)) { e.preventDefault(); duelUi.answer(Number(k) - 1); return; }
@@ -1501,7 +1560,7 @@ $("panel-back").addEventListener("click", closePanel);
 function fitKeyboard() {
   const vv = window.visualViewport;
   if (!vv) return;
-  const gap = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+  const gap = state.chatOpen ? Math.max(0, window.innerHeight - vv.height - vv.offsetTop) : 0;
   document.documentElement.style.setProperty("--kb-gap", `${Math.round(gap)}px`);
 }
 if (window.visualViewport) {

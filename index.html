@@ -27,7 +27,7 @@
 </head>
 <body>
 <div id="app">
-  <canvas id="world" aria-label="Mapa do mundo, em pixel art. Ande com WASD ou setas e interaja com E." role="img"></canvas>
+  <canvas id="world" aria-label="Mapa do mundo, em pixel art. Ande com WASD, setas ou toque no chão; interaja com F ou com o botão A." role="img"></canvas>
   <div class="vignette" aria-hidden="true"></div>
   <div class="scanlines" aria-hidden="true"></div>
 
@@ -74,7 +74,7 @@
   <div id="scrim" class="scrim" hidden></div>
 
   <div id="dungeon" class="dungeon" hidden aria-label="Caverna no subsolo">
-    <canvas id="dungeon-canvas" aria-label="Mapa da caverna, em pixel art. Ande com WASD ou clique, interaja com F e saia com Esc."></canvas>
+    <canvas id="dungeon-canvas" aria-label="Mapa da caverna, em pixel art. Ande com WASD, setas ou toque no chão; interaja com F ou toque no objeto; saia com Esc ou pelo botão sair."></canvas>
     <div class="dungeon-hud">
       <div class="dg-head">
         <div class="dg-title-wrap">
@@ -210,7 +210,7 @@
         <h2 id="pvp-title">Duelo de perguntas</h2>
         <button type="button" class="hud-btn" data-close="pvp">fechar <kbd>Esc</kbd></button>
       </div>
-      <p id="pvp-sub" class="pvp-sub"></p>
+      <p id="pvp-sub" class="pvp-sub" aria-live="polite"></p>
       <div id="pvp-body"></div>
     </div>
   </div>
@@ -229,7 +229,7 @@
           <div id="duel-meta"></div>
         </div>
       </div>
-      <div id="duel-body"></div>
+      <div id="duel-body" aria-live="polite"></div>
     </div>
   </div>
 
@@ -287,7 +287,7 @@
     </div>
   </div>
 
-  <div id="touch" class="touch" hidden aria-label="Controles de toque">
+  <div id="touch" class="touch" role="group" hidden aria-label="Controles de toque">
     <div class="dpad">
       <button type="button" data-dir="up" aria-label="cima">▲</button>
       <button type="button" data-dir="left" aria-label="esquerda">◀</button>
@@ -301,7 +301,7 @@
   </div>
 
   <div id="minimap" class="minimap" hidden>
-    <canvas id="minimap-canvas" width="360" height="240" aria-label="Minimapa"></canvas>
+    <canvas id="minimap-canvas" width="360" height="240" role="img" aria-label="Minimapa do arquipélago. Clique num ponto revelado para andar até lá."></canvas>
     <span id="room-label">sala praca</span>
   </div>
 

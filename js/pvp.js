@@ -9,6 +9,9 @@ const DIFFICULTY = ["", "muito fácil", "fácil", "média", "difícil", "muito d
 const COMPOSURE = 10;
 const CHALLENGE_MS = 20000;
 const DEFEND_MS = 30000;
+const WAIT_MS = 45000;
+const TURN_MS = 150000;
+const CHOOSE_MS = 120000;
 const DOWN_MS = 10000;
 
 function el(tag, cls, text) {
@@ -165,6 +168,7 @@ export function createPvp({ rpg, toast, audio, player, getNet, isBusy, openPanel
       } else {
         body.appendChild(el("p", "pvp-text", `${peerName()} vai escolher uma pergunta para você.`));
       }
+      body.appendChild(el("p", "pvp-note", "Se o outro lado sumir, o duelo fecha sozinho, sem desativar ninguém."));
       return;
     }
 
@@ -181,7 +185,9 @@ export function createPvp({ rpg, toast, audio, player, getNet, isBusy, openPanel
         options.appendChild(b);
       });
       body.appendChild(options);
-      body.appendChild(el("p", "pvp-timer", "responda em 30s"));
+      const timer = el("p", "pvp-timer", "responda em 30s");
+      timer.id = "pvp-timer";
+      body.appendChild(timer);
       const give = el("button", "pvp-action ghost", "não sei");
       give.type = "button";
       give.addEventListener("click", () => answerDefense(-1));
@@ -247,15 +253,21 @@ export function createPvp({ rpg, toast, audio, player, getNet, isBusy, openPanel
     state.nonce = null;
     state.result = null;
     if (role === "attacker") {
-      state.phase = "choosing";
       state.questions = rpg.pvpQuestions(continent());
       if (!state.questions.length) {
         toast("Sem perguntas para duelar agora.", 3200);
         close();
         return;
       }
+      beginChoosing();
     } else {
       state.phase = "waiting";
+      // O desafiante pode desistir antes do primeiro ataque; sem prazo, quem
+      // aceitou ficaria esperando para sempre.
+      later(TURN_MS, () => {
+        if (state.phase !== "waiting") return;
+        abandon("O outro lado não começou o duelo. Encerrado sem penalidade.");
+      });
     }
     render();
     openPanel?.();
@@ -283,6 +295,29 @@ export function createPvp({ rpg, toast, audio, player, getNet, isBusy, openPanel
     }
     state.phase = "waiting";
     render();
+    later(WAIT_MS, () => {
+      if (state.phase !== "waiting") return;
+      abandon("O outro lado não respondeu. Duelo encerrado sem penalidade.");
+    });
+  }
+
+  function abandon(reason) {
+    if (state.phase === "idle" || state.finished) return;
+    const peer = state.peer;
+    clearTimers();
+    if (peer) getNet?.()?.sendPvp?.({ kind: "end", to: peer.id, winner: "" });
+    toast(reason, 3800);
+    close();
+  }
+
+  function beginChoosing() {
+    state.phase = "choosing";
+    state.questions = rpg.pvpQuestions(continent());
+    render();
+    later(CHOOSE_MS, () => {
+      if (state.phase !== "choosing") return;
+      abandon("Tempo para escolher a pergunta esgotou. Encerrado sem penalidade.");
+    });
   }
 
   function startCountdown() {
@@ -315,6 +350,10 @@ export function createPvp({ rpg, toast, audio, player, getNet, isBusy, openPanel
       state.current = null;
       state.phase = "waiting";
       render();
+      later(TURN_MS, () => {
+        if (state.phase !== "waiting") return;
+        abandon("O outro lado não atacou de novo. Encerrado sem penalidade.");
+      });
       return;
     }
     state.myComp = Math.max(0, state.myComp - state.damage);
@@ -325,9 +364,7 @@ export function createPvp({ rpg, toast, audio, player, getNet, isBusy, openPanel
       over("lose");
       return;
     }
-    state.phase = "choosing";
-    state.questions = rpg.pvpQuestions(continent());
-    render();
+    beginChoosing();
   }
 
   function handleDefend(msg) {
@@ -335,9 +372,7 @@ export function createPvp({ rpg, toast, audio, player, getNet, isBusy, openPanel
     clearTimers();
     state.current = null;
     if (msg.correct) {
-      state.phase = "choosing";
-      state.questions = rpg.pvpQuestions(continent());
-      render();
+      beginChoosing();
       return;
     }
     state.theirComp = Math.max(0, state.theirComp - state.damage);
@@ -347,6 +382,10 @@ export function createPvp({ rpg, toast, audio, player, getNet, isBusy, openPanel
     }
     state.phase = "waiting";
     render();
+    later(TURN_MS, () => {
+      if (state.phase !== "waiting") return;
+      abandon("O outro lado não atacou. Encerrado sem penalidade.");
+    });
   }
 
   function handleAttack(peer, msg) {
@@ -422,10 +461,15 @@ export function createPvp({ rpg, toast, audio, player, getNet, isBusy, openPanel
     }
 
     if (kind === "decline") {
-      if (!samePeer && state.phase !== "challenging") return;
+      if (!samePeer) return;
       clearTimers();
-      toast(state.phase === "challenging" ? "O convite foi recusado." : "O duelo foi encerrado.", 2800);
-      if (state.phase === "challenging" || state.phase === "incoming") close();
+      if (state.phase === "challenging" || state.phase === "incoming") {
+        toast("O convite foi recusado.", 2800);
+        close();
+      } else {
+        toast("O outro lado encerrou o duelo.", 3000);
+        close();
+      }
       return;
     }
 
@@ -442,6 +486,11 @@ export function createPvp({ rpg, toast, audio, player, getNet, isBusy, openPanel
     if (kind === "end") {
       if (state.phase === "over" || state.finished) return;
       clearTimers();
+      if (!msg.winner) {
+        toast("O outro lado encerrou o duelo.", 3000);
+        close();
+        return;
+      }
       over(String(msg.winner) === myId() ? "win" : "lose");
     }
   }

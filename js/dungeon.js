@@ -655,6 +655,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
         x: entrance.x + entrance.w / 2,
         y: entrance.y + entrance.h - 0.4,
         label: "subir para a superfície",
+        interact: true,
       });
     }
     for (const room of def.rooms) {
@@ -686,7 +687,8 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
           kind: "plot",
           x: city.x + 8.5 + i * 1.5,
           y: city.y + city.h - 3.4,
-          planted: i === 0,
+          plotKey: `${def.id}:${i}`,
+          planted: false,
           readyAt: 0,
           interact: true,
           label: "horta de ervas",
@@ -731,6 +733,24 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
     state.boss = rpg.bossAlive(state.ground) ? spawnBoss(def) : null;
     state.chests = makeChests(def);
     state.props = makeProps(def);
+    // A horta é do jogador: o que foi plantado continua plantado na próxima
+    // descida, e só colhe quando o tempo real passou.
+    for (const prop of state.props) {
+      if (prop.kind !== "plot") continue;
+      const saved = rpg.data.plots?.[prop.plotKey];
+      if (saved?.planted) {
+        prop.planted = true;
+        prop.readyAt = saved.readyAt;
+        continue;
+      }
+      // A primeira horta de cada caverna nasce com uma erva de presente: sem
+      // isso não há como tirar a primeira semente para começar a plantar.
+      if (prop.plotKey === `${def.id}:0` && !rpg.data.plotGift?.[def.id]) {
+        prop.planted = true;
+        prop.readyAt = 0;
+        prop.gift = true;
+      }
+    }
     // o que ocupa espaço de verdade dentro da sala: prédios e baús
     state.solids = [];
     for (const p of state.props) {
@@ -1100,22 +1120,33 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
         if (rpg.data.items.semente <= 0) delete rpg.data.items.semente;
         rpg.save();
         obj.planted = true;
-        obj.readyAt = clock() + 45000;
+        obj.readyAt = Date.now() + 45000;
+        rpg.data.plots = rpg.data.plots || {};
+        rpg.data.plots[obj.plotKey] = { planted: true, readyAt: obj.readyAt };
+        rpg.save();
         say("Semente plantada. Em 45 segundos tem erva.", 3200);
         audio.blip();
         updateHud();
         return;
       }
-      if (clock() < obj.readyAt) {
-        say(`A horta ainda está crescendo. Faltam ${Math.ceil((obj.readyAt - clock()) / 1000)}s.`);
+      if (Date.now() < obj.readyAt) {
+        say(`A horta ainda está crescendo. Faltam ${Math.ceil((obj.readyAt - Date.now()) / 1000)}s.`);
         return;
       }
       const qty = 2 + Math.floor(Math.random() * 2);
       rpg.addItem("erva", qty);
-      const seed = Math.random() < 0.5;
+      // A primeira colheita sempre devolve uma semente: é o começo do ciclo.
+      const seed = obj.gift || Math.random() < 0.5;
       if (seed) rpg.addItem("semente", 1);
       obj.planted = false;
       obj.readyAt = 0;
+      if (rpg.data.plots) delete rpg.data.plots[obj.plotKey];
+      if (obj.gift) {
+        obj.gift = false;
+        rpg.data.plotGift = rpg.data.plotGift || {};
+        rpg.data.plotGift[state.def.id] = true;
+      }
+      rpg.save();
       say(`Colheu ${qty} erva(s)${seed ? " e uma semente" : ""}. A terra devolve.`, 3400);
       audio.blip();
       updateHud();
@@ -1346,8 +1377,8 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
       if (near?.kind === "plot") {
         label = !near.planted
           ? "plantar semente"
-          : near.readyAt > clock()
-            ? `horta crescendo (${Math.ceil((near.readyAt - clock()) / 1000)}s)`
+          : near.readyAt > Date.now()
+            ? `horta crescendo (${Math.ceil((near.readyAt - Date.now()) / 1000)}s)`
             : "colher erva";
       }
       if (near?.kind === "vein") label = near.charges > 0 ? `minerar o veio (${near.charges})` : "veio vazio";
@@ -1595,6 +1626,9 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, isBloc
     if (!state.open || blocked()) return;
     const tag = (e.target.tagName || "").toLowerCase();
     if (tag === "input" || tag === "textarea") return;
+    // A caverna consome a tecla: sem isso, o F que sobe pela escada também
+    // seria lido pelo mapa da superfície no mesmo evento e abriria outra coisa.
+    e.stopImmediatePropagation();
     const k = e.key.toLowerCase();
     if (["arrowup", "arrowdown", "arrowleft", "arrowright", " "].includes(k)) e.preventDefault();
     if (k === "escape") {

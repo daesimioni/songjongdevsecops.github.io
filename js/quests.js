@@ -1,5 +1,6 @@
 // Missões: cada NPC tem uma pergunta ou uma tarefa. O objetivo é sempre
 // verificável no estado do jogo, então a missão nunca "acha" que terminou.
+import { backupCorrupt } from "./storage.js";
 import { SITES, STORAGE } from "./config.js";
 
 export const QUESTS = [
@@ -232,6 +233,7 @@ export class Quests {
     this.onReady = onReady || (() => {});
     this.onChange = onChange || (() => {});
     this.toast = toast || (() => {});
+    backupCorrupt(STORAGE.quests);
     this.data = { ...emptyData(), ...readData() };
     if (!this.data.stats.labs || !Array.isArray(this.data.stats.labs)) this.data.stats.labs = [];
     this.readyNotified = new Set();

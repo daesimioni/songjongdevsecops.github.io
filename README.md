@@ -120,7 +120,9 @@ cristal** presos nas salas só se abrem com uma **picareta**, que também se for
 
 Na cidade subterrânea há forja, altar que devolve vida, três canteiros de erva,
 mesa de encantamento, um bicho e a pedra de retorno. A horta se planta com
-semente e cresce em 45 segundos. A mesa grava três encantos permanentes: mais
+semente e cresce em 45 segundos; a primeira horta de cada caverna nasce com uma
+erva de presente (e devolve uma semente), para o ciclo começar, e o que você
+planta continua plantado na próxima descida. A mesa grava três encantos permanentes: mais
 vida, mais dano ou mais luz. O bicho aceita três rações e passa a seguir você,
 somando vida e luz. A forja faz picareta, semente, ração, comida, tocha, chave e
 bomba.
@@ -156,6 +158,24 @@ A página é feita para o toque, não adaptada depois:
 
 A conferência de toque roda em viewport de 390×844, 360×640 e 844×390, com
 eventos de toque reais e sem erro de console.
+
+## Acessibilidade
+
+O jogo inteiro tem caminho de teclado: WASD ou setas andam, `F` interage, `Q`
+fala, `E` abre a Rede, `Z` o diário, `C` a ficha e `Esc` fecha. Quando um painel
+ou modal abre, o foco entra nele e fica preso até fechar; ao sair, o foco volta
+para o botão que abriu. O `Tab` não passeia por trás do diálogo.
+
+O que muda na tela é anunciado: o prompt do chão, o recado da caverna, o
+resultado da pergunta e o título do duelo são regiões `aria-live`. Os botões têm
+`type`, as imagens têm `alt` e os diálogos apontam para o próprio título com
+`aria-labelledby`. Com `prefers-reduced-motion`, as animações de interface param.
+
+Se o navegador não abrir WebGL, o cristal 3D e o visualizador de moléculas não
+somem: o primeiro avisa e mantém a explicação; o segundo troca o desenho pelas
+abas com a história de cada molécula. O mapa em si é visual: quem usa leitor
+de tela anda com as setas e ouve o prompt que anuncia o que está perto. Um índice
+de estações fora do mapa ainda não existe, e é a próxima lacuna a resolver.
 
 ## A Rede
 
@@ -196,27 +216,41 @@ defendeu e o atacante ataca de novo; errou, toma dano e a vez passa para ele.
 Cada um começa com 10 de compostura. O dano é a dificuldade da carta (1 a 5) mais
 até 2 de bônus por relíquias: no máximo 7. Quem chega a zero perde e fica **10
 segundos desativado**, sem andar nem interagir. Nada de vida, item ou XP é
-perdido: é um duelo de conversa, não de saque. Fechar a janela no meio conta como
-desistência e também desativa. Os pacotes de pergunta são validados antes de
+perdido: é um duelo de conversa, não de saque. O broker é público e as mensagens
+não são assinadas, então o duelo vale entre gente que combinou; não é ranking.
+Fechar a janela no meio conta como desistência e também desativa. Os pacotes de
+pergunta são validados antes de
 entrar na tela; a pergunta trafega com as três alternativas e a resposta é
 conferida dos dois lados.
 
 ## Conferir
 
-A parte que não depende do navegador tem uma conferência só:
+A parte que não depende do navegador tem três conferências, e elas rodam em
+sequência sem instalar nada:
 
 ```bash
 node test/core.test.mjs
+node test/content.test.mjs
+node test/ui.test.mjs
 ```
 
-Ela cobre o progresso e a persistência das missões, o filtro que mantém
-conteúdo de fora fora dos canais, o ciclo de duelo, dano e chefe, a
-interpolação dos outros jogadores, a superfície sem monstro e com um instrutor
-por clareira, o treino sem dano e sem loot, o risco de fuga por andar, o dano
-direto e o respawn, e a caverna: salas com chão, ligação da entrada até a cidade,
-linha de visão, chefe sem alavanca, a forja, os encantamentos, a comida com
-efeito, o bicho e a pergunta que casa com o tema. O duelo entre jogadores entra
-pela mesma prova: as cinco cartas, a dificuldade que vira dano e a compostura.
+A primeira cobre o progresso e a persistência das missões, o filtro que mantém
+conteúdo de fora fora dos canais, o ciclo de duelo, dano e chefe, a interpolação
+dos outros jogadores, a superfície sem monstro e com um instrutor por clareira, o
+treino sem dano e sem loot, o risco de fuga por andar, o dano direto e o respawn,
+e a caverna: salas com chão, ligação da entrada até a cidade, linha de visão,
+chefe sem alavanca, a forja, os encantamentos, a comida com efeito, o bicho e a
+pergunta que casa com o tema. O duelo entre jogadores entra pela mesma prova: as
+cinco cartas, a dificuldade que vira dano e a compostura.
+
+A segunda confere o conteúdo inteiro: as 32 estações e seus textos, falas de NPC,
+18 missões, itens, relíquias por continente, receitas, encantos, as 60 perguntas
+(sem repetição e com resposta válida), as cinco cartas do PvP por continente, as
+seis cavernas e o mundo montado (seis instrutores, nenhum monstro na superfície).
+
+A terceira confere a casca: id repetido ou faltando, import que não resolve,
+botão sem `type`, imagem sem `alt`, link `_blank` sem `rel`, `aria-labelledby`
+apontando para id inexistente, `data-close` órfão e `console.log` esquecido.
 
 ## Rodar na mão
 
@@ -259,6 +293,8 @@ Depois abra `http://localhost:8000`.
 | `wasm/julia.wat` | fonte do módulo WebAssembly do conjunto de Julia |
 | `wasm/julia.wasm` | o módulo compilado, de 296 bytes |
 | `test/core.test.mjs` | conferência de missões, RPG, treino, fuga, duelo PvP e caverna |
+| `test/content.test.mjs` | conferência das 32 estações, perguntas, itens, cavernas e mundo |
+| `test/ui.test.mjs` | conferência de ids, imports, botões, rótulos e aria |
 
 O módulo wasm é gerado com `wat2wasm`:
 
