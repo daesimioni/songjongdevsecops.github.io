@@ -4,6 +4,7 @@ import {
 } from "./config.js";
 import { hash2 } from "./world.js";
 import { NPCS } from "./content.js";
+import { drawPetSprite } from "./pet-art.js";
 
 const BODY_W = 12;
 const BODY_H = 17;
@@ -1169,30 +1170,7 @@ export function createRenderer(canvas, world) {
   }
 
   function drawCat(cat, moving, time) {
-    const px = cat.x * TILE, py = cat.y * TILE;
-    const bob = moving ? Math.abs(Math.sin(time * 0.02)) * 1.2 : Math.sin(time * 0.002) * 0.5;
-    ctx.fillStyle = "rgba(2,4,10,0.3)";
-    ctx.beginPath(); ctx.ellipse(px, py, 5, 2, 0, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = "#6b5b73";
-    ctx.fillRect(px - 5, py - 6 - bob, 10, 5);
-    ctx.fillRect(px - 4, py - 9 - bob, 7, 4);
-    ctx.fillStyle = "#8a7893";
-    ctx.fillRect(px - 4, py - 9 - bob, 2, 2);
-    // orelhas
-    ctx.fillStyle = "#6b5b73";
-    ctx.fillRect(px - 4, py - 11 - bob, 2, 2);
-    ctx.fillRect(px + 1, py - 11 - bob, 2, 2);
-    // olhos
-    ctx.fillStyle = "#ffc857";
-    ctx.fillRect(px - 2, py - 8 - bob, 1, 1);
-    ctx.fillRect(px + 1, py - 8 - bob, 1, 1);
-    // rabo
-    ctx.strokeStyle = "#6b5b73";
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(px + 5, py - 4 - bob);
-    ctx.quadraticCurveTo(px + 9, py - 6 - bob, px + 8, py - 10 - bob);
-    ctx.stroke();
+    drawPetSprite(ctx, cat.kind || "cat", cat.x * TILE, cat.y * TILE, time, moving);
   }
 
   function drawBubble(text, px, py, color) {

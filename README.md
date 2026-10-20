@@ -141,6 +141,39 @@ anel e colar. Cada peça soma pouco (arma +1 ou +2 de dano; armadura +4 ou +5 de
 vida) e cai de baú de caverna ou de chefe. A ideia é fôlego e vocabulário, nunca
 resolver a pergunta pelo número. São 23 peças, incluindo anéis e colares.
 
+## Companhia: bichos e montarias
+
+A Ficha (`C`) tem a seção **Companhia**: mana, o bicho que anda com você e as
+montarias. Um bicho e uma montaria ficam ativos por vez, e a escolha é o que dá
+propósito a cada um.
+
+Todo bicho é domado com três **rações de caverna** na praça subterrânea do
+continente onde ele vive. Cada um tem um passivo, uma habilidade com mana e
+recarga, e um lugar próprio na aventura:
+
+| bicho | passivo | habilidade | mana | recarga |
+|---|---|---|---|---|
+| Gato do Porto | +5 vida, +1 luz | faro: risca uma alternativa errada | 2 | 60 s |
+| Coruja do Lema | +2 luz | sabedoria: aponta a alternativa certa | 4 | 180 s |
+| Sapo de Calcário | +8 vida | cura: recupera 20 de vida | 3 | 120 s |
+| Vaga-lume de Vidro | +2 mana máxima | pulso: devolve 3 de mana | 0 | 90 s |
+| Grilo do Compasso | +1 mana por acerto | ritmo: +1 de dano por 2 min | 2 | 150 s |
+| Sombra da Caixa | +1 dano | aviso: tema e fraqueza do monstro | 1 | 90 s |
+
+A **mana** começa em 10, volta 1 a cada 45 segundos e é o combustível das
+habilidades. A ficha mostra a mana e a recarga; no duelo, o botão do bicho fica
+na coluna da pergunta.
+
+As **montarias** são compradas na ficha com material de caverna e só andam na
+superfície: entrar numa boca de caverna desmonta. O cavalo do cais corre 50%
+mais rápido, o lobo cinza 30% e enxerga longe, e a tartaruga de vidro anda 12%
+mais rápido, mas o casco soma 5 de vida.
+
+O gato do porto só segue depois de domado, e o companheiro de verdade é o bicho
+ativo: a espécie que aparece atrás de você na superfície é a mesma que anda
+pela trilha da caverna. O gato respeita água, árvore e parede; quando fica longe
+demais, reaparece num chão livre atrás de você em vez de atravessar o mar.
+
 ## As cavernas
 
 Cada continente tem **duas bocas de caverna**, uma perto da clareira e outra a

@@ -368,6 +368,115 @@ const fora = spellRpg.useItem("runa-gelo");
 assert.equal(fora.ok, false, "runa nao funciona fora do duelo");
 assert.equal(spellRpg.itemCount("runa-gelo"), 1, "runa fora do duelo nao e consumida");
 
+// companhia: mana, bichos com habilidades e montarias
+const { MANA_MS } = await import("../js/pets.js");
+store.set(STORAGE.rpg, JSON.stringify({
+  hp: 30,
+  pets: { gato: { bond: 3 } },
+  petActive: "gato",
+  mana: 10,
+  items: { racao: 3, ferro: 4, erva: 2 },
+}));
+const comp = new RPG({ getLevel: () => 1, gainXp: () => {}, toast: () => {}, audio: {} });
+assert.equal(comp.activePet()?.id, "gato", "bicho domado fica ativo");
+assert.equal(comp.hpMax(), 35, "gato soma 5 de vida");
+assert.equal(comp.lightBonus(), 1, "gato soma 1 de luz");
+assert.equal(comp.manaMax(), 10, "mana cheia por padrão");
+
+const compGround = GROUNDS.find((g) => g.id === "cs");
+comp.startDuel(compGround.monsters[0], compGround, false);
+const faro = comp.usePetAbility({ duel: true });
+assert.equal(faro.ok, true, "faro funciona no duelo");
+assert.equal(typeof faro.spark, "number", "faro risca uma alternativa");
+assert.equal(comp.mana(), 8, "faro custa 2 de mana");
+assert.ok(comp.petCdLeft("gato") > 0, "faro entra em recarga");
+const againFaro = comp.usePetAbility({ duel: true });
+assert.equal(againFaro.ok, false, "faro não repete durante a recarga");
+comp.duel = null;
+
+// mana volta com o tempo e para no teto
+comp.data.mana = 2;
+comp.data.manaAt = Date.now() - MANA_MS * 3 - 10;
+comp.pulse();
+assert.equal(comp.mana(), 5, "mana volta com o tempo");
+comp.data.mana = 9;
+comp.addMana(5);
+assert.equal(comp.mana(), 10, "mana não passa do teto");
+
+// coruja revela a resposta certa
+comp.data.pets.coruja = { bond: 3 };
+comp.data.petActive = "coruja";
+comp.data.mana = 10;
+comp.data.petCd = {};
+comp.startDuel(compGround.monsters[1], compGround, false);
+const owl = comp.usePetAbility({ duel: true });
+assert.equal(owl.ok, true, "sabedoria funciona");
+assert.equal(owl.answer, comp.duel.question.answer, "sabedoria aponta a alternativa certa");
+assert.equal(comp.mana(), 6, "sabedoria custa 4 de mana");
+comp.duel = null;
+
+// sapo cura
+comp.data.pets.sapo = { bond: 3 };
+comp.data.petActive = "sapo";
+comp.data.mana = 10;
+comp.data.petCd = {};
+comp.data.hp = 5;
+const frog = comp.usePetAbility({});
+assert.equal(frog.ok, true, "cura funciona fora do duelo");
+assert.ok(comp.hp() > 5, "sapo devolve vida");
+comp.data.petCd = {};
+
+// sombra some dano
+comp.data.pets.sombra = { bond: 3 };
+comp.data.petActive = "sombra";
+assert.equal(comp.damageFor("cs"), 2, "sombra soma 1 de dano");
+
+// grilo dá mana por acerto
+comp.data.pets.grilo = { bond: 3 };
+comp.data.petActive = "grilo";
+comp.data.mana = 1;
+comp.data.petCd = {};
+comp.startDuel(compGround.monsters[0], compGround, false);
+comp.data.monsters = {};
+comp.answer(comp.duel.question.answer);
+assert.ok(comp.mana() >= 2, "grilo devolve mana quando acerta");
+comp.duel = null;
+
+// vaga-lume devolve mana de graça
+comp.data.pets.vaga = { bond: 3 };
+comp.data.petActive = "vaga";
+comp.data.mana = 2;
+comp.data.petCd = {};
+const wisp = comp.usePetAbility({});
+assert.equal(wisp.ok, true, "pulso funciona");
+assert.equal(comp.mana(), 5, "pulso devolve 3 de mana");
+
+// montarias: compra, acelera e o casco só vale na superfície
+comp.data.mounts = {};
+comp.data.mountActive = null;
+comp.data.items.ferro = 4;
+comp.data.items.erva = 2;
+assert.equal(comp.buyMount("cavalo").ok, true, "compra o cavalo");
+assert.equal(comp.mountSpeedMult(), 1.5, "cavalo acelera");
+comp.setCave(true);
+assert.equal(comp.mountSpeedMult(), 1, "montaria não acelera na caverna");
+comp.setCave(false);
+comp.data.items.veio = 3;
+comp.data.items.erva = 3;
+assert.equal(comp.buyMount("tartaruga").ok, true, "compra a tartaruga");
+comp.setMount("tartaruga");
+const surfaceHp = comp.hpMax();
+comp.setCave(true);
+assert.equal(comp.hpMax(), surfaceHp - 5, "casco da tartaruga só na superfície");
+comp.setCave(false);
+assert.equal(comp.buyMount("cavalo").ok, false, "não compra a mesma montaria duas vezes");
+
+// save antigo do bicho vira o gato da companhia
+store.set(STORAGE.rpg, JSON.stringify({ hp: 30, pet: { bond: 3 } }));
+const legacy = new RPG({ getLevel: () => 1, gainXp: () => {}, toast: () => {}, audio: {} });
+assert.equal(legacy.activePet()?.id, "gato", "save antigo migra o gato");
+assert.equal(legacy.hpMax(), 35, "bicho migrado soma vida");
+
 // save corrompido não vira save vazio sem deixar cópia
 const corruptKey = STORAGE.rpg;
 const goodRaw = store.get(corruptKey);
@@ -505,7 +614,7 @@ assert.equal(
 assert.equal(rpg.bossAlive({ id: "dungeon-teste", dungeon: true }), true, "chefe de caverna sem alavanca");
 assert.equal(rpg.bossAlive({ id: "caçada-teste" }), false, "chefe de outro tipo pede alavanca");
 store.clear();
-rpg.data = { hp: null, skills: {}, items: {}, monsters: {}, bosses: {}, levers: {}, enchants: {}, buffs: {}, pet: { bond: 0 } };
+rpg.data = { hp: null, skills: {}, items: {}, monsters: {}, bosses: {}, levers: {}, enchants: {}, buffs: {}, pets: {}, petActive: null, petCd: {}, mana: null, manaAt: 0, mounts: {}, mountActive: null };
 rpg.addItem("ferro", 2);
 rpg.addItem("madeira", 1);
 const made = rpg.craft("chave");
@@ -533,9 +642,9 @@ assert.equal(rpg.useItem("doce").ok, true, "doce se usa de vida cheia");
 assert.equal(rpg.buffActive("maxhp"), true, "doce dá vida extra");
 assert.equal(rpg.hpMax(), 45, "buff soma 5 de vida");
 rpg.addItem("racao", 3);
-assert.equal(rpg.feedPet().ok, true);
-assert.equal(rpg.feedPet().ok, true);
-const pet = rpg.feedPet();
+assert.equal(rpg.feedPet("gato").ok, true);
+assert.equal(rpg.feedPet("gato").ok, true);
+const pet = rpg.feedPet("gato");
 assert.equal(pet.tamed, true, "bicho fica manso");
 assert.equal(rpg.hpMax(), 50, "bicho soma 5 de vida");
 rpg.addItem("erva", 1);

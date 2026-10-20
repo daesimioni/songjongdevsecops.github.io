@@ -2400,6 +2400,82 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
 
 .npc-context { color: var(--mint); border-left: 2px solid rgba(97, 244, 192, 0.4); padding-left: 9px; }
 
+/* companhia: mana, bichos e montarias */
+.duel-bar.mana .duel-bar-track i { background: linear-gradient(90deg, var(--violet), var(--cyan)); }
+.sheet-bar.mana i { background: linear-gradient(90deg, var(--violet), var(--cyan)); }
+.company { display: flex; flex-direction: column; gap: 9px; margin-bottom: 16px; }
+.company-pet {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 4px 10px;
+  align-items: center;
+  padding: 10px 12px;
+  border: 1px solid rgba(97, 244, 192, 0.45);
+  border-radius: 7px;
+  background: rgba(97, 244, 192, 0.05);
+}
+.company-pet b { font-family: var(--pixel); font-size: 9px; color: var(--mint); grid-column: 1; }
+.company-pet span { grid-column: 1; font-size: 10.5px; line-height: 1.5; color: var(--muted); }
+.company-pet .item-use { grid-column: 2; grid-row: 1 / span 2; }
+.pet-roster { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.pet-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 9px 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.02);
+  font-family: var(--mono);
+}
+.pet-card.on { border-color: rgba(97, 244, 192, 0.55); }
+.pet-head { display: flex; justify-content: space-between; gap: 8px; font-size: 11px; color: var(--ink); }
+.pet-head b { font-family: var(--pixel); font-size: 8px; color: var(--amber); }
+.pet-head span { color: var(--muted); font-size: 9.5px; }
+.pet-where { font-size: 9.5px; line-height: 1.45; color: var(--muted); }
+.mount-list { display: flex; flex-direction: column; gap: 7px; }
+.mount-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 4px 10px;
+  align-items: center;
+  padding: 9px 11px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.02);
+}
+.mount-row b { font-family: var(--pixel); font-size: 8px; color: var(--violet); }
+.mount-row span { grid-column: 1; font-size: 10px; line-height: 1.45; color: var(--muted); }
+.mount-row .item-use { grid-column: 2; grid-row: 1 / span 2; }
+.duel-pet {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px 12px;
+  border: 1px solid rgba(97, 244, 192, 0.5);
+  border-radius: 7px;
+  background: rgba(97, 244, 192, 0.07);
+  color: var(--mint);
+  font-family: var(--mono);
+  font-size: 11.5px;
+  text-align: left;
+}
+.duel-pet:hover:not(:disabled) { background: rgba(97, 244, 192, 0.15); }
+.duel-pet:disabled { opacity: 0.42; cursor: default; }
+.duel-petinfo {
+  margin: 8px 0 0;
+  padding: 8px 10px;
+  border-left: 2px solid var(--violet);
+  background: rgba(180, 140, 255, 0.07);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  line-height: 1.55;
+  color: var(--ink);
+}
+.duel-option.hinted {
+  border-color: rgba(97, 244, 192, 0.75);
+  box-shadow: 0 0 0 1px rgba(97, 244, 192, 0.35) inset;
+}
+
 /* matilha: dois monstros perguntam na mesma tela, em duas colunas */
 .duel-cols { display: grid; gap: 12px; grid-template-columns: minmax(0, 1fr); }
 .duel-cols.has-partners { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
@@ -2422,6 +2498,7 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
 }
 @media (max-width: 860px) {
   .duel-cols.has-partners { grid-template-columns: minmax(0, 1fr); }
+  .pet-roster { grid-template-columns: 1fr; }
 }
 .duel-partner-head {
   display: flex;

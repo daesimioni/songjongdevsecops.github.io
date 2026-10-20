@@ -6,6 +6,8 @@ import { drawCreature } from "./creature.js";
 const $ = (id) => document.getElementById(id);
 let lastPick = null;
 let sparked = null;
+let hinted = null;
+let petInfo = "";
 
 function el(tag, cls, text) {
   const node = document.createElement(tag);
@@ -72,6 +74,8 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
     }
     lastPick = null;
     sparked = null;
+    hinted = null;
+    petInfo = "";
     render();
     startSprite();
     return true;
@@ -92,6 +96,8 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
     }
     lastPick = null;
     sparked = null;
+    hinted = null;
+    petInfo = "";
     render();
     startSprite();
     return true;
@@ -137,6 +143,8 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
       bar("vida do monstro", d.monsterHp, d.monsterHpMax, "enemy"),
       bar("sua vida", rpg.hp(), rpg.hpMax(), "self"),
     );
+    rpg.pulse();
+    if (rpg.activePet()) meta.appendChild(bar("mana", rpg.mana(), rpg.manaMax(), "mana"));
     drawSprite();
 
     const body = $("duel-body");
@@ -157,6 +165,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
       b.type = "button";
       b.appendChild(el("kbd", "", String(i + 1)));
       b.appendChild(el("span", "", text));
+      if (hinted === i) b.classList.add("hinted");
       if (sparked === i) {
         b.disabled = true;
         b.classList.add("sparked");
@@ -187,6 +196,17 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
       next.addEventListener("click", advance);
       main.appendChild(next);
     } else {
+      const pet = rpg.activePet();
+      if (pet) {
+        const cd = rpg.petCdLeft(pet.id);
+        const pb = el("button", "duel-pet", cd > 0
+          ? `${pet.name} · ${pet.ability.name} em ${Math.ceil(cd / 1000)}s`
+          : `${pet.name} · ${pet.ability.name} · ${pet.ability.mana} mana`);
+        pb.type = "button";
+        pb.disabled = cd > 0 || (pet.ability.id !== "mana" && rpg.mana() < pet.ability.mana);
+        pb.addEventListener("click", usePet);
+        main.appendChild(pb);
+      }
       const runes = SPELLS.filter(([id]) => rpg.itemCount(id) > 0);
       if (runes.length) {
         const bar = el("div", "duel-spells");
@@ -199,6 +219,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
         }
         main.appendChild(bar);
       }
+      if (petInfo) main.appendChild(el("p", "duel-petinfo", petInfo));
       const foot = el("p", "duel-hint", "Toque numa alternativa (ou 1, 2 e 3 no teclado). Errar tira vida; acertar tira vida do monstro.");
       main.appendChild(foot);
     }
@@ -275,6 +296,31 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
     body.appendChild(b);
   }
 
+  function usePet() {
+    if (!rpg.duel || rpg.duel.phase !== "question") return false;
+    const res = rpg.usePetAbility({ duel: true });
+    if (!res.ok) {
+      toast(res.reason, 3200);
+      audio.error?.();
+      render();
+      return false;
+    }
+    if (res.effect === "faro") sparked = res.spark;
+    else if (res.effect === "sabedoria") hinted = res.answer;
+    else if (res.effect === "aviso") {
+      petInfo = `${res.pet.name}: ${res.monster} é ${TIERS[res.tier]?.stars || ""} ${TIERS[res.tier]?.name || ""} e puxa ${res.theme || "o tema da sala"}.`;
+    } else if (res.effect === "cura") {
+      toast(`${res.pet.name} curou ${res.healed} de vida.`, 2800);
+    } else if (res.effect === "ritmo") {
+      toast(`${res.pet.name} marcou o ritmo: +1 de dano por dois minutos.`, 3000);
+    } else if (res.effect === "mana") {
+      toast(`${res.pet.name} devolveu 3 de mana.`, 2600);
+    }
+    audio.blip();
+    render();
+    return true;
+  }
+
   function castSpell(id) {
     if (!rpg.duel || rpg.duel.phase !== "question") return false;
     if (id === "runa-faisca") return spark();
@@ -326,9 +372,11 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
       return;
     }
     sparked = null;
+    hinted = null;
+    petInfo = "";
     const res = rpg.next();
     if (res?.phase === "question") render();
   }
 
-  return { open, openTraining, close, answer, advance, render, drawSprite, spark };
+  return { open, openTraining, close, answer, advance, render, drawSprite, spark, usePet };
 }

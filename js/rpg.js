@@ -4,12 +4,14 @@
 import { backupCorrupt } from "./storage.js";
 import { STORAGE } from "./config.js";
 import { SKILLS, TIERS, ITEMS, QUESTIONS, RECIPES, ENCHANTS, DEEP_QUESTIONS } from "./rpg-data.js";
+import { BOND_MAX, MANA_MS, PETS, MOUNTS, petById, mountById } from "./pets.js";
 
 const RESPAWN_MS = 5 * 60 * 1000;
 const BOSS_RESPAWN_MS = 20 * 60 * 1000;
 const MAX_SKILL_XP = 50;
 const SKILL_STEP = 5;
 const BUFF_NAMES = { speed: "passos rápidos", damage: "dano extra", maxhp: "vida extra" };
+const PET_ABILITY_IDS = new Set(Object.values(PETS).map((pet) => pet.ability.id));
 
 // Palavras que aproximam a pergunta do tema da sala. O tema vem do mapa; a
 // pergunta não precisa citar a palavra exata para puxar assunto.
@@ -64,7 +66,13 @@ function emptyData() {
     levers: {},
     enchants: {},
     buffs: {},
-    pet: { bond: 0 },
+    pets: {},
+    petActive: null,
+    petCd: {},
+    mana: null,
+    manaAt: 0,
+    mounts: {},
+    mountActive: null,
     equipped: {},
     seen: {},
     plots: {},
@@ -100,7 +108,32 @@ function readData() {
     for (const [id, at] of Object.entries(obj.buffs || {})) {
       if (BUFF_NAMES[id] && Number.isFinite(at) && at > now()) data.buffs[id] = at;
     }
-    data.pet.bond = clamp(Number(obj.pet?.bond) || 0, 0, 3);
+    // bichos: a versão antiga só tinha o gato (obj.pet.bond)
+    const petsRaw = obj.pets && typeof obj.pets === "object" ? obj.pets : null;
+    if (petsRaw) {
+      for (const id of Object.keys(PETS)) {
+        const bond = clamp(Number(petsRaw[id]?.bond) || 0, 0, BOND_MAX);
+        if (bond > 0) data.pets[id] = { bond };
+      }
+    } else {
+      const bond = clamp(Number(obj.pet?.bond) || 0, 0, BOND_MAX);
+      if (bond > 0) data.pets.gato = { bond };
+    }
+    if (typeof obj.petActive === "string" && data.pets[obj.petActive]?.bond >= BOND_MAX) {
+      data.petActive = obj.petActive;
+    } else {
+      const first = Object.keys(data.pets).find((id) => data.pets[id].bond >= BOND_MAX);
+      data.petActive = first || null;
+    }
+    for (const [id, at] of Object.entries(obj.petCd || {})) {
+      if (PET_ABILITY_IDS.has(id) && Number.isFinite(at) && at > 0) data.petCd[id] = at;
+    }
+    if (Number.isFinite(obj.mana)) data.mana = clamp(Number(obj.mana), 0, 30);
+    if (Number.isFinite(obj.manaAt)) data.manaAt = Number(obj.manaAt);
+    for (const id of Object.keys(MOUNTS)) {
+      if (obj.mounts?.[id]) data.mounts[id] = true;
+    }
+    if (typeof obj.mountActive === "string" && data.mounts[obj.mountActive]) data.mountActive = obj.mountActive;
     for (const [slot, id] of Object.entries(obj.equipped || {})) {
       if (ITEMS[id]?.slot === slot && Number(data.items[id]) > 0) data.equipped[slot] = id;
     }
@@ -161,6 +194,7 @@ export class RPG {
     backupCorrupt(STORAGE.rpg);
     this.data = readData();
     this.duel = null;
+    this.cave = false;
     this.lastRegen = now();
     this.ensureHp();
     this.save();
@@ -273,7 +307,8 @@ export class RPG {
     let max = 30 + (Math.max(1, this.getLevel()) - 1) * 4 + this.relics() * 5 + this.equipmentBonus().hp;
     if (this.data.enchants.vigor) max += 10;
     if (this.buffActive("maxhp")) max += 5;
-    if (this.data.pet.bond >= 3) max += 5;
+    max += Number(this.activePet()?.passive.hp) || 0;
+    if (!this.cave) max += Number(MOUNTS[this.data.mountActive]?.hp) || 0;
     return max;
   }
 
@@ -286,7 +321,9 @@ export class RPG {
   }
 
   lightBonus() {
-    return (this.data.enchants.luz ? 3 : 0) + (this.data.pet.bond >= 3 ? 1 : 0);
+    return (this.data.enchants.luz ? 3 : 0)
+      + (Number(this.activePet()?.passive.sight) || 0)
+      + (this.cave ? 0 : Number(MOUNTS[this.data.mountActive]?.sight) || 0);
   }
 
   buffView() {
@@ -295,18 +332,191 @@ export class RPG {
       .map(([id, at]) => ({ id, name: BUFF_NAMES[id], left: Math.ceil((at - now()) / 1000) }));
   }
 
-  petTamed() {
-    return this.data.pet.bond >= 3;
+  // ---------- companhia: bichos e montarias ----------
+  setCave(on) {
+    this.cave = !!on;
   }
 
-  feedPet() {
-    if (this.petTamed()) return { ok: false, reason: "O bicho já segue você." };
+  activePet() {
+    const id = this.data.petActive;
+    if (!id || !PETS[id]) return null;
+    if ((this.data.pets[id]?.bond || 0) < BOND_MAX) return null;
+    return { id, ...PETS[id] };
+  }
+
+  petTamed(id = null) {
+    if (id) return (this.data.pets[id]?.bond || 0) >= BOND_MAX;
+    return !!this.activePet();
+  }
+
+  petsView() {
+    return Object.entries(PETS).map(([id, pet]) => {
+      const bond = clamp(Number(this.data.pets[id]?.bond) || 0, 0, BOND_MAX);
+      return {
+        id,
+        name: pet.name,
+        continent: pet.continent,
+        where: pet.where,
+        bond,
+        max: BOND_MAX,
+        tamed: bond >= BOND_MAX,
+        active: this.data.petActive === id,
+        passive: pet.passive,
+        ability: pet.ability,
+        cdLeft: this.petCdLeft(id),
+        mana: this.mana(),
+      };
+    });
+  }
+
+  feedPet(id) {
+    const pet = petById(id);
+    if (!pet) return { ok: false, reason: "Este bicho não vive aqui." };
+    if (this.petTamed(id)) return { ok: false, reason: `O ${pet.name} já segue você.` };
     if (this.itemCount("racao") <= 0) return { ok: false, reason: "Falta ração de caverna." };
     this.data.items.racao--;
     if (this.data.items.racao <= 0) delete this.data.items.racao;
-    this.data.pet.bond = clamp(this.data.pet.bond + 1, 0, 3);
+    const entry = this.data.pets[id] || { bond: 0 };
+    entry.bond = clamp(entry.bond + 1, 0, BOND_MAX);
+    this.data.pets[id] = entry;
+    if (entry.bond >= BOND_MAX && !this.activePet()) this.data.petActive = id;
     this.save();
-    return { ok: true, bond: this.data.pet.bond, tamed: this.petTamed() };
+    return { ok: true, bond: entry.bond, tamed: entry.bond >= BOND_MAX, name: pet.name };
+  }
+
+  setPet(id) {
+    if (!this.petTamed(id)) return { ok: false, reason: "Esse bicho ainda não confia em você." };
+    this.data.petActive = id;
+    this.save();
+    return { ok: true };
+  }
+
+  petCdLeft(id = this.data.petActive) {
+    const pet = petById(id);
+    if (!pet) return 0;
+    return Math.max(0, (Number(this.data.petCd?.[pet.ability.id]) || 0) - now());
+  }
+
+  manaMax() {
+    return 10 + (Number(this.activePet()?.passive.manaMax) || 0);
+  }
+
+  mana() {
+    if (this.data.mana == null) {
+      this.data.mana = this.manaMax();
+      this.data.manaAt = now();
+    }
+    return clamp(Math.round(Number(this.data.mana)), 0, this.manaMax());
+  }
+
+  addMana(n) {
+    if (!n) return;
+    this.data.mana = clamp(this.mana() + n, 0, this.manaMax());
+    this.save();
+  }
+
+  // mana volta com o tempo; chamado pelo laço do jogo e pelo duelo
+  pulse() {
+    if (this.data.mana == null) {
+      this.data.mana = this.manaMax();
+      this.data.manaAt = now();
+      this.save();
+      return;
+    }
+    const max = this.manaMax();
+    const at = Number(this.data.manaAt) || now();
+    const gain = Math.floor((now() - at) / MANA_MS);
+    if (gain <= 0) return;
+    this.data.mana = clamp(Number(this.data.mana) + gain, 0, max);
+    this.data.manaAt = at + gain * MANA_MS;
+    this.save();
+  }
+
+  usePetAbility({ duel = false } = {}) {
+    const pet = this.activePet();
+    if (!pet) return { ok: false, reason: "Nenhum bicho tamed está ativo." };
+    const ab = pet.ability;
+    const left = this.petCdLeft(pet.id);
+    if (left > 0) return { ok: false, cooldown: left, reason: `${pet.name} ainda está descansando (${Math.ceil(left / 1000)}s).` };
+    const inDuel = duel && this.duel && this.duel.phase === "question";
+    if (["faro", "sabedoria", "aviso"].includes(ab.id) && !inDuel) {
+      return { ok: false, reason: "Essa habilidade só funciona na pergunta de um duelo." };
+    }
+    this.pulse();
+    if (ab.id !== "mana" && this.mana() < ab.mana) {
+      return { ok: false, reason: `Falta mana (${this.mana()}/${ab.mana}).` };
+    }
+    const out = { ok: true, pet: { id: pet.id, name: pet.name }, ability: ab, effect: ab.id };
+    if (ab.id === "faro") {
+      const wrong = this.duel.question.options.map((_, i) => i).filter((i) => i !== this.duel.question.answer);
+      if (!wrong.length) return { ok: false, reason: "Esta pergunta não tem alternativa para riscar." };
+      out.spark = wrong[Math.floor(Math.random() * wrong.length)];
+    }
+    if (ab.id === "sabedoria") out.answer = this.duel.question.answer;
+    if (ab.id === "aviso") {
+      out.theme = this.duel.question.theme || this.duel.ground.theme || "";
+      out.tier = this.duel.boss ? 4 : this.duel.monster.tier || 1;
+      out.monster = this.duel.monster.name || "o monstro";
+    }
+    if (ab.id === "cura") out.healed = this.heal(20);
+    if (ab.id === "mana") {
+      out.mana = 3;
+      this.data.mana = clamp(this.mana() + 3, 0, this.manaMax());
+    }
+    if (ab.id === "ritmo") {
+      this.data.buffs.damage = now() + 120000;
+      out.buff = { id: "damage", name: BUFF_NAMES.damage, ms: 120000 };
+    }
+    if (ab.id !== "mana") this.data.mana = clamp(this.mana() - ab.mana, 0, this.manaMax());
+    this.data.petCd[ab.id] = now() + ab.cd;
+    this.save();
+    return out;
+  }
+
+  mountsView() {
+    return Object.entries(MOUNTS).map(([id, mount]) => ({
+      id,
+      name: mount.name,
+      speed: mount.speed,
+      desc: mount.desc,
+      price: mount.price,
+      owned: !!this.data.mounts[id],
+      active: this.data.mountActive === id,
+      can: this.canBuyMount(id),
+    }));
+  }
+
+  canBuyMount(id) {
+    const mount = mountById(id);
+    if (!mount || this.data.mounts[id]) return false;
+    return Object.entries(mount.price).every(([item, qty]) => this.itemCount(item) >= qty);
+  }
+
+  buyMount(id) {
+    const mount = mountById(id);
+    if (!mount) return { ok: false, reason: "Esta montaria não existe." };
+    if (this.data.mounts[id]) return { ok: false, reason: "Você já tem esta montaria." };
+    if (!this.canBuyMount(id)) return { ok: false, reason: "Falta material para a montaria." };
+    for (const [item, qty] of Object.entries(mount.price)) {
+      this.data.items[item] -= qty;
+      if (this.data.items[item] <= 0) delete this.data.items[item];
+    }
+    this.data.mounts[id] = true;
+    if (!this.data.mountActive) this.data.mountActive = id;
+    this.save();
+    return { ok: true, name: mount.name };
+  }
+
+  setMount(id) {
+    if (id && !this.data.mounts[id]) return { ok: false, reason: "Você ainda não tem essa montaria." };
+    this.data.mountActive = id || null;
+    this.save();
+    return { ok: true };
+  }
+
+  mountSpeedMult() {
+    if (this.cave) return 1;
+    return Number(MOUNTS[this.data.mountActive]?.speed) || 1;
   }
 
   hp() {
@@ -381,6 +591,7 @@ export class RPG {
     let damage = skill >= 10 ? 3 : skill >= 6 ? 2 : 1;
     if (this.data.enchants.furor) damage++;
     if (this.buffActive("damage")) damage++;
+    damage += Number(this.activePet()?.passive.damage) || 0;
     return damage + this.equipmentBonus().damage;
   }
 
@@ -775,6 +986,7 @@ export class RPG {
     const correct = Number(index) === d.question.answer;
     if (correct) {
       this.addSkillXp(d.ground.continent, 1);
+      this.addMana(Number(this.activePet()?.passive.manaHit) || 0);
       d.monsterHp = Math.max(0, d.monsterHp - this.damageFor(d.ground.continent));
       d.feedback = { correct: true, why: d.question.why, damage: 0 };
       if (d.monsterHp <= 0) {
@@ -816,6 +1028,7 @@ export class RPG {
     const correct = Number(index) === p.question.answer;
     if (correct) {
       this.addSkillXp(d.ground.continent, 1);
+      this.addMana(Number(this.activePet()?.passive.manaHit) || 0);
       p.hp = Math.max(0, p.hp - this.damageFor(d.ground.continent));
       p.feedback = { correct: true, why: p.question.why, damage: 0 };
       if (p.hp <= 0) {

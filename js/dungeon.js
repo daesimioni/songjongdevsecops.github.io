@@ -4,9 +4,11 @@
 import { TILE, PLAYER_W, PLAYER_H } from "./config.js";
 import { DUNGEON_LAYOUT, dungeonById } from "./dungeon-data.js";
 import { GROUNDS, ITEMS, TIERS } from "./rpg-data.js";
+import { PET_BY_CONTINENT, PETS } from "./pets.js";
 import { drawCreature } from "./creature.js";
 import { findPathIn } from "./path.js";
 import { hash2 } from "./world.js";
+import { drawPetSprite } from "./pet-art.js";
 
 const $ = (id) => document.getElementById(id);
 const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
@@ -236,31 +238,6 @@ function drawAdventurer(ctx, x, y, dir, moving, t, avatar = {}, ship = false) {
   ctx.fillRect(6, -9, 3, 4);
   ctx.fillStyle = "#ffc857";
   ctx.fillRect(7, -8, 1, 2);
-  ctx.restore();
-}
-
-function drawCat(ctx, x, y, t) {
-  const tail = Math.sin(t * 0.006) * 1.3;
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.fillStyle = "rgba(0,0,0,0.35)";
-  ctx.beginPath();
-  ctx.ellipse(0, 0, 5, 1.8, 0, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.fillStyle = "#c98b3f";
-  ctx.fillRect(-4, -6, 8, 5);
-  ctx.fillRect(-3, -9, 6, 4);
-  ctx.fillStyle = "#e0a455";
-  ctx.fillRect(-2, -8, 2, 2);
-  ctx.fillRect(1, -8, 2, 2);
-  ctx.fillStyle = "#2a1c12";
-  ctx.fillRect(-3, -7, 1, 1);
-  ctx.fillRect(2, -7, 1, 1);
-  ctx.fillRect(-4, -9, 1, 2);
-  ctx.fillRect(3, -9, 1, 2);
-  ctx.fillStyle = "#a86f30";
-  ctx.fillRect(4, -7, 1, 4);
-  ctx.fillRect(5, -4 + tail, 1, 2);
   ctx.restore();
 }
 
@@ -494,31 +471,17 @@ function drawVein(ctx, x, y, t, accent, charges) {
   ctx.restore();
 }
 
-function drawPet(ctx, x, y, t, accent, tamed) {
-  const bob = Math.sin(t * 0.006) * 0.8;
+function drawPet(ctx, x, y, t, accent, kind, tamed) {
   ctx.save();
-  ctx.translate(x, y + bob);
-  ctx.fillStyle = "rgba(0,0,0,0.35)";
-  ctx.beginPath();
-  ctx.ellipse(0, 1, 6, 2.2, 0, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.fillStyle = "#8b5a3c";
-  ctx.fillRect(-5, -7, 10, 6);
-  ctx.fillStyle = "#a86f4a";
-  ctx.fillRect(-4, -11, 8, 5);
-  ctx.fillStyle = "#8b5a3c";
-  ctx.fillRect(-5, -13, 2, 4);
-  ctx.fillRect(3, -13, 2, 4);
-  ctx.fillStyle = "#f4e2c8";
-  ctx.fillRect(-2, -9, 1, 1);
-  ctx.fillRect(1, -9, 1, 1);
   if (tamed) {
     ctx.fillStyle = accent;
-    ctx.fillRect(-4, -6, 8, 1);
+    ctx.globalAlpha = 0.22 + Math.sin(t * 0.004) * 0.08;
+    ctx.beginPath();
+    ctx.ellipse(x, y + 1, 9, 3.4, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
   }
-  ctx.fillStyle = "#7a4a30";
-  ctx.fillRect(4, -5, 1, 4);
-  ctx.fillRect(5, -2 + Math.sin(t * 0.01), 1, 2);
+  drawPetSprite(ctx, kind, x, y, t, false);
   ctx.restore();
 }
 
@@ -770,7 +733,15 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
       props.push({ kind: "waystone", x: city.x + city.w / 2 + 3, y: city.y + 2.6, label: "pedra de retorno", interact: true });
       props.push({ kind: "keeper", x: city.x + city.w / 2 - 3, y: city.y + city.h - 3.4, label: "conversar com a mestra", interact: true });
       props.push({ kind: "enchanter", x: city.x + city.w / 2, y: city.y + 3.2, label: "mesa de encantamento", interact: true });
-      props.push({ kind: "pet", x: city.x + 4.5, y: city.y + 4.2, label: "oferecer ração ao bicho", interact: true });
+      const petId = PET_BY_CONTINENT[def.continent] || "gato";
+      props.push({
+        kind: "pet",
+        petId,
+        x: city.x + 4.5,
+        y: city.y + 4.2,
+        label: `oferecer ração ao ${PETS[petId]?.name || "bicho"}`,
+        interact: true,
+      });
       for (let i = 0; i < 3; i++) {
         props.push({
           kind: "plot",
@@ -1325,18 +1296,20 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
       return;
     }
     if (obj.kind === "pet") {
-      if (rpg.petTamed()) {
-        say("O bicho já anda com você. Agora é companhia, não fome.");
+      const petId = obj.petId || "gato";
+      const pet = PETS[petId];
+      if (rpg.petTamed(petId)) {
+        say(`${pet?.name || "O bicho"} já anda com você. Agora é companhia, não fome.`);
         return;
       }
-      const res = rpg.feedPet();
+      const res = rpg.feedPet(petId);
       if (!res.ok) {
         say(res.reason);
         audio.error?.();
         return;
       }
       if (res.tamed) {
-        say("O bicho aceitou a última ração e agora segue você. +5 de vida e mais luz.", 4200);
+        say(`${res.name} aceitou a última ração e entrou na sua companhia. Escolha quem anda com você na Ficha (C).`, 5600);
         audio.chime();
       } else {
         say(`O bicho comeu. Afeição ${res.bond}/3.`, 3000);
@@ -1695,7 +1668,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
           else if (prop.kind === "waystone") drawWaystone(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent);
           else if (prop.kind === "keeper") drawKeeper(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent);
           else if (prop.kind === "enchanter") drawEnchanter(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent);
-          else if (prop.kind === "pet") drawPet(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent, rpg.petTamed());
+          else if (prop.kind === "pet") drawPet(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent, PETS[prop.petId]?.kind || "cat", rpg.petTamed(prop.petId));
           else if (prop.kind === "plot") {
             drawPlot(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent, prop.planted, prop.planted && t >= prop.readyAt);
           }
@@ -1711,17 +1684,15 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
       drawables.push({ y: m.y, draw: () => drawMonster(m, t) });
     }
     if (state.boss?.alive) drawables.push({ y: state.boss.y, draw: () => drawMonster(state.boss, t) });
-    // o gato entra antes do aventureiro: parado no mesmo tile, ele fica atrás
-    if (state.history.length > 14) {
+    // o companheiro segue pela trilha, um só, com a cara da espécie ativa
+    const companion = rpg.activePet();
+    if (companion && state.history.length > 14) {
       const trail = state.history[state.history.length - 14];
       if (Math.hypot(trail.x - state.player.x, trail.y - state.player.y) < 5) {
-        drawables.push({ y: trail.y, draw: () => drawCat(ctx, trail.x * TILE, trail.y * TILE, t) });
-      }
-    }
-    if (rpg.petTamed() && state.history.length > 26) {
-      const trail = state.history[state.history.length - 26];
-      if (Math.hypot(trail.x - state.player.x, trail.y - state.player.y) < 6) {
-        drawables.push({ y: trail.y, draw: () => drawPet(ctx, trail.x * TILE, trail.y * TILE, t, palette.accent, true) });
+        drawables.push({
+          y: trail.y,
+          draw: () => drawPetSprite(ctx, companion.kind, trail.x * TILE, trail.y * TILE, t, state.player.moving),
+        });
       }
     }
     drawables.push({

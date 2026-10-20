@@ -15,7 +15,17 @@ function accentOf(continent) {
   return CONTINENTS[continent]?.accent || "#ffc857";
 }
 
-export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onUse, onOutfits }) {
+function passiveText(passive = {}) {
+  return [
+    passive.hp ? `+${passive.hp} vida` : "",
+    passive.sight ? `+${passive.sight} luz` : "",
+    passive.damage ? `+${passive.damage} dano` : "",
+    passive.manaMax ? `+${passive.manaMax} mana` : "",
+    passive.manaHit ? `+${passive.manaHit} mana por acerto` : "",
+  ].filter(Boolean).join(", ") || "sem passivo";
+}
+
+export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onUse, onOutfits, onPetAbility }) {
   function render() {
     const body = $("sheet-body");
     if (!body) return;
@@ -46,13 +56,94 @@ export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onUs
     if (buffs.length) {
       body.appendChild(el("p", "sheet-buffs", `efeitos: ${buffs.map((b) => `${b.name} ${b.left}s`).join(" · ")}`));
     }
-    body.appendChild(el(
-      "p",
-      "sheet-pet",
-      rpg.petTamed()
-        ? "bicho companheiro: +5 de vida e +1 de luz na caverna."
-        : `bicho da cidade: afeição ${rpg.data.pet.bond}/3, dê ração na praça subterrânea.`,
-    ));
+    // ---------- companhia: bichos e montarias ----------
+    body.appendChild(el("h3", "sheet-sec", "Companhia"));
+    const mana = rpg.mana();
+    const manaMax = rpg.manaMax();
+    const manaLabel = el("div", "sheet-hp-label");
+    manaLabel.append(el("span", "", "mana"), el("b", "", `${mana}/${manaMax}`));
+    const manaBar = el("div", "sheet-bar mana");
+    const manaFill = el("i");
+    manaFill.style.width = `${manaMax ? Math.round((mana / manaMax) * 100) : 0}%`;
+    manaBar.appendChild(manaFill);
+    body.append(manaLabel, manaBar);
+
+    const company = el("div", "company");
+    const pet = rpg.activePet();
+    if (pet) {
+      const cd = rpg.petCdLeft(pet.id);
+      const row = el("div", "company-pet");
+      const use = el("button", "item-use", cd > 0
+        ? `${pet.ability.name} · ${Math.ceil(cd / 1000)}s`
+        : `${pet.ability.name} · ${pet.ability.mana} mana`);
+      use.type = "button";
+      use.disabled = cd > 0 || (pet.ability.id !== "mana" && mana < pet.ability.mana);
+      use.addEventListener("click", () => {
+        const res = rpg.usePetAbility({ duel: false });
+        if (!res.ok) { toast(res.reason, 3200); audio.error?.(); render(); return; }
+        onPetAbility?.(res);
+        render();
+      });
+      row.append(
+        el("b", "", pet.name),
+        el("span", "", `passivo: ${passiveText(pet.passive)} · ${pet.ability.desc}`),
+        use,
+      );
+      company.appendChild(row);
+    } else {
+      company.appendChild(el("p", "sheet-empty", "Nenhum bicho anda com você ainda. Dê três rações ao bicho da praça subterrânea do continente."));
+    }
+
+    const roster = el("div", "pet-roster");
+    for (const p of rpg.petsView()) {
+      const card = el("div", `pet-card${p.active ? " on" : ""}`);
+      const head = el("div", "pet-head");
+      head.append(el("b", "", p.name), el("span", "", p.tamed ? "domado" : `afeição ${p.bond}/${p.max}`));
+      card.append(head, el("span", "pet-where", `${p.where} · ${passiveText(p.passive)}`));
+      if (p.tamed && !p.active) {
+        const pick = el("button", "item-use", "chamar");
+        pick.type = "button";
+        pick.addEventListener("click", () => {
+          const res = rpg.setPet(p.id);
+          if (!res.ok) { toast(res.reason, 2600); return; }
+          toast(`${p.name} agora anda com você.`, 2600);
+          audio.blip();
+          render();
+        });
+        card.appendChild(pick);
+      }
+      roster.appendChild(card);
+    }
+    company.appendChild(roster);
+
+    const stable = el("div", "mount-list");
+    for (const m of rpg.mountsView()) {
+      const row = el("div", "mount-row");
+      const price = Object.entries(m.price).map(([id, qty]) => `${ITEMS[id]?.name || id} ${qty}`).join(" · ");
+      row.append(el("b", "", m.name), el("span", "", `${m.desc} (${price})`));
+      const action = el("button", "item-use", m.owned ? (m.active ? "desmontar" : "montar") : "comprar");
+      action.type = "button";
+      action.disabled = !m.owned && !m.can;
+      action.addEventListener("click", () => {
+        if (!m.owned) {
+          const res = rpg.buyMount(m.id);
+          if (!res.ok) { toast(res.reason, 3000); return; }
+          toast(`${res.name} é sua e já está selada.`, 3200);
+          audio.chime();
+        } else {
+          const res = rpg.setMount(m.active ? null : m.id);
+          toast(res.ok
+            ? (m.active ? `${m.name} descansa no cais.` : `${m.name} pronta para a estrada.`)
+            : res.reason, 2800);
+          audio.blip();
+        }
+        render();
+      });
+      row.appendChild(action);
+      stable.appendChild(row);
+    }
+    company.appendChild(stable);
+    body.appendChild(company);
 
     if (onOutfits) {
       const look = el("button", "sheet-outfit", "trocar traje");

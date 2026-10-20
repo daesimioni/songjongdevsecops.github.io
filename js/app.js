@@ -173,6 +173,23 @@ const sheetUi = createSheet({
   toast,
   audio,
   onOutfits: () => openOutfits(),
+  onPetAbility: (res) => {
+    const pet = res.pet?.name || "O bicho";
+    if (res.effect === "cura") {
+      toast(`${pet} curou ${res.healed} de vida.`, 3000);
+      audio.blip();
+      return;
+    }
+    if (res.effect === "mana") {
+      toast(`${pet} devolveu ${res.mana} de mana.`, 2800);
+      audio.blip();
+      return;
+    }
+    if (res.effect === "ritmo") {
+      toast(`${pet} marcou o ritmo: +1 de dano por dois minutos.`, 3200);
+      audio.chime();
+    }
+  },
   onUse: (id, res) => {
     if (id === "tocha") {
       if (dungeon?.isOpen()) {
@@ -233,6 +250,7 @@ dungeon = createDungeon({
   onKeeper: () => openShop(),
   avatar: player.colors,
   onExit: ({ kind, dungeon: def, target }) => {
+    rpg.setCave(false);
     if (kind === "death") return;
     const cave = target || world.caves.find((c) => c.continent === def?.continent);
     if (cave) {
@@ -519,8 +537,10 @@ function enterCave(cave) {
   if (state.panelOpen) closePanel();
   closeModal(state.modal);
   const pair = world.caves.find((c) => c.id === cave.pairId);
+  rpg.setCave(true);
   const ok = dungeon?.open(cave.defId || cave.id, pair ? { ...cave, pair } : cave);
   if (!ok) {
+    rpg.setCave(false);
     toast("A caverna não abriu agora. Tente de novo.", 3000);
     audio.error();
     return;
@@ -1335,7 +1355,7 @@ function walkStep(dx, dy, dt) {
   if (!len) { player.moving = false; return false; }
   dx /= len; dy /= len;
   const sprinting = state.sprint;
-  const step = PLAYER_SPEED * (sprinting ? SPRINT_MULT : 1) * rpg.speedMult() * dt;
+  const step = PLAYER_SPEED * (sprinting ? SPRINT_MULT : 1) * rpg.speedMult() * (dungeon?.isOpen() ? 1 : rpg.mountSpeedMult()) * dt;
   const oldX = player.x, oldY = player.y;
   // Em velocidade de nave o passo do quadro passa de um tile e atravessaria
   // parede fina. Divide o movimento em pedaços que a colisão consegue ver.
@@ -1399,7 +1419,7 @@ function setPathTo(x, y, pending = null) {
 function updateAutoWalk(dt) {
   const path = state.path;
   if (!path || !path.length) return false;
-  const stepLen = PLAYER_SPEED * (state.sprint ? SPRINT_MULT : 1) * rpg.speedMult() * dt;
+  const stepLen = PLAYER_SPEED * (state.sprint ? SPRINT_MULT : 1) * rpg.speedMult() * (dungeon?.isOpen() ? 1 : rpg.mountSpeedMult()) * dt;
   let target = path[0];
   let dx = target.x - player.x;
   let dy = target.y - player.y;
@@ -1430,18 +1450,55 @@ function updateAutoWalk(dt) {
   return true;
 }
 
+function catFree(x, y) {
+  // o gato ocupa menos que o jogador, mas respeita água, árvore e parede
+  return !world.boxCollides(x, y, 0.42, 0.32);
+}
+
+function moveCat(dx, dy) {
+  const cat = world.cat;
+  if (catFree(cat.x + dx, cat.y + dy)) {
+    cat.x += dx;
+    cat.y += dy;
+    return true;
+  }
+  // desliza pelo eixo livre em vez de atravessar a água
+  if (Math.abs(dx) > 0.001 && catFree(cat.x + dx, cat.y)) {
+    cat.x += dx;
+    return true;
+  }
+  if (Math.abs(dy) > 0.001 && catFree(cat.x, cat.y + dy)) {
+    cat.y += dy;
+    return true;
+  }
+  return false;
+}
+
 function updateCat(dt) {
   const cat = world.cat;
+  const pet = rpg.activePet();
+  cat.kind = pet?.kind || "cat";
+  if (!pet) {
+    // sem companheiro ativo o gato do porto fica de guarda, não segue
+    cat.moving = false;
+    return;
+  }
   const behind = [[0, -0.9], [0.9, 0], [-0.9, 0], [0, 0.9]][player.dir] || [0, -0.9];
   const behindX = player.x + behind[0];
   const behindY = player.y + behind[1];
   const d = Math.hypot(behindX - cat.x, behindY - cat.y);
+  if (d > 9 && catFree(behindX, behindY)) {
+    // ficou preso longe demais: reaparece atrás do jogador, em chão livre
+    cat.x = behindX;
+    cat.y = behindY;
+    cat.moving = false;
+    return;
+  }
   if (d > 1.15) {
     const sp = Math.min(4.2, 1.2 + d) * dt;
-    cat.x += ((behindX - cat.x) / d) * sp;
-    cat.y += ((behindY - cat.y) / d) * sp;
+    const moved = moveCat(((behindX - cat.x) / d) * sp, ((behindY - cat.y) / d) * sp);
     cat.facing = behindX >= cat.x ? 1 : -1;
-    cat.moving = true;
+    cat.moving = moved;
   } else {
     cat.moving = false;
   }
@@ -1466,6 +1523,10 @@ function loop(now) {
     const active = state.started && !state.panelOpen && !state.modal && !state.chatOpen && now >= state.pvpDownUntil;
     updateBoost(dt, active);
     rpg.tick();
+    if (!state.manaAt || now - state.manaAt > 1000) {
+      state.manaAt = now;
+      rpg.pulse();
+    }
     if (dungeon?.isOpen()) {
       $("prompt").hidden = true;
       return;
