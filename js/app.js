@@ -19,6 +19,10 @@ import { renderCharacterEditor } from "./character.js";
 import { copyText } from "./social.js";
 import { isAdminKey, ADMIN_LABEL } from "./admin.js";
 import { CATALOG_CONTENT } from "./catalog-gen.js";
+import { CATALOG } from "./catalog.js";
+
+// as 82 seções do catálogo têm farol próprio e são a porta do arquipélago
+const CATALOG_STONES = new Set(CATALOG.map((area) => area.existing || area.id));
 import { findPath, nearestWalkable } from "./path.js";
 import { feedPeer, peerRenderPosition } from "./interp.js";
 import { startTitle } from "./title.js";
@@ -1103,6 +1107,7 @@ function gainXp(n) {
 
 const FIRST_STEPS = [
   { id: "walk", label: "ande pelo mapa (WASD ou clique no chão)" },
+  { id: "expedition", label: "viaje de farol para um arquipélago do saber" },
   { id: "station", label: "abra uma estação de estudo" },
   { id: "npc", label: "converse com um NPC" },
   { id: "quest", label: "aceite uma missão" },
@@ -1430,7 +1435,7 @@ function openTravel(mode = "stones") {
   $("travel-title").textContent = caves ? "Túneis da Conurbação" : "Pedras do Porto";
   $("travel-lead").textContent = caves
     ? "As cidades subterrâneas se ligam por túneis antigos. Escolha a cidade de destino; a saída devolve você à boca daquela caverna."
-    : "Os faróis que você já acendeu podem ser alcançados num piscar. Os outros continuam escondidos na névoa.";
+    : "Os faróis que você já acendeu podem ser alcançados num piscar. O arquipélago do saber tem expedição própria: nele, as pontes ligam as áreas.";
   buildTravel();
   wireTravelFilter();
   openModal("travel");
@@ -1508,9 +1513,45 @@ function buildTravel() {
     }
     return;
   }
+  // expedição para o arquipélago do saber: cada seção tem farol, e o jogador
+  // chega sem precisar descobrir a capital antes
+  const expedicao = WAYSTONES.filter((w) => CATALOG_STONES.has(w.id)).sort((a, b) => {
+    const ca = CONTINENTS[a.continent]?.name || "";
+    const cb = CONTINENTS[b.continent]?.name || "";
+    return ca.localeCompare(cb, "pt-BR") || a.name.localeCompare(b.name, "pt-BR");
+  });
+  if (expedicao.length) {
+    const head = document.createElement("p");
+    head.className = "travel-group";
+    head.textContent = "Arquipélagos do saber · expedição";
+    list.appendChild(head);
+    for (const stone of expedicao) {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "travel-item";
+      const left = document.createElement("span");
+      const b = document.createElement("b");
+      b.textContent = stone.name;
+      const s = document.createElement("span");
+      s.textContent = `${CONTINENTS[stone.continent]?.name || "arquipélago"} · estação, caverna e pontes`;
+      left.append(b, s);
+      const right = document.createElement("em");
+      right.textContent = "expedição";
+      btn.append(left, right);
+      btn.addEventListener("click", () => travelTo(stone.id));
+      list.appendChild(btn);
+    }
+  }
+  const porto = WAYSTONES.filter((w) => !CATALOG_STONES.has(w.id));
+  if (porto.length) {
+    const head = document.createElement("p");
+    head.className = "travel-group";
+    head.textContent = "Porto e continentes";
+    list.appendChild(head);
+  }
   for (const cid of CONTINENT_ORDER) {
     const c = CONTINENTS[cid];
-    const stones = WAYSTONES.filter((w) => w.continent === cid);
+    const stones = WAYSTONES.filter((w) => w.continent === cid && !CATALOG_STONES.has(w.id));
     if (!stones.length) continue;
     const known = cid === "hub" || state.docks.has(cid);
     const sites = sitesOf(cid);
@@ -1575,6 +1616,10 @@ function travelConurbation(defId) {
 function travelTo(cid) {
   const stone = WAYSTONES.find((w) => w.id === cid) || WAYSTONES.find((w) => w.continent === cid);
   if (!stone) return;
+  // o destino pode ser uma área do catálogo: o continente e o nome vêm dela
+  const areaDestino = world.areaAt(stone.x, stone.y);
+  const continenteDestino = areaDestino?.continent || stone.continent;
+  const nomeDestino = areaDestino?.name || CONTINENTS[continenteDestino]?.name || stone.name;
   const spots = [
     [stone.x, stone.y + 1.8], [stone.x, stone.y - 1.8],
     [stone.x + 1.8, stone.y], [stone.x - 1.8, stone.y],
@@ -1587,13 +1632,14 @@ function travelTo(cid) {
   player.x = target[0];
   player.y = target[1];
   player.moving = false;
-  player.continentId = cid;
+  player.continentId = continenteDestino;
   state.lastContinent = null;
-  markDock(cid);
+  markDock(continenteDestino);
+  if (areaDestino) markStep("expedition");
   closeModal("travel");
   audio.chime();
   renderer.kick(0.5);
-  toast(`viajando para ${CONTINENTS[cid].name}`, 2200);
+  toast(`viajando para ${nomeDestino}`, 2200);
 }
 
 const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -2885,6 +2931,6 @@ window.addEventListener("beforeunload", () => {
   }, { capture: true });
 
   if (new URLSearchParams(location.search).has("debug")) {
-    window.__mundo = { player, state, world, renderer, audio, quests, rede, backup, rpg, sheetUi, duelUi, dungeon, pvpUi, knockDown, findPath, openPost: (id) => openPost(id), catalog: CATALOG_CONTENT, get social() { return social; } };
+    window.__mundo = { player, state, world, renderer, audio, quests, rede, backup, rpg, sheetUi, duelUi, dungeon, pvpUi, knockDown, findPath, openPost: (id) => openPost(id), openTravel: (mode) => openTravel(mode), catalog: CATALOG_CONTENT, catalogStones: [...CATALOG_STONES], waystones: WAYSTONES, get social() { return social; } };
   }
 })();

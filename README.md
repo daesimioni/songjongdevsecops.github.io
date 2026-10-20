@@ -10,6 +10,10 @@ página. Ao todo, 86 áreas: as 16 originais mais uma para cada seção do catá
 de Matemática, Física, Química, Computação, Língua Portuguesa e das 11
 interseções entre elas.
 
+## Como chegar às áreas
+
+O arquipélago do saber não fica pendurado num único caminho de pedra: cada uma das 82 seções tem um farol, e a **Pedra do Porto** abre a lista de **expedição**. Escolha um farol e você chega à área; dentro de cada arquipélago, as pontes ligam as seções vizinhas. O minimapa mostra a silhueta do mundo inteiro, mesmo o que ainda está na névoa.
+
 ## A interface
 
 A abertura é uma tela de título com o vale em pixel art animado: estrelas, lua, montanhas, rio e vagalumes. Depois dela vêm a chave, o personagem e uma passagem curta para o mundo.

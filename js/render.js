@@ -1701,11 +1701,18 @@ export function createRenderer(canvas, world) {
       for (let y = 0; y < MAP_H; y++) {
         for (let x = 0; x < MAP_W; x++) {
           if (world.isExplored(x, y)) continue;
+          // terra não explorada fica como silhueta, água fica quase preta: o
+          // mapa mostra que o arquipélago existe sem entregar o detalhe
+          const terra = world.get(x, y) !== 3;
+          const r = terra ? 9 : 4;
+          const g = terra ? 15 : 6;
+          const b = terra ? 30 : 13;
+          const alpha = terra ? 150 : 215;
           for (let dy = 0; dy < 2; dy++) {
             let i = ((y * 2 + dy) * mmFog.width + x * 2) * 4;
-            data[i] = 4; data[i + 1] = 6; data[i + 2] = 13; data[i + 3] = 255;
+            data[i] = r; data[i + 1] = g; data[i + 2] = b; data[i + 3] = alpha;
             i += 4;
-            data[i] = 4; data[i + 1] = 6; data[i + 2] = 13; data[i + 3] = 255;
+            data[i] = r; data[i + 1] = g; data[i + 2] = b; data[i + 3] = alpha;
           }
         }
       }
