@@ -603,25 +603,49 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
     };
   }
 
-  function makeMonster(def, room, k, name, tier, taken = []) {
-    const spots = [[0.28, 0.3], [0.72, 0.28], [0.5, 0.72], [0.24, 0.7], [0.76, 0.68]];
-    const start = (room.x + room.y + k) % spots.length;
-    let x = 0;
-    let y = 0;
-    // escolhe o canto da sala mais longe dos bichos já postos: nada de
-    // amontoar dois no mesmo canto só porque o mapa sorteou assim
-    let bestDist = -1;
-    for (let i = 0; i < spots.length; i++) {
-      const s = spots[(start + i) % spots.length];
-      const cx = room.x + 0.8 + s[0] * (room.w - 1.6);
-      const cy = room.y + 0.8 + s[1] * (room.h - 1.6);
-      const dist = taken.length ? Math.min(...taken.map((p) => Math.hypot(p.x - cx, p.y - cy))) : 99;
-      if (dist >= 3) { x = cx; y = cy; break; }
-      if (dist > bestDist) { bestDist = dist; x = cx; y = cy; }
+  // Separação entre bichos: cada um passeia até MONSTER_ROAM da sua casa. Se
+  // a distância entre duas casas for maior que a soma dos alcances de visão
+  // mais os dois passeios, os círculos de visão não se tocam e nenhum ponto do
+  // mapa pode ser visto pelos dois ao mesmo tempo. É a garantia contra matilha.
+  const MONSTER_ROAM = 0.8;
+  const MONSTER_GAP = 0.4;
+
+  function visionFor(kind, tier) {
+    return 3.2 + tier * 0.45 + (kind === "bat" ? 0.4 : kind === "wisp" ? 0.3 : kind === "spider" ? 0.2 : kind === "scorpion" ? 0.1 : 0);
+  }
+
+  // folga: positivo quer dizer que os dois círculos, já com o passeio, não se
+  // cruzam nem com a margem de segurança
+  function folgaDeVisao(x, y, vision, postos) {
+    let folga = Infinity;
+    for (const p of postos) {
+      const d = Math.hypot(x - p.x, y - p.y);
+      folga = Math.min(folga, d - (vision + p.vision + MONSTER_ROAM + p.roam + MONSTER_GAP));
     }
-    // espécies diferentes por andar: não é só o nome que muda
+    return folga;
+  }
+
+  function melhorPosto(plano, postos) {
+    const room = plano.room;
+    const passos = 6;
+    let melhor = null;
+    let melhorFolga = -Infinity;
+    for (let i = 0; i <= passos; i++) {
+      for (let j = 0; j <= passos; j++) {
+        const x = room.x + 1 + ((i + 0.5) / (passos + 1)) * (room.w - 2);
+        const y = room.y + 1 + ((j + 0.5) / (passos + 1)) * (room.h - 2);
+        const folga = folgaDeVisao(x, y, plano.vision, postos);
+        if (folga > melhorFolga) { melhorFolga = folga; melhor = { x, y }; }
+      }
+    }
+    return melhorFolga >= 0 ? melhor : null;
+  }
+
+  function makeMonster(def, room, k, name, tier, post) {
     const kind = creatureKind(def, name, tier, k);
     const baseSpeed = { bat: 0.82, spider: 0.46, slime: 0.58, eye: 0.54, golem: 0.5, wisp: 0.7, scorpion: 0.5, ant: 0.78, moth: 0.86, beetle: 0.42, crab: 0.64, jelly: 0.36, imp: 0.74, sentinel: 0.38, serpent: 0.52 }[kind] || 0.55;
+    const x = post.x;
+    const y = post.y;
     return {
       id: creatureId(def, room.id, k),
       name,
@@ -637,7 +661,8 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
       dir: 0,
       moving: false,
       alive: true,
-      vision: 3.2 + tier * 0.45 + (kind === "bat" ? 0.4 : kind === "wisp" ? 0.3 : kind === "spider" ? 0.2 : kind === "scorpion" ? 0.1 : 0),
+      vision: visionFor(kind, tier),
+      roam: MONSTER_ROAM,
       // meia-lua: o bicho vê na direção em que está virado
       fov: { bat: 1.5, spider: 1.0, slime: 1.35, eye: 1.15, golem: 0.85, wisp: 1.4, scorpion: 0.95, ant: 1.3, moth: 1.55, beetle: 0.8, crab: 1.1, jelly: 0.7, imp: 1.25, sentinel: 1.05, serpent: 1.2 }[kind] || 1.2,
       speed: baseSpeed + tier * 0.12,
@@ -651,31 +676,42 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
   }
 
   function spawnMonsters(def) {
-    const out = [];
-    if (def.hub) return out;
+    if (def.hub) return [];
     const names = def.monsters || [];
+    const bossRoom = def.rooms.find((r) => r.id === (def.layout || DUNGEON_LAYOUT).bossRoom);
+    const planos = [];
     let n = 0;
-    def.rooms.forEach((room) => {
-      if (room.kind === "entrance" || room.kind === "city") return;
+    for (const room of def.rooms) {
+      if (room.kind === "entrance" || room.kind === "city") continue;
       const tier = clamp(room.tier || 1, 1, 3);
-      // Regra da construção: um bicho por sala. A sala já é a unidade de
-      // encontro; dois no mesmo cômodo viram monte e quebram a leitura do
-      // espaço. O chefe fica na sala dele, separado dos comuns.
-      const count = 1;
-      for (let k = 0; k < count; k++) {
-        const id = creatureId(def, room.id, k);
-        if (!rpg.monsterAlive(id)) continue;
-        const name = names[(n + k) % Math.max(1, names.length)] || "Coisa";
-        out.push(makeMonster(def, room, k, name, tier, out));
-      }
-      n += count;
-    });
-    // regra da construção: nenhum par de bichos comuns a menos de 4 tiles.
-    // Se uma planta futura criar salas vizinhas demais, o segundo sai.
-    return out.filter((m, i) => out.slice(0, i).every((other) => {
-      const gap = Math.hypot(m.x - other.x, m.y - other.y);
-      return gap >= 4;
-    }));
+      const name = names[n % Math.max(1, names.length)] || "Coisa";
+      n++;
+      // o chefe mora sozinho: comum e chefe na mesma sala veriam o jogador
+      // juntos, que é exatamente o combo que esta regra proíbe
+      if (bossRoom && room.id === bossRoom.id) continue;
+      const id = creatureId(def, room.id, 0);
+      if (!rpg.monsterAlive(id)) continue;
+      const kind = creatureKind(def, name, tier);
+      planos.push({ room, name, tier, kind, vision: visionFor(kind, tier), id });
+    }
+    const postos = [];
+    if (bossRoom) {
+      postos.push({ x: bossRoom.x + bossRoom.w / 2, y: bossRoom.y + bossRoom.h / 2, vision: 5.6, roam: 0 });
+    }
+    // quem enxerga mais longe escolhe primeiro, senão a folga dele é comida
+    // por um bicho de visão curta
+    for (const plano of [...planos].sort((a, b) => b.vision - a.vision)) {
+      const posto = melhorPosto(plano, postos);
+      if (!posto) continue; // sem ponto seguro, melhor não nascer
+      plano.post = posto;
+      postos.push({ x: posto.x, y: posto.y, vision: plano.vision, roam: MONSTER_ROAM });
+    }
+    const out = [];
+    for (const plano of planos) {
+      if (!plano.post) continue;
+      out.push(makeMonster(def, plano.room, 0, plano.name, plano.tier, plano.post));
+    }
+    return out;
   }
 
   function spawnBoss(def) {
@@ -1427,7 +1463,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
   function pickWander(m) {
     for (let i = 0; i < 8; i++) {
       const a = Math.random() * Math.PI * 2;
-      const r = 0.6 + Math.random() * 1.8;
+      const r = 0.2 + Math.random() * Math.max(0, (m.roam ?? MONSTER_ROAM) - 0.2);
       const tx = m.hx + Math.cos(a) * r;
       const ty = m.hy + Math.sin(a) * r;
       if (boxFree(state.map, tx, ty, PATH_PAD, state.solids)) {

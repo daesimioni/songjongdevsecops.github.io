@@ -691,10 +691,15 @@ export function creatureId(def, roomId, k = 0) {
 // bicho só, com todos os ids em que ele pode aparecer.
 export function dungeonCreatures(def) {
   const porNome = new Map();
+  const bossRoom = (def.layout || DUNGEON_LAYOUT).bossRoom;
   let n = 0;
   for (const room of def.rooms) {
     if (room.kind === "entrance" || room.kind === "city") continue;
     const nome = def.monsters[n % def.monsters.length] || "Coisa";
+    n++;
+    // a sala do chefe não tem bicho comum: o chefe fica sozinho para não
+    // dividir a visão do jogador com outro bicho
+    if (bossRoom && room.id === bossRoom) continue;
     const tier = Math.max(1, Math.min(3, Number(room.tier) || 1));
     const id = creatureId(def, room.id);
     const chave = nome.toLowerCase();
@@ -714,7 +719,6 @@ export function dungeonCreatures(def) {
         salas: [room.name],
       });
     }
-    n++;
   }
   const bichos = [...porNome.values()];
   if (def.boss) {

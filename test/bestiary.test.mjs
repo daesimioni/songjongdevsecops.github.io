@@ -1,4 +1,4 @@
-// O bestiário inteiro sem navegador: as 93 cavernas viram 487 fichas, todo id
+// O bestiário inteiro sem navegador: as 93 cavernas viram 464 fichas, todo id
 // de encontro é único, toda espécie tem nome e fraqueza, e encontrar (ou
 // vencer) um bicho revela a ficha na hora, inclusive depois de recarregar.
 import assert from "node:assert/strict";
@@ -18,7 +18,7 @@ const { RPG } = await import("../js/rpg.js");
 
 const modelo = bestiaryModel();
 assert.equal(modelo.continentes.length, 7, "continentes com caverna");
-assert.equal(modelo.todos.length, 487, "487 criaturas no bestiário");
+assert.equal(modelo.todos.length, 464, "464 criaturas no bestiário");
 assert.equal(modelo.chefes, DUNGEONS.length, "um chefe por caverna");
 
 const cavernas = modelo.continentes.flatMap((grupo) => grupo.cacadas);
@@ -40,7 +40,7 @@ for (const caverna of cavernas) {
 
 const rpg = new RPG();
 const ui = createBestiary({ rpg, getAreaId: () => "" });
-assert.deepEqual(ui.summary(), { total: 487, vistos: 0, vencidos: 0, chefes: 0, chefesTotal: 93 });
+assert.deepEqual(ui.summary(), { total: 464, vistos: 0, vencidos: 0, chefes: 0, chefesTotal: 93 });
 // a Cripta da Álgebra repete os mesmos nomes em salas diferentes: encontrar
 // um deles revela a ficha do bicho, e vencer qualquer sala marca a vitória
 const cav = cavernas.find((c) => c.id === "dungeon-math-algebra");
@@ -69,4 +69,4 @@ assert.notEqual(idArca, idArch, "cavernas do mesmo continente ainda compartilham
 recarregado.data.monsters[idArca] = Date.now();
 assert.equal(recarregado.monsterAlive(idArca), false, "bicho vencido continua vivo");
 assert.equal(recarregado.monsterAlive(idArch), true, "vitória vazou para outra caverna");
-console.log("ok bestiário, 93 cavernas, 487 criaturas, descoberta, vitória e save");
+console.log("ok bestiário, 93 cavernas, 464 criaturas, descoberta, vitória e save");

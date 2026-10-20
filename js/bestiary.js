@@ -21,7 +21,7 @@ const FILTROS = [
   { id: "por-ver", label: "por ver" },
 ];
 
-// Monta o catálogo inteiro a partir das cavernas: 93 cavernas, 487 criaturas.
+// Monta o catálogo inteiro a partir das cavernas: 93 cavernas, 464 criaturas.
 // É dado puro, sem DOM, para o teste conferir sem navegador.
 export function bestiaryModel() {
   const areas = new Map(AREAS.map((area) => [area.id, area]));

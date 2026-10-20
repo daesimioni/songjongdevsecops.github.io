@@ -20,7 +20,7 @@ A abertura é uma tela de título com o vale em pixel art animado: estrelas, lua
 
 No jogo, a vida e a mana ficam em barras no topo. A mochila abre com <kbd>I</kbd>: grade de itens com ícones desenhados, equipamento ao lado, arrastar e soltar, detalhe do item e um boneco que muda de arma, elmo e cor de armadura conforme você veste. O botão direito abre um menu com olhar, falar, abrir, descer, viajar, pegar e andar até aqui. Runas e magias aparecem na barra inferior e gastam mana.
 
-O **Bestiário** abre com <kbd>B</kbd> ou pelo botão escrito no menu. São as 93 cavernas agrupadas por continente, com 487 fichas: nome, espécie, andar, o que o bicho faz contra você e a fraqueza dele. O que você ainda não encontrou aparece como silhueta e `???`; o primeiro encontro revela a ficha, e a vitória marca o bicho como vencido. Tem busca sem acento, filtro por conhecidos/vencidos/por ver, placar de descobertas por continente e a caverna onde você está já vem aberta.
+O **Bestiário** abre com <kbd>B</kbd> ou pelo botão escrito no menu. São as 93 cavernas agrupadas por continente, com 464 fichas: nome, espécie, andar, o que o bicho faz contra você e a fraqueza dele. O que você ainda não encontrou aparece como silhueta e `???`; o primeiro encontro revela a ficha, e a vitória marca o bicho como vencido. Tem busca sem acento, filtro por conhecidos/vencidos/por ver, placar de descobertas por continente e a caverna onde você está já vem aberta.
 
 O **minimapa** tem coordenada `x y z` (z 0 superfície, -1 subsolo, -2 Porto Submerso), zoom de 1× a 6× pela roda do mouse ou pelos botões, o botão **mapa** para ver o arquipélago inteiro e clique num ponto revelado para andar até lá. O personagem é uma seta branca com anel, apontando para onde olha; a caverna tem a mesma coordenada e profundidade no minimapa dela, que ficou maior.
 
@@ -240,7 +240,11 @@ pedra apontando para cima. O prompt confirma o destino (`F subir para Boca do
 Silício`).
 
 `F` numa boca entra no mapa em tela cheia: salas ligadas por túneis, entrada
-embaixo, cidade no fundo. Seis temas, um por continente, com paleta, nomes e
+embaixo, cidade no fundo. Cada bicho fica postado no miolo da sua sala e passeia
+só um pouco em volta; a distância entre dois postos é maior que a soma dos
+alcances de visão mais os dois passeios, então **dois bichos não podem ver o
+jogador ao mesmo tempo** e a matilha não se forma. A sala do chefe não tem bicho
+comum: o chefe espera sozinho. Seis temas, um por continente, com paleta, nomes e
 bichos próprios, e seis traçados de túnel diferentes: em cotovelo, desvio no
 meio, largo, cruzado, serpente e estreito. Metade das cavernas espelha as salas
 laterais. O HUD marca a camada (`subsolo -1`).
@@ -447,7 +451,7 @@ botão sem `type`, imagem sem `alt`, link `_blank` sem `rel`, `aria-labelledby`
 apontando para id inexistente, `data-close` órfão e `console.log` esquecido.
 
 A quinta confere o Bestiário contra as cavernas de verdade: 93 cavernas viram
-487 fichas, todo id de encontro é único entre cavernas, toda espécie tem nome de
+464 fichas, todo id de encontro é único entre cavernas, toda espécie tem nome de
 leitura e fraqueza, o bicho repetido em várias salas vira uma ficha só, e
 encontro, vitória e chefe aparecem no placar e sobrevivem ao recarregar o estado.
 
@@ -497,7 +501,7 @@ Depois abra `http://localhost:8000`.
 | `test/content.test.mjs` | conferência das 454 estações, perguntas, itens, cavernas, áreas, cobertura do catálogo e mundo |
 | `test/ui.test.mjs` | conferência de ids, imports, botões, rótulos e aria |
 | `test/backup.test.mjs` | envelope do backup, whitelist, dedupe e restauração |
-| `test/bestiary.test.mjs` | 93 cavernas, 487 fichas, ids únicos, descoberta e vitória |
+| `test/bestiary.test.mjs` | 93 cavernas, 464 fichas, ids únicos, descoberta e vitória |
 
 O módulo wasm é gerado com `wat2wasm`:
 

@@ -63,6 +63,16 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 - [x] desempenho e carga medidos
 - [x] commit e push com evidência
 
+### I. Separação das criaturas
+
+- [x] um bicho por sala, com a casa escolhida para maximizar a distância de
+      visão dos outros (e do chefe)
+- [x] a soma das visões mais os dois passeios cabe entre as casas, com margem
+      de 0,4 tile: dois círculos de visão nunca se tocam
+- [x] a sala do chefe não tem bicho comum; o chefe espera sozinho
+- [x] conferido nas 93 cavernas: 7 bichos por caverna, zero pontos do mapa
+      vistos por duas criaturas
+
 ### H. Minimapa
 
 - [x] minimapa maior (232x155) com marcador em seta e anel, na direção do boneco
@@ -75,7 +85,7 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 ### G. Bestiário
 
 - [x] tecla B e botão "Bestiário" no menu, com o mesmo caminho pelo Diário
-- [x] 93 cavernas por continente, 487 fichas ligadas aos encontros de verdade
+- [x] 93 cavernas por continente, 464 fichas ligadas aos encontros de verdade
 - [x] silhueta e `???` até o primeiro encontro; ficha, fraqueza e estado depois
 - [x] busca sem acento e filtro por conhecidos, vencidos e por ver
 - [x] placar de descobertas, vencidos e chefes, com a caverna atual já aberta
@@ -94,6 +104,9 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 - O bestiário lê a mesma função que cria o bicho na caverna. Espécie, cor, nome
   e id da ficha e do encontro não podem divergir, senão o jogador caça um bicho
   e vê outro no caderno.
+- Bicho de caverna tem casa e passeio curto. Dois círculos de visão que se
+  tocam deixam o jogador ser visto por dois ao mesmo tempo; a casa é escolhida
+  para a soma dos alcances, mais os passeios, caber entre os bichos.
 - O minimapa é uma janela, não um selo: o personagem precisa ser achado sem
   apertar os olhos, e o mapa inteiro é o nível 1 do zoom. Coordenada e piso
   ficam à vista, porque é assim que o jogador se localiza no subsolo.
@@ -102,6 +115,7 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 
 | data | fase | o que entrou | prova |
 |---|---|---|---|
+| 2026-10-20 | I | bichos postados no miolo da sala com passeio de 0,8 tile; posição escolhida para a soma das visões mais os passeios caber entre as casas, com margem de 0,4 tile; sala do chefe sem bicho comum; bestiário passa a listar 464 criaturas | navegador: 93 cavernas, 651 bichos comuns, 7 por caverna, chefe sozinho, folga mínima 0,49 tile, 1.142.784 pontos testados e nenhum visto por dois bichos, console limpo; node verde |
 | 2026-10-20 | H | minimapa 232x155 com coordenada x y z, piso, zoom 1× a 6× pela roda e botões, botão mapa inteiro e marcador em seta; caverna ganhou coordenada, profundidade e minimapa de 200x150; o mapa base de 560x360 não é mais cortado no canto | navegador: coordenada x 91 y 61 z 0, zoom 1× a 6×, roda, clique andou 5 tiles, viagem para a Álgebra acompanhou, caverna z -1 com marcador, console limpo |
 | 2026-10-20 | G | bestiário com tecla B e botão no menu, 487 fichas de 93 cavernas agrupadas por continente, silhueta até o encontro, busca sem acento, filtros e placar; id de bicho passou a carregar a caverna (antes o mesmo id se repetia entre cavernas do mesmo continente) | node: 93 cavernas, 487 fichas, ids únicos, encontro e vitória sobrevivem ao recarregar; navegador: 487 sprites, 93 grupos, busca "algebra" acha a Cripta da Álgebra, filtros 486/0/487, Diário abre o bestiário, 390 px sem estouro e menu em duas linhas, sem erro de console |
 | 2026-10-20 | acesso | expedição na Pedra do Porto lista os 82 faróis do catálogo desde o início; viajar para uma pedra de área marca o continente e o passo de expedição; minimapa mostra silhueta de terra e ponte na névoa | navegador: lista com 82 destinos de expedição e 12 do porto, viagem até a Álgebra chegou na área certa com o passo marcado, sem erro de console |
