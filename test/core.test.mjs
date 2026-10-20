@@ -617,7 +617,7 @@ assert.equal(w.hunters.every((h) => !h.lever), true, "superfície sem alavanca")
 const instructors = w.npcs.filter((n) => n.trainer);
 assert.equal(instructors.length, w.hunters.length, "um instrutor por caçada");
 for (const h of w.hunters) {
-  const npc = instructors.find((n) => n.continent === h.continent);
+  const npc = instructors.find((n) => n.id === `trainer-${h.id}`);
   assert.ok(npc, `instrutor de ${h.continent}`);
   assert.ok(Math.hypot(npc.x - h.center.x, npc.y - h.center.y) < 2.5, `instrutor no centro de ${h.continent}`);
   assert.ok(Math.hypot(npc.hx - npc.x, npc.hy - npc.y) <= npc.wander + 0.6, `instrutor de ${h.continent} com posto e raio de passeio`);

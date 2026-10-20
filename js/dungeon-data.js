@@ -206,14 +206,39 @@ const COMMON = {
     monsters: ["Sílaba", "Verbo", "Fonema", "Acento", "Hífen", "Crase", "Sintaxe", "Metáfora", "Estrofe", "Rima", "Pontuação", "Concordância"],
     palette: { floor: "#3a2f22", floor2: "#2a2218", wall: "#1a140c", wallTop: "#57452e", accent: "#e8c07a" },
   },
+  "physics-em": {
+    continent: "physics",
+    name: "Galerias do Eletromagneto",
+    sub: "fios, campos e cargas dormindo na pedra",
+    material: "cobre",
+    tunnel: "cross",
+    equipment: ["anel-bobina", "escudo-capacitor", "manto-dieletrico"],
+    shift: { b: [-2, 2], d: [2, -1], h: [-1, 1] },
+    boss: "O Eletromagneto",
+    rooms: [
+      ["Boca da Corrente", "entrada"],
+      ["Sala das Cargas", "cargas"],
+      ["Corredor da Indução", "indução"],
+      ["Cripta do Capacitor", "capacitância"],
+      ["Oficina das Bobinas", "bobinas"],
+      ["Poço do Campo", "campo"],
+      ["Torre de Maxwell", "ondas"],
+      ["Praça da Corrente", "cidade"],
+      ["Câmara dos Fusíveis", "resistência"],
+      ["Galeria do Ímã", "magnetismo"],
+    ],
+    monsters: ["Ímã", "Bobina", "Capacitor", "Resistor", "Fusível", "Corrente", "Faísca", "Campo", "Carga", "Onda", "Voltagem"],
+    palette: { floor: "#3a2a20", floor2: "#2a1e16", wall: "#1a120c", wallTop: "#5a3f2c", accent: "#ffb26b" },
+  },
 };
 
-export const DUNGEONS = Object.entries(COMMON).map(([continent, d]) => {
+export const DUNGEONS = Object.entries(COMMON).map(([key, d]) => {
   // metade das cavernas espelha as salas laterais: mesmo desenho de túneis,
   // geografia diferente, sem duplicar a planta inteira.
-  const mirror = ["math", "music", "ai"].includes(continent);
+  const mirror = ["math", "music", "ai"].includes(key);
+  const continent = d.continent || key;
   return {
-    id: `dungeon-${continent}`,
+    id: `dungeon-${key}`,
     continent,
     ...d,
     rooms: DUNGEON_LAYOUT.rooms.map((room, i) => {

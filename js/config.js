@@ -169,6 +169,22 @@ export const CONTINENTS = {
   },
 };
 
+// Áreas temáticas dentro de um continente: cada uma tem a própria ilha,
+// estações, clareira de caçada e caverna. O continente continua sendo o mesmo.
+export const AREAS = [
+  {
+    id: "physics-em",
+    continent: "physics",
+    name: "Área do Eletromagnetismo",
+    land: { cx: 152, cy: 104, rx: 18, ry: 10 },
+    rect: { x: 134, y: 94, w: 36, h: 20 },
+    base: 14,
+    floor: 19,
+    path: 15,
+    accent: "#ffb26b",
+  },
+];
+
 export const SITES = [
   // Porto
   {
@@ -370,6 +386,18 @@ export const SITES = [
     label: "Crase e Regência", x: 28, y: 111, post: "crase",
     accent: "#61f4c0", icon: "scale",
   },
+
+  // Física · área do eletromagnetismo
+  {
+    id: "induction", continent: "physics", name: "Oficina da Indução",
+    label: "Faraday", x: 140, y: 107, post: "induction",
+    accent: "#ffb26b", icon: "chip",
+  },
+  {
+    id: "maxwell", continent: "physics", name: "Torre de Maxwell",
+    label: "Ondas Eletromagnéticas", x: 164, y: 107, post: "maxwell",
+    accent: "#6bd5ff", icon: "wave",
+  },
 ];
 
 export const WAYSTONES = [
@@ -381,6 +409,7 @@ export const WAYSTONES = [
   { id: "music", continent: "music", name: "Farol da Música", x: 58, y: 32, accent: "#ffb26b" },
   { id: "ai", continent: "ai", name: "Farol da IA", x: 122, y: 32, accent: "#6bd5ff" },
   { id: "lingua", continent: "lingua", name: "Farol da Língua", x: 29, y: 103, accent: "#e8c07a" },
+  { id: "physics-em", continent: "physics", name: "Farol do Eletromagnetismo", x: 152, y: 104, accent: "#ffb26b" },
 ];
 
 export const NPC_SPAWNS = [
@@ -399,6 +428,7 @@ export const NPC_SPAWNS = [
   { id: "bach", continent: "music", x: 45, y: 31, accent: "#ffc489" },
   { id: "shannon", continent: "ai", x: 135, y: 31, accent: "#8fe3ff" },
   { id: "alzira", continent: "lingua", x: 33, y: 102, accent: "#e8c07a" },
+  { id: "faraday", continent: "physics", x: 146, y: 111, accent: "#ffb26b" },
 ];
 
 export const CAT_SPAWN = { x: 87, y: 61 };

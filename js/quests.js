@@ -316,6 +316,21 @@ export const QUESTS = [
     goal: { type: "cards", continent: "lingua", count: 5 },
     reward: { xp: 40, title: "Leitor do Vale" },
   },
+  {
+    id: "corrente-sem-ima-parado",
+    npc: "faraday",
+    giver: "Faraday",
+    title: "Ímã parado, agulha parada",
+    brief: "A bobina do vale só responde quando o fluxo muda. Qual é a condição?",
+    goal: { type: "quiz" },
+    quiz: {
+      question: "O que faz aparecer corrente induzida numa bobina?",
+      options: ["A variação do fluxo magnético", "Um ímã parado ao lado", "Aquecer o fio"],
+      answer: 0,
+      why: "A lei de Faraday liga a força eletromotriz à taxa de variação do fluxo. Ímã parado não muda o fluxo e não gera corrente.",
+    },
+    reward: { xp: 32, title: "Aprendiz de Faraday" },
+  },
 ];
 
 const QUEST_BY_ID = new Map(QUESTS.map((q) => [q.id, q]));

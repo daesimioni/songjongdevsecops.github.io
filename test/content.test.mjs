@@ -24,7 +24,7 @@ const check = (cond, message) => { if (!cond) faults.push(message); };
 const continents = CONTINENT_ORDER.filter((c) => c !== "hub");
 
 // 37 estações com texto, cinco por continente e duas no porto
-check(SITES.length === 37, `SITES tem ${SITES.length} estações, esperado 37`);
+check(SITES.length === 39, `SITES tem ${SITES.length} estações, esperado 39`);
 check(new Set(SITES.map((s) => s.id)).size === SITES.length, "id de estação repetido");
 check(SITES.filter((s) => s.continent === "hub").length === 2, "o porto precisa de 2 estações");
 for (const site of SITES) {
@@ -39,7 +39,8 @@ for (const site of SITES) {
 }
 for (const c of continents) {
   const n = SITES.filter((s) => s.continent === c).length;
-  check(n === 5, `continente ${c} tem ${n} estações, esperado 5`);
+  // cada continente mantém as cinco estações e ganha mais nas áreas temáticas
+  check(n >= 5, `continente ${c} tem ${n} estações, esperado ao menos 5`);
   check(!!WAYSTONES.find((w) => w.continent === c), `continente ${c} sem pedra de viagem`);
 }
 
@@ -72,14 +73,15 @@ for (const [id, item] of Object.entries(ITEMS)) {
 }
 for (const c of continents) {
   const relics = Object.values(ITEMS).filter((i) => i.continent === c && i.relic).length;
-  check(relics === 1, `continente ${c} tem ${relics} relíquias, esperado 1`);
-  const ground = GROUNDS.find((g) => g.continent === c);
-  check(!!ground, `sem caçada para ${c}`);
-  if (!ground) continue;
-  check(ground.monsters.length === 3, `caçada de ${c} tem ${ground.monsters.length} monstros`);
-  check(ground.monsters.map((m) => m.tier).join(",") === "1,2,3", `caçada de ${c} sem tiers 1, 2, 3`);
-  for (const id of ground.loot) check(!!ITEMS[id], `loot de ${c} com item inexistente ${id}`);
-  check(!!ITEMS[ground.bossLoot], `chefe de ${c} solta item inexistente ${ground.bossLoot}`);
+  check(relics >= 1, `continente ${c} tem ${relics} relíquias, esperado ao menos 1`);
+  const grounds = GROUNDS.filter((g) => g.continent === c);
+  check(grounds.length >= 1, `sem caçada para ${c}`);
+  for (const ground of grounds) {
+    check(ground.monsters.length === 3, `caçada de ${c} tem ${ground.monsters.length} monstros`);
+    check(ground.monsters.map((m) => m.tier).join(",") === "1,2,3", `caçada de ${c} sem tiers 1, 2, 3`);
+    for (const id of ground.loot) check(!!ITEMS[id], `loot de ${c} com item inexistente ${id}`);
+    check(!!ITEMS[ground.bossLoot], `chefe de ${c} solta item inexistente ${ground.bossLoot}`);
+  }
 }
 const runas = Object.keys(ITEMS).filter((id) => id.startsWith("runa-"));
 check(runas.length >= 6, `só ${runas.length} runas, esperado ao menos 6`);
@@ -148,7 +150,7 @@ relicRpg.addItem("orbita", 1);
 check(relicRpg.pvpQuestions("cs")[4].damage === 7, "duas relíquias somam o teto de 2 de dano no PvP");
 
 // cavernas: seis, com entrada, cidade, monstros e chefe
-check(DUNGEONS.length === 7, `DUNGEONS tem ${DUNGEONS.length} cavernas, esperado 7`);
+check(DUNGEONS.length === 8, `DUNGEONS tem ${DUNGEONS.length} cavernas, esperado 8`);
 for (const dungeon of DUNGEONS) {
   check(continents.includes(dungeon.continent), `caverna ${dungeon.id} em continente inválido`);
   check(dungeon.monsters?.length >= 4, `caverna ${dungeon.id} com poucos monstros`);
@@ -164,9 +166,9 @@ for (const dungeon of DUNGEONS) {
 
 // o mundo que o jogo monta: instrutores na superfície, bicho só na caverna
 const world = createWorld();
-check(world.hunters.length === 7, `mundo com ${world.hunters.length} clareiras`);
+check(world.hunters.length === 8, `mundo com ${world.hunters.length} clareiras`);
 check(world.monsters.length === 0, "a superfície ainda tem monstros");
-check(world.npcs.filter((n) => n.trainer).length === 7, "faltam instrutores na superfície");
+check(world.npcs.filter((n) => n.trainer).length === 8, "faltam instrutores na superfície");
 for (const c of continents) {
   check(!!world.caves.find((cave) => cave.continent === c), `continente ${c} sem boca de caverna`);
   check(!!DUNGEONS.find((d) => d.continent === c), `continente ${c} sem caverna definida`);

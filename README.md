@@ -3,7 +3,7 @@
 No ar em <https://songjongdevsecops.github.io/>.
 
 Um blog pessoal que se atravessa a pé. O site é um arquipélago em pixel art:
-você entra com um boneco, cruza pontes e encontra 37 estações. Cada estação é
+você entra com um boneco, cruza pontes e encontra 39 estações. Cada estação é
 uma página com um texto curto e um instrumento interativo.
 
 ## O arquipélago
@@ -13,7 +13,7 @@ uma página com um texto curto e um instrumento interativo.
 | **Porto do Início** | a fonte de boas-vindas e o rádio com um sequenciador de oito passos |
 | **Computação** | portas lógicas, somador de quatro bits, flip-flop e contador, CPU de brinquedo e uma linha do tempo da computação |
 | **Matemática** | paradoxos do infinito, sólidos platônicos em 3D, derivada e integral, máquina de Galton e fractais |
-| **Física** | pêndulo, série de Fourier, gás ideal, prisma de Newton e órbitas gravitacionais |
+| **Física** | pêndulo, série de Fourier, gás ideal, prisma de Newton, órbitas gravitacionais e a área do eletromagnetismo (indução, Maxwell, caçada e caverna próprias) |
 | **Química** | tabela periódica interativa, moléculas em 3D, titulação, energia de reação e balanceamento |
 | **Música** | polirritmia, intervalos e razões, temperamento e escalas, timbre aditivo e música generativa |
 | **Inteligência Artificial** | regressão linear, rede neural que aprende um círculo, tokens e predição, convolução de imagem e ética |
@@ -188,6 +188,21 @@ O gato do porto só segue depois de domado, e o companheiro de verdade é o bich
 ativo: a espécie que aparece atrás de você na superfície é a mesma que anda
 pela trilha da caverna. O gato respeita água, árvore e parede; quando fica longe
 demais, reaparece num chão livre atrás de você em vez de atravessar o mar.
+
+## Áreas temáticas
+
+Cada continente pode ter **áreas**, e cada área é um pedaço de mundo com vida
+própria: estações, clareira de caçada com instrutor, duas bocas de caverna e uma
+caverna só dela, com chefe, material e equipamento. A primeira área pronta é a
+**Física · Eletromagnetismo**, numa ilha ligada por ponte ao sul da Física: tem
+a Oficina da Indução e a Torre de Maxwell, o NPC Faraday com missão, a Caçada
+dos Circuitos e as Galerias do Eletromagneto.
+
+A ideia é que cada área cresça até ter o tamanho de um continente de hoje. A
+estrutura já é a mesma: a área é declarada em `AREAS` (em `js/config.js`), as
+estações entram em `SITES`, a caçada em `GROUNDS` com o campo `dungeon`, e a
+caverna em `dungeon-data.js`. O resto (instrutor, bocas, caminho, viagem) o
+mundo monta sozinho.
 
 ## As cavernas
 
@@ -391,9 +406,9 @@ chefe sem alavanca, a forja, os encantamentos, a comida com efeito, o bicho e a
 pergunta que casa com o tema. O duelo entre jogadores entra pela mesma prova: as
 cinco cartas, a dificuldade que vira dano e a compostura.
 
-A segunda confere o conteúdo inteiro: as 37 estações e seus textos, falas de NPC,
+A segunda confere o conteúdo inteiro: as 39 estações e seus textos, falas de NPC,
 24 missões, itens, equipamento, relíquias por continente, receitas, encantos, as
-154 perguntas (sem repetição e com resposta válida), as cinco cartas do PvP por
+163 perguntas (sem repetição e com resposta válida), as cinco cartas do PvP por
 continente, as seis cavernas e o mundo montado (seis instrutores, doze bocas,
 nenhum monstro na superfície).
 
@@ -436,14 +451,14 @@ Depois abra `http://localhost:8000`.
 | `js/pvp.js` | o duelo de perguntas entre jogadores |
 | `js/social.js` | janela da Rede: canais, DMs, pessoas e conta |
 | `js/audio.js` | síntese, ambiente e sequenciador |
-| `js/content.js` | os 37 textos e as falas dos NPCs |
+| `js/content.js` | os 39 textos e as falas dos NPCs |
 | `js/config.js` | mapa, continentes, estações, pedras e cores |
 | `js/data/elements.js` | os 36 elementos da tabela periódica |
 | `js/zones/` | os instrumentos interativos de cada região |
 | `wasm/julia.wat` | fonte do módulo WebAssembly do conjunto de Julia |
 | `wasm/julia.wasm` | o módulo compilado, de 296 bytes |
 | `test/core.test.mjs` | conferência de missões, RPG, treino, fuga, duelo PvP e caverna |
-| `test/content.test.mjs` | conferência das 37 estações, perguntas, itens, cavernas e mundo |
+| `test/content.test.mjs` | conferência das 39 estações, perguntas, itens, cavernas, áreas e mundo |
 | `test/ui.test.mjs` | conferência de ids, imports, botões, rótulos e aria |
 | `test/backup.test.mjs` | envelope do backup, whitelist, dedupe e restauração |
 

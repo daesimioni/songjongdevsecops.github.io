@@ -550,6 +550,38 @@ export const POSTS = {
       <blockquote>Se dá para trocar por "ao", o "à" está no lugar.</blockquote>
     `,
   },
+
+  // ---------------- Física · eletromagnetismo ----------------
+  induction: {
+    kicker: "física · oficina da indução",
+    title: "A corrente que nasce do movimento",
+    date: "2026-09-28",
+    read: "5 min",
+    tags: ["eletromagnetismo", "indução", "faraday"],
+    continent: "physics",
+    lab: null,
+    body: `
+      <p>Em 1831, Faraday aproximou e afastou um ímã de uma bobina com um galvanômetro ligado. Quando o ímã ficava parado, a agulha não mexia. Quando se movia, a agulha pulava. Não era o ímã: era a <strong>variação</strong> do fluxo magnético atravessando a espira.</p>
+      <p>Essa é a indução. O campo magnético mudando no tempo gera um campo elétrico que empurra elétrons. O sinal não importa: o que importa é variar. Por isso o gerador gira a bobina em vez de só aproximá-la uma vez.</p>
+      <p>A mesma regra explica o transformador: corrente alternada no primário cria fluxo variável no núcleo, e o secundário responde com outra tensão. Uma usina, um carregador de celular e um freio regenerativo trabalham com essa ideia.</p>
+      <blockquote>Ímã parado não faz corrente. É o movimento que chama o elétron.</blockquote>
+    `,
+  },
+  maxwell: {
+    kicker: "física · torre de maxwell",
+    title: "A luz é uma onda de campos",
+    date: "2026-09-24",
+    read: "6 min",
+    tags: ["maxwell", "luz", "ondas"],
+    continent: "physics",
+    lab: null,
+    body: `
+      <p>As equações de Maxwell dizem, em quatro linhas, que campo elétrico variando gera campo magnético e campo magnético variando gera campo elétrico. Isso já permite uma onda que se sustenta sozinha, até no vácuo, sem precisar de corda nem de ar para sacudir.</p>
+      <p>Quando Maxwell calculou a velocidade dessa onda com números de laboratório, encontrou algo perto de 300 mil quilômetros por segundo. Já se sabia a velocidade da luz. A conclusão caiu no colo: a luz é essa onda. Rádio, micro-ondas, infravermelho, luz visível, ultravioleta e raios X são a mesma coisa em frequências diferentes.</p>
+      <p>A luz visível ocupa uma fatia finíssima desse espectro. O olho humano enxerga entre cerca de 400 e 700 nanômetros; a maior parte do eletromagnetismo é invisível e faz tanto barulho quanto um rádio fora da estação.</p>
+      <blockquote>O céu inteiro é uma conversa de campos. Os olhos ouviram só uma faixa.</blockquote>
+    `,
+  },
 };
 
 export const NPCS = {
@@ -701,6 +733,24 @@ export const NPCS = {
       "Treinar aqui é de graça. Na grota, a mesma pergunta cobra vida e paga item.",
       "Comece pela concordância: acertar o plural do sujeito resolve metade das pegadinhas.",
       "A querida crase só é difícil quando a gente esquece de perguntar quem pede a preposição.",
+    ],
+  },
+  faraday: {
+    name: "Faraday",
+    lines: [
+      "Aqui a gente não decora as quatro equações: mexe na bobina e vê a agulha mexer.",
+      "Ímã parado não faz nada. É quando o fluxo varia que a corrente aparece. Tente aí.",
+      "Quem trabalha com corrente leva choque, então o escudo de capacitor não é enfeite.",
+      "O transformador tem duas bobinas e nenhum contato entre elas. Só o fluxo atravessa.",
+      "A luz daqui do vale é só uma faixa pequena do que o campo faz. A torre mede o resto.",
+    ],
+  },
+  "trainer-physics-em": {
+    name: "Técnica Ampere",
+    lines: [
+      "Treino de corrente aqui, no claro e sem susto. A grota é que paga.",
+      "Comece pela corrente induzida: é a pergunta que mais aparece.",
+      "Se errar não mexe em nada além do orgulho. Destrave o caminho sem perder item.",
     ],
   },
   shannon: {

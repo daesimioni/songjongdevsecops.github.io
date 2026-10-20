@@ -1,5 +1,5 @@
 import {
-  MAP_W, MAP_H, TILE, TILE_KIND as K, SOLID, CONTINENTS, SITES,
+  MAP_W, MAP_H, TILE, TILE_KIND as K, SOLID, CONTINENTS, AREAS, SITES,
   WAYSTONES, NPC_SPAWNS, CAT_SPAWN, REVEAL_RADIUS, PLAYER_W, PLAYER_H,
 } from "./config.js";
 import { GROUNDS } from "./rpg-data.js";
@@ -47,12 +47,16 @@ export function createWorld() {
       const r = c.rect;
       if (tx >= r.x && tx < r.x + r.w && ty >= r.y && ty < r.y + r.h) return c.id;
     }
+    for (const a of AREAS) {
+      const r = a.rect;
+      if (tx >= r.x && tx < r.x + r.w && ty >= r.y && ty < r.y + r.h) return a.continent;
+    }
     return null;
   }
   function continentAt(x, y) { return continentAtTile(Math.floor(x), Math.floor(y)); }
 
-  // 1. massas de terra com costa irregular
-  for (const c of Object.values(CONTINENTS)) {
+  // 1. massas de terra com costa irregular (continentes e áreas temáticas)
+  for (const c of [...Object.values(CONTINENTS), ...AREAS]) {
     const { cx, cy, rx, ry } = c.land;
     const r = c.rect;
     for (let y = Math.max(1, r.y); y < Math.min(MAP_H - 1, r.y + r.h); y++) {
@@ -156,6 +160,7 @@ export function createWorld() {
   bridgeLine(138, 81, 112, 92, 3, BRIDGE); // direita e sul
   bridgeLine(66, 94, 40, 83, 3, BRIDGE); // sul e esquerda
   bridgeLine(43, 108, 74, 112, 3, BRIDGE); // sul e vale da língua
+  bridgeLine(112, 104, 136, 104, 3, BRIDGE); // física e eletromagnetismo
   // encontros de ponte com terra
   rect(88, 30, 5, 4, CONTINENTS.cs.path);
   rect(88, 88, 5, 4, CONTINENTS.physics.path);
@@ -169,6 +174,8 @@ export function createWorld() {
   rect(72, 62, 4, 5, CONTINENTS.hub.floor);
   rect(41, 107, 4, 4, CONTINENTS.lingua.path);
   rect(73, 111, 4, 4, CONTINENTS.physics.path);
+  rect(110, 103, 4, 4, CONTINENTS.physics.path);
+  rect(134, 103, 4, 4, CONTINENTS.physics.path);
   rect(76, 47, 4, 4, CONTINENTS.hub.floor);
   rect(101, 47, 4, 4, CONTINENTS.hub.floor);
 
@@ -288,10 +295,11 @@ export function createWorld() {
       banner: { ...g.bannerPos, accent },
       loot: g.loot,
       bossLoot: g.bossLoot,
+      dungeon: g.dungeon || `dungeon-${g.continent}`,
     };
   });
   const trainerNpcs = hunters.map((h) => ({
-    id: `trainer-${h.continent}`,
+    id: `trainer-${h.id}`,
     continent: h.continent,
     x: h.center.x,
     y: h.center.y,
@@ -462,7 +470,7 @@ export function createWorld() {
   // caber o corpo inteiro.
   const caves = [];
   for (const h of hunters) {
-    const def = dungeonById(`dungeon-${h.continent}`);
+    const def = dungeonById(h.dungeon);
     const base = def?.rooms?.[0]?.name || `Caverna de ${CONTINENTS[h.continent]?.name || ""}`;
     const freeSpot = (cx, cy) =>
       !boxCollides(cx, cy, 1.9, 1.0) &&
