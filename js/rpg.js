@@ -198,7 +198,7 @@ function shuffle(list) {
   return a;
 }
 
-const OPTION_COUNT = 6;
+const OPTION_COUNT = 5;
 const NUMERIC_OPTION = /^-?\d+(?:[.,]\d+)?\s*%?$/;
 
 function looksNumeric(text) {
@@ -943,15 +943,16 @@ export class RPG {
 
   // As salas têm tema. A pergunta que combina com o tema vai para a frente do
   // baralho; o resto continua no sorteio. Sem tema, é sorteio puro.
-  optionPool(continent, tier) {
+  optionPool(continent, tier, area = "") {
     if (!this.pool) this.pool = new Map();
-    const key = `${continent}:${tier}`;
+    const key = `${continent}:${tier}:${area}`;
     if (this.pool.has(key)) return this.pool.get(key);
     const pool = [];
     const seen = new Set();
     const bank = QUESTION_INDEX.get(continent) || {};
     for (const t of [tier, 1, 2, 3]) {
       for (const q of bank[t] || []) {
+        if (area && q.area !== area) continue;
         for (const text of q.options) {
           const clean = String(text).trim();
           if (!clean || clean.length > 44) continue;
@@ -966,13 +967,20 @@ export class RPG {
     return pool;
   }
 
-  // toda pergunta oferece seis alternativas, A a F: com três o chute acerta
+  // toda pergunta oferece cinco alternativas, A a E: com três o chute acerta
   // demais. As que faltam vêm do próprio banco do continente, e pergunta
   // numérica ganha número, não palavra.
-  padOptions(options, answer, continent, tier) {
-    const list = options.slice();
-    const correct = String(list[answer] ?? "");
-    const seen = new Set(list.map((s) => String(s).trim().toLowerCase()));
+  padOptions(options, answer, continent, tier, area = "") {
+    const entries = options.map((text, i) => ({ text: String(text).trim(), ok: i === answer }));
+    // pergunta com mais alternativas que o padrão: mantém a certa e corta as
+    // outras, em vez de descartar as opções escritas à mão e inventar duas
+    let escolhidas = entries;
+    if (entries.length > OPTION_COUNT) {
+      escolhidas = [entries[answer], ...shuffle(entries.filter((_, i) => i !== answer)).slice(0, OPTION_COUNT - 1)];
+    }
+    const list = escolhidas.map((e) => e.text);
+    const correct = escolhidas.find((e) => e.ok)?.text || "";
+    const seen = new Set(list.map((s) => s.toLowerCase()));
     const push = (text) => {
       const clean = String(text).trim();
       if (!clean || list.length >= OPTION_COUNT) return;
@@ -982,11 +990,21 @@ export class RPG {
       list.push(clean);
     };
     if (looksNumeric(correct)) for (const n of numericDistractors(correct)) push(n);
-    const pool = this.optionPool(continent, tier);
     const numeric = looksNumeric(correct);
+    // primeiro as alternativas da própria área: um tópico da mesma seção é
+    // distrator plausível; o banco inteiro do continente é a reserva
+    const areaPool = area ? this.optionPool(continent, tier, area) : [];
+    for (const text of shuffle(areaPool.filter((s) => looksNumeric(s) === numeric))) push(text);
+    for (const text of shuffle(areaPool)) push(text);
+    const pool = this.optionPool(continent, tier);
     for (const text of shuffle(pool.filter((s) => looksNumeric(s) === numeric))) push(text);
     for (const text of shuffle(pool)) push(text);
-    return { options: list, answer };
+    // a resposta certa também embaralha: com o preenchimento no fim, ela
+    // ficaria sempre em A, B ou C e o jogador aprenderia a ignorar D e E
+    const finalEntries = escolhidas.map((e) => ({ text: e.text, ok: e.ok }));
+    for (const text of list.slice(escolhidas.length)) finalEntries.push({ text, ok: false });
+    const final = shuffle(finalEntries);
+    return { options: final.map((o) => o.text), answer: final.findIndex((o) => o.ok) };
   }
 
   themeScore(text, hint) {
@@ -1006,7 +1024,7 @@ export class RPG {
       for (const q of bank) {
         const options = q.options.map((text, i) => ({ text, ok: i === q.a }));
         const mixed = shuffle(options);
-        const filled = this.padOptions(mixed.map((o) => o.text), mixed.findIndex((o) => o.ok), continent, tier);
+        const filled = this.padOptions(mixed.map((o) => o.text), mixed.findIndex((o) => o.ok), continent, tier, q.area);
         deck.push({
           q: q.q,
           options: filled.options,
@@ -1115,7 +1133,7 @@ export class RPG {
       if (!q) continue;
       const options = q.options.map((text, i) => ({ text, ok: i === q.a }));
       const mixed = shuffle(options);
-      const filled = this.padOptions(mixed.map((o) => o.text), mixed.findIndex((o) => o.ok), continent, tier);
+      const filled = this.padOptions(mixed.map((o) => o.text), mixed.findIndex((o) => o.ok), continent, tier, q.area);
       list.push({
         q: q.q,
         options: filled.options,

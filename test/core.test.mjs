@@ -165,7 +165,7 @@ const ground = GROUNDS.find((g) => g.id === "cs");
 const easy = ground.monsters[0];
 assert.equal(rpg.startDuel(easy, ground).ok, true);
 assert.equal(rpg.duel.monsterHpMax, 3, "monstro fácil pede 3 acertos");
-assert.equal(rpg.duel.question.options.length, 6, "pergunta traz seis alternativas");
+assert.equal(rpg.duel.question.options.length, 5, "pergunta traz cinco alternativas");
 for (let i = 0; i < 20 && rpg.duel.phase !== "victory"; i++) {
   if (rpg.duel.phase === "question") rpg.answer(rpg.duel.question.answer);
   else rpg.next();
@@ -178,13 +178,13 @@ assert.equal(xpGanho > 0, true);
 rpg.next();
 assert.equal(rpg.duel, null);
 
-// toda pergunta do duelo vem com seis alternativas A-F, sem repetir
+// toda pergunta do duelo vem com cinco alternativas A-E, sem repetir
 for (const g of GROUNDS) {
   for (const tier of [1, 2, 3]) {
     for (const item of rpg.buildDeck(g.continent, [tier], "")) {
-      assert.equal(item.options.length, 6, `pergunta de ${g.continent} tier ${tier} sem seis alternativas`);
-      assert.equal(new Set(item.options.map((o) => o.toLowerCase())).size, 6, "alternativas repetidas");
-      assert.ok(item.answer >= 0 && item.answer < 6, "resposta fora das alternativas");
+      assert.equal(item.options.length, 5, `pergunta de ${g.continent} tier ${tier} sem cinco alternativas`);
+      assert.equal(new Set(item.options.map((o) => o.toLowerCase())).size, 5, "alternativas repetidas");
+      assert.ok(item.answer >= 0 && item.answer < 5, "resposta fora das alternativas");
       assert.ok(item.options[item.answer].length > 0, "resposta vazia");
     }
   }
@@ -836,9 +836,9 @@ assert.equal(pvpCards.length, 5, "cinco cartas de duelo");
 assert.deepEqual(pvpCards.map((c) => c.difficulty), [1, 2, 3, 4, 5], "uma por dificuldade");
 assert.deepEqual(pvpCards.map((c) => c.damage), [1, 2, 3, 4, 5], "dano acompanha a dificuldade");
 for (const c of pvpCards) {
-  assert.equal(c.options.length, 6, "seis alternativas no PvP");
-  assert.ok(c.answer >= 0 && c.answer < 6, "resposta dentro das alternativas");
-  assert.equal(new Set(c.options).size, 6, "sem alternativa repetida");
+  assert.equal(c.options.length, 5, "cinco alternativas no PvP");
+  assert.ok(c.answer >= 0 && c.answer < 5, "resposta dentro das alternativas");
+  assert.equal(new Set(c.options).size, 5, "sem alternativa repetida");
   assert.ok(c.q.length >= 4 && c.why.length > 0, "pergunta e explicação vêm juntas");
 }
 const dmgBefore = pvpCards[4].damage;

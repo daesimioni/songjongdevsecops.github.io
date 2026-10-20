@@ -4,7 +4,7 @@ import { ITEMS, TIERS, MONSTER_TRAITS } from "./rpg-data.js";
 import { drawCreature } from "./creature.js";
 
 const $ = (id) => document.getElementById(id);
-const LETTERS = "ABCDEF";
+const LETTERS = "ABCDE";
 let lastPick = null;
 let sparked = [];
 let hinted = null;
@@ -231,7 +231,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
         main.appendChild(bar);
       }
       if (petInfo) main.appendChild(el("p", "duel-petinfo", petInfo));
-      const foot = el("p", "duel-hint", "Toque numa alternativa (ou A a F no teclado). Errar tira vida; acertar tira vida do monstro.");
+      const foot = el("p", "duel-hint", "Toque numa alternativa (ou A a E no teclado). Errar tira vida; acertar tira vida do monstro.");
       main.appendChild(foot);
     }
     if (live.length) {

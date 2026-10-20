@@ -139,9 +139,12 @@ for (const c of continents) {
     const need = tier === 3 ? 12 : tier === 2 ? 7 : 3;
     check(list.length >= need, `${c} tier ${tier} tem ${list.length} perguntas, esperado ${need}`);
     for (const q of list) {
-      check(q.options?.length === 3, `${c}/${tier}: pergunta sem 3 alternativas: ${q.q}`);
-      check(new Set(q.options).size === 3, `${c}/${tier}: alternativas repetidas: ${q.q}`);
-      check(q.a >= 0 && q.a < 3, `${c}/${tier}: resposta fora da faixa: ${q.q}`);
+      // o banco tem questões de 3 e de 6 alternativas escritas à mão; o duelo
+      // normaliza para cinco (A-E) na hora de montar o baralho
+      const n = q.options?.length || 0;
+      check(n >= 3 && n <= 6, `${c}/${tier}: pergunta com ${n} alternativas: ${q.q}`);
+      check(new Set(q.options).size === n, `${c}/${tier}: alternativas repetidas: ${q.q}`);
+      check(q.a >= 0 && q.a < n, `${c}/${tier}: resposta fora da faixa: ${q.q}`);
       check(typeof q.why === "string" && q.why.length >= 20, `${c}/${tier}: explicação curta: ${q.q}`);
     }
   }
@@ -168,8 +171,8 @@ for (const c of continents) {
   check(cards.map((x) => x.damage).join(",") === "1,2,3,4,5", `PvP de ${c} com dano fora de ordem`);
   check(new Set(cards.map((x) => x.q)).size === cards.length, `PvP de ${c} repete pergunta`);
   for (const card of cards) {
-    check(card.options.length === 6, `PvP de ${c}: carta sem 6 alternativas`);
-    check(card.answer >= 0 && card.answer < 6, `PvP de ${c}: resposta fora da faixa`);
+    check(card.options.length === 5, `PvP de ${c}: carta sem 5 alternativas`);
+    check(card.answer >= 0 && card.answer < 5, `PvP de ${c}: resposta fora da faixa`);
   }
   check(rpg.buildDeck(c, [1], "").length > 0, `baralho fácil de ${c} vazio`);
   check(rpg.buildDeck(c, [2], "").length > 0, `baralho médio de ${c} vazio`);
@@ -522,11 +525,11 @@ for (const q of CATALOG_CONTENT.quests) {
 }
 check(respostasQuiz.size >= 2, `quiz sempre na mesma letra: ${[...respostasQuiz].join(",")}`);
 
-// pergunta de duelo sempre com seis alternativas na hora da luta
+// pergunta de duelo sempre com cinco alternativas na hora da luta
 const rpgOptions = new RPG({ getLevel: () => 1, gainXp: () => {}, toast: () => {}, audio: {} });
 for (const item of CATALOG_CONTENT.areas.slice(0, 8)) {
   const deck = rpgOptions.buildDeck(item.continent, [1], "");
-  check(deck.length > 0 && deck.every((q) => q.options.length === 6), `${item.id}: duelo sem 6 alternativas`);
+  check(deck.length > 0 && deck.every((q) => q.options.length === 5), `${item.id}: duelo sem 5 alternativas`);
 }
 
 // cobertura do catálogo: as 82 seções têm área, caverna, NPC e missão no jogo

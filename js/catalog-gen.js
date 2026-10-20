@@ -207,12 +207,14 @@ export function buildCatalogContent() {
         continent,
         area: area.id,
         tier: i + 1,
-        // o banco guarda 6 alternativas; o baralho base guarda 3 e o duelo
-        // completa até seis na hora da pergunta
+        // o banco pode guardar 6 alternativas; o baralho base guarda 3 e o duelo
+        // completa até cinco na hora da pergunta
         q: {
           q: topic.q.q,
-          options: [topic.q.o[topic.q.a], topic.q.o[(topic.q.a + 1) % 6], topic.q.o[(topic.q.a + 2) % 6]],
-          a: 0,
+          // o banco escreve seis alternativas; o duelo mostra cinco, então o
+          // corte para A-E acontece lá, sem jogar fora as opções escritas
+          options: topic.q.o.slice(),
+          a: topic.q.a,
           why: topic.q.why,
         },
       });

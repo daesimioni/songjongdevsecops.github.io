@@ -181,7 +181,7 @@ export function createPvp({ rpg, toast, audio, player, getNet, isBusy, openPanel
       (state.current?.options || []).forEach((text, i) => {
         const b = el("button", "pvp-option");
         b.type = "button";
-        b.append(el("kbd", "", String(i + 1)), el("span", "", text));
+        b.append(el("kbd", "", "ABCDE"[i] || String(i + 1)), el("span", "", text));
         b.addEventListener("click", () => answerDefense(i));
         options.appendChild(b);
       });

@@ -96,7 +96,7 @@ baralho da caverna daquele continente. No treino, errar **não tira vida**, a
 vitória **não dá loot** e a perícia do continente continua subindo.
 
 Quem paga é o bicho da caverna. Cada monstro abre uma prova de perguntas,
-sempre com **seis alternativas, de A a F**, e a vida do bicho é o número de
+sempre com **cinco alternativas, de A a E**, e a vida do bicho é o número de
 acertos que ele aguenta:
 
 - **fácil**: 3 acertos, errar tira 2 de vida.
