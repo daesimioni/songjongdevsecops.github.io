@@ -2396,3 +2396,23 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
 @media (max-width: 720px) { .shop-grid { grid-template-columns: 1fr; } }
 
 .npc-context { color: var(--mint); border-left: 2px solid rgba(97, 244, 192, 0.4); padding-left: 9px; }
+
+/* dupla: o segundo monstro pergunta na mesma tela */
+.duel-partner {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--line-strong);
+}
+.duel-partner-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+  font-family: var(--mono);
+}
+.duel-partner-head span { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--violet); }
+.duel-partner-head b { font-family: var(--pixel); font-size: 9px; color: var(--ink); }
+.duel-question.partner { font-size: 13px; margin-top: 8px; }
+.partner-options .duel-option { padding: 8px 10px; font-size: 11px; }
+.duel-next.small { margin-top: 8px; padding: 8px 10px; font-size: 11px; }

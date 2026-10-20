@@ -55,8 +55,8 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
     timer = null;
   }
 
-  function open(monster, ground, boss = false) {
-    const res = rpg.startDuel(monster, ground, boss);
+  function open(monster, ground, boss = false, partner = null) {
+    const res = rpg.startDuel(monster, ground, boss, partner);
     if (!res.ok) {
       toast(res.reason || "Este monstro não está mais aqui.", 3600);
       return false;
@@ -182,6 +182,46 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
       const foot = el("p", "duel-hint", "Toque numa alternativa (ou 1, 2 e 3 no teclado). Errar tira vida; acertar tira vida do monstro.");
       body.appendChild(foot);
     }
+    renderPartner(body, d);
+  }
+
+  function renderPartner(body, d) {
+    const p = d.partner;
+    if (!p || p.done) return;
+    const box = el("div", "duel-partner");
+    const head = el("div", "duel-partner-head");
+    head.append(el("span", "", "também está aqui"), el("b", "", p.monster.name));
+    box.appendChild(head);
+    box.appendChild(bar("vida do parceiro", p.hp, p.hpMax, "enemy"));
+    if (p.feedback) {
+      const fb = el("div", `duel-feedback ${p.feedback.correct ? "good" : "bad"}`);
+      fb.setAttribute("role", "status");
+      fb.appendChild(el("b", "", p.feedback.correct ? "Acertou." : `Errou. Levou ${p.feedback.damage} de dano.`));
+      fb.appendChild(el("span", "", p.feedback.why));
+      box.appendChild(fb);
+      const next = el("button", "duel-next small", "continuar com o parceiro");
+      next.type = "button";
+      next.addEventListener("click", () => { rpg.partnerNext(); render(); });
+      box.appendChild(next);
+    } else {
+      box.appendChild(el("p", "duel-question partner", p.question.q));
+      const opts = el("div", "duel-options partner-options");
+      p.question.options.forEach((text, i) => {
+        const b = el("button", "duel-option");
+        b.type = "button";
+        b.appendChild(el("kbd", "", String(i + 1)));
+        b.appendChild(el("span", "", text));
+        b.addEventListener("click", () => {
+          const res = rpg.answerPartner(i);
+          if (!res?.ok) return;
+          if (res.correct) audio.blip(); else audio.error?.();
+          render();
+        });
+        opts.appendChild(b);
+      });
+      box.appendChild(opts);
+    }
+    body.appendChild(box);
   }
 
   function renderEnd(body, d) {

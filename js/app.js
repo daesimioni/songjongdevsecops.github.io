@@ -223,8 +223,8 @@ dungeon = createDungeon({
   rpg,
   audio,
   isBlocked: () => state.panelOpen || !!state.modal || state.chatOpen,
-  onEncounter: (monster, ground, boss) => {
-    openDuel(monster, ground, boss);
+  onEncounter: (monster, ground, boss, partner) => {
+    openDuel(monster, ground, boss, partner);
     return !!rpg.duel;
   },
   onSheet: () => openSheet(),
@@ -463,8 +463,8 @@ function openSheet() {
   audio.open();
 }
 
-function openDuel(monster, ground, boss = false) {
-  if (!duelUi.open(monster, ground, boss)) return;
+function openDuel(monster, ground, boss = false, partner = null) {
+  if (!duelUi.open(monster, ground, boss, partner)) return;
   openModal("duel");
   audio.open();
 }

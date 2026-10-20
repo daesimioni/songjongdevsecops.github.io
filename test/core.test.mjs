@@ -223,6 +223,46 @@ assert.equal(seen.find((s) => s.kind === "boss")?.tier, 4, "chefe entra no besti
 const beastAgain = new RPG({ getLevel: () => 1, gainXp: () => {}, toast: () => {}, audio: {} });
 assert.equal(beastAgain.seenView().find((s) => s.kind === "bat")?.count, 2, "bestiário persiste");
 
+// dupla: o segundo monstro pergunta junto e a vitória soma os dois
+const duoRpg = new RPG({ getLevel: () => 1, gainXp: () => {}, toast: () => {}, audio: {} });
+const duoGround = { id: "duo-test", continent: "cs", name: "Dupla", dungeon: true, loot: ["parafuso", "chip", "fita"], bossLoot: "nucleo", material: "ferro" };
+const duoMain = { id: "duo-main", name: "Bit", kind: "slime", tier: 1, theme: "lógica" };
+const duoPartner = { id: "duo-partner", name: "Olho", kind: "eye", tier: 2, theme: "memória" };
+assert.equal(duoRpg.startDuel(duoMain, duoGround, false, duoPartner).ok, true);
+assert.equal(duoRpg.duel.partner?.monster.id, "duo-partner", "segundo monstro entra no duelo");
+assert.equal(duoRpg.duel.partner.hp, 3, "vida do segundo monstro");
+const partnerQuestion = duoRpg.duel.partner.question.q;
+duoRpg.answerPartner(duoRpg.duel.partner.question.answer);
+assert.equal(duoRpg.duel.partner.feedback?.correct, true, "acerto no segundo monstro");
+duoRpg.partnerNext();
+assert.equal(!!duoRpg.duel.partner.question, true, "segunda pergunta do parceiro");
+for (let i = 0; i < 6 && !duoRpg.duel.partner.done; i++) {
+  const p = duoRpg.duel.partner;
+  duoRpg.answerPartner(p.question.answer);
+  duoRpg.partnerNext();
+}
+assert.equal(duoRpg.duel.partner.done, true, "segundo monstro cai");
+assert.equal(duoRpg.monsterAlive("duo-partner"), false, "segundo monstro fica derrotado");
+for (let i = 0; i < 8 && duoRpg.duel.phase !== "victory"; i++) {
+  if (duoRpg.duel.phase === "question") duoRpg.answer(duoRpg.duel.question.answer);
+  else duoRpg.next();
+}
+assert.equal(duoRpg.duel.phase, "victory", "vitória da dupla");
+assert.ok(duoRpg.duel.result.xp >= 18 + 10, "XP soma o parceiro");
+assert.ok(duoRpg.duel.result.loot.length >= 3, "loot soma o parceiro");
+duoRpg.next();
+
+// parceiro pode derrubar o jogador
+const duoHp = new RPG({ getLevel: () => 1, gainXp: () => {}, toast: () => {}, audio: {} });
+duoHp.data.hp = 1;
+duoHp.save();
+duoHp.startDuel({ id: "duo2-main", name: "A", kind: "slime", tier: 1 }, duoGround, false, { id: "duo2-partner", name: "B", kind: "eye", tier: 2 });
+const p2 = duoHp.duel.partner;
+const wrong2 = (p2.question.answer + 1) % p2.question.options.length;
+duoHp.answerPartner(wrong2);
+assert.equal(duoHp.duel.phase, "defeat", "errar com o parceiro derruba");
+assert.equal(duoHp.hp(), duoHp.hpMax(), "respawn devolve a vida");
+
 // save corrompido não vira save vazio sem deixar cópia
 const corruptKey = STORAGE.rpg;
 const goodRaw = store.get(corruptKey);

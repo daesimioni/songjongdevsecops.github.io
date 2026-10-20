@@ -1400,7 +1400,10 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
       state.paused = false;
       return;
     }
-    const ok = onEncounter?.(m, state.ground, !!m.boss);
+    // dois bichos na mesma janela perguntam juntos; três viram fila
+    const partner = state.pack.length === 1 ? state.pack.shift() : null;
+    state.partnerMonster = partner || null;
+    const ok = onEncounter?.(m, state.ground, !!m.boss, partner);
     if (!ok) {
       state.pendingMonster = null;
       state.paused = false;
@@ -1413,6 +1416,14 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
     const m = state.pendingMonster;
     state.pendingMonster = null;
     state.paused = false;
+    const partner = state.partnerMonster;
+    state.partnerMonster = null;
+    if (partner) {
+      if (!rpg.monsterAlive(partner.id)) {
+        partner.alive = false;
+        say(`${partner.name} também caiu na mesma rodada.`, 2800);
+      }
+    }
     if (m) {
       const dead = m.boss ? !rpg.bossAlive(state.ground) : !rpg.monsterAlive(m.id);
       if (dead) {

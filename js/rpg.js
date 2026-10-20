@@ -584,10 +584,11 @@ export class RPG {
     return shuffle(deck).sort((a, b) => b.score - a.score);
   }
 
-  startDuel(monster, ground, boss = false) {
+  startDuel(monster, ground, boss = false, partner = null) {
     if (boss ? !this.bossAlive(ground) : !this.monsterAlive(monster.id)) {
       return { ok: false, reason: "Este monstro não está mais aqui." };
     }
+    if (partner && (!this.monsterAlive(partner.id) || partner.id === monster.id)) partner = null;
     const tiers = boss ? [2, 3] : [monster.tier];
     const deck = this.buildDeck(ground.continent, tiers, monster?.theme || ground.theme);
     if (!deck.length) return { ok: false, reason: "As perguntas deste continente ainda não foram escritas." };
@@ -602,10 +603,28 @@ export class RPG {
       question: deck[0],
       monsterHp: hp,
       monsterHpMax: hp,
+      partner: null,
       phase: "question",
       feedback: null,
       result: null,
     };
+    if (partner) {
+      const ptier = clamp(Number(partner.tier) || 1, 1, 3);
+      const pdeck = this.buildDeck(ground.continent, [ptier], partner.theme || ground.theme);
+      if (pdeck.length) {
+        this.duel.partner = {
+          monster: partner,
+          tier: ptier,
+          deck: pdeck,
+          deckIndex: 0,
+          question: pdeck[0],
+          hp: TIERS[ptier].hp,
+          hpMax: TIERS[ptier].hp,
+          feedback: null,
+          done: false,
+        };
+      }
+    }
     return { ok: true, duel: this.duel };
   }
 
@@ -734,6 +753,55 @@ export class RPG {
     return { ok: true, correct, phase: d.phase, feedback: d.feedback, duel: d };
   }
 
+  answerPartner(index) {
+    const d = this.duel;
+    const p = d?.partner;
+    if (!d || !p || p.done || p.feedback || d.phase !== "question") return { ok: false };
+    const correct = Number(index) === p.question.answer;
+    if (correct) {
+      this.addSkillXp(d.ground.continent, 1);
+      p.hp = Math.max(0, p.hp - this.damageFor(d.ground.continent));
+      p.feedback = { correct: true, why: p.question.why, damage: 0 };
+      if (p.hp <= 0) {
+        p.done = true;
+        this.data.monsters[p.monster.id] = now();
+      }
+      this.save();
+      return { ok: true, correct, partner: true, done: p.done };
+    }
+    const damage = TIERS[p.tier].damage;
+    this.data.hp = Math.max(0, this.hp() - damage);
+    p.feedback = { correct: false, why: p.question.why, damage };
+    if (this.data.hp <= 0) {
+      this.data.hp = this.hpMax();
+      d.phase = "defeat";
+      this.save();
+      this.onRespawn?.();
+    } else {
+      this.save();
+    }
+    return { ok: true, correct, partner: true, phase: d.phase };
+  }
+
+  partnerNext() {
+    const d = this.duel;
+    const p = d?.partner;
+    if (!d || !p || p.done) return null;
+    if (!p.feedback) return { phase: d.phase, partner: p };
+    p.feedback = null;
+    if (p.hp <= 0) { p.done = true; return { phase: d.phase, partner: p }; }
+    p.deckIndex++;
+    if (p.deckIndex >= p.deck.length) {
+      p.deck = shuffle(p.deck);
+      p.deckIndex = 0;
+      if (p.deck.length > 1 && p.question && p.deck[0].q === p.question.q) {
+        [p.deck[0], p.deck[1]] = [p.deck[1], p.deck[0]];
+      }
+    }
+    p.question = p.deck[p.deckIndex];
+    return { phase: d.phase, partner: p };
+  }
+
   victory(d) {
     if (d.training) return { training: true, xp: 0, loot: [] };
     const ground = d.ground;
@@ -752,8 +820,16 @@ export class RPG {
         this.addItem(accessory, 1);
       }
     }
+    let xp = TIERS[tier].xp;
+    if (d.partner?.done) {
+      const p = d.partner;
+      const ptier = p.tier;
+      const pItem = ground.loot[Math.min(2, Math.max(0, ptier - 1))];
+      if (pItem) { loot.push({ id: pItem, qty: 1 }); this.addItem(pItem, 1); }
+      if (ground.material) { loot.push({ id: ground.material, qty: 1 }); this.addItem(ground.material, 1); }
+      xp += TIERS[ptier].xp;
+    }
     this.addSkillXp(ground.continent, 2);
-    const xp = TIERS[tier].xp;
     this.gainXp(xp);
     if (d.boss) {
       this.data.bosses[ground.id] = now();
