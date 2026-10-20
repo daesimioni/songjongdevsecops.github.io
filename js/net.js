@@ -1,4 +1,5 @@
 import { MAP_W, MAP_H, NET } from "./config.js";
+import { avatarFromCode } from "./avatar.js";
 
 const CDN = "https://cdn.jsdelivr.net/npm/mqtt@5.10.1/dist/mqtt.min.js";
 
@@ -24,12 +25,18 @@ function validOutfit(o) {
   return typeof o === "string" && /^[a-z0-9-]{1,20}$/.test(o) ? o : "";
 }
 
+// o personagem viaja em cinco campos curtos: "f|chanel|1|1|0"
+function validLook(a) {
+  return typeof a === "string" && /^[fm]\|[a-z]{3,10}\|\d{1,2}\|\d{1,2}\|\d{1,2}$/.test(a) ? a : "";
+}
+
 export class Net {
-  constructor({ room, name, color, outfit, onPeers, onStatus, onChat, onPvp, onParty, onError }) {
+  constructor({ room, name, color, outfit, look, onPeers, onStatus, onChat, onPvp, onParty, onError }) {
     this.room = room;
     this.name = clean(name, 16) || "viajante";
     this.color = validColor(color);
     this.outfit = validOutfit(outfit);
+    this.look = validLook(look);
     this.id = "ms_" + Math.random().toString(36).slice(2, 12);
     this.onPeers = onPeers;
     this.onStatus = onStatus;
@@ -163,6 +170,7 @@ export class Net {
         seq: Number(msg.s) || 0,
         pubkey,
         outfit: validOutfit(msg.o),
+        look: avatarFromCode(validLook(msg.a)),
         moving,
         lastSeen: now,
       });
@@ -261,6 +269,11 @@ export class Net {
     this.publishState(true);
   }
 
+  setLook(code) {
+    this.look = validLook(code);
+    this.publishState(true);
+  }
+
   publishState(force) {
     if (!this.connected || !this.client) return;
     this.seq = (this.seq + 1) % 1000000000;
@@ -273,6 +286,7 @@ export class Net {
       m: this.state.m || undefined,
       k: this.pubkey || undefined,
       o: this.outfit || undefined,
+      a: this.look || undefined,
     }), { qos: 0 });
     if (force) this.emitPeers();
   }

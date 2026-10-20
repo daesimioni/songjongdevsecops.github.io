@@ -1,4 +1,6 @@
 import { outfitById } from "./outfits.js";
+import { avatarColors } from "./avatar.js";
+import { drawHuman } from "./human.js";
 import {
   TILE, MAP_W, MAP_H, WORLD_W, WORLD_H, TILE_KIND as K, PLAYER_COLORS,
 } from "./config.js";
@@ -1165,7 +1167,7 @@ export function createRenderer(canvas, world) {
     const px = npc.x * TILE, py = npc.y * TILE;
     const bob = Math.sin(time * 0.002 + npc.bob) * 1.2;
     const colors = { skin: "#d9b08c", hair: "#4a3a55", shirt: npc.accent, pants: "#2f2c45" };
-    drawHuman(px, py + bob, npc.facing || 0, !!npc.moving, time, colors, null, 0.9);
+    drawHuman(ctx, px, py + bob, npc.facing || 0, !!npc.moving, time, colors, 0.9);
     if (npc.questMark) {
       const ready = npc.questMark === "ready";
       const color = ready ? "#61f4c0" : "#ffc857";
@@ -1281,87 +1283,6 @@ export function createRenderer(canvas, world) {
         ctx.stroke();
       }
     }
-    ctx.restore();
-  }
-
-  function drawHuman(px, py, dir, moving, time, colors, name, scale = 1) {
-    const s = scale;
-    const step = moving ? Math.sin(time * 0.016) : 0;
-    ctx.save();
-    ctx.translate(px, py);
-    ctx.scale(s, s);
-
-    ctx.fillStyle = "rgba(2,4,10,0.38)";
-    ctx.beginPath();
-    ctx.ellipse(0, 0, 6.5, 2.6, 0, 0, Math.PI * 2);
-    ctx.fill();
-
-    const legOff = step > 0 ? 1 : step < -0 ? -1 : 0;
-    const lift = moving ? Math.abs(step) * 1.1 : 0;
-
-    // pernas
-    ctx.fillStyle = colors.pants;
-    ctx.fillRect(-4, -5, 3, 5 - lift);
-    ctx.fillRect(1, -5, 3, 4);
-    ctx.fillStyle = "#1b1c2c";
-    ctx.fillRect(-4, -1, 3, 1);
-    ctx.fillRect(1, -2, 3, 1);
-
-    // corpo
-    ctx.fillStyle = colors.shirt;
-    ctx.fillRect(-5, -13, 10, 9);
-    ctx.fillStyle = "rgba(255,255,255,0.16)";
-    ctx.fillRect(-5, -13, 2, 8);
-    ctx.fillStyle = colors.pants;
-    ctx.fillRect(-5, -5, 10, 2);
-
-    // braços
-    ctx.fillStyle = colors.shirt;
-    ctx.fillRect(-7, -12 + Math.max(0, legOff), 2, 6);
-    ctx.fillRect(5, -12 - Math.max(0, legOff), 2, 6);
-    ctx.fillStyle = colors.skin;
-    ctx.fillRect(-7, -6 + Math.max(0, legOff), 2, 2);
-    ctx.fillRect(5, -6 - Math.max(0, legOff), 2, 2);
-
-    // cabeça
-    ctx.fillStyle = colors.skin;
-    ctx.fillRect(-4, -20, 8, 8);
-    // cabelo: por cima e cobrindo a nuca, nunca o lado do rosto
-    ctx.fillStyle = colors.hair;
-    ctx.fillRect(-4, -21, 8, 3);
-    if (dir === 0) {
-      ctx.fillRect(-5, -20, 2, 5);
-      ctx.fillRect(3, -20, 2, 5);
-    } else if (dir === 1) {
-      // olhando para a esquerda: nuca à direita
-      ctx.fillRect(1, -20, 4, 6);
-      ctx.fillRect(-4, -21, 8, 3);
-    } else if (dir === 2) {
-      // olhando para a direita: nuca à esquerda
-      ctx.fillRect(-5, -20, 4, 6);
-      ctx.fillRect(-4, -21, 8, 3);
-    } else {
-      // de costas
-      ctx.fillRect(-4, -20, 8, 7);
-    }
-    // rosto: olho e nariz do lado para onde anda
-    ctx.fillStyle = "#14121f";
-    if (dir === 0) {
-      ctx.fillRect(-2, -17, 1, 2);
-      ctx.fillRect(1, -17, 1, 2);
-    } else if (dir === 1) {
-      ctx.fillRect(-3, -17, 1, 2);
-    } else if (dir === 2) {
-      ctx.fillRect(2, -17, 1, 2);
-    }
-    if (dir === 1 || dir === 2) {
-      ctx.fillStyle = colors.skin;
-      ctx.fillRect(dir === 1 ? -5 : 4, -16, 1, 2);
-    }
-    // detalhe no peito
-    ctx.fillStyle = colors.accent || "#fff3d1";
-    ctx.fillRect(-1, -11, 2, 2);
-
     ctx.restore();
   }
 
@@ -1576,15 +1497,17 @@ export function createRenderer(canvas, world) {
     for (const p of peers) {
       const px = (p.rx ?? p.x) * TILE;
       const py = (p.ry ?? p.y) * TILE;
-      const peerColors = p.outfit
-        ? outfitById(p.outfit).colors
-        : { skin: "#e8b98c", hair: "#2a2438", shirt: p.color, pants: "#2f2c45", accent: "#fff3d1" };
+      const peerColors = p.look
+        ? avatarColors(p.look)
+        : p.outfit
+          ? outfitById(p.outfit).colors
+          : { skin: "#e8b98c", hair: "#2a2438", shirt: p.color, pants: "#2f2c45", accent: "#fff3d1" };
       drawables.push({
         y: py,
         fn: () => {
           const lift = p.mount ? 5 : 0;
           if (p.mount) drawSkiff(px, py, p.dir || 0, time, 1, p.moving);
-          drawHuman(px, py - lift, p.dir || 0, p.mount ? false : p.moving, time, peerColors, null, 1);
+          drawHuman(ctx, px, py - lift, p.dir || 0, p.mount ? false : p.moving, time, peerColors, 1, p.look);
           drawNameTag(p.name, px, py - 26 - lift, p.color);
           if (p.bubble && p.bubble.until > now) {
             drawBubble(p.bubble.text, px, py - lift, p.color);
@@ -1599,8 +1522,8 @@ export function createRenderer(canvas, world) {
         const bob = Math.sin(time * 0.007) * 1.1 * player.boost;
         const onShip = player.boost > 0.35;
         if (player.boost > 0.01) drawSkiff(player.x * TILE, player.y * TILE, player.dir, time, player.boost, moving);
-        drawHuman(player.x * TILE, player.y * TILE - lift + bob, player.dir, onShip ? false : moving, time,
-          player.colors || PLAYER_COLORS[0], null, 1);
+        drawHuman(ctx, player.x * TILE, player.y * TILE - lift + bob, player.dir, onShip ? false : moving, time,
+          player.colors || PLAYER_COLORS[0], 1, player.look);
         drawNameTag(player.name, player.x * TILE, player.y * TILE - 26 - lift, player.color);
         if (player.bubble && player.bubble.until > now) {
           drawBubble(player.bubble.text, player.x * TILE, player.y * TILE - lift, player.color);

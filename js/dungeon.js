@@ -6,6 +6,7 @@ import { DUNGEON_LAYOUT, dungeonById } from "./dungeon-data.js";
 import { GROUNDS, ITEMS, TIERS } from "./rpg-data.js";
 import { PET_BY_CONTINENT, PETS } from "./pets.js";
 import { drawCreature } from "./creature.js";
+import { drawHuman } from "./human.js";
 import { findPathIn } from "./path.js";
 import { hash2 } from "./world.js";
 import { drawPetSprite } from "./pet-art.js";
@@ -147,22 +148,15 @@ export function dungeonLineOfSight(map, ax, ay, bx, by) {
 }
 
 // ---------- desenho ----------
-function drawAdventurer(ctx, x, y, dir, moving, t, avatar = {}, ship = false) {
-  // Mesmas proporções do boneco da superfície: o jogador precisa ser o mesmo
-  // personagem lá em cima e aqui embaixo, com capa e lanterna por cima.
+function drawAdventurer(ctx, x, y, dir, moving, t, avatar = {}, ship = false, look = null) {
+  // O mesmo boneco da superfície, com capa e lanterna por cima.
   const c = { hair: "#3a2a55", skin: "#f0c9a8", shirt: "#61f4c0", pants: "#2f3a66", ...avatar };
   const animate = moving && !ship;
   const frame = animate ? Math.floor(t / 115) % 4 : 0;
   const swing = animate ? [0, 1, 0, -1][frame] : 0;
   const bob = animate && (frame === 1 || frame === 3) ? -1 : 0;
-  const dark = "#101426";
   ctx.save();
   ctx.translate(x, y + bob);
-  // sombra
-  ctx.fillStyle = "rgba(0,0,0,0.38)";
-  ctx.beginPath();
-  ctx.ellipse(0, 0, 6.5, 2.6, 0, 0, Math.PI * 2);
-  ctx.fill();
   // casco da nave: o boneco vai parado dentro dela
   if (ship) {
     ctx.fillStyle = "#0b2438";
@@ -183,53 +177,7 @@ function drawAdventurer(ctx, x, y, dir, moving, t, avatar = {}, ship = false) {
   ctx.fillRect(-6 + (swing > 0 ? 1 : 0), -15, 12, 11);
   ctx.fillStyle = "#1b1f37";
   ctx.fillRect(-5, -5 + (swing < 0 ? 1 : 0), 10, 2);
-  // pernas
-  ctx.fillStyle = c.pants;
-  ctx.fillRect(-4, -5, 3, 5 - (swing > 0 ? 1 : 0));
-  ctx.fillRect(1, -5, 3, 5 - (swing < 0 ? 1 : 0));
-  ctx.fillStyle = dark;
-  ctx.fillRect(-4, -1, 3, 1);
-  ctx.fillRect(1, -1 - (swing < 0 ? 1 : 0), 3, 1);
-  // torso
-  ctx.fillStyle = c.shirt;
-  ctx.fillRect(-5, -13, 10, 9);
-  ctx.fillStyle = "rgba(255,255,255,0.16)";
-  ctx.fillRect(-5, -13, 2, 8);
-  ctx.fillStyle = c.pants;
-  ctx.fillRect(-5, -5, 10, 2);
-  // braços, opostos às pernas
-  ctx.fillStyle = c.shirt;
-  ctx.fillRect(-7, -12 + (swing < 0 ? 1 : 0), 2, 6);
-  ctx.fillRect(5, -12 + (swing > 0 ? 1 : 0), 2, 6);
-  ctx.fillStyle = c.skin;
-  ctx.fillRect(-7, -6 + (swing < 0 ? 1 : 0), 2, 2);
-  ctx.fillRect(5, -6 + (swing > 0 ? 1 : 0), 2, 2);
-  // cabeça
-  ctx.fillStyle = c.skin;
-  ctx.fillRect(-4, -20, 8, 8);
-  // cabelo pela direção, igual ao boneco de cima
-  ctx.fillStyle = c.hair;
-  ctx.fillRect(-4, -21, 8, 3);
-  if (dir === 0) {
-    ctx.fillRect(-5, -20, 2, 5);
-    ctx.fillRect(3, -20, 2, 5);
-  } else if (dir === 1) {
-    ctx.fillRect(1, -20, 4, 6);
-  } else if (dir === 2) {
-    ctx.fillRect(-5, -20, 4, 6);
-  } else {
-    ctx.fillRect(-4, -20, 8, 7);
-  }
-  // olhos
-  ctx.fillStyle = dark;
-  if (dir === 0) {
-    ctx.fillRect(-3, -17, 2, 1);
-    ctx.fillRect(1, -17, 2, 1);
-  } else if (dir === 1) {
-    ctx.fillRect(-3, -17, 2, 1);
-  } else if (dir === 2) {
-    ctx.fillRect(1, -17, 2, 1);
-  }
+  drawHuman(ctx, 0, 0, dir, animate, t, c, 1, look);
   // lanterna na mão direita, com halo curto
   ctx.fillStyle = "rgba(255,200,87,0.16)";
   ctx.beginPath();
@@ -585,7 +533,7 @@ function drawBuilding(ctx, x, y, w, h, palette, accent) {
 }
 
 // ---------- a caverna em si ----------
-export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeeper, onConurbation, onPortal, isBlocked, avatar = {} }) {
+export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeeper, onConurbation, onPortal, isBlocked, avatar = {}, look = null }) {
   const canvas = $("dungeon-canvas");
   const ctx = canvas?.getContext("2d", { alpha: false }) || null;
 
@@ -1830,7 +1778,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
     }
     drawables.push({
       y: state.player.y,
-      draw: () => drawAdventurer(ctx, state.player.x * TILE, state.player.y * TILE, state.player.dir, state.player.moving, t, avatar, state.sprint),
+      draw: () => drawAdventurer(ctx, state.player.x * TILE, state.player.y * TILE, state.player.dir, state.player.moving, t, avatar, state.sprint, look),
     });
     drawables.sort((a, b) => a.y - b.y);
     for (const d of drawables) d.draw();

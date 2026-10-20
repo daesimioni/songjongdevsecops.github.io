@@ -25,7 +25,7 @@ function passiveText(passive = {}) {
   ].filter(Boolean).join(", ") || "sem passivo";
 }
 
-export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onUse, onOutfits, onPetAbility }) {
+export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onUse, onOutfits, onLook, onPetAbility }) {
   function render() {
     const body = $("sheet-body");
     if (!body) return;
@@ -146,11 +146,21 @@ export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onUs
     company.appendChild(stable);
     body.appendChild(company);
 
-    if (onOutfits) {
-      const look = el("button", "sheet-outfit", "trocar traje");
-      look.type = "button";
-      look.addEventListener("click", () => onOutfits());
-      body.appendChild(look);
+    if (onOutfits || onLook) {
+      const row = el("div", "sheet-look-row");
+      if (onLook) {
+        const bodyBtn = el("button", "sheet-outfit", "mudar personagem");
+        bodyBtn.type = "button";
+        bodyBtn.addEventListener("click", () => onLook());
+        row.appendChild(bodyBtn);
+      }
+      if (onOutfits) {
+        const look = el("button", "sheet-outfit", "trocar traje");
+        look.type = "button";
+        look.addEventListener("click", () => onOutfits());
+        row.appendChild(look);
+      }
+      body.appendChild(row);
     }
 
     body.appendChild(el("h3", "sheet-sec", "Equipamento"));

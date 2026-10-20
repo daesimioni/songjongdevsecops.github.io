@@ -19,6 +19,7 @@ const { POSTS, NPCS } = await import("../js/content.js");
 const { QUESTS } = await import("../js/quests.js");
 const { RPG } = await import("../js/rpg.js");
 const { isAdminKey } = await import("../js/admin.js");
+const { HAIRS, AVATAR_DEFAULT, normalizeAvatar, avatarColors, avatarCode, avatarFromCode, hairUnlock } = await import("../js/avatar.js");
 const { createWorld } = await import("../js/world.js");
 
 const source = (rel) => readFileSync(new URL(rel, import.meta.url), "utf8");
@@ -162,6 +163,21 @@ check(relicRpg.pvpQuestions("cs")[4].damage === 6, "uma relíquia soma 1 de dano
 relicRpg.addItem("infinito", 1);
 relicRpg.addItem("orbita", 1);
 check(relicRpg.pvpQuestions("cs")[4].damage === 7, "duas relíquias somam o teto de 2 de dano no PvP");
+
+// personagem: gênero, cabelo e cor sobrevivem ao ida e volta da rede
+const lookBase = normalizeAvatar({ gender: "m", hair: "rabo", skin: 3, hairColor: 6, eyes: 2 });
+check(lookBase.gender === "m" && lookBase.hair === "rabo" && lookBase.skin === 3, "normalizeAvatar perdeu os campos");
+check(normalizeAvatar({ gender: "x", hair: "nao-existe", skin: 99 }).gender === AVATAR_DEFAULT.gender, "normalizeAvatar aceitou gênero inventado");
+check(normalizeAvatar({ skin: 99 }).skin === 0 || normalizeAvatar({ skin: 99 }).skin === 5, "normalizeAvatar não limitou a pele");
+const code = avatarCode(lookBase);
+const volta = avatarFromCode(code);
+check(!!volta && volta.hair === "rabo" && volta.skin === 3 && volta.hairColor === 6 && volta.eyes === 2, `código do personagem não voltou igual (${code})`);
+check(avatarFromCode("lixo") === null, "código de personagem inválido virou personagem");
+const cores = avatarColors(lookBase);
+check(!!cores.skin && !!cores.hair && !!cores.eyes, "avatarColors não devolveu as cores do corpo");
+check(HAIRS.length === 11, `cabelos: ${HAIRS.length}, esperado 11`);
+check(HAIRS.filter((h) => !h.unlock).length === 4, "a lista de cabelo básico mudou de tamanho");
+check(hairUnlock("moicano") === "cs" && hairUnlock("curto") === null, "trava do cabelo errada");
 
 // cada bicho desenhado tem um jeito de atrapalhar o duelo, e o chefe morre por fase
 const creatureKinds = [...source("../js/creature.js").matchAll(/kind === "([a-z]+)"/g)].map((m) => m[1]);

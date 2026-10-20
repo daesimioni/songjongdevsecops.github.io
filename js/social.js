@@ -32,7 +32,7 @@ function hueOf(pk) {
   return Number.isFinite(n) ? n % 360 : 200;
 }
 
-async function copyText(text) {
+export async function copyText(text) {
   try {
     await navigator.clipboard.writeText(text);
     return true;
@@ -599,7 +599,7 @@ export function createSocial({ rede, backup, quests, player, getPeers, getNet, g
     const npub = rede.npub;
     const card = el("div", "rede-card");
     card.appendChild(el("h3", "rede-sec", "Sua chave"));
-    card.appendChild(el("p", "rede-hint", "A conta é uma chave criada neste navegador. Quem tiver a nsec controla a conta, então não mostre para ninguém."));
+    card.appendChild(el("p", "rede-hint", "A conta é uma chave criada neste navegador. Quem tiver a chave controla a conta, então não mostre para ninguém."));
     const npubRow = el("div", "rede-keyrow");
     const code = el("code", "rede-code", shortNpub(npub || "ainda sem chave"));
     const copy = el("button", "rede-mini", "copiar npub");
@@ -612,8 +612,8 @@ export function createSocial({ rede, backup, quests, player, getPeers, getNet, g
     card.appendChild(npubRow);
 
     const secretRow = el("div", "rede-keyrow");
-    const secret = el("code", "rede-code", ui.secretShown ? rede.secret() : "nsec••••••••••••••••••••••••");
-    const toggle = el("button", "rede-mini", ui.secretShown ? "esconder" : "mostrar nsec");
+    const secret = el("code", "rede-code", ui.secretShown ? rede.secret() : "chave••••••••••••••••••••••••");
+    const toggle = el("button", "rede-mini", ui.secretShown ? "esconder" : "mostrar chave");
     toggle.type = "button";
     toggle.addEventListener("click", () => {
       ui.secretShown = !ui.secretShown;
@@ -622,11 +622,11 @@ export function createSocial({ rede, backup, quests, player, getPeers, getNet, g
     secretRow.append(secret, toggle);
     card.appendChild(secretRow);
     if (ui.secretShown) {
-      const copySecret = el("button", "rede-mini", "copiar nsec");
+      const copySecret = el("button", "rede-mini", "copiar chave");
       copySecret.type = "button";
       copySecret.addEventListener("click", async () => {
         const ok = await copyText(rede.secret());
-        toast(ok ? "nsec copiada. Guarde longe de print e de chat." : "não deu para copiar.", 4200);
+        toast(ok ? "chave copiada. Guarde longe de print e de chat." : "não deu para copiar.", 4200);
       });
       card.appendChild(copySecret);
     }
@@ -642,7 +642,7 @@ export function createSocial({ rede, backup, quests, player, getPeers, getNet, g
     bk.appendChild(el("p", "rede-hint", when
       ? `Último envio ${new Date(when).toLocaleString("pt-BR")} · ${st.bytes || 0} caracteres`
       : "Nenhum backup enviado desta conta ainda."));
-    bk.appendChild(el("p", "rede-hint", "A cada cinco minutos de jogo o estado inteiro vai cifrado para a sua própria DM, no Nostr. A nsec nunca entra no backup."));
+    bk.appendChild(el("p", "rede-hint", "A cada cinco minutos de jogo o estado inteiro vai cifrado para a sua própria DM, no Nostr. A chave nunca entra no backup."));
     const bkRow = el("div", "rede-keyrow");
     const saveNow = el("button", "rede-mini", "salvar agora");
     saveNow.type = "button";
@@ -677,8 +677,8 @@ export function createSocial({ rede, backup, quests, player, getPeers, getNet, g
     const imp = el("form", "rede-card rede-form-stack");
     imp.appendChild(el("h3", "rede-sec", "Importar chave"));
     const impInput = el("input", "");
-    impInput.placeholder = "cole a nsec1... ou a chave hex";
-    impInput.setAttribute("aria-label", "chave nsec ou hex para importar");
+    impInput.placeholder = "cole a sua chave aqui";
+    impInput.setAttribute("aria-label", "chave da conta para importar");
     impInput.autocomplete = "off";
     impInput.spellcheck = false;
     const impBtn = el("button", "rede-send", "usar esta chave");

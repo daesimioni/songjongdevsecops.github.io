@@ -34,6 +34,7 @@ export const STORAGE = {
   rpg: "mundo-song:rpg:v1",
   chat: "mundo-song:chat:v1",
   outfit: "mundo-song:outfit:v1",
+  avatar: "mundo-song:avatar:v1",
   npc: "mundo-song:npc:v1",
   steps: "mundo-song:steps:v1",
 };
@@ -47,7 +48,7 @@ export const BACKUP = {
   every: 5 * 60 * 1000,
   days: 30,
   max: 60000,
-  keys: ["cards", "xp", "docks", "explored", "name", "sound", "room", "quests", "rpg", "outfit", "npc"],
+  keys: ["cards", "xp", "docks", "explored", "name", "sound", "room", "quests", "rpg", "outfit", "avatar", "npc"],
 };
 
 // A rede do mundo: relays públicos, canais do jogo e DMs privadas (NIP-17).

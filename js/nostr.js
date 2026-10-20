@@ -154,6 +154,18 @@ export class Rede {
     try { return this.nt.nip19.nsecEncode(this.sk); } catch { return ""; }
   }
 
+  // a chave pode ficar guardada nesta máquina ou só na memória da aba
+  hasStoredKey() {
+    return HEX64.test(String(readStore().sk || ""));
+  }
+
+  forgetStored() {
+    const stored = readStore();
+    delete stored.sk;
+    delete stored.created;
+    writeStore(stored);
+  }
+
   // assinatura de prova para o PvP: o evento não é publicado, só usado para
   // provar que quem enviou o convite tem a chave que diz ter.
   async signText(text) {
@@ -187,7 +199,7 @@ export class Rede {
         if (dec.type === "nsec" && dec.data instanceof Uint8Array && dec.data.length === 32) sk = dec.data;
       } catch { /* formato errado */ }
     }
-    if (!sk) return { ok: false, reason: "isso não parece uma chave nsec." };
+    if (!sk) return { ok: false, reason: "isso não parece uma chave de conta." };
     this.sk = sk;
     this.pk = this.nt.getPublicKey(sk);
     this.npub = this.nt.nip19.npubEncode(this.pk);

@@ -207,6 +207,18 @@
     </div>
   </div>
 
+
+  <div id="look" class="modal" role="dialog" aria-modal="true" aria-labelledby="look-title" hidden>
+    <div class="modal-card look-card">
+      <div class="modal-head">
+        <h2 id="look-title">Personagem</h2>
+        <button type="button" class="hud-btn" data-close="look">fechar <kbd>Esc</kbd></button>
+      </div>
+      <p class="outfits-sub">Cabelo novo abre quando o continente fecha. O traje muda a roupa, não o corpo.</p>
+      <div id="look-body"></div>
+    </div>
+  </div>
+
   <div id="shop" class="modal" role="dialog" aria-modal="true" aria-labelledby="shop-title" hidden>
     <div class="modal-card shop-card">
       <div class="modal-head">
@@ -312,19 +324,61 @@
     <div class="intro-card">
       <p class="intro-eyebrow">um blog jogável · edição 2026</p>
       <h1 id="intro-title">MUNDO<br>DE SONG</h1>
-      <p class="intro-lead">Sete continentes, 37 fragmentos. Cada estação é uma página com um instrumento para mexer: lógica, circuitos, processadores, infinito, cálculo, pêndulos, luz, átomos, harmonia, ritmo, redes neurais, português do Brasil e mais. Os NPCs dão missões, as caçadas dão itens e perícias, e a Rede liga você aos outros jogadores. Ande, clique no chão, segure Espaço para acender a nave e cruze o mapa voando baixo. O cartão de primeiros passos aparece no canto; siga ele se estiver perdido.</p>
-      <form id="intro-form" autocomplete="off">
-        <label for="intro-name">seu apelido</label>
-        <input id="intro-name" name="mundo-apelido" maxlength="16" placeholder="viajante" autocomplete="off" required>
-        <label for="intro-room">sala</label>
-        <input id="intro-room" maxlength="24" placeholder="praca" value="praca">
+      <p class="intro-lead">Sete continentes, 69 fragmentos: cada estação é uma página com um instrumento para mexer. Os NPCs dão missões, as caçadas dão itens e a Rede liga você aos outros. Ande, clique no chão e segure Espaço para cruzar o mapa voando baixo.</p>
+
+      <section id="intro-key-step" class="intro-step">
+        <div id="intro-saved" class="intro-saved" hidden>
+          <p><strong>chave guardada nesta máquina.</strong> Você entra direto, sem digitar nada.</p>
+          <div class="intro-row">
+            <button type="button" id="intro-continue" class="start">entrar</button>
+            <button type="button" id="intro-other" class="intro-link">usar outra chave</button>
+            <button type="button" id="intro-new-key" class="intro-link">criar uma chave nova</button>
+          </div>
+        </div>
+        <form id="intro-key-form" class="intro-form-stack" autocomplete="off" hidden>
+          <label for="intro-key">sua chave</label>
+          <input id="intro-key" name="mundo-chave" placeholder="cole sua chave aqui" autocomplete="off" spellcheck="false">
+          <button type="submit" class="start">entrar com esta chave</button>
+        </form>
+        <div id="intro-key-start" class="intro-row">
+          <button type="button" id="intro-create" class="start">criar uma chave nova</button>
+        </div>
+        <p class="intro-note">A chave é a sua conta: ela guarda o progresso, os itens e a conversa. <strong>Guardar nesta máquina</strong> evita digitar toda vez. Sem chave, dá para andar pelo mundo, mas sem a Rede.</p>
+        <button type="button" id="intro-skip" class="intro-link">entrar sem a Rede, só no mundo</button>
+      </section>
+
+      <section id="intro-new-step" class="intro-step" hidden>
+        <h2 class="intro-sub">Sua chave nova</h2>
+        <p class="intro-warn">Anote esta chave e guarde num lugar seguro. <strong>Quem perde a chave perde a conta</strong> e tudo que está nela: progresso, itens, missões e conversas. <strong>Quem pega a chave fica com tudo</strong>, sem precisar de mais nada. Não deixe em print, em chat nem em computador emprestado.</p>
+        <code id="intro-new-value" class="intro-key">—</code>
+        <div class="intro-row">
+          <button type="button" id="intro-copy-key" class="rede-mini">copiar chave</button>
+          <button type="button" id="intro-hide-key" class="rede-mini">esconder</button>
+        </div>
         <label class="check">
-          <input type="checkbox" id="intro-net" checked>
-          <span>entrar na praça compartilhada</span>
+          <input type="checkbox" id="intro-keep" checked>
+          <span>guardar a chave nesta máquina</span>
         </label>
-        <button type="submit" class="start">entrar no mundo</button>
-      </form>
-      <p class="intro-note">A sala é pública. Quem estiver nela vê seu apelido e sua posição. Sem servidor meu: presença por broker público, conversa por relays Nostr. Sua chave da Rede nasce neste navegador e nunca sai dele sem você mandar.</p>
+        <button type="button" id="intro-key-done" class="start">já guardei, continuar</button>
+      </section>
+
+      <section id="intro-look-step" class="intro-step" hidden>
+        <h2 class="intro-sub">Seu personagem</h2>
+        <form id="intro-form" autocomplete="off">
+          <label for="intro-name">seu apelido</label>
+          <input id="intro-name" name="mundo-apelido" maxlength="16" placeholder="viajante" autocomplete="off" required>
+          <div id="intro-look"></div>
+          <label for="intro-room">sala</label>
+          <input id="intro-room" maxlength="24" placeholder="praca" value="praca">
+          <label class="check">
+            <input type="checkbox" id="intro-net" checked>
+            <span>entrar na praça compartilhada</span>
+          </label>
+          <button type="submit" class="start">entrar no mundo</button>
+        </form>
+        <p class="intro-note">A sala é pública. Quem estiver nela vê seu apelido e sua posição. Sem servidor meu: presença por broker público, conversa por relays Nostr.</p>
+      </section>
+
       <p class="intro-controls"><kbd>WASD</kbd> andar · clique no chão · <kbd>Espaço</kbd> nave · <kbd>F</kbd> interagir · <kbd>Q</kbd> falar · <kbd>E</kbd> Rede · <kbd>Z</kbd> diário · <kbd>C</kbd> ficha</p>
     </div>
   </div>

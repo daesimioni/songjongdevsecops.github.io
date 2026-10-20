@@ -14,6 +14,9 @@ import { createSocial } from "./social.js";
 import { createBackup } from "./backup.js";
 import { createPvp } from "./pvp.js";
 import { OUTFITS, outfitById, outfitColors } from "./outfits.js";
+import { AVATAR_DEFAULT, normalizeAvatar, avatarColors, avatarCode } from "./avatar.js";
+import { renderCharacterEditor } from "./character.js";
+import { copyText } from "./social.js";
 import { isAdminKey } from "./admin.js";
 import { findPath, nearestWalkable } from "./path.js";
 import { feedPeer, peerRenderPosition } from "./interp.js";
@@ -79,6 +82,7 @@ const saved = {
 };
 
 const savedOutfit = outfitById(readJSON(STORAGE.outfit, "viajante"));
+const savedAvatar = normalizeAvatar(readJSON(STORAGE.avatar, null), AVATAR_DEFAULT);
 const player = {
   x: SPAWN.x,
   y: SPAWN.y,
@@ -86,7 +90,8 @@ const player = {
   moving: false,
   name: saved.name || "viajante",
   outfitId: savedOutfit.id,
-  colors: outfitColors(savedOutfit.id),
+  look: savedAvatar,
+  colors: { ...outfitColors(savedOutfit.id), ...avatarColors(savedAvatar) },
   bubble: null,
   boost: 0,
   pathLine: null,
@@ -104,6 +109,7 @@ const state = {
   modal: null,
   peers: [],
   net: null,
+  hasIdentity: false,
   nearest: null,
   room: sanitizeRoom(saved.room),
   lastContinent: null,
@@ -181,6 +187,7 @@ const sheetUi = createSheet({
   toast,
   audio,
   onOutfits: () => openOutfits(),
+  onLook: () => openLook(),
   onPetAbility: (res) => {
     const pet = res.pet?.name || "O bicho";
     if (res.effect === "cura") {
@@ -261,6 +268,7 @@ dungeon = createDungeon({
   onConurbation: () => openTravel("caves"),
   onPortal: (defId) => portalToCity(defId),
   avatar: player.colors,
+  look: player.look,
   onExit: ({ kind, dungeon: def, target }) => {
     rpg.setCave(false);
     if (kind === "death") return;
@@ -400,14 +408,30 @@ function bootSocial() {
     .catch(() => {});
 }
 
+// muda só o corpo: pele, cabelo e olhos nunca vêm do traje
+function applyLook(next) {
+  Object.assign(player.look, normalizeAvatar({ ...player.look, ...next }, player.look));
+  Object.assign(player.colors, avatarColors(player.look));
+  player.color = player.colors.shirt;
+  writeJSON(STORAGE.avatar, player.look);
+  state.net?.setLook?.(avatarCode(player.look));
+  renderer.kick(0.2);
+  return player.look;
+}
+
 function outfitUnlocked(outfit) {
   return outfit.continent === "hub" || provinceComplete(outfit.continent);
+}
+
+function hairOpen(continent) {
+  return provinceComplete(continent);
 }
 
 function applyOutfit(id) {
   const outfit = outfitById(id);
   if (!outfitUnlocked(outfit)) return false;
   Object.assign(player.colors, outfit.colors);
+  Object.assign(player.colors, avatarColors(player.look));
   player.outfitId = outfit.id;
   player.color = player.colors.shirt;
   writeJSON(STORAGE.outfit, outfit.id);
@@ -457,6 +481,24 @@ function openOutfits() {
   }
   body.appendChild(grid);
   openModal("outfits");
+  audio.open();
+}
+
+function openLook() {
+  if (!state.started) return;
+  stopSprint();
+  closeChat();
+  if (state.panelOpen) closePanel();
+  const mount = $("look-body");
+  if (!mount) return;
+  const draw = () => renderCharacterEditor(mount, {
+    look: player.look,
+    colors: player.colors,
+    isLocked: (continent) => !hairOpen(continent),
+    onChange: (patch) => { applyLook(patch); audio.blip(); draw(); },
+  });
+  draw();
+  openModal("look");
   audio.open();
 }
 
@@ -959,6 +1001,7 @@ function startNet() {
     name: player.name,
     color: player.color,
     outfit: player.outfitId,
+    look: avatarCode(player.look),
     onPeers: setPeers,
     onStatus: setNetStatus,
     onChat: (peer, text) => {
@@ -987,7 +1030,7 @@ function startGame() {
   $("room-label").textContent = `sala ${state.room}`;
   loadChatLog();
   player.continentId = "hub";
-  if ($("intro-net").checked) { startNet(); bootSocial(); } else setNetStatus({ state: "solo", count: 1 });
+  if ($("intro-net").checked && state.hasIdentity) { startNet(); bootSocial(); } else setNetStatus({ state: "solo", count: 1 });
   const first = !state.docks.has("hub");
   markDock("hub");
   state.lastContinent = "hub";
@@ -2088,6 +2131,120 @@ $("chat-input").addEventListener("keydown", (e) => {
   $("chat-form").requestSubmit();
 });
 
+// ---------- entrada: chave e personagem ----------
+let introKeyVisible = true;
+
+function showIntroStep(step) {
+  for (const name of ["key", "new", "look"]) {
+    const node = $(`intro-${name}-step`);
+    if (node) node.hidden = name !== step;
+  }
+  // a partir da chave o título encolhe: a tela é do personagem, não do cartaz
+  document.querySelector(".intro-card")?.classList.toggle("compact", step !== "key");
+  if (step === "look") renderIntroLook();
+}
+
+function renderIntroLook() {
+  const mount = $("intro-look");
+  if (!mount) return;
+  const draw = () => renderCharacterEditor(mount, {
+    look: player.look,
+    colors: player.colors,
+    isLocked: (continent) => !hairOpen(continent),
+    onChange: (patch) => { applyLook(patch); draw(); },
+  });
+  draw();
+}
+
+function revealKeyForm() {
+  $("intro-saved").hidden = true;
+  $("intro-key-form").hidden = false;
+  $("intro-key-start").hidden = false;
+  $("intro-key").focus();
+}
+
+function markIdentity(on) {
+  state.hasIdentity = on;
+  const net = $("intro-net");
+  if (net) {
+    net.disabled = !on;
+    if (!on) net.checked = false;
+  }
+}
+
+async function unlockIdentity(label) {
+  try {
+    await rede.init();
+  } catch {
+    toast("a Rede não respondeu agora. Dá para entrar só no mundo.", 4200);
+    return false;
+  }
+  markIdentity(true);
+  if (label) toast(label, 3600);
+  return true;
+}
+
+$("intro-continue").addEventListener("click", () => showIntroStep("look"));
+$("intro-other").addEventListener("click", revealKeyForm);
+
+$("intro-key-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const raw = $("intro-key").value.trim();
+  if (!raw) { $("intro-key").focus(); return; }
+  const button = e.submitter || $("intro-key-form").querySelector("button[type=submit]");
+  button.disabled = true;
+  const ok = await unlockIdentity();
+  if (!ok) { button.disabled = false; return; }
+  const res = await rede.importSecret(raw);
+  button.disabled = false;
+  if (!res.ok) { toast(res.reason || "essa chave não abriu.", 4200); return; }
+  $("intro-key").value = "";
+  toast("chave aceita. Sua conta voltou.", 3600);
+  showIntroStep("look");
+});
+
+async function createNewKey() {
+  const create = $("intro-create");
+  create.disabled = true;
+  const ok = await unlockIdentity();
+  if (!ok) { create.disabled = false; return; }
+  await rede.resetIdentity();
+  create.disabled = false;
+  introKeyVisible = true;
+  paintNewKey();
+  showIntroStep("new");
+}
+
+function paintNewKey() {
+  const value = rede.secret();
+  $("intro-new-value").textContent = introKeyVisible ? value : "chave escondida · toque em mostrar";
+  $("intro-hide-key").textContent = introKeyVisible ? "esconder" : "mostrar";
+}
+
+$("intro-create").addEventListener("click", createNewKey);
+$("intro-new-key").addEventListener("click", createNewKey);
+$("intro-hide-key").addEventListener("click", () => {
+  introKeyVisible = !introKeyVisible;
+  paintNewKey();
+});
+$("intro-copy-key").addEventListener("click", async () => {
+  const ok = await copyText(rede.secret());
+  toast(ok ? "chave copiada. Guarde fora de print e de chat." : "não deu para copiar. Anote na mão.", 4200);
+});
+$("intro-key-done").addEventListener("click", () => {
+  if (!$("intro-keep").checked) {
+    rede.forgetStored();
+    toast("a chave não foi guardada: nesta máquina ela vale só até fechar a aba.", 4600);
+  } else {
+    toast("chave guardada nesta máquina.", 3000);
+  }
+  showIntroStep("look");
+});
+$("intro-skip").addEventListener("click", () => {
+  markIdentity(false);
+  showIntroStep("look");
+});
+
 $("intro-form").addEventListener("submit", (e) => {
   e.preventDefault();
   const name = $("intro-name").value.trim().replace(/[<>\u0000-\u001f]/g, "").slice(0, 16);
@@ -2096,6 +2253,7 @@ $("intro-form").addEventListener("submit", (e) => {
   state.room = sanitizeRoom($("intro-room").value);
   writeJSON(STORAGE.name, name);
   writeJSON(STORAGE.room, state.room);
+  writeJSON(STORAGE.avatar, player.look);
   $("intro-room").value = state.room;
   startGame();
 });
@@ -2122,6 +2280,16 @@ window.addEventListener("beforeunload", () => {
   if (roomFromHash) state.room = roomFromHash;
   $("intro-name").value = saved.name || "";
   $("intro-room").value = state.room;
+  state.hasIdentity = rede.hasStoredKey();
+  $("intro-saved").hidden = !state.hasIdentity;
+  $("intro-key-form").hidden = state.hasIdentity;
+  $("intro-key-start").hidden = state.hasIdentity;
+  markIdentity(state.hasIdentity);
+  // as páginas de teste abrem com ?debug e não passam pela tela da chave:
+  // a chave nasce sozinha para a Rede continuar testável
+  if (!state.hasIdentity && new URLSearchParams(location.search).has("debug")) {
+    rede.init().then(() => markIdentity(rede.hasStoredKey())).catch(() => {});
+  }
   loadFog();
   world.markExplored(player.x, player.y);
   updateProgress();
