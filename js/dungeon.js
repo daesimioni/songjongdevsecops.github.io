@@ -398,6 +398,64 @@ function drawWaystone(ctx, x, y, t, accent) {
   ctx.restore();
 }
 
+function drawPortal(ctx, x, y, t, accent) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.fillStyle = "rgba(0,0,0,0.4)";
+  ctx.beginPath();
+  ctx.ellipse(0, 0, 15, 4, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = "#2a3048";
+  ctx.fillRect(-15, -30, 5, 30);
+  ctx.fillRect(10, -30, 5, 30);
+  ctx.fillRect(-15, -34, 30, 6);
+  ctx.fillStyle = "#0b1020";
+  ctx.fillRect(-10, -29, 20, 28);
+  const pulse = 0.35 + Math.sin(t * 0.003) * 0.2;
+  ctx.globalAlpha = pulse;
+  ctx.fillStyle = accent;
+  ctx.fillRect(-8, -27, 16, 25);
+  ctx.globalAlpha = pulse + 0.2;
+  ctx.strokeStyle = accent;
+  ctx.lineWidth = 1;
+  for (let i = 0; i < 3; i++) {
+    const yy = -24 + ((t * 0.02 + i * 8) % 22);
+    ctx.beginPath();
+    ctx.moveTo(-7, yy);
+    ctx.lineTo(7, yy - 3);
+    ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
+  ctx.fillStyle = accent;
+  ctx.fillRect(-17, -37, 3, 3);
+  ctx.fillRect(14, -37, 3, 3);
+  ctx.restore();
+}
+
+function drawTunnel(ctx, x, y, t, accent) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.fillStyle = "rgba(0,0,0,0.4)";
+  ctx.beginPath();
+  ctx.ellipse(0, 0, 12, 3.4, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = "#242a3c";
+  ctx.fillRect(-11, -16, 22, 16);
+  ctx.fillStyle = "#0a0d17";
+  ctx.beginPath();
+  ctx.arc(0, -15, 9, Math.PI, 0);
+  ctx.fill();
+  ctx.fillStyle = accent;
+  ctx.globalAlpha = 0.5 + Math.sin(t * 0.004) * 0.2;
+  ctx.fillRect(-7, -14, 2, 8);
+  ctx.fillRect(5, -14, 2, 8);
+  ctx.globalAlpha = 1;
+  ctx.fillStyle = "#3b4466";
+  ctx.fillRect(-12, -18, 4, 3);
+  ctx.fillRect(8, -18, 4, 3);
+  ctx.restore();
+}
+
 function drawKeeper(ctx, x, y, t, accent) {
   ctx.save();
   ctx.translate(x, y);
