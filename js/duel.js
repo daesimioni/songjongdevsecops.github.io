@@ -137,7 +137,11 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
       return;
     }
     const q = d.question;
-    body.appendChild(el("p", "duel-question", q.q));
+    const live = (d.partners || []).filter((p) => !p.done);
+    const cols = el("div", `duel-cols${live.length ? " has-partners" : ""}`);
+    const main = el("div", "duel-col main");
+    cols.appendChild(main);
+    main.appendChild(el("p", "duel-question", q.q));
     const opts = el("div", "duel-options");
     q.options.forEach((text, i) => {
       const b = el("button", "duel-option");
@@ -156,7 +160,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
       }
       opts.appendChild(b);
     });
-    body.appendChild(opts);
+    main.appendChild(opts);
 
     if (d.phase === "feedback") {
       const fb = d.feedback;
@@ -167,27 +171,33 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
         : `Errou. Você levou ${fb.damage} de dano.`;
       box.appendChild(el("b", "", fb.correct ? "Acertou." : wrong));
       box.appendChild(el("span", "", fb.why));
-      body.appendChild(box);
+      main.appendChild(box);
       const next = el("button", "duel-next", "continuar");
       next.type = "button";
       next.addEventListener("click", advance);
-      body.appendChild(next);
+      main.appendChild(next);
     } else {
       if (sparked === null && rpg.itemCount("runa-faisca") > 0) {
         const rune = el("button", "duel-rune", "faísca · elimina uma alternativa errada");
         rune.type = "button";
         rune.addEventListener("click", spark);
-        body.appendChild(rune);
+        main.appendChild(rune);
       }
       const foot = el("p", "duel-hint", "Toque numa alternativa (ou 1, 2 e 3 no teclado). Errar tira vida; acertar tira vida do monstro.");
-      body.appendChild(foot);
+      main.appendChild(foot);
     }
-    renderPartner(body, d);
+    if (live.length) {
+      const side = el("div", "duel-col extras");
+      side.appendChild(el("p", "duel-col-tag", `matilha · ${live.length} bicho${live.length > 1 ? "s" : ""} na mesma rodada`));
+      (d.partners || []).forEach((p, i) => {
+        if (!p.done) side.appendChild(partnerCard(p, i));
+      });
+      cols.appendChild(side);
+    }
+    body.appendChild(cols);
   }
 
-  function renderPartner(body, d) {
-    const p = d.partner;
-    if (!p || p.done) return;
+  function partnerCard(p, who) {
     const box = el("div", "duel-partner");
     const head = el("div", "duel-partner-head");
     head.append(el("span", "", "também está aqui"), el("b", "", p.monster.name));
@@ -199,9 +209,9 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
       fb.appendChild(el("b", "", p.feedback.correct ? "Acertou." : `Errou. Levou ${p.feedback.damage} de dano.`));
       fb.appendChild(el("span", "", p.feedback.why));
       box.appendChild(fb);
-      const next = el("button", "duel-next small", "continuar com o parceiro");
+      const next = el("button", "duel-next small", "continuar com este bicho");
       next.type = "button";
-      next.addEventListener("click", () => { rpg.partnerNext(); render(); });
+      next.addEventListener("click", () => { rpg.partnerNext(who); render(); });
       box.appendChild(next);
     } else {
       box.appendChild(el("p", "duel-question partner", p.question.q));
@@ -212,7 +222,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
         b.appendChild(el("kbd", "", String(i + 1)));
         b.appendChild(el("span", "", text));
         b.addEventListener("click", () => {
-          const res = rpg.answerPartner(i);
+          const res = rpg.answerPartner(i, who);
           if (!res?.ok) return;
           if (res.correct) audio.blip(); else audio.error?.();
           render();
@@ -221,7 +231,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
       });
       box.appendChild(opts);
     }
-    body.appendChild(box);
+    return box;
   }
 
   function renderEnd(body, d) {

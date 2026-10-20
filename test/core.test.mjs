@@ -263,6 +263,45 @@ duoHp.answerPartner(wrong2);
 assert.equal(duoHp.duel.phase, "defeat", "errar com o parceiro derruba");
 assert.equal(duoHp.hp(), duoHp.hpMax(), "respawn devolve a vida");
 
+// matilha: dois parceiros na mesma tela, uma coluna para cada bicho
+const trioRpg = new RPG({ getLevel: () => 1, gainXp: () => {}, toast: () => {}, audio: {} });
+const trioGround = { id: "trio-test", continent: "cs", name: "Matilha", dungeon: true, loot: ["parafuso", "chip", "fita"], bossLoot: "nucleo", material: "ferro" };
+const trio = trioRpg.startDuel(
+  { id: "trio-main", name: "Bit", kind: "slime", tier: 1, theme: "lógica" },
+  trioGround,
+  false,
+  [{ id: "trio-p1", name: "Olho", kind: "eye", tier: 1 }, { id: "trio-p2", name: "Golem", kind: "golem", tier: 3 }],
+);
+assert.equal(trio.ok, true, "duelo com matilha abre");
+assert.equal(trioRpg.duel.partners.length, 2, "dois parceiros entram juntos");
+assert.equal(trioRpg.duel.partners[1].hpMax, 3, "vida do terceiro bicho");
+for (let who = 0; who < 2; who++) {
+  for (let i = 0; i < 14 && !trioRpg.duel.partners[who].done; i++) {
+    const p = trioRpg.duel.partners[who];
+    if (p.feedback) trioRpg.partnerNext(who);
+    else trioRpg.answerPartner(p.question.answer, who);
+  }
+  assert.equal(trioRpg.duel.partners[who].done, true, `parceiro ${who + 1} cai`);
+}
+for (let i = 0; i < 10 && trioRpg.duel.phase !== "victory"; i++) {
+  if (trioRpg.duel.phase === "question") trioRpg.answer(trioRpg.duel.question.answer);
+  else trioRpg.next();
+}
+assert.equal(trioRpg.duel.phase, "victory", "matilha inteira cai");
+assert.ok(trioRpg.duel.result.xp >= 10 + 10 + 30, "XP soma os três monstros");
+assert.equal(trioRpg.duel.partners.every((p) => p.done), true, "os dois parceiros ficam derrotados");
+trioRpg.next();
+
+// lista de parceiros repetida ou morta é ignorada
+const trioFilter = new RPG({ getLevel: () => 1, gainXp: () => {}, toast: () => {}, audio: {} });
+const mainId = "filtro-main";
+trioFilter.startDuel({ id: mainId, name: "A", kind: "slime", tier: 1 }, trioGround, false, [
+  { id: mainId, name: "A de novo", kind: "slime", tier: 1 },
+  { id: "filtro-p1", name: "B", kind: "eye", tier: 1 },
+]);
+assert.equal(trioFilter.duel.partners.length, 1, "monstro repetido não vira parceiro");
+trioFilter.next();
+
 // save corrompido não vira save vazio sem deixar cópia
 const corruptKey = STORAGE.rpg;
 const goodRaw = store.get(corruptKey);

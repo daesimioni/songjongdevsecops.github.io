@@ -559,6 +559,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
     paused: false,
     alert: null,
     pack: [],
+    partnerMonsters: [],
     encounterLockUntil: 0,
     torchUntil: 0,
     altarAt: 0,
@@ -1382,7 +1383,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
     state.pack = state.monsters
       .filter((o) => o !== m && o.alive && !o.boss && canSeePlayer(o) && Math.hypot(o.x - state.player.x, o.y - state.player.y) < 5.5)
       .slice(0, 2);
-    if (state.pack.length) say(`Matilha: mais ${state.pack.length} bicho(s) entra(m) depois deste.`, 3200);
+    if (state.pack.length) say(`Matilha: ${state.pack.length} bicho(s) entram junto com este.`, 3200);
     state.paused = true;
     state.path = null;
     state.pending = null;
@@ -1400,10 +1401,10 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
       state.paused = false;
       return;
     }
-    // dois bichos na mesma janela perguntam juntos; três viram fila
-    const partner = state.pack.length === 1 ? state.pack.shift() : null;
-    state.partnerMonster = partner || null;
-    const ok = onEncounter?.(m, state.ground, !!m.boss, partner);
+    // até dois bichos da matilha entram juntos com o primeiro; o resto vira fila
+    const extras = m.boss ? [] : state.pack.splice(0, 2);
+    state.partnerMonsters = extras;
+    const ok = onEncounter?.(m, state.ground, !!m.boss, extras);
     if (!ok) {
       state.pendingMonster = null;
       state.paused = false;
@@ -1416,9 +1417,9 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
     const m = state.pendingMonster;
     state.pendingMonster = null;
     state.paused = false;
-    const partner = state.partnerMonster;
-    state.partnerMonster = null;
-    if (partner) {
+    const partners = state.partnerMonsters || [];
+    state.partnerMonsters = [];
+    for (const partner of partners) {
       if (!rpg.monsterAlive(partner.id)) {
         partner.alive = false;
         say(`${partner.name} também caiu na mesma rodada.`, 2800);

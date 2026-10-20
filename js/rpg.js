@@ -588,7 +588,9 @@ export class RPG {
     if (boss ? !this.bossAlive(ground) : !this.monsterAlive(monster.id)) {
       return { ok: false, reason: "Este monstro não está mais aqui." };
     }
-    if (partner && (!this.monsterAlive(partner.id) || partner.id === monster.id)) partner = null;
+    const extras = (Array.isArray(partner) ? partner : partner ? [partner] : [])
+      .filter((p) => p && p.id !== monster.id && this.monsterAlive(p.id))
+      .slice(0, 2);
     const tiers = boss ? [2, 3] : [monster.tier];
     const deck = this.buildDeck(ground.continent, tiers, monster?.theme || ground.theme);
     if (!deck.length) return { ok: false, reason: "As perguntas deste continente ainda não foram escritas." };
@@ -603,27 +605,27 @@ export class RPG {
       question: deck[0],
       monsterHp: hp,
       monsterHpMax: hp,
-      partner: null,
+      partners: [],
+      get partner() { return this.partners[0] || null; },
       phase: "question",
       feedback: null,
       result: null,
     };
-    if (partner) {
-      const ptier = clamp(Number(partner.tier) || 1, 1, 3);
-      const pdeck = this.buildDeck(ground.continent, [ptier], partner.theme || ground.theme);
-      if (pdeck.length) {
-        this.duel.partner = {
-          monster: partner,
-          tier: ptier,
-          deck: pdeck,
-          deckIndex: 0,
-          question: pdeck[0],
-          hp: TIERS[ptier].hp,
-          hpMax: TIERS[ptier].hp,
-          feedback: null,
-          done: false,
-        };
-      }
+    for (const p of extras) {
+      const ptier = clamp(Number(p.tier) || 1, 1, 3);
+      const pdeck = this.buildDeck(ground.continent, [ptier], p.theme || ground.theme);
+      if (!pdeck.length) continue;
+      this.duel.partners.push({
+        monster: p,
+        tier: ptier,
+        deck: pdeck,
+        deckIndex: 0,
+        question: pdeck[0],
+        hp: TIERS[ptier].hp,
+        hpMax: TIERS[ptier].hp,
+        feedback: null,
+        done: false,
+      });
     }
     return { ok: true, duel: this.duel };
   }
@@ -707,6 +709,8 @@ export class RPG {
       question: deck[0],
       monsterHp: hp,
       monsterHpMax: hp,
+      partners: [],
+      get partner() { return this.partners[0] || null; },
       phase: "question",
       feedback: null,
       result: null,
@@ -753,9 +757,9 @@ export class RPG {
     return { ok: true, correct, phase: d.phase, feedback: d.feedback, duel: d };
   }
 
-  answerPartner(index) {
+  answerPartner(index, who = 0) {
     const d = this.duel;
-    const p = d?.partner;
+    const p = d?.partners?.[who];
     if (!d || !p || p.done || p.feedback || d.phase !== "question") return { ok: false };
     const correct = Number(index) === p.question.answer;
     if (correct) {
@@ -767,7 +771,7 @@ export class RPG {
         this.data.monsters[p.monster.id] = now();
       }
       this.save();
-      return { ok: true, correct, partner: true, done: p.done };
+      return { ok: true, correct, partner: true, who, done: p.done };
     }
     const damage = TIERS[p.tier].damage;
     this.data.hp = Math.max(0, this.hp() - damage);
@@ -780,12 +784,12 @@ export class RPG {
     } else {
       this.save();
     }
-    return { ok: true, correct, partner: true, phase: d.phase };
+    return { ok: true, correct, partner: true, who, phase: d.phase };
   }
 
-  partnerNext() {
+  partnerNext(who = 0) {
     const d = this.duel;
-    const p = d?.partner;
+    const p = d?.partners?.[who];
     if (!d || !p || p.done) return null;
     if (!p.feedback) return { phase: d.phase, partner: p };
     p.feedback = null;
@@ -821,8 +825,7 @@ export class RPG {
       }
     }
     let xp = TIERS[tier].xp;
-    if (d.partner?.done) {
-      const p = d.partner;
+    for (const p of (d.partners || []).filter((x) => x.done)) {
       const ptier = p.tier;
       const pItem = ground.loot[Math.min(2, Math.max(0, ptier - 1))];
       if (pItem) { loot.push({ id: pItem, qty: 1 }); this.addItem(pItem, 1); }

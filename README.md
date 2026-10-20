@@ -100,11 +100,14 @@ frente do boneco cobre o corpo dele em vez de ficar sempre atrás.
 
 ## Matilha e runa
 
-Quando dois monstros veem você na mesma janela, os dois perguntam **na mesma
-tela**: uma pergunta para cada, vida separada, e o parceiro pode cair antes do
-principal. A vitória soma o XP e o loot dos dois. Com três, o primeiro par vem
-junto e o terceiro entra na fila; o HUD mostra `matilha N` enquanto houver fila.
-Fugir limpa a fila; o risco é do bicho que está na frente.
+Quando até três monstros veem você na mesma janela, todos perguntam **na mesma
+tela**, em duas colunas: o principal à esquerda e a matilha à direita, cada
+bicho com a própria pergunta e a própria vida. Cada um pode cair antes dos
+outros, e a vitória soma o XP e o loot de todos. Com mais de três na janela, os
+dois primeiros acompanham o principal e o resto entra na fila; o HUD mostra
+`matilha N` enquanto houver fila. Fugir limpa a fila; o risco é do bicho que
+está na frente. No celular as colunas empilham, mas as perguntas continuam
+juntas.
 
 A **Runa da Faísca**, feita na forja (veio 2, erva 1), é a magia de bolso do
 duelo: gasta a runa e elimina uma alternativa errada da pergunta atual. Uma por
