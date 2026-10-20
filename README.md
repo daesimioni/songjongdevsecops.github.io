@@ -112,12 +112,12 @@ ou parede na frente do boneco cobre o corpo dele em vez de ficar sempre atrás.
 
 ## Matilha e magias
 
-Quando até três monstros veem você na mesma janela, todos perguntam **na mesma
-tela**, em duas colunas: o principal à esquerda e a matilha à direita, cada
-bicho com a própria pergunta e a própria vida. Cada um pode cair antes dos
-outros, e a vitória soma o XP e o loot de todos. Com mais de três na janela, os
-dois primeiros acompanham o principal e o resto entra na fila; o HUD mostra
-`matilha N` enquanto houver fila. Fugir limpa a fila; o risco é do bicho que
+Quando até quatro monstros veem você na mesma janela, todos perguntam **na
+mesma tela**, em duas colunas: o principal à esquerda e a matilha à direita,
+cada bicho com a própria pergunta e a própria vida. Cada um pode cair antes dos
+outros, e a vitória soma o XP e o loot de todos. Com mais de quatro na janela,
+três acompanham o principal e o resto entra na fila; o HUD mostra `matilha N`
+enquanto houver fila. Fugir limpa a fila; o risco é do bicho que
 está na frente. No celular as colunas empilham, mas as perguntas continuam
 juntas.
 
@@ -132,8 +132,11 @@ A barra de **magias** do duelo tem seis runas forjáveis (forja da cidade):
 | cura | recupera 12 de vida | erva 2, veio 1 |
 | espelho | o próximo erro não tira vida | veio 3, erva 1 |
 
-Cada uso gasta uma runa; a barra mostra quantas restam. Fora do duelo a runa
-volta para a mochila em vez de desaparecer.
+Cada uso gasta uma runa; a barra mostra quantas restam. A primeira carga de
+uma runa **ensina a magia**: quando as cargas acabam, ela continua saindo por
+mana (2 a 4), a mesma mana que alimenta as habilidades dos bichos. Runas
+aprendidas aparecem na barra com o custo em mana em vez da carga. Fora do
+duelo a runa volta para a mochila em vez de desaparecer.
 
 ## Nave, traje e equipamento
 

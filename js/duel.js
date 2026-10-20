@@ -58,14 +58,14 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
     timer = null;
   }
 
-  const SPELLS = [
-    ["runa-faisca", "faísca · elimina uma alternativa"],
-    ["runa-trovao", "trovão · 2 de dano no da frente"],
-    ["runa-fogo", "fogo · 1 de dano em todos"],
-    ["runa-gelo", "gelo · passa a pergunta"],
-    ["runa-cura", "cura · recupera 12"],
-    ["runa-espelho", "espelho · o próximo erro não dói"],
-  ];
+  const SPELL_LABELS = {
+    "runa-faisca": "faísca · risca uma alternativa",
+    "runa-trovao": "trovão · 2 de dano no da frente",
+    "runa-fogo": "fogo · 1 de dano em todos",
+    "runa-gelo": "gelo · passa a pergunta",
+    "runa-cura": "cura · recupera 12",
+    "runa-espelho": "espelho · o próximo erro não dói",
+  };
 
   function open(monster, ground, boss = false, partner = null) {
     const res = rpg.startDuel(monster, ground, boss, partner);
@@ -208,14 +208,18 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
         pb.addEventListener("click", usePet);
         main.appendChild(pb);
       }
-      const runes = SPELLS.filter(([id]) => rpg.itemCount(id) > 0);
+      const runes = rpg.spellbarView();
       if (runes.length) {
         const bar = el("div", "duel-spells");
-        for (const [id, label] of runes) {
-          const rune = el("button", "duel-rune", `${label} · ${rpg.itemCount(id)}`);
+        for (const spell of runes) {
+          const label = SPELL_LABELS[spell.id] || spell.name;
+          const cost = spell.charges
+            ? `${spell.charges} carga${spell.charges > 1 ? "s" : ""}`
+            : `${spell.mana} mana`;
+          const rune = el("button", "duel-rune", `${label} · ${cost}`);
           rune.type = "button";
-          if (id === "runa-faisca" && sparked.length > 0) rune.disabled = true;
-          rune.addEventListener("click", () => castSpell(id));
+          if (spell.id === "runa-faisca" && sparked.length > 0) rune.disabled = true;
+          rune.addEventListener("click", () => castSpell(spell.id));
           bar.appendChild(rune);
         }
         main.appendChild(bar);
@@ -325,9 +329,10 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
   function castSpell(id) {
     if (!rpg.duel || rpg.duel.phase !== "question") return false;
     if (id === "runa-faisca") return spark();
-    const res = rpg.useItem(id);
+    const res = rpg.castSpell(id);
     if (!res.ok) { toast(res.reason, 2800); return false; }
     audio.blip();
+    if (res.healed) toast(`A runa curou ${res.healed} de vida.`, 2400);
     if (rpg.duel.phase === "victory") {
       audio.chime();
       if (!rpg.duel.training) onVictory?.();
@@ -338,7 +343,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
 
   function spark() {
     if (!rpg.duel || rpg.duel.phase !== "question" || sparked.length) return false;
-    const res = rpg.useItem("runa-faisca");
+    const res = rpg.castSpell("runa-faisca");
     if (!res.ok) { toast(res.reason, 2800); return false; }
     const q = rpg.duel.question;
     const wrong = q.options.map((_, i) => i).filter((i) => i !== q.answer);

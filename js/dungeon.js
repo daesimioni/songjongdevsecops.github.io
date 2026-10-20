@@ -1417,7 +1417,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
     rpg.noteMonster?.(m);
     state.pack = state.monsters
       .filter((o) => o !== m && o.alive && !o.boss && canSeePlayer(o) && Math.hypot(o.x - state.player.x, o.y - state.player.y) < 3.6)
-      .slice(0, 2);
+      .slice(0, 3);
     if (state.pack.length) say(`Matilha: ${state.pack.length} bicho(s) entram junto com este.`, 3200);
     state.paused = true;
     state.path = null;
@@ -1436,8 +1436,8 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onExit, onKeep
       state.paused = false;
       return;
     }
-    // até dois bichos da matilha entram juntos com o primeiro; o resto vira fila
-    const extras = m.boss ? [] : state.pack.splice(0, 2);
+    // até três bichos da matilha entram juntos com o primeiro; o resto vira fila
+    const extras = m.boss ? [] : state.pack.splice(0, 3);
     state.partnerMonsters = extras;
     state.duelMonster = m;
     const ok = onEncounter?.(m, state.ground, !!m.boss, extras);

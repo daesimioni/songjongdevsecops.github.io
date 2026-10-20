@@ -67,6 +67,7 @@ export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onUs
     manaFill.style.width = `${manaMax ? Math.round((mana / manaMax) * 100) : 0}%`;
     manaBar.appendChild(manaFill);
     body.append(manaLabel, manaBar);
+    body.appendChild(el("p", "company-hint", "mana paga as habilidades do bicho ativo; runa é carga guardada, gasta uma por uso."));
 
     const company = el("div", "company");
     const pet = rpg.activePet();

@@ -11,6 +11,15 @@ const BOSS_RESPAWN_MS = 20 * 60 * 1000;
 const MAX_SKILL_XP = 50;
 const SKILL_STEP = 5;
 const BUFF_NAMES = { speed: "passos rápidos", damage: "dano extra", maxhp: "vida extra" };
+// custo em mana de cada runa aprendida; sem carga guardada, é por aqui que ela sai
+const SPELL_MANA = {
+  "runa-faisca": 2,
+  "runa-trovao": 3,
+  "runa-fogo": 4,
+  "runa-gelo": 3,
+  "runa-cura": 3,
+  "runa-espelho": 2,
+};
 const PET_ABILITY_IDS = new Set(Object.values(PETS).map((pet) => pet.ability.id));
 
 // Palavras que aproximam a pergunta do tema da sala. O tema vem do mapa; a
@@ -73,6 +82,7 @@ function emptyData() {
     bosses: {},
     levers: {},
     enchants: {},
+    spells: {},
     buffs: {},
     pets: {},
     petActive: null,
@@ -112,6 +122,9 @@ function readData() {
     }
     for (const enchant of ENCHANTS) {
       if (obj.enchants?.[enchant.id]) data.enchants[enchant.id] = true;
+    }
+    for (const id of Object.keys(SPELL_MANA)) {
+      if (obj.spells?.[id]) data.spells[id] = true;
     }
     for (const [id, at] of Object.entries(obj.buffs || {})) {
       if (BUFF_NAMES[id] && Number.isFinite(at) && at > now()) data.buffs[id] = at;
@@ -647,6 +660,79 @@ export class RPG {
     return this.data.items[id] || 0;
   }
 
+  // efeito da runa, sem cobrar item nem mana: quem chama cuida do custo
+  applyRune(id) {
+    const item = ITEMS[id];
+    const d = this.duel;
+    if (id === "runa-faisca") return { ok: true, spark: true, name: item.name };
+    if (id === "runa-cura") {
+      const healed = this.heal(12);
+      return { ok: true, healed, name: item.name };
+    }
+    if (id === "runa-espelho") {
+      d.shield = true;
+      return { ok: true, shield: true, name: item.name };
+    }
+    if (id === "runa-gelo") {
+      d.feedback = { correct: true, spell: item.name, damage: 0, why: "O gelo segurou o tempo: a pergunta passou sem resposta e sem dano." };
+      d.phase = "feedback";
+      return { ok: true, name: item.name };
+    }
+    // trovão acerta o da frente; fogo passa por todos, matilha incluída
+    const dmg = id === "runa-fogo" ? 1 : 2;
+    d.monsterHp = Math.max(0, d.monsterHp - dmg);
+    if (id === "runa-fogo") {
+      for (const p of d.partners || []) {
+        if (p.done) continue;
+        p.hp = Math.max(0, p.hp - dmg);
+        if (p.hp <= 0) {
+          p.done = true;
+          this.data.monsters[p.monster.id] = now();
+        }
+      }
+    }
+    d.feedback = {
+      correct: true,
+      spell: item.name,
+      damage: 0,
+      why: id === "runa-fogo" ? "O fogo passou por todos os bichos da tela." : "O trovão bateu no monstro da frente.",
+    };
+    if (d.monsterHp <= 0) {
+      d.phase = "victory";
+      d.result = this.victory(d);
+    } else {
+      d.phase = "feedback";
+    }
+    return { ok: true, name: item.name, victory: d.phase === "victory" };
+  }
+
+  // sem carga, mas com a runa aprendida, a magia sai por mana
+  castSpell(id) {
+    if (!ITEMS[id] || !SPELL_MANA[id]) return { ok: false, reason: "Essa magia não existe." };
+    if (this.itemCount(id) > 0) return this.useItem(id);
+    if (!this.data.spells[id]) return { ok: false, reason: "Você ainda não aprendeu essa runa. Forje uma na forja." };
+    const d = this.duel;
+    if (!d || d.phase !== "question") return { ok: false, reason: "A runa só funciona na pergunta de um duelo." };
+    if (id === "runa-espelho" && d.shield) return { ok: false, reason: "O espelho já está armado." };
+    this.pulse();
+    const cost = SPELL_MANA[id];
+    if (this.mana() < cost) return { ok: false, reason: `Falta mana (${this.mana()}/${cost}).` };
+    this.data.mana = clamp(this.mana() - cost, 0, this.manaMax());
+    const res = this.applyRune(id);
+    this.save();
+    return { ...res, manaCost: cost };
+  }
+
+  spellbarView() {
+    return Object.keys(SPELL_MANA).map((id) => ({
+      id,
+      name: ITEMS[id]?.name || id,
+      mana: SPELL_MANA[id],
+      charges: this.itemCount(id),
+      learned: !!this.data.spells[id],
+    })).filter((spell) => spell.learned || spell.charges > 0);
+  }
+
   useItem(id) {
     const item = ITEMS[id];
     const rune = id.startsWith("runa-");
@@ -672,53 +758,11 @@ export class RPG {
       if (id === "runa-espelho" && d.shield) return { ok: false, reason: "O espelho já está armado." };
       this.data.items[id]--;
       if (this.data.items[id] <= 0) delete this.data.items[id];
-      if (id === "runa-faisca") {
-        this.save();
-        return { ok: true, spark: true, name: item.name };
-      }
-      if (id === "runa-cura") {
-        const healed = this.heal(12);
-        this.save();
-        return { ok: true, healed, name: item.name };
-      }
-      if (id === "runa-espelho") {
-        d.shield = true;
-        this.save();
-        return { ok: true, shield: true, name: item.name };
-      }
-      if (id === "runa-gelo") {
-        d.feedback = { correct: true, spell: item.name, damage: 0, why: "O gelo segurou o tempo: a pergunta passou sem resposta e sem dano." };
-        d.phase = "feedback";
-        this.save();
-        return { ok: true, name: item.name };
-      }
-      // trovão acerta o da frente; fogo passa por todos, matilha incluída
-      const dmg = id === "runa-fogo" ? 1 : 2;
-      d.monsterHp = Math.max(0, d.monsterHp - dmg);
-      if (id === "runa-fogo") {
-        for (const p of d.partners || []) {
-          if (p.done) continue;
-          p.hp = Math.max(0, p.hp - dmg);
-          if (p.hp <= 0) {
-            p.done = true;
-            this.data.monsters[p.monster.id] = now();
-          }
-        }
-      }
-      d.feedback = {
-        correct: true,
-        spell: item.name,
-        damage: 0,
-        why: id === "runa-fogo" ? "O fogo passou por todos os bichos da tela." : "O trovão bateu no monstro da frente.",
-      };
-      if (d.monsterHp <= 0) {
-        d.phase = "victory";
-        d.result = this.victory(d);
-      } else {
-        d.phase = "feedback";
-      }
+      // usar a carga também ensina a magia: depois dela, dá para repetir por mana
+      this.data.spells[id] = true;
+      const res = this.applyRune(id);
       this.save();
-      return { ok: true, name: item.name, victory: d.phase === "victory" };
+      return res;
     }
     // comida com efeito pode ser usada de vida cheia: o buff ainda vale
     if (!item.buff && this.hp() >= this.hpMax()) return { ok: false, reason: "Sua vida já está cheia." };
@@ -776,6 +820,7 @@ export class RPG {
       if (this.data.items[id] <= 0) delete this.data.items[id];
     }
     this.addItem(recipe.out, recipe.qty);
+    if (String(recipe.out).startsWith("runa-")) this.data.spells[recipe.out] = true;
     return { ok: true, recipe, item: ITEMS[recipe.out] };
   }
 
@@ -951,7 +996,7 @@ export class RPG {
     }
     const extras = (Array.isArray(partner) ? partner : partner ? [partner] : [])
       .filter((p) => p && p.id !== monster.id && this.monsterAlive(p.id))
-      .slice(0, 2);
+      .slice(0, 3);
     const deck = this.duelDeck(ground.continent, boss ? 3 : monster.tier, monster?.theme || ground.theme);
     if (!deck.length) return { ok: false, reason: "As perguntas deste continente ainda não foram escritas." };
     const hp = boss ? TIERS[4].hp : TIERS[monster.tier].hp;

@@ -306,6 +306,36 @@ assert.ok(trioRpg.duel.result.xp >= 10 + 10 + 30, "XP soma os três monstros");
 assert.equal(trioRpg.duel.partners.every((p) => p.done), true, "os dois parceiros ficam derrotados");
 trioRpg.next();
 
+// quatro bichos: três parceiros na mesma tela
+const quadRpg = new RPG({ getLevel: () => 1, gainXp: () => {}, toast: () => {}, audio: {} });
+const quad = quadRpg.startDuel(
+  { id: "quad-main", name: "Bit", kind: "slime", tier: 1, theme: "lógica" },
+  trioGround,
+  false,
+  [
+    { id: "quad-p1", name: "Olho", kind: "eye", tier: 1 },
+    { id: "quad-p2", name: "Golem", kind: "golem", tier: 2 },
+    { id: "quad-p3", name: "Morcego", kind: "bat", tier: 3 },
+  ],
+);
+assert.equal(quad.ok, true, "duelo com quatro bichos abre");
+assert.equal(quadRpg.duel.partners.length, 3, "três parceiros entram juntos");
+for (let who = 0; who < 3; who++) {
+  for (let i = 0; i < 70 && !quadRpg.duel.partners[who].done; i++) {
+    const p = quadRpg.duel.partners[who];
+    if (p.feedback) quadRpg.partnerNext(who);
+    else quadRpg.answerPartner(p.question.answer, who);
+  }
+  assert.equal(quadRpg.duel.partners[who].done, true, `parceiro ${who + 1} de quatro cai`);
+}
+for (let i = 0; i < 40 && quadRpg.duel.phase !== "victory"; i++) {
+  if (quadRpg.duel.phase === "question") quadRpg.answer(quadRpg.duel.question.answer);
+  else quadRpg.next();
+}
+assert.equal(quadRpg.duel.phase, "victory", "os quatro caem");
+assert.ok(quadRpg.duel.result.xp >= 10 + 10 + 18 + 30, "XP soma os quatro monstros");
+quadRpg.next();
+
 // lista de parceiros repetida ou morta é ignorada
 const trioFilter = new RPG({ getLevel: () => 1, gainXp: () => {}, toast: () => {}, audio: {} });
 const mainId = "filtro-main";
@@ -381,6 +411,31 @@ spellRpg.next();
 spellRpg.useItem("runa-fogo");
 assert.equal(spellRpg.duel.partners[0].done, true, "terceiro fogo derruba o parceiro de vida 3");
 assert.equal(spellRpg.monsterAlive("runa-p1"), false, "parceiro queimado fica derrotado");
+spellRpg.duel = null;
+
+// a primeira carga ensina a runa; sem carga, ela sai por mana
+spellRpg.data.items = {};
+spellRpg.data.spells = {};
+spellRpg.data.mana = 10;
+spellRpg.addItem("runa-gelo", 1);
+spellRpg.startDuel(spellMain("runa-main-7", 2), spellGround, false);
+const chargeCast = spellRpg.castSpell("runa-gelo");
+assert.equal(chargeCast.ok, true, "carga da runa funciona");
+assert.equal(spellRpg.itemCount("runa-gelo"), 0, "cast com carga gasta o item");
+assert.equal(spellRpg.data.spells["runa-gelo"], true, "usar a carga aprende a magia");
+assert.equal(spellRpg.mana(), 10, "carga guardada não custa mana");
+spellRpg.next();
+const manaCast = spellRpg.castSpell("runa-gelo");
+assert.equal(manaCast.ok, true, "sem carga, a runa sai por mana");
+assert.equal(manaCast.manaCost, 3, "gelo custa 3 de mana");
+assert.equal(spellRpg.mana(), 7, "mana foi descontada");
+spellRpg.next();
+spellRpg.data.mana = 1;
+const semMana = spellRpg.castSpell("runa-gelo");
+assert.equal(semMana.ok, false, "sem mana a runa não sai");
+assert.equal(spellRpg.itemCount("runa-cura"), 0, "runa não aprendida e sem carga não inventa item");
+const semAprender = spellRpg.castSpell("runa-cura");
+assert.equal(semAprender.ok, false, "runa não aprendida não sai por mana");
 spellRpg.duel = null;
 
 // runa fora do duelo volta para a mochila, nao some
