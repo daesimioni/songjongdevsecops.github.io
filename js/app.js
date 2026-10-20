@@ -597,12 +597,22 @@ function openSheet() {
   audio.open();
 }
 
+let assinaturaMagias = "";
 function updateSpellbar() {
   const bar = $("spellbar");
   if (!bar) return;
   const magias = rpg.spellbarView();
   state.spells = magias;
-  if (!magias.length) { bar.hidden = true; bar.textContent = ""; return; }
+  if (!magias.length) {
+    if (bar.hidden) return;
+    bar.hidden = true;
+    bar.textContent = "";
+    assinaturaMagias = "";
+    return;
+  }
+  const assinatura = magias.map((m) => `${m.id}:${m.charges}:${m.learned ? 1 : 0}`).join("|");
+  if (!bar.hidden && assinatura === assinaturaMagias) return;
+  assinaturaMagias = assinatura;
   bar.hidden = false;
   bar.textContent = "";
   magias.slice(0, 6).forEach((magia, i) => {
@@ -2841,6 +2851,7 @@ window.addEventListener("beforeunload", () => {
   if (splash) {
     if (new URLSearchParams(location.search).has("debug")) {
       splash.hidden = true;
+      $("intro").inert = false;
     } else {
       stopTitle = startTitle($("splash-canvas"));
       splashEnter?.focus({ preventScroll: true });
@@ -2853,6 +2864,7 @@ window.addEventListener("beforeunload", () => {
     setTimeout(() => {
       splash.hidden = true;
       splash.classList.remove("saindo");
+      $("intro").inert = false;
       stopTitle();
       const alvo = !$("intro-saved").hidden ? $("intro-continue") : $("intro-create");
       alvo?.focus({ preventScroll: true });
