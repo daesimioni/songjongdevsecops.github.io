@@ -3,7 +3,7 @@
 No ar em <https://songjongdevsecops.github.io/>.
 
 Um blog pessoal que se atravessa a pé. O site é um arquipélago em pixel art:
-você entra com um boneco, cruza pontes e encontra 39 estações. Cada estação é
+você entra com um boneco, cruza pontes e encontra 41 estações. Cada estação é
 uma página com um texto curto e um instrumento interativo.
 
 ## O arquipélago
@@ -198,11 +198,15 @@ caverna só dela, com chefe, material e equipamento. A primeira área pronta é 
 a Oficina da Indução e a Torre de Maxwell, o NPC Faraday com missão, a Caçada
 dos Circuitos e as Galerias do Eletromagneto.
 
+A segunda área pronta é a **Computação · Arquitetura de Computadores**, na
+costa leste: Sala do Pipeline, Oficina dos Registradores, Von Neumann com
+missão, Caçada das Instruções e a Galeria das Instruções.
+
 A ideia é que cada área cresça até ter o tamanho de um continente de hoje. A
 estrutura já é a mesma: a área é declarada em `AREAS` (em `js/config.js`), as
 estações entram em `SITES`, a caçada em `GROUNDS` com o campo `dungeon`, e a
 caverna em `dungeon-data.js`. O resto (instrutor, bocas, caminho, viagem) o
-mundo monta sozinho.
+mundo monta sozinho, e a pedra da área aparece na lista de viagem.
 
 ## As cavernas
 
@@ -406,9 +410,9 @@ chefe sem alavanca, a forja, os encantamentos, a comida com efeito, o bicho e a
 pergunta que casa com o tema. O duelo entre jogadores entra pela mesma prova: as
 cinco cartas, a dificuldade que vira dano e a compostura.
 
-A segunda confere o conteúdo inteiro: as 39 estações e seus textos, falas de NPC,
+A segunda confere o conteúdo inteiro: as 41 estações e seus textos, falas de NPC,
 24 missões, itens, equipamento, relíquias por continente, receitas, encantos, as
-163 perguntas (sem repetição e com resposta válida), as cinco cartas do PvP por
+171 perguntas (sem repetição e com resposta válida), as cinco cartas do PvP por
 continente, as seis cavernas e o mundo montado (seis instrutores, doze bocas,
 nenhum monstro na superfície).
 
@@ -451,14 +455,14 @@ Depois abra `http://localhost:8000`.
 | `js/pvp.js` | o duelo de perguntas entre jogadores |
 | `js/social.js` | janela da Rede: canais, DMs, pessoas e conta |
 | `js/audio.js` | síntese, ambiente e sequenciador |
-| `js/content.js` | os 39 textos e as falas dos NPCs |
+| `js/content.js` | os 41 textos e as falas dos NPCs |
 | `js/config.js` | mapa, continentes, estações, pedras e cores |
 | `js/data/elements.js` | os 36 elementos da tabela periódica |
 | `js/zones/` | os instrumentos interativos de cada região |
 | `wasm/julia.wat` | fonte do módulo WebAssembly do conjunto de Julia |
 | `wasm/julia.wasm` | o módulo compilado, de 296 bytes |
 | `test/core.test.mjs` | conferência de missões, RPG, treino, fuga, duelo PvP e caverna |
-| `test/content.test.mjs` | conferência das 39 estações, perguntas, itens, cavernas, áreas e mundo |
+| `test/content.test.mjs` | conferência das 41 estações, perguntas, itens, cavernas, áreas e mundo |
 | `test/ui.test.mjs` | conferência de ids, imports, botões, rótulos e aria |
 | `test/backup.test.mjs` | envelope do backup, whitelist, dedupe e restauração |
 

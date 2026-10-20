@@ -1,6 +1,6 @@
 export const TILE = 16;
-export const MAP_W = 180;
-export const MAP_H = 120;
+export const MAP_W = 300;
+export const MAP_H = 200;
 export const WORLD_W = MAP_W * TILE;
 export const WORLD_H = MAP_H * TILE;
 
@@ -182,6 +182,17 @@ export const AREAS = [
     floor: 19,
     path: 15,
     accent: "#ffb26b",
+  },
+  {
+    id: "cs-arch",
+    continent: "cs",
+    name: "Área da Arquitetura de Computadores",
+    land: { cx: 204, cy: 20, rx: 26, ry: 14 },
+    rect: { x: 178, y: 6, w: 52, h: 28 },
+    base: 10,
+    floor: 11,
+    path: 11,
+    accent: "#61f4c0",
   },
 ];
 
@@ -398,6 +409,18 @@ export const SITES = [
     label: "Ondas Eletromagnéticas", x: 164, y: 107, post: "maxwell",
     accent: "#6bd5ff", icon: "wave",
   },
+
+  // Computação · área da arquitetura
+  {
+    id: "pipeline", continent: "cs", name: "Sala do Pipeline",
+    label: "Ciclo de Instrução", x: 192, y: 15, post: "pipeline",
+    accent: "#61f4c0", icon: "cpu",
+  },
+  {
+    id: "registers", continent: "cs", name: "Oficina dos Registradores",
+    label: "Registradores e Memória", x: 214, y: 25, post: "registers",
+    accent: "#6bd5ff", icon: "chip",
+  },
 ];
 
 export const WAYSTONES = [
@@ -410,6 +433,7 @@ export const WAYSTONES = [
   { id: "ai", continent: "ai", name: "Farol da IA", x: 122, y: 32, accent: "#6bd5ff" },
   { id: "lingua", continent: "lingua", name: "Farol da Língua", x: 29, y: 103, accent: "#e8c07a" },
   { id: "physics-em", continent: "physics", name: "Farol do Eletromagnetismo", x: 152, y: 104, accent: "#ffb26b" },
+  { id: "cs-arch", continent: "cs", name: "Farol da Arquitetura", x: 204, y: 25, accent: "#61f4c0" },
 ];
 
 export const NPC_SPAWNS = [
@@ -429,6 +453,7 @@ export const NPC_SPAWNS = [
   { id: "shannon", continent: "ai", x: 135, y: 31, accent: "#8fe3ff" },
   { id: "alzira", continent: "lingua", x: 33, y: 102, accent: "#e8c07a" },
   { id: "faraday", continent: "physics", x: 146, y: 111, accent: "#ffb26b" },
+  { id: "vonneumann", continent: "cs", x: 196, y: 29, accent: "#61f4c0" },
 ];
 
 export const CAT_SPAWN = { x: 87, y: 61 };

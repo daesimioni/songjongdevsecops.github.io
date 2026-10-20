@@ -161,6 +161,7 @@ export function createWorld() {
   bridgeLine(66, 94, 40, 83, 3, BRIDGE); // sul e esquerda
   bridgeLine(43, 108, 74, 112, 3, BRIDGE); // sul e vale da língua
   bridgeLine(112, 104, 136, 104, 3, BRIDGE); // física e eletromagnetismo
+  bridgeLine(154, 22, 180, 22, 3, BRIDGE); // nordeste e arquitetura
   // encontros de ponte com terra
   rect(88, 30, 5, 4, CONTINENTS.cs.path);
   rect(88, 88, 5, 4, CONTINENTS.physics.path);
@@ -176,6 +177,8 @@ export function createWorld() {
   rect(73, 111, 4, 4, CONTINENTS.physics.path);
   rect(110, 103, 4, 4, CONTINENTS.physics.path);
   rect(134, 103, 4, 4, CONTINENTS.physics.path);
+  rect(152, 21, 4, 4, CONTINENTS.ai.path);
+  rect(178, 21, 4, 4, CONTINENTS.cs.path);
   rect(76, 47, 4, 4, CONTINENTS.hub.floor);
   rect(101, 47, 4, 4, CONTINENTS.hub.floor);
 

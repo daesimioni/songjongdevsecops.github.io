@@ -582,6 +582,38 @@ export const POSTS = {
       <blockquote>O céu inteiro é uma conversa de campos. Os olhos ouviram só uma faixa.</blockquote>
     `,
   },
+
+  // ---------------- Computação · arquitetura ----------------
+  pipeline: {
+    kicker: "computação · sala do pipeline",
+    title: "O ciclo que não para",
+    date: "2026-09-20",
+    read: "5 min",
+    tags: ["arquitetura", "pipeline", "processador"],
+    continent: "cs",
+    lab: null,
+    body: `
+      <p>Toda instrução passa por um ciclo: buscar, decodificar, executar e gravar o resultado. Se cada etapa esperasse a anterior terminar, a CPU passaria a maior parte do tempo parada. O <strong>pipeline</strong> resolve isso deixando etapas de instruções diferentes rodarem ao mesmo tempo.</p>
+      <p>Enquanto a instrução 1 executa, a 2 decodifica e a 3 busca. É como uma linha de montagem: o carro não fica pronto mais rápido, mas um carro sai por minuto em vez de um por hora. O ganho depende de manter a linha cheia.</p>
+      <p>O problema aparece no desvio: se a instrução 3 é um salto, as instruções já buscadas podem estar erradas. O processador aposta num caminho e, se errar, descarta o trabalho. Quem programa pensando em previsão de desvio economiza ciclos sem perceber.</p>
+      <blockquote>A linha anda mesmo quando você não vê: cada etapa trabalha numa instrução diferente.</blockquote>
+    `,
+  },
+  registers: {
+    kicker: "computação · oficina dos registradores",
+    title: "O lugar onde o número mora",
+    date: "2026-09-16",
+    read: "5 min",
+    tags: ["memória", "registradores", "cache"],
+    continent: "cs",
+    lab: null,
+    body: `
+      <p>Existe uma escada de memória no computador. Os registradores ficam dentro da CPU e respondem no mesmo ciclo; a cache fica ao lado e responde em poucos ciclos; a memória principal demora dezenas; o disco, milhões. Quanto mais perto, menor e mais caro.</p>
+      <p>O programa tenta manter perto o que usa agora. É por isso que percorrer uma lista em ordem costuma ser mais rápido do que pular de um lado para o outro: a cache traz blocos inteiros, e o próximo item já vem junto.</p>
+      <p>Na arquitetura de Von Neumann, dados e instruções dividem a mesma memória e o mesmo barramento. Isso é simples e flexível, mas cria um gargalo: a CPU consegue calcular mais rápido do que consegue buscar. A cache é a resposta prática para esse gargalo.</p>
+      <blockquote>Memória é distância. Todo desempenho nasce de encurtar a distância entre a conta e o número.</blockquote>
+    `,
+  },
 };
 
 export const NPCS = {
@@ -751,6 +783,24 @@ export const NPCS = {
       "Treino de corrente aqui, no claro e sem susto. A grota é que paga.",
       "Comece pela corrente induzida: é a pergunta que mais aparece.",
       "Se errar não mexe em nada além do orgulho. Destrave o caminho sem perder item.",
+    ],
+  },
+  vonneumann: {
+    name: "Von Neumann",
+    lines: [
+      "Dados e instruções morando na mesma memória: simples de descrever, difícil de alimentar. Esse é o gargalo que leva meu nome.",
+      "O registrador é o lugar mais rápido da máquina. Se o número está lá, a conta sai neste ciclo.",
+      "Pipeline não deixa a instrução mais rápida. Deixa a linha de montagem andar sem vazio.",
+      "Quando o desvio engana a previsão, o processador joga fora o trabalho que já tinha buscado. Programas com caminhos previsíveis voam.",
+      "A cache é pequena de propósito: guardar tudo perto seria caro e lento. O truque é guardar o que acabou de ser usado.",
+    ],
+  },
+  "trainer-cs-arch": {
+    name: "Técnica Lovelace",
+    lines: [
+      "Treino de arquitetura é aqui, no claro. A galeria cobra caro por erro de cache.",
+      "Comece pelo ciclo de instrução: buscar, decodificar, executar. O resto encaixa.",
+      "Se travar, pense no endereço. Toda memória tem um, e a pergunta também.",
     ],
   },
   shannon: {

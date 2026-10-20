@@ -14,7 +14,7 @@ const { Quests, QUESTS } = await import("../js/quests.js");
 const { Rede } = await import("../js/nostr.js");
 const { NOSTR } = await import("../js/config.js");
 const { RPG } = await import("../js/rpg.js");
-const { GROUNDS } = await import("../js/rpg-data.js");
+const { GROUNDS, QUESTIONS } = await import("../js/rpg-data.js");
 const { DUNGEONS } = await import("../js/dungeon-data.js");
 const { buildDungeonMap, dungeonSolid, dungeonLineOfSight } = await import("../js/dungeon.js");
 const { addPeerSample, feedPeer, peerRenderPosition } = await import("../js/interp.js");
@@ -752,7 +752,7 @@ assert.equal(rpg.craft("cafe").ok, true, "cozinha o café");
 rpg.useItem("cafe");
 assert.equal(rpg.speedMult(), 1.3, "café acelera");
 const deepDeck = rpg.buildDeck("cs", [3], "algoritmos");
-assert.equal(deepDeck.length, 8, "pergunta do fundo entrou no baralho");
+assert.equal(deepDeck.length, QUESTIONS.cs[3].length, "pergunta do fundo entrou no baralho");
 assert.ok(deepDeck[0].q.includes("escalonador"), "tema da sala puxa a pergunta certa");
 
 // fuga sempre arrisca, e o risco cresce com a dificuldade do bicho

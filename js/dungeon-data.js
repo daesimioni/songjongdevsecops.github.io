@@ -230,6 +230,30 @@ const COMMON = {
     monsters: ["Ímã", "Bobina", "Capacitor", "Resistor", "Fusível", "Corrente", "Faísca", "Campo", "Carga", "Onda", "Voltagem"],
     palette: { floor: "#3a2a20", floor2: "#2a1e16", wall: "#1a120c", wallTop: "#5a3f2c", accent: "#ffb26b" },
   },
+  "cs-arch": {
+    continent: "cs",
+    name: "Galeria das Instruções",
+    sub: "um processador antigo que ainda tenta terminar o ciclo",
+    material: "ferro",
+    tunnel: "wide",
+    equipment: ["anel-pipeline", "capuz-registrador", "escudo-barramento"],
+    shift: { a: [2, 1], c: [-2, -1], g: [1, 2] },
+    boss: "O Von Neumann",
+    rooms: [
+      ["Boca da Instrução", "entrada"],
+      ["Sala dos Registradores", "registradores"],
+      ["Corredor do Pipeline", "pipeline"],
+      ["Cripta do Cache", "cache"],
+      ["Oficina da ULA", "ula"],
+      ["Poço dos Endereços", "endereços"],
+      ["Torre do Clock", "clock"],
+      ["Praça da Arquitetura", "cidade"],
+      ["Câmara dos Desvios", "desvios"],
+      ["Arquivo de Memória", "memória"],
+    ],
+    monsters: ["Instrução", "Registrador", "Pipeline", "ULA", "Cache", "Barramento", "Clock", "Endereço", "Desvio", "Memória", "Salto"],
+    palette: { floor: "#143330", floor2: "#0e2523", wall: "#081716", wallTop: "#1e4a44", accent: "#61f4c0" },
+  },
 };
 
 export const DUNGEONS = Object.entries(COMMON).map(([key, d]) => {

@@ -331,6 +331,21 @@ export const QUESTS = [
     },
     reward: { xp: 32, title: "Aprendiz de Faraday" },
   },
+  {
+    id: "ciclo-completo",
+    npc: "vonneumann",
+    giver: "Von Neumann",
+    title: "O ciclo completo",
+    brief: "Buscar, decodificar, executar e gravar. Qual é a ordem do ciclo?",
+    goal: { type: "quiz" },
+    quiz: {
+      question: "Qual é a ordem do ciclo de instrução?",
+      options: ["buscar, decodificar, executar", "executar, buscar, decodificar", "decodificar, gravar, buscar"],
+      answer: 0,
+      why: "A CPU busca a instrução na memória, decodifica o que ela manda e só então executa. No fim, grava o resultado.",
+    },
+    reward: { xp: 32, title: "Arquiteto de Bolso" },
+  },
 ];
 
 const QUEST_BY_ID = new Map(QUESTS.map((q) => [q.id, q]));

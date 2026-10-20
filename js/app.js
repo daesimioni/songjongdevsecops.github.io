@@ -1048,35 +1048,36 @@ function buildTravel() {
   list.textContent = "";
   for (const cid of CONTINENT_ORDER) {
     const c = CONTINENTS[cid];
-    const stone = WAYSTONES.find((w) => w.continent === cid);
-    if (!stone) continue;
+    const stones = WAYSTONES.filter((w) => w.continent === cid);
+    if (!stones.length) continue;
     const known = cid === "hub" || state.docks.has(cid);
     const sites = sitesOf(cid);
     const opened = continentOpened(cid);
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "travel-item";
-    btn.disabled = !known;
-    const left = document.createElement("span");
-    const b = document.createElement("b");
-    b.textContent = c.name;
-    const s = document.createElement("span");
-    s.textContent = known
-      ? `${sites.length ? `${opened}/${sites.length} fragmentos · ` : ""}${stone.name}`
-      : "na névoa, siga a pé até lá";
-    left.append(b, s);
-    const right = document.createElement("em");
-    right.textContent = known ? "viajar" : "trancado";
-    btn.append(left, right);
-    if (known) {
-      btn.addEventListener("click", () => travelTo(cid));
+    // com área temática, o mesmo continente pode ter mais de uma pedra
+    for (const stone of stones) {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "travel-item";
+      btn.disabled = !known;
+      const left = document.createElement("span");
+      const b = document.createElement("b");
+      b.textContent = stones.length > 1 ? `${c.name} · ${stone.name}` : c.name;
+      const s = document.createElement("span");
+      s.textContent = known
+        ? `${sites.length ? `${opened}/${sites.length} fragmentos · ` : ""}${stone.name}`
+        : "na névoa, siga a pé até lá";
+      left.append(b, s);
+      const right = document.createElement("em");
+      right.textContent = known ? "viajar" : "trancado";
+      btn.append(left, right);
+      if (known) btn.addEventListener("click", () => travelTo(stone.id));
+      list.appendChild(btn);
     }
-    list.appendChild(btn);
   }
 }
 
 function travelTo(cid) {
-  const stone = WAYSTONES.find((w) => w.continent === cid);
+  const stone = WAYSTONES.find((w) => w.id === cid) || WAYSTONES.find((w) => w.continent === cid);
   if (!stone) return;
   const spots = [
     [stone.x, stone.y + 1.8], [stone.x, stone.y - 1.8],
