@@ -71,7 +71,14 @@ function shade(hex, amount) {
   return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, "0")}`;
 }
 
-const titleCase = (text) => String(text || "").replace(/(^|\s)\S/g, (c) => c.toUpperCase());
+// título com as palavras pequenas do português em minúscula
+const SMALL = new Set(["e", "de", "da", "do", "das", "dos", "em", "no", "na", "nos", "nas", "a", "o", "as", "os", "um", "uma", "para", "com", "por", "ao", "à"]);
+const titleCase = (text) => String(text || "").split(/\s+/).map((word, i) => {
+  const clean = word.toLowerCase();
+  if (word.length <= 5 && word === word.toUpperCase() && /[A-Z]/.test(word)) return word;
+  if (i > 0 && SMALL.has(clean)) return clean;
+  return clean.charAt(0).toUpperCase() + clean.slice(1);
+}).join(" ");
 
 export function buildCatalogContent() {
   const areas = [];
