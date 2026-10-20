@@ -10,6 +10,12 @@ página. Ao todo, 86 áreas: as 16 originais mais uma para cada seção do catá
 de Matemática, Física, Química, Computação, Língua Portuguesa e das 11
 interseções entre elas.
 
+## A interface
+
+A abertura é uma tela de título com o vale em pixel art animado: estrelas, lua, montanhas, rio e vagalumes. Depois dela vêm a chave, o personagem e uma passagem curta para o mundo.
+
+No jogo, a vida e a mana ficam em barras no topo. A mochila abre com <kbd>I</kbd>: grade de itens com ícones desenhados, equipamento ao lado, arrastar e soltar, detalhe do item e um boneco que muda de arma, elmo e cor de armadura conforme você veste. O botão direito abre um menu com olhar, falar, abrir, descer, viajar, pegar e andar até aqui. Runas e magias aparecem na barra inferior e gastam mana.
+
 ## O arquipélago
 
 | continente | estações |

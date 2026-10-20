@@ -3353,3 +3353,52 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
   background: radial-gradient(circle at 50% 70%, rgba(255, 200, 87, 0.09), rgba(4, 6, 14, 0.55) 70%);
 }
 .inv-avatar { width: 132px; height: 176px; image-rendering: pixelated; }
+
+/* ---- passagem para o vale ---- */
+.enter-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 95;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(60% 55% at 50% 45%, rgba(255, 200, 87, 0.1), transparent 70%),
+    radial-gradient(70% 60% at 50% 50%, rgba(97, 244, 192, 0.08), transparent 70%),
+    #05070f;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+.enter-screen[hidden] { display: none; }
+.enter-screen.on { opacity: 1; }
+.enter-screen.sai { opacity: 0; }
+.enter-inner { text-align: center; animation: enter-rise 700ms ease both; }
+@keyframes enter-rise { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.enter-kicker {
+  font-family: var(--pixel);
+  font-size: 7px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--mint);
+  margin: 0 0 18px;
+}
+.enter-logo {
+  font-family: var(--pixel);
+  font-size: clamp(18px, 3.6vw, 34px);
+  line-height: 1.45;
+  color: #fff3d1;
+  text-shadow: 0 3px 0 #201426, 0 0 34px rgba(255, 200, 87, 0.4);
+}
+.enter-logo b {
+  font-weight: 400;
+  background: linear-gradient(180deg, #fff3d1, #ffc857 60%, #ff9f6b);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 22px rgba(255, 200, 87, 0.35));
+}
+.enter-sub { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; color: var(--muted); margin: 20px 0 0; }
+
+@media (max-width: 860px) {
+  .inv-avatar { width: 104px; height: 138px; }
+  .inv-avatar-wrap { max-height: 154px; overflow: hidden; }
+}

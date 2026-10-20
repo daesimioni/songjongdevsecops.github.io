@@ -2712,7 +2712,25 @@ $("intro-form").addEventListener("submit", (e) => {
   writeJSON(STORAGE.room, state.room);
   writeJSON(STORAGE.avatar, player.look);
   $("intro-room").value = state.room;
-  startGame();
+  // a passagem para o vale: uma tela curta com o logo antes de acordar no porto
+  if (new URLSearchParams(location.search).has("debug")) {
+    startGame();
+    return;
+  }
+  const enter = $("enter-screen");
+  if (!enter || state.entering) { startGame(); return; }
+  state.entering = true;
+  enter.hidden = false;
+  requestAnimationFrame(() => enter.classList.add("on"));
+  setTimeout(() => {
+    startGame();
+    enter.classList.add("sai");
+    setTimeout(() => {
+      enter.hidden = true;
+      enter.classList.remove("on", "sai");
+      state.entering = false;
+    }, 420);
+  }, 920);
 });
 
 window.addEventListener("beforeunload", () => {
