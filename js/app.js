@@ -2237,6 +2237,8 @@ function updateZone() {
   showZoneCard(CONTINENTS[cid], first);
 }
 
+let cobertoAntes = false;
+
 function loop(now) {
   requestAnimationFrame(loop);
   try {
@@ -2321,7 +2323,14 @@ function loop(now) {
       }
     }
     player.gear = gearAtual();
-    renderer.draw(now, player, state.peers, world.npcs, world.cat, player.moving);
+    // Com modal, painel ou conversa por cima, o mundo está pausado e coberto:
+    // desenhar uma vez basta. Antes o laço redesenhava o mundo inteiro atrás do
+    // desfoque do modal, e a mochila aberta derrubava o quadro para 8 fps.
+    const coberto = !!(state.panelOpen || state.modal || state.chatOpen || now < state.pvpDownUntil);
+    if (!coberto || coberto !== cobertoAntes) {
+      renderer.draw(now, player, state.peers, world.npcs, world.cat, player.moving);
+    }
+    cobertoAntes = coberto;
     updatePrompt();
     updateMiniHud();
     const stepD = Math.hypot(player.x - state.stepX, player.y - state.stepY);

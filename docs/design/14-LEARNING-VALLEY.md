@@ -285,6 +285,21 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 - limite conhecido: a conta usa `background-color`. Texto sobre gradiente ou
   imagem é aproximado pela cor de trás, então gradiente novo pede nova medida
 
+### Y. Regressão de navegador
+
+- [x] um passeio só, com PASS/FALHA por linha, cobrindo o que já foi entregue:
+      HUD, mochila (40 espaços e 8 de equipamento), bestiário (464 fichas),
+      diário (86 grupos), viagem (95 destinos), arrastar para andar, névoa em
+      `r2:`, caverna abrindo com planta no minimapa, saída por Esc, 390 px sem
+      estouro e console limpo
+- [x] 12 de 12 passando, rodado no navegador com teclas e ponteiro de verdade
+- [x] defeito encontrado no caminho: com modal ou painel aberto o mundo era
+      redesenhado atrás do desfoque. A mochila aberta derrubava de 45,7 para
+      8,2 fps. Agora o mundo desenha uma vez ao abrir e fica parado enquanto a
+      tela está coberta: 56,9 fps com a mochila aberta em sessão curta
+- [ ] em sessão longa a mochila aberta voltou a medir 12 a 17 fps, sem o mundo
+      sendo redesenhado: falta trace de composição para achar o que repinta
+
 ## 3. Regras de desenho
 
 - A tela de título é a primeira impressão: vale com camadas, céu em degradê,
@@ -314,6 +329,7 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 
 | data | fase | o que entrou | prova |
 |---|---|---|---|
+| 2026-10-21 | Y | regressão de navegador e custo do modal: 12 verificações num passeio só (HUD, mochila, bestiário, diário, viagem, arrastar, névoa r2, caverna, Esc, 390 px e console) e o mundo deixou de ser redesenhado atrás do modal | navegador: 12/12 PASS, arrasto moveu o boneco de 91,61 para 96,63, névoa `r2:` de 165 caracteres, caverna com 10 salas e minimapa em 0,305, sem erro de console; fps com a mochila aberta de 8,2 para 56,9 em sessão curta |
 | 2026-10-21 | X | contraste medido em todos os estados, com medidor que compõe o fundo transparente e se autotesta | navegador: 10 estados (mundo, mochila, bestiário, diário, ficha, ajuda, menu, viagem, caverna e 390 px), 544 textos, zero abaixo de 4,5:1 (3:1 para texto grande), autoteste acusando par ruim |
 | 2026-10-21 | J/H | nave e minimapa da caverna: Espaço liga e desliga na superfície e no subsolo, sem auto-repeat, e o mapa continua desenhado andando com a nave; o minimapa passou a mostrar a planta inteira apagada desde a entrada | navegador: superfície e caverna com sprint ligado, desligado no segundo Espaço, 6 amostras do canvas por trecho (superfície 1,000 de mapa vivo, caverna 0,28 de área iluminada) e minimapa da caverna de 0,015 a 0,306 de pixel vivo; console limpo |
 | 2026-10-21 | W | vento e onda: frente de rajada que atravessa o mapa com fase por posição e força por material da área; copa, folha solta, capim, musgo e flor respondem à mesma rajada; o mar ganhou crista que viaja, cava entre cristas e espuma que respira | node: rajada com pico e calmaria, vizinho de 1 tile na mesma frente, 14 tiles adiante em outra fase, pico levando tempo para atravessar 40 tiles, fibra mais forte que cristal, crista do mar andando; navegador: dois quadros congelados no pico e no calmo, crista e quadro seguinte, fps 45,1 com vento e 48,7 sem, terreno 0,66 contra 0,60 ms |
