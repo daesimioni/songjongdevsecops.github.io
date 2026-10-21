@@ -16,6 +16,7 @@ import { drawCaveFacade } from "./cave-art.js";
 import { gustAt, ondaAt, espumaAt, swayAt, windMood } from "./wind.js";
 import { escalaDaCamera, tilesNaVista } from "./camera.js";
 import { desenharAsset } from "./assets/index.js";
+import { fracoesDeVida } from "./vitais.js";
 import { criarAmbiente, ambienteDe } from "./ambient.js";
 
 const BODY_W = 12;
@@ -1828,7 +1829,7 @@ export function createRenderer(canvas, world) {
     drawGroundOn(ctx, x, y, t, time, true);
   }
 
-  function draw(now, player, peers, npcs, cat, moving, rastreador = false) {
+  function draw(now, player, peers, npcs, cat, moving, rastreador = false, vitais = null) {
     const frameStart = performance.now();
     const time = now;
     const areaJogador = world.areaAt(player.x, player.y);
@@ -2021,7 +2022,7 @@ export function createRenderer(canvas, world) {
         if (player.boost > 0.01) drawSkiff(ctx, player.x * TILE, player.y * TILE, player.dir, time, player.boost, moving);
         drawHuman(ctx, player.x * TILE, player.y * TILE - lift + bob, player.dir, onShip ? false : moving, time,
           player.colors || PLAYER_COLORS[0], 1, player.look, player.gear || null);
-        drawNameTag(player.name, player.x * TILE, player.y * TILE - 26 - lift, player.color);
+        drawNameTag(player.name, player.x * TILE, player.y * TILE - 26 - lift, player.color, vitais);
         if (player.bubble && player.bubble.until > now) {
           drawBubble(player.bubble.text, player.x * TILE, player.y * TILE - lift, player.color);
         }
@@ -2086,7 +2087,7 @@ export function createRenderer(canvas, world) {
     quadrosTotais++;
   }
 
-  function drawNameTag(name, px, py, color) {
+  function drawNameTag(name, px, py, color, vitais = null) {
     if (!name) return;
     ctx.font = "5px ui-monospace, monospace";
     ctx.textAlign = "center";
@@ -2097,6 +2098,23 @@ export function createRenderer(canvas, world) {
     ctx.fillStyle = color || "#eae4ff";
     ctx.fillText(name, px, py - 4);
     ctx.textAlign = "left";
+    // barrinhas de vida e mana logo abaixo do nome, do tamanho da placa
+    if (vitais) {
+      const f = fracoesDeVida(vitais);
+      const larg = w, alto = 2, folga = 1;
+      const topo = py + 1;
+      ctx.fillStyle = "rgba(8,10,20,0.78)";
+      roundRect(ctx, px - larg / 2, topo, larg, alto * 2 + folga * 3, 2);
+      ctx.fill();
+      ctx.fillStyle = "#3a1f2c";
+      ctx.fillRect(px - larg / 2 + 1, topo + folga, larg - 2, alto);
+      ctx.fillStyle = "#ff5a86";
+      ctx.fillRect(px - larg / 2 + 1, topo + folga, Math.round((larg - 2) * f.vida), alto);
+      ctx.fillStyle = "#16283a";
+      ctx.fillRect(px - larg / 2 + 1, topo + folga * 2 + alto, larg - 2, alto);
+      ctx.fillStyle = "#6bd5ff";
+      ctx.fillRect(px - larg / 2 + 1, topo + folga * 2 + alto, Math.round((larg - 2) * f.mana), alto);
+    }
   }
 
   // ---- ambiente por ilha: estação, evento e partículas do lugar ----
