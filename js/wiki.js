@@ -199,7 +199,7 @@ export function construirIndice() {
       ["Caverna", cave ? cave.name : ""],
       ["Chefe da caverna", cave?.boss || ""],
     ];
-    add("mundo", area.name, bio.name || area.sub || "", campos, { tags: [area.id, bio.material || ""] });
+    add("mundo", area.name, bio.name || area.sub || "", campos, { tags: [area.id, bio.material || ""], icone: { tipo: "bioma", bioma: bio } });
   }
 
   // Cavernas: uma entrada por caverna, com salas, chefe e equipamento.
@@ -213,7 +213,7 @@ export function construirIndice() {
       ["Chefe", d.boss || ""],
       ["Equipamento", (d.equipment || []).map(nomeItem).join(", ")],
     ];
-    add("cavernas", d.name, d.sub || "", campos, { tags: [areaId, d.id] });
+    add("cavernas", d.name, d.sub || "", campos, { tags: [areaId, d.id], icone: { tipo: "caverna", accent: d.accent || BIOMES[areaId]?.accent || "#ffc857" } });
   }
 
   // Criaturas: a fauna de cada área, mais os chefes das cavernas.
@@ -354,7 +354,7 @@ export function construirIndice() {
     add("trajes", traje.name, traje.desc || "", [
       ["Continente", CONTINENTS[traje.continent]?.name || traje.continent || ""],
       ["Descrição", traje.desc || ""],
-    ], { tags: ["traje", traje.id] });
+    ], { tags: ["traje", traje.id], icone: { tipo: "traje", traje } });
   }
 
   // Sistemas: o que não é item nem lugar, mas decide o jogo.
@@ -507,6 +507,78 @@ function iconeDaEntrada(icone) {
     g.restore();
   } else if (icone.tipo === "pet") {
     drawPetSprite(g, icone.kind, 32, 58, 0, false, 0);
+  } else if (icone.tipo === "bioma") {
+    const b = icone.bioma || {};
+    const base = b.base || "#1c1a2e";
+    const piso = b.floor || "#231e39";
+    const caminho = b.path || "#312c5e";
+    const acento = b.accent || "#ffc857";
+    g.fillStyle = base;
+    g.fillRect(0, 0, 64, 64);
+    g.fillStyle = piso;
+    g.fillRect(6, 6, 52, 52);
+    // padrão do piso: onda, ponto ou rachadura, o mesmo nome do bioma
+    g.fillStyle = b.accent2 || acento;
+    g.globalAlpha = 0.35;
+    if (b.pattern === "dots") {
+      for (let y = 10; y < 58; y += 8) for (let x = 10; x < 58; x += 8) g.fillRect(x, y, 2, 2);
+    } else if (b.pattern === "cracks") {
+      g.fillRect(10, 30, 18, 1);
+      g.fillRect(28, 30, 1, 10);
+      g.fillRect(40, 18, 1, 16);
+      g.fillRect(40, 34, 10, 1);
+    } else {
+      for (let y = 12; y < 58; y += 8) for (let x = 10; x < 54; x += 10) g.fillRect(x + (y % 16 ? 2 : 0), y, 6, 1);
+    }
+    g.globalAlpha = 1;
+    g.fillStyle = caminho;
+    g.fillRect(28, 6, 8, 52);
+    g.fillRect(6, 28, 52, 8);
+    g.fillStyle = acento;
+    g.fillRect(26, 26, 12, 12);
+    g.fillStyle = "rgba(255,255,255,0.25)";
+    g.fillRect(28, 28, 8, 2);
+  } else if (icone.tipo === "caverna") {
+    const acento = icone.accent || "#ffc857";
+    g.fillStyle = "#0b0d18";
+    g.fillRect(0, 0, 64, 64);
+    g.fillStyle = "#232437";
+    g.fillRect(4, 30, 56, 30);
+    g.beginPath();
+    g.arc(32, 34, 22, Math.PI, Math.PI * 2);
+    g.fill();
+    g.fillStyle = "#05070f";
+    g.beginPath();
+    g.arc(32, 36, 15, Math.PI, Math.PI * 2);
+    g.fill();
+    g.fillRect(17, 36, 30, 20);
+    g.fillStyle = acento;
+    g.globalAlpha = 0.8;
+    g.fillRect(29, 46, 6, 6);
+    g.globalAlpha = 1;
+    g.fillStyle = "rgba(255,255,255,0.2)";
+    g.fillRect(12, 32, 4, 2);
+    g.fillRect(48, 38, 3, 2);
+  } else if (icone.tipo === "traje") {
+    const c = icone.traje?.colors || {};
+    g.fillStyle = "#0b0d18";
+    g.fillRect(0, 0, 64, 64);
+    g.fillStyle = c.skin || "#e8b98c";
+    g.fillRect(24, 10, 16, 16);
+    g.fillStyle = c.hair || "#2a2438";
+    g.fillRect(23, 8, 18, 6);
+    g.fillRect(23, 12, 3, 6);
+    g.fillRect(38, 12, 3, 6);
+    g.fillStyle = c.shirt || "#61f4c0";
+    g.fillRect(20, 26, 24, 20);
+    g.fillStyle = c.accent || "#fff3d1";
+    g.fillRect(20, 42, 24, 3);
+    g.fillStyle = c.pants || "#2f2c45";
+    g.fillRect(22, 46, 8, 14);
+    g.fillRect(34, 46, 8, 14);
+    g.fillStyle = "#05070f";
+    g.fillRect(25, 17, 2, 2);
+    g.fillRect(37, 17, 2, 2);
   } else if (icone.tipo === "gema") {
     const cor = icone.accent || "#ffc857";
     g.fillStyle = "rgba(4,6,14,0.7)";

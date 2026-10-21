@@ -63,13 +63,16 @@ for (const e of indice) {
 
 // ---- fichas com imagem: item, bicho, pet e relíquia ----
 const comIcone = indice.filter((e) => e.icone);
-check(comIcone.length >= 880, `só ${comIcone.length} fichas com ícone, esperado ao menos 880`);
+check(comIcone.length >= 1100, `só ${comIcone.length} fichas com ícone, esperado ao menos 1100`);
 for (const e of comIcone) {
-  check(["item", "bicho", "pet", "gema"].includes(e.icone.tipo), `ícone de tipo inválido em ${e.nome}: ${e.icone.tipo}`);
+  check(["item", "bicho", "pet", "gema", "bioma", "caverna", "traje"].includes(e.icone.tipo), `ícone de tipo inválido em ${e.nome}: ${e.icone.tipo}`);
 }
 check(indice.some((e) => e.icone?.tipo === "item"), "nenhum item com ícone");
 check(indice.some((e) => e.icone?.tipo === "bicho"), "nenhum bicho com icon");
 check(indice.some((e) => e.icone?.tipo === "gema"), "nenhuma relíquia com gema");
+check(indice.some((e) => e.icone?.tipo === "bioma"), "nenhuma área com chip de bioma");
+check(indice.some((e) => e.icone?.tipo === "caverna"), "nenhuma caverna com boca");
+check(indice.some((e) => e.icone?.tipo === "traje"), "nenhum traje com busto");
 
 // ---- páginas abrem; só páginas têm atalho ----
 for (const e of indice.filter((x) => x.cat === "paginas")) {

@@ -23,9 +23,10 @@ dos mesmos módulos que o jogo usa, então o que entra no jogo entra na wiki.
 | Vocações | `vocations.js` | 5 |
 | Sistemas | `TIERS`, `SKILLS` e os resumos de como jogar | 22 |
 
-Total: **2.246 fichas**. Item, bicho, pet e relíquia mostram o ícone na ficha
-(o ícone do item vem de `item-art.js`, o bicho de `creature.js`, o pet de
-`pet-art.js`).
+Total: **2.246 fichas**. Toda ficha com desenho mostra o ícone: item
+(`item-art.js`), bicho (`creature.js`), pet (`pet-art.js`), relíquia (gema),
+área (chip do bioma com piso, padrão e acento), caverna (boca de pedra) e traje
+(busto com as cores do traje).
 
 Cada entrada mostra os campos que o jogo já tem: disciplina, material e caverna
 da área; salas, chefe e equipamento da caverna; tipo e fraqueza do bicho; tipo e
