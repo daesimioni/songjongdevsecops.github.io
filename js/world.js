@@ -127,13 +127,44 @@ export function createWorld() {
       for (let d = 0; d < largura; d++) set(x + d, y, tile);
     }
   }
+  // Caminho torto: anda um tile por vez, trocando de eixo conforme o que falta
+  // e com uma tremida sorteada pela posição, então a estrada curva em vez de
+  // fazer um L reto igual em todo lugar. Larga no meio e estreita nas pontas,
+  // e nunca cobre água: rio continua rio.
   function connect(a, b, tile, largura = 2) {
-    if (Math.abs(b.x - a.x) > Math.abs(b.y - a.y)) {
-      hpath(Math.round(a.y), Math.round(a.x), Math.round(b.x), tile, largura);
-      vpath(Math.round(b.x), Math.round(a.y), Math.round(b.y), tile, largura);
-    } else {
-      vpath(Math.round(a.x), Math.round(a.y), Math.round(b.y), tile, largura);
-      hpath(Math.round(b.y), Math.round(a.x), Math.round(b.x), tile, largura);
+    let x = Math.round(a.x);
+    let y = Math.round(a.y);
+    const alvoX = Math.round(b.x);
+    const alvoY = Math.round(b.y);
+    const semente = (x * 31 + y * 17 + alvoX * 7 + alvoY * 13) | 0;
+    const pinta = (px, py, w) => {
+      for (let dx = 0; dx < w; dx++) {
+        for (let dy = 0; dy < w; dy++) {
+          const nx = px + dx;
+          const ny = py + dy;
+          if (nx < 1 || ny < 1 || nx >= MAP_W - 1 || ny >= MAP_H - 1) continue;
+          // atravessar água vira ponte: a estrada não pisa no mar, ela passa
+          // por cima, e a água embaixo continua água
+          set(nx, ny, get(nx, ny) === WATER ? BRIDGE : tile);
+        }
+      }
+    };
+    let voltas = 0;
+    while ((x !== alvoX || y !== alvoY) && voltas++ < 400) {
+      const faltaX = alvoX - x;
+      const faltaY = alvoY - y;
+      const r = hash2(x + semente, y - semente);
+      const prefereX = Math.abs(faltaX) >= Math.abs(faltaY);
+      const vira = r > 0.82 && faltaX !== 0 && faltaY !== 0;
+      if ((prefereX && !vira) || faltaY === 0) x += Math.sign(faltaX);
+      else if (faltaY !== 0) y += Math.sign(faltaY);
+      else x += Math.sign(faltaX);
+      const perto = Math.min(
+        Math.abs(x - Math.round(a.x)) + Math.abs(y - Math.round(a.y)),
+        Math.abs(x - alvoX) + Math.abs(y - alvoY),
+      );
+      const w = perto < 1 ? 1 : r > 0.88 ? largura + 1 : largura;
+      pinta(x, y, w);
     }
   }
 

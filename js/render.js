@@ -72,10 +72,10 @@ export function createRenderer(canvas, world) {
     if (bruto > MAX_PIXELS) dpr *= Math.sqrt(MAX_PIXELS / bruto);
     canvas.width = Math.max(320, Math.round(vw * dpr));
     canvas.height = Math.max(240, Math.round(vh * dpr));
-    // O tile de 16 px fica entre 24 e 40 px na tela. Antes o zoom subia até
-    // 3,5 em monitor grande e cada bloco virava uma parede de 56 px.
+    // O tile de 16 px fica entre 21 e 26 px na tela. Antes ia até 32 px e cada
+    // bloco pesava: com o tile menor o vale respira e parece menos quadrado.
     const z = Math.min(vw / 600, vh / 380);
-    zoom = Math.max(1.5, Math.min(2, Math.round(z * 2) / 2));
+    zoom = Math.max(1.3, Math.min(1.6, Math.round(z * 4) / 4));
   }
 
   function tileColor(t) {
@@ -244,6 +244,30 @@ export function createRenderer(canvas, world) {
       g.fillRect(Math.round(w.x * 2) - 1, Math.round(w.y * 2) - 1, 3, 3);
       g.fillStyle = "#1a1405";
       g.fillRect(Math.round(w.x * 2), Math.round(w.y * 2), 1, 1);
+    }
+  }
+
+  // Borda de bioma: onde o chão do vizinho é de outro tipo, alguns pixels dele
+  // entram nesta tile. A divisa entre duas áreas deixa de ser uma linha reta de
+  // tile e vira uma mistura serrilhada, como o dither da costa.
+  const SEM_BORDA = new Set([K.WATER, K.TREE, K.WALL, K.PATH, K.BRIDGE, K.MAGMA, K.ACID]);
+  function bordaDeBioma(c, x, y) {
+    const t = world.get(x, y);
+    if (SEM_BORDA.has(t)) return;
+    const px = x * TILE;
+    const py = y * TILE;
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+      const nt = world.get(x + dx, y + dy);
+      if (nt === t || SEM_BORDA.has(nt)) continue;
+      c.fillStyle = tileColor(nt);
+      for (let i = 0; i < 4; i++) {
+        if (hash2(x * 13 + i * 5, y * 7 + i) < 0.42) continue;
+        const aoLongo = Math.floor(hash2(x + i * 3, y + i) * 13);
+        const fundo = i % 3;
+        const ex = dx > 0 ? 12 + fundo : dx < 0 ? fundo : aoLongo;
+        const ey = dy > 0 ? 12 + fundo : dy < 0 ? fundo : aoLongo;
+        c.fillRect(px + ex, py + ey, 2, 1);
+      }
     }
   }
 
@@ -1680,6 +1704,7 @@ export function createRenderer(canvas, world) {
         const ty = by + y;
         if (tx < 0 || ty < 0 || tx >= MAP_W || ty >= MAP_H) continue;
         drawGroundOn(g, tx, ty, world.get(tx, ty), 0, false);
+        bordaDeBioma(g, tx, ty);
       }
     }
     // grão fino por cima de tudo: uma segunda passada barata, uma vez por

@@ -408,6 +408,24 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 - próximo passo do item 33: cache de sprite para enfeite e criatura (hoje o
   desenho custa 3 a 3,8 ms por quadro, não é o gargalo) e LRU no cache de bloco
 
+### AC. Mapa orgânico
+
+- [x] **o caminho deixou de ser um L reto**: em vez de um trecho horizontal e
+      outro vertical, a estrada anda um tile por vez, trocando de eixo conforme o
+      que falta e com uma tremida sorteada pela posição. Larga no meio, estreita
+      nas pontas, e onde cruza água vira **ponte** em vez de pintar caminho por
+      cima do mar (antes a estrada passava por cima da água)
+- [x] **divisa de bioma serrilhada**: onde o chão do vizinho é de outro tipo,
+      alguns pixels dele entram nesta tile, então a fronteira entre duas áreas
+      deixa de ser uma linha reta de tile e vira mistura, como o dither da costa
+- [x] **escala do tile menor**: de 24 a 32 px na tela para 21 a 26 px (zoom 1,3
+      a 1,6 em vez de 1,5 a 2). O vale respira e o bloco pesa menos
+- [x] efeito medido nos caminhos: 82/454 estações continuam alcançáveis a pé
+      desde o spawn, 27/186 cavernas (era 28) e 34/194 NPCs (era 37). A rota
+      mudou e três pontos ficaram para trás: é o item 2 que fecha isso de
+      verdade, com ponte e passagem
+- [ ] falta a área por polígono (hoje a área ainda é retângulo) e o mapa maior
+
 ## 3. Regras de desenho
 
 - A tela de título é a primeira impressão: vale com camadas, céu em degradê,
@@ -440,6 +458,7 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 
 | data | fase | o que entrou | prova |
 |---|---|---|---|
+| 2026-10-21 | AC | mapa orgânico (fatia 1): caminho com passo torto, largura variável e ponte sobre água; divisa de bioma serrilhada; tile de 21 a 26 px na tela | navegador: captura do caminho torto e da divisa, desempenho nos três perfis mantido com o tile menor; node verde; alcance a pé 82/454 estações, 27/186 cavernas e 34/194 NPCs contra 82, 28 e 37 antes |
 | 2026-10-21 | AB | desempenho nos três perfis: teto de 2,2 MP no canvas (antes crescia com a densidade da tela) e qualidade pelo p95 do quadro com piso 0,7 e aquecimento de 90 quadros | navegador: computador 48,3 → 58,5 fps, tablet 41,5 → 57,1, celular 60,3 → 60,2; p95 de 23,7 e 27,3 para 20,5 e 20,3; canvas de 1,68 e 2,55 MP para 1,02 e 1,54; memória de 20,8 para 14,2 MB no tablet |
 | 2026-10-21 | AA | oito direções em tudo: passo diagonal com pose própria (cabeça deslocada, arma do lado, escudo atrás), bicho espelhando, NPC, gato, pet, casco e viajante; e o conserto do `skiffRear` que faltava importar e apagava o boneco com a nave ligada | navegador: quatro diagonais andando no mundo (dir 4, 5, 6, 7) com recorte do boneco, bichos da caverna em dir 4 e 7, boneco de costas na caverna visível depois do conserto, zero exceção; node: oito direções no gearView, direcaoBase e ladoDaDiagonal |
 | 2026-10-21 | H | minimapa recolhível: botão no canto fecha o mapa numa fita com coordenada e piso, com aria-expanded e rótulo trocando, e o estado guardado | navegador: caixa de 250x227 para 217x34, canvas escondido, coordenada ainda mudando ao andar (x 91 para 95), recolhido continuou recolhido depois de recarregar e o segundo clique reabriu |
