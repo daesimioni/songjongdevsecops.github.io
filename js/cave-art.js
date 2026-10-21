@@ -195,8 +195,21 @@ export function drawCaveFacade(ctx, c) {
     // luz do fundo e o degrau que o pé já gastou
     ctx.fillStyle = hexA(acento, 0.4 + pulso * 0.18);
     ctx.fillRect(px - 5, py - 17, 10, 1);
-    ctx.fillStyle = hexA(pedra, 0.55);
-    ctx.fillRect(px - 7, py - 2, 14, 1);
+    // a escada da boca desce em diagonal para um canto sorteado pela semente,
+    // então nenhuma entrada repete o mesmo degrau reto
+    const ladoDegrau = seed > 0.5 ? 1 : -1;
+    for (let i = 0; i < 4; i++) {
+      const ex = ladoDegrau > 0 ? px + 1 + i * 4 : px - 6 - i * 4;
+      const ey = py - 1 + i;
+      ctx.fillStyle = "#0a0c18";
+      ctx.fillRect(ex - 1, ey - 1, 7, 4);
+      ctx.fillStyle = hexA(pedra, 0.66 - i * 0.1);
+      ctx.fillRect(ex, ey, 5, 2);
+      ctx.fillStyle = hexA(acento, 0.16);
+      ctx.fillRect(ex, ey, 5, 1);
+    }
+    ctx.fillStyle = hexA(acento, 0.24);
+    ctx.fillRect(px - 1, py - 2, 2, 1);
     // placa do lugar
     ctx.fillStyle = "#141827";
     ctx.fillRect(px + 14, py - 26, 2, 12);

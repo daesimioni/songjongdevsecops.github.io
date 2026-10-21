@@ -376,9 +376,14 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
       todo quadro e o boneco, os bichos e os objetos paravam de ser desenhados.
       Era o "o mapa some com a nave" que não reproduzia na medição antiga porque
       a medição contava pixel de cenário, não o boneco
+- [x] cenário na diagonal: a escada da boca da caverna desce em diagonal para
+      um canto sorteado pela semente (quatro lajotas com contorno, não o mesmo
+      degrau reto em toda boca), e o item no chão flutua na diagonal com a fase
+      tirada do id, então dois itens vizinhos não sobem no mesmo compasso
 - [x] conferido: quatro diagonais andando de verdade no mundo, bicho com
       direção 4 e 7 na caverna, boneco de costas desenhado na caverna depois do
-      conserto, e nenhuma exceção no console
+      conserto, escada diagonal da boca visível no recorte 5x, e nenhuma
+      exceção no console
 
 ## 3. Regras de desenho
 

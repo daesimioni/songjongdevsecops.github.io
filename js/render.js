@@ -1522,7 +1522,12 @@ export function createRenderer(canvas, world) {
     const item = ITEMS[g.itemId];
     if (!item) return;
     const px = g.x * TILE, py = g.y * TILE;
-    const bob = Math.sin(time * 0.002 + g.x * 1.3) * 1.6;
+    // o item flutua na diagonal e a fase vem do id, então dois itens vizinhos
+    // não sobem no mesmo compasso
+    const fase = (g.itemId || "").length * 0.7 + g.x * 1.3;
+    const bobX = Math.cos(time * 0.002 + fase) * 0.9;
+    const bob = Math.sin(time * 0.002 + fase) * 1.6;
+    const pulso2 = 0.5 + Math.sin(time * 0.0028 + fase * 1.7) * 0.5;
     const pulse = 0.45 + Math.sin(time * 0.003 + g.y) * 0.25;
     ctx.fillStyle = "rgba(2,6,10,0.4)";
     ctx.beginPath();
@@ -1534,11 +1539,14 @@ export function createRenderer(canvas, world) {
     ctx.arc(px, py - 8 + bob, 13, 0, Math.PI * 2);
     ctx.fill();
     ctx.globalAlpha = 1;
-    ctx.drawImage(itemIconCanvas(item), px - 9, py - 21 + bob, 18, 18);
-    if (Math.sin(time * 0.005 + g.x) > 0.8) {
-      ctx.fillStyle = "rgba(255,243,209,0.9)";
-      ctx.fillRect(px + 5, py - 18 + bob, 1, 1);
-      ctx.fillRect(px + 6, py - 17 + bob, 1, 1);
+    ctx.drawImage(itemIconCanvas(item), px - 9 + bobX, py - 21 + bob, 18, 18);
+    // brilho em diagonal, do canto de cima para o de baixo, como se a luz
+    // varresse o item em vez de piscar no mesmo pixel
+    if (pulso2 > 0.35) {
+      const t = (pulso2 - 0.35) / 0.65;
+      ctx.fillStyle = `rgba(255,243,209,${(0.25 + t * 0.6).toFixed(3)})`;
+      ctx.fillRect(px - 4 + Math.round(t * 10) + bobX, py - 20 + bob, 1, 1);
+      ctx.fillRect(px - 3 + Math.round(t * 10) + bobX, py - 19 + bob, 1, 1);
     }
   }
 
