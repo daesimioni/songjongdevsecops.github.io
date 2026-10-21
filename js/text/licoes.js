@@ -5785,6 +5785,143 @@ export const LICOES = {
         "Reescreva o mesmo pedido como e-mail formal, mensagem de grupo e postagem pública; compare tom, extensão e o que cada canal expõe. Antes de publicar, releia pensando em quem pode ver o texto daqui a um ano: o alcance do canal não muda só o tom, muda a responsabilidade sobre o que ficou registrado. O rascunho salvo e a resposta rápida duram mais que a intenção, e a leitura antes de enviar é a última barreira entre você e o canal.",
     },
   },
+  "lingua-redacao": {
+    "Fundamentos da Redação": {
+      contexto:
+        "Onde isso aparece: no trabalho escolar, no relatório e no e-mail. Escrever é planejar antes de digitar. Objetivo e tema delimitado evitam texto que fala de tudo e não resolve nada.",
+      oQue:
+        "Fundamento da redação é planejamento: objetivo, tema delimitado e organização de ideia. O objetivo diz o que o texto deve provocar, e o recorte diz o que fica de fora. O esboço economiza reescrita e revela buraco de argumento antes da primeira frase.",
+      passos: [
+        "Defina o objetivo e o leitor em uma frase.",
+        "Delimite o tema até caber no espaço.",
+        "Liste as ideias e ordene antes de escrever.",
+      ],
+      exemplo:
+        "Tema amplo como educação rende texto genérico. Recortar para o efeito da leitura no ensino médio de uma escola específica dá dado e argumento. O recorte não empobrece: ele permite profundidade.",
+      quebra:
+        "Começar a escrever sem saber o objetivo. O texto cresce sem foco, e a revisão trabalha duas vezes. O planejamento de dez minutos economiza a reescrita de uma hora.",
+      limite:
+        "Planejar demais também atrasa. Em texto curto, o esboço de três linhas basta, e o excesso de estrutura sufoca a escrita. O tamanho do plano acompanha o tamanho do texto.",
+      levar: "Recortar o tema é o que dá profundidade ao texto.",
+      maos:
+        "Escreva o objetivo e o recorte de um texto em duas frases e liste três ideias antes de redigir. Depois redija só com o plano ao lado e compare o tempo com a escrita improvisada. O plano costuma parecer atraso e devolve tempo na revisão; quando o texto é curto, o esboço de três linha já basta, e o hábito vale para e-mail e relatório também.",
+      pergunta: {
+        q: "Por que delimitar o tema antes de escrever?",
+        a: "Porque o recorte permite profundidade dentro do espaço do texto",
+        why: "Tema amplo obriga o texto a passar por tudo sem demonstrar nada; o recorte define o que entra e o que fica de fora, e o argumento ganha densidade.",
+      },
+    },
+    "Estruturas Textuais": {
+      contexto:
+        "Onde isso aparece: na narrativa, na descrição e na exposição. Cada estrutura organiza o material de um jeito. O texto expositivo explica sem defender posição.",
+      oQue:
+        "Estrutura textual organiza o conteúdo: narração conta, descrição retrata, exposição explica e argumentação defende. O texto expositivo explica um assunto sem defender posição, e o argumentativo toma partido com evidência. A estrutura escolhida guia a expectativa do leitor.",
+      passos: [
+        "Defina o efeito: contar, retratar, explicar ou defender.",
+        "Escolha a estrutura adequada.",
+        "Mantenha a estrutura dominante até o fim.",
+      ],
+      exemplo:
+        "O mesmo assunto pode virar crônica, verbete ou artigo de opinião. A estrutura muda a expectativa e o critério de sucesso. Trocar a estrutura no meio confunde o leitor.",
+      quebra:
+        "Misturar estrutura sem sinalizar. O texto começa explicando e termina defendendo, e o leitor não sabe o que avaliar. A transição precisa ser explícita.",
+      limite:
+        "A estrutura é dominante e não exclusiva. Exposição pode ter exemplo narrativo, e isso não a descaracteriza enquanto o propósito continuar de explicação.",
+      levar: "A estrutura escolhida define o que o leitor espera.",
+      maos:
+        "Reescreva o mesmo parágrafo em duas estruturas, expositiva e argumentativa, e marque o que muda no critério de avaliação do leitor. Repita com o mesmo parágrafo em estrutura descritiva e note que a pergunta do leitor muda: na exposição ele busca entender, e na argumentação ele busca saber o que você defende. A estrutura dominante organiza a expectativa, e a mistura só funciona quando o leitor é avisado pela transição, com uma frase que anuncie a mudança de propósito e devolva o leitor ao fio principal do texto.",
+    },
+    "Redação Argumentativa": {
+      contexto:
+        "Onde isso aparece: na prova, no artigo e no parecer. O texto defende tese com argumento e evidência. A refutação responde ao contra-argumento e reforça a tese.",
+      oQue:
+        "Redação argumentativa tem tese, argumento, evidência e exemplo. A refutação responde ao contra-argumento e fortalece a posição, e a conclusão propõe desfecho. Sem evidência, o argumento vira opinião.",
+      passos: [
+        "Formule a tese em uma frase defensável.",
+        "Sustente com dado e exemplo.",
+        "Refute o contra-argumento mais forte.",
+      ],
+      exemplo:
+        "Dizer que o transporte público é ruim não convence; mostrar tempo de espera e comparação com outra cidade convence. A refutação antecipa o argumento contrário e mostra que ele não derruba a tese. O texto ganha força quando enfrenta a objeção.",
+      quebra:
+        "Repetir a tese em vez de sustentá-la. O texto fica longo e frágil, porque não há prova. A repetição pode convencer quem já concorda e não move mais ninguém.",
+      limite:
+        "A evidência tem limite de alcance. Dado de um caso não prova a regra geral, e a generalização indevida enfraquece o texto. A conclusão precisa caber na evidência.",
+      levar: "Argumento sem evidência é opinião com estrutura.",
+      maos:
+        "Pegue uma tese que você defende, escreva o argumento mais forte contra ela e responda em três frases. O exercício prepara a refutação antes de ela aparecer. A tese precisa caber em uma frase e sobreviver à objeção; se não sobrevive, o problema é da tese e não do texto, e nenhuma redação bonita conserta isso. A refutação feita antes de escrever revela qual evidência falta, e o texto já nasce com o contra-argumento respondido.",
+    },
+    "Redação Escolar e Acadêmica": {
+      contexto:
+        "Onde isso aparece: na prova, no resumo e na resenha. O gênero escolar tem formato e critério. O resumo condensa, e a resenha avalia com critério.",
+      oQue:
+        "Redação escolar e acadêmica inclui dissertação, artigo de opinião, resumo e resenha. A dissertação defende, o resumo condensa sem opinar, e a resenha avalia com critério. Cada gênero tem estrutura e expectativa próprias.",
+      passos: [
+        "Identifique o gênero e o critério de avaliação.",
+        "Estruture no formato que o gênero pede.",
+        "Revise o que o corretor vai procurar.",
+      ],
+      exemplo:
+        "Resumo que opina descumpre o gênero; resenha que só resume também. O primeiro deveria condensar, e a segunda avaliar. O critério de sucesso é do gênero, não do gosto do autor.",
+      quebra:
+        "Escrever resumo com opinião e resenha sem opinião. A troca inverte o gênero e a nota cai por estrutura, não por conteúdo. A expectativa vem antes do texto.",
+      limite:
+        "A fronteira entre gênero é mais estável na escola que na vida. Na publicação real, o formato mistura, e o autor precisa declarar o pacto com o leitor.",
+      levar: "Cada gênero tem seu critério: resumo condensa, resenha avalia.",
+      maos:
+        "Resuma um artigo em cinco frases sem opinião e depois escreva a resenha dele em cinco frases com juízo; compare os dois textos. A diferença entre resumir e avaliar é o que separa os gêneros, e a mesma leitura rende os dois; o resumo prova que você entendeu, e a resenha prova que você julgou com critério declarado. O resumo usa as palavras do autor, e a resenha assume as suas; confundir as duas vozes é o erro mais comum de quem escreve os dois gêneros na mesma semana; a voz do resumo é do autor resumido, e a da resenha é sua, com o critério exposto.",
+      pergunta: {
+        q: "O que diferencia resumo de resenha?",
+        a: "O resumo condensa o conteúdo; a resenha avalia com critério",
+        why: "Cada gênero tem uma promessa: o resumo informa sem opinar, e a resenha emite juízo sustentado; trocar as duas descumpre a expectativa do leitor.",
+      },
+    },
+    "Escrita Profissional": {
+      contexto:
+        "Onde isso aparece: no e-mail, na ata e no relatório. A escrita profissional busca clareza e registro. O documento precisa funcionar para quem lê depois.",
+      oQue:
+        "Escrita profissional inclui e-mail, memorando, ata e relatório. O texto registra decisão, prazo e responsável, e a clareza evita retrabalho. O formato muda por canal, e o conteúdo útil é o que permanece.",
+      passos: [
+        "Defina o que o leitor precisa fazer depois.",
+        "Escreva assunto, decisão e prazo em lugar visível.",
+        "Revise antes de enviar.",
+      ],
+      exemplo:
+        "E-mail sem prazo e sem responsável gera ida e volta. O mesmo pedido com data e nome resolve na primeira leitura. A clareza é econômica, não estética.",
+      quebra:
+        "Escrever para se defender em vez de para informar. O texto fica longo e esconde a decisão. O leitor cansado responde à parte fácil e ignora o resto.",
+      limite:
+        "A informalidade do canal não dispensa clareza. Mensagem curta também precisa de pedido explícito, e o risco de mal-entendido cresce com a pressa.",
+      levar: "Escrita profissional existe para o leitor agir.",
+      maos:
+        "Reescreva um e-mail seu com assunto, decisão, prazo e responsável em quatro linhas e compare com a versão original. O e-mail curto com pedido explícito costuma receber resposta mais rápida, porque o leitor não precisa reconstruir o contexto para saber o que fazer e até quando. A ata, por sua vez, registra o que foi decidido e por quem, e a falta desse registro é a causa mais comum de retrabalho em reunião. O relatório profissional segue a mesma regra: conclusão primeiro, detalhe depois, e anexo só quando alguém for conferir a conta. O leitor profissional lê o resumo executivo e decide se desce ao detalhe, e o texto que obriga a ler tudo perde a decisão, porque o tempo do leitor é o recurso mais escasso da empresa.",
+      pergunta: {
+        q: "O que um e-mail profissional precisa deixar claro?",
+        a: "O que o leitor deve fazer, até quando e quem responde",
+        why: "Sem decisão, prazo e responsável, o e-mail gera ida e volta; a informação explícita resolve na primeira leitura e deixa registro.",
+      },
+    },
+    "Revisão Textual": {
+      contexto:
+        "Onde isso aparece: no relatório, na prova e no contrato. Revisar é ajustar língua, clareza e coesão. A revisão além da ortografia pega o que o corretor de texto não vê.",
+      oQue:
+        "Revisão textual cobre gramática, ortografia, clareza e concisão. Revisar além da ortografia ajusta clareza, coesão e adequação ao leitor, e a concisão remove o que não trabalha. A revisão em duas passadas pega mais erro que uma leitura só.",
+      passos: [
+        "Primeira passada: sentido e estrutura.",
+        "Segunda passada: língua e norma.",
+        "Terceira passada: leitura em voz alta para ritmo.",
+      ],
+      exemplo:
+        "Texto sem erro de ortografia pode ter frase de quarenta palavra e perder o leitor. A revisão de clareza divide, corta e ordena, e o texto fica mais curto. O erro de gramática era o menor dos problemas.",
+      quebra:
+        "Corrigir só a ortografia e entregar. O texto fica limpo e difícil de ler, e o leitor desiste. A clareza é parte da correção.",
+      limite:
+        "A revisão não reescreve o texto do autor. Mudança de sentido pede consulta, e o revisor aponta. A fronteira protege a voz do texto.",
+      levar: "Revisar é ajustar para o leitor, não só para a gramática.",
+      maos:
+        "Pegue um texto seu de dez linhas e faça duas passadas, uma de estrutura e uma de língua; anote o que cada uma pegou e o que sobrou para a terceira. A leitura em voz alta pega frase longa e repetição que o olho pula, e o corte de uma frase melhora o ritmo mais que a troca de uma palavra.",
+    },
+  },
 };
 
 // o nome da estação chega em caixa baixa do banco ("Grafos moleculares") e em
