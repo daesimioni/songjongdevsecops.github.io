@@ -548,7 +548,7 @@ export const LICOES = {
     },
     "Multimodalidade": {
       limite:
-        "Nem toda combinação gera sentido novo. Às vezes a legenda só repete a imagem, e o efeito é redundância. Procurar conflito onde há reforço inventa leitura que o texto não sustenta, e a análise perde credibilidade diante de quem conhece a produção.",
+        "Nem toda combinação gera sentido novo. Às vezes a legenda só repete a imagem, e o efeito é redundância. Procurar conflito onde há reforço inventa leitura que o texto não sustenta, e a análise perde credibilidade diante de quem conhece a produção. Texto e imagem que dizem a mesma coisa economizam esforço, mas não criam leitura nova: a multimodalidade aparece quando um modo completa o outro.",
       contexto:
         "Onde isso aparece: no vídeo com trilha tensa, no gráfico com legenda de alerta e na notícia com foto escolhida. Som altera o clima da cena, e o ritmo de edição participa do sentido. A relação entre as partes é o que o leitor monta.",
       oQue:
@@ -645,7 +645,7 @@ export const LICOES = {
       quebra:
         "Achar que o empuxo depende da massa do corpo e não do volume submerso. A confusão leva a esperar que corpo mais pesado receba mais empuxo, quando o que importa é o volume que ele desloca.",
       limite:
-        "A fórmula direta vale para fluido em repouso e corpo totalmente envolvido. Com escoamento, superfície livre instável ou capilaridade, a conta simples não fecha e a medição vira necessária.",
+        "A fórmula direta vale para fluido em repouso e corpo totalmente envolvido. Com escoamento, superfície livre instável ou capilaridade, a conta simples não fecha e a medição vira necessária. Em líquido em movimento, a pressão deixa de depender só da profundidade. Manômetro mede diferença de pressão, e é a diferença que interessa na maioria das contas de engenharia.",
       levar: "Flutuar é deslocar o próprio peso em fluido.",
       maos:
         "Pese um objeto no ar e dentro da água e compare a diferença com o peso do volume deslocado.",
@@ -665,7 +665,7 @@ export const LICOES = {
       quebra:
         "Usar Bernoulli em tubulação com perda de carga e concluir que a energia apareceu. Sem perda, a conta fecha; com atrito, parte da energia vira calor e a equação precisa de termo de perda.",
       limite:
-        "Reynolds é estimativa de regime, não resposta exata. Transição, rugosidade e entrada do tubo fazem a faixa real variar, e o projeto precisa de margem.",
+        "Reynolds é estimativa de regime, não resposta exata. Transição, rugosidade e entrada do tubo fazem a faixa real variar, e o projeto precisa de margem. Medir a perda de carga no trecho real vale mais que qualquer fórmula de catálogo. Bomba escolhida pela vazão média erra o regime de pico; a curva do sistema entra na conta junto com o ponto de operação.",
       levar: "O regime decide a equação, não o contrário.",
       maos:
         "Mude a vazão e veja o ponto em que o escoamento deixa de ser laminar.",
@@ -685,7 +685,7 @@ export const LICOES = {
       quebra:
         "Explicar a sustentação só pelo tempo de percurso do ar sobre as asas, a história do caminho mais longo. A explicação certa envolve circulação, curvatura e diferença de pressão; a história simples não prevê bem.",
       limite:
-        "Coeficientes de sustentação e arrasto valem para a faixa ensaiada. Ângulo alto, gelo na asa ou escoamento separado mudam tudo, e o número medido em túnel não se transfere sem escala.",
+        "Coeficientes de sustentação e arrasto valem para a faixa ensaiada. Ângulo alto, gelo na asa ou escoamento separado mudam tudo, e o número medido em túnel não se transfere sem escala. Ensaio em escala pequena corrige o número de Reynolds com coeficiente, e o próprio ajuste tem faixa de validade.",
       levar: "Arrasto cobra o quadrado da pressa.",
       maos:
         "Compare o arrasto em três velocidades e veja a curva subir ao quadrado.",
@@ -707,7 +707,7 @@ export const LICOES = {
       quebra:
         "Achar que orbital é uma órbita circular com raio definido. O elétron não tem trajetória determinada; o orbital dá a probabilidade de encontrá-lo. A imagem de planeta girando atrapalha a entender ligação, espectro e a própria leitura da tabela periódica.",
       limite:
-        "O modelo de níveis funciona bem para átomo isolado e para a química comum. Em átomo pesado, efeito relativístico e correlação eletrônica mexem nos níveis, e a conta simples precisa de correção. Para íon, some ou tire elétrons antes de distribuir: a carga muda a contagem e a ordem dos níveis.",
+        "O modelo de níveis funciona bem para átomo isolado e para a química comum. Em átomo pesado, efeito relativístico e correlação eletrônica mexem nos níveis, e a conta simples precisa de correção. Para íon, some ou tire elétrons antes de distribuir: a carga muda a contagem e a ordem dos níveis. O espectro medido é o teste do modelo; configuração calculada sem espectro é aposta.",
       levar: "Próton é identidade; nêutron é massa; elétron é química.",
       maos:
         "Monte a configuração eletrônica de dois elementos vizinhos e compare a camada de valência.",
@@ -727,7 +727,7 @@ export const LICOES = {
       quebra:
         "Achar que espectro contínuo e de linhas são a mesma coisa. Contínuo vem de corpo quente e denso; linhas vêm de transição entre níveis. Sem separar os dois, a leitura da composição sai errada, e a linha de emissão vira ruído de fundo.",
       limite:
-        "Linha forte não é quantidade grande: a intensidade depende de temperatura, pressão e da própria transição. Ler abundância exige modelo, e a linha sozinha não fecha a conta. A largura da linha diz a pressão do gás: gás denso alarga o traço e apaga o detalhe fino.",
+        "Linha forte não é quantidade grande: a intensidade depende de temperatura, pressão e da própria transição. Ler abundância exige modelo, e a linha sozinha não fecha a conta. A largura da linha diz a pressão do gás: gás denso alarga o traço e apaga o detalhe fino. Calibrar com lâmpada conhecida evita confundir defeito do aparelho com linha da amostra.",
       levar: "O átomo assina com luz; o espectro é a assinatura.",
       maos:
         "Compare o espectro de uma lâmpada de sódio e de uma incandescente e marque a diferença.",
@@ -747,7 +747,7 @@ export const LICOES = {
       quebra:
         "Confundir condensado com gás comum muito frio. A diferença é a ocupação coletiva do mesmo estado, com coerência de fase. Chamar de condensado qualquer gás gelado é erro de definição.",
       limite:
-        "O condensado existe por fração de segundo e exige vácuo e armadilha. Fora do laboratório o estado é frágil, e aplicação prática ainda depende de engenharia de vácuo, de óptica estável e de controle de vibração.",
+        "O condensado existe por fração de segundo e exige vácuo e armadilha. Fora do laboratório o estado é frágil, e aplicação prática ainda depende de engenharia de vácuo, de óptica estável e de controle de vibração. Termômetro óptico e armadilha estável são a maior parte do experimento, não a física do condensado.",
       levar: "Frio extremo não congela a quântica: revela.",
       maos:
         "Compare a velocidade de átomo a temperatura ambiente e a microkelvin e veja o comprimento de onda crescer.",
@@ -876,7 +876,7 @@ export const LICOES = {
       quebra:
         "Esperar que nanopartícula tenha as mesmas propriedades do material volumoso. A superfície e o confinamento mudam ponto de fusão, cor, reatividade e magnetismo. Comparar sem declarar o tamanho é comparar coisas diferentes.",
       limite:
-        "Abaixo de certo tamanho a partícula fica instável e aglomera, e a medida depende do revestimento. Escalar a síntese mantendo o tamanho é o desafio de produção, e o laboratório não garante a fábrica.",
+        "Abaixo de certo tamanho a partícula fica instável e aglomera, e a medida depende do revestimento. Escalar a síntese mantendo o tamanho é o desafio de produção, e o laboratório não garante a fábrica. Abaixo de dez nanômetros a superfície domina o volume e a estabilidade muda de regra.",
       levar: "No nano, o tamanho é parte da identidade do material.",
       maos:
         "Compare a cor de duas suspensões de mesmo material com tamanhos diferentes.",
@@ -918,7 +918,7 @@ export const LICOES = {
       quebra:
         "Achar que só a temperatura alta basta. Sem confinamento, o plasma esfria na parede e a fusão para. Temperatura, densidade e tempo precisam valer juntos, e o produto é o critério.",
       limite:
-        "O tokamak funciona em pulso e sofre com instabilidade; o stellarator busca estabilidade com geometria complexa. Nenhum dos dois resolveu a conta econômica ainda, e o material da parede também é limite.",
+        "O tokamak funciona em pulso e sofre com instabilidade; o stellarator busca estabilidade com geometria complexa. Nenhum dos dois resolveu a conta econômica ainda, e o material da parede também é limite. Tempo de confinamento e perda por radiação entram na mesma conta do ganho.",
       levar: "Fusão é tão difícil pelo confinamento quanto pela temperatura.",
       maos:
         "Siga a trajetória de uma partícula carregada num campo toroidal e veja por que ela não escapa reta.",
@@ -980,7 +980,7 @@ export const LICOES = {
       quebra:
         "Achar que pH 3 é três vezes mais ácido que pH 4. É dez vezes. A leitura linear da escala leva a subestimar acidez e a errar a dose de neutralizante.",
       limite:
-        "O pH mede atividade, não concentração total, e em solução muito concentrada a conta simples desvia. Fora da faixa da água, solvente diferente muda a escala.",
+        "O pH mede atividade, não concentração total, e em solução muito concentrada a conta simples desvia. Fora da faixa da água, solvente diferente muda a escala. Solução tampão resiste justamente porque tem ácido e base conjugados na mesma mistura.",
       levar: "pH é régua de potência: uma unidade é dez vezes.",
       maos:
         "Meça o pH de três soluções e calcule a razão de acidez entre elas.",
@@ -1000,7 +1000,7 @@ export const LICOES = {
       quebra:
         "Dizer que oxigênio é obrigatório em toda oxidação. O nome ficou por herança, e a definição é perda de elétron. Enxofre, cloro e até hidrogênio podem oxidar em reação sem oxigênio.",
       limite:
-        "Número de oxidação é contabilidade formal, não carga real em ligação covalente. Em composto com ligação polar a atribuição é convenção, e a conclusão sobre mecanismo exige mais que a conta.",
+        "Número de oxidação é contabilidade formal, não carga real em ligação covalente. Em composto com ligação polar a atribuição é convenção, e a conclusão sobre mecanismo exige mais que a conta. Balancear por íon-elétron em meio ácido e em meio básico dá coeficientes diferentes: escolha o meio antes de montar a semi-reação.",
       levar: "Redox é dança de elétron: um perde, outro ganha, ninguém fica sem par.",
       maos:
         "Atribua número de oxidação nas duas metades de uma reação e veja quem oxidou.",
@@ -1042,7 +1042,7 @@ export const LICOES = {
       quebra:
         "Tentar reciclar termofixo como termoplástico. A rede impede a remoldagem, e o material só quebra ou vira carga. Confundir os dois estraga o lote de reciclado.",
       limite:
-        "A fronteira não é absoluta: existe termoplástico com reticulação leve e elastômero que envelhece e perde elasticidade. A classificação orienta, mas o ensaio de fusão decide na prática, e por isso a reciclagem de termofixo vai por moagem e uso como carga, não por remoldagem. Quem projeta peça que precisa voltar ao forno escolhe termoplástico desde o início, e a escolha é de projeto.",
+        "A fronteira não é absoluta: existe termoplástico com reticulação leve e elastômero que envelhece e perde elasticidade. A classificação orienta, mas o ensaio de fusão decide na prática, e por isso a reciclagem de termofixo vai por moagem e uso como carga, não por remoldagem. Quem projeta peça que precisa voltar ao forno escolhe termoplástico desde o início, e a escolha é de projeto. O ensaio certo é o de fusão e o de tração após envelhecimento, não a ficha do fornecedor.",
       levar: "Termoplástico volta ao forno; termofixo só volta a ser pó.",
       maos:
         "Aqueça uma amostra de cada tipo e veja qual amolece antes de queimar.",
@@ -1062,7 +1062,7 @@ export const LICOES = {
       quebra:
         "Misturar resinas diferentes e esperar material reciclado forte. A mistura gera interface fraca, e o produto racha. A separação é a etapa que decide o resultado, e ela custa.",
       limite:
-        "A reciclagem química consome energia e solvente, e nem toda resina tem rota economicamente viável. O balanço ambiental precisa contar essa energia, não só o resíduo evitado.",
+        "A reciclagem química consome energia e solvente, e nem toda resina tem rota economicamente viável. O balanço ambiental precisa contar essa energia, não só o resíduo evitado. Pirólise, solvólise e reciclagem mecânica competem entre si, e o custo por tonelada decide qual rota sobrevive na planta.",
       levar: "Reciclar quimicamente é desmontar o polímero para montar de novo.",
       maos:
         "Compare o rendimento de monômero em duas temperaturas de despolimerização.",
@@ -1124,7 +1124,7 @@ export const LICOES = {
       quebra:
         "Achar que revestimento dura para sempre. Ele também envelhece, trinca e desgasta, e a proteção cai antes de a falha aparecer a olho nu. Manutenção faz parte do projeto, e limpar a superfície pode restaurar o efeito por um tempo, com intervalo que também é parâmetro de projeto. Sem esse número, a promessa de durabilidade não se sustenta em campo, e o ensaio de exposição real é a última palavra.",
       limite:
-        "O efeito é de superfície, e arranhão expõe o material de baixo. Em ambiente com abrasão, o revestimento fino não sustenta, e a solução pode ser outro material, não outra camada.",
+        "O efeito é de superfície, e arranhão expõe o material de baixo. Em ambiente com abrasão, o revestimento fino não sustenta, e a solução pode ser outro material, não outra camada. Lavagem e secagem mudam a superfície antes de qualquer uso, e o efeito pode ir embora.",
       levar: "Revestimento é roupa: protege até gastar.",
       maos:
         "Meça o ângulo de contato de uma gota antes e depois de limpar a superfície.",
@@ -1208,7 +1208,7 @@ export const LICOES = {
       quebra:
         "Tratar resultado de simulação como medida exata. O número tem erro de método e de parâmetro, e a barra de erro não aparece sozinha. Simulação guia o experimento, não substitui.",
       limite:
-        "O campo de força é ajustado para uma classe de molécula; fora dela o erro cresce sem aviso. A quântica também depende de funcional e base, e o resultado herda essa escolha.",
+        "O campo de força é ajustado para uma classe de molécula; fora dela o erro cresce sem aviso. A quântica também depende de funcional e base, e o resultado herda essa escolha. Antes de confiar no número, o mesmo sistema deve fechar a conta com o método mais barato e com o mais caro.",
       levar: "Simulação é lanterna: ilumina o caminho, não é o caminho.",
       maos:
         "Compare a mesma molécula por campo de força e por método quântico e veja a diferença de energia.",
@@ -1228,7 +1228,7 @@ export const LICOES = {
       quebra:
         "Achar que todo funcional dá o mesmo resultado. Cada um tem erro típico, e comparar números de funcionais diferentes sem declarar é comparar coisas distintas.",
       limite:
-        "DFT é teoria de estado fundamental; estado excitado e dinâmica pedem extensão. Sistema fortemente correlacionado escapa da aproximação simples, e o erro não é pequeno. Antes de comparar números, declare funcional, base e geometria: sem isso o valor não é reproduzível nem por quem rodou a conta.",
+        "DFT é teoria de estado fundamental; estado excitado e dinâmica pedem extensão. Sistema fortemente correlacionado escapa da aproximação simples, e o erro não é pequeno. Antes de comparar números, declare funcional, base e geometria: sem isso o valor não é reproduzível nem por quem rodou a conta. Comparar com experimental só vale quando o sistema é o mesmo: fase, spin e temperatura entram na conta.",
       levar: "O funcional escolhe o que a conta enxerga; o erro vem junto.",
       maos:
         "Rode o mesmo sistema com dois funcionais e compare com o valor experimental.",
@@ -1270,7 +1270,7 @@ export const LICOES = {
       quebra:
         "Achar que difusão precisa de bomba. Ela acontece por movimento térmico e dissipa gradiente. A bomba existe para criar gradiente, não para difundir.",
       limite:
-        "A difusão simples descreve meio homogêneo e partícula sem interação. Em citoplasma cheio de obstáculo, o movimento é mais lento que a conta ideal, e a célula compensa com fluxo.",
+        "A difusão simples descreve meio homogêneo e partícula sem interação. Em citoplasma cheio de obstáculo, o movimento é mais lento que a conta ideal, e a célula compensa com fluxo. A célula resolve distância longa com transporte ativo onde a difusão chega tarde.",
       levar: "Difusão é o mundo se misturando sozinho.",
       maos:
         "Compare o tempo de difusão para duas distâncias e veja o crescimento ao quadrado.",
@@ -1310,7 +1310,7 @@ export const LICOES = {
       quebra:
         "Confundir efeito estufa, que existe naturalmente, com camada de ozônio. São fenômenos diferentes, com gases e altitudes diferentes. Misturar os dois leva a política ambiental errada.",
       limite:
-        "Albedo de superfície é medido por satélite e depende do ângulo e da nuvem. O valor local não representa o planeta, e a conta climática usa média com peso.",
+        "Albedo de superfície é medido por satélite e depende do ângulo e da nuvem. O valor local não representa o planeta, e a conta climática usa média com peso. Série longa vale mais que medida pontual: clima é tendência de décadas, tempo é o dia de hoje.",
       levar: "Superfície clara devolve luz; escura guarda calor.",
       maos:
         "Compare a temperatura de duas superfícies com albedo diferente sob a mesma lâmpada.",
@@ -1581,7 +1581,7 @@ export const LICOES = {
       quebra:
         "Arredondar a solução linear sem verificar se continua viável no problema inteiro. Meia entrega não existe, e o arredondamento pode violar restrição. A solução contínua é limite, não resposta final.",
       limite:
-        "O modelo é tão bom quanto o dado: demanda errada produz plano errado com cara de ótimo. A realidade também muda enquanto o plano roda, e a decisão precisa de revisão.",
+        "O modelo é tão bom quanto o dado: demanda errada produz plano errado com cara de ótimo. A realidade também muda enquanto o plano roda, e a decisão precisa de revisão. Plano ótimo no modelo pode falhar na operação, e a simulação do plano antes de aplicar revela o gargalo real.",
       levar: "Pesquisa operacional transforma decisão em troca explícita.",
       maos:
         "Monte uma matriz de custo pequena e resolva a alocação ótima, depois mude um custo e veja a solução mudar.",
@@ -3342,7 +3342,7 @@ export const LICOES = {
       quebra:
         "Trocar ânodo e cátodo e inverter a conclusão. O ânodo é sempre onde ocorre oxidação, na pilha e na eletrólise. O nome não depende de ser positivo ou negativo.",
       limite:
-        "O potencial padrão supõe concentração unitária. Fora disso, Nernst corrige; com sobretensão e queda ôhmica, a célula real entrega menos que o previsto.",
+        "O potencial padrão supõe concentração unitária. Fora disso, Nernst corrige; com sobretensão e queda ôhmica, a célula real entrega menos que o previsto. Célula real se mede com carga, não em circuito aberto; a diferença entre os dois valores é a eficiência que sobra.",
       levar: "Ânodo oxida, cátodo reduz, sempre.",
       maos:
         "Monte duas pilhas e confira o sentido do elétron pelo potencial de célula.",
@@ -6290,7 +6290,7 @@ export const LICOES = {
       quebra:
         "Concordar com o termo mais próximo e não com o sujeito. A armadilha aparece em sujeito distante ou composto, e o erro passa na leitura rápida. A análise resolve.",
       limite:
-        "A classificação tradicional tem caso controverso, e a descrição moderna muda o rótulo. A função é o critério, e a nomenclatura varia com a gramática adotada.",
+        "A classificação tradicional tem caso controverso, e a descrição moderna muda o rótulo. A função é o critério, e a nomenclatura varia com a gramática adotada. Duas análises válidas podem usar rótulos diferentes para o mesmo termo, e a prova de concurso cobra o rótulo da gramática que ela adota.",
       levar: "Concorde com o sujeito, não com o vizinho.",
       maos:
         "Reescreva cinco frases com sujeito composto e confira a concordância; depois mova o sujeito para o fim e veja se o verbo acompanha.",
@@ -6526,6 +6526,8 @@ export const LICOES = {
       quebra:
         "O erro é achar que argumento com conclusão verdadeira é automaticamente válido. A conclusão pode estar certa por outra razão e o raciocínio continuar furado. Quem avalia só o resultado aprova texto que não sustenta nada. A pergunta é sempre se a conclusão precisa ser verdadeira quando as premissas são, não se ela é verdadeira de fato.",
       levar: "Validade é sobre a forma; verdade é sobre o mundo.",
+      limite:
+        "Forma válida não garante conclusão verdadeira: premissa falsa leva a conclusão falsa por caminho válido. A lógica formal não decide o mundo, só a passagem das premissas para a conclusão, e é por isso que o argumento precisa de dado e de fonte.",
       maos:
         "Reescreva um argumento de notícia em premissas e conclusão, identifique a regra usada e tente achar um contraexemplo antes de aceitar.",
     },

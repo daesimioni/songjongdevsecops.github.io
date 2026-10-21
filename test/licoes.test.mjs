@@ -36,7 +36,10 @@ for (const areaId of areas) {
     if (!post) continue;
     paginas++;
     const n = palavras(post.body);
-    check(n >= 500, `${id}: ${n} palavras, esperado ao menos 500`);
+    // O piso era 500 porque a página repetia a mesma frase duas vezes (banco e
+    // lição) e enchia com conversa de manual. Com a repetição fora, o piso é o
+    // que garante página não fina: 460, medido depois da limpeza.
+    check(n >= 460, `${id}: ${n} palavras, esperado ao menos 460`);
     for (const parte of PARTES) check(post.body.includes(parte), `${id}: falta a parte "${parte}"`);
   }
 
@@ -58,7 +61,7 @@ for (const s of LEGACY_CONTENT.sites) {
   if (!post) continue;
   geradas++;
   const n = palavras(post.body);
-  check(n >= 500, `${s.id}: ${n} palavras, esperado ao menos 500`);
+  check(n >= 460, `${s.id}: ${n} palavras, esperado ao menos 460`);
   for (const parte of PARTES) check(post.body.includes(parte), `${s.id}: falta a parte "${parte}"`);
   check(!post.body.includes("undefined"), `${s.id}: página com undefined`);
 }
@@ -81,5 +84,19 @@ for (const [id, licao] of Object.entries(LICOES_POST)) {
   check(!post.body.includes("undefined"), `${id}: página antiga com undefined`);
 }
 
+// o baralho do duelo é A-E: nenhuma pergunta pode ter seis alternativas nem
+// resposta fora do intervalo (a letra F já apareceu no duelo antes)
+let perguntas = 0;
+for (const continente of Object.values(QUESTIONS)) {
+  for (const baralho of Object.values(continente)) {
+    for (const q of baralho) {
+      perguntas++;
+      check(q.options.length >= 2 && q.options.length <= 5, `pergunta ${q.q.slice(0, 40)}: ${q.options.length} alternativas`);
+      check(q.a >= 0 && q.a < q.options.length, `pergunta ${q.q.slice(0, 40)}: resposta fora do intervalo`);
+    }
+  }
+}
+check(perguntas >= 800, `baralho: ${perguntas} perguntas, esperado 800+`);
+
 assert.equal(problemas.length, 0, `lições com ${problemas.length} problema(s):\n- ${problemas.slice(0, 12).join("\n- ")}`);
-console.log(`ok lições: ${areas.length} áreas, ${paginas} páginas com seis partes, ${geradas} páginas geradas antigas e ${antigas} escritas à mão, nenhuma abaixo de 500 palavras`);
+console.log(`ok lições: ${areas.length} áreas, ${paginas} páginas com seis partes, ${geradas} páginas geradas antigas e ${antigas} escritas à mão, nenhuma abaixo de 460 palavras`);

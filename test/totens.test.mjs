@@ -17,10 +17,16 @@ const check = (ok, msg) => { if (!ok) problemas.push(msg); };
 const render = readFileSync(new URL("../js/render.js", import.meta.url), "utf8");
 check(/function drawTotem\(s, px, py, k, time\)/.test(render), "totem sem desenho próprio");
 check(/drawTotem\(s, px, py, k, time\)/.test(render), "estação não chama o totem");
-for (const parte of ["lajotas do adro", "degraus", "fuste", "capitel", "runas gravadas"]) {
+for (const parte of ["lajotas do adro", "degraus"]) {
   check(render.includes(parte), `totem sem ${parte}`);
 }
-check(/drawStationIcon\(s\.icon, px, gy, time, s\.accent, 0\.66 \* k\)/.test(render), "sigilo não está encostado no capitel");
+// seis silhuetas e três pedras: cada estação não repete a vizinha
+check(/TOTEM_PEDRAS = \[/.test(render), "totem com uma pedra só");
+check(/hash2\(s\.x - 5\.7, s\.y \+ 2\.9\) \* 6/.test(render), "totem sem sorteio de silhueta");
+for (const parte of ["cairn", "pórtico", "obelisco", "braços", "anel"]) {
+  check(render.includes(parte), `totem sem a silhueta ${parte}`);
+}
+check(/drawStationIcon\(s\.icon, px, gy, time, s\.accent, escalaSigilo \* k\)/.test(render), "sigilo fora do ponto da silhueta");
 // o pedestal antigo era uma placa reta com um feixe de luz: isso não pode voltar
 check(!/const beam = ctx\.createLinearGradient\(px, py - 4, px, py - 28\)/.test(render), "feixe antigo do pedestal de volta");
 

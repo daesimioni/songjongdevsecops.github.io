@@ -2086,15 +2086,30 @@ for (const [areaId, lista] of Object.entries(PERGUNTAS_LEGADO)) {
   });
 }
 
+// O baralho é A-E. O banco escreve seis alternativas; o corte para cinco é
+// aqui, mantendo a resposta e sem deixar a letra F aparecer no duelo.
+function cortaCinco(q) {
+  if (!Array.isArray(q.options) || q.options.length <= 5) return q;
+  // tira a alternativa errada mais curta: a certa não pode ficar sendo a única
+  // longa, senão o tamanho entrega a resposta
+  let fora = -1;
+  for (let i = 0; i < q.options.length; i++) {
+    if (i === q.a) continue;
+    if (fora < 0 || q.options[i].length < q.options[fora].length) fora = i;
+  }
+  const opcoes = q.options.filter((_, i) => i !== fora);
+  return { ...q, options: opcoes, a: q.a > fora ? q.a - 1 : q.a };
+}
+
 // perguntas do catálogo: uma por tópico de estação, na dificuldade do tópico
 for (const item of CATALOG_CONTENT.questions) {
   const bucket = QUESTIONS[item.continent]?.[item.tier];
-  if (bucket) bucket.push({ ...item.q, area: item.area });
+  if (bucket) bucket.push({ ...cortaCinco(item.q), area: item.area });
 }
 // subáreas das seções antigas: perguntas do mesmo catálogo
 for (const item of LEGACY_CONTENT.questions) {
   const bucket = QUESTIONS[item.continent]?.[item.tier];
-  if (bucket) bucket.push({ ...item.q, area: item.area });
+  if (bucket) bucket.push({ ...cortaCinco(item.q), area: item.area });
 }
 
 // alternativas reescritas à mão (ver js/text/opcoes.js)
@@ -2103,8 +2118,9 @@ for (const c of Object.keys(QUESTIONS)) {
     for (const q of QUESTIONS[c][t]) {
       const melhor = OPCOES_MELHORES[q.q];
       if (melhor && Array.isArray(melhor.o) && melhor.o[melhor.a] != null) {
-        q.options = melhor.o.slice();
-        q.a = melhor.a;
+        const cortada = cortaCinco({ ...q, options: melhor.o.slice(), a: melhor.a });
+        q.options = cortada.options;
+        q.a = cortada.a;
       }
     }
   }

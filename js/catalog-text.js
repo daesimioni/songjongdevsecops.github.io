@@ -123,9 +123,12 @@ export function subareaBody({ sectionNum, sectionName, discipline, name, topics,
   const lista = topics.map((t) => `<li>${html(t)}</li>`).join("");
   const vizinhas = siblings.filter((s) => s !== name);
   const curado = extra || CURADO[discipline]?.[`${sectionNum}|${name}`] || CURADO[discipline]?.[name];
-  const abertura = curado
+  let abertura = curado
     ? `<p>${curado.abre}</p>`
     : `<p>Uma pedra baixa, coberta de marcas. ${html(name)}, no caminho de ${html(sectionName)}.</p>`;
+  // a abertura curada às vezes é a mesma frase que abre a lição: repetir a
+  // primeira linha na mesma página não ensina nada
+  if (licao && semAcento(abertura).includes(semAcento(licao.oQue).split(" ").slice(0, 8).join(" "))) abertura = "";
   // com lição escrita, o "Com as mãos" é o exercício da lição; a prática e a
   // armadilha da seção entram com rótulo próprio para não repetir o título
   const pratica = curado?.pratica ? `<p><strong>${licao ? "A prática da seção" : "Com as mãos"}.</strong> ${curado.pratica}</p>` : "";
@@ -143,7 +146,9 @@ export function subareaBody({ sectionNum, sectionName, discipline, name, topics,
   if (!licao) {
     return `<p class="page-epigrafe">${epigrafe(name)}</p>${abertura}<p><strong>${html(name)}</strong> é o nome desta pedra, no caminho de ${html(sectionName)}. Ela guarda ${topics.length} ${topics.length === 1 ? "marca" : "marcas"}.</p><ul>${lista}</ul>${pratica}${erro}${conexoes}${linha}`;
   }
-  const marcas = Array.isArray(bankTopic?.keys) ? bankTopic.keys : [];
+  const jaDito = semAcento(`${abertura} ${licao.oQue} ${licao.contexto || ""}`);
+  const marcas = (Array.isArray(bankTopic?.keys) ? bankTopic.keys : [])
+    .filter((k) => !jaDito.includes(semAcento(k).split(" ").slice(0, 6).join(" ")));
   const defDoBanco = bankTopic?.def || "";
   const listaPerguntas = [...perguntas, licao.pergunta].filter((q) => q && q.q);
   const perguntam = listaPerguntas
@@ -160,6 +165,16 @@ export function subareaBody({ sectionNum, sectionName, discipline, name, topics,
   // fazer com as mãos. Só depois vêm o que é da seção (prática e armadilha) e
   // o que é do mapa (pedras irmãs e áreas vizinhas), rotulados, porque no meio
   // da lição essas partes liam como mistura de assuntos.
+  const levar = frase(licao.levar);
+  const chaveLevar = semAcento(levar).split(" ").slice(0, 7).join(" ");
+  // se a frase de cabeça já aparece no contexto, ela sai do contexto e fica só
+  // na citação do fim: repetir a mesma linha duas vezes na página não ensina
+  let contexto = licao.contexto ? frase(licao.contexto) : "";
+  if (contexto && semAcento(contexto).includes(chaveLevar)) {
+    const frases = contexto.split(/(?<=[.!?])\s+/);
+    const restantes = frases.filter((f) => !semAcento(f).includes(chaveLevar));
+    contexto = restantes.join(" ").trim();
+  }
   return [
     `<p class="page-epigrafe">${epigrafe(name)}</p>`,
     abertura,
@@ -167,18 +182,20 @@ export function subareaBody({ sectionNum, sectionName, discipline, name, topics,
     `<p><strong>O que é.</strong> ${frase(licao.oQue)}</p>`,
     // A definição do banco entra só quando acrescenta: quando a lição já abre
     // com as mesmas palavras, repetir a frase não ensina nada.
-    defDoBanco && !semAcento(licao.oQue).includes(semAcento(defDoBanco).split(" ").slice(0, 10).join(" "))
+    defDoBanco && !semAcento(licao.oQue).includes(semAcento(defDoBanco).split(" ").slice(0, 6).join(" "))
       ? `<p><strong>A definição do banco.</strong> ${frase(defDoBanco)}</p>`
       : "",
-    licao.contexto ? `<p>${frase(licao.contexto)}</p>` : "",
+    contexto ? `<p>${contexto}</p>` : "",
     marcas.length ? `<p><strong>O que guardar.</strong> ${marcas.map(frase).join(" ")}</p>` : "",
-    `<p><strong>Como se usa.</strong> O caminho é sempre o mesmo, e o exemplo abaixo faz ele inteiro.</p>`,
+    `<p><strong>Como se usa.</strong></p>`,
     `<ol>${(licao.passos || []).map((p) => `<li>${frase(p)}</li>`).join("")}</ol>`,
     `<p>${frase(licao.exemplo)}</p>`,
-    `<p><strong>Onde quebra.</strong> ${frase(bankTopic?.mistake)} ${frase(licao.quebra)}</p>`,
+    // a armadilha do banco às vezes está escrita dentro da lição: repetir a
+    // mesma frase na mesma seção só incha a página
+    `<p><strong>Onde quebra.</strong> ${semAcento(licao.quebra).includes(semAcento(bankTopic?.mistake).slice(0, 32)) ? "" : frase(bankTopic?.mistake)} ${frase(licao.quebra)}</p>`,
     licao.limite ? `<p><strong>O limite.</strong> ${frase(licao.limite)}</p>` : "",
-    perguntam ? `<p><strong>O que perguntam.</strong> O bicho da área cobra a ideia, não a decoreba. Estes são os formatos que já apareceram:</p>${perguntam}` : "",
-    `<blockquote><strong>Para levar.</strong> ${frase(licao.levar)}</blockquote>`,
+    perguntam ? `<p><strong>O que perguntam.</strong> Os formatos que já apareceram:</p>${perguntam}` : "",
+    `<blockquote><strong>Para levar.</strong> ${levar}</blockquote>`,
     `<p><strong>Com as mãos.</strong> ${frase(licao.maos)}</p>`,
     `<p><strong>O que esta pedra cobre.</strong> ${topics.length} ${topics.length === 1 ? "marca" : "marcas"} do assunto, para reconhecer quando aparecerem:</p><ul>${lista}</ul>`,
     pratica,
