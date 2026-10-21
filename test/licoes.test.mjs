@@ -10,6 +10,7 @@ const { QUESTIONS } = await import("../js/rpg-data.js");
 const { LICOES } = await import("../js/text/licoes.js");
 const { LICOES_POST } = await import("../js/text/licoes-post.js");
 const { POSTS } = await import("../js/content.js");
+const { LEGACY_CONTENT } = await import("../js/config.js");
 
 const problemas = [];
 const check = (ok, msg) => { if (!ok) problemas.push(msg); };
@@ -48,6 +49,21 @@ for (const areaId of areas) {
   }
 }
 
+// as 69 páginas geradas das doze áreas antigas também são curso de seis partes
+const GERADAS_LEGADAS = 69;
+let geradas = 0;
+for (const s of LEGACY_CONTENT.sites) {
+  const post = LEGACY_CONTENT.posts[s.id];
+  check(!!post, `${s.id}: página gerada sem post`);
+  if (!post) continue;
+  geradas++;
+  const n = palavras(post.body);
+  check(n >= 500, `${s.id}: ${n} palavras, esperado ao menos 500`);
+  for (const parte of PARTES) check(post.body.includes(parte), `${s.id}: falta a parte "${parte}"`);
+  check(!post.body.includes("undefined"), `${s.id}: página com undefined`);
+}
+check(geradas === GERADAS_LEGADAS, `páginas geradas: ${geradas}, esperado ${GERADAS_LEGADAS}`);
+
 // as 69 páginas escritas à mão (as estações antigas) recebem o fecho de curso:
 // limite, pergunta, para levar e com as mãos, sem perder o corpo original
 const POSTS_ESCRITOS = 69;
@@ -66,4 +82,4 @@ for (const [id, licao] of Object.entries(LICOES_POST)) {
 }
 
 assert.equal(problemas.length, 0, `lições com ${problemas.length} problema(s):\n- ${problemas.slice(0, 12).join("\n- ")}`);
-console.log(`ok lições: ${areas.length} áreas, ${paginas} páginas com seis partes, ${paginas >= 1 ? "nenhuma abaixo de 500 palavras" : ""}, pergunta com casa; ${antigas} páginas antigas com fecho de curso`);
+console.log(`ok lições: ${areas.length} áreas, ${paginas} páginas com seis partes, ${geradas} páginas geradas antigas e ${antigas} escritas à mão, nenhuma abaixo de 500 palavras`);

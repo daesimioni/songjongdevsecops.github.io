@@ -7,6 +7,7 @@ import { SECTION_TOPICS } from "./catalog-topics.js";
 import { ICONS, articleOf, labFor, subareaBody, titleCase, topicLabel, trilhas } from "./catalog-text.js";
 import { placeStations } from "./catalog-place.js";
 import { SECAO_TEXT } from "./text/secoes.js";
+import { licaoDeLegado } from "./text/licoes-legado.js";
 
 const dentroDoRetangulo = (rect, p) =>
   p.x >= rect.x - 1 && p.x <= rect.x + rect.w + 1 && p.y >= rect.y - 1 && p.y <= rect.y + rect.h + 1;
@@ -98,17 +99,23 @@ export function buildLegacyContent({ areas, sites, waystones, npcSpawns }) {
         legacy: true,
       });
       const trilhaTexto = SECAO_TEXT[secaoArea.num];
-      const corpo = item.trilha
-        ? `${trilhaTexto ? `<p>${trilhaTexto.abre}</p>` : ""}<p><strong>Trilha ${i + 1} de ${lista.length}.</strong> Esta parte da seção <strong>${secao.name}</strong> reúne os tópicos abaixo.</p><ul>${item.topicos.map((t) => `<li>${t}</li>`).join("")}</ul>${trilhaTexto ? `<p><strong>Prática:</strong> ${trilhaTexto.pratica}</p><p><strong>Erro comum:</strong> ${trilhaTexto.erro}</p>` : ""}`
-        : subareaBody({
-            sectionNum: secaoArea.num,
-            sectionName: secao.name,
-            discipline: secaoArea.discipline,
-            name: item.nome,
-            topics: item.topicos,
-            siblings: lista.map((x) => x.nome),
-            catalogId: secaoArea.id,
-          }) + (trilhaTexto ? `<p><strong>Com as mãos.</strong> ${trilhaTexto.pratica}</p><p><strong>O passo em falso.</strong> ${trilhaTexto.erro}</p>` : "");
+      // a página da trilha também é curso de seis partes: a abertura da seção
+      // entra no lugar da abertura padrão, e a prática e a armadilha da seção
+      // continuam na página porque a pergunta cobra exatamente esse texto
+      const extraTrilha = item.trilha && trilhaTexto
+        ? { abre: `${trilhaTexto.abre} <strong>Trilha ${i + 1} de ${lista.length}.</strong> Esta parte da seção <strong>${secao.name}</strong> reúne os tópicos abaixo.`, pratica: trilhaTexto.pratica, erro: trilhaTexto.erro }
+        : null;
+      const corpo = subareaBody({
+        sectionNum: secaoArea.num,
+        sectionName: secao.name,
+        discipline: secaoArea.discipline,
+        name: item.nome,
+        topics: item.topicos,
+        siblings: lista.map((x) => x.nome),
+        catalogId: secaoArea.id,
+        licao: licaoDeLegado(area.id, item.nome),
+        extra: extraTrilha,
+      });
       posts[id] = {
         kicker: `${discipline.name.toLowerCase()} · ${noun.toLowerCase()}`,
         title: nome,

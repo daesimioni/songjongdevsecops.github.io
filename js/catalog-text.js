@@ -125,8 +125,10 @@ export function subareaBody({ sectionNum, sectionName, discipline, name, topics,
   const abertura = curado
     ? `<p>${curado.abre}</p>`
     : `<p>Uma pedra baixa, coberta de marcas. ${html(name)}, no caminho de ${html(sectionName)}.</p>`;
-  const pratica = curado ? `<p><strong>Com as mãos.</strong> ${curado.pratica}</p>` : "";
-  const erro = curado ? `<p><strong>O passo em falso.</strong> ${curado.erro}</p>` : "";
+  // com lição escrita, o "Com as mãos" é o exercício da lição; a prática e a
+  // armadilha da seção entram com rótulo próprio para não repetir o título
+  const pratica = curado?.pratica ? `<p><strong>${licao ? "A prática da seção" : "Com as mãos"}.</strong> ${curado.pratica}</p>` : "";
+  const erro = curado?.erro ? `<p><strong>${licao ? "A armadilha da seção" : "O passo em falso"}.</strong> ${curado.erro}</p>` : "";
   // as conexões são as áreas ligadas por ponte ou túnel no mapa
   const areasVizinhas = catalogId
     ? catalogNeighbors(catalogId).slice(0, 4).map((id) => CATALOG_BY_ID.get(id)?.short).filter(Boolean)
