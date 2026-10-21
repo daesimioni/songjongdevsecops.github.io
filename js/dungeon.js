@@ -11,6 +11,7 @@ import { findPathIn } from "./path.js";
 import { hash2 } from "./world.js";
 import { drawPetSprite } from "./pet-art.js";
 import { drawSkiff } from "./skiff.js";
+import { escalaDaCamera, tilesNaVista, dentroDaVista, caixaNaVista } from "./camera.js";
 
 const $ = (id) => document.getElementById(id);
 const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
@@ -2014,18 +2015,24 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
 
   function draw(t) {
     if (!ctx || !state.map) return;
+    const tQuadro = performance.now();
     const dpr = state.dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.imageSmoothingEnabled = false;
 
     const vw = state.vw;
     const vh = state.vh;
-    const scale = clamp(Math.min(vw / (27 * TILE), vh / (18 * TILE)), 1.15, 3.4);
+    // a mesma escala do vale: a caverna não chega mais perto nem mais longe
+    const scale = escalaDaCamera(vw, vh);
     const viewW = vw / scale;
     const viewH = vh / scale;
     const camX = clamp(state.player.x * TILE - viewW / 2, 0, state.map.W * TILE - viewW);
     const camY = clamp(state.player.y * TILE - viewH / 2, 0, state.map.H * TILE - viewH);
-    state.view = { scale, camX, camY };
+    // só o que a câmera cobre é visitado no quadro. O mapa continua 64x48, mas
+    // o custo acompanha a tela, não o tamanho da caverna.
+    const vista = tilesNaVista(camX, camY, viewW, viewH, state.map.W, state.map.H);
+    const visiveis = { props: 0, chests: 0, monstros: 0, tochas: 0, tiles: (vista.x1 - vista.x0 + 1) * (vista.y1 - vista.y0 + 1) };
+    state.view = { scale, camX, camY, vista, visiveis };
 
     const palette = state.def.palette;
     ctx.fillStyle = palette.wall;
@@ -2035,17 +2042,29 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     ctx.translate(-camX, -camY);
 
     const cityIndex = state.map.rooms.findIndex((r) => r.kind === "city");
-    // chão e parede vêm do canvas pintado na descida: um drawImage por quadro
-    if (state.terrain) ctx.drawImage(state.terrain, 0, 0);
+    // chão e parede vêm do canvas pintado na descida. O recorte é da vista: o
+    // resto do canvas não é lido nem amostrado pelo navegador.
+    if (state.terrain) {
+      const sx0 = Math.max(0, vista.x0 * TILE);
+      const sy0 = Math.max(0, vista.y0 * TILE);
+      const sw = Math.min(state.terrain.width, (vista.x1 + 1) * TILE) - sx0;
+      const sh = Math.min(state.terrain.height, (vista.y1 + 1) * TILE) - sy0;
+      if (sw > 0 && sh > 0) ctx.drawImage(state.terrain, sx0, sy0, sw, sh, sx0, sy0, sw, sh);
+      visiveis.terrenoPx = Math.max(0, sw) * Math.max(0, sh);
+    }
 
     // tochas nas paredes
     for (const prop of state.props) {
-      if (prop.kind === "torch") drawTorch(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent);
+      if (prop.kind !== "torch" || !dentroDaVista(prop.x, prop.y, vista)) continue;
+      visiveis.tochas++;
+      drawTorch(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent);
     }
 
     // entidades ordenadas por y
     const drawables = [];
     for (const chest of state.chests) {
+      if (!dentroDaVista(chest.x, chest.y, vista)) continue;
+      visiveis.chests++;
       drawables.push({
         y: chest.y,
         draw: () => drawChest(ctx, chest.x * TILE, chest.y * TILE, chest.opened, palette.accent),
@@ -2053,6 +2072,12 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     }
     for (const prop of state.props) {
       if (!prop.interact && prop.kind !== "stairs" && prop.kind !== "building") continue;
+      // construção ocupa mais de um tile: a caixa inteira decide, não o canto
+      const naVista = prop.kind === "building"
+        ? caixaNaVista(prop.x, prop.y, (prop.w || TILE) / TILE, (prop.h || TILE) / TILE, vista)
+        : dentroDaVista(prop.x, prop.y, vista);
+      if (!naVista) continue;
+      visiveis.props++;
       drawables.push({
         y: prop.y + (prop.kind === "building" ? (prop.h || 0) / TILE : 0),
         draw: () => {
@@ -2075,10 +2100,14 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
       });
     }
     for (const m of state.monsters) {
-      if (!m.alive) continue;
+      if (!m.alive || !dentroDaVista(m.x, m.y, vista)) continue;
+      visiveis.monstros++;
       drawables.push({ y: m.y, draw: () => drawMonster(m, t) });
     }
-    if (state.boss?.alive) drawables.push({ y: state.boss.y, draw: () => drawMonster(state.boss, t) });
+    if (state.boss?.alive && dentroDaVista(state.boss.x, state.boss.y, vista)) {
+      visiveis.monstros++;
+      drawables.push({ y: state.boss.y, draw: () => drawMonster(state.boss, t) });
+    }
     // o companheiro segue pela trilha, um só, com a cara da espécie ativa
     const companion = rpg.activePet();
     if (companion && state.history.length > 14) {
@@ -2124,7 +2153,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     ctx.globalCompositeOperation = "lighter";
     const glowSprite = torchGlowSprite();
     for (const prop of state.props) {
-      if (prop.kind !== "torch") continue;
+      if (prop.kind !== "torch" || !dentroDaVista(prop.x, prop.y, vista)) continue;
       const tx = (prop.x * TILE - camX) * scale;
       const ty = (prop.y * TILE - camY) * scale;
       if (tx < -140 || tx > vw + 140 || ty < -140 || ty > vh + 140) continue;
@@ -2132,6 +2161,12 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
       ctx.drawImage(glowSprite, tx - r, ty - r, r * 2, r * 2);
     }
     ctx.restore();
+
+    // custo do quadro, media movel: serve de alarme de regressão de desempenho
+    const ms = performance.now() - tQuadro;
+    if (!state.stats) state.stats = { drawMs: ms };
+    else state.stats.drawMs = state.stats.drawMs * 0.9 + ms * 0.1;
+    state.stats.visiveis = visiveis;
   }
 
   function drawMonster(m, t) {

@@ -14,6 +14,7 @@ import { drawSkiff, skiffRear } from "./skiff.js";
 import { drawNpcKit } from "./npc-art.js";
 import { drawCaveFacade } from "./cave-art.js";
 import { gustAt, ondaAt, espumaAt, swayAt, windMood } from "./wind.js";
+import { escalaDaCamera, tilesNaVista } from "./camera.js";
 import { criarAmbiente, ambienteDe } from "./ambient.js";
 
 const BODY_W = 12;
@@ -87,10 +88,9 @@ export function createRenderer(canvas, world) {
     if (bruto > pixelsTeto) dpr *= Math.sqrt(pixelsTeto / bruto);
     canvas.width = Math.max(320, Math.round(vw * dpr));
     canvas.height = Math.max(240, Math.round(vh * dpr));
-    // O tile de 16 px fica entre 21 e 26 px na tela. Antes ia até 32 px e cada
-    // bloco pesava: com o tile menor o vale respira e parece menos quadrado.
-    const z = Math.min(vw / 600, vh / 380);
-    zoom = Math.max(1.3, Math.min(1.6, Math.round(z * 4) / 4));
+    // O tile de 16 px fica entre 21 e 26 px na tela. A conta mora em
+    // js/camera.js e é a mesma da caverna: trocar de cena não muda o tamanho.
+    zoom = escalaDaCamera(vw, vh);
   }
 
   function tileColor(t) {
@@ -1854,10 +1854,8 @@ export function createRenderer(canvas, world) {
     const scale = dpr * zoom;
     ctx.setTransform(scale, 0, 0, scale, (-camX + shx) * scale, (-camY + shy) * scale);
 
-    const x0 = Math.max(0, Math.floor(camX / TILE) - 1);
-    const y0 = Math.max(0, Math.floor(camY / TILE) - 1);
-    const x1 = Math.min(MAP_W - 1, Math.ceil((camX + viewW) / TILE) + 1);
-    const y1 = Math.min(MAP_H - 1, Math.ceil((camY + viewH) / TILE) + 1);
+    const vista = tilesNaVista(camX, camY, viewW, viewH, MAP_W, MAP_H, 1);
+    const { x0, y0, x1, y1 } = vista;
 
     const tTerrain = performance.now();
     const chunkPx = CHUNK * TILE;
@@ -1883,7 +1881,11 @@ export function createRenderer(canvas, world) {
     stats.tiles = (x1 - x0 + 1) * (y1 - y0 + 1);
     stats.chunks = chunks;
 
-    for (const h of world.hunters) drawHunterRing(h, time);
+    // o anel da caçada só entra se o centro dela está perto da tela
+    for (const h of world.hunters) {
+      if (h.center.x < x0 - 4 || h.center.x > x1 + 4 || h.center.y < y0 - 4 || h.center.y > y1 + 4) continue;
+      drawHunterRing(h, time);
+    }
     if (player.pathLine && player.pathLine.length) drawPathLine(player.pathLine);
     if (player.pathGoal) drawPathGoal(player.pathGoal, time);
 
@@ -1956,6 +1958,7 @@ export function createRenderer(canvas, world) {
       drawables.push({ y: cat.y * TILE, fn: () => drawCat(cat, cat.moving, time) });
     }
     for (const p of peers) {
+      if (!onScreen(p.rx ?? p.x, p.ry ?? p.y, 48)) continue;
       const px = (p.rx ?? p.x) * TILE;
       const py = (p.ry ?? p.y) * TILE;
       const peerColors = p.look

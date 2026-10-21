@@ -144,8 +144,12 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 
 ### O. Desenho granular
 
-- [x] o zoom da superfície trava em 2x (24 a 32 px por tile); antes chegava a
-      3,5x em monitor grande e o bloco virava parede
+- [x] a câmera é uma só: `js/camera.js` dá a mesma escala ao vale e à caverna
+      (1,3 a 1,6 conforme a janela, tile de 21 a 26 px); antes a caverna usava
+      escala própria de 1,15 a 3,4 e chegava a 42 px por tile
+- [x] o quadro visita só o retângulo que a câmera cobre: na caverna medida,
+      props visíveis 3 de 49, tochas 16 de 31, baús 7 de 9 e terreno recortado
+      em 450.560 de 786.432 px
 - [x] grão de 1 px em todo tile e tom em mancha de 3 em 3 tiles, não em xadrez
 - [x] praça e pedra em lajota pequena, parede em pedra com junta, ponte em tábua
 - [x] costa, margem do caminho e borda da praça com dither; espuma pontilhada
