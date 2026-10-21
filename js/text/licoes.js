@@ -5561,6 +5561,230 @@ export const LICOES = {
       },
     },
   },
+  "lingua-leitura": {
+    "Compreensão Literal": {
+      contexto:
+        "Onde isso aparece: na prova, no contrato e na notícia. Compreender literalmente é recuperar o que está escrito, sem interpretar. Tema, ideia principal e estrutura organizam essa leitura.",
+      oQue:
+        "Compreensão literal exige recuperar a informação explícita no texto. Localizar dado, identificar tema e ideia principal e reconhecer a estrutura são operações distintas. A leitura literal é a base sem a qual a inferência vira chute.",
+      passos: [
+        "Localize no texto a frase que responde à pergunta.",
+        "Separe tema de ideia principal.",
+        "Reconheça a estrutura: causa, comparação, lista.",
+      ],
+      exemplo:
+        "Pergunta com resposta no terceiro parágrafo exige voltar ao texto, não lembrar de impressão. Quem responde pela memória do assunto erra quando o texto diz outra coisa. A leitura literal é conferência, não opinião.",
+      quebra:
+        "Responder pelo que se sabe do assunto e não pelo que o texto diz. A inferência anterior contamina a leitura, e a resposta certa do mundo pode ser errada na prova. O texto é a fonte.",
+      limite:
+        "A leitura literal não resolve ironia, pressuposto e ambiguidade. Nesses casos, a interpretação autorizada pelo contexto entra, e a resposta literal seria ingênua.",
+      levar: "Primeiro o que está escrito; depois o que se conclui.",
+      maos:
+        "Responda cinco perguntas de localização sem sair do texto e marque a frase que prova cada resposta. Depois compare com o que você achava que sabia do assunto: a diferença mostra onde a memória atrapalha. Faça o exercício com dois textos diferentes e cronometre: a localização fica mais rápida com a prática, e a resposta ganha rastreabilidade.",
+    },
+    "Interpretação Inferencial": {
+      contexto:
+        "Onde isso aparece: na leitura de notícia, de romance e de laudo. Inferir é concluir o que o texto autoriza sem dizer. A inferência válida tem apoio no texto e no contexto.",
+      oQue:
+        "Interpretação inferencial vai além do explícito com apoio no texto e no contexto. Relação de causa, pressuposto e subentendido sustentam a conclusão implícita. O limite da inferência válida é o apoio textual: sem ele, é projeção do leitor.",
+      passos: [
+        "Marque o que está explícito.",
+        "Aponte a pista que autoriza a conclusão.",
+        "Verifique se a conclusão cabe sem contradizer o texto.",
+      ],
+      exemplo:
+        "Personagem que tranca a porta sem dizer que tem medo autoriza a inferência de medo, e a pista é a ação. Já supor que ele mentiu, sem nenhuma pista, é invenção. A pista é o que separa as duas.",
+      quebra:
+        "Projetar conhecimento de fora e chamar de inferência. O leitor completa com o que sabe e o texto não sustenta. A conclusão parece natural e não é do autor.",
+      limite:
+        "A inferência depende do repertório e do contexto cultural. Duas leituras podem ser plausíveis, e o texto não decide sozinho. A interpretação precisa declarar a pista.",
+      levar: "Inferência válida deixa rastro no texto.",
+      maos:
+        "Leia um conto curto, escreva três inferências e aponte a pista de cada uma. Depois retire a pista e veja se a conclusão continua sustentável: o exercício mostra a diferença entre ler e adivinhar.",
+    },
+    "Leitura Crítica": {
+      contexto:
+        "Onde isso aparece: na notícia, no estudo e na rede social. Ler criticamente é avaliar argumento e fonte. A verificação de origem e interesse vem antes de aceitar.",
+      oQue:
+        "Leitura crítica avalia argumento, identifica viés, verifica fonte e reconhece falácia. A fonte tem origem, método e interesse, e checar os três evita aceitar por aparência. O viés não invalida automaticamente: ele precisa ser declarado e considerado.",
+      passos: [
+        "Identifique autor, veículo e data.",
+        "Avalie o argumento e a evidência apresentada.",
+        "Procure o interesse e o que ficou de fora.",
+      ],
+      exemplo:
+        "Estudo patrocinado pela indústria pode estar certo e precisa ser lido com o interesse em vista. A verificação não é descartar: é pesar. Quem aceita ou rejeita pela origem comete o mesmo erro do outro lado.",
+      quebra:
+        "Descartar o texto pela fonte sem ler o argumento. O preconceito de fonte impede avaliar o dado. A leitura crítica examina a evidência, não só a etiqueta.",
+      limite:
+        "A leitura crítica não tem acesso a tudo. Método mal descrito impede a avaliação, e a resposta honesta é dizer que falta informação, não concluir por simpatia.",
+      levar: "Fonte, método e interesse antes do aceite.",
+      maos:
+        "Pegue uma notícia, identifique fonte, data e interesse, e procure o dado que falta para confirmar a manchete. O exercício treina a pergunta que a leitura crítica faz antes de concordar. Repita com uma fonte que você já admira: o incômodo de achar menos dado do que esperava é o aprendizado.",
+    },
+    "Estratégias de Leitura": {
+      contexto:
+        "Onde isso aparece: no estudo, no trabalho e na pesquisa. Ler bem é escolher o modo de leitura. Pré-leitura, exploratória, analítica e comparativa respondem a objetivos diferentes.",
+      oQue:
+        "Estratégia de leitura adapta o esforço ao objetivo. A pré-leitura olha título, seção e resumo, e a exploratória busca o mapa do texto. A analítica examina o argumento linha a linha, e a comparativa confronta fontes.",
+      passos: [
+        "Defina o objetivo antes de abrir o texto.",
+        "Escolha a estratégia adequada ao objetivo.",
+        "Registre o que ficou e o que falta ler.",
+      ],
+      exemplo:
+        "Para decidir se um artigo serve, a pré-leitura de cinco minutos resolve. Para usá-lo na revisão, a leitura analítica é obrigatória. Trocar as duas custa tempo ou profundidade.",
+      quebra:
+        "Ler todo texto do mesmo jeito. A leitura linear de tudo consome tempo em material que só precisava de triagem. A estratégia economiza esforço para o que importa.",
+      limite:
+        "A estratégia não substitui o conhecimento do assunto. Texto difícil exige base, e nenhuma técnica de leitura compensa a falta de repertório.",
+      levar: "Leitura boa é leitura com objetivo declarado.",
+      maos:
+        "Escolha três textos e pratique pré-leitura em um, leitura analítica em outro e comparação entre o primeiro e o terceiro; anote o que cada modo rendeu e compare o tempo gasto com o que ficou de informação. A pré-leitura deve render o mapa, e a analítica deve render o argumento; quando a conta não fecha, a estratégia escolhida foi a errada para o objetivo do dia. Repita na semana seguinte com textos novos e compare o tempo: a leitura treinada reconhece o gênero e o objetivo antes do primeiro parágrafo, e a escolha da estratégia fica automática, sem custo de decisão a cada texto.",
+      pergunta: {
+        q: "Para que serve a pré-leitura?",
+        a: "Para decidir rápido se o texto serve ao objetivo",
+        why: "Título, resumo e seção dão o mapa do texto em poucos minutos e evitam leitura profunda de material que não responde à pergunta.",
+      },
+    },
+    "Interpretação de Diferentes Gêneros": {
+      contexto:
+        "Onde isso aparece: no romance, no artigo e no ofício. Cada gênero tem contrato de leitura. O literário pede interpretação, o científico pede método, e o oficial pede o que a norma manda.",
+      oQue:
+        "Interpretação muda com o gênero. No literário, a ambiguidade é recurso; no científico, a precisão é regra. No jornalístico, a fonte importa, e no documento oficial, a cláusula decide. O leitor precisa reconhecer o contrato do gênero.",
+      passos: [
+        "Identifique o gênero e o que ele promete.",
+        "Aplique o critério adequado: estético, metodológico ou normativo.",
+        "Compare o texto com o que o gênero exige.",
+      ],
+      exemplo:
+        "Procurar prova científica em poema é erro de gênero, e procurar beleza em bula é o mesmo erro ao contrário. Cada texto pede o critério do seu gênero. A leitura competente troca o critério junto com o texto.",
+      quebra:
+        "Aplicar critério de um gênero em outro. Tratar notícia como literatura ou romance como documento distorce o sentido. O contrato do gênero precisa ser respeitado.",
+      limite:
+        "Os gêneros se misturam, e a fronteira é instável. Crônica é literária e jornalística ao mesmo tempo, e o leitor precisa segurar os dois contratos.",
+      levar: "Cada gênero tem contrato de leitura próprio.",
+      maos:
+        "Pegue a mesma notícia em dois veículos e um conto curto; aponte o critério de leitura que cada texto pede e o que muda na sua avaliação. Repita o exercício com um documento oficial e note que a pergunta muda: ali não se procura estilo, e sim quem tem competência para decidir e qual é o prazo. A comparação entre os três textos mostra que o critério de leitura não é o mesmo. Anote a pergunta que você fez em cada caso: a leitura competente é a que muda a pergunta junto com o gênero, e não a que aplica um único critério em tudo. Repita a comparação na semana seguinte com textos novos e veja se a pergunta muda mais rápido: a leitura treinada reconhece o gênero antes de terminar o primeiro parágrafo.",
+      pergunta: {
+        q: "Por que o critério de leitura muda com o gênero?",
+        a: "Porque cada gênero promete algo diferente ao leitor",
+        why: "O literário trabalha ambiguidade e efeito estético, o científico exige método e o oficial exige norma; aplicar o critério errado distorce o sentido do texto.",
+      },
+    },
+  },
+  "lingua-generos": {
+    "Literários": {
+      contexto:
+        "Onde isso aparece: no romance, no conto e na crônica. O gênero literário organiza a experiência de leitura. O lírico expressa emoção pelo ritmo e pela imagem.",
+      oQue:
+        "Gêneros literários incluem romance, conto, novela e crônica. O lírico expressa emoção pelo ritmo e pela imagem, e o narrativo conta história com personagem e conflito. O conto condensa, e o romance expande.",
+      passos: [
+        "Identifique o modo: lírico, narrativo ou dramático.",
+        "Observe a extensão e o foco do conflito.",
+        "Leia o recurso de linguagem como parte do efeito.",
+      ],
+      exemplo:
+        "O conto concentra o conflito num episódio, e o romance acompanha o conflito por muito tempo. O mesmo tema rende os dois, e a diferença é de foco. A extensão muda a experiência.",
+      quebra:
+        "Procurar resposta prática em texto literário. A obra não promete instrução, e cobrar dela o que ela não oferece erra o gênero. O efeito estético é o que a obra entrega.",
+      limite:
+        "Os gêneros se misturam, e a classificação é aproximação. Crônica e prosa poética vivem na fronteira, e a leitura ganha quando aceita a mistura.",
+      levar: "O literário entrega experiência, não instrução.",
+      maos:
+        "Leia um conto curto e uma crônica; aponte onde cada um concentra o conflito e o que a extensão muda na leitura. Repita com um romance e um conto do mesmo autor: o tempo de leitura não é só maior, a relação com o personagem também muda, e o conflito ganha camada que o conto precisa deixar implícita. O exercício mostra que gênero não é etiqueta de livraria: ele muda o que a obra consegue fazer com o tempo do leitor e com o que fica sem dizer.",
+    },
+    "Jornalísticos": {
+      contexto:
+        "Onde isso aparece: na notícia, na reportagem e no editorial. O jornalismo promete fato e contexto. O editorial expressa a posição do veículo.",
+      oQue:
+        "Gênero jornalístico inclui notícia, reportagem, entrevista e editorial. A notícia relata fato com fonte, e a reportagem aprofunda com contexto. O editorial expressa a posição do veículo, e a entrevista dá voz ao entrevistado.",
+      passos: [
+        "Identifique o gênero e a promessa.",
+        "Veja a fonte e a evidência de cada afirmação.",
+        "Separe fato de opinião dentro do texto.",
+      ],
+      exemplo:
+        "A notícia responde o quê, quem, quando e onde; o editorial diz o que o veículo pensa. Ler editorial como notícia confunde opinião com fato. A etiqueta do gênero orienta a leitura.",
+      quebra:
+        "Tratar opinião como fato porque está no jornal. O editorial é opinião declarada, e a notícia precisa de fonte. A confusão compromete a leitura.",
+      limite:
+        "A objetividade jornalística é busca, não garantia. A escolha de fonte e de ângulo já recorta o fato, e o leitor precisa considerar o recorte.",
+      levar: "Notícia relata; editorial opina.",
+      maos:
+        "Compare a manchete de uma notícia e a de um editorial do mesmo dia e marque onde aparece o fato e onde aparece a posição. Depois procure o mesmo fato em uma reportagem: o dado de contexto que faltava na notícia curta costuma aparecer ali, e a comparação mostra o que cada gênero consegue entregar no espaço que tem. Anote também a fonte de cada um: a notícia curta costuma citar um documento, e a reportagem cita o mesmo documento com mais contexto, o que muda o peso da afirmação. O exercício também mostra onde a imprensa erra: quando a notícia não aponta o documento, o leitor fica sem o meio de conferir, e a desconfiança genérica substitui a verificação.",
+    },
+    "Acadêmicos e Científicos": {
+      contexto:
+        "Onde isso aparece: no artigo, na resenha e no resumo. O gênero acadêmico promete método e evidência. A estrutura guia a leitura: resumo, método, resultado e discussão.",
+      oQue:
+        "Gênero acadêmico inclui resumo, resenha, artigo e ensaio. O resumo condensa, a resenha avalia e o artigo apresenta método e resultado. O ensaio argumenta com liberdade, e a estrutura varia com a área.",
+      passos: [
+        "Leia resumo e conclusão antes do corpo.",
+        "Localize método e dado.",
+        "Avalie a conclusão pela evidência apresentada.",
+      ],
+      exemplo:
+        "Artigo que promete na conclusão mais do que o método sustenta tem problema de gênero. A leitura acadêmica confere o dado antes de aceitar a afirmação. A estrutura existe para isso.",
+      quebra:
+        "Ler só o resumo e citar como se tivesse lido o artigo. O resumo condensa e pode esconder limitação. A citação honesta exige a leitura do método.",
+      limite:
+        "A estrutura não garante qualidade. Artigo com método descrito pode ter dado fraco, e a avaliação precisa de conhecimento da área.",
+      levar: "No acadêmico, método e dado vêm antes da conclusão.",
+      maos:
+        "Pegue um artigo da sua área e anote resumo, método, resultado e limitação em quatro frases; depois compare o que a conclusão promete com o que o método sustenta. Se a conclusão prometer mais, anote a limitação e use essa anotação na sua citação: o leitor que vem depois agradece, e a sua credibilidade sobe junto, porque o leitor vê que a citação é honesta e vai conferir. O contrário também vale: citar artigo que você não leu é risco de reputação que custa caro, e o método está lá justamente para ser conferido. O resumo do artigo, lido sozinho, serve para decidir se vale abrir o texto, e não para citar o resultado como se fosse conclusão fechada.",
+      pergunta: {
+        q: "O que o gênero artigo científico promete ao leitor?",
+        a: "Método e evidência que sustentam a conclusão",
+        why: "O artigo descreve como o dado foi obtido e apresenta o resultado; a conclusão vale na medida em que o método e a evidência sustentam, e a leitura confere esse encaixe.",
+      },
+    },
+    "Administrativos e Institucionais": {
+      contexto:
+        "Onde isso aparece: na ata, no ofício e no comunicado. O gênero oficial promete registro e efeito. A cláusula decide, e o formato identifica o documento.",
+      oQue:
+        "Gênero administrativo inclui ata, ofício, requerimento e comunicado. A ata registra o que aconteceu, e o ofício comunica formalmente entre órgão. O requerimento pede, e o comunicado informa, e o efeito depende da forma prevista na norma.",
+      passos: [
+        "Identifique o efeito que o documento quer produzir.",
+        "Confira o formato e os elementos exigidos.",
+        "Veja se o pedido ou registro está claro e completo.",
+      ],
+      exemplo:
+        "Requerimento sem identificação e sem pedido explícito não produz efeito, mesmo com texto bonito. A forma é condição de validade. O gênero administrativo não é enfeite.",
+      quebra:
+        "Escrever ofício como se fosse mensagem informal. O tom e a estrutura mudam, e o documento pode ser recusado. O gênero tem forma por motivo prático.",
+      limite:
+        "A norma varia com órgão e esfera. O mesmo modelo não serve a todos, e a consulta ao regimento é parte do trabalho.",
+      levar: "No administrativo, forma e efeito andam juntos.",
+      maos:
+        "Escreva um requerimento curto com identificação, pedido e fundamento; confira se o pedido é claro sem conhecer o contexto. Depois reescreva na forma de mensagem e compare: o que se perde na informalidade é precisão de identificação, e o que se ganha é velocidade; o gênero escolhido depende do efeito que você precisa produzir. O requerimento tem efeito jurídico, e a mensagem não tem; confundir os dois faz o pedido se perder no caminho, mesmo com a redação impecável. O modelo de documento existe para reduzir a chance de recusa por detalhe, e a lista de conferência evita o retrabalho. A forma é o que permite ao órgão processar o pedido, e o modelo de documento existe para reduzir a chance de recusa por detalhe.",
+      pergunta: {
+        q: "Por que a forma importa num documento administrativo?",
+        a: "Porque a forma é condição para o documento produzir efeito",
+        why: "O requerimento sem elemento exigido não é processado, e o ofício sem identificação não é aceito; a norma liga a estrutura ao efeito jurídico do documento.",
+      },
+    },
+    "Digitais": {
+      contexto:
+        "Onde isso aparece: no e-mail, na mensagem e na postagem. O gênero digital mistura fala e escrita. O hipertexto permite leitura por caminho ligado, não só linear.",
+      oQue:
+        "Gênero digital inclui e-mail, mensagem instantânea, postagem e comentário. O hipertexto permite leitura por caminhos ligados, e o leitor escolhe o percurso. A brevidade e o tom mudam com a plataforma e com o público.",
+      passos: [
+        "Identifique a plataforma e o público.",
+        "Ajuste tom e extensão ao gênero.",
+        "Confira o link e o contexto antes de publicar.",
+      ],
+      exemplo:
+        "E-mail profissional e mensagem de grupo pedem tom diferente para o mesmo pedido. A plataforma define a expectativa. O texto que serve a um soa fora de lugar no outro.",
+      quebra:
+        "Publicar mensagem privada em canal público. O raio de alcance muda, e o que era conversa vira exposição. A escolha do canal é parte do texto.",
+      limite:
+        "O gênero digital muda rápido, e a norma de etiqueta acompanha. O que era aceitável ontem pode ser grosseiro hoje, e a leitura do contexto da plataforma decide.",
+      levar: "No digital, o canal também fala.",
+      maos:
+        "Reescreva o mesmo pedido como e-mail formal, mensagem de grupo e postagem pública; compare tom, extensão e o que cada canal expõe. Antes de publicar, releia pensando em quem pode ver o texto daqui a um ano: o alcance do canal não muda só o tom, muda a responsabilidade sobre o que ficou registrado. O rascunho salvo e a resposta rápida duram mais que a intenção, e a leitura antes de enviar é a última barreira entre você e o canal.",
+    },
+  },
 };
 
 // o nome da estação chega em caixa baixa do banco ("Grafos moleculares") e em
