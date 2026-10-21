@@ -654,8 +654,14 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
       roam: MONSTER_ROAM,
       // meia-lua: o bicho vê na direção em que está virado
       fov: { bat: 1.5, spider: 1.0, slime: 1.35, eye: 1.15, golem: 0.85, wisp: 1.4, scorpion: 0.95, ant: 1.3, moth: 1.55, beetle: 0.8, crab: 1.1, jelly: 0.7, imp: 1.25, sentinel: 1.05, serpent: 1.2, tome: 1.05, glyph: 1.35, note: 1.5, atom: 1.25, crystal: 0.85, gear: 0.9, node: 1.3, prism: 1.2, vector: 1.15, flask: 1.1 }[kind] || 1.2,
-      speed: baseSpeed + tier * 0.12,
-      waitUntil: clock() + 600 + Math.random() * 1800,
+      // ritmo próprio: a espécie que voa não para no mesmo compasso da que
+      // rasteja, e o passeio vai em cadeia (dois ou três pontos antes de parar)
+      speed: (baseSpeed + tier * 0.12) * (0.85 + Math.random() * 0.4),
+      passos: 2 + Math.floor(Math.random() * 3),
+      pausaCurta: 120 + Math.random() * 320,
+      pausaLonga: 500 + Math.random() * 1100,
+      olharEm: 0,
+      waitUntil: clock() + 300 + Math.random() * 900,
       accent: creatureAccent(def, name, k),
       continent: def.continent,
       theme: room.theme,
@@ -738,6 +744,12 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
       vision: 5.6,
       fov: 1.5,
       speed: 0.4,
+      // o chefe anda devagar pela sala: sozinho, não entra na conta de separação
+      roam: 1.1,
+      passos: 1,
+      pausaCurta: 700 + Math.random() * 500,
+      pausaLonga: 1800 + Math.random() * 1400,
+      olharEm: 0,
       waitUntil: clock() + 900,
       accent: def.bossAccent || def.palette.accent,
       continent: def.continent,
@@ -1497,19 +1509,30 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
 
   // ---- monstros ----
   function pickWander(m) {
-    for (let i = 0; i < 8; i++) {
+    // O ponto sorteado é o mais longe que couber dentro do campo: assim o
+    // bicho atravessa o campo em vez de dar dois passos e parar. O raio não
+    // muda, então a conta de separação entre bichos continua valendo.
+    let melhor = null;
+    let melhorDist = -1;
+    for (let i = 0; i < 10; i++) {
       const a = Math.random() * Math.PI * 2;
       const r = 0.2 + Math.random() * Math.max(0, (m.roam ?? MONSTER_ROAM) - 0.2);
       const tx = m.hx + Math.cos(a) * r;
       const ty = m.hy + Math.sin(a) * r;
-      if (boxFree(state.map, tx, ty, PATH_PAD, state.solids)) {
-        m.tx = tx;
-        m.ty = ty;
-        return;
+      if (!boxFree(state.map, tx, ty, PATH_PAD, state.solids)) continue;
+      const d = Math.hypot(tx - m.x, ty - m.y);
+      if (d > melhorDist) {
+        melhorDist = d;
+        melhor = { x: tx, y: ty };
       }
     }
-    m.tx = m.hx;
-    m.ty = m.hy;
+    if (melhor) {
+      m.tx = melhor.x;
+      m.ty = melhor.y;
+    } else {
+      m.tx = m.hx;
+      m.ty = m.hy;
+    }
   }
 
   function canSeePlayer(m) {
@@ -1527,14 +1550,23 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     const list = state.boss ? [...state.monsters, state.boss] : state.monsters;
     for (const m of list) {
       if (!m.alive) continue;
-      if (!m.boss) {
+      {
         if (t >= m.waitUntil) {
           const dx = m.tx - m.x;
           const dy = m.ty - m.y;
           const dist = Math.hypot(dx, dy);
           if (dist < 0.12) {
             m.moving = false;
-            m.waitUntil = t + 900 + Math.random() * 2400;
+            if (m.passos > 0) {
+              // ainda tem caminho na cadeia: pausa curta e segue
+              m.passos -= 1;
+              m.waitUntil = t + (m.pausaCurta || 240);
+            } else {
+              m.passos = 2 + Math.floor(Math.random() * 3);
+              m.waitUntil = t + (m.pausaLonga || 900);
+              // na pausa longa ele olha em volta, em vez de ficar congelado
+              m.olharEm = t + 160 + Math.random() * 320;
+            }
             pickWander(m);
           } else {
             const step = Math.min(dist, m.speed * dt);
@@ -1547,10 +1579,16 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
               if (Math.abs(dx) > Math.abs(dy)) m.dir = dx > 0 ? 2 : 1;
               else m.dir = dy > 0 ? 0 : 3;
             } else {
-              m.waitUntil = t + 600;
+              m.waitUntil = t + 400;
               pickWander(m);
             }
           }
+        }
+        // parado, ele ainda vira a cabeça de vez em quando: bicho vivo não
+        // fica olhando para o mesmo pixel
+        if (!m.moving && m.olharEm && t >= m.olharEm) {
+          m.dir = (m.dir + 1 + Math.floor(Math.random() * 3)) % 4;
+          m.olharEm = t + 380 + Math.random() * 900;
         }
       }
       // o campo de visão: perto e com linha reta até você
