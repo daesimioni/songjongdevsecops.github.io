@@ -1,19 +1,21 @@
 // A câmera é uma só. A escala do tile é a mesma no vale e na caverna, então o
 // mundo não muda de tamanho quando a pessoa desce ou sobe: o tile de 16 px
-// fica entre 21 e 26 px na tela em qualquer cena, em qualquer janela.
+// fica entre 26 e 40 px na tela em qualquer cena, em qualquer janela.
 //
 // A escala depende da janela, nunca da cena. E o desenho de cada quadro usa o
 // retângulo de tiles que a câmera cobre: o que está longe do jogador não é
 // visitado, então memória e processamento crescem com a tela, não com o mapa.
 import { TILE } from "./config.js";
 
-export const ESCALA_MIN = 1.3;
-export const ESCALA_MAX = 1.6;
+export const ESCALA_MIN = 1.6;
+export const ESCALA_MAX = 2.0;
 // margem em tiles para o que atravessa a borda da tela (copa, fachada, muralha)
 export const MARGEM_PADRAO = 2;
 
 export function escalaDaCamera(vw, vh) {
-  const z = Math.min(vw / 600, vh / 380);
+  // 2x no computador: cada pixel antigo cobre 2x2 pixels de tela, que é o
+  // espaço que a arte em 2x usa. Em tela pequena a escala desce para 1,6.
+  const z = Math.min(vw / 480, vh / 304);
   return Math.max(ESCALA_MIN, Math.min(ESCALA_MAX, Math.round(z * 4) / 4));
 }
 

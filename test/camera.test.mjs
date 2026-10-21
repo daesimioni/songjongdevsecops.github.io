@@ -17,8 +17,8 @@ for (const [vw, vh] of [[390, 844], [800, 600], [1280, 757], [1920, 1080], [2560
   check(z >= ESCALA_MIN && z <= ESCALA_MAX, `${vw}x${vh}: escala ${z} fora de ${ESCALA_MIN}-${ESCALA_MAX}`);
   check(z === escalaDaCamera(vw, vh), `${vw}x${vh}: escala não determinística`);
 }
-check(escalaDaCamera(1280, 757) === 1.6, `1280x757 devia dar 1.6, deu ${escalaDaCamera(1280, 757)}`);
-check(escalaDaCamera(390, 844) === 1.3, `390x844 devia dar 1.3, deu ${escalaDaCamera(390, 844)}`);
+check(escalaDaCamera(1280, 757) === 2.0, `1280x757 devia dar 2.0, deu ${escalaDaCamera(1280, 757)}`);
+check(escalaDaCamera(390, 844) === 1.6, `390x844 devia dar 1.6, deu ${escalaDaCamera(390, 844)}`);
 
 // ---- retângulo da vista: cobre a tela, sobra só a margem e prende no mapa ----
 for (const [vw, vh] of [[1280, 757], [390, 844]]) {

@@ -1,8 +1,9 @@
 # Pixel fino e animação
 
-O vale não mudou de escala nem de câmera: mudou a **densidade de desenho**. Cada
-pixel antigo de arte virou quatro pixels de desenho, e o que era estático ganhou
-movimento.
+A câmera subiu para 2,0 (1,6 em tela pequena) e a **densidade de desenho**
+dobrou: cada pixel antigo de arte virou quatro pixels de desenho, e o que era
+estático ganhou movimento. O tile agora tem 32 px na tela em vez de 25,6, e a
+arte em 2x cai quase 1:1 no dispositivo: o detalhe de meio pixel aparece.
 
 ## Sprite em 2x
 
@@ -44,14 +45,14 @@ hora de andar, e a memória ia a 20 MB.
 
 | Medida | Antes | Depois |
 |---|---|---|
-| desenho do quadro no vale | ~2,3 ms | ~3,4 ms |
+| desenho do quadro no vale | ~2,3 ms | ~2,9 ms |
 | desenho do quadro na caverna | 0,52 ms | 0,56 ms |
 | fps parado | 60,5 | 60,5 |
-| andando (16 tiles em 3,2 s) | 56,9 fps / p95 30,3 ms | 52,2 fps / p95 31,8 ms |
+| andando (16 tiles em 3,2 s) | 56,9 fps / p95 30,3 ms | 59,7 fps / p95 30,3 ms |
 | memória do chão | 12,6 MB | 12,6 MB |
 | cache de sprite | 240 sprites | 240 sprites em 2x (~5 MB) |
 
-O andar custa ~1,2 ms a mais por causa das duas passadas de detalhe; o resto é o
-mesmo. A resolução forçada em 2x foi testada e recusada: em tela comum derrubava
-para 51 fps. O dpr continua seguindo o aparelho, e quem tem tela retina vê o
-detalhe de meio pixel cheio.
+O andar ficou até mais leve que antes: com menos tiles na tela, o detalhe novo
+cabe no mesmo orçamento. A resolução forçada em 2x foi testada e recusada: em
+tela comum derrubava para 51 fps; o dpr continua seguindo o aparelho e o ganho
+vem da arte em 2x com a câmera em 2,0.
