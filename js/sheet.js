@@ -47,6 +47,16 @@ export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onOu
     top.append(id, vitals);
     body.appendChild(top);
 
+    // ---------- vocação: o jeito de lutar, com força e fraqueza à vista ----
+    const voc = rpg.vocacao();
+    const sub = rpg.sub();
+    body.appendChild(el("h3", "sheet-sec", "Vocação"));
+    const vbox = el("div", "sheet-vocation");
+    vbox.appendChild(el("b", "", voc.name));
+    vbox.appendChild(el("span", "", sub ? `${sub.name}: ${sub.efeito}` : (level >= 10 ? "subcategoria aberta: escolha na mesa do subsolo" : "a subcategoria abre no nível 10")));
+    vbox.appendChild(el("span", "sheet-vocation-weak", `força: ${voc.forca} · fraqueza: ${voc.fraqueza}`));
+    body.appendChild(vbox);
+
     const buffs = rpg.buffView();
     if (buffs.length) {
       body.appendChild(el("p", "sheet-buffs", `efeitos: ${buffs.map((b) => `${b.name} ${b.left}s`).join(" · ")}`));

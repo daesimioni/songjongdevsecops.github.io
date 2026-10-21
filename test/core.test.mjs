@@ -110,6 +110,8 @@ assert.equal(q.ready(quest("chefe-math-algebra")), true);
 
 // poção de mana e magia fora do duelo
 const magiaRpg = new RPG({ getLevel: () => 1, gainXp: () => {}, toast: () => {}, audio: {} });
+// mana cheia é da vocação de mana 1,00: guerreiro padrão tem 0,60
+magiaRpg.setVocation("atirador");
 magiaRpg.addItem("pocao-mana", 1);
 magiaRpg.data.mana = 2;
 const bebeu = magiaRpg.useItem("pocao-mana");
@@ -163,6 +165,7 @@ const rpg = new RPG({
 });
 const ground = GROUNDS.find((g) => g.id === "cs");
 const easy = ground.monsters[0];
+const hpAntesDoLoot = rpg.hpMax();
 assert.equal(rpg.startDuel(easy, ground).ok, true);
 assert.equal(rpg.duel.monsterHpMax, 3, "monstro fácil pede 3 acertos");
 assert.equal(rpg.duel.question.options.length, 5, "pergunta traz cinco alternativas");
@@ -173,7 +176,7 @@ for (let i = 0; i < 20 && rpg.duel.phase !== "victory"; i++) {
 assert.equal(rpg.duel.phase, "victory");
 assert.equal(rpg.monsterAlive(easy.id), false);
 assert.equal(rpg.inventoryList().length > 0, true);
-assert.equal(rpg.hpMax(), 30, "item comum não é relíquia");
+assert.equal(rpg.hpMax(), hpAntesDoLoot, "item comum não é relíquia");
 assert.equal(xpGanho > 0, true);
 rpg.next();
 assert.equal(rpg.duel, null);
@@ -196,7 +199,7 @@ rpg.startDuel(medium, ground);
 const hpBefore = rpg.hp();
 const wrong = (rpg.duel.question.answer + 1) % rpg.duel.question.options.length;
 rpg.answer(wrong);
-assert.equal(rpg.hp(), hpBefore - 3, "pergunta média tira 3 de vida");
+assert.equal(rpg.hp(), hpBefore - rpg.danoSofrido(3), "pergunta média tira o dano da vocação, 3 na base");
 assert.equal(rpg.duel.phase, "feedback");
 rpg.flee();
 
@@ -206,6 +209,7 @@ for (const m of ground.monsters) rpg.data.monsters[m.id] = Date.now();
 assert.equal(rpg.allMonstersDown(ground), true);
 assert.equal(rpg.pullLever(ground).ok, true);
 assert.equal(rpg.bossAlive(ground), true);
+const hpAntesDoChefe = rpg.hpMax();
 assert.equal(rpg.startDuel(ground.boss, ground, true).ok, true);
 for (let i = 0; i < 60 && rpg.duel.phase !== "victory"; i++) {
   if (rpg.duel.phase === "question") rpg.answer(rpg.duel.question.answer);
@@ -214,7 +218,8 @@ for (let i = 0; i < 60 && rpg.duel.phase !== "victory"; i++) {
 assert.equal(rpg.duel.phase, "victory");
 rpg.next();
 assert.equal(rpg.bossAlive(ground), false, "chefe derrotado sai do mapa");
-assert.equal(rpg.hpMax(), 35, "relíquia do chefe dá +5 de vida máxima");
+assert.equal(rpg.relics(), 1, "relíquia do chefe entrou na mochila");
+assert.ok(rpg.hpMax() > hpAntesDoChefe, "relíquia do chefe aumenta a vida máxima");
 rpg.addItem("pocao", 1);
 rpg.data.hp = 5;
 const healed = rpg.useItem("pocao");
@@ -240,7 +245,7 @@ const bareDamage = gearRpg.damageFor("cs");
 const bareHp = gearRpg.hpMax();
 assert.equal(gearRpg.equip("chave-longa").ok, true);
 assert.equal(gearRpg.equip("colete-malha").ok, true);
-assert.equal(gearRpg.damageFor("cs"), bareDamage + 1, "arma soma dano");
+assert.ok(gearRpg.damageFor("cs") > bareDamage, "arma soma dano");
 assert.equal(gearRpg.hpMax(), bareHp + 5, "armadura soma vida");
 const gearAgain = new RPG({ getLevel: () => 1, gainXp: () => {}, toast: () => {}, audio: {} });
 assert.equal(gearAgain.data.equipped.weapon, "chave-longa", "arma equipada persiste");

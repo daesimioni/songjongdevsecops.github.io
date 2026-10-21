@@ -28,7 +28,7 @@ function swatchRow(label, list, value, onPick) {
   return row;
 }
 
-export function renderCharacterEditor(mount, { look, colors, outfits = [], outfit = "", isHairLocked = () => false, isOutfitLocked = () => false, lockHint = () => "", onlyUnlocked = false, onChange, onOutfit }) {
+export function renderCharacterEditor(mount, { look, colors, outfits = [], outfit = "", vocations = [], vocation = "", onVocation = null, isHairLocked = () => false, isOutfitLocked = () => false, lockHint = () => "", onlyUnlocked = false, onChange, onOutfit }) {
   const current = normalizeAvatar(look);
   mount.textContent = "";
 
@@ -73,6 +73,27 @@ export function renderCharacterEditor(mount, { look, colors, outfits = [], outfi
   }
   hairRow.appendChild(hairGrid);
   controls.appendChild(hairRow);
+
+  if (vocations.length && onVocation) {
+    const vocRow = el("div", "look-row");
+    vocRow.appendChild(el("span", "look-label", "vocação"));
+    const grid = el("div", "look-vocations");
+    for (const v of vocations) {
+      const card = el("button", `look-vocation${vocation === v.id ? " on" : ""}`);
+      card.type = "button";
+      card.setAttribute("aria-pressed", vocation === v.id ? "true" : "false");
+      card.setAttribute("aria-label", `${v.name}: ${v.forca}; fraqueza: ${v.fraqueza}`);
+      card.append(
+        el("b", "look-vocation-name", v.name),
+        el("span", "look-vocation-force", v.forca),
+        el("span", "look-vocation-weak", `fraqueza: ${v.fraqueza}`),
+      );
+      card.addEventListener("click", () => onVocation(v.id));
+      grid.appendChild(card);
+    }
+    vocRow.appendChild(grid);
+    controls.appendChild(vocRow);
+  }
 
   if (outfits.length && onOutfit) {
     const outfitRow = el("div", "look-row");

@@ -27,6 +27,7 @@ import { findPath, nearestWalkable } from "./path.js";
 import { feedPeer, peerRenderPosition } from "./interp.js";
 import { startTitle } from "./title.js";
 import { RPG } from "./rpg.js";
+import { VOCACOES, VOCACAO_PADRAO } from "./vocations.js";
 import { ITEMS, QUESTIONS } from "./rpg-data.js";
 import { createSheet } from "./sheet.js";
 import { createDuel } from "./duel.js";
@@ -785,7 +786,9 @@ function gatherContinent() {
 }
 
 function openGather(kind, extra = {}) {
-  const reward = rollGather(kind, Math.random, extra);
+  // ervanário coleta raro com mais frequência, além do bônus da vocação
+  const coleta = rpg.bonus().coleta * (rpg.data.sub === "ervanario" ? 1.5 : 1);
+  const reward = rollGather(kind, Math.random, { ...extra, coleta });
   if (!gatherUi.open({
     kind,
     continent: extra.continent || gatherContinent(),
@@ -3036,6 +3039,9 @@ function showIntroStep(step) {
   if (step === "look") renderIntroLook();
 }
 
+// a vocação é a última decisão da criação: sem ela não entra
+let vocacaoEscolhida = "";
+
 function renderIntroLook() {
   const mount = $("intro-look");
   if (!mount) return;
@@ -3054,6 +3060,9 @@ function renderIntroLook() {
     outfits: liberados,
     outfit: player.outfitId,
     onlyUnlocked: true,
+    vocations: VOCACOES,
+    vocation: vocacaoEscolhida,
+    onVocation: (id) => { vocacaoEscolhida = id; audio.blip(); draw(); },
     isHairLocked: (item) => !hairOpen(item),
     isOutfitLocked: (item) => !outfitUnlocked(item),
     lockHint,
@@ -3156,7 +3165,13 @@ $("intro-form").addEventListener("submit", (e) => {
   e.preventDefault();
   const name = $("intro-name").value.trim().replace(/[<>\u0000-\u001f]/g, "").slice(0, 16);
   if (!name) { $("intro-name").focus(); return; }
+  if (!state.personagemCriado && !vocacaoEscolhida) {
+    toast("escolha a vocação antes de entrar no vale.", 3200);
+    $("intro-look")?.scrollIntoView({ block: "center", behavior: "smooth" });
+    return;
+  }
   player.name = name;
+  if (!state.personagemCriado && vocacaoEscolhida) rpg.setVocation(vocacaoEscolhida);
   state.room = sanitizeRoom($("intro-room").value);
   writeJSON(STORAGE.name, name);
   writeJSON(STORAGE.room, state.room);

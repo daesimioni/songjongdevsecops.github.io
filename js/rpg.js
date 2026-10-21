@@ -5,6 +5,7 @@ import { backupCorrupt } from "./storage.js";
 import { STORAGE } from "./config.js";
 import { SKILLS, TIERS, ITEMS, QUESTIONS, RECIPES, ENCHANTS, DEEP_QUESTIONS, MONSTER_TRAITS, MONSTER_LABELS, MONSTER_WEAKNESS } from "./rpg-data.js";
 import { BOND_MAX, MANA_MS, PETS, MOUNTS, petById, mountById } from "./pets.js";
+import { VOCACAO_PADRAO, VOC_POR_ID, subcategoriaDe, vocacaoDe, multDe } from "./vocations.js";
 
 const RESPAWN_MS = 5 * 60 * 1000;
 const BOSS_RESPAWN_MS = 20 * 60 * 1000;
@@ -96,6 +97,9 @@ function emptyData() {
     met: {},
     plots: {},
     plotGift: {},
+    // vocação: padrão para save antigo, que nunca escolheu
+    vocation: VOCACAO_PADRAO,
+    sub: "",
   };
 }
 
@@ -106,6 +110,8 @@ function readData() {
     if (!obj || typeof obj !== "object") return emptyData();
     const data = emptyData();
     if (Number.isFinite(obj.hp)) data.hp = obj.hp;
+    if (VOC_POR_ID.has(obj.vocation)) data.vocation = obj.vocation;
+    if (obj.sub && subcategoriaDe(obj.sub)?.vocacao === data.vocation) data.sub = obj.sub;
     for (const k of Object.keys(SKILLS)) {
       data.skills[k] = clamp(Number(obj.skills?.[k]) || 0, 0, MAX_SKILL_XP);
     }
@@ -345,6 +351,40 @@ export class RPG {
       .length;
   }
 
+  // ---- vocação -------------------------------------------------------------
+  vocacao() {
+    return vocacaoDe(this.data.vocation);
+  }
+
+  sub() {
+    return subcategoriaDe(this.data.sub);
+  }
+
+  bonus() {
+    return multDe(this.data.vocation);
+  }
+
+  setVocation(id) {
+    const v = VOC_POR_ID.get(id);
+    if (!v) return { ok: false, reason: "vocação desconhecida" };
+    const mudou = this.data.vocation !== id;
+    this.data.vocation = id;
+    // trocar de vocação zera a subcategoria: ela é do caminho antigo
+    if (mudou) this.data.sub = "";
+    this.ensureHp();
+    this.save();
+    return { ok: true, mudou, vocacao: v };
+  }
+
+  setSub(id) {
+    const s = subcategoriaDe(id);
+    if (!s || s.vocacao !== this.data.vocation) return { ok: false, reason: "essa subcategoria não é da sua vocação" };
+    if (this.getLevel() < 10) return { ok: false, reason: "a subcategoria abre no nível 10" };
+    this.data.sub = id;
+    this.save();
+    return { ok: true, sub: s };
+  }
+
   noteMonster(monster) {
     if (!monster?.kind) return;
     const kind = String(monster.kind).toLowerCase().replace(/[^a-z]/g, "").slice(0, 10);
@@ -441,12 +481,15 @@ export class RPG {
   }
 
   hpMax() {
-    let max = 30 + (Math.max(1, this.getLevel()) - 1) * 4 + this.relics() * 5 + this.equipmentBonus().hp;
+    // a vocação multiplica o corpo (base + nível), não o que veio de item:
+    // assim uma armadura de +5 continua valendo +5 em qualquer vocação
+    const corpo = 30 + (Math.max(1, this.getLevel()) - 1) * 4;
+    let max = corpo * this.bonus().vida + this.relics() * 5 + this.equipmentBonus().hp;
     if (this.data.enchants.vigor) max += 10;
     if (this.buffActive("maxhp")) max += 5;
     max += Number(this.activePet()?.passive.hp) || 0;
     if (!this.cave) max += Number(MOUNTS[this.data.mountActive]?.hp) || 0;
-    return max;
+    return Math.max(1, Math.round(max));
   }
 
   buffActive(id) {
@@ -535,7 +578,8 @@ export class RPG {
   }
 
   manaMax() {
-    return 10 + (Number(this.activePet()?.passive.manaMax) || 0);
+    // mesma regra da vida: mana de bicho entra depois do multiplicador
+    return Math.max(1, Math.round(10 * this.bonus().mana + (Number(this.activePet()?.passive.manaMax) || 0)));
   }
 
   mana() {
@@ -727,16 +771,29 @@ export class RPG {
     this.data.skills[id] = clamp(this.skillXp(id) + n, 0, MAX_SKILL_XP);
   }
 
-  damageFor(id) {
+  damageFor(id, longe = true) {
     const skill = this.skillLevel(id);
     let damage = skill >= 10 ? 3 : skill >= 6 ? 2 : 1;
     if (this.data.enchants.furor) damage++;
     if (this.buffActive("damage")) damage++;
-    damage += Number(this.activePet()?.passive.damage) || 0;
+    damage += (Number(this.activePet()?.passive.damage) || 0) * this.bonus().pet;
     damage += this.equipmentBonus().damage;
-    // ponytail: teto de 3 por acerto; sem isso o bicho difícil de 12 vira
-    // uma pergunta só para quem tem equipamento completo
-    return Math.min(3, damage);
+    // o atirador é forte de longe e fraco de perto; a vocação entra depois da
+    // soma, então vale para perícia, equipamento e pet
+    const mult = this.data.vocation === "atirador" ? (longe ? 1.15 : 0.75) : this.bonus().dano;
+    damage *= mult;
+    if (this.data.sub === "barbaro" && !this.data.equipped?.armor) damage += 1;
+    // teto de 4: sem teto o bicho difícil de 18 vira uma pergunta para quem
+    // juntou equipamento e encantamento
+    return Math.min(4, Math.round(damage * 10) / 10);
+  }
+
+  // o erro cobra por vocação, e duas subcategorias mexem na conta
+  danoSofrido(base) {
+    let dano = base * this.bonus().sofrido;
+    if (this.data.sub === "baluarte") dano -= 1;
+    if (this.data.sub === "barbaro") dano += 2;
+    return Math.max(1, Math.round(dano));
   }
 
   // ---------- itens ----------
@@ -1336,7 +1393,7 @@ export class RPG {
       const blocked = !!d.shield;
       if (blocked) d.shield = false;
       const phaseBonus = d.boss ? ((d.bossPhase || 1) - 1) * 2 : 0;
-      let damage = TIERS[d.tier].damage + phaseBonus;
+      let damage = this.danoSofrido(TIERS[d.tier].damage + phaseBonus);
       let note = "";
       if (trait === "haste") {
         damage += Math.ceil(TIERS[d.tier].damage / 2);
@@ -1388,7 +1445,7 @@ export class RPG {
     }
     const blocked = !!d.shield;
     if (blocked) d.shield = false;
-    const damage = blocked ? 0 : TIERS[p.tier].damage;
+    const damage = blocked ? 0 : this.danoSofrido(TIERS[p.tier].damage);
     this.data.hp = Math.max(0, this.hp() - damage);
     p.feedback = { correct: false, why: p.question.why, damage, blocked };
     if (this.data.hp <= 0) {

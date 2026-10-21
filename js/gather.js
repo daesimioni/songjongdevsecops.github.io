@@ -20,7 +20,10 @@ function el(tag, cls, text) {
 // O sorteio é puro: o mesmo tipo sempre devolve um recurso que existe em
 // ITEMS e um tier de pergunta de 1 a 3. O lendário pede duas perguntas.
 export function rollGather(kind, rand = Math.random, extra = {}) {
-  const r = rand();
+  // a coleta da vocação puxa o sorteio para baixo: 1,45 dá 45% mais chance de
+  // cair no raro e no lendário, sem mudar o comum
+  const coleta = Math.max(0.1, Number(extra.coleta) || 1);
+  const r = Math.min(0.999, rand() / coleta);
   const dois = () => rand() < 0.5;
   if (kind === "vein") {
     if (r < 0.55) return { resource: "veio", qty: dois() ? 2 : 1, tier: 1, grade: "comum" };
