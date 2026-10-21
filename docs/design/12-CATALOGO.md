@@ -75,8 +75,9 @@ estações de uma ilha subiu de 5,9 para 12,4 tiles, e a menor de 2 para 5. Cada
 com o nome, uma pedra de viagem (ou entrada na rede de pedras já existente), boca
 de caverna, clareira de caçada e NPC, mais o enfeite proporcional ao tamanho da
 ilha: 3.790 peças ambientais e 1.365 árvores no total, contra 2.417 e 840. A
-boca da caverna mantém 5 tiles de distância do farol da própria área, para não
-trancar a passagem. Caverna e clareira ficam na própria ilha; a caverna desce
+boca da caverna mantém 5 tiles de distância do farol da própria área, 3,2 de
+qualquer totem, 2,8 de qualquer NPC e 3,2 de construção, para nada nascer
+empilhado; e a construção da ilha guarda 3,5 de gente e de boca de caverna. Caverna e clareira ficam na própria ilha; a caverna desce
 para o subsolo e o túnel da conurbação (camada -2) continua sendo o atalho entre
 cidades.
 
