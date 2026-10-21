@@ -287,7 +287,7 @@ export const QUESTS = [
     npc: "turing",
     giver: "Turing",
     title: "O exemplo que engana",
-    brief: "Um modelo acerta todo o treino e erra a rua. Que nome tem isso?",
+    brief: "Um modelo acerta todo o treino e erra na rua. Que nome tem isso?",
     goal: { type: "quiz" },
     quiz: {
       question: "Um modelo que acerta o treino e erra dados novos tem...",

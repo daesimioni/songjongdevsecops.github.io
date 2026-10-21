@@ -474,6 +474,7 @@ for (const area of AREAS) {
 export function questsForArea(area, keeper, giver) {
   const bioma = BIOMES[area.id];
   const fauna = FAUNA[area.id];
+  const { article, noun } = articleOf(area.name);
   return [
     {
       id: `trilha-${area.id}`,
@@ -489,7 +490,7 @@ export function questsForArea(area, keeper, giver) {
       npc: keeper,
       giver,
       title: `O Chefe ${articleOf(area.name).article} ${articleOf(area.name).noun}`,
-      brief: `${fauna[2]?.name || "O guardião"} espera no fundo da caverna de ${area.short}. Desça, responda e volte.`,
+      brief: `Desça até ${fauna[2]?.name || "o guardião"}, no fundo da caverna ${article} ${noun}. Responda e volte.`,
       goal: { type: "bosses", count: 1, area: area.id },
       reward: { xp: 90, title: `Vencedor ${deBioma(bioma.name)} ${bioma.name}` },
     },

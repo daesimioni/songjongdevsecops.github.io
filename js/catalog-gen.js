@@ -8,7 +8,7 @@ import { BANK } from "./catalog-bank.js";
 import { SECTION_TOPICS } from "./catalog-topics.js";
 import { ICONS, articleOf, epigrafe, labFor, subareaBody, titleCase, trilhas } from "./catalog-text.js";
 import { placeStations } from "./catalog-place.js";
-import { AREA_ITEMS, BIOMES, FAUNA, dungeonIdentity } from "./identity.js";
+import { AREA_ITEMS, BIOMES, FAUNA, dungeonIdentity, prepBioma } from "./identity.js";
 import { INTER_TEXT } from "./text/inter.js";
 import { SECAO_TEXT } from "./text/secoes.js";
 
@@ -277,23 +277,34 @@ export function buildCatalogContent() {
     });
 
     const shortWords = bank.map((t) => t.name.split(" ")[0]);
+    // a fala diz o lugar e o assunto: antes 70 treinadores diziam a mesma
+    // frase e 70 guardiões repetiam a mesma linha da caverna
+    const resumo = (texto) => {
+      let frase = String(texto).split(/(?<=\.)\s/)[0].replace(/\.$/, "");
+      if (frase.length > 110) frase = frase.slice(0, 110).replace(/[ ,;:]\S*$/, "");
+      return frase;
+    };
+    // três tópicos podem começar com a mesma palavra ("Geometria, Geometria,
+    // Geometria"): nesse caso a fala usa o nome inteiro de cada tópico
+    const nomesIlha = [...new Set(shortWords)];
+    const listaNomes = nomesIlha.length === shortWords.length ? shortWords : bank.map((t) => resumo(t.name));
     npcSpawns.push({ id: keeperId, continent, x: spot.npc.x, y: spot.npc.y, accent });
     npcs[keeperId] = {
       name: keeperName,
       lines: [
         `${bioma.name}. Poucos chegam até aqui, e menos ainda param.`,
-        `Os nomes desta ilha: ${shortWords.join(", ")}. Não são enfeites; são o que se pode aprender.`,
+        `Os nomes desta ilha: ${listaNomes.join(", ")}. Não são enfeites; são o que se pode aprender.`,
         `${fauna[0].name} e ${fauna[1].name} rondam por perto. Não os provoque sem resposta.`,
         `O engano que volta sempre: ${bank[0].mistake}`,
-        `A caverna abaixo guarda o resto. Desça quando tiver pergunta demais.`,
+        `A caverna ${prepBioma(bioma.name)} ${bioma.name} guarda o resto. Desça quando tiver pergunta demais.`,
       ],
     };
     npcs[`trainer-${area.id}`] = {
       name: `${monitorTitulo} ${monitorNome}`,
       lines: [
-        `A clareira é lugar de errar sem sangue.`,
-        `Comece por ${shortWords[0]}. O que a clareira cobra, a caverna também cobra.`,
-        `Aqui o erro não dói. Lá embaixo, dói.`,
+        `A clareira ${prepBioma(bioma.name)} ${bioma.name} é lugar de errar sem sangue.`,
+        `${resumo(bank[0].def)} Comece por aí.`,
+        `Aqui o erro não dói. Lá embaixo ${fauna[0].name} cobra a mesma resposta.`,
       ],
     };
     quests.push({
@@ -301,7 +312,7 @@ export function buildCatalogContent() {
       npc: keeperId,
       giver: keeperName,
       title: `A pergunta de ${keeperName}`,
-      brief: `${area.sub}. ${keeperName} espera uma resposta, não uma visita.`,
+      brief: `${area.sub.charAt(0).toUpperCase() + area.sub.slice(1)}. ${keeperName} espera uma resposta, não uma visita.`,
       goal: { type: "quiz" },
       quiz: quizFor(bank[1].q, order),
       reward: { xp: 38, title: `Aprendiz de ${keeperName}` },

@@ -25,7 +25,7 @@ export const titleCase = (text) => String(text || "").split(/\s+/).map((word, i)
 
 // artigo da área, para "Cripta dos Fundamentos" e não "Cripta da Fundamentos"
 export function articleOf(name) {
-  const m = /^Área (da|das|do|dos) (.+)$/.exec(String(name || ""));
+  const m = /^Área (de|da|das|do|dos) (.+)$/.exec(String(name || ""));
   if (m) return { article: m[1], noun: m[2] };
   return { article: "da", noun: String(name || "").replace(/^Área /, "") };
 }

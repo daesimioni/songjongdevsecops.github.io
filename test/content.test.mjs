@@ -26,6 +26,7 @@ const { CATALOG, CATALOG_BY_ID, DISCIPLINES, CATALOG_EXISTING } = await import("
 const { CATALOG_CONTENT } = await import("../js/catalog-gen.js");
 const { SECTION_TOPICS } = await import("../js/catalog-topics.js");
 const { insideLand } = await import("../js/catalog-place.js");
+const { articleOf } = await import("../js/catalog-text.js");
 const { AREA_ITEMS, AREA_OUTFITS, BIOMES, FAUNA, IDENTITY_AREAS, TILE_STYLE, dungeonIdentity, npcStyle } = await import("../js/identity.js");
 const { MATH_TEXT } = await import("../js/text/math.js");
 const { PHYSICS_TEXT } = await import("../js/text/physics.js");
@@ -479,14 +480,10 @@ check(pontesSecas === CATALOG_BRIDGES.length, `pontes secas: ${pontesSecas}/${CA
 
 // português correto nas etiquetas geradas e instrumento em toda estação nova
 const LABS = new Set(["logic", "fractal", "fourier", "solid", "echo", "adder", "state", "cpu", "history", "infinity", "calculus", "probability", "motion", "thermo", "optics", "gravity", "periodic", "bonds", "titration", "energy", "balance", "rhythm", "harmony", "scales", "timbre", "generative", "learning", "neural", "language", "vision"]);
-const artigoDe = (name) => {
-  const m = /^Área (da|das|do|dos) (.+)$/.exec(name);
-  return m ? { art: m[1], noun: m[2] } : { art: "da", noun: name.replace(/^Área /, "") };
-};
 let etiquetaErrada = [], semInstrumento = [];
 for (const item of CATALOG_CONTENT.areas) {
   const area = CATALOG.find((a) => a.id === item.id);
-  const { art, noun } = artigoDe(area.name);
+  const { article: art, noun } = articleOf(area.name);
   const dungeon = DUNGEONS.find((d) => d.id === `dungeon-${item.id}`);
   const ground = GROUNDS.find((g) => g.id === item.id);
   const stone = (WAYSTONES.find((w) => w.id === item.id));
@@ -562,6 +559,22 @@ check(DUNGEONS.length === 93, `cavernas: ${DUNGEONS.length}, esperado 93`);
 check(GROUNDS.length === 93, `caçadas: ${GROUNDS.length}, esperado 93`);
 check(SITES.length === totalEstacoes, `catações: ${SITES.length}, esperado ${totalEstacoes}`);
 check(QUESTS.length === 284, `missões: ${QUESTS.length}, esperado 284`);
+// a missão fala como morador: campo cheio, recompensa que existe, frase
+// começando em maiúscula e sem concordância quebrada ("da de")
+const falhasMissao = [];
+for (const q of QUESTS) {
+  const texto = `${q.title} ${q.brief} ${q.reward?.title || ""}`;
+  if (!q.title || !q.brief || !q.giver || !q.npc) falhasMissao.push(`${q.id}: campo vazio`);
+  if (!q.reward?.item || !ITEMS[q.reward.item]) falhasMissao.push(`${q.id}: recompensa sem item`);
+  if (!/^[A-ZÁÉÍÓÚÂÊÔÃÕÇ]/.test(q.brief)) falhasMissao.push(`${q.id}: brief em minúscula`);
+  if (!/[.!?]$/.test(q.brief.trim())) falhasMissao.push(`${q.id}: brief sem ponto final`);
+  if (/\b(da|do|das|dos) de\b/.test(texto)) falhasMissao.push(`${q.id}: concordância quebrada`);
+}
+check(falhasMissao.length === 0, `missão com defeito: ${falhasMissao.slice(0, 4).join(" | ")}`);
+// nenhuma fala de NPC se repete: cada morador fala do próprio lugar
+const falasNpc = Object.values(NPCS).flatMap((npc) => npc.lines || []);
+check(falasNpc.length >= 780, `falas de NPC: ${falasNpc.length}, esperado ao menos 780`);
+check(new Set(falasNpc).size === falasNpc.length, "fala de NPC repetida no mundo");
 check(WAYSTONES.length === 94, `faróis: ${WAYSTONES.length}, esperado 94`);
 // as 770 perguntas de posição no catálogo saíram; sobrou conceito das áreas
 check(totalQuestions === 887, `perguntas: ${totalQuestions}, esperado 887`);
