@@ -108,8 +108,9 @@ function poca(g, p, v) {
   }
 }
 
-function tufo(g, p, v) {
+function tufo(g, p, v, q = 0) {
   const w = 16, h = 11;
+  const vento = q % 2 ? 0.5 : 0;
   const hastes = v === 2
     ? [2, 4, 6, 8, 11, 13, 15]
     : v === 1
@@ -120,7 +121,7 @@ function tufo(g, p, v) {
     g.strokeStyle = i % 2 ? p.folha : p.folhaEscura;
     g.beginPath();
     g.moveTo(x, h - 1);
-    g.lineTo(x + (i % 2 ? 1 : -1), h - (v === 2 ? 5 : 4) - ((i * 3) % 4));
+    g.lineTo(x + (i % 2 ? 1 : -1) + vento, h - (v === 2 ? 5 : 4) - ((i * 3) % 4));
     g.stroke();
   }
   g.fillStyle = p.folhaClara;
@@ -197,7 +198,7 @@ export const SOLOS = {
   rachadura: { w: 22, h: 12, variantes: 3, desenhar: rachadura },
   raiz: { w: 22, h: 12, variantes: 3, desenhar: raiz },
   poca: { w: 20, h: 12, variantes: 3, desenhar: poca },
-  tufo: { w: 16, h: 11, variantes: 3, desenhar: tufo },
+  tufo: { w: 16, h: 11, variantes: 3, quadros: 2, ms: 420, desenhar: tufo },
   folhada: { w: 20, h: 10, variantes: 3, desenhar: folhada },
   cogumelo: { w: 18, h: 12, variantes: 3, desenhar: cogumelo },
   musgo: { w: 20, h: 10, variantes: 3, desenhar: musgo },

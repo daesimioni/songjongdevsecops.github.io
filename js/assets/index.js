@@ -46,11 +46,18 @@ function paletaDoBioma(bioma) {
   return p;
 }
 
+// Grupos em que espelhar a peça não quebra leitura: árvore, pedra e barril
+// ficam bem de qualquer lado; casa com porta e placa de doca não.
+const ESPELHA = new Set(["vegetacao", "props", "agua", "solo"]);
+
 export function desenharAsset(ctx, tipo, x, y, { tempo = 0, bioma = null, seed = 0, camada = "ser", inclinacao = 0 } = {}) {
   const def = POR_TIPO.get(tipo);
   if (!def) return false;
   const p = paletaDoBioma(bioma);
   const v = variante(seed, def.variantes || 1);
+  // espelho por instância: três variantes viram seis caras na mesma ilha
+  const grupo = POR_TIPO.get(tipo)?.grupo;
+  const espelha = ESPELHA.has(grupo) && variante(seed + 17.3, 2) === 1;
   const q = def.quadros ? quadroAnimado(tempo, def.quadros, def.ms || 160) : 0;
   const chave = `${tipo}:${v}:${p.chave}:${q}`;
   // o sprite nasce em 2x: cada pixel antigo vira quatro pixels de desenho, e o
@@ -69,7 +76,16 @@ export function desenharAsset(ctx, tipo, x, y, { tempo = 0, bioma = null, seed =
     ctx.save();
     ctx.translate(x, y);
     ctx.transform(1, 0, inclinacao, 1, 0, 0);
+    if (espelha) ctx.scale(-1, 1);
     ctx.drawImage(sprite, -def.w / 2, -def.h, def.w, def.h);
+    ctx.restore();
+    return true;
+  }
+  if (espelha) {
+    ctx.save();
+    ctx.translate(Math.round(x), camada === "chao" ? 0 : Math.round(y));
+    ctx.scale(-1, 1);
+    ctx.drawImage(sprite, -def.w / 2, camada === "chao" ? dy : -def.h, def.w, def.h);
     ctx.restore();
     return true;
   }

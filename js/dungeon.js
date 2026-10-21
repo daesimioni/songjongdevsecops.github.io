@@ -706,6 +706,8 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
       name,
       tier,
       kind,
+      // tamanho por bicho: dois "Bytes" não têm o mesmo porte
+      escala: 0.9 + hash2(x * 7 + k, y * 11 - k) * 0.16,
       level: tier * 3,
       x,
       y,
@@ -2345,7 +2347,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     }
     ctx.save();
     ctx.translate(x, y);
-    drawCreatureArt(ctx, m.kind, m.accent, t + m.x * 90, m.boss ? 1.15 : 0.95, m.dir);
+    drawCreatureArt(ctx, m.kind, m.accent, t + m.x * 90, m.escala || (m.boss ? 1.15 : 0.95), m.dir);
     ctx.restore();
     if (state.alert?.monster === m) {
       ctx.save();

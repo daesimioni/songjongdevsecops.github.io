@@ -29,8 +29,9 @@ function pedraAgua(g, p, v) {
   }
 }
 
-function juncoAgua(g, p, v) {
+function juncoAgua(g, p, v, q = 0) {
   const w = 22, h = 26;
+  const vento = q % 2 ? 0.5 : 0;
   g.fillStyle = "rgba(18,55,84,0.5)";
   g.fillRect(2, h - 4, w - 4, 3);
   const hastes = v === 2 ? [3, 6, 8, 11, 14, 17, 20] : v === 1 ? [5, 9, 14, 18] : [4, 7, 12, 16, 20];
@@ -39,7 +40,7 @@ function juncoAgua(g, p, v) {
     g.strokeStyle = i % 2 ? p.folha : p.folhaEscura;
     g.beginPath();
     g.moveTo(x, h - 3);
-    g.lineTo(x + (i % 2 ? 2 : -1), h - 3 - alt);
+    g.lineTo(x + (i % 2 ? 2 : -1) + vento, h - 3 - alt);
     g.stroke();
     g.fillStyle = p.tronco;
     g.fillRect(x + (i % 2 ? 2 : -1), h - 4 - alt, 2, 3);
@@ -66,13 +67,14 @@ function espuma(g, p, _v, quadro) {
   g.fillRect(0, h - 2, w, 2);
 }
 
-function lirio(g, p, v) {
+function lirio(g, p, v, q = 0) {
   const w = 18, h = 12;
+  const onda = q % 2 ? 0.5 : 0;
   g.fillStyle = "rgba(18,55,84,0.5)";
   g.fillRect(0, h - 5, w, 4);
   for (let i = 0; i < (v === 2 ? 4 : 3); i++) {
     const x = 1 + i * 4 + (v === 1 ? 1 : 0);
-    const y = h - 4 - (i % 2);
+    const y = h - 4 - (i % 2) + onda;
     g.fillStyle = p.folhaEscura;
     g.beginPath(); g.ellipse(x, y, 3.4, 1.6, 0, 0, Math.PI * 2); g.fill();
     g.fillStyle = p.folha;
@@ -92,7 +94,7 @@ function lirio(g, p, v) {
 
 export const AGUAS = {
   pedraAgua: { w: 20, h: 14, variantes: 3, desenhar: pedraAgua },
-  juncoAgua: { w: 22, h: 26, variantes: 3, desenhar: juncoAgua },
+  juncoAgua: { w: 22, h: 26, variantes: 3, quadros: 2, ms: 460, desenhar: juncoAgua },
   espuma: { w: 22, h: 9, variantes: 1, quadros: 6, ms: 200, desenhar: espuma },
-  lirio: { w: 18, h: 12, variantes: 3, desenhar: lirio },
+  lirio: { w: 18, h: 12, variantes: 3, quadros: 2, ms: 620, desenhar: lirio },
 };

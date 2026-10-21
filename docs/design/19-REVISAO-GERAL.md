@@ -43,8 +43,22 @@ andamento e o que falta.
 
 Silhuetas do grupo: 24 + 24 + 24 + 10 + 10 + 13 = **105** (antes 69).
 
+### Etapa 2 (mais única): espelho por instância
+
+Vegetação, props, água e decalques de solo podem nascer espelhados: a semente da
+posição decide, então três variantes viram até seis caras na mesma ilha sem
+sprite novo. Construção não espelha (porta e placa têm lado) e o cisalhamento
+do vento continua valendo na peça espelhada.
+
+### Etapa 3 (animação): o chão e a beira respiram
+
+Ramo de capim (`tufo`), junco d'água e lírio ganharam dois quadros: o capim
+verga meio pixel, o junco balança a ponta e o lírio sobe e desce na ondulação.
+A árvore já vergava com a rajada e o fogo já tinha 4 a 8 quadros.
+
 ## Registro
 
 | data | onda | o que mudou | prova |
 |---|---|---|---|
+| 2026-10-21 | assets, etapa 2 e 3 | espelho por instância nas peças de vegetação, props, água e solo; três peças pequenas ganharam dois quadros de animação; bicho da caverna ganhou porte próprio (0,90 a 1,06) | 24/24 suítes, 19/19 no navegador, 60,4 fps |
 | 2026-10-21 | assets, etapa 1 | vegetação, solo, construção, água, props e fogo com 2 ou 3 variantes: 69 para 105 silhuetas; três variantes fracas foram refeitas depois da auditoria da folha de contato (doca em T, braseiro pendurado e palmeira curta) | folha de contato das 105, 24/24 suítes, 19/19 no navegador, 60,6 fps |
