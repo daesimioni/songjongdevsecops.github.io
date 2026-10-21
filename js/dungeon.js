@@ -1110,6 +1110,16 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     g.clearRect(0, 0, c.width, c.height);
     g.fillStyle = "rgba(5,8,20,0.86)";
     g.fillRect(0, 0, c.width, c.height);
+    // A planta inteira aparece apagada antes de ser andada: o minimapa nasce
+    // com o desenho da caverna, e não como um retângulo preto até o boneco
+    // passar. O que já foi visto é que ganha cor.
+    g.globalAlpha = 0.18;
+    g.fillStyle = "#5f6f93";
+    for (let y = 0; y < state.map.H; y++) {
+      for (let x = 0; x < W; x++) {
+        if (state.map.grid[y * W + x]) g.fillRect(x * 2, y * 2, 2, 2);
+      }
+    }
     for (let y = 0; y < state.map.H; y++) {
       for (let x = 0; x < W; x++) {
         if (!state.seen[y * W + x]) continue;

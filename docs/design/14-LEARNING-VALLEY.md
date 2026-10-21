@@ -225,6 +225,9 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 - [x] clique convertido pela janela do zoom, sem perder a caminhada até o ponto
 - [x] o mapa inteiro deixou de ser cortado: o base é 560x360 e o canvas mostrava
       só o canto de 300x200
+- [x] o minimapa da caverna nasce com a planta inteira apagada e ganha cor no
+      que já foi andado: antes ele era um retângulo quase preto nas primeiras
+      salas (2% de pixel vivo), agora abre em 31%
 
 ### G. Bestiário
 
@@ -298,6 +301,7 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 
 | data | fase | o que entrou | prova |
 |---|---|---|---|
+| 2026-10-21 | J/H | nave e minimapa da caverna: Espaço liga e desliga na superfície e no subsolo, sem auto-repeat, e o mapa continua desenhado andando com a nave; o minimapa passou a mostrar a planta inteira apagada desde a entrada | navegador: superfície e caverna com sprint ligado, desligado no segundo Espaço, 6 amostras do canvas por trecho (superfície 1,000 de mapa vivo, caverna 0,28 de área iluminada) e minimapa da caverna de 0,015 a 0,306 de pixel vivo; console limpo |
 | 2026-10-21 | W | vento e onda: frente de rajada que atravessa o mapa com fase por posição e força por material da área; copa, folha solta, capim, musgo e flor respondem à mesma rajada; o mar ganhou crista que viaja, cava entre cristas e espuma que respira | node: rajada com pico e calmaria, vizinho de 1 tile na mesma frente, 14 tiles adiante em outra fase, pico levando tempo para atravessar 40 tiles, fibra mais forte que cristal, crista do mar andando; navegador: dois quadros congelados no pico e no calmo, crista e quadro seguinte, fps 45,1 com vento e 48,7 sem, terreno 0,66 contra 0,60 ms |
 | 2026-10-21 | P | equipamento preso na mão: o punho saiu do ombro e foi para o último par de pixels do braço, subindo, descendo e balançando com o passo; arma ganhou contorno escuro, aço em dois tons, guarda dourada, cabo com a mão por cima e pomo; escudo ganhou aro, brilho, sombra, cravos, umbo e alça | node: quatro direções com parado e andando, punho a no máximo 6 px da mão, escudo a no máximo 6 px do braço e balanço entre dois instantes do passo; navegador: galeria do boneco com espada, escudo, elmo e armadura nas quatro direções |
 | 2026-10-21 | V | caverna com cara de lugar: planta semeada pelo id (93 desenhos distintos, progressão por profundidade e chefe no fundo) e fachada pela pedra da área, com a boca do fundo diferente da entrada; a segunda boca foi para o lado oposto da ilha | node: 93 plantas distintas, todas as salas com chão e alcançáveis desde a entrada, chefe em tier 3; navegador: galeria das cinco famílias com a paleta real de cada área e as duas bocas, mina e fenda no mundo com placa e sem placa, console limpo; pares de boca: min 9,2 e mediana 17,0 tiles (antes 7,1 e 12,0, com 24 pares abaixo de 9), zero saída obstruída |
