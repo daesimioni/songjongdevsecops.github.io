@@ -307,6 +307,7 @@ dungeon = createDungeon({
   onKeeper: () => openShop(),
   onConurbation: () => openTravel("caves"),
   onPortal: (defId) => portalToCity(defId),
+  onVocacao: () => openVocacoes(),
   avatar: player.colors,
   look: player.look,
   gear: () => gearAtual(),
@@ -536,6 +537,83 @@ function openOutfits() {
   }
   body.appendChild(grid);
   openModal("outfits");
+  audio.open();
+}
+
+// ---- mesa de vocação -----------------------------------------------------
+function custoTexto(custo) {
+  if (!custo) return "grátis";
+  return Object.entries(custo).map(([mat, qtd]) => `${ITEMS[mat]?.name || mat} ${qtd}`).join(" · ");
+}
+
+function renderVocacoes() {
+  const body = $("vocacoes-body");
+  if (!body) return;
+  body.textContent = "";
+  const atual = rpg.data.vocation;
+  const nivel = typeof rpg.getLevel === "function" ? rpg.getLevel() : 1;
+  const custoV = rpg.custoVocacao();
+  const custoSub = rpg.custoSub();
+  $("vocacoes-sub").textContent = nivel >= 10
+    ? `Nível ${nivel}. A primeira troca de vocação de cada nível é grátis; depois custa ${custoTexto(rpg.custoVocacao() || { ferro: 3, veio: 2 })}. A subcategoria está aberta.`
+    : `Nível ${nivel}. A primeira troca de vocação de cada nível é grátis; depois custa ${custoTexto({ ferro: 3, veio: 2 })}. A subcategoria abre no nível 10.`;
+
+  const grid = el("div", "voc-grid");
+  for (const v of VOCACOES) {
+    const card = el("button", `voc-card${atual === v.id ? " on" : ""}`);
+    card.type = "button";
+    card.disabled = atual === v.id;
+    card.append(
+      el("b", "", v.name),
+      el("span", "", `força: ${v.forca}`),
+      el("span", "", `fraqueza: ${v.fraqueza}`),
+      el("span", "voc-preco", atual === v.id ? "vocação atual" : `trocar: ${custoTexto(custoV)}`),
+    );
+    card.addEventListener("click", () => {
+      const res = rpg.trocarVocacao(v.id);
+      if (!res.ok) { toast(res.reason || "não deu para trocar.", 3200); audio.blip(); return; }
+      audio.chime();
+      toast(`Agora você é ${v.name}${res.custo ? ` (custou ${custoTexto(res.custo)})` : " (grátis)"}.`, 4200);
+      renderVocacoes();
+      updateMiniHud(true);
+    });
+    grid.appendChild(card);
+  }
+  body.appendChild(grid);
+
+  const voc = rpg.vocacao();
+  if (!voc.subs.length) return;
+  body.appendChild(el("h3", "sheet-sec", `Subcategoria de ${voc.name}`));
+  const subs = el("div", "voc-subs");
+  for (const sub of voc.subs) {
+    const card = el("button", `voc-sub${rpg.data.sub === sub.id ? " on" : ""}`);
+    card.type = "button";
+    card.disabled = rpg.data.sub === sub.id || nivel < 10;
+    card.append(
+      el("b", "", sub.name),
+      el("span", "", sub.desc),
+      el("span", "", sub.efeito),
+      el("span", "voc-preco", rpg.data.sub === sub.id ? "sua subcategoria" : nivel < 10 ? "abre no nível 10" : `escolher: ${custoTexto(custoSub)}`),
+    );
+    card.addEventListener("click", () => {
+      const res = rpg.trocarSub(sub.id);
+      if (!res.ok) { toast(res.reason || "não deu para escolher.", 3200); audio.blip(); return; }
+      audio.chime();
+      toast(`Subcategoria: ${sub.name}${res.custo ? ` (custou ${custoTexto(res.custo)})` : " (grátis)"}.`, 4200);
+      renderVocacoes();
+    });
+    subs.appendChild(card);
+  }
+  body.appendChild(subs);
+}
+
+function openVocacoes() {
+  if (!state.started) return;
+  stopSprint();
+  closeChat();
+  if (state.panelOpen) closePanel();
+  renderVocacoes();
+  openModal("vocacoes");
   audio.open();
 }
 
@@ -2345,7 +2423,7 @@ function loop(now) {
     // desfoque do modal, e a mochila aberta derrubava o quadro para 8 fps.
     const coberto = !!(state.panelOpen || state.modal || state.chatOpen || now < state.pvpDownUntil);
     if (!coberto || coberto !== cobertoAntes) {
-      renderer.draw(now, player, state.peers, world.npcs, world.cat, player.moving);
+      renderer.draw(now, player, state.peers, world.npcs, world.cat, player.moving, rpg.data.sub === "rastreador");
     }
     cobertoAntes = coberto;
     updatePrompt();
@@ -3278,6 +3356,6 @@ window.addEventListener("beforeunload", () => {
   }, { capture: true });
 
   if (new URLSearchParams(location.search).has("debug")) {
-    window.__mundo = { player, state, world, renderer, audio, quests, rede, backup, rpg, sheetUi, duelUi, dungeon, pvpUi, knockDown, findPath, openPost: (id) => openPost(id), openTravel: (mode) => openTravel(mode), catalog: CATALOG_CONTENT, catalogStones: [...CATALOG_STONES], waystones: WAYSTONES, get social() { return social; } };
+    window.__mundo = { player, state, world, renderer, audio, quests, rede, backup, rpg, sheetUi, duelUi, dungeon, pvpUi, knockDown, findPath, openPost: (id) => openPost(id), openTravel: (mode) => openTravel(mode), openVocacoes: () => openVocacoes(), catalog: CATALOG_CONTENT, catalogStones: [...CATALOG_STONES], waystones: WAYSTONES, get social() { return social; } };
   }
 })();

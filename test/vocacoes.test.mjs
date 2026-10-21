@@ -84,3 +84,73 @@ assert.equal(antigo.hpMax(), 30, "neutro tem a vida de antes das vocações");
 assert.equal(antigo.manaMax(), 10, "neutro tem a mana de antes das vocações");
 
 console.log(`ok vocações: ${VOCACOES.length} vocações, ${SUB_POR_ID.size} subcategorias, vida ${guerreiro.hpMax()} x ${mago.hpMax()}, mana ${guerreiro.manaMax()} x ${mago.manaMax()}, dano ${danoG} x ${danoM}`);
+
+// 6. mesa: primeira troca de cada nível é grátis, a segunda custa material
+localStorage.clear();
+const mesa = new RPG({ getLevel: () => 12 });
+mesa.setVocation("mago");
+const primeira = mesa.trocarVocacao("guerreiro");
+assert.equal(primeira.ok, true, `primeira troca: ${primeira.reason || ""}`);
+assert.equal(primeira.custo, null, "primeira troca do nível deveria ser grátis");
+const cobrada = mesa.trocarVocacao("mago");
+assert.equal(cobrada.ok, false, "segunda troca sem material deveria falhar");
+mesa.addItem("ferro", 3);
+mesa.addItem("veio", 2);
+const segunda = mesa.trocarVocacao("mago");
+assert.equal(segunda.ok, true, `segunda troca com material: ${segunda.reason || ""}`);
+assert.deepEqual(segunda.custo, { ferro: 3, veio: 2 }, "preço da segunda troca");
+assert.equal(mesa.itemCount("ferro"), 0, "ferro não foi cobrado");
+assert.equal(mesa.itemCount("veio"), 0, "veio não foi cobrado");
+
+// 7. subcategoria: primeira grátis, troca depois custa
+localStorage.clear();
+const subs = new RPG({ getLevel: () => 12 });
+subs.setVocation("mago");
+assert.equal(subs.trocarSub("arcanista").ok, true, "primeira subcategoria");
+assert.deepEqual(subs.trocarSub("arcanista").reason, "essa já é a sua subcategoria");
+const trocaSub = subs.trocarSub("bruxo");
+assert.equal(trocaSub.ok, false, "troca de subcategoria sem material deveria falhar");
+subs.addItem("veio", 4);
+subs.addItem("erva", 2);
+assert.equal(subs.trocarSub("bruxo").ok, true, "troca de subcategoria com material");
+assert.equal(subs.sub().id, "bruxo");
+// trocar de vocação zera a subcategoria e devolve a escolha grátis
+subs.trocarVocacao("guerreiro");
+assert.equal(subs.sub(), null, "troca de vocação não zerou a subcategoria");
+
+// 8. mecânica de subcategoria no duelo: sombra dobra o primeiro acerto,
+// besteiro soma no segundo, arcanista cura a cada três
+function dueloDe(vocation, sub) {
+  localStorage.clear();
+  const r = new RPG({ getLevel: () => 12, gainXp: () => {} });
+  r.setVocation(vocation);
+  if (sub) r.setSub(sub);
+  r.startTraining("math", 2);
+  return r;
+}
+const sombra = dueloDe("assassino", "sombra");
+const hpInicial = sombra.duel.monsterHp;
+sombra.answer(sombra.duel.question.answer);
+const danoSombra = hpInicial - sombra.duel.monsterHp;
+assert.ok(danoSombra >= 2, `sombra deveria dobrar o primeiro acerto (tirou ${danoSombra})`);
+const referencia = dueloDe("assassino", null);
+const hpRef = referencia.duel.monsterHp;
+referencia.answer(referencia.duel.question.answer);
+assert.ok(danoSombra > hpRef - referencia.duel.monsterHp, "sombra não bateu mais que o normal");
+
+const besteiro = dueloDe("atirador", "besteiro");
+const hpB = besteiro.duel.monsterHp;
+besteiro.answer(besteiro.duel.question.answer);
+const dano1 = hpB - besteiro.duel.monsterHp;
+besteiro.next();
+const hpB2 = besteiro.duel.monsterHp;
+besteiro.answer(besteiro.duel.question.answer);
+const dano2 = hpB2 - besteiro.duel.monsterHp;
+assert.ok(dano2 > dano1, `besteiro deveria somar no segundo acerto (${dano1} -> ${dano2})`);
+
+const arcanista = dueloDe("mago", "arcanista");
+arcanista.data.hp = 10;
+for (let i = 0; i < 3; i++) { arcanista.answer(arcanista.duel.question.answer); arcanista.next(); }
+assert.ok(arcanista.data.hp > 10, "arcanista não curou a cada três acertos");
+
+console.log("ok mesa de vocação: troca grátis no nível, custo depois, 15 subcategorias e três mecânicas conferidas no duelo");

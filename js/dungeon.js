@@ -327,6 +327,36 @@ function drawAltar(ctx, x, y, t, accent) {
   ctx.restore();
 }
 
+// Mesa de vocação: estante baixa com o livro das cinco cartas aberto e duas
+// velas. O brilho muda de cor com o tempo, como se a página virasse sozinha.
+function drawMesa(ctx, x, y, t, accent) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.fillStyle = "rgba(0,0,0,0.35)";
+  ctx.beginPath();
+  ctx.ellipse(0, 1, 14, 4, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = "#3a2b22";
+  ctx.fillRect(-13, -8, 26, 8);
+  ctx.fillStyle = "#5a4030";
+  ctx.fillRect(-13, -9, 26, 2);
+  ctx.fillStyle = "#1b1626";
+  ctx.fillRect(-8, -14, 16, 6);
+  ctx.fillStyle = "#d8d0e8";
+  ctx.fillRect(-7, -13, 7, 4);
+  ctx.fillRect(1, -13, 6, 4);
+  ctx.fillStyle = accent;
+  ctx.fillRect(-6, -12, 5, 1);
+  ctx.fillRect(2, -12, 4, 1);
+  const brilho = 0.5 + Math.sin(t * 0.004) * 0.25;
+  ctx.globalAlpha = brilho;
+  ctx.fillStyle = "#ffe3a1";
+  ctx.fillRect(-11, -12, 2, 3);
+  ctx.fillRect(9, -12, 2, 3);
+  ctx.globalAlpha = 1;
+  ctx.restore();
+}
+
 function drawForge(ctx, x, y, t, accent) {
   ctx.save();
   ctx.translate(x, y);
@@ -555,7 +585,7 @@ function drawBuilding(ctx, x, y, w, h, palette, accent) {
 }
 
 // ---------- a caverna em si ----------
-export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, onGather, onExit, onKeeper, onConurbation, onPortal, isBlocked, avatar = {}, look = null, gear = null }) {
+export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, onGather, onExit, onKeeper, onConurbation, onPortal, onVocacao, isBlocked, avatar = {}, look = null, gear = null }) {
   const canvas = $("dungeon-canvas");
   const ctx = canvas?.getContext("2d", { alpha: false }) || null;
 
@@ -748,9 +778,19 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     }
     for (const [plano, posto] of melhor || []) plano.post = posto;
     const out = [];
+    // alcance e furtividade da vocação mudam de onde o bicho te vê: atirador
+    // e assassino chegam perto antes de serem notados, guerreiro é notado
+    // mais longe
+    let fatorVisao = 1 / Math.max(0.3, (rpg.bonus?.().alcance || 1) * (rpg.bonus?.().furtividade || 1));
+    // subcategoria que mexe no olho do bicho: ilusionista confunde (20% menos),
+    // campeão provoca (20% mais)
+    if (rpg.data.sub === "ilusionista") fatorVisao *= 0.8;
+    if (rpg.data.sub === "campeao") fatorVisao *= 1.2;
     for (const plano of planos) {
       if (!plano.post) continue;
-      out.push(makeMonster(def, plano.room, 0, plano.name, plano.tier, plano.post));
+      const m = makeMonster(def, plano.room, 0, plano.name, plano.tier, plano.post);
+      m.vision = Math.max(1.6, m.vision * fatorVisao);
+      out.push(m);
     }
     return out;
   }
@@ -825,6 +865,16 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     for (const room of def.rooms) {
       for (let x = room.x + 2; x < room.x + room.w - 1; x += 4) {
         props.push({ kind: "torch", x: x + 0.5, y: room.y - 0.22 });
+      }
+      // a mesa de vocação mora na praça da capital subterrânea
+      if (room.kind === "city" || room.theme === "cidade") {
+        props.push({
+          kind: "vocacao",
+          x: room.x + room.w / 2,
+          y: room.y + room.h / 2 + 0.5,
+          label: "mesa de vocação",
+          interact: true,
+        });
       }
     }
     // tochas nos túneis, para o labirinto não virar um breu só
@@ -995,6 +1045,10 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
         continue;
       }
       if (p.kind === "forge") {
+        state.solids.push({ x: p.x, y: p.y, hw: 0.7, hh: 0.45 });
+        continue;
+      }
+      if (p.kind === "vocacao") {
         state.solids.push({ x: p.x, y: p.y, hw: 0.7, hh: 0.45 });
         continue;
       }
@@ -1367,14 +1421,18 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
         return;
       }
       if (obj.locked) {
-        if (rpg.itemCount("chave") <= 0) {
+        // ladrão abre selado sem gastar chave; é a força dele fora do duelo
+        if (rpg.data.sub === "ladrao") {
+          say("O ladrão abre o selo sem chave.", 2600);
+        } else if (rpg.itemCount("chave") <= 0) {
           say("O baú está selado. Uma chave de caverna, feita na forja, abre.");
           audio.error?.();
           return;
+        } else {
+          rpg.data.items.chave--;
+          if (rpg.data.items.chave <= 0) delete rpg.data.items.chave;
+          rpg.save();
         }
-        rpg.data.items.chave--;
-        if (rpg.data.items.chave <= 0) delete rpg.data.items.chave;
-        rpg.save();
       }
       const loot = rollChest(obj);
       for (const l of loot) rpg.addItem(l.id, l.qty);
@@ -1385,6 +1443,11 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
       say(`Baú aberto: ${names}.`, 4200);
       audio.chime();
       updateHud();
+      return;
+    }
+    if (obj.kind === "vocacao") {
+      onVocacao?.();
+      say("A mesa de vocação abre as cinco cartas.", 2400);
       return;
     }
     if (obj.kind === "stairs") {
@@ -1996,6 +2059,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
           if (prop.kind === "stairs") drawStairs(ctx, prop.x * TILE, prop.y * TILE, palette.accent, t);
           else if (prop.kind === "altar") drawAltar(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent);
           else if (prop.kind === "forge") drawForge(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent);
+          else if (prop.kind === "vocacao") drawMesa(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent);
           else if (prop.kind === "waystone") drawWaystone(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent);
           else if (prop.kind === "keeper") drawKeeper(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent);
           else if (prop.kind === "enchanter") drawEnchanter(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent);

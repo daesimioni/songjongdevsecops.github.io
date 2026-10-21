@@ -1803,7 +1803,7 @@ export function createRenderer(canvas, world) {
     drawGroundOn(ctx, x, y, t, time, true);
   }
 
-  function draw(now, player, peers, npcs, cat, moving) {
+  function draw(now, player, peers, npcs, cat, moving, rastreador = false) {
     const frameStart = performance.now();
     const time = now;
     const areaJogador = world.areaAt(player.x, player.y);
@@ -1987,7 +1987,7 @@ export function createRenderer(canvas, world) {
     }
 
     drawNpcLabels(npcs, scale, camX, camY);
-    drawMinimap(player, peers);
+    drawMinimap(player, peers, rastreador);
     const frameEnd = performance.now();
     if (stats._prev) {
       const dt = frameEnd - stats._prev;
@@ -2092,7 +2092,7 @@ export function createRenderer(canvas, world) {
     mctx.restore();
   }
 
-  function drawMinimap(player, peers) {
+  function drawMinimap(player, peers, rastreador = false) {
     if (!mctx) return;
     miniPlayer = player;
     if (fogVersion !== world.exploredVersion && performance.now() - lastFogBuild > 120) {
@@ -2129,13 +2129,26 @@ export function createRenderer(canvas, world) {
       mctx.fillStyle = p.color || "#61f4c0";
       mctx.fillRect(Math.round(pt.x) - 2, Math.round(pt.y) - 2, 4, 4);
     }
+    // rastreador revela o que está perto mesmo na névoa: bicho, caverna e veio
+    const perto = (x, y) => rastreador && Math.hypot(x - player.x, y - player.y) <= 14;
     for (const h of world.hunters) {
-      if (!world.isExplored(Math.floor(h.center.x), Math.floor(h.center.y))) continue;
+      const revelado = world.isExplored(Math.floor(h.center.x), Math.floor(h.center.y));
+      if (!revelado && !perto(h.center.x, h.center.y)) continue;
       const pt = miniPoint(view, h.center.x, h.center.y);
+      mctx.globalAlpha = revelado ? 1 : 0.55;
       mctx.fillStyle = "#0a0c18";
       mctx.fillRect(Math.round(pt.x) - 3, Math.round(pt.y) - 3, 6, 6);
       mctx.fillStyle = h.accent;
       mctx.fillRect(Math.round(pt.x) - 2, Math.round(pt.y) - 2, 4, 4);
+      mctx.globalAlpha = 1;
+    }
+    if (rastreador) {
+      mctx.fillStyle = "rgba(255,243,209,0.8)";
+      for (const g of world.groundItems || []) {
+        if (!perto(g.x, g.y)) continue;
+        const pt = miniPoint(view, g.x, g.y);
+        mctx.fillRect(Math.round(pt.x) - 1, Math.round(pt.y) - 1, 2, 2);
+      }
     }
     for (const c of world.caves || []) {
       if (!world.isExplored(Math.floor(c.x), Math.floor(c.y))) continue;

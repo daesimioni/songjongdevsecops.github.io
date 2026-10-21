@@ -100,6 +100,10 @@ function emptyData() {
     // vocação: padrão para save antigo, que nunca escolheu
     vocation: VOCACAO_PADRAO,
     sub: "",
+    // mesa de vocação: troca grátis uma vez por nível, subcategoria grátis na
+    // primeira escolha
+    vocacaoLivre: 0,
+    subUsada: false,
   };
 }
 
@@ -112,6 +116,8 @@ function readData() {
     if (Number.isFinite(obj.hp)) data.hp = obj.hp;
     if (VOC_POR_ID.has(obj.vocation)) data.vocation = obj.vocation;
     if (obj.sub && subcategoriaDe(obj.sub)?.vocacao === data.vocation) data.sub = obj.sub;
+    if (Number.isFinite(obj.vocacaoLivre)) data.vocacaoLivre = obj.vocacaoLivre;
+    if (obj.subUsada) data.subUsada = true;
     for (const k of Object.keys(SKILLS)) {
       data.skills[k] = clamp(Number(obj.skills?.[k]) || 0, 0, MAX_SKILL_XP);
     }
@@ -374,6 +380,56 @@ export class RPG {
     this.ensureHp();
     this.save();
     return { ok: true, mudou, vocacao: v };
+  }
+
+  custoVocacao() {
+    // a primeira troca de cada nível é de graça; a segunda custa material
+    return this.data.vocacaoLivre === this.getLevel() ? { ferro: 3, veio: 2 } : null;
+  }
+
+  trocarVocacao(id) {
+    if (!VOC_POR_ID.has(id)) return { ok: false, reason: "vocação desconhecida" };
+    if (this.data.vocation === id) return { ok: false, reason: "essa já é a sua vocação" };
+    const custo = this.custoVocacao();
+    if (custo) {
+      for (const [mat, qtd] of Object.entries(custo)) {
+        if (this.itemCount(mat) < qtd) return { ok: false, reason: `faltam materiais: ${mat} ${qtd}` };
+      }
+      for (const [mat, qtd] of Object.entries(custo)) {
+        this.data.items[mat] -= qtd;
+        if (this.data.items[mat] <= 0) delete this.data.items[mat];
+      }
+    } else {
+      this.data.vocacaoLivre = this.getLevel();
+    }
+    const res = this.setVocation(id);
+    return { ...res, custo };
+  }
+
+  custoSub() {
+    return this.data.subUsada ? { veio: 4, erva: 2 } : null;
+  }
+
+  trocarSub(id) {
+    const s = subcategoriaDe(id);
+    if (!s) return { ok: false, reason: "subcategoria desconhecida" };
+    if (s.vocacao !== this.data.vocation) return { ok: false, reason: "não é da sua vocação" };
+    if (this.getLevel() < 10) return { ok: false, reason: "a subcategoria abre no nível 10" };
+    if (this.data.sub === id) return { ok: false, reason: "essa já é a sua subcategoria" };
+    const custo = this.custoSub();
+    if (custo) {
+      for (const [mat, qtd] of Object.entries(custo)) {
+        if (this.itemCount(mat) < qtd) return { ok: false, reason: `faltam materiais: ${mat} ${qtd}` };
+      }
+      for (const [mat, qtd] of Object.entries(custo)) {
+        this.data.items[mat] -= qtd;
+        if (this.data.items[mat] <= 0) delete this.data.items[mat];
+      }
+    }
+    this.data.sub = id;
+    this.data.subUsada = true;
+    this.save();
+    return { ok: true, sub: s, custo };
   }
 
   setSub(id) {
@@ -826,7 +882,7 @@ export class RPG {
       return { ok: true, name: item.name };
     }
     // trovão acerta o da frente; fogo passa por todos, matilha incluída
-    const dmg = id === "runa-fogo" ? 1 : 2;
+    const dmg = (id === "runa-fogo" ? 1 : 2) + (this.data.sub === "alquimista" ? 1 : 0);
     d.monsterHp = Math.max(0, d.monsterHp - dmg);
     if (id === "runa-fogo") {
       for (const p of d.partners || []) {
@@ -1230,6 +1286,13 @@ export class RPG {
       phase: "question",
       feedback: null,
       result: null,
+      // marcadores das subcategorias: acertos, sequência, veneno e surpresa
+      acertos: 0,
+      seguidos: 0,
+      venenoTurnos: 0,
+      venenoPendente: false,
+      petUsado: false,
+      surprise: !this.cave,
     };
     for (const p of extras) {
       const ptier = clamp(Number(p.tier) || 1, 1, 3);
@@ -1337,6 +1400,13 @@ export class RPG {
       phase: "question",
       feedback: null,
       result: null,
+      // marcadores das subcategorias: acertos, sequência, veneno e surpresa
+      acertos: 0,
+      seguidos: 0,
+      venenoTurnos: 0,
+      venenoPendente: false,
+      petUsado: false,
+      surprise: !this.cave,
     };
     return { ok: true, duel: this.duel };
   }
@@ -1352,6 +1422,39 @@ export class RPG {
       this.addMana(Number(this.activePet()?.passive.manaHit) || 0);
       let damage = this.damageFor(d.ground.continent);
       let note = "";
+      const sub = this.data.sub;
+      d.acertos = (d.acertos || 0) + 1;
+      d.seguidos = (d.seguidos || 0) + 1;
+      // veneno do assassino: dois acertos seguintes doem 1 a mais
+      if (d.venenoTurnos > 0) {
+        damage += 1;
+        d.venenoTurnos -= 1;
+        note = "O veneno ainda corrói.";
+      }
+      // bruxo: o acerto anterior envenenou o bicho
+      if (sub === "bruxo" && d.venenoPendente) {
+        damage += 1;
+        d.venenoPendente = false;
+        note = "O veneno do bruxo cobrou a conta.";
+      }
+      // besteiro: acerto em sequência soma 1
+      if (sub === "besteiro" && d.seguidos > 1) {
+        damage += 1;
+        note = "Na sequência, a pontaria soma.";
+      }
+      // sombra: o primeiro acerto vale o dobro se o bicho não viu
+      if (sub === "sombra" && d.acertos === 1 && d.surprise) {
+        damage *= 2;
+        note = "O bicho não viu de onde veio.";
+      }
+      // arcanista: cada três acertos curam 1
+      if (sub === "arcanista" && d.acertos % 3 === 0) {
+        this.heal(1);
+        note = "A magia devolveu 1 de vida.";
+      }
+      // bruxo e veneno deixam marca para o próximo acerto
+      if (sub === "bruxo") d.venenoPendente = true;
+      if (sub === "veneno") d.venenoTurnos = 2;
       if (trait === "armor") {
         damage = Math.max(1, damage - 1);
         note = "O casco aguentou parte do golpe.";
@@ -1390,8 +1493,11 @@ export class RPG {
         this.save();
       }
     } else {
-      const blocked = !!d.shield;
-      if (blocked) d.shield = false;
+      d.seguidos = 0;
+      const petSegura = this.data.sub === "domador" && this.activePet() && !d.petUsado;
+      if (petSegura) d.petUsado = true;
+      const blocked = !!d.shield || petSegura;
+      if (blocked && d.shield) d.shield = false;
       const phaseBonus = d.boss ? ((d.bossPhase || 1) - 1) * 2 : 0;
       let damage = this.danoSofrido(TIERS[d.tier].damage + phaseBonus);
       let note = "";
@@ -1488,6 +1594,8 @@ export class RPG {
     if (ground.material) loot.push({ id: ground.material, qty: d.boss ? 3 : 1 });
     if (d.boss) loot.push({ id: "pocao", qty: 1 });
     else if (Math.random() < 0.28) loot.push({ id: "pocao", qty: 1 });
+    // caçador de recompensa: a caçada rende uma peça a mais
+    if (this.data.sub === "cacador" && ground.material) loot.push({ id: ground.material, qty: 1 });
     for (const l of loot) this.addItem(l.id, l.qty);
     if (d.boss) {
       const accessory = ground.continent === "cs" ? "anel-sinapse" : ground.continent === "music" ? "colar-constante" : null;
@@ -1504,6 +1612,8 @@ export class RPG {
       if (ground.material) { loot.push({ id: ground.material, qty: 1 }); this.addItem(ground.material, 1); }
       xp += TIERS[ptier].xp;
     }
+    // campeão ganha XP extra no duelo: a briga que rende
+    if (this.data.sub === "campeao") xp = Math.round(xp * 1.2);
     this.addSkillXp(ground.continent, 2);
     this.gainXp(xp);
     if (d.boss) {

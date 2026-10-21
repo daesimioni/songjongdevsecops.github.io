@@ -3714,3 +3714,61 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
   .dg-exit { padding: 0 8px; font-size: 10.5px; }
   .dg-exit kbd { display: none; }
 }
+
+/* mesa de vocação: cinco cartas, a atual marcada, troca com preço à vista */
+.vocacoes-card { width: min(980px, 94vw); }
+.voc-grid { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: 14px; }
+.voc-card {
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+  text-align: left;
+  background: rgba(12, 16, 32, 0.72);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+}
+.voc-card:hover:not(:disabled) { border-color: var(--line-strong); }
+.voc-card.on { border-color: var(--mint); box-shadow: inset 0 0 0 1px var(--mint); }
+.voc-card:disabled { cursor: default; opacity: 0.72; }
+.voc-card b { font-family: var(--pixel); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; }
+.voc-card span { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+.voc-card .voc-preco { color: var(--amber, #ffc857); }
+.voc-subs { display: grid; gap: 8px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+.voc-sub {
+  display: grid;
+  gap: 3px;
+  padding: 8px 10px;
+  text-align: left;
+  background: rgba(12, 16, 32, 0.6);
+  border: 1px dashed var(--line);
+  border-radius: 6px;
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+}
+.voc-sub.on { border-style: solid; border-color: var(--mint); }
+.voc-sub span { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+
+/* cartas de vocação na criação: mesmo desenho da mesa, em escala menor */
+.look-vocations { display: grid; gap: 6px; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
+.look-vocation {
+  display: grid;
+  gap: 2px;
+  padding: 7px 9px;
+  text-align: left;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 11px;
+  cursor: pointer;
+}
+.look-vocation:hover { border-color: var(--line-strong); }
+.look-vocation.on { border-color: var(--mint); background: rgba(97, 244, 192, 0.14); }
+.look-vocation-name { font-family: var(--pixel); font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--mint); }
+.look-vocation-force { color: var(--ink); }
+.look-vocation-weak { color: var(--muted); }
