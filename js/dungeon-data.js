@@ -790,9 +790,9 @@ function plantaDaCaverna(chave) {
   const entrada = { id: "entrada", kind: "entrance", x: entX, y: 41, w: entW, h: 5, tier: 0 };
 
   // a cidade do fundo, no alto, com largura de praça
-  const cidW = 16 + Math.floor(rnd() * 4);
+  const cidW = 20 + Math.floor(rnd() * 5);
   const cidX = Math.max(10, Math.min(W - cidW - 10, Math.round(W / 2 - cidW / 2 + (rnd() * 8 - 4))));
-  const cidade = { id: "cidade", kind: "city", x: cidX, y: 2, w: cidW, h: 9, tier: 3 };
+  const cidade = { id: "cidade", kind: "city", x: cidX, y: 2, w: cidW, h: 11, tier: 3 };
 
   // salas em uma malha de 9 x 8 tiles: a planta escolhe quais casas usar
   const colunas = [4, 13, 22, 31, 40, 49];

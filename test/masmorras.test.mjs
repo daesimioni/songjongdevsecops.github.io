@@ -34,7 +34,7 @@ for (const d of DUNGEONS) {
   check(!!cidade, `${nome}: sem cidade do fundo`);
   check(!!chefe, `${nome}: sem sala do chefe`);
   if (entrada) check(entrada.y >= 38, `${nome}: entrada fora do rodapé (y ${entrada.y})`);
-  if (cidade) check(cidade.y + cidade.h <= 12, `${nome}: cidade fora do topo (y ${cidade.y})`);
+  if (cidade) check(cidade.y + cidade.h <= 13, `${nome}: cidade fora do topo (y ${cidade.y})`);
   if (entrada && chefe) {
     const dx = (chefe.x + chefe.w / 2) - (entrada.x + entrada.w / 2);
     const dy = (chefe.y + chefe.h / 2) - (entrada.y + entrada.h / 2);

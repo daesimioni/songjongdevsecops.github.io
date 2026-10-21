@@ -587,6 +587,53 @@ function drawBuilding(ctx, x, y, w, h, palette, accent) {
 }
 
 // ---------- a caverna em si ----------
+
+// A praça da capital subterrânea, em três faixas: serviços no alto, mesa no
+// meio, horta e forja embaixo. Sai numa função pura para o teste medir o vão
+// de cada peça sem abrir navegador.
+export function pracaDaCaverna(def, city) {
+  const props = [];
+  const alta = city.y + 3.0;
+  const meia = city.y + 5.6;
+  const baixa = city.y + 7.8;
+  props.push({ kind: "altar", x: city.x + city.w * 0.13, y: baixa, label: "altar que devolve vida", interact: true });
+  props.push({ kind: "forge", x: city.x + city.w * 0.87, y: baixa, label: "forja do subsolo", interact: true });
+  props.push({ kind: "waystone", x: city.x + city.w * 0.25, y: alta, label: "pedra de retorno", interact: true });
+  if (!def.hub) props.push({ kind: "conurbation", x: city.x + city.w * 0.75, y: alta, label: "túnel da conurbação", interact: true });
+  props.push({ kind: "keeper", x: city.x + city.w * 0.63, y: baixa, label: "conversar com a mestra", interact: true });
+  props.push({ kind: "enchanter", x: city.x + city.w * 0.5, y: alta, label: "mesa de encantamento", interact: true });
+  const petId = PET_BY_CONTINENT[def.continent] || "gato";
+  props.push({
+    kind: "pet",
+    petId,
+    x: city.x + city.w * 0.18,
+    y: meia,
+    label: `oferecer ração ao ${PETS[petId]?.name || "bicho"}`,
+    interact: true,
+  });
+  for (let i = 0; i < 3; i++) {
+    props.push({
+      kind: "plot",
+      x: city.x + city.w * 0.3 + i * 2.2,
+      y: baixa,
+      plotKey: `${def.id}:${i}`,
+      planted: false,
+      readyAt: 0,
+      interact: true,
+      label: "horta de ervas",
+    });
+  }
+  if (!def.hub) props.push({
+    kind: "stairs",
+    x: city.x + city.w * 0.2,
+    y: city.y + city.h - 1.4,
+    stairMouth: "far",
+    label: "subir pelo túnel até a outra boca",
+    interact: true,
+  });
+  return props;
+}
+
 export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, onWiki, onGather, onExit, onKeeper, onConurbation, onPortal, onVocacao, isBlocked, vitais = null, avatar = {}, look = null, gear = null }) {
   const canvas = $("dungeon-canvas");
   const ctx = canvas?.getContext("2d", { alpha: false }) || null;
@@ -881,8 +928,8 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
       if (room.kind === "city" || room.theme === "cidade") {
         props.push({
           kind: "vocacao",
-          x: room.x + room.w / 2,
-          y: room.y + room.h / 2 + 0.5,
+          x: room.x + room.w * 0.5,
+          y: room.y + 5.6,
           label: "mesa de vocação",
           interact: true,
         });
@@ -900,45 +947,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
       }
     }
     const city = def.rooms.find((r) => r.kind === "city");
-    if (city) {
-      props.push({ kind: "altar", x: city.x + 3.2, y: city.y + city.h - 3.4, label: "altar que devolve vida", interact: true });
-      props.push({ kind: "forge", x: city.x + city.w - 3.2, y: city.y + city.h - 3.4, label: "forja do subsolo", interact: true });
-      props.push({ kind: "waystone", x: city.x + city.w / 2 + 3, y: city.y + 2.6, label: "pedra de retorno", interact: true });
-      if (!def.hub) props.push({ kind: "conurbation", x: city.x + city.w / 2 + 6, y: city.y + 3.2, label: "túnel da conurbação", interact: true });
-      props.push({ kind: "keeper", x: city.x + city.w / 2 - 3, y: city.y + city.h - 3.4, label: "conversar com a mestra", interact: true });
-      props.push({ kind: "enchanter", x: city.x + city.w / 2, y: city.y + 3.2, label: "mesa de encantamento", interact: true });
-      const petId = PET_BY_CONTINENT[def.continent] || "gato";
-      props.push({
-        kind: "pet",
-        petId,
-        x: city.x + 4.5,
-        y: city.y + 4.2,
-        label: `oferecer ração ao ${PETS[petId]?.name || "bicho"}`,
-        interact: true,
-      });
-      for (let i = 0; i < 3; i++) {
-        props.push({
-          kind: "plot",
-          x: city.x + 8.5 + i * 1.5,
-          y: city.y + city.h - 3.4,
-          plotKey: `${def.id}:${i}`,
-          planted: false,
-          readyAt: 0,
-          interact: true,
-          label: "horta de ervas",
-        });
-      }
-      if (!def.hub) props.push({
-        kind: "stairs",
-        x: city.x + 6,
-        y: city.y + city.h - 1.8,
-        stairMouth: "far",
-        label: "subir pelo túnel até a outra boca",
-        interact: true,
-      });
-      props.push({ kind: "building", x: city.x + 1.2, y: city.y + 1.2, w: 26, h: 22, solid: true });
-      props.push({ kind: "building", x: city.x + city.w - 4.8, y: city.y + 1.2, w: 30, h: 22, solid: true });
-    }
+    if (city) for (const p of pracaDaCaverna(def, city)) props.push(p);
     if (def.hub) {
       for (const portal of def.portals || []) {
         props.push({

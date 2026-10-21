@@ -81,13 +81,16 @@ export function espalharAmbiente({ areas, get, hash2, waystones, hunts = [], gen
     const pode = (x, y, raio = 1) => x >= 1 && y >= 1 && naIlha(x, y) && macio(x, y) && !trilha(x, y, raio) && livre(x, y);
 
     // ---- construção: uma por ilha, na coroa, entrando antes da vegetação ----
+    const pertoDeGente = (x, y) => gente.some((n) => Math.abs(n.x - (x + 0.5)) < 2.8 && Math.abs(n.y - (y + 0.5)) < 2.8);
+    const pertoDeFarol = (x, y) => waystones.some((p) => Math.hypot(p.x - (x + 0.5), p.y - (y + 0.5)) < 3.2);
+    const pertoDaCacada = (x, y) => hunts.some((h) => Math.abs(h.x - (x + 0.5)) < 3 && Math.abs(h.y - (y + 0.5)) < 3);
     const angulo = hash2(ai * 13 + 5, ai * 7 + 2) * Math.PI * 2;
     let bx = 0, by = 0, achou = false;
     for (let i = 0; i < 8 && !achou; i++) {
       const a = angulo + i * (Math.PI / 4);
       bx = Math.round(cx + Math.cos(a) * rx * 0.64);
       by = Math.round(cy + Math.sin(a) * ry * 0.64);
-      achou = pode(bx, by, 1);
+      achou = pode(bx, by, 2) && !pertoDeGente(bx, by) && !pertoDeFarol(bx, by) && !pertoDaCacada(bx, by);
     }
     if (achou) {
       let tipo = DUREZA[disc] || "casa";
@@ -129,7 +132,7 @@ export function espalharAmbiente({ areas, get, hash2, waystones, hunts = [], gen
       const a2 = angulo + 2.1;
       const rx2 = Math.round(cx + Math.cos(a2) * rx * 0.58);
       const ry2 = Math.round(cy + Math.sin(a2) * ry * 0.58);
-      if (pode(rx2, ry2, 1)) {
+      if (pode(rx2, ry2, 2) && !pertoDeGente(rx2, ry2) && !pertoDeFarol(rx2, ry2) && !pertoDaCacada(rx2, ry2)) {
         por(rx2 + 0.5, ry2 + 0.5, "ruina", { bioma: area.id }, 3);
         por(rx2 + 1.4, ry2 + 0.7, "trepadeira", { bioma: area.id, camada: "chao" });
       }
@@ -159,8 +162,6 @@ export function espalharAmbiente({ areas, get, hash2, waystones, hunts = [], gen
     // bosque (célula grossa de 7 tiles), com 2 tiles de folga entre copas e um
     // teto por ilha, então a região metropolitana não vira floresta fechada.
     const ARVORES = new Set(["arvore", "conifera", "palmeira", "seca"]);
-    const pertoDaCacada = (x, y) => hunts.some((h) => Math.abs(h.x - (x + 0.5)) < 3 && Math.abs(h.y - (y + 0.5)) < 3);
-    const pertoDeGente = (x, y) => gente.some((n) => Math.abs(n.x - (x + 0.5)) < 2.4 && Math.abs(n.y - (y + 0.5)) < 2.4);
     const maxArvores = metropole
       ? 4
       : Math.min(14, Math.max(5, Math.round((area.rect.w * area.rect.h) / 62)));

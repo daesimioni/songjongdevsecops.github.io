@@ -873,6 +873,7 @@ export function createWorld() {
   // subir pela escada do fundo leva à outra. A saída (abaixo da boca) precisa
   // caber o corpo inteiro.
   const caves = [];
+  const GRANDES = new Set(["casa", "cabana", "torre", "ruina", "galpao", "doca", "poco"]);
   for (const h of hunters) {
     const def = dungeonById(h.dungeon);
     // a boca não pode nascer em cima do farol da própria área: além de feio,
@@ -891,7 +892,11 @@ export function createWorld() {
       freeSpot(cx, cy) &&
       Math.hypot(cx - h.banner.x, cy - h.banner.y) >= 2.5 &&
       !caves.some((c) => Math.hypot(c.x - cx, c.y - cy) < 7) &&
-      !(pedraDaArea && Math.hypot(pedraDaArea.x - cx, pedraDaArea.y - cy) < 5);
+      !(pedraDaArea && Math.hypot(pedraDaArea.x - cx, pedraDaArea.y - cy) < 5) &&
+      // a boca é um morro de 3 tiles: não nasce colada em totem nem em gente
+      !SITES.some((s) => Math.hypot(s.x - cx, s.y - cy) < 3.2) &&
+      !NPC_SPAWNS.some((n) => Math.hypot(n.x - cx, n.y - cy) < 2.8) &&
+      !ambiente.some((a) => GRANDES.has(a.tipo) && Math.hypot(a.x - cx, a.y - cy) < 3.2);
     const pick = (from, to, minFromCenter, avoid = null) => {
       for (let r = from; r <= to; r++) {
         for (let dy = -r; dy <= r; dy++) {

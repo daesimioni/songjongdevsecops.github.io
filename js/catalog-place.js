@@ -16,7 +16,9 @@ export function placeStations(land, count, reserved = []) {
   if (!candidatos.length) return [];
   const reservados = reserved.filter(Boolean);
   const pertoDe = (c) => Math.min(...reservados.map((p) => cheb(p, c)), 99);
-  const abertos = candidatos.filter((c) => pertoDe(c) >= 2.2);
+  // 3,2 tiles de folga do farol, do NPC e da clareira: totem e gente não
+  // encostam, e a ilha não lê como coisa empilhada
+  const abertos = candidatos.filter((c) => pertoDe(c) >= 3.2);
   const lista = abertos.length >= count ? abertos : candidatos;
 
   const escolhidos = [];
@@ -39,7 +41,7 @@ export function placeStations(land, count, reserved = []) {
     let melhorFolga = -1;
     for (const c of lista) {
       const d = distancia(c);
-      if (d < 2.5) continue;
+      if (d < 3.2) continue;
       const folga = d + c.s * 0.35;
       if (folga > melhorFolga) { melhorFolga = folga; melhor = c; }
     }
@@ -49,7 +51,7 @@ export function placeStations(land, count, reserved = []) {
   // se a ilha não tinha folga para todas, completa com o que sobrou
   for (const c of lista) {
     if (escolhidos.length >= count) break;
-    if (escolhidos.some((e) => cheb(e, c) < 1.6)) continue;
+    if (escolhidos.some((e) => cheb(e, c) < 2.6)) continue;
     escolhidos.push(c);
   }
   return escolhidos.slice(0, count).map((c) => ({ x: c.x, y: c.y }));
