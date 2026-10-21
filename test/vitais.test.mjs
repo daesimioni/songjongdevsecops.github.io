@@ -30,6 +30,7 @@ const app = fs.readFileSync(new URL("../js/app.js", import.meta.url), "utf8");
 check(/from "\.\/vitais\.js"/.test(render), "render.js não importa a conta dos vitais");
 check(/function draw\(now, player, peers, npcs, cat, moving, rastreador = false, vitais = null\)/.test(render), "draw() sem o parâmetro de vitais");
 check(/drawNameTag\(player\.name[^)]*vitais\)/.test(render), "o nome do jogador não recebe os vitais");
+check(/player\.y \* TILE - 33 - lift/.test(render), "placa de nome e barras coladas na cabeça");
 check(/fracoesDeVida\(vitais\)/.test(render), "as barras não usam a conta de fração");
 check(/#ff5a86/.test(render) && /#6bd5ff/.test(render), "cores de vida e mana diferentes do HUD");
 check(/hp: rpg\.hp\(\), hpMax: rpg\.hpMax\(\), mana: rpg\.mana\(\), manaMax: rpg\.manaMax\(\)/.test(app), "app.js não entrega os vitais ao renderer");
