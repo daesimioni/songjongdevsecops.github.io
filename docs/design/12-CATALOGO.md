@@ -57,22 +57,28 @@ disciplina**, com duas regras:
 
 Regiões:
 
-| arquipélago | região no mar novo | âncora |
+| arquipélago | região no mar | âncora |
 |---|---|---|
-| Matemática | faixa superior direita | liga ao continente pelo farol e pelo túnel |
-| Física | faixa média direita | idem |
-| Química | faixa esquerda inferior | idem |
-| Computação | faixa inferior direita | idem |
-| Língua | faixa inferior esquerda | idem |
-| Interseções | cinturão do meio | túneis para as duas mães |
+| Matemática | alto da faixa direita | liga ao continente pelo farol e pelo túnel |
+| Computação | meio da faixa direita | idem |
+| Química | pé da faixa direita | idem |
+| Física | canto inferior esquerdo | idem |
+| Língua | centro inferior esquerdo | idem |
+| Interseções | nas folgas entre os quarteirões | túneis para as duas mães |
 
-Cada área tem: ilha de 22 x 14 tiles, uma estação por subárea (com praça de
-3 x 3 tiles e caminho de 1 tile, para caberem todas), placa com o nome, uma
-pedra de viagem (ou entrada na rede de pedras já existente), boca de caverna,
-clareira de caçada e NPC. A boca da caverna mantém 5 tiles de distância do
-farol da própria área, para não trancar a passagem. Caverna e clareira ficam na
-própria ilha; a caverna desce para o subsolo e o túnel da conurbação (camada -2)
-continua sendo o atalho entre cidades.
+A ilha cresce com a seção: de 3 a 11 estações, o raio vai de 14 a 15 tiles em x
+e de 9 a 10 em y (retângulo de 30 a 32 por 20 a 22), contra 22 x 14 de antes.
+Entre uma ilha e a vizinha ficam **10 tiles de água**, contra 2. As estações são
+postas pela regra do mais longe possível, então a distância média entre duas
+estações de uma ilha subiu de 5,9 para 12,4 tiles, e a menor de 2 para 5. Cada
+área tem: uma estação por subárea (com adro de pedra e caminho de 1 tile), placa
+com o nome, uma pedra de viagem (ou entrada na rede de pedras já existente), boca
+de caverna, clareira de caçada e NPC, mais o enfeite proporcional ao tamanho da
+ilha: 3.790 peças ambientais e 1.365 árvores no total, contra 2.417 e 840. A
+boca da caverna mantém 5 tiles de distância do farol da própria área, para não
+trancar a passagem. Caverna e clareira ficam na própria ilha; a caverna desce
+para o subsolo e o túnel da conurbação (camada -2) continua sendo o atalho entre
+cidades.
 
 ## 3. De onde vem o conteúdo
 

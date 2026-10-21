@@ -1,3 +1,6 @@
+import { CATALOG } from "./catalog.js";
+import { SECTION_TOPICS } from "./catalog-topics.js";
+
 // Posições do catálogo no mapa grande. Gerado por script e conferido pelo
 // teste: uma ilha por seção, sem sobreposição, com ponte para a vizinha de
 // catálogo e túnel para as áreas-mãe nas interseções.
@@ -143,20 +146,31 @@ export const CATALOG_AREAS = [{"id":"math-fundamentos","discipline":"math","cx":
 {"id":"inter-todas","discipline":"inter","cx":458,"cy":240,"land":{"cx":458,"cy":240,"rx":10,"ry":6},"rect":{"x":447,"y":233,"w":22,"h":14},"sites":[{"x":454,"y":242},
 {"x":463,"y":239}],"waystone":{"x":458,"y":244},"npc":{"x":456,"y":237},"hunt":{"x":461,"y":237},"accent":"inter-todas"}];
 
-// Geografia dos assuntos: as cinco disciplinas viram cinco quarteirões
-// compactos e as ilhas de interseção ficam entre os dois quarteirões que ligam.
-// Antes as ilhas eram uma malha de 24x16 espalhada pelo mapa inteiro, e uma
-// interseção de computação com língua caía a 239 tiles de um dos pais.
-// É mutação de módulo: roda antes de quem lê as posições, então tudo (terra,
-// caixa, sites, pedra, NPC e caçada) anda junto.
+// Geografia dos assuntos: cada disciplina ocupa um quarteirão com as ilhas
+// separadas por água de verdade, e as interseções ficam nas folgas entre os
+// quarteirões. Antes a malha era de 24x16, com 2 tiles de água entre ilhas, e
+// as ilhas pareciam um bloco só. É mutação de módulo: roda antes de quem lê as
+// posições, então terra, caixa, sites, pedra, NPC e caçada andam junto.
 {
-  const ANCORAS = {
-    math: { x: 392, y: 74 },
-    cs: { x: 500, y: 106 },
-    physics: { x: 470, y: 226 },
-    chem: { x: 356, y: 300 },
-    lingua: { x: 340, y: 176 },
+  // ilha pelo tamanho da seção: 3 estações pedem menos terra que 11, mas
+  // nenhuma ilha fica do tamanho da estação, porque o adro do totem, o enfeite
+  // e o caminho precisam de espaço
+  const estacoesDaArea = (id) => {
+    const area = CATALOG.find((a) => a.id === id);
+    const secao = SECTION_TOPICS[area?.num];
+    return secao?.subareas?.length || (secao?.topics?.length ? 3 : 1);
   };
+  const tamanho = (n) => {
+    const raiz = Math.sqrt(Math.max(1, n));
+    return { rx: 12 + Math.round(raiz), ry: 8 + Math.round(raiz * 0.55) };
+  };
+  for (const spot of CATALOG_AREAS) {
+    const { rx, ry } = tamanho(estacoesDaArea(spot.id));
+    spot.land.rx = rx;
+    spot.land.ry = ry;
+    spot.rect = { x: spot.cx - rx - 1, y: spot.cy - ry - 1, w: rx * 2 + 2, h: ry * 2 + 2 };
+  }
+
   const move = (spot, tx, ty) => {
     const dx = Math.round(tx) - spot.cx;
     const dy = Math.round(ty) - spot.cy;
@@ -172,31 +186,97 @@ export const CATALOG_AREAS = [{"id":"math-fundamentos","discipline":"math","cx":
       if (spot[chave]) { spot[chave].x += dx; spot[chave].y += dy; }
     }
   };
+  // distância mínima entre duas ilhas: 10 tiles de água, o bastante para
+  // ponte, doca e gaivota respirarem
+  const FOLGA = 10;
   const livre = (r, ocupados) => !ocupados.some((o) =>
-    r.x < o.x + o.w + 1 && r.x + r.w + 1 > o.x && r.y < o.y + o.h + 1 && r.y + r.h + 1 > o.y);
-  const ocupados = [];
+    r.x < o.x + o.w + FOLGA && r.x + r.w + FOLGA > o.x &&
+    r.y < o.y + o.h + FOLGA && r.y + r.h + FOLGA > o.y);
+  // o bloco antigo (vale, porto e áreas escritas à mão) fica intocado
+  const ANTIGO = { x: 4, y: 0, w: 290, h: 194 };
+  const ocupados = [ANTIGO];
 
-  // quarteirão de cada disciplina: grade compacta de três colunas em
-  // serpentina. A ordem da lista é a ordem da corrente de pontes (conferida em
-  // teste), então a linha ímpar anda da direita para a esquerda: sem isso a
-  // ponte que vira a linha pulava uma coluna inteira, 50 tiles.
-  for (const disciplina of Object.keys(ANCORAS)) {
-    const spots = CATALOG_AREAS.filter((a) => a.discipline === disciplina);
-    const colunas = 3;
+  const comSites = CATALOG_AREAS.filter((a) => a.discipline !== "inter");
+  const maiorLado = (spots) => {
+    const rx = Math.max(...spots.map((a) => a.land.rx));
+    const ry = Math.max(...spots.map((a) => a.land.ry));
+    return { w: rx * 2 + 2, h: ry * 2 + 2 };
+  };
+  // quarteirão: grade de três colunas em serpentina, na ordem da corrente de
+  // pontes. A linha ímpar anda da direita para a esquerda para a ponte que
+  // vira a linha não pular coluna.
+  const quarteirao = (spots, ancora) => {
+    const colunas = spots.length > 12 ? 4 : 3;
     const linhas = Math.ceil(spots.length / colunas);
-    spots.forEach((spot, i) => {
+    const { w, h } = maiorLado(spots);
+    const passoX = w + FOLGA;
+    const passoY = h + FOLGA;
+    const largura = (colunas - 1) * passoX + w;
+    const altura = (linhas - 1) * passoY + h;
+    if (ancora.x - largura / 2 < 6 || ancora.x + largura / 2 > 554) return null;
+    if (ancora.y - altura / 2 < 6 || ancora.y + altura / 2 > 354) return null;
+    const postos = spots.map((spot, i) => {
       const lin = Math.floor(i / colunas);
       const col = lin % 2 ? colunas - 1 - (i % colunas) : i % colunas;
-      const x = ANCORAS[disciplina].x + (col - (colunas - 1) / 2) * 24;
-      const y = ANCORAS[disciplina].y + (lin - (linhas - 1) / 2) * 16;
-      move(spot, x, y);
-      ocupados.push({ x: spot.rect.x, y: spot.rect.y, w: spot.rect.w, h: spot.rect.h });
+      return {
+        spot,
+        x: Math.round(ancora.x + (col - (colunas - 1) / 2) * passoX),
+        y: Math.round(ancora.y + (lin - (linhas - 1) / 2) * passoY),
+      };
     });
+    const caixas = postos.map((p) => ({
+      x: p.x - p.spot.land.rx - 1, y: p.y - p.spot.land.ry - 1,
+      w: p.spot.rect.w, h: p.spot.rect.h,
+    }));
+    if (caixas.some((c) => !livre(c, ocupados))) return null;
+    return { postos, caixas };
+  };
+
+  // âncoras preferidas: mantêm a geografia dos assuntos (matemática em cima,
+  // computação na direita, química embaixo). Se não couber, o código procura
+  // a primeira vaga na malha inteira, do centro para fora.
+  const PREFERIDAS = [
+    ["math", { x: 430, y: 55 }],
+    ["cs", { x: 430, y: 172 }],
+    ["lingua", { x: 222, y: 280 }],
+    ["physics", { x: 70, y: 280 }],
+    ["chem", { x: 430, y: 297 }],
+  ];
+  for (const [disciplina, preferida] of PREFERIDAS) {
+    const spots = comSites.filter((a) => a.discipline === disciplina);
+    if (!spots.length) continue;
+    let achado = quarteirao(spots, preferida);
+    if (!achado) {
+      for (let raio = 8; raio <= 260 && !achado; raio += 8) {
+        for (let i = 0; i < 24 && !achado; i++) {
+          const a = (i / 24) * Math.PI * 2;
+          achado = quarteirao(spots, {
+            x: Math.round(preferida.x + Math.cos(a) * raio),
+            y: Math.round(preferida.y + Math.sin(a) * raio),
+          });
+        }
+      }
+    }
+    if (!achado) throw new Error(`sem lugar para o quarteirão de ${disciplina}`);
+    for (const { spot, x, y } of achado.postos) move(spot, x, y);
+    for (const { spot } of achado.postos) ocupados.push({ ...spot.rect });
   }
 
-  // interseção no meio do caminho entre os dois quarteirões que ela liga
+  // interseção: no meio do caminho entre os dois quarteirões que ela liga.
+  // Se o meio estiver ocupado, procura em anel, com passo de 4 tiles.
+  const centro = (d) => {
+    const spots = comSites.filter((a) => a.discipline === d);
+    if (!spots.length) return null;
+    return {
+      x: spots.reduce((s, a) => s + a.cx, 0) / spots.length,
+      y: spots.reduce((s, a) => s + a.cy, 0) / spots.length,
+    };
+  };
+  const ANCORAS = Object.fromEntries(
+    PREFERIDAS.map(([d]) => d).map((d) => [d, centro(d)]).filter(([, c]) => c),
+  );
   const todas = Object.values(ANCORAS).reduce(
-    (acc, c) => ({ x: acc.x + c.x / 5, y: acc.y + c.y / 5 }),
+    (acc, c) => ({ x: acc.x + c.x / Object.keys(ANCORAS).length, y: acc.y + c.y / Object.keys(ANCORAS).length }),
     { x: 0, y: 0 },
   );
   for (const spot of CATALOG_AREAS) {
@@ -209,20 +289,30 @@ export const CATALOG_AREAS = [{"id":"math-fundamentos","discipline":"math","cx":
         }
       : todas;
     let posto = null;
-    for (let anel = 0; anel < 26 && !posto; anel++) {
+    for (let anel = 0; anel < 40 && !posto; anel++) {
       for (let i = 0; i < (anel === 0 ? 1 : 12) && !posto; i++) {
         const a = (i / 12) * Math.PI * 2 - Math.PI / 2;
-        const x = Math.round(alvo.x + Math.cos(a) * anel * 3);
-        const y = Math.round(alvo.y + Math.sin(a) * anel * 3);
-        const r = { x: x - 11, y: y - 7, w: 22, h: 14 };
-        if (r.x < 250 || r.y < 4 || r.x + r.w > 556 || r.y + r.h > 356) continue;
+        const x = Math.round(alvo.x + Math.cos(a) * anel * 4);
+        const y = Math.round(alvo.y + Math.sin(a) * anel * 4);
+        const r = { x: x - spot.land.rx - 1, y: y - spot.land.ry - 1, w: spot.rect.w, h: spot.rect.h };
+        if (r.x < 6 || r.y < 6 || r.x + r.w > 554 || r.y + r.h > 354) continue;
         if (!livre(r, ocupados)) continue;
         posto = { x, y };
       }
     }
+    if (!posto) {
+      for (let y = 210; y <= 350 && !posto; y += 4) {
+        for (let x = 310; x <= 545 && !posto; x += 4) {
+          const r = { x: x - spot.land.rx - 1, y: y - spot.land.ry - 1, w: spot.rect.w, h: spot.rect.h };
+          if (r.y + r.h > 354 || r.x + r.w > 554) continue;
+          if (!livre(r, ocupados)) continue;
+          posto = { x, y };
+        }
+      }
+    }
     if (!posto) continue;
     move(spot, posto.x, posto.y);
-    ocupados.push({ x: spot.rect.x, y: spot.rect.y, w: spot.rect.w, h: spot.rect.h });
+    ocupados.push({ ...spot.rect });
   }
 }
 

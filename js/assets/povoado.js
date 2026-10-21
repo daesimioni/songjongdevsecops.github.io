@@ -142,7 +142,9 @@ export function espalharAmbiente({ areas, get, hash2, waystones, livre = () => t
     if (pedra) {
       for (const [dx, dy] of [[3.6, 3.6], [-3.6, 3.6]]) {
         const px = Math.round(pedra.x + dx), py = Math.round(pedra.y + dy);
-        if (naIlha(px, py) && !ocupado.has(chave(px + 0.5, py + 0.5))) {
+        // ilha grande tem enseada perto da pedra: braseiro não entra na água
+        if (!naIlha(px, py) || !macio(px, py) || agua(px, py)) continue;
+        if (!ocupado.has(chave(px + 0.5, py + 0.5))) {
           por(px + 0.5, py + 0.5, "braseiro", { bioma: area.id }, 1);
         }
       }

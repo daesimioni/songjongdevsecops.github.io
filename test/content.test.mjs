@@ -338,13 +338,16 @@ for (const spot of CATALOG_AREAS) {
   check(spot.rect.x > 0 && spot.rect.y > 0 && spot.rect.x + spot.rect.w < MAP_W && spot.rect.y + spot.rect.h < MAP_H, `${spot.id} fora do mapa`);
   check(spot.land.rx * 2 <= spot.rect.w && spot.land.ry * 2 <= spot.rect.h, `${spot.id} com terra maior que o retângulo`);
 }
-// nenhuma ilha em cima da outra e nenhuma em cima do mundo antigo
+// nenhuma ilha em cima da outra, ao menos 8 tiles de água entre elas, e
+// nenhuma em cima do mundo antigo
+const AGUA_ENTRE_ILHAS = 8;
 for (let i = 0; i < CATALOG_AREAS.length; i++) {
   const a = CATALOG_AREAS[i];
   for (let j = i + 1; j < CATALOG_AREAS.length; j++) {
     const b = CATALOG_AREAS[j];
-    const gapX = Math.abs(a.cx - b.cx), gapY = Math.abs(a.cy - b.cy);
-    check(gapX >= 20 || gapY >= 12, `${a.id} encosta em ${b.id}`);
+    const vaoX = Math.max(0, Math.max(a.rect.x - (b.rect.x + b.rect.w), b.rect.x - (a.rect.x + a.rect.w)));
+    const vaoY = Math.max(0, Math.max(a.rect.y - (b.rect.y + b.rect.h), b.rect.y - (a.rect.y + a.rect.h)));
+    check(Math.max(vaoX, vaoY) >= AGUA_ENTRE_ILHAS, `${a.id} encosta em ${b.id}: ${Math.max(vaoX, vaoY)} tiles`);
   }
   check(a.cx - a.land.rx > 293 || a.cy - a.land.ry > 191, `${a.id} invadiu o mundo antigo`);
 }
@@ -366,7 +369,9 @@ for (const [inter, d] of CATALOG_TUNNELS) {
   const centre = clusterCentre[d];
   const dist = Math.hypot(spot.cx - centre.x, spot.cy - centre.y);
   // inter-todas junta as cinco, então o alcance dela é o mapa todo
-  const limit = inter === "inter-todas" ? 340 : 240;
+  // o mapa foi aberto para as ilhas respirarem; a interseção continua entre
+  // as duas disciplinas, só que a distância entre quarteirões cresceu
+  const limit = inter === "inter-todas" ? 340 : 320;
   check(dist < limit, `${inter} longe demais de ${d}: ${Math.round(dist)} tiles`);
 }
 check(CATALOG_TUNNELS.length === 25, `túneis de interseção: ${CATALOG_TUNNELS.length}, esperado 25`);
@@ -375,7 +380,9 @@ const spotById = new Map(CATALOG_AREAS.map((a) => [a.id, a]));
 for (const [a, b] of CATALOG_BRIDGES) {
   const pa = spotById.get(a), pb = spotById.get(b);
   check(!!pa && !!pb, `ponte com área sem posição: ${a} -> ${b}`);
-  if (pa && pb) check(Math.hypot(pa.cx - pb.cx, pa.cy - pb.cy) < 26, `ponte longa demais: ${a} -> ${b}`);
+  // ilha maior e mais afastada: a ponte encosta nas duas bordas e atravessa
+  // mais água, então o teto é o vão real, não a distância curta de antes
+  if (pa && pb) check(Math.hypot(pa.cx - pb.cx, pa.cy - pb.cy) < 60, `ponte longa demais: ${a} -> ${b}`);
 }
 const linked = new Set(CATALOG_BRIDGES.flat());
 for (const spot of CATALOG_AREAS) {
@@ -467,14 +474,24 @@ for (const [a, b] of CATALOG_BRIDGES) {
   const dx = pb.cx - pa.cx, dy = pb.cy - pa.cy;
   const len = Math.hypot(dx, dy) || 1;
   const ux = dx / len, uy = dy / len;
-  let agua = 0;
-  for (let i = 1; i < 40; i++) {
+  // A reta passa por ilha, água e ponte; o que não pode é o meio dela cair em
+  // água aberta. Se o ponto é água, exige chão seco (terra, caminho ou tabuado)
+  // na faixa de um tile em volta, que é a largura da ponte.
+  let cortada = false;
+  for (let i = 1; i < 40 && !cortada; i++) {
     const t = i / 40;
     const x = Math.floor(pa.cx + ux * (len * t));
     const y = Math.floor(pa.cy + uy * (len * t));
-    if (world.get(x, y) === 3) agua++;
+    if (world.get(x, y) !== 3) continue;
+    let temChao = false;
+    for (let oy = -1; oy <= 1 && !temChao; oy++) {
+      for (let ox = -1; ox <= 1 && !temChao; ox++) {
+        if (world.get(x + ox, y + oy) !== 3) temChao = true;
+      }
+    }
+    if (!temChao) cortada = true;
   }
-  if (agua === 0) pontesSecas++;
+  if (!cortada) pontesSecas++;
 }
 check(pontesSecas === CATALOG_BRIDGES.length, `pontes secas: ${pontesSecas}/${CATALOG_BRIDGES.length}`);
 
