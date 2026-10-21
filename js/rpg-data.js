@@ -4,6 +4,7 @@
 
 import { CATALOG_CONTENT } from "./catalog-gen.js";
 import { PERGUNTAS_LEGADO } from "./text/perguntas-legado.js";
+import { OPCOES_MELHORES } from "./text/opcoes.js";
 import { CATALOG, DISCIPLINES } from "./catalog.js";
 import { AREA_ITEMS, BIOMES, FAUNA } from "./identity.js";
 import { LEGACY_CONTENT } from "./config.js";
@@ -2082,4 +2083,17 @@ for (const item of CATALOG_CONTENT.questions) {
 for (const item of LEGACY_CONTENT.questions) {
   const bucket = QUESTIONS[item.continent]?.[item.tier];
   if (bucket) bucket.push({ ...item.q, area: item.area });
+}
+
+// alternativas reescritas à mão (ver js/text/opcoes.js)
+for (const c of Object.keys(QUESTIONS)) {
+  for (const t of Object.keys(QUESTIONS[c])) {
+    for (const q of QUESTIONS[c][t]) {
+      const melhor = OPCOES_MELHORES[q.q];
+      if (melhor && Array.isArray(melhor.o) && melhor.o[melhor.a] != null) {
+        q.options = melhor.o.slice();
+        q.a = melhor.a;
+      }
+    }
+  }
 }
