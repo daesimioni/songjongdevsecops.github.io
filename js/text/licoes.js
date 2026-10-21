@@ -3423,6 +3423,484 @@ export const LICOES = {
       },
     },
   },
+  "cs-fundamentos": {
+    "Pensamento Computacional": {
+      contexto:
+        "Onde isso aparece: no roteiro de tarefa, na planilha automatizada e no projeto de programa. Decompor, abstrair e reconhecer padrão são o passo anterior ao código. Sem eles, a pressa vira retrabalho.",
+      oQue:
+        "Pensamento computacional é o método de encarar problema: decompor em partes, abstrair o que importa, reconhecer padrão e formular algoritmo. A representação da informação entra junto, porque o dado precisa caber na solução. O passo vale para qualquer linguagem.",
+      passos: [
+        "Decomponha o problema até cada parte ser resolvível.",
+        "Abstraia o que é essencial e descarte o detalhe que não muda a resposta.",
+        "Escreva o algoritmo e teste com caso pequeno antes de codar.",
+      ],
+      exemplo:
+        "Automatizar uma planilha de gastos: primeiro separar entrada, classificação e total; depois decidir que a classificação usa categoria e valor; por fim escrever o passo a passo. O código só aparece depois que o problema está desmontado. Quem pula a etapa escreve a solução errada mais rápido.",
+      quebra:
+        "Começar pela linguagem e pelo framework. A decisão de ferramenta antes do problema esconde a pergunta e produz código que resolve outra coisa. A ordem se inverte e o retrabalho aparece.",
+      limite:
+        "O método orienta, não decide. Problema com requisito contraditório não se resolve decompondo, e aí a conversa com quem pede é parte da solução.",
+      levar: "Decompor e abstrair antes de codar economiza o código que não seria escrito.",
+      maos:
+        "Pegue uma tarefa do dia e escreva a decomposição em três partes antes de pensar em ferramenta.",
+      pergunta: {
+        q: "O que a decomposição faz com um problema grande?",
+        a: "Divide em partes menores que podem ser resolvidas e combinadas",
+        why: "Cada parte menor pode ser entendida, testada e resolvida separadamente, e a solução final combina os resultados; é o passo que torna o problema tratável.",
+      },
+    },
+    "Representação da Informação": {
+      contexto:
+        "Onde isso aparece: no endereço de rede, na cor da tela e no erro de arredondamento da conta. O computador guarda bit, e a leitura depende da convenção. Base numérica e ponto flutuante têm armadilha própria.",
+      oQue:
+        "Representação da informação estuda como o dado vira bit. Binário, octal e hexadecimal são bases posicionais, e cada dígito hexadecimal vale quatro bits. O inteiro tem limite de faixa, e o ponto flutuante é aproximação com erro, o que explica por que 0,1 mais 0,2 não dá exatamente 0,3.",
+      passos: [
+        "Identifique a base e a quantidade de bit disponível.",
+        "Converta para binário e confira a faixa representável.",
+        "Cuidado com ponto flutuante: compare com tolerância, não com igualdade exata.",
+      ],
+      exemplo:
+        "Um byte tem oito bits e representa 256 valores; um dígito hexadecimal cobre quatro bits, então dois dígitos cobrem um byte. Já em ponto flutuante, 0,1 não tem representação exata e a soma acumula erro minúsculo. A comparação de igualdade falha por isso.",
+      quebra:
+        "Comparar número de ponto flutuante com igualdade exata. O erro de representação faz a condição falhar mesmo quando o resultado parece certo. A comparação precisa de tolerância. O erro cresce com a quantidade de operação, e a conta financeira que acumula centavo erra no fim do mês.",
+      limite:
+        "A representação é finita. Número muito grande estoura a faixa, e número muito pequeno perde precisão; a escolha de tipo é decisão de projeto.",
+      levar: "Bit é a matéria; a convenção decide o significado.",
+      maos:
+        "Converta um número para hexadecimal e veja quantos bits ele ocupa.",
+      pergunta: {
+        q: "Quantos bits tem um dígito hexadecimal?",
+        a: "Quatro bits",
+        why: "O hexadecimal tem dezesseis símbolos, e dezesseis é dois elevado a quatro; por isso um dígito cobre quatro bits e dois dígitos cobrem um byte.",
+      },
+    },
+    "Lógica Digital": {
+      contexto:
+        "Onde isso aparece: no processador, no alarme e no semáforo. Porta lógica implementa a operação booleana, e o circuito combina portas. O mesmo desenho vira soma, comparação e memória.",
+      oQue:
+        "Lógica digital liga álgebra booleana a circuito. E, OU, NÃO e XOR são portas, e cada uma tem tabela de verdade; o XOR dá um apenas quando as entradas diferem. Circuito combinacional não guarda estado, e o sequencial guarda com flip-flop.",
+      passos: [
+        "Escreva a tabela de verdade da função desejada.",
+        "Simplifique a expressão booleana.",
+        "Monte o circuito com as portas e teste todas as combinações.",
+      ],
+      exemplo:
+        "Um alarme que dispara quando uma entrada está ligada e a outra não é um XOR. Já o alarme que dispara com qualquer entrada ligada é um OU. A diferença está na linha em que as duas entradas são iguais, e a tabela mostra antes de montar.",
+      quebra:
+        "Confundir OU com XOR. No OU, entrada iguais dão um; no XOR, dão zero. Trocar a porta inverte o comportamento no caso mais comum e o teste pega logo na primeira combinação de entradas iguais.",
+      limite:
+        "O modelo ideal ignora atraso de propagação e ruído. Em circuito real, o atraso pode gerar corrida, e a análise temporal entra além da tabela.",
+      levar: "A tabela de verdade decide a porta, não o contrário.",
+      maos:
+        "Monte a tabela de verdade do XOR e do OU lado a lado e marque a diferença.",
+    },
+    "Fundamentos de Programação": {
+      contexto:
+        "Onde isso aparece: no script de automação, no jogo e no serviço. Variável, condição, repetição e função são o vocabulário mínimo. O laço precisa de saída, e a função precisa de contrato.",
+      oQue:
+        "Fundamentos de programação são variável, tipo, expressão, condicional, repetição e função. O laço termina quando a condição fica falsa, e a variável que a condição usa precisa mudar dentro do laço. Função empacota o trecho com entrada e saída definidas.",
+      passos: [
+        "Defina a variável e o tipo antes de usar.",
+        "Escreva a condição de parada do laço e o passo que a atualiza.",
+        "Teste o caso limite, como lista vazia e valor zero.",
+      ],
+      exemplo:
+        "Um laço que soma de um a dez precisa da variável que cresce a cada volta; sem esse passo, a condição nunca fica falsa e o programa trava. Já a função que calcula média precisa tratar a lista vazia, senão divide por zero. O caso limite é parte do teste.",
+      quebra:
+        "Esquecer de atualizar a variável da condição. O laço infinito trava o programa e o sintoma aparece longe da causa. A revisão do passo de atualização evita.",
+      limite:
+        "O modelo simples não cobre concorrência e estado compartilhado. Com duas threads mexendo na mesma variável, a condição pode mudar fora de ordem, e a garantia exige outro cuidado.",
+      levar: "Todo laço precisa de uma saída que o próprio corpo garanta.",
+      maos:
+        "Escreva um laço com condição de parada e remova a atualização para ver o travamento.",
+    },
+    "Abstração Computacional": {
+      contexto:
+        "Onde isso aparece: na biblioteca, na API e no módulo do sistema. A interface esconde a implementação e permite trocar a peça. Contrato claro reduz acoplamento e facilita o teste.",
+      oQue:
+        "Abstração computacional define o contrato entre partes: o que entra, o que sai e o que a parte garante. Encapsulamento esconde o detalhe, e separação de responsabilidade evita que uma peça saiba demais. O modelo de computação dá o limite do que se pode calcular.",
+      passos: [
+        "Escreva o contrato com entrada, saída e garantia.",
+        "Esconda o detalhe atrás de interface pequena.",
+        "Teste a parte pela interface, sem depender do interior.",
+      ],
+      exemplo:
+        "Uma biblioteca de fila expõe inserir, remover e ver o primeiro; quem usa não precisa saber se por dentro é vetor ou lista ligada. Trocar a implementação não muda o programa que usa. O contrato é o que fica.",
+      quebra:
+        "Deixar o detalhe de implementação vazar na interface. Quem usa passa a depender do interior, e a troca quebra o programa. O acoplamento tira o benefício da abstração. O contrato precisa declarar também o que a parte não garante, porque quem usa assume o resto e o erro aparece longe. A interface pequena e honesta é a que envelhece melhor, e o teste pela borda é o que prova que o contrato continua de pé.",
+      limite:
+        "Toda abstração tem custo e vaza em algum ponto. Desempenho e erro do interior aparecem na borda, e a escolha do que esconder é decisão de projeto.",
+      levar: "Contrato bom é o que permite trocar a peça sem medo.",
+      maos:
+        "Escreva o contrato de uma função antes do corpo e teste só pela assinatura.",
+      pergunta: {
+        q: "O que um contrato de interface garante?",
+        a: "Que quem usa não precisa conhecer a implementação",
+        why: "O contrato fixa entrada, saída e garantia, então a peça interna pode ser trocada sem quebrar quem depende dela; é isso que permite evoluir o sistema por partes.",
+      },
+    },
+  },
+  "cs-algoritmos": {
+    "Algoritmos Fundamentais": {
+      contexto:
+        "Onde isso aparece: na busca do catálogo, na ordenação da fila e no cálculo de rota. O algoritmo clássico é ponto de partida, e a escolha depende do dado. Ordenado abre atalho que a ordem aleatória não tem.",
+      oQue:
+        "Algoritmos fundamentais incluem busca, ordenação, percurso, divisão e conquista e programação dinâmica. A busca binária exige lista ordenada, a ordenação por comparação tem limite teórico, e a programação dinâmica reusa subproblema. A escolha depende da estrutura do dado.",
+      passos: [
+        "Veja se o dado tem ordem ou estrutura que dê atalho.",
+        "Escolha o algoritmo compatível com a estrutura.",
+        "Analise o custo no pior caso antes de usar em produção.",
+      ],
+      exemplo:
+        "Procurar nome em lista ordenada por busca binária acha em poucos passos, mas a mesma busca falha em lista desordenada. Ordenar primeiro custa uma vez e pode compensar se a busca repete. A conta é de uso, não de algoritmo isolado.",
+      quebra:
+        "Usar busca binária em lista desordenada. O algoritmo compara e descarta a metade errada, e o resultado é ausência falsa. A exigência de ordenação é parte da definição do algoritmo, não sugestão de estilo: sem a ordem, metade descartada na primeira comparação leva a resposta errada.",
+      limite:
+        "A análise de pior caso não descreve todo uso. Em dado quase ordenado, o algoritmo simples pode vencer, e a medição no dado real decide.",
+      levar: "Busca binária só funciona onde existe ordem.",
+      maos:
+        "Rode busca binária em lista ordenada e desordenada e compare a resposta.",
+    },
+    "Estruturas de Dados": {
+      contexto:
+        "Onde isso aparece: na fila do processo, na pilha do navegador e no índice do banco. A estrutura decide o custo da operação, e a escolha errada aparece na lentidão. Cada uma tem uma operação que faz bem.",
+      oQue:
+        "Estrutura de dados organiza o dado para a operação frequente. Lista ligada insere e remove fácil, vetor acessa por índice rápido, pilha é último a entrar primeiro a sair, fila é primeiro a entrar primeiro a sair, e fila de prioridade atende o maior primeiro. A escolha segue o uso.",
+      passos: [
+        "Liste as operações que mais acontecem.",
+        "Escolha a estrutura pelo custo dessas operações.",
+        "Meça com o dado real antes de otimizar.",
+      ],
+      exemplo:
+        "Uma fila de atendimento tem que atender primeiro quem chegou primeiro: é fila, não pilha. Já o histórico de navegação volta pelo último acessado, e é pilha. A mesma lista de item, estruturas diferentes, e o comportamento muda.",
+      quebra:
+        "Usar lista para busca por chave e estranhar a lentidão. A busca custa tempo linear, e a tabela de dispersão resolveria. A estrutura errada cobra na operação frequente.",
+      limite:
+        "A estrutura ótima em teoria pode custar memória e constante. Em volume pequeno, a diferença some, e a simplicidade vence.",
+      levar: "A estrutura certa é a que faz barata a operação que você mais repete.",
+      maos:
+        "Implemente fila e pilha com a mesma lista e compare a ordem de saída.",
+    },
+    "Análise de Algoritmos": {
+      contexto:
+        "Onde isso aparece: no limite de requisição, no tempo de resposta e no custo de nuvem. A notação Big O descreve crescimento, não segundo. Comparar algoritmo exige medir o crescimento, não só a entrada pequena.",
+      oQue:
+        "Análise de algoritmos mede o custo em função do tamanho da entrada. Big O descreve o crescimento dominante, e a ordenação por comparação tem limite teórico de n log n. Pior caso e caso médio respondem perguntas diferentes, e a escolha depende da garantia que se quer.",
+      passos: [
+        "Conte a operação dominante em função de n.",
+        "Simplifique para o termo de maior crescimento.",
+        "Compare com o limite do problema e com a medição real.",
+      ],
+      exemplo:
+        "Ordenar um milhão de itens com algoritmo quadrático dá trabalho que cresce depressa demais; com n log n, o tempo cresce bem mais devagar. Na entrada pequena, os dois parecem iguais, e é por isso que a medição só com dado pequeno engana. A conclusão precisa de tamanho representativo.",
+      quebra:
+        "Comparar algoritmos só com entrada pequena e concluir que são iguais. O termo de maior crescimento não aparece, e a escolha falha quando o dado cresce. O teste precisa de tamanho que separe as curvas.",
+      limite:
+        "Big O ignora constante e memória. Algoritmo com crescimento melhor pode perder na faixa de uso por constante grande, e a medição decide na faixa real.",
+      levar: "Big O diz como o custo cresce, não quanto ele custa hoje.",
+      maos:
+        "Meça o tempo de duas ordenações em três tamanhos e compare o crescimento.",
+    },
+    "Projeto Avançado de Algoritmos": {
+      contexto:
+        "Onde isso aparece: na rota do mapa, no escalonamento e no corte de material. Algoritmo de grafo, de fluxo e de aproximação resolve o que o exato não alcança no tempo. A garantia de aproximação é o que substitui o ótimo.",
+      oQue:
+        "Projeto avançado cobre algoritmo de grafo, geométrico, de fluxo, de aproximação e paralelo. O algoritmo de aproximação entrega solução perto do ótimo com fator de garantia, e o de fluxo resolve rede com capacidade. Problema NP-difícil não tem algoritmo exato rápido conhecido, e a aproximação é a resposta prática.",
+      passos: [
+        "Classifique o problema e veja se há algoritmo exato viável.",
+        "Escolha a abordagem: exato, aproximação, heurística ou paralelo.",
+        "Verifique o fator de garantia e o custo real.",
+      ],
+      exemplo:
+        "O caixeiro viajante não tem solução exata rápida para entrada grande, e a aproximação entrega rota com garantia de estar perto do ótimo. Já o problema de fluxo máximo tem algoritmo exato eficiente e resolve rede de verdade. A escolha depende da classe do problema.",
+      quebra:
+        "Usar heurística sem saber se ela tem garantia e apresentar como ótimo. A solução pode estar longe, e o cliente descobre na conta. A garantia precisa ser declarada, com o fator e a condição em que ela vale.",
+      limite:
+        "O fator de garantia é de pior caso, e a instância real costuma ficar melhor. Ainda assim, o pior caso existe, e a decisão de risco é do projeto.",
+      levar: "Quando o exato é caro, a garantia da aproximação é o que se vende.",
+      maos:
+        "Compare a solução exata e a aproximada de uma instância pequena do caixeiro viajante.",
+      pergunta: {
+        q: "O que um algoritmo de aproximação garante?",
+        a: "Solução perto do ótimo em tempo viável, com fator de garantia",
+        why: "Para problema NP-difícil, o exato pode ser inviável; a aproximação entrega solução com erro limitado por um fator declarado, e o custo fica tratável.",
+      },
+    },
+    "Resolução de Problemas Computacionais": {
+      contexto:
+        "Onde isso aparece: no concurso, na entrevista e no projeto real. Modelar, escolher estrutura e provar correção são etapas antes de codar. O código certo começa na escolha certa.",
+      oQue:
+        "Resolução de problema computacional cobre modelagem, escolha de estrutura, análise de viabilidade e prova de correção. A prova mostra que o algoritmo responde certo em toda entrada válida, e a análise de desempenho mostra se cabe no limite. Sem as duas, o código é aposta.",
+      passos: [
+        "Modele o problema com entrada, saída e restrição.",
+        "Escolha o algoritmo e a estrutura compatíveis.",
+        "Prove a correção e meça o desempenho no pior caso.",
+      ],
+      exemplo:
+        "Um problema de agenda pode ser modelado como intervalo e resolvido por ordenação e varredura. A prova mostra que nenhum intervalo compatível fica de fora, e a medição confirma que cabe no limite. A modelagem errada levaria a algoritmo caro para o mesmo problema.",
+      quebra:
+        "Codar antes de fixar a modelagem. A estrutura escolhida errada aparece no meio do código, e o retrabalho é grande. A modelagem é a decisão mais barata de mudar. Um desenho de entrada e saída no papel economiza horas de depuração, e o caso pequeno confirma se o modelo fecha. Depois da modelagem, a prova e a medição fecham a entrega: uma garante o acerto, a outra garante o prazo.",
+      limite:
+        "A prova de correção vale para o modelo, não para o problema real. Se a modelagem deixou requisito de fora, o algoritmo está certo para a pergunta errada.",
+      levar: "Modelar, provar e medir: o código vem depois.",
+      maos:
+        "Modele um problema pequeno, escreva a prova em três linhas e meça.",
+      pergunta: {
+        q: "Para que serve a prova de correção?",
+        a: "Para mostrar que o algoritmo responde certo em toda entrada válida",
+        why: "A prova cobre todas as entradas do modelo, não só os casos testados; junto com a análise de desempenho, ela separa solução confiável de tentativa.",
+      },
+    },
+  },
+  "cs-teorica": {
+    "Teoria da Computabilidade": {
+      contexto:
+        "Onde isso aparece: no limite do que o programa pode decidir e no analisador que trava. Nem todo problema tem algoritmo que sempre responde. A prova de indecidibilidade mostra o limite antes de alguém gastar mês tentando.",
+      oQue:
+        "Teoria da computabilidade estuda o que a máquina de Turing pode calcular. Função computável tem algoritmo, problema decidível tem sempre resposta, e o problema da parada demonstra que nem todo problema tem algoritmo que sempre decide. Redutibilidade transporta o limite de um problema para outro.",
+      passos: [
+        "Modele o problema como pergunta de sim ou não.",
+        "Veja se existe algoritmo que sempre responde.",
+        "Use redução para mostrar que outro problema herda a dificuldade.",
+      ],
+      exemplo:
+        "O problema da parada pergunta se um programa para em certa entrada. A prova supõe um programa que decide e constrói um programa que se contradiz, mostrando que o decisor não existe. Não é falta de criatividade: é limite demonstrado.",
+      quebra:
+        "Achar que todo limite é passageiro. O indeterminado não vira decidível com máquina mais rápida, porque o limite é de lógica, não de velocidade. Prometer solução geral é prometer o impossível.",
+      limite:
+        "Indecidível no caso geral não significa indecidível em caso particular. Restringir a entrada pode tornar o problema decidível, e é isso que a engenharia faz. O limite é do caso geral, e a solução real vive na restrição declarada.",
+      levar: "Existe pergunta que nenhum programa responde sempre.",
+      maos:
+        "Escreva o argumento da parada em cinco linhas e marque a contradição.",
+    },
+    "Teoria da Complexidade Computacional": {
+      contexto:
+        "Onde isso aparece: no limite de tempo do concurso e no custo de nuvem. A classe P é o que se resolve rápido, e NP é o que se verifica rápido. Problema NP-completo é o mais difícil da classe, e reduzir um ao outro mostra a dificuldade.",
+      oQue:
+        "Complexidade classifica problema por recurso necessário. P reúne o que se resolve em tempo polinomial, NP o que se verifica em tempo polinomial, e NP-completo é o mais difícil de NP. NP-difícil não está necessariamente em NP, e a hierarquia separa faixas de custo.",
+      passos: [
+        "Identifique a entrada e o recurso medido.",
+        "Veja se a solução se verifica em tempo polinomial.",
+        "Reduza de problema NP-completo conhecido para provar a dureza.",
+      ],
+      exemplo:
+        "Verificar uma senha candidata é rápido; achar a senha pode ser caro. É a diferença entre NP e P encarnada no exemplo. Se o problema é NP-completo, o algoritmo exato rápido conhecido não existe, e a engenharia usa aproximação ou restrição.",
+      quebra:
+        "Achar que NP significa não polinomial. NP quer dizer verificável em tempo polinomial, e P está dentro de NP. A sigla engana quem lê rápido.",
+      limite:
+        "P diferente de NP é conjectura, não teorema. Toda a classificação de dureza depende dela, e a prova ainda não existe.",
+      levar: "NP é verificação rápida, não solução rápida.",
+      maos:
+        "Classifique três problemas em P, NP e NP-completo e justifique a classificação.",
+    },
+    "Autômatos e Linguagens Formais": {
+      contexto:
+        "Onde isso aparece: na expressão regular, no validador de formulário e no compilador. O autômato reconhece padrão, e a gramática define a linguagem. Cada classe de autômato corresponde a uma classe de linguagem.",
+      oQue:
+        "Autômato e linguagem formal caminham juntos. Autômato finito reconhece linguagem regular e expressão regular descreve o mesmo conjunto; autômato com pilha reconhece linguagem livre de contexto. A gramática formal gera a linguagem, e a hierarquia organiza classes.",
+      passos: [
+        "Identifique o padrão que a linguagem exige.",
+        "Escolha a máquina: finito para regular, pilha para livre de contexto.",
+        "Escreva o autômato ou a gramática e teste com cadeia de exemplo.",
+      ],
+      exemplo:
+        "Parêntese balanceado não é linguagem regular, porque o autômato finito não conta profundidade; com pilha, a contagem funciona. Já a validação de CEP é regular e cabe em expressão regular. A escolha da máquina segue a linguagem. A hierarquia de Chomsky organiza essas classes, e cada nível pede uma máquina mais forte e uma análise mais cara.",
+      quebra:
+        "Tentar expressão regular para linguagem que exige contagem. O autômato finito não tem memória de profundidade, e o padrão escapa. A classe da linguagem decide a ferramenta.",
+      limite:
+        "A hierarquia cobre linguagem formal, não linguagem natural. Texto humano foge da gramática simples, e o processamento exige modelo estatístico.",
+      levar: "A máquina diz a classe da linguagem que ela reconhece. A gramática formal é a mesma informação escrita de outro jeito, e o compilador usa as duas: a expressão regular no léxico e a gramática na sintaxe.",
+      maos:
+        "Escreva o autômato de parêntese balanceado e teste com uma cadeia aninhada.",
+    },
+    "Lógica e Computação": {
+      contexto:
+        "Onde isso aparece: no verificador de circuito, no planejador e no banco de dados. A lógica formaliza a condição, e o solucionador responde. Satisfatibilidade é a pergunta central.",
+      oQue:
+        "Lógica e computação ligam proposição, predicado e satisfatibilidade. A fórmula é satisfatível quando existe atribuição que a torna verdadeira, e o solucionador moderno resolve instância grande. Lógica temporal e modal descrevem tempo e possibilidade, e a verificação de sistema usa isso.",
+      passos: [
+        "Traduza a condição para fórmula lógica.",
+        "Converta para a forma que o solucionador aceita.",
+        "Interprete o resultado: satisfatível, insatisfatível ou desconhecido.",
+      ],
+      exemplo:
+        "Verificar se uma configuração de circuito viola a regra vira fórmula booleana; se não existe atribuição que satisfaça a violação, o circuito está seguro. O solucionador percorre o espaço com poda, e a resposta é prova, não teste. Verificação de hardware, planejamento e configuração usam a mesma ideia com fórmula diferente. A tradução para CNF é o passo padrão, e o formato importa menos que a pergunta estar escrita sem ambiguidade. Lógica temporal acrescenta o operador de sempre e de eventualmente, e a verificação pergunta se a propriedade vale em todo caminho.",
+      quebra:
+        "Achar que fórmula sem solução encontrada é insatisfatível. O solucionador pode devolver desconhecido no limite de tempo, e tratar como prova inverte o resultado.",
+      limite:
+        "A satisfatibilidade é NP-completa no caso geral. Instância real costuma ser tratável, mas o pior caso não desaparece, e o tempo do solucionador não é garantido.",
+      levar: "A fórmula certa transforma teste em prova.",
+      maos:
+        "Escreva uma regra de negócio como fórmula e decida a satisfatibilidade com um solucionador.",
+      pergunta: {
+        q: "O que a satisfatibilidade pergunta sobre uma fórmula booleana?",
+        a: "Se existe atribuição de valores que a torna verdadeira",
+        why: "A pergunta é de existência; se não há atribuição, a fórmula é insatisfatível, e essa resposta serve de prova para regra e circuito.",
+      },
+    },
+    "Fundamentos de Sistemas de Tipos": {
+      contexto:
+        "Onde isso aparece: no erro de compilação, na API e no dado de entrada. O tipo restringe o que pode acontecer, e a checagem pega erro antes de rodar. Tipo bom documenta sem comentário.",
+      oQue:
+        "Sistema de tipos classifica valor e expressão. A tipagem estática confere antes da execução, a dinâmica confere durante, e o tipo algébrico combina alternativas e produtos. Polimorfismo permite a mesma operação em tipos diferentes, e tipo dependente carrega valor na própria definição.",
+      passos: [
+        "Defina o tipo de cada entrada e saída.",
+        "Use tipo que representa só os estados válidos.",
+        "Deixe o compilador recusar o que não faz sentido.",
+      ],
+      exemplo:
+        "Um campo que aceita qualquer texto deixa passar valor inválido; um tipo que enumera os estados válidos torna o erro impossível de representar. O compilador vira teste barato, e o caso inválido sai da conta. A escolha do tipo é decisão de projeto.",
+      quebra:
+        "Usar texto para tudo e validar em todo lugar. A validação repetida diverge e o estado inválido circula. O tipo é a primeira validação.",
+      limite:
+        "O sistema de tipos não captura toda regra de negócio. Semântica e invariante de domínio exigem teste e validação em tempo de execução, e o tipo não substitui.",
+      levar: "Tipo bom é o que torna o estado inválido impossível de escrever. A checagem estática pega erro antes de rodar, e o teste fica para o que o tipo não alcança. Tipo algébrico com enumeração fecha o conjunto de casos, e o compilador avisa quando falta tratar um deles. O tipo dependente leva o valor na assinatura, e a checagem fica mais forte ao custo de anotação explícita.",
+      maos:
+        "Troque um campo de texto por tipo com alternativas e veja os erros que somem.",
+      pergunta: {
+        q: "O que o tipo algébrico permite representar?",
+        a: "Alternativas e combinações de valores, com checagem em tempo de compilação",
+        why: "O tipo soma representa uma entre várias formas e o produto representa campos juntos; o compilador garante que cada caso foi tratado.",
+      },
+    },
+    "Teoria da Informação": {
+      contexto:
+        "Onde isso aparece: na compressão, na transmissão e no código de correção. A entropia mede a incerteza da fonte, e a capacidade limita a taxa. O limite teórico diz o que é possível antes de tentar.",
+      oQue:
+        "Teoria da informação mede incerteza com entropia. A informação mútua quantifica o que duas variáveis compartilham, e a capacidade de canal dá a taxa máxima confiável. A compressão sem perda não passa da entropia, e o código com redundância se aproxima do limite.",
+      passos: [
+        "Modele a fonte e calcule a entropia.",
+        "Compare a taxa do código com a capacidade do canal.",
+        "Verifique se o código atinge a entropia ou fica acima.",
+      ],
+      exemplo:
+        "Fonte que gera símbolo com probabilidade desigual tem entropia menor que o número de bits do símbolo: há redundância a comprimir. Se a fonte é uniforme, o limite é o próprio log do alfabeto. A compressão não inventa, ela remove o que já era previsível.",
+      quebra:
+        "Achar que compressão sem perda pode passar da entropia. O limite é teorema, e prometer mais é vender o impossível. A conta da entropia é o teto. O código de Huffman se aproxima dele para símbolo frequente, e o código de canal adiciona redundância para corrigir erro. Há limite para as duas coisas: não se comprime além da entropia, e não se transmite acima da capacidade.",
+      limite:
+        "O modelo supõe fonte e canal conhecidos e estacionários. Fonte que muda de comportamento exige adaptação, e o limite vale para o modelo, não para qualquer dado.",
+      levar: "Entropia é o quanto a mensagem ainda surpreende.",
+      maos:
+        "Calcule a entropia de duas distribuições e veja qual comprime mais.",
+      pergunta: {
+        q: "O que a entropia mede na teoria da informação?",
+        a: "A incerteza média de uma fonte de mensagem",
+        why: "A entropia é a média de informação por símbolo; ela limita a compressão sem perda e define a taxa que um código precisa para transmitir a fonte.",
+      },
+    },
+  },
+  "cs-linguagens": {
+    "Paradigmas de Programação": {
+      contexto:
+        "Onde isso aparece: no código do dia a dia, no estilo do time e na biblioteca escolhida. Paradigma é forma de organizar a solução, e cada um tem custo. A linguagem costuma misturar mais de um.",
+      oQue:
+        "Paradigma descreve o estilo de programação: imperativo, procedural, orientado a objeto, funcional e declarativo. O funcional compõe função e evita estado mutável; o orientado a objeto organiza por dado e responsabilidade. A escolha muda a forma do erro e o teste.",
+      passos: [
+        "Identifique o tipo de problema: transformação de dado, estado ou regra.",
+        "Escolha o paradigma que deixa o fluxo visível.",
+        "Misture com critério, sem dogmatismo.",
+      ],
+      exemplo:
+        "Transformar lista de registro é natural em funcional: aplicar função e compor resultado, sem variável intermediária. Já modelar carrinho de compra com estado e evento pede objeto ou modelo de estado. O problema escolhe o estilo. O time escolhe o que sabe manter, e a mistura consciente costuma ser melhor que a pureza forçada. O código de produção mistura estilo, e o custo real está na leitura de quem chega depois.",
+      quebra:
+        "Forçar um paradigma em problema de outro tipo. Orientação a objeto para conta pura e funcional para estado complexo produzem código torto. O custo aparece na manutenção.",
+      limite:
+        "A linguagem real mistura paradigma, e a fronteira é cinza. A escolha é de projeto e de time, não de pureza teórica.",
+      levar: "Paradigma é a forma do código seguir o problema.",
+      maos:
+        "Resolva a mesma tarefa de duas formas e compare o tamanho do código.",
+    },
+    "Projeto de Linguagens": {
+      contexto:
+        "Onde isso aparece: na definição da linguagem interna, no DSL e na configuração. Sintaxe, semântica e tipo formam o contrato da linguagem. A escolha de escopo muda o que o programador espera.",
+      oQue:
+        "Projeto de linguagem define sintaxe, semântica, tipo, escopo e memória. A sintaxe é a forma, a semântica é o significado, e o tipo estático confere antes da execução. Escopo e ligação de nome decidem qual variável a referência enxerga.",
+      passos: [
+        "Defina a sintaxe mínima que expressa o domínio.",
+        "Fixe a semântica de cada construção.",
+        "Decida o escopo e o tipo, e escreva exemplo antes de implementar.",
+      ],
+      exemplo:
+        "Uma linguagem de regra de negócio precisa de condição, comparação e composição; o resto é excesso. Fixar a semântica de igualdade e de precedência evita ambiguidade. O exemplo escrito antes da implementação pega buraco de projeto. A precedência e a associatividade entram na gramática, e a árvore sintática mostra se a leitura é a que você queria. A gramática sem ambiguidade evita duas árvores para a mesma expressão, e a precedência fica declarada.",
+      quebra:
+        "Definir sintaxe sem semântica. A forma fica bonita e o significado de cada construção fica ambíguo, e a implementação inventa a regra. A semântica é o contrato.",
+      limite:
+        "Linguagem nova custa ferramenta: editor, erro e depurador. O ganho precisa superar o custo de adoção, e DSL pequena costuma valer mais que linguagem geral.",
+      levar: "Sintaxe é a forma; semântica é o contrato.",
+      maos:
+        "Escreva três exemplos da linguagem que você quer antes de implementar o interpretador.",
+    },
+    "Compiladores e Interpretadores": {
+      contexto:
+        "Onde isso aparece: no build, no interpretador da linguagem e na ferramenta de migração. O compilador traduz em etapas, e cada etapa tem representação própria. O erro aparece no estágio certo quando a etapa está clara.",
+      oQue:
+        "Compilador e interpretador processam código em etapas: análise léxica, sintática, semântica, representação intermediária e geração. A análise sintática monta a árvore conforme a gramática, e a semântica confere tipo e escopo. O interpretador executa a árvore, e o compilador gera outro código.",
+      passos: [
+        "Tokenize o código na análise léxica.",
+        "Monte a árvore pela gramática na análise sintática.",
+        "Confira tipo e escopo na análise semântica antes de gerar.",
+      ],
+      exemplo:
+        "Um erro de parêntese aparece na análise sintática, e um erro de tipo aparece na semântica. Separar as etapas faz o aviso apontar o problema certo. A mesma estrutura serve para compilador e interpretador. A representação intermediária permite otimizar uma vez e gerar para alvo diferente, e é aí que mora boa parte do ganho. A árvore sintática é o contrato entre etapas, e o erro aponta linha e coluna porque a etapa guardou a posição.",
+      quebra:
+        "Misturar análise e execução. O erro fica confuso e o código vira espaguete. A etapa separada é o que permite mensagem de erro útil.",
+      limite:
+        "A estrutura clássica supõe gramática sem ambiguidade e sem contexto complicado. Linguagem com macro ou dependência de contexto exige etapa extra e cuidado.",
+      levar: "Cada etapa do compilador tem uma pergunta e um erro próprios.",
+      maos:
+        "Escreva a árvore sintática de uma expressão com parêntese e precedência.",
+    },
+    "Programação de Baixo Nível": {
+      contexto:
+        "Onde isso aparece: no driver, no tempo real e no código que precisa de desempenho. O programador controla memória e chamada. A proximidade com a máquina dá poder e risco.",
+      oQue:
+        "Programação de baixo nível usa assembly, chamada de sistema e memória explícita. A chamada de sistema pede ao núcleo um serviço protegido, e o modelo de execução define registro e pilha. A interface binária fixa como biblioteca e programa conversam.",
+      passos: [
+        "Identifique o serviço que precisa do núcleo.",
+        "Respeite a convenção de chamada e o registro usado.",
+        "Libere a memória e confira o limite de buffer.",
+      ],
+      exemplo:
+        "Ler arquivo em baixo nível é chamada de sistema: o programa prepara descritor e buffer, e o núcleo faz o acesso. Se o buffer é menor que o dado, o estouro corrompe memória. O controle é do programador, e o teste precisa cobrir o limite.",
+      quebra:
+        "Esquecer de liberar memória ou checar tamanho de buffer. O vazamento cresce com o tempo e o estouro pode ser falha de segurança. A disciplina de limite é parte do código. O depurador de memória e o teste com entrada extrema são o que transforma controle em segurança. A convenção de chamada precisa estar documentada, senão a biblioteca e o programa discordam de quem limpa a pilha. O modelo de execução e o registro de base são o mapa de onde o código está na memória.",
+      limite:
+        "O código de baixo nível depende de arquitetura e sistema. Trocar de plataforma exige portar, e o ganho de desempenho precisa pagar esse custo.",
+      levar: "Baixo nível é controle; controle cobra disciplina.",
+      maos:
+        "Escreva uma chamada de sistema mínima e meça o que acontece com buffer pequeno.",
+      pergunta: {
+        q: "O que uma chamada de sistema faz?",
+        a: "Pede ao núcleo do sistema operacional um serviço protegido",
+        why: "O programa não acessa diretamente recurso como disco e rede; ele faz a chamada, o núcleo valida e executa, e devolve o resultado com código de erro.",
+      },
+    },
+    "Ferramentas de Desenvolvimento": {
+      contexto:
+        "Onde isso aparece: no editor, no build e na investigação de lentidão. A ferramenta certa economiza hora de depuração. Linter, formatador e profiler respondem perguntas diferentes.",
+      oQue:
+        "Ferramentas de desenvolvimento incluem editor, linter, formatador, depurador e profiler. O linter aponta padrão suspeito antes da execução, o formatador fixa estilo, e o profiler mede onde o tempo é gasto. Cada uma responde uma pergunta e não substitui a outra.",
+      passos: [
+        "Escolha a ferramenta pela pergunta: estilo, defeito ou desempenho.",
+        "Rode no código real, não no exemplo.",
+        "Corrija o achado e meça de novo.",
+      ],
+      exemplo:
+        "O linter aponta variável não usada, o formatador padroniza espaço, e o profiler mostra que 80% do tempo está numa função de consulta. Rodar o profiler antes de otimizar evita trabalho inútil. A pergunta decide a ferramenta.",
+      quebra:
+        "Otimizar por intuição sem profiler. O ganho aparece em trecho que não pesa, e o gargalo continua. A medição é o que separa otimização de superstição. O perfil mostra a função quente, e a mudança se mede de novo para provar o ganho. O formatador entra antes do linter na esteira, e o linter antes do teste: cada um barra o que o anterior não vê. O profiler fecha a esteira mostrando se o ganho de desempenho se pagou, e a resposta realimenta o projeto; sem esse retorno, a esteira vira ritual.",
+      limite:
+        "A ferramenta vê o código e a execução, não a intenção. O achado pode ser falso positivo, e a decisão final é de quem conhece o sistema.",
+      levar: "Cada ferramenta responde uma pergunta; use a pergunta certa.",
+      maos:
+        "Rode linter e profiler no mesmo projeto e compare o tipo de achado.",
+      pergunta: {
+        q: "O que um linter faz?",
+        a: "Aponta padrão suspeito no código antes de executar",
+        why: "O linter analisa o código estaticamente e avisa sobre construção arriscada, como variável não usada ou comparação suspeita; ele não substitui teste nem profiler.",
+      },
+    },
+  },
 };
 
 // o nome da estação chega em caixa baixa do banco ("Grafos moleculares") e em
