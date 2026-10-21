@@ -2487,6 +2487,185 @@ export const LICOES = {
       },
     },
   },
+  "physics-quantica": {
+    "Mecânica Quântica": {
+      contexto:
+        "Onde isso aparece: no laser, no transistor e na imagem médica. O estado é descrito por função de onda, e a medida devolve valor probabilístico. A conta não diz o resultado de uma medida, diz a distribuição de resultados.",
+      oQue:
+        "Mecânica quântica descreve o estado atômico por função de onda, e o observável vira operador. A equação de Schrödinger dá a evolução do estado, e a medida projeta o estado num autovalor. O princípio da incerteza impede conhecer posição e momento com precisão total ao mesmo tempo.",
+      passos: [
+        "Escreva o estado e o operador do observável.",
+        "Resolva a equação para achar os autovalores possíveis.",
+        "Calcule a distribuição de probabilidade e a incerteza.",
+      ],
+      exemplo:
+        "Num átomo de hidrogênio, o elétron não tem órbita circular definida: a função de onda dá a região provável, e cada nível tem energia bem definida. A transição entre níveis emite fóton de frequência calculada, e a cor do espectro confirma a conta. A precisão do modelo é enorme, e a imagem de planeta girando não serve.",
+      quebra:
+        "Tratar incerteza como limitação do instrumento. Ela é propriedade do estado, não da balança: par de observável incompatível não tem valor simultâneo definido. A confusão leva a esperar medida mais precisa que o possível.",
+      limite:
+        "A descrição vale para sistema isolado e escala atômica. Com ambiente interagindo, a decoerência apaga a superposição, e o comportamento clássico emerge na escala grande.",
+      levar: "A conta quântica entrega distribuição, não certeza.",
+      maos:
+        "Compare a energia de dois níveis do hidrogênio e a frequência do fóton emitido.",
+    },
+    "Fundamentos Quânticos": {
+      contexto:
+        "Onde isso aparece: no debate sobre medida, na criptografia quântica e na computação. Superposição e emaranhamento não têm análogo clássico, e a interpretação ainda é discutida. O experimento decide o que a teoria diz.",
+      oQue:
+        "Fundamentos quânticos tratam medida, superposição, emaranhamento e decoerência. A medida projetou o estado e destruiu a superposição, e o emaranhamento correlaciona partes distantes sem permitir mensagem instantânea. A interpretação escolhe como contar a história, mas as previsões coincidem.",
+      passos: [
+        "Descreva o estado conjunto, não só o de cada parte.",
+        "Calcule a correlação que a medida revela.",
+        "Verifique se a operação permite transmitir informação.",
+      ],
+      exemplo:
+        "Dois fótons emaranhados em polarização mostram correlação perfeita: medir um diz o resultado do outro. Mas o resultado do primeiro é aleatório, e quem mede não controla o que envia. A correlação aparece só quando as duas listas são comparadas, e é por isso que não há mensagem instantânea.",
+      quebra:
+        "Achar que emaranhamento permite comunicação mais rápida que a luz. A correlação é real, e o resultado individual é aleatório, então nada é transmitido. A confusão é o erro mais comum da área.",
+      limite:
+        "A interpretação não muda a previsão. O debate sobre colapso, muitos mundos e variáveis ocultas é filosófico até que um experimento separe as alternativas, e hoje as previsões batem.",
+      levar: "Emaranhamento correlaciona sem transmitir.",
+      maos:
+        "Simule duas listas de medida emaranhada e mostre que cada lista sozinha parece aleatória.",
+    },
+    "Teoria Quântica de Campos": {
+      contexto:
+        "Onde isso aparece: na colisão de partícula, no vácuo quântico e na correção de massa. O campo é o objeto, e a partícula é excitação dele. A conta soma contribuição de processo, ordem a ordem, e a renormalização doma o infinito.",
+      oQue:
+        "Teoria quântica de campos trata partícula como excitação de campo, e a interação como termo no lagrangiano. O diagrama de Feynman organiza a soma das contribuições por ordem de acoplamento, e a renormalização absorve o infinito em parâmetro medido. A eletrodinâmica quântica é o caso mais preciso da física. O vácuo do campo não é vazio: tem flutuação, e ela desloca a energia dos níveis, num efeito medido com precisão. O acoplamento muda com a escala de energia, e é isso que a renormalização descreve: sem ela, a soma diverge e a teoria perde poder de previsão, mesmo descrevendo bem o processo de curta distância. O acoplamento muda com a escala de energia, e é isso que a renormalização descreve.",
+      passos: [
+        "Escreva o lagrangiano com o termo de interação.",
+        "Desenhe os diagramas por ordem de acoplamento.",
+        "Calcule a amplitude e renormalize os parâmetros.",
+      ],
+      exemplo:
+        "No espalhamento elétron-elétron, o diagrama de um fóton trocado dá a contribuição principal, e os diagramas com mais laço dão correção pequena. A soma até certa ordem bate com a medida em casas decimais. O diagrama não é desenho: é termo de conta.",
+      quebra:
+        "Tratar diagrama como figura ilustrativa. Cada traço e cada vértice tem regra de conta, e o sinal e o fator importam. Desenhar sem a regra não produz amplitude.",
+      limite:
+        "A série é assintótica, não convergente: somar mais ordem pode não melhorar. A gravidade quântica fica fora do esquema, e a teoria não é completa.",
+      levar: "Campo é o objeto; partícula é o campo vibrando.",
+      maos:
+        "Desenhe o diagrama de troca de um fóton e identifique os vértices de interação.",
+      pergunta: {
+        q: "O que um diagrama de Feynman representa?",
+        a: "Uma contribuição de amplitude para um processo, numa ordem de acoplamento",
+        why: "Cada diagrama tem regra de conta e corresponde a um termo da série de perturbação; somar as ordens dá a amplitude prevista.",
+      },
+    },
+    "Informação e Tecnologias Quânticas": {
+      contexto:
+        "Onde isso aparece: no computador quântico, na criptografia e no sensor. Qubit é a unidade, e a superposição cresce exponencial com o número de qubits. Emaranhamento entra como recurso, não como curiosidade.",
+      oQue:
+        "Informação quântica usa qubit, porta e circuito. O estado de n qubits tem duas elevado a n amplitudes, e a medida devolve um resultado só. Emaranhamento é recurso para teletransporte e correção de erro, e a correção é obrigatória para uso prático.",
+      passos: [
+        "Escreva o estado em amplitudes, não em bits.",
+        "Aplique as portas como transformação unitária.",
+        "Conte com decoerência e correção de erro no resultado.",
+      ],
+      exemplo:
+        "Três qubits descrevem oito amplitudes, e uma porta de Hadamard em cada um cria superposição de todas as oito. A medida devolve uma delas com probabilidade dada pelo quadrado da amplitude. Não existe acesso às oito de uma vez, e é essa diferença que limita o algoritmo quântico.",
+      quebra:
+        "Achar que o computador quântico testa todas as possibilidades de uma vez. A medida entrega um resultado, e o ganho depende de interferência construída pelo algoritmo. Sem isso, não há vantagem.",
+      limite:
+        "O número de qubits físicos necessários é muito maior que o lógico por causa da correção de erro. A decoerência e o ruído limitam o circuito, e o ganho aparece só para classe específica de problema.",
+      levar: "Qubit guarda amplitude; a medida devolve um resultado.",
+      maos:
+        "Escreva as amplitudes de dois qubits e veja quantas portas Hadamard são necessárias.",
+    },
+  },
+  "physics-astro": {
+    "Astronomia": {
+      contexto:
+        "Onde isso aparece: no telescópio, no catálogo de estrela e no relógio de posição. A astronomia observacional mede luz: posição, brilho e espectro. Cada medida responde a uma pergunta diferente sobre o objeto.",
+      oQue:
+        "Astronomia observacional mede posição, fluxo e espectro dos astros. Astrometria dá coordenada e movimento, fotometria dá brilho, e espectroscopia dá composição e velocidade. A instrumentação decide o que se pode medir, e o telescópio é a janela. A astronomia moderna olha faixa que o olho não vê: rádio, infravermelho e raio X, e cada faixa revela processo diferente do mesmo objeto, e o brilho é medido por comparação com estrela de referência, não por número absoluto.",
+      passos: [
+        "Escolha a banda e o instrumento para a pergunta.",
+        "Calibre a medida com estrela de referência.",
+        "Corrija atmosfera e instrumento antes de interpretar.",
+      ],
+      exemplo:
+        "Medir brilho de estrela em duas bandas dá cor, e a cor dá temperatura. Medir o desvio do espectro dá velocidade radial, e é assim que se acha exoplaneta pela oscilação da estrela. Uma medida bem calibrada responde várias perguntas. A escala de distância usa degrau: paralaxe para perto, Cefeida para média, supernova para longe, e cada degrau calibra o seguinte. O erro de um degrau se propaga para cima, e é por isso que a calibração vale tanto. O céu não é laboratório com régua: a distância é inferida, e a inferência carrega hipótese.",
+      quebra:
+        "Interpretar brilho sem calibrar com referência. A atmosfera e o instrumento alteram o fluxo, e a comparação entre noites erra. A calibração é parte da medida.",
+      limite:
+        "A atmosfera bloqueia faixa inteira do espectro, e o chão não vê tudo. Satélite e telescópio espacial cobrem o que falta, mas com custo e tempo próprios.",
+      levar: "A luz é a única amostra que o astrônomo recebe.",
+      maos:
+        "Compare a cor de duas estrelas no catálogo e veja a temperatura correspondente.",
+      pergunta: {
+        q: "O que a fotometria mede em astronomia?",
+        a: "O fluxo de luz do objeto em uma banda, ligado ao brilho",
+        why: "O fluxo calibrado dá magnitude e cor, e a cor revela temperatura; fotometria e espectroscopia juntas descrevem o objeto.",
+      },
+    },
+    "Astrofísica": {
+      contexto:
+        "Onde isso aparece: no diagrama de estrela, na nebulosa e no exoplaneta. A estrela é esfera de plasma em equilíbrio entre gravidade e pressão. A cor revela temperatura, e o espectro revela composição e movimento.",
+      oQue:
+        "Astrofísica aplica física à estrela e ao sistema planetário. A estrela se sustenta pelo equilíbrio entre gravidade e pressão de radiação, e a cor indica temperatura. Formação estelar, evolução e meio interestelar contam a história do objeto.",
+      passos: [
+        "Meça cor, luminosidade e espectro da estrela.",
+        "Coloque no diagrama de luminosidade e temperatura.",
+        "Compare com modelo de evolução estelar.",
+      ],
+      exemplo:
+        "Uma estrela azul tem superfície mais quente que uma vermelha, e a cor revela a temperatura. O diagrama de luminosidade e temperatura separa anã, gigante e supergigante, e a posição indica a fase da evolução. A mesma física explica o Sol e a estrela distante.",
+      quebra:
+        "Achar que estrela vermelha é mais quente por ser mais brilhante no céu. A cor indica temperatura, e a luminosidade depende também do tamanho. Comparar as duas grandezas sem o diagrama confunde.",
+      limite:
+        "O modelo de evolução depende de composição e massa, e a medida de distância entra na conta de luminosidade. Sem distância confiável, a conclusão sobre a estrela fica presa.",
+      levar: "Cor é temperatura; luminosidade é tamanho e temperatura juntos.",
+      maos:
+        "Coloque três estrelas no diagrama de luminosidade e temperatura e classifique cada uma.",
+    },
+    "Cosmologia": {
+      contexto:
+        "Onde isso aparece: na expansão do universo, no fundo cósmico e na matéria escura. A história inteira está na radiação de fundo e na distribuição de galáxia. O modelo padrão junta expansão, matéria e energia escura.",
+      oQue:
+        "Cosmologia estuda origem e evolução do universo. A expansão afasta as galáxias, e o desvio para o vermelho mede a velocidade de afastamento. A radiação cósmica de fundo é o eco do universo primordial, e a formação de estrutura separa matéria escura de matéria comum.",
+      passos: [
+        "Meça o desvio para o vermelho da galáxia.",
+        "Relacione com a distância pela lei de Hubble.",
+        "Compare o resultado com o modelo de expansão.",
+      ],
+      exemplo:
+        "O fundo cósmico tem temperatura de cerca de 2,7 kelvin e mostra flutuação minúscula que corresponde à semente da estrutura atual. O padrão das flutuações é o que sustenta o modelo com matéria escura e energia escura. A conta bate com a observação em detalhe.",
+      quebra:
+        "Confundir expansão com galáxia se afastando dentro do espaço. É o próprio espaço que estica, e por isso a distância cresce sem que o objeto se mova localmente. A imagem errada leva a contradição sobre velocidade.",
+      limite:
+        "O modelo padrão não explica o que é a matéria escura nem a energia escura. A expansão acelerada é medida, e a causa é desconhecida, então a teoria é incompleta.",
+      levar: "O fundo cósmico é a foto mais antiga do universo.",
+      maos:
+        "Compare a temperatura do fundo cósmico com a de uma superfície conhecida.",
+    },
+    "Ciências Planetárias": {
+      contexto:
+        "Onde isso aparece: na atmosfera de Marte, no interior da Terra e no cometa. O planeta é sistema com atmosfera, superfície e interior acoplados. A missão mede o que o modelo precisa explicar.",
+      oQue:
+        "Ciências planetárias estudam atmosfera, superfície, interior e formação de planeta. A atmosfera tem balanço de energia e circulação, a superfície registra impacto e erosão, e o interior sustenta campo magnético e vulcão. Pequeno corpo do sistema solar guarda material primordial.",
+      passos: [
+        "Escolha a camada que a pergunta investiga.",
+        "Combine medida remota e dado de missão.",
+        "Monte o modelo de balanço ou de composição e compare.",
+      ],
+      exemplo:
+        "Marte tem atmosfera fina e fria, e a água líquida não dura na superfície; o registro geológico mostra que já houve rio. O balanço de energia e a perda atmosférica explicam a diferença com a Terra. O planeta é o mesmo tipo de objeto com parâmetro diferente. A detecção de exoplaneta mostra o limite do método: trânsito mede raio, velocidade radial mede massa, e cada técnica enxerga uma faixa de sistema. A atmosfera do exoplaneta só aparece quando o trânsito permite medir a luz que atravessa, e a medida é minúscula.",
+      quebra:
+        "Explicar a atmosfera planetária só pela distância do Sol. A composição e a massa também decidem o que fica e o que escapa. A distância é parte da conta, não a conta inteira. A composição medida por espectro é a de uma camada, e o interior do planeta tem de ser inferido por modelo e por sismo.",
+      limite:
+        "O dado de missão é caro e esparso, e o modelo tem de preencher lacuna. A extrapolação para outro planeta exige cuidado, porque o parâmetro medido é local.",
+      levar: "Planeta é sistema: atmosfera, superfície e interior respondem juntos.",
+      maos:
+        "Compare o balanço de energia de dois planetas com atmosferas diferentes.",
+      pergunta: {
+        q: "Por que Marte perdeu a água líquida da superfície?",
+        a: "Porque a atmosfera fina mantém pressão baixa e a água evapora ou congela",
+        why: "Pressão e temperatura baixas deixam a água instável na superfície; a perda atmosférica ao longo do tempo agravou o quadro.",
+      },
+    },
+  },
 };
 
 // o nome da estação chega em caixa baixa do banco ("Grafos moleculares") e em
