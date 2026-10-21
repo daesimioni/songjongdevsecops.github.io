@@ -1423,6 +1423,205 @@ export const LICOES = {
       },
     },
   },
+  "math-edo": {
+    "Equações Diferenciais Ordinárias (EDO)": {
+      contexto:
+        "Onde isso aparece: no decaimento de fármaco, no resfriamento do café e no circuito com capacitor. A equação relaciona a função e a derivada, e a solução é uma família. A condição inicial escolhe qual membro da família responde ao problema real.",
+      oQue:
+        "Equação diferencial relaciona uma função e suas derivadas. Descreve crescimento, decaimento, oscilação e difusão, e a ordem é a maior derivada presente. Equação linear tem solução geral como soma da particular com a homogênea, e a condição inicial fixa a constante.",
+      passos: [
+        "Classifique a equação por ordem e por linearidade.",
+        "Resolva a homogênea e ache uma solução particular.",
+        "Aplique a condição inicial para escolher a solução do problema.",
+      ],
+      exemplo:
+        "O decaimento radioativo segue a derivada proporcional à quantidade presente, e a solução é exponencial com meia-vida constante. A família de soluções tem infinitas exponenciais; saber que havia 100 gramas no início escolhe uma. Sem a condição inicial, a resposta é família, não resposta.",
+      quebra:
+        "Esquecer as condições iniciais e achar que a solução geral é a resposta do problema. A geral descreve todas as histórias possíveis; a inicial diz qual delas aconteceu.",
+      limite:
+        "Solução analítica existe para classe estreita de equações. Fora dela, a resposta vem por método numérico, com erro e estabilidade na conta, e o comportamento pode mudar de forma perto de singularidade.",
+      levar: "A equação desenha a família; a condição inicial aponta o membro.",
+      maos:
+        "Resolva a equação de decaimento e mostre duas soluções diferentes mudando só a condição inicial.",
+    },
+    "Equações Diferenciais Parciais (EDP)": {
+      contexto:
+        "Onde isso aparece: no calor que se espalha na barra, na onda na corda e na difusão de poluente. A incógnita depende de mais de uma variável, e a condição de contorno entra junto com a inicial. Sem contorno, a conta não descreve o domínio real.",
+      oQue:
+        "EDP relaciona derivadas parciais de uma função de várias variáveis. Ela descreve campo e meio contínuo, onde o valor em cada ponto evolui junto com os vizinhos. A solução depende da equação, da condição inicial e da condição de contorno, e as três formam o problema.",
+      passos: [
+        "Classifique a equação: elíptica, parabólica ou hiperbólica.",
+        "Escreva as condições inicial e de contorno do domínio real.",
+        "Resolva por separação de variáveis ou por método numérico.",
+      ],
+      exemplo:
+        "A equação do calor numa barra com pontas em temperatura fixa tem solução que decai para o perfil estacionário. A forma da solução vem da série de Fourier, e o coeficiente de cada termo vem da condição inicial. Trocar a condição de contorno muda o destino, não só a velocidade.",
+      quebra:
+        "Resolver a equação sem olhar o contorno. A mesma EDP em domínio diferente tem solução diferente, e ignorar a borda produz resposta que não vale no problema. O contorno não é detalhe: é parte da definição.",
+      limite:
+        "Solução fechada existe para geometria simples e equação linear. Domínio irregular, coeficiente variável e não linearidade pedem discretização, e aí entram malha, estabilidade e custo.",
+      levar: "EDP é o meio contínuo: equação, início e borda andam juntos.",
+      maos:
+        "Resolva a equação do calor numa barra e mude a temperatura das pontas para ver o novo destino.",
+      pergunta: {
+        q: "O que a condição de contorno faz numa EDP?",
+        a: "Define o que acontece na borda do domínio e escolhe a solução",
+        why: "Sem ela o problema fica subdeterminado, e a mesma equação admite soluções incompatíveis com o domínio real.",
+      },
+    },
+    "Equações de Diferenças e Recorrências": {
+      contexto:
+        "Onde isso aparece: no juro composto, no algoritmo recursivo e na população que se conta por geração. O tempo é discreto, e o estado de hoje define o de amanhã. Iterar é rodar a regra, e o destino aparece depois de muitos passos.",
+      oQue:
+        "Equação de diferenças relaciona termos consecutivos de uma sequência, e recorrência é a regra que gera cada termo a partir dos anteriores. O sistema é dinâmico em tempo discreto: ponto fixo é valor que não muda, e estabilidade diz se a iteração volta para ele depois de uma perturbação.",
+      passos: [
+        "Escreva a recorrência e o valor inicial.",
+        "Ache o ponto fixo igualando o termo ao anterior.",
+        "Teste a estabilidade iterando a partir de valor próximo.",
+      ],
+      exemplo:
+        "A recorrência que multiplica por 1,1 a cada passo cresce sem parar, e o ponto fixo é zero, instável. Já a que faz média com o valor anterior converge para a média, e o ponto fixo é estável. A regra é parecida; a taxa decide o destino.",
+      quebra:
+        "Confundir recorrência com fórmula fechada. A recorrência descreve o passo, não o valor em n; para prever longe é preciso iterar ou resolver a forma fechada, e nem toda recorrência tem forma simples.",
+      limite:
+        "A análise de ponto fixo descreve comportamento local. Longe dele, ciclo e caos podem aparecer, e a linearização não decide. A simulação entra para ver o regime global.",
+      levar: "Recorrência é o futuro escrito em função do presente.",
+      maos:
+        "Itere a mesma recorrência com dois valores iniciais próximos e veja se as trajetórias se juntam ou se separam.",
+    },
+    "Sistemas Dinâmicos": {
+      contexto:
+        "Onde isso aparece: no pêndulo, no clima e na população de predador e presa. O estado evolui no tempo, e o retrato de fase mostra para onde as trajetórias vão. Ponto fixo, ciclo e atrator organizam a leitura.",
+      oQue:
+        "Sistema dinâmico descreve a evolução de um estado no tempo. Ponto fixo é estado que não muda; estabilidade indica se perturbação pequena desaparece; bifurcação é mudança qualitativa quando um parâmetro varia. O atrator é o conjunto para onde as trajetórias tendem.",
+      passos: [
+        "Escreva o estado e a regra de evolução.",
+        "Ache os pontos fixos e linearize em volta deles.",
+        "Varra o parâmetro para localizar bifurcação e mudança de regime.",
+      ],
+      exemplo:
+        "No pêndulo com atrito, o repouso é ponto fixo estável: empurrão pequeno volta. Sem atrito, o mesmo ponto deixa de ser atrator e a trajetória vira ciclo. A equação não mudou de forma; o parâmetro mudou o regime.",
+      quebra:
+        "Concluir estabilidade pelo gráfico de uma única simulação. Uma trajetória bonita não prova nada sobre as outras; a conclusão exige análise dos pontos fixos e do espaço de estados.",
+      limite:
+        "A linearização vale perto do ponto fixo. Em sistema não linear forte, o comportamento global pode ser caótico mesmo com todos os pontos fixos estáveis, e a conta local não vê.",
+      levar: "Dinâmica é mapa de destinos: para onde o estado vai quando o tempo passa.",
+      maos:
+        "Desenhe o retrato de fase de um pêndulo com e sem atrito e compare os destinos.",
+    },
+    "Equações Funcionais": {
+      contexto:
+        "Onde isso aparece: na média que precisa ser consistente, na função exponencial definida pela propriedade e no algoritmo que exige invariante. A incógnita é a função inteira, e a equação diz como ela se comporta ao combinar entradas.",
+      oQue:
+        "Equação funcional determina uma função por propriedade, sem derivada explícita. A equação de Cauchy é o exemplo clássico: a soma das entradas vira soma das saídas, e as soluções dependem das hipóteses. Estabilidade funcional pergunta se a propriedade aproximada ainda garante função próxima.",
+      passos: [
+        "Teste valores simples para descobrir candidatos.",
+        "Use as hipóteses de regularidade: continuidade, monotonicidade, mensurabilidade.",
+        "Verifique se a candidata satisfaz a equação em todo o domínio.",
+      ],
+      exemplo:
+        "A equação que pede soma virando soma tem a reta como solução quando se assume continuidade; sem essa hipótese, existem soluções patológicas construídas com base de Hamel. A hipótese não é enfeite: ela separa as soluções que a intuição aceita das que a definição permite. Em aplicação, a hipótese costuma vir da própria situação: a função é contínua porque descreve grandeza física que não salta.",
+      quebra:
+        "Achar que a propriedade sozinha determina a função. Sem hipótese de regularidade, a equação admite solução que ninguém espera. A hipótese precisa entrar antes da conclusão.",
+      limite:
+        "A estabilidade funcional garante proximidade, não igualdade, e a constante pode ser grande. Em aplicação, o erro tolerado decide se a garantia serve, e a constante da estabilidade pode ser grande o bastante para tornar a garantia inútil na prática, mesmo com o teorema verdadeiro.",
+      levar: "Equação funcional descreve o comportamento, não o desenho do gráfico.",
+      maos:
+        "Teste três funções na equação de Cauchy e veja quais cumprem a propriedade para todo par.",
+      pergunta: {
+        q: "Por que a equação funcional precisa de hipótese de regularidade?",
+        a: "Porque sem ela a equação admite soluções patológicas",
+        why: "A propriedade sozinha não impede função construída de forma arbitrária; continuidade ou monotonicidade restringe o conjunto de soluções.",
+      },
+    },
+  },
+  "math-otimizacao": {
+    "Otimização Matemática": {
+      contexto:
+        "Onde isso aparece: no custo de produção, no trajeto mais curto e no ajuste de modelo. A função objetivo diz o que se quer, e as restrições dizem o que é permitido. Em problema convexo, a busca local não engana.",
+      oQue:
+        "Otimização busca o melhor valor de uma função sujeita a restrições. Em problema convexo, todo mínimo local é global, e a garantia vem da forma da função e da região viável. Multiplicadores de Lagrange tratam restrição de igualdade, e a solução fica onde o gradiente da função é paralelo ao da restrição.",
+      passos: [
+        "Escreva a função objetivo e as restrições com unidade.",
+        "Verifique se o problema é convexo e se a região viável é fechada.",
+        "Resolva e confira se a solução está na fronteira ou no interior.",
+      ],
+      exemplo:
+        "Minimizar custo sujeito a produção mínima é problema linear, e o ótimo cai num vértice da região viável. Já a função com dois vales tem mínimo local falso, e a busca de gradiente para no primeiro que encontra. A convexidade é o que separa os dois casos.",
+      quebra:
+        "Tratar problema não convexo como se o mínimo local fosse o global. O algoritmo para no primeiro vale e devolve resposta que parece certa. Sem garantia de convexidade, a busca precisa de reinício ou de método global.",
+      limite:
+        "Convexidade garante o ótimo, mas não garante que ele seja único nem que o método convirja rápido. Condicionamento ruim faz a descida demorar, e a solução numérica tem erro.",
+      levar: "O ótimo é o melhor valor que respeita as restrições, não o melhor valor imaginável.",
+      maos:
+        "Desenhe duas funções, uma convexa e outra com dois vales, e veja onde a busca de gradiente para.",
+    },
+    "Pesquisa Operacional": {
+      contexto:
+        "Onde isso aparece: na rota de entrega, na fila do caixa e na escala de plantão. Modelo matemático entra na decisão, e a solução precisa caber no tempo de quem decide. A conta não escolhe por você; ela mostra o custo de cada escolha.",
+      oQue:
+        "Pesquisa operacional aplica modelo matemático à decisão: fila, transporte, alocação e escalonamento. Programação linear otimiza função linear com restrição linear, e a teoria das filas estuda espera e atendimento. O problema de transporte minimiza custo entre origem e destino.",
+      passos: [
+        "Formule o problema com variáveis, objetivo e restrições.",
+        "Escolha o modelo: linear, fila, transporte, escala.",
+        "Resolva e teste a sensibilidade do resultado ao dado de entrada.",
+      ],
+      exemplo:
+        "Distribuir estoque entre dois depósitos e três lojas é problema de transporte: o custo por rota entra na matriz, e a oferta e a demanda entram como restrição. A solução ótima deixa de usar a rota mais barata quando ela esgota a oferta. O modelo mostra a troca, não só o número.",
+      quebra:
+        "Arredondar a solução linear sem verificar se continua viável no problema inteiro. Meia entrega não existe, e o arredondamento pode violar restrição. A solução contínua é limite, não resposta final.",
+      limite:
+        "O modelo é tão bom quanto o dado: demanda errada produz plano errado com cara de ótimo. A realidade também muda enquanto o plano roda, e a decisão precisa de revisão.",
+      levar: "Pesquisa operacional transforma decisão em troca explícita.",
+      maos:
+        "Monte uma matriz de custo pequena e resolva a alocação ótima, depois mude um custo e veja a solução mudar.",
+    },
+    "Análise Numérica": {
+      contexto:
+        "Onde isso aparece: na raiz de equação sem fórmula, na integral sem primitiva e na simulação de engenharia. O resultado é aproximação com erro declarado, e a escolha do método importa. Velocidade sem estabilidade produz número errado rápido.",
+      oQue:
+        "Análise numérica resolve problema por aproximação controlada, com atenção a erro, estabilidade e custo. Erro de arredondamento cresce com o número de operações, e condicionamento mede a sensibilidade do problema à entrada. Método estável não amplifica perturbação pequena.",
+      passos: [
+        "Meça o condicionamento do problema antes de escolher o método.",
+        "Escolha o método pela estabilidade e pela ordem do erro.",
+        "Estime o erro e compare com a tolerância pedida.",
+      ],
+      exemplo:
+        "Somar um milhão de números muito pequenos em ponto flutuante acumula erro; somar em ordem crescente de magnitude reduz a perda. O problema é o mesmo, o algoritmo muda o resultado. Estabilidade é escolha, não sorte.",
+      quebra:
+        "Escolher algoritmo pela velocidade sem olhar estabilidade numérica. O método rápido que amplifica erro entrega resposta confiante e errada, e a diferença só aparece quando alguém confere com precisão maior.",
+      limite:
+        "O erro estimado depende do modelo de arredondamento e do dado. Em problema mal condicionado, nenhum algoritmo salva: a entrada já não determina a saída com precisão.",
+      levar: "Número calculado vem com erro; quem não declara o erro não sabe o que entregou.",
+      maos:
+        "Some a mesma lista em duas ordens e compare o resultado com a soma de precisão alta.",
+    },
+    "Computação Científica": {
+      contexto:
+        "Onde isso aparece: na previsão de tempo, no projeto de ponte e no ensaio virtual de motor. Simulação numérica ocupa supercomputador e transforma equação em conta. O resultado precisa de validação contra experimento, senão é desenho bonito.",
+      oQue:
+        "Computação científica resolve equação por simulação numérica, com modelagem, discretização e alto desempenho. A modelagem escolhe o que entra na equação, e a discretização escolhe como o contínuo vira malha. Matemática assistida por computador inclui prova verificada e cálculo simbólico.",
+      passos: [
+        "Escolha o modelo e a escala do fenômeno.",
+        "Discretize com malha adequada ao gradiente do campo.",
+        "Valide o resultado contra experimento ou solução conhecida.",
+      ],
+      exemplo:
+        "Simular o escoamento em volta de uma asa com malha grossa perde a camada-limite e prevê sustentação errada. Refinar a malha perto da parede melhora o resultado e multiplica o custo. O equilíbrio entre malha e tempo de máquina é decisão de engenharia, não de gosto. Em muitos casos, o modelo físico erra mais que a malha, e refinar a conta não resolve o erro de hipótese.",
+      quebra:
+        "Confiar no resultado da simulação sem validação. Malha, modelo de turbulência e condição de contorno podem errar juntos, e a imagem colorida não mostra o erro. Sem experimento ou caso conhecido, não há prova.",
+      limite:
+        "Refinar a malha tem custo que cresce rápido, e o modelo físico pode ser o limitante antes da malha. Em fenômeno multiescala, nenhuma malha única cobre tudo, e o acoplamento entre escalas vira o problema principal. Por isso a validação é feita em casos de referência antes do caso novo.",
+      levar: "Simulação é experimento de conta: precisa de modelo, malha e conferência.",
+      maos:
+        "Rode a mesma simulação com duas malhas e compare a diferença no ponto de interesse.",
+      pergunta: {
+        q: "Por que a simulação numérica precisa de validação experimental?",
+        a: "Porque modelo, malha e contorno podem errar juntos sem aviso",
+        why: "O resultado numérico herda as escolhas do modelador; só a comparação com dado real ou caso conhecido mostra se a conta representa o fenômeno.",
+      },
+    },
+  },
 };
 
 // o nome da estação chega em caixa baixa do banco ("Grafos moleculares") e em

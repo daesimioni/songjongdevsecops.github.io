@@ -14,7 +14,7 @@ const check = (ok, msg) => { if (!ok) problemas.push(msg); };
 const palavras = (html) => String(html).replace(/<[^>]+>/g, " ").split(/\s+/).filter(Boolean).length;
 
 // áreas que já ganharam lição escrita; o número sobe a cada fatia
-const AREAS_COM_LICAO = 23;
+const AREAS_COM_LICAO = 25;
 const areas = Object.keys(LICOES);
 check(areas.length === AREAS_COM_LICAO, `áreas com lição: ${areas.length}, esperado ${AREAS_COM_LICAO}`);
 

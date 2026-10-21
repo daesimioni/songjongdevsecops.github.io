@@ -125,6 +125,51 @@ const WORDS = {
   inter: ["Ponte", "Diálogo", "Modelo", "Método", "Dado", "Linguagem", "Experimento", "Prova", "Sistema", "Hipótese", "Medida"],
 };
 
+// O banco de cada área tem três temas, mas as seções têm de 3 a 11 estações e
+// nem sempre na mesma ordem. Antes a pergunta ia para a página de mesmo índice,
+// e em 21 áreas a página ensinava um assunto e cobrava outro. Aqui cada tema
+// procura a estação mais parecida pelo nome e pelos tópicos; o que não achar
+// casa vai para a primeira estação que ainda está sem tema.
+const tokensDoTema = (texto) =>
+  String(texto || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .split(/[^a-z0-9]+/)
+    .filter((w) => w.length > 3);
+
+function atribuirTemas(bank, estacoes) {
+  const usado = new Set();
+  const mapa = estacoes.map(() => -1);
+  estacoes.forEach((estacao, i) => {
+    const alvo = new Set([
+      ...tokensDoTema(estacao.nome),
+      ...(estacao.topicos || []).flatMap(tokensDoTema),
+    ]);
+    let melhor = -1;
+    let score = 0;
+    bank.forEach((tema, j) => {
+      if (usado.has(j)) return;
+      const pontos = tokensDoTema(tema.name).filter((w) => alvo.has(w)).length;
+      if (pontos > score) {
+        score = pontos;
+        melhor = j;
+      }
+    });
+    if (melhor >= 0) {
+      usado.add(melhor);
+      mapa[i] = melhor;
+    }
+  });
+  bank.forEach((_, j) => {
+    if (usado.has(j)) return;
+    const livre = mapa.findIndex((m) => m < 0);
+    if (livre >= 0) mapa[livre] = j;
+    usado.add(j);
+  });
+  return mapa;
+}
+
 export function buildCatalogContent() {
   const areas = [];
   const sites = [];
@@ -212,6 +257,7 @@ export function buildCatalogContent() {
       }));
     }
 
+    const temasDasEstacoes = atribuirTemas(bank, lista.map((x) => ({ nome: x.nome, topicos: x.topicos })));
     lista.forEach((item, i) => {
       const postId = `${area.id}-${i + 1}`;
       const siteName = titleCase(item.nome);
@@ -229,7 +275,8 @@ export function buildCatalogContent() {
         catalog: true,
       });
       const inter = item.bankTopic ? (SECAO_TEXT[area.num] || INTER_TEXT[area.num]) : null;
-      const tema = item.bankTopic || bank[i] || null;
+      const indiceTema = temasDasEstacoes[i] ?? -1;
+      const tema = item.bankTopic || (indiceTema >= 0 ? bank[indiceTema] : null);
       const licao = licaoDe(area.id, item.nome);
       const corpo = licao
         ? subareaBody({
