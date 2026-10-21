@@ -5139,6 +5139,254 @@ export const LICOES = {
       },
     },
   },
+  "lingua-oralidade": {
+    "Conversação": {
+      contexto:
+        "Onde isso aparece: na reunião, na entrevista e na conversa de balcão. A fala é negociada em turno, e a pausa sinaliza a troca. Quem só espera a vez de falar não escuta, e o mal-entendido cresce.",
+      oQue:
+        "Conversação é atividade cooperativa com tomada de turno, marcador e reparo. A pausa e a entonação sinalizam que a vez passou, e o marcador organiza o que vem. A escuta ativa confirma e retoma o que o outro disse antes de responder.",
+      passos: [
+        "Deixe o outro terminar e confirme o que entendeu.",
+        "Use marcador para organizar a fala e devolver a vez.",
+        "Repare o mal-entendido na hora, antes de acumular.",
+      ],
+      exemplo:
+        "Numa reunião, quem repete o pedido em outras palavras antes de responder pega o desvio cedo. Quem responde no primeiro segundo costuma responder ao que imaginou, não ao que foi dito. A confirmação custa uma frase e evita retrabalho.",
+      quebra:
+        "Interromper para discordar antes de o outro concluir. A interrupção troca a escuta por defesa, e a conversa vira disputa. O turno perdido leva a informação embora. A pausa curta também comunica: quem não devolve a vez domina a conversa e o outro desiste de falar. O silêncio de quem escuta também é resposta e convida o outro a continuar.",
+      limite:
+        "A regra de turno varia com cultura e situação. Em emergência e em ambiente hierárquico, a fala é mais direta, e a leitura de contexto decide o que vale.",
+      levar: "Escutar é confirmar antes de responder.",
+      maos:
+        "Em cinco minutos de conversa, resuma o que o outro disse antes de dar sua opinião.",
+    },
+    "Apresentações": {
+      contexto:
+        "Onde isso aparece: na defesa de projeto, na venda e na aula. A fala carrega o recado, e o slide apoia. Slide demais desvia a atenção do que se diz.",
+      oQue:
+        "Apresentação tem abertura, desenvolvimento e fecho. A abertura anuncia assunto e objetivo, e o fecho pede a decisão. O ensaio reduz o vício de ler o roteiro, e o slide serve de apoio visual, não de script.",
+      passos: [
+        "Abra com assunto e objetivo em uma frase.",
+        "Reduza o slide ao número ou à imagem que sustenta a fala.",
+        "Ensaie em voz alta e cronometre.",
+      ],
+      exemplo:
+        "Quem lê o slide deixa de olhar para a plateia e perde a entonação. A mesma informação dita com um número na tela prende mais. O slide é o apoio, e a fala é o conteúdo. A abertura precisa dizer o que se quer da plateia no fim, senão a apresentação termina sem decisão. O fecho precisa repetir o pedido em uma frase, com prazo e responsável.",
+      quebra:
+        "Colocar todo o texto no slide e ler. A atenção se divide entre ler e ouvir, e a fala perde função. O texto longo ainda convida a plateia a ler na frente de quem fala.",
+      limite:
+        "O estilo de slide depende do contexto. Relatório enviado precisa de texto, e apresentação ao vivo precisa de pouco texto. O mesmo material não serve aos dois.",
+      levar: "O slide apoia a fala; não a substitui.",
+      maos:
+        "Refaça um slide cheio de texto em um slide com um número e uma frase.",
+    },
+    "Debate": {
+      contexto:
+        "Onde isso aparece: no plenário, na reunião e na entrevista. O argumento responde ao que foi dito, e a evidência sustenta. Conceder um ponto fortalece a credibilidade.",
+      oQue:
+        "Debate é troca de argumento com réplica e tréplica. Responder ao argumento do outro com evidência fortalece a posição, e interromper não é argumentar. Conceder um ponto verdadeiro mostra honestidade e aumenta o peso do resto.",
+      passos: [
+        "Resuma o argumento do outro antes de responder.",
+        "Responda com evidência ligada à pergunta.",
+        "Conceda o que for verdadeiro e siga.",
+      ],
+      exemplo:
+        "Quem responde à pergunta feita, em vez de repetir a tese, avança. Quem muda de assunto para evitar o ponto perde credibilidade. O debate é sobre a pergunta, não sobre a vitória.",
+      quebra:
+        "Falar mais alto e interromper como estratégia. O volume não é argumento, e a interrupção desgasta a imagem. O público percebe a troca de força por razão. A pergunta de esclarecimento, feita com calma, costuma desarmar mais que o contra-ataque. O ponto concedido com honestidade dá peso ao restante da fala, e a plateia percebe a diferença. Trocar acusação por pergunta sobre o dado costuma render mais que a resposta pronta.",
+      limite:
+        "A regra vale para debate de boa-fé. Em ambiente de propaganda, o adversário pode não jogar com as mesmas regras, e a resposta precisa de outra estratégia.",
+      levar: "Responder ao argumento vale mais que repetir a tese.",
+      maos:
+        "Em um debate curto, resuma o ponto do outro antes de responder. A réplica boa cita a fala anterior e mostra onde o dado muda a conclusão, e o público acompanha o raciocínio.",
+    },
+  },
+  "lingua-historia": {
+    "Formação do Português": {
+      contexto:
+        "Onde isso aparece: na etimologia, no dicionário e no sotaque regional. O português vem do latim vulgar falado, não do latim clássico escrito. O contato com outros povos deixou marca no vocabulário.",
+      oQue:
+        "O português nasce do latim vulgar na Península Ibérica, e o galego-português medieval deu origem ao português e ao galego. O árabe entrou em áreas como agricultura e matemática, e o contato com outros povos somou léxico. A língua que se fala é resultado de história.",
+      passos: [
+        "Identifique a camada histórica da palavra: latim, árabe ou empréstimo moderno.",
+        "Veja a mudança fonética que separa a forma antiga da atual.",
+        "Compare a mesma raiz em outra língua românica.",
+      ],
+      exemplo:
+        "A palavra para ofício e a para número vieram do árabe e mostram o contato na península. A forma latina aparece em outra camada, e a comparação com o espanhol revela a mesma raiz. A língua guarda o mapa do contato.",
+      quebra:
+        "Achar que o português descende direto do latim clássico dos livros. A base é a fala vulgar, com mudança própria, e a forma clássica é referência culta, não a origem direta. A mudança de som entre o latim e o português atual segue padrão que se reconhece em série de palavra.",
+      limite:
+        "A história registrada cobre parte do caminho. Antes da escrita, a reconstrução é por comparação entre línguas, e o detalhe fica hipótese.",
+      levar: "O português é latim vulgar com séculos de contato.",
+      maos:
+        "Compare três palavras portuguesas com o equivalente em outra língua românica.",
+    },
+    "Mudanças Linguísticas": {
+      contexto:
+        "Onde isso aparece: na palavra que mudou de sentido, no sotaque e no empréstimo. A língua muda sempre, e a mudança tem padrão. Empréstimo lexical entra por contato cultural.",
+      oQue:
+        "Mudança linguística pode ser fonética, semântica ou lexical. A mudança fonética pode ser regular em série de palavras, e a semântica altera o sentido do termo. O empréstimo entra por contato, e a língua muda sem passar por decreto.",
+      passos: [
+        "Compare a forma antiga e a atual da palavra.",
+        "Veja se a mudança é de som, de sentido ou de empréstimo.",
+        "Procure o padrão na série de palavra afetada.",
+      ],
+      exemplo:
+        "A palavra que hoje significa algo pode ter começado com sentido mais estreito e ampliado com o uso. O empréstimo recente entra pelo comércio e pela tecnologia e se adapta à fonologia da casa. A mudança não é erro: é processo datado. A forma que hoje parece correta foi inovação em outro momento, e o dicionário registra o ponto de chegada.",
+      quebra:
+        "Tratar mudança como erro e a forma antiga como a correta para sempre. A norma registra um momento, e a língua viva segue. A confusão gera preconceito, não conhecimento. A escola ensina a norma e precisa ensinar também que a variedade do aluno tem regra própria. Sem isso, o aluno aprende a esconder a fala de casa em vez de aprender a segunda variedade. A norma é ferramenta de acesso, e o ensino que humilha fecha a porta.",
+      limite:
+        "A regularidade da mudança fonética vale para boa parte do léxico e não para todo. Empréstimo recente e forma erudita escapam do padrão, e a exceção precisa de explicação própria.",
+      levar: "Língua viva muda: a norma fotografa, não congela.",
+      maos:
+        "Escolha três palavras e conte a mudança de som ou de sentido de cada uma.",
+    },
+    "Políticas Linguísticas": {
+      contexto:
+        "Onde isso aparece: no acordo ortográfico, no currículo e na proteção de língua minoritária. A norma padrão é escolha histórica, não superioridade natural. A lei pode proteger ou apagar uma língua.",
+      oQue:
+        "Política linguística decide a norma, o ensino e a proteção. A norma padrão é escolha histórica, e a língua minoritária pode ser protegida por lei. O acordo ortográfico muda a grafia oficial e não muda a fala.",
+      passos: [
+        "Identifique quem decidiu a norma e com quais critérios.",
+        "Veja o que a medida alcança: escrita, ensino ou fala.",
+        "Compare com o efeito sobre a língua minoritária.",
+      ],
+      exemplo:
+        "O acordo ortográfico unificou a grafia sem mudar a pronúncia. Falante continua pronunciando do mesmo jeito, e o texto troca a forma escrita. A decisão é política e acontece no papel.",
+      quebra:
+        "Tratar a norma padrão como a única forma correta de falar. A regra é escolha de uma variedade, e as outras não são defeito. O preconceito linguístico nasce dessa confusão.",
+      limite:
+        "Política de proteção tem custo e limite. Garantir a língua na escola não garante falante, e a vitalidade depende do uso na comunidade. A política de língua também se faz no material escolar e no meio de comunicação, e a presença pública sustenta o uso, junto com a transmissão entre geração na família, que é o que mantém a língua viva no dia a dia.",
+      levar: "Norma é escolha, não superioridade.",
+      maos:
+        "Compare a grafia antiga e a nova de uma palavra e veja se a pronúncia muda.",
+    },
+  },
+  "lingua-lexico": {
+    "Lexicologia": {
+      contexto:
+        "Onde isso aparece: no dicionário, na tradução e no texto jurídico. Sinônimo próximo raramente é intercambiável. A palavra pode acumular sentido, e o contexto decide qual vale.",
+      oQue:
+        "Lexicologia estuda o léxico e a relação entre palavra. Polissemia é a palavra com vários sentidos relacionados, e homonímia é a coincidência de forma com sentidos distintos. Sinônimo próximo não é intercambiável em todo contexto.",
+      passos: [
+        "Veja se os sentidos estão relacionados: polissemia ou homonímia.",
+        "Teste a troca do sinônimo no contexto real.",
+        "Confira o uso no domínio do texto.",
+      ],
+      exemplo:
+        "A palavra pode significar um objeto e também o ato de usá-lo, de forma relacionada, e isso é polissemia. Já duas palavras de forma igual com origem diferente são homônimas. O critério é a relação de sentido. A etimologia ajuda: sentidos que vieram da mesma raiz são polissemia, e formas que coincidiram por acaso são homonímia. O dicionário separa os verbetes quando a origem é outra, e o leitor precisa do contexto para escolher o sentido. A definição no dicionário lista os sentidos, e a ordem costuma refletir a frequência de uso.",
+      quebra:
+        "Usar o dicionário como lista de sinônimo intercambiável. A troca muda o tom e às vezes o sentido, e o texto fica estranho. O contexto é o juiz da escolha.",
+      limite:
+        "A fronteira entre polissemia e homonímia nem sempre é clara, e a origem ajuda a decidir. Em palavra antiga, a etimologia pode ser incerta, e a classificação fica convenção.",
+      levar: "Sinônimo é próximo; não é igual.",
+      maos:
+        "Teste dois sinônimos em três frases e veja em qual a troca falha.",
+    },
+    "Terminologia": {
+      contexto:
+        "Onde isso aparece: no manual, no contrato e no artigo científico. O termo técnico tem sentido fixo no domínio. A consistência evita que o leitor pense que são coisas diferentes.",
+      oQue:
+        "Terminologia fixa o termo dentro do domínio. O sentido é definido por convenção e documentado, e a consistência evita mal-entendido. O glossário garante que o leitor use a mesma definição do autor.",
+      passos: [
+        "Defina o termo na primeira ocorrência.",
+        "Use a mesma forma no texto inteiro.",
+        "Registre a definição no glossário.",
+      ],
+      exemplo:
+        "Trocar o nome do mesmo processo no meio do manual faz o leitor procurar duas coisas. A consistência economiza leitura e evita erro de execução. O termo é ferramenta, não estilo.",
+      quebra:
+        "Variar a palavra para não repetir e trocar o termo técnico. A variação estilística confunde quando o termo é definido. No texto técnico, repetir o termo certo é qualidade. A definição na primeira ocorrência e o glossário no fim formam o par que sustenta a leitura. O revisor ainda confere se o termo definido é o termo usado, porque trocar um pelo outro no meio do texto cria ambiguidade. O glossário é a âncora que segura a leitura de quem entra no assunto.",
+      limite:
+        "A consistência vale dentro do domínio. O mesmo termo pode ter sentido diferente em outra área, e o glossário do texto precisa declarar o escopo.",
+      levar: "Termo técnico é contrato de sentido dentro do domínio.",
+      maos:
+        "Procure no texto um termo usado com duas formas e unifique. O glossário de um manual técnico costuma ter de dez a trinta verbete, e a lista curta facilita a consulta; o glossário longo demais ninguém lê.",
+    },
+    "Dicionários e Glossários": {
+      contexto:
+        "Onde isso aparece: no dicionário, no glossário do livro e no tesauro. O dicionário pode descrever o uso ou prescrever a norma. O glossário é limitado ao texto ou ao domínio.",
+      oQue:
+        "Dicionário pode ser descritivo, que registra o uso, ou prescritivo, que fixa a norma. O glossário explica termo usado num texto ou domínio, e o tesauro agrupa por campo semântico. Cada obra responde a uma pergunta diferente.",
+      passos: [
+        "Defina o público e a pergunta da obra.",
+        "Escolha descritivo ou prescritivo.",
+        "Limite o glossário ao texto e ligue ao uso real.",
+      ],
+      exemplo:
+        "Dicionário de língua registra o uso corrente e inclui gíria; manual de redação prescreve a forma. O glossário da norma técnica lista só o termo daquele documento. Trocar as obras troca a resposta.",
+      quebra:
+        "Usar dicionário prescritivo para julgar a fala de uma comunidade. A fala segue a variedade, e a norma é uma escolha. O julgamento vira preconceito.",
+      limite:
+        "Nenhuma obra cobre a língua inteira. O dicionário é recorte e data, e o termo novo demora a entrar. A ausência não significa que a palavra não exista. O dicionário registra o uso que o editor julgou estável, e a escolha do verbete também é decisão de obra. O leitor precisa saber qual recorte a obra adota, senão conclui que a palavra não existe. O recorte declarado logo na abertura evita a conclusão errada sobre o que ficou de fora.",
+      levar: "Dicionário descreve ou prescreve; o glossário explica o texto.",
+      maos:
+        "Compare a definição de um termo no dicionário e no glossário de uma norma.",
+    },
+  },
+  "lingua-traducao": {
+    "Tradução": {
+      contexto:
+        "Onde isso aparece: no livro, no manual e na legenda. Traduzir é transportar sentido, não palavra. O contexto e o gênero orientam a escolha.",
+      oQue:
+        "Tradução transporta sentido entre línguas. A tradução palavra por palavra costuma falhar porque expressão e sentido não funcionam igual nos dois idiomas. O contexto e o gênero orientam a escolha, e o termo técnico costuma ter equivalente fixo.",
+      passos: [
+        "Leia o trecho inteiro antes de traduzir a frase.",
+        "Escolha a equivalência pelo efeito, não pela forma.",
+        "Confira o termo técnico no glossário da área.",
+      ],
+      exemplo:
+        "Expressão idiomática traduzida ao pé da letra vira frase sem sentido no idioma de chegada. A tradução boa encontra a expressão equivalente, mesmo com palavra diferente. O leitor precisa sentir o mesmo efeito. O tradutor precisa conhecer as duas culturas, porque a expressão carrega história que a palavra sozinha não carrega. A nota do tradutor existe para isso: registrar o que a tradução deixou de fora. A escolha do que preservar depende do público: leitor técnico e leitor geral precisam de soluções diferentes.",
+      quebra:
+        "Traduzir palavra por palavra e chamar de fidelidade. A fidelidade é ao sentido, e a forma literal pode trair. O texto fica estranho mesmo com cada palavra correta.",
+      limite:
+        "Toda tradução perde algo: som, ambiguidade, registro. A escolha do que preservar é decisão do tradutor, e a nota explica o que ficou de fora.",
+      levar: "Traduzir é transportar efeito, não palavra.",
+      maos:
+        "Traduza uma expressão idiomática pelo efeito e compare com a versão literal.",
+    },
+    "Revisão e Editoração": {
+      contexto:
+        "Onde isso aparece: no original, na prova e na publicação. Revisão ajusta língua e sentido, e editoração prepara o texto para sair. A correção de prova é a última barreira antes de imprimir.",
+      oQue:
+        "Revisão e editoração são etapas diferentes. A revisão ajusta língua e sentido, e a editoração prepara a publicação, com padrão, marcação e prova. Revisar em duas passadas pega mais erro que uma leitura única.",
+      passos: [
+        "Faça a primeira passada pelo sentido e pela estrutura.",
+        "Faça a segunda pela língua e pela norma.",
+        "Confira a prova contra o texto aprovado.",
+      ],
+      exemplo:
+        "Uma passada pega o erro de concordância e deixa passar o parágrafo fora de ordem. A segunda leitura, com outro foco, pega o que a primeira não viu. O olho cansa e o foco troca.",
+      quebra:
+        "Tratar revisão e editoração como a mesma coisa. O texto revisado mas não editorado sai com marcação errada, e o preparado sem revisão sai com erro de língua. As duas etapas cobrem falhas diferentes.",
+      limite:
+        "A revisão não substitui o autor. Mudança de sentido é decisão dele, e o revisor aponta. Sem essa fronteira, o texto perde a voz. A prova final compara texto e marcação, e a assinatura de aprovação é o registro de que a barreira foi cumprida. O padrão editorial garante que capítulo, nota e referência saiam no mesmo formato, e a lista de verificação fecha a etapa antes do envio para a gráfica.",
+      levar: "Revisão cuida do texto; editoração cuida da publicação.",
+      maos:
+        "Revise um parágrafo em duas passadas, uma de sentido e uma de língua.",
+    },
+    "Português para Estrangeiros": {
+      contexto:
+        "Onde isso aparece: na aula, no material e na conversa real. O aprendiz traz a estrutura da língua materna. O gênero gramatical é difícil quando não existe na origem.",
+      oQue:
+        "Português para estrangeiro ensina língua com foco no uso. O gênero gramatical é difícil para quem vem de língua sem gênero, e o verbo com preposição pede prática. O contexto autêntico acelera a aprendizagem.",
+      passos: [
+        "Identifique a estrutura que falta na língua materna.",
+        "Pratique em contexto autêntico, não só em regra.",
+        "Corrija o erro recorrente sem interromper toda fala.",
+      ],
+      exemplo:
+        "Aprendiz sem gênero na língua materna erra o artigo e o adjetivo por sistema, não por descuido. A correção precisa trabalhar o par artigo-substantivo junto. A regra isolada não resolve.",
+      quebra:
+        "Corrigir todo erro no meio da fala. A correção constante trava a fluência e o aprendiz para de arriscar. A correção escolhida, no momento certo, ensina mais.",
+      limite:
+        "O material didático não cobre a variação real. Sotaque, gíria e registro mudam por região, e a exposição ao uso autêntico completa o curso. O erro do aprendiz segue a lógica da língua dele, e entender essa lógica ensina mais que corrigir caso a caso.",
+      levar: "Aprender língua é praticar uso, não decorar regra.",
+      maos:
+        "Explique a regra de gênero com três pares de substantivo e adjetivo. A prática em contexto autêntico vale mais que a tabela de exceção, e o erro recorrente precisa de retorno específico.",
+    },
+  },
 };
 
 // o nome da estação chega em caixa baixa do banco ("Grafos moleculares") e em
