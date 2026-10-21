@@ -1,8 +1,29 @@
 // Bichos das caçadas desenhados na unha, em blocos, para o mapa e para a
 // janela de duelo usarem o mesmo desenho.
+// ruído 1D determinístico: a respiração do bicho não é um seno de período fixo
+function ruido(t) {
+  const i = Math.floor(t);
+  const f = t - i;
+  const h = (n) => {
+    const x = Math.sin(n * 127.1 + 311.7) * 43758.5453;
+    return x - Math.floor(x);
+  };
+  const a = h(i);
+  const b = h(i + 1);
+  const u = f * f * (3 - 2 * f);
+  return a + (b - a) * u;
+}
+
+function sementeDe(txt) {
+  let h = 0;
+  for (let i = 0; i < txt.length; i++) h = (h * 31 + txt.charCodeAt(i)) >>> 0;
+  return h % 97;
+}
+
 export function drawCreature(ctx, kind, accent, time = 0, scale = 1, dir = 0) {
   const boss = kind === "boss";
-  const bob = Math.sin(time * 0.004 + (boss ? 1.7 : 0)) * (boss ? 1.8 : 1.1);
+  const s = sementeDe(String(kind));
+  const bob = (ruido(time * 0.0011 + s) - 0.5) * (boss ? 3.2 : 2.2);
   // oito direções: espelha para a esquerda e inclina um pixel na diagonal
   const vira = dir === 1 || dir === 4 || dir === 6 ? -1 : 1;
   const deLado = dir === 1 || dir === 2 || dir >= 4;

@@ -715,7 +715,14 @@ export function createWorld() {
     n.ty = n.hy;
   }
 
+  // clima corrente: na chuva o morador recolhe, anda menos e espera mais
+  let clima = "limpo";
+  function setClima(id) {
+    clima = String(id || "limpo");
+  }
+
   function updateNpcs(dt, t) {
+    const molhado = clima === "chuva" ? 0.55 : 1;
     for (const n of npcs) {
       if (t < n.waitUntil) {
         n.moving = false;
@@ -724,11 +731,11 @@ export function createWorld() {
       const d = Math.hypot(n.tx - n.x, n.ty - n.y);
       if (d < 0.15) {
         n.moving = false;
-        n.waitUntil = t + 1400 + rand() * 5200;
+        n.waitUntil = t + (1400 + rand() * 5200) / molhado;
         pickNpcTarget(n);
         continue;
       }
-      const step = Math.min(d, n.speed * dt);
+      const step = Math.min(d, n.speed * dt * molhado);
       const nx = n.x + ((n.tx - n.x) / d) * step;
       const ny = n.y + ((n.ty - n.y) / d) * step;
       let moved = false;
@@ -1089,7 +1096,7 @@ export function createWorld() {
   return {
     tiles, decor, props, stations, waystones, npcs, hunters, monsters, caves, groundItems, takeGroundItem,
     cat: { ...CAT_SPAWN, facing: 1, t: 0, moving: false },
-    get, set, isSolidTile, boxCollides, updateNpcs,
+    get, set, isSolidTile, boxCollides, updateNpcs, setClima,
     continentAt, continentAtTile, areaAt, areaAtTile,
     markExplored, isExplored, setExplored,
     get exploredVersion() { return exploredVersion; },

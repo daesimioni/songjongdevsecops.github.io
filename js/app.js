@@ -250,6 +250,28 @@ const sheetUi = createSheet({
   },
   onInventory: () => openInventory(),
 });
+// ---- ganchos do ambiente: o que acontece no céu chega no HUD e na coleta ----
+const AVISO_CLIMA = {
+  chuva: "Chuva no vale: o peixe morde melhor.",
+  neblina: "Neblina baixou: enxerga menos longe.",
+  rajada: "Rajada forte: o capim deita.",
+  revoada: "Revoada: os bichos levantaram.",
+  vagalumes: "Vagalumes: a noite acendeu.",
+  meteoro: "Um meteoro cruzou o vale.",
+  calmaria: "Calmaria: o mar alisou.",
+  silencio: "O vale ficou em silêncio.",
+};
+for (const [id, aviso] of Object.entries(AVISO_CLIMA)) {
+  renderer.ambiente.on(`${id}:comeca`, () => {
+    if (state.started) toast(aviso, 3400);
+  });
+  // o morador recolhe na chuva e volta a passear quando ela passa
+  if (id === "chuva") {
+    renderer.ambiente.on("chuva:comeca", () => world.setClima("chuva"));
+    renderer.ambiente.on("chuva:termina", () => world.setClima("limpo"));
+  }
+}
+
 const inventoryUi = createInventoryUI({
   rpg,
   toast,
@@ -864,8 +886,10 @@ function gatherContinent() {
 }
 
 function openGather(kind, extra = {}) {
-  // ervanário coleta raro com mais frequência, além do bônus da vocação
-  const coleta = rpg.bonus().coleta * (rpg.data.sub === "ervanario" ? 1.5 : 1);
+  // ervanário coleta raro com mais frequência, além do bônus da vocação; na
+  // chuva o peixe morde melhor (gancho do ambiente)
+  const chuva = renderer.ambiente.eventoAtual?.evento?.id === "chuva";
+  const coleta = rpg.bonus().coleta * (rpg.data.sub === "ervanario" ? 1.5 : 1) * (chuva ? 1.3 : 1);
   const reward = rollGather(kind, Math.random, { ...extra, coleta });
   if (!gatherUi.open({
     kind,
