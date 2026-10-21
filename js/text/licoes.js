@@ -1799,6 +1799,194 @@ export const LICOES = {
       },
     },
   },
+  "math-discreta": {
+    "Combinatória Enumerativa": {
+      contexto:
+        "Onde isso aparece: na senha, na fila, no campeonato e no teste de sorteio. Contar não é listar: é achar a estrutura da escolha. Permutação ordena, combinação só escolhe, e a diferença entre as duas é o fator que decide a conta.",
+      oQue:
+        "Combinatória conta arranjos, escolhas e estruturas finitas. O princípio multiplicativo encadeia escolhas independentes, e o aditivo soma casos que não se sobrepõem. Função geradora transforma a contagem em coeficiente de série, e inclusão-exclusão corrige a contagem que contou duas vezes.",
+      passos: [
+        "Decida se a ordem importa e se a repetição é permitida.",
+        "Escolha entre permutação, arranjo e combinação.",
+        "Corrija sobreposição com inclusão-exclusão quando os casos se cruzam.",
+      ],
+      exemplo:
+        "Uma comissão de duas pessoas num grupo de cinco não tem ordem: escolher Ana e Bia é o mesmo que Bia e Ana. A conta é cinco vezes quatro dividido por dois, que dá dez. Já uma fila de duas pessoas do mesmo grupo tem ordem e dá vinte. A divisão pela permutação dos escolhidos é o que corrige a contagem.",
+      quebra:
+        "Contar arranjo quando o problema pede combinação. A resposta sai multiplicada pelo fatorial dos escolhidos, e o erro passa despercebido quando o número é grande. Perguntar se a ordem importa resolve antes de calcular.",
+      limite:
+        "A fórmula fechada vale para conjunto sem estrutura especial. Com restrição de vizinhança, grupo repetido ou simetria, a contagem direta erra e pede inclusão-exclusão ou função geradora.",
+      levar: "Conte escolhas, não listas: a estrutura decide a fórmula.",
+      maos:
+        "Conte as comissões de duas pessoas de cinco e confira listando os pares.",
+    },
+    "Teoria dos Grafos": {
+      contexto:
+        "Onde isso aparece: na rota de entrega, na rede social e na dependência entre tarefas. Vértice é coisa, aresta é relação, e a pergunta vira estrutura. Caminho, ciclo e conectividade respondem quase tudo.",
+      oQue:
+        "Grafo é conjunto de vértices ligados por arestas. Modela rede, rota, dependência e amizade. Árvore é grafo conectado e sem ciclo; planar é o que desenha sem cruzamento; coloração separa vizinhos em grupos, e grafo de fluxo carrega capacidade na aresta.",
+      passos: [
+        "Desenhe os vértices e as arestas do problema.",
+        "Verifique conectividade e presença de ciclo.",
+        "Escolha o algoritmo pela estrutura: busca, coloração ou fluxo.",
+      ],
+      exemplo:
+        "Numa rede de sete cidades, uma árvore conecta todas com seis estradas e nenhum caminho alternativo: tirar uma estrada parte a rede. Acrescentar a sétima estrada cria um ciclo, e aí existe rota alternativa. Conectado e sem ciclo é a definição que garante o número de arestas.",
+      quebra:
+        "Chamar de árvore todo grafo conectado. Conectividade sozinha não basta: com ciclo, o grafo deixa de ser árvore e a contagem de arestas muda.",
+      limite:
+        "A intuição de desenho falha em grafo grande e em grafo não planar. Propriedade como planaridade e número cromático exige prova, não figura.",
+      levar: "Grafo é relação desenhada: conexão e ciclo dizem o resto.",
+      maos:
+        "Monte uma árvore de cinco vértices e depois acrescente uma aresta para ver o ciclo nascer.",
+    },
+    "Combinatória Extremal": {
+      contexto:
+        "Onde isso aparece: no limite de conexão de uma rede, no tamanho de conjunto sem padrão proibido e no campeonato sem empate. A pergunta é quanto cabe antes de a estrutura obrigar certo padrão. Ramsey mostra que, em conjunto grande, padrão aparece de qualquer jeito. O exemplo mais conhecido é o jantar de seis pessoas: sempre há três que se conhecem todas ou três que não se conhecem nenhuma, e o número exigido para casos maiores ainda é mistério.",
+      oQue:
+        "Combinatória extremal pergunta o maior ou o menor tamanho de estrutura que evita ou força uma propriedade. O teorema de Ramsey diz que em grupo grande sempre existe subconjunto organizado, e o extremal clássico conta quantas arestas cabem sem formar triângulo. O resultado costuma ser limite, não fórmula exata.",
+      passos: [
+        "Formule a propriedade proibida ou exigida.",
+        "Construa exemplo que evita a propriedade e mostre o limite inferior.",
+        "Prove que acima daquele tamanho a propriedade aparece, fechando o limite superior.",
+      ],
+      exemplo:
+        "Num jantar com seis pessoas, sempre há três que se conhecem todas ou três que não se conhecem nenhuma. Isso é um caso pequeno de Ramsey. O número exato para casos maiores é desconhecido, e o que se prova são cotas: o padrão aparece antes do que a intuição espera.",
+      quebra:
+        "Achar que o número de Ramsey é fácil de calcular por tentativa. Os valores crescem rápido e são desconhecidos além de casos pequenos. Confundir cota com valor exato leva a afirmação falsa.",
+      limite:
+        "Cotas extremas costumam ser frouxas, e o valor exato é difícil. Em aplicação, o limite garante existência, mas não dá construção explícita.",
+      levar: "Estrutura grande obriga padrão: é disso que Ramsey trata.",
+      maos:
+        "Desenhe um grafo de seis vértices colorido em duas cores e procure o triângulo monocromático.",
+      pergunta: {
+        q: "O que o teorema de Ramsey garante?",
+        a: "Que estrutura grande contém subconjunto organizado, de qualquer jeito",
+        why: "A garantia vale para qualquer coloração: em conjunto grande o padrão monocromático aparece, e o número de Ramsey mede o tamanho necessário.",
+      },
+    },
+    "Combinatória Algébrica": {
+      contexto:
+        "Onde isso aparece: na contagem de partição, na simetria de polinômio e na representação de grupo. A ideia é trocar a contagem direta por estrutura algébrica, e o coeficiente passa a carregar o número. Função simétrica resume a informação que a permutação não muda.",
+      oQue:
+        "Combinatória algébrica liga contagem a estrutura algébrica. Função simétrica é invariante por permutação e organiza partição; representação combinatória descreve objeto discreto com álgebra. A conta que era caso a caso vira coeficiente de produto.",
+      passos: [
+        "Identifique a simetria que o problema tem.",
+        "Escreva a função geradora ou simétrica correspondente.",
+        "Extraia o coeficiente da estrutura que se quer contar.",
+      ],
+      exemplo:
+        "O número de partições de um inteiro em partes pode ser lido no coeficiente da série que multiplica fatores de um sobre um menos x elevado a k. Cada fator representa uma parte possível, e o coeficiente conta as combinações. A lista infinita vira produto finito de leitura.",
+      quebra:
+        "Aplicar fórmula simétrica sem checar a simetria do problema. Se a estrutura não é invariante por permutação, a função simétrica conta outra coisa. A hipótese precisa valer antes da conta.",
+      limite:
+        "A tradução algébrica pode ser elegante e cara de calcular. Coeficiente de série grande exige método assintótico, e a forma fechada nem sempre existe. O preço da elegância é a conta: a série costuma crescer rápido, e o coeficiente exato sai por recorrência ou por computador. Em problema de contagem séria, a função geradora vem junto de estimativa assintótica e de conferência em casos pequenos.",
+      levar: "Contar com simetria é contar uma vez o que se repete.",
+      maos:
+        "Escreva a função geradora das partições de cinco e confira o coeficiente contando à mão."
+      ,
+      pergunta: {
+        q: "O que uma função simétrica preserva?",
+        a: "O valor quando as variáveis são permutadas",
+        why: "A invariância por permutação é a definição; ela permite resumir estruturas que só diferem pela ordem dos elementos.",
+      },
+    },
+    "Combinatória Probabilística": {
+      contexto:
+        "Onde isso aparece: na prova de que existe grafo com certa propriedade e no limite de algoritmo aleatório. O argumento é de existência: se a probabilidade de falhar é menor que um, então existe exemplo bom. Não se constrói o objeto; prova-se que ele tem de estar lá.",
+      oQue:
+        "Método probabilístico prova existência mostrando que escolha aleatória tem probabilidade positiva de dar certo. Estimativa de esperança e de desvio sustentam o argumento, e a conclusão é sobre existência, não sobre construção. É ferramenta de combinatória quando a contagem direta é inviável. Esse tipo de argumento resolve existência que a contagem exata não alcança, e o exemplo costuma ser encontrado depois, por busca dirigida.",
+      passos: [
+        "Escolha a distribuição aleatória sobre as estruturas.",
+        "Estime a probabilidade do evento ruim ou a esperança do parâmetro.",
+        "Conclua que existe estrutura fora do evento ruim.",
+      ],
+      exemplo:
+        "Para mostrar que existe grafo com número cromático alto e sem triângulo, o argumento sorteia arestas e mostra que a probabilidade de falhar nas duas condições é menor que um. Então algum grafo sorteado cumpre as duas. O método não diz qual, mas garante que existe.",
+      quebra:
+        "Confundir existência com construção. O método probabilístico garante que o objeto existe, mas não entrega o objeto. Quem precisa do grafo explícito tem de buscar algoritmo, não só o argumento.",
+      limite:
+        "A cota pode ser fraca e o objeto raro. Probabilidade positiva não diz que o sorteio comum acha o objeto, e a distribuição escolhida muda a força do resultado.",
+      levar: "Se a escolha aleatória acerta com chance maior que zero, o objeto existe.",
+      maos:
+        "Sorteie grafos pequenos e veja com que frequência aparece o padrão procurado.",
+      pergunta: {
+        q: "O que o método probabilístico prova em combinatória?",
+        a: "A existência de estrutura com a propriedade, sem construí-la",
+        why: "Se a probabilidade de sucesso é positiva, algum objeto da distribuição cumpre a propriedade; o argumento não entrega o objeto explicitamente.",
+      },
+    },
+    "Teoria dos Desenhos Combinatórios": {
+      contexto:
+        "Onde isso aparece: no planejamento de experimento, no torneio com rodada equilibrada e no quadrado latino de sudoku. O desenho reparte elementos em blocos com regra de incidência. A regra garante comparação justa entre tratamentos.",
+      oQue:
+        "Desenho combinatório organiza elementos em blocos com condição de incidência. Quadrado latino arranja símbolos sem repetir em linha nem coluna, e planejamento de experimento usa isso para separar efeito de tratamento de efeito de ordem. O desenho é estrutura, não enfeite de tabela.",
+      passos: [
+        "Defina tratamentos, blocos e a condição de balanceamento.",
+        "Construa o desenho ou verifique se o existente cumpre a condição.",
+        "Analise o resultado separando efeito de tratamento e de bloco.",
+      ],
+      exemplo:
+        "Um teste de quatro pneus em quatro carros pode ser organizado em quadrado latino: cada carro recebe os quatro pneus em ordem diferente, e cada posição recebe cada pneu uma vez. Assim, efeito de carro e de ordem não se confundem com efeito de pneu. O desenho é o que permite comparar. Em experimento agrícola, o desenho em blocos completos ao acaso foi o que separou efeito de solo do efeito de variedade, e a lição vale para qualquer área.",
+      quebra:
+        "Usar desenho desbalanceado e analisar como se fosse balanceado. O efeito de bloco entra na conta como se fosse tratamento, e a conclusão sai torta. O balanceamento é condição de validade.",
+      limite:
+        "O desenho existe para certos parâmetros; nem toda combinação de tamanho admite. Quando não existe, o plano precisa de aproximação ou de bloco incompleto, com perda de precisão.",
+      levar: "Desenho bom compara o que interessa e isola o resto.",
+      maos:
+        "Monte um quadrado latino de quatro por quatro e confira que nenhum símbolo repete em linha ou coluna.",
+      pergunta: {
+        q: "Para que serve um quadrado latino num experimento?",
+        a: "Para variar a ordem sem confundir efeito de tratamento com efeito de ordem",
+        why: "Cada tratamento aparece uma vez em cada linha e coluna, então o efeito de bloco e de posição se separa do efeito que se quer medir.",
+      },
+    },
+    "Teoria dos Códigos": {
+      contexto:
+        "Onde isso aparece: no disco, na transmissão por rádio e no QR code. Código corretor acrescenta redundância para detectar e corrigir erro, e a distância mínima diz quantos erros cabem. Redundância é o preço da confiabilidade.",
+      oQue:
+        "Código corretor adiciona redundância para detectar e corrigir erro de transmissão. A distância mínima entre palavras é o que limita quantos erros o código corrige: com distância d, corrige até (d−1)/2. Código linear tem estrutura algébrica que facilita a decodificação.",
+      passos: [
+        "Escolha o código e calcule a distância mínima.",
+        "Veja quantos erros o canal pode introduzir.",
+        "Decodifique pela palavra válida mais próxima e confira se está dentro do limite.",
+      ],
+      exemplo:
+        "Um código com distância mínima três corrige um erro por palavra: duas palavras válidas ficam a três posições, e um erro aproxima de uma sem chegar na outra. Com distância quatro, corrige um e detecta dois. A conta é geométrica e vale para todo código.",
+      quebra:
+        "Confundir detecção com correção. Detectar erro é saber que houve; corrigir é saber qual palavra foi enviada. A distância que garante uma não garante a outra, e o projeto precisa das duas.",
+      limite:
+        "Corrigir mais erro custa mais redundância, e a taxa útil cai. Em canal com erro em rajada, o modelo de erro independente não vale, e o código precisa de entrelaçamento.",
+      levar: "Distância mínima é a régua: ela diz quantos erros o código perdoa.",
+      maos:
+        "Calcule a distância mínima de um código pequeno e veja quantos erros ele corrige.",
+    },
+    "Matroides e Estruturas Discretas": {
+      contexto:
+        "Onde isso aparece: na árvore geradora mínima, na alocação de recurso e no algoritmo guloso que funciona sem prova caso a caso. Matroide é a estrutura que diz quando o guloso é ótimo. Independência combinatória generaliza a ideia de conjunto sem dependência.",
+      oQue:
+        "Matroide é estrutura com noção de independência que respeita dois axiomas: subconjunto de independente é independente, e troca entre conjuntos de tamanhos diferentes. Essa estrutura garante que o algoritmo guloso resolve otimização. Otimização combinatória usa isso para justificar escolha local. Árvore geradora mínima, emparelhamento e base de espaço vetorial são exemplos clássicos, cada um com o guloso certo funcionando.",
+      passos: [
+        "Identifique o conjunto base e a noção de independência.",
+        "Verifique os axiomas de matroide.",
+        "Se valerem, use o guloso e confie na otimalidade.",
+      ],
+      exemplo:
+        "Em grafo, o conjunto de arestas sem ciclo forma matroide; por isso o algoritmo de Kruskal, que escolhe a aresta mais barata sem fechar ciclo, acha a árvore geradora mínima. Já o problema do caixeiro viajante não forma matroide, e o guloso falha. A estrutura explica a diferença.",
+      quebra:
+        "Usar guloso em problema que não é matroide e supor que o resultado é ótimo. O algoritmo entrega solução boa e não avisa que é só boa. Sem os axiomas, a garantia não existe. O teste rápido é procurar contraexemplo: se o guloso falhar em caso pequeno, a estrutura não é matroide e a prova não vem.",
+      limite:
+        "Matroide garante otimalidade para função de peso linear. Com restrição extra ou objetivo não linear, a estrutura não basta, e o problema pode ficar difícil.",
+      levar: "Guloso só é ótimo quando a estrutura permite.",
+      maos:
+        "Rode o guloso num grafo pequeno e depois num problema não matroide e compare.",
+      pergunta: {
+        q: "Por que o algoritmo guloso resolve otimização em matroide?",
+        a: "Porque a estrutura de independência garante que a escolha local leva ao ótimo global",
+        why: "Os axiomas de matroide permitem trocar elementos sem perder independência, e disso sai a prova de que o guloso é ótimo para peso linear.",
+      },
+    },
+  },
 };
 
 // o nome da estação chega em caixa baixa do banco ("Grafos moleculares") e em
