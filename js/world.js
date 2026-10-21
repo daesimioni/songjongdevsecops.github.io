@@ -242,11 +242,15 @@ export function createWorld() {
   bridgeLine(244, 135, 254, 135, 3, BRIDGE); // linguagem e semântica
   bridgeLine(74, 151, 78, 162, 3, BRIDGE); // analítica e óptica
   bridgeLine(226, 145, 226, 162, 3, BRIDGE); // linguagem e segurança
-  // pontes do catálogo: só entre áreas que já têm conteúdo, curtas como a
-  // distância entre duas seções vizinhas
+  // Passagem entre áreas vizinhas: nem tudo é ponte sobre o mar. Metade dos
+  // pares vira istmo de terra, com piso do bioma das duas pontas, franja de
+  // areia e trilha no meio; a outra metade continua ponte. Assim o arquipélago
+  // tem continente de verdade, não só mar com tábuas.
+  const passagens = [];
   {
     const ready = new Set(AREAS.map((a) => a.id));
     const spotOf = new Map(CATALOG_AREAS.map((spot) => [spot.id, spot]));
+    const areaDe = (id) => AREAS.find((x) => x.id === id);
     for (const [a, b] of CATALOG_BRIDGES) {
       if (!ready.has(a) || !ready.has(b)) continue;
       const pa = spotOf.get(a), pb = spotOf.get(b);
@@ -254,16 +258,70 @@ export function createWorld() {
       const dx = pb.cx - pa.cx, dy = pb.cy - pa.cy;
       const len = Math.hypot(dx, dy) || 1;
       const ux = dx / len, uy = dy / len;
-      // distância até a borda elíptica da ilha na direção da ponte
       const edge = (land) => land
         ? 1 / Math.sqrt((ux / land.rx) ** 2 + (uy / land.ry) ** 2)
         : 10;
-      const startA = edge(AREAS.find((x) => x.id === a)?.land) + 0.6;
-      const startB = edge(AREAS.find((x) => x.id === b)?.land) + 0.6;
-      bridgeLine(pa.cx + ux * startA, pa.cy + uy * startA, pb.cx - ux * startB, pb.cy - uy * startB, 3, BRIDGE);
-      // a ponta da ponte encosta em terra, não em água
-      rect(Math.round(pa.cx + ux * 9) - 1, Math.round(pa.cy + uy * 9) - 1, 3, 3, pa.rect ? (AREAS.find((x) => x.id === a)?.base ?? 12) : 12);
-      rect(Math.round(pb.cx - ux * 9) - 1, Math.round(pb.cy - uy * 9) - 1, 3, 3, AREAS.find((x) => x.id === b)?.base ?? 12);
+      const la = areaDe(a), lb = areaDe(b);
+      // começa e termina dentro da borda da ilha: passagem não deixa fresta
+      const startA = Math.max(1, edge(la?.land) - 0.9);
+      const startB = Math.max(1, edge(lb?.land) - 0.9);
+      const ax = pa.cx + ux * startA, ay = pa.cy + uy * startA;
+      const bx = pb.cx - ux * startB, by = pb.cy - uy * startB;
+      const semente = (pa.cx * 31 + pa.cy * 17 + pb.cx * 7 + pb.cy * 13) | 0;
+      const istmo = (semente >>> 0) % 100 < 54;
+      if (!istmo) {
+        bridgeLine(ax, ay, bx, by, 3, BRIDGE);
+        rect(Math.round(pa.cx + ux * 9) - 1, Math.round(pa.cy + uy * 9) - 1, 3, 3, la?.base ?? 12);
+        rect(Math.round(pb.cx - ux * 9) - 1, Math.round(pb.cy - uy * 9) - 1, 3, 3, lb?.base ?? 12);
+        continue;
+      }
+      // istmo: largura varia, franja de areia, trilha de 3 tiles no eixo
+      const len2 = Math.hypot(bx - ax, by - ay) || 1;
+      const ux2 = (bx - ax) / len2, uy2 = (by - ay) / len2;
+      const nx = -uy2, ny = ux2;
+      const passos = Math.ceil(len2 * 1.4);
+      const pontos = [];
+      for (let i = 0; i <= passos; i++) {
+        const t = i / passos;
+        // eixo torto: a passagem serpenteia em vez de sair em linha reta
+        const desvio = Math.sin(t * Math.PI * 2 + semente * 0.7) * 1.6 + Math.sin(t * Math.PI * 5 - semente) * 0.6;
+        const cx = ax + ux2 * len2 * t + nx * desvio;
+        const cy = ay + uy2 * len2 * t + ny * desvio;
+        const afina = 0.7 + Math.sin(t * Math.PI) * 0.45;
+        const ruido = Math.sin((i + semente) * 0.83) * 0.7 + Math.sin((i - semente) * 0.31) * 0.9;
+        const meia = Math.max(2, Math.round((3.1 + ruido) * afina));
+        for (let k = -meia; k <= meia; k++) {
+          const x = Math.round(cx + nx * k);
+          const y = Math.round(cy + ny * k);
+          const dist = Math.abs(k);
+          let tile;
+          if (dist <= 1) tile = K.STONE;
+          else if (dist === meia) tile = SAND;
+          else if (t < 0.38) tile = la?.floor ?? 13;
+          else if (t > 0.62) tile = lb?.floor ?? 13;
+          // meio da passagem: piso do vizinho mesclado por dither, para a
+          // troca de bioma aparecer em vez de virar uma faixa chapada
+          else if (hash2(x, y) < 0.5) tile = la?.floor ?? 13;
+          else tile = lb?.floor ?? 13;
+          set(x, y, tile);
+        }
+        if (i % 6 === 0) pontos.push({ x: cx, y: cy, nx, ny, meia, bioma: t < 0.5 ? a : b });
+        if (i % 14 === 7) {
+          const lado = i % 28 === 7 ? 1 : -1;
+          const lx = cx + nx * (meia - 0.2) * lado;
+          const ly = cy + ny * (meia - 0.2) * lado;
+          const lt = get(Math.floor(lx), Math.floor(ly));
+          if (lt !== WATER && lt !== K.WALL && lt !== PATH && lt !== PLAZA && lt !== BRIDGE) {
+            decor.push({
+              type: "lamp",
+              x: lx,
+              y: ly,
+              accent: (t < 0.5 ? la : lb)?.accent || "#ffc857",
+            });
+          }
+        }
+      }
+      passagens.push({ a, b, pontos });
     }
   }
 
@@ -631,6 +689,38 @@ export function createWorld() {
     gente: NPC_SPAWNS,
     livre: (x, y) => !nearUsed(x, y),
   });
+  // a passagem de terra ganha vida própria: pedra e capim nas beiradas
+  const vegetalTipo = new Set(["arvore", "conifera", "palmeira", "seca", "arbusto", "florada"]);
+  const chavesVegetal = new Set();
+  for (const a of ambiente) {
+    if (vegetalTipo.has(a.tipo)) chavesVegetal.add(`${Math.floor(a.x)},${Math.floor(a.y)}`);
+  }
+  const topoVegetalLivre = (x, y) => {
+    const cx0 = Math.floor(x), cy0 = Math.floor(y);
+    for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+      if (chavesVegetal.has(`${cx0 + dx},${cy0 + dy}`)) return false;
+    }
+    return true;
+  };
+  const cantoLivre = (x, y) => {
+    const t = get(Math.floor(x), Math.floor(y));
+    return t !== WATER && t !== K.WALL && t !== PATH && t !== PLAZA && t !== BRIDGE;
+  };
+  for (const pass of passagens) {
+    pass.pontos.forEach((p, i) => {
+      for (const lado of [-1, 1]) {
+        const x = p.x + p.nx * (p.meia - 0.3) * lado;
+        const y = p.y + p.ny * (p.meia - 0.3) * lado;
+        if (!cantoLivre(x, y)) continue;
+        const tipo = i % 4 === 0 ? "pedra" : i % 3 === 0 ? "arbusto" : "tufo";
+        if (tipo === "arbusto") {
+          if (!topoVegetalLivre(x, y)) continue;
+          chavesVegetal.add(`${Math.floor(x)},${Math.floor(y)}`);
+        }
+        ambiente.push({ tipo, x, y, bioma: p.bioma });
+      }
+    });
+  }
 
   // 8. estado de jogo
   const stations = SITES.map((s) => ({ ...s }));

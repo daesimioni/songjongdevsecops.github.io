@@ -24,6 +24,7 @@ com a linha do diário dizendo que foi feito.
 | floresta organizada, sem mata na metrópole | `test/floresta.test.mjs` e captura | feito em 2026-10-21 20:06 |
 | áreas sem coisa empilhada | `test/espaco.test.mjs` | feito em 2026-10-21 20:16 |
 | totens com silhueta própria | contagem por estação: 6 silhuetas, 3 pedras, 3 bases | feito em 2026-10-21 20:23 |
+| acessos às ilhas variados, não só ponte sobre o mar | `test/passagens.test.mjs`: 31 istmos de terra e 23 pontes nas 54 ligações, 0 ponto de água aberta; captura do istmo e da ponte em `temporarios/2026-10-20-mundo-song-pedido/` | feito em 2026-10-21 20:33 |
 
 ## O que a auditoria pegou de errado
 

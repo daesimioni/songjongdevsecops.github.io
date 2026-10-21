@@ -48,9 +48,13 @@ O mapa cresce para **560 x 360 tiles** (era 300 x 200). O que já existe fica
 onde está; o mar novo recebe as áreas do catálogo em **arquipélagos por
 disciplina**, com duas regras:
 
-1. **Vizinhança é distância.** Seções consecutivas da mesma disciplina ficam
-   lado a lado, em corrente, com ponte curta entre uma e a seguinte. A ordem
-   da corrente é a ordem do catálogo.
+1. **Vizinhança é distância, mas nem toda passagem é ponte.** Seções
+   consecutivas da mesma disciplina ficam lado a lado, em corrente, com uma
+   passagem curta entre uma e a seguinte. Das 54 ligações, 31 são **istmo de
+   terra** (piso do bioma das duas pontas, franja de areia, trilha de pedra,
+   eixo serpenteando e lâmpada nos cantos) e 23 continuam ponte de madeira.
+   O istmo é gerado pela semente do par, então é estável entre sessões e cada
+   trecho tem largura, curva e decoração próprias.
 2. **Interseção é passagem.** Cada área de interseção fica entre os dois
    arquipélagos que ela liga e ganha **túnel** para as duas áreas-mãe (uma
    escada em cada lado), além de ponte para a vizinha mais próxima.
@@ -129,6 +133,7 @@ Sem banco preenchido, a área não entra no jogo: o teste cobra cobertura.
 | 2026-10-20 | F6 | banco de Língua (`catalog-bank-lingua.js`): 13 áreas novas, 39 tópicos | node: 75 áreas, 246 estações, 82 cavernas, 82 clareiras, 101 missões, 793 perguntas; navegador: 59/59 áreas do catálogo com pacote completo, página e missão de Língua; 60 fps com desenho 1,1 ms; revisão ao vivo 48/48 |
 | 2026-10-20 | F7 | banco das Interseções (`catalog-bank-inter.js`): 11 áreas, 33 tópicos; cada interseção foi posicionada entre as duas disciplinas-mãe e ligada pelo túnel da conurbação; pontes de corrente caíram de 64 para 54 | node: 86 áreas, 82 seções cobertas com área, caverna, NPC e missão, 93 cavernas, 93 clareiras, 112 missões, 826 perguntas; navegador: 70/70 áreas do catálogo completas, 70 cavernas abrindo, túnel da interseção listando as capitais das duas mães; 14/14 |
 | 2026-10-20 | F9 | catálogo completo: 283 subáreas viram estações (220 nas ilhas novas e 63 dentro das ilhas antigas), 32 seções sem subárea viram 3 trilhas, 2.659 tópicos nas páginas, 566 perguntas novas | node: 454 estações, 454 páginas, 385 estações de catálogo, 1.603 perguntas, 283 subáreas com página, 2.659 tópicos cobertos, todas as estações dentro da ilha e sem encostar; navegador: contagem do diário, páginas abrindo, GOD e prova final verdes |
+| 2026-10-21 | F10 | passagens das ilhas: 54 ligações sorteadas pela semente do par, 31 istmos de terra com piso dos dois biomas, franja de areia, trilha de pedra, curva e lâmpada; 23 continuam ponte; decoração das beiradas presa a tile seco e fofo | node: 27 suítes verdes, `passagens.test.mjs` com 31 istmos, 23 pontes e 0 ponto de água aberta; navegador: matriz 19/19, 60 fps, captura do istmo (math-fundamentos) e da ponte (math-geometria) |
 | 2026-10-20 | F8 | varredura final: cobertura das 82 seções, diário com 86 áreas, lista de túneis por continente, desempenho medido com CPU lenta | node: 86 áreas, 279 estações, 93 cavernas, 93 clareiras, 186 bocas, 112 missões, 833 perguntas, 82/82 seções cobertas, 94 faróis; navegador: 15/15 no catálogo e 6/6 na prova final; 60 fps normal, 47 fps a 4x e 45 fps a 6x de CPU; diário reconhece as áreas e interseções; tudo ao vivo |
 
 ## 6. Refinamento depois da primeira entrega
