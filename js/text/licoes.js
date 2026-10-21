@@ -939,6 +939,192 @@ export const LICOES = {
         "Compare a energia liberada por fusão de deutério-trítio e por fissão de urânio por núcleo.",
     },
   },
+  "chem-geral": {
+    "Reações e Soluções": {
+      contexto:
+        "Onde isso aparece: no soro do hospital, no reagente do laboratório e no aditivo do combustível. Solubilidade depende de temperatura e do solvente, e passar do limite deixa precipitado no fundo. A conta de diluição é a mais usada da bancada, e o erro mais comum é achar que diluir remove soluto.",
+      oQue:
+        "Reação química rearranja átomos: nada some, tudo troca de par. Em solução, a concentração diz quanto soluto existe por volume, e a unidade carrega essa razão. Diluir é acrescentar solvente: o volume cresce, a quantidade de soluto não muda e a concentração cai na mesma proporção.",
+      passos: [
+        "Meça a concentração inicial e o volume da solução.",
+        "Calcule a quantidade de soluto, que não muda na diluição.",
+        "Aplique o volume final para achar a concentração nova.",
+      ],
+      exemplo:
+        "Tomar 100 mililitros de solução 1 mol por litro e acrescentar água até 1 litro deixa a concentração em 0,1 mol por litro. A quantidade de soluto continua a mesma, porque só entrou solvente. Se você precisasse de 0,5 mol por litro, o volume final seria 200 mililitros, e a conta é sempre a mesma.",
+      quebra:
+        "Diluir e achar que a quantidade de soluto diminui junto com a concentração. A quantidade fica; o que cai é a razão. Confundir as duas coisas erra a dose e erra o rendimento da reação.",
+      limite:
+        "A conta supõe soluto que não reage e volume aditivo. Em solução concentrada o volume pode não somar, e reação com o solvente muda a quantidade real.",
+      levar: "Diluir espalha o mesmo soluto em mais volume.",
+      maos:
+        "Dilua uma solução colorida em três volumes e compare a cor com a concentração calculada.",
+    },
+    "Equilíbrio Ácido-base": {
+      contexto:
+        "Onde isso aparece: no sangue, no refrigerante, no solo agrícola e no tratamento de água. pH igual a 7 é neutro em água a 25 graus, e a neutralidade muda com a temperatura. A escala logarítmica engana quem lê como se fosse linear.",
+      oQue:
+        "Ácido doa próton e base recebe. O pH mede a acidez em escala logarítmica, então cada unidade é fator dez na concentração de íon hidrogênio. Tampão resiste à mudança de pH porque tem par ácido-base que consome o que chega.",
+      passos: [
+        "Identifique o ácido e a base do sistema em estudo.",
+        "Calcule a concentração de íon hidrogênio a partir do pH.",
+        "Veja se há tampão e qual a capacidade dele antes de prever o pH final.",
+      ],
+      exemplo:
+        "pH 3 tem concentração de íon hidrogênio de 0,001 mol por litro; pH 5 tem 0,00001. A diferença é de cem vezes, não de duas. Por isso um refrigerante com pH perto de 3 é bem mais ácido que café com pH 5, e a boca sente a diferença.",
+      quebra:
+        "Achar que pH 3 é três vezes mais ácido que pH 4. É dez vezes. A leitura linear da escala leva a subestimar acidez e a errar a dose de neutralizante.",
+      limite:
+        "O pH mede atividade, não concentração total, e em solução muito concentrada a conta simples desvia. Fora da faixa da água, solvente diferente muda a escala.",
+      levar: "pH é régua de potência: uma unidade é dez vezes.",
+      maos:
+        "Meça o pH de três soluções e calcule a razão de acidez entre elas.",
+    },
+    "Oxidação e Redução": {
+      contexto:
+        "Onde isso aparece: na pilha, na ferrugem, no clareamento e na respiração celular. A pilha separa as duas metades para obrigar o elétron a passar pelo circuito, e a corrente é o elétron em trânsito. O número de oxidação é a contabilidade que revela quem fez o quê.",
+      oQue:
+        "Em redox, um elemento perde elétrons e outro ganha, sempre juntos: não existe doador sem receptor. A variação do número de oxidação denuncia o processo, e quem perde elétrons oxida. Oxigênio não é obrigatório, apesar do nome que ficou por herança.",
+      passos: [
+        "Atribua número de oxidação a cada átomo da reação.",
+        "Veja quem aumentou e quem diminuiu de número.",
+        "Balanceie os elétrons e confira a carga total dos dois lados.",
+      ],
+      exemplo:
+        "Na formação da ferrugem, o ferro passa de zero para mais três e perde elétrons; o oxigênio passa de zero para menos dois e ganha. Os dois processos somam zero em elétrons. Sem o oxigênio como receptor, o ferro não oxidaria nessa condição.",
+      quebra:
+        "Dizer que oxigênio é obrigatório em toda oxidação. O nome ficou por herança, e a definição é perda de elétron. Enxofre, cloro e até hidrogênio podem oxidar em reação sem oxigênio.",
+      limite:
+        "Número de oxidação é contabilidade formal, não carga real em ligação covalente. Em composto com ligação polar a atribuição é convenção, e a conclusão sobre mecanismo exige mais que a conta.",
+      levar: "Redox é dança de elétron: um perde, outro ganha, ninguém fica sem par.",
+      maos:
+        "Atribua número de oxidação nas duas metades de uma reação e veja quem oxidou.",
+    },
+  },
+  "chem-polimeros": {
+    "Polimerização": {
+      contexto:
+        "Onde isso aparece: no plástico do copo, na fibra do tecido e na resina da pintura. Todo plástico vem de monômero, mas não do mesmo; polietileno, náilon e PET têm rotas diferentes. A escolha da rota muda o subproduto e o custo de purificação.",
+      oQue:
+        "Monômeros se ligam formando cadeia longa, e o tamanho da cadeia decide a propriedade. Adição encadeia sem perder átomo; condensação perde molécula pequena a cada ligação. O grau de polimerização mede quantas unidades entraram na cadeia.",
+      passos: [
+        "Identifique o monômero e a ligação que se abre.",
+        "Veja se a rota libera subproduto a cada ligação.",
+        "Calcule o grau de polimerização pela massa molar.",
+      ],
+      exemplo:
+        "O polietileno vem do etileno, que abre a ligação dupla e encadeia sem perder nada. O náilon vem de dois monômeros e perde água a cada ligação formada. A mesma ideia de cadeia, rotas diferentes, e a água precisa sair para a reação continuar. Se a rota perde molécula pequena, o rendimento em massa já nasce menor, e a purificação precisa contar esse resíduo. No projeto de processo, a rota de condensação costuma pedir etapa de secagem que a de adição dispensa.",
+      quebra:
+        "Achar que todo plástico vem do mesmo monômero. Cada polímero tem sua matéria-prima e sua rota, e misturar resina na reciclagem produz material fraco.",
+      limite:
+        "A descrição por grau de polimerização supõe cadeia linear e distribuição estreita. Ramificação, copolímero e reticulação mudam a propriedade mesmo com a mesma massa média.",
+      levar: "Polímero é cadeia: o monômero é o elo, a rota é a solda.",
+      maos:
+        "Compare a massa de dois polímeros e calcule o grau de polimerização de cada um.",
+    },
+    "Termoplásticos e Elastômeros": {
+      contexto:
+        "Onde isso aparece: na garrafa, no pneu e na resina da bancada. A reciclagem segue a estrutura: termoplástico volta ao forno, termofixo não. Separar os dois antes de triturar decide se o reciclado presta.",
+      oQue:
+        "Termoplástico amolece com calor e pode ser remoldado porque as cadeias deslizam. Termofixo endurece de vez porque forma rede reticulada permanente. Elastômero estica e volta porque tem ligações cruzadas espaçadas.",
+      passos: [
+        "Veja se as cadeias são lineares ou reticuladas.",
+        "Aqueça e observe se o material amolece antes de queimar.",
+        "Teste a recuperação elástica depois de esticar.",
+      ],
+      exemplo:
+        "Uma garrafa de PET amolece e pode virar fibra; uma resina epóxi cura e não amolece mais, mesmo aquecida. O pneu é elastômero: estica bastante e volta ao tamanho, com poucas ligações cruzadas bem espaçadas. Um termofixo comum, como a baquelite, já foi termoplástico antes de curar: a cura fecha a rede e o caminho de volta deixa de existir.",
+      quebra:
+        "Tentar reciclar termofixo como termoplástico. A rede impede a remoldagem, e o material só quebra ou vira carga. Confundir os dois estraga o lote de reciclado.",
+      limite:
+        "A fronteira não é absoluta: existe termoplástico com reticulação leve e elastômero que envelhece e perde elasticidade. A classificação orienta, mas o ensaio de fusão decide na prática, e por isso a reciclagem de termofixo vai por moagem e uso como carga, não por remoldagem. Quem projeta peça que precisa voltar ao forno escolhe termoplástico desde o início, e a escolha é de projeto.",
+      levar: "Termoplástico volta ao forno; termofixo só volta a ser pó.",
+      maos:
+        "Aqueça uma amostra de cada tipo e veja qual amolece antes de queimar.",
+    },
+    "Reciclagem Química": {
+      contexto:
+        "Onde isso aparece: no PET de garrafa, no poliuretano de colchão e no resíduo misto que a mecânica não aceita. Separar resinas melhora a qualidade do reciclado, e a mistura é o principal inimigo. O custo de energia decide se a rota fecha a conta.",
+      oQue:
+        "Reciclagem química quebra o polímero em monômero ou em produto útil, em vez de só triturar e reformar. Reciclagem mecânica tritura e remodela, e perde qualidade a cada ciclo. A química devolve a matéria-prima e permite fechar o ciclo.",
+      passos: [
+        "Identifique a resina e o grau de sujeira do resíduo.",
+        "Escolha a rota e o catalisador adequados.",
+        "Meça o rendimento em monômero e a pureza do produto.",
+      ],
+      exemplo:
+        "O PET pode voltar a monômero por glicólise, com etileno glicol aquecido, e o produto serve para nova resina. A mecânica do mesmo PET perde viscosidade a cada ciclo e limita o uso. A rota química custa mais energia e devolve material de qualidade maior. Quanto mais seletiva a rota, menos resíduo sobra no fim, e o ganho aparece no balanço inteiro. A conta de energia por quilo de monômero recuperado é o número que decide se a planta sai do papel.",
+      quebra:
+        "Misturar resinas diferentes e esperar material reciclado forte. A mistura gera interface fraca, e o produto racha. A separação é a etapa que decide o resultado, e ela custa.",
+      limite:
+        "A reciclagem química consome energia e solvente, e nem toda resina tem rota economicamente viável. O balanço ambiental precisa contar essa energia, não só o resíduo evitado.",
+      levar: "Reciclar quimicamente é desmontar o polímero para montar de novo.",
+      maos:
+        "Compare o rendimento de monômero em duas temperaturas de despolimerização.",
+    },
+  },
+  "chem-materiais": {
+    "Nanomateriais": {
+      contexto:
+        "Onde isso aparece: no reforço de compósito, no sensor e no catalisador. A mesma substância em nano pode ser reativa e tóxica de um jeito que o pó comum não é, e o cuidado de manuseio muda. A especificação precisa de tamanho e revestimento.",
+      oQue:
+        "Nanomaterial tem ao menos uma dimensão pequena, e a superfície passa a dominar a propriedade. A fração de átomos na superfície cresce muito, e efeito quântico aparece. Nanotubo de carbono é forte e condutor; nanopartícula pode ter cor diferente do material comum.",
+      passos: [
+        "Meça a dimensão e a distribuição de tamanho.",
+        "Calcule a fração de átomos na superfície.",
+        "Relacione essa fração com a propriedade de interesse.",
+      ],
+      exemplo:
+        "Um cubo de 10 centímetros tem quase nenhum átomo na superfície; o mesmo volume em cubos de 10 nanômetros tem fração enorme. Por isso a nanopartícula de ouro pode ser vermelha e catalisar reação que o ouro maciço não catalisa. A medida de tamanho precisa vir com o método: microscopia, espalhamento e área superficial dão números diferentes. Por isso a ficha do material traz o método junto com o número.",
+      quebra:
+        "Tratar nanopartícula como poeira comum. A reatividade e a toxicidade podem mudar com o tamanho, e a poeira fina exige cuidado próprio. Comparar sem medir tamanho é comparar materiais diferentes.",
+      limite:
+        "O efeito depende de tamanho, forma e revestimento, e a partícula tende a aglomerar. A medida no pó seco não representa o que acontece em suspensão, e a aplicação exige ensaio no meio real.",
+      levar: "No nano, a superfície é metade do material.",
+      maos:
+        "Calcule a fração de átomos na superfície para dois tamanhos de partícula.",
+    },
+    "Materiais Porosos": {
+      contexto:
+        "Onde isso aparece: no filtro de água, no craqueamento do petróleo e no secante da embalagem. A zeólita seleciona pela geometria do canal, e é isso que a torna seletiva. Material poroso não é frágil por definição: depende da parede.",
+      oQue:
+        "Material poroso tem cavidade que absorve, filtra e catalisa. Porosidade é a fração de volume vazio, e a área superficial alta melhora adsorção e catálise. Zeólita é peneira molecular porque o canal tem tamanho de molécula.",
+      passos: [
+        "Meça a porosidade e a distribuição de tamanho de poro.",
+        "Calcule a área superficial disponível.",
+        "Teste a seletividade com molécula de tamanho conhecido.",
+      ],
+      exemplo:
+        "Uma zeólita com canal de 0,4 nanômetro deixa passar água e barra molécula maior. No craqueamento, o canal força a molécula a entrar numa posição específica e a reação acontece ali. A geometria faz a seleção que o catalisador sozinho não faria. A distribuição de tamanho de poro importa mais que a média, porque o canal estreito é o que decide quem entra. Medir só a média é como descrever uma peneira pelo diâmetro médio dos fios, e o resultado não prevê a passagem da molécula real.",
+      quebra:
+        "Achar que material poroso é sempre frágil. A parede pode ser cristalina e resistente, como na zeólita. Confundir porosidade com fraqueza leva a descartar material bom.",
+      limite:
+        "A seletividade vale enquanto o poro não entope. Depósito de coque, umidade e impureza bloqueiam o canal, e o material perde desempenho com o uso.",
+      levar: "Poro é porta do tamanho da molécula que se quer deixar entrar.",
+      maos:
+        "Compare a adsorção de duas moléculas de tamanhos diferentes na mesma zeólita.",
+    },
+    "Superfícies Funcionais": {
+      contexto:
+        "Onde isso aparece: no vidro autolimpante, na panela antiaderente e na proteção contra corrosão. Revestimento fino pode falhar por trinca ou desgaste, e ele também envelhece. A rugosidade pode amplificar o efeito ou criar ponto de falha.",
+      oQue:
+        "A superfície pode ser tratada para repelir água, aderir tinta ou resistir à corrosão. Revestimento muda a energia superficial, e a gota se comporta de acordo. Superfície hidrofóbica repele água, e o efeito depende da química e da rugosidade.",
+      passos: [
+        "Meça o ângulo de contato da gota.",
+        "Veja a composição e a espessura do revestimento.",
+        "Teste a resistência ao desgaste e à corrosão.",
+      ],
+      exemplo:
+        "Numa superfície hidrofóbica a gota fica quase esférica, com ângulo de contato acima de 90 graus; numa superfície que molha, a gota espalha. O ângulo é a medida objetiva do efeito, e ele muda com a limpeza e com o desgaste.",
+      quebra:
+        "Achar que revestimento dura para sempre. Ele também envelhece, trinca e desgasta, e a proteção cai antes de a falha aparecer a olho nu. Manutenção faz parte do projeto, e limpar a superfície pode restaurar o efeito por um tempo, com intervalo que também é parâmetro de projeto. Sem esse número, a promessa de durabilidade não se sustenta em campo, e o ensaio de exposição real é a última palavra.",
+      limite:
+        "O efeito é de superfície, e arranhão expõe o material de baixo. Em ambiente com abrasão, o revestimento fino não sustenta, e a solução pode ser outro material, não outra camada.",
+      levar: "Revestimento é roupa: protege até gastar.",
+      maos:
+        "Meça o ângulo de contato de uma gota antes e depois de limpar a superfície.",
+    },
+  },
 };
 
 // o nome da estação chega em caixa baixa do banco ("Grafos moleculares") e em
