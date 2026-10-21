@@ -272,6 +272,19 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 - [ ] falta fauna e NPC com respiração e passo parado, e clima por bioma
       (chuva, neblina, poeira)
 
+### X. Contraste medido
+
+- [x] medidor de contraste no navegador: para cada texto visível, compõe a cor
+      do fundo subindo os pais com transparência e calcula a razão WCAG contra
+      o tamanho e o peso da fonte (4,5:1 para texto normal, 3:1 para grande)
+- [x] o medidor se testa: um texto quase da cor do fundo é acusado, senão a
+      medida não vale
+- [x] 10 estados medidos (mundo, mochila, bestiário, diário, ficha, ajuda, menu
+      de contexto, viagem, caverna e 390 px de celular): 544 textos, nenhuma
+      falha
+- limite conhecido: a conta usa `background-color`. Texto sobre gradiente ou
+  imagem é aproximado pela cor de trás, então gradiente novo pede nova medida
+
 ## 3. Regras de desenho
 
 - A tela de título é a primeira impressão: vale com camadas, céu em degradê,
@@ -301,6 +314,7 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 
 | data | fase | o que entrou | prova |
 |---|---|---|---|
+| 2026-10-21 | X | contraste medido em todos os estados, com medidor que compõe o fundo transparente e se autotesta | navegador: 10 estados (mundo, mochila, bestiário, diário, ficha, ajuda, menu, viagem, caverna e 390 px), 544 textos, zero abaixo de 4,5:1 (3:1 para texto grande), autoteste acusando par ruim |
 | 2026-10-21 | J/H | nave e minimapa da caverna: Espaço liga e desliga na superfície e no subsolo, sem auto-repeat, e o mapa continua desenhado andando com a nave; o minimapa passou a mostrar a planta inteira apagada desde a entrada | navegador: superfície e caverna com sprint ligado, desligado no segundo Espaço, 6 amostras do canvas por trecho (superfície 1,000 de mapa vivo, caverna 0,28 de área iluminada) e minimapa da caverna de 0,015 a 0,306 de pixel vivo; console limpo |
 | 2026-10-21 | W | vento e onda: frente de rajada que atravessa o mapa com fase por posição e força por material da área; copa, folha solta, capim, musgo e flor respondem à mesma rajada; o mar ganhou crista que viaja, cava entre cristas e espuma que respira | node: rajada com pico e calmaria, vizinho de 1 tile na mesma frente, 14 tiles adiante em outra fase, pico levando tempo para atravessar 40 tiles, fibra mais forte que cristal, crista do mar andando; navegador: dois quadros congelados no pico e no calmo, crista e quadro seguinte, fps 45,1 com vento e 48,7 sem, terreno 0,66 contra 0,60 ms |
 | 2026-10-21 | P | equipamento preso na mão: o punho saiu do ombro e foi para o último par de pixels do braço, subindo, descendo e balançando com o passo; arma ganhou contorno escuro, aço em dois tons, guarda dourada, cabo com a mão por cima e pomo; escudo ganhou aro, brilho, sombra, cravos, umbo e alça | node: quatro direções com parado e andando, punho a no máximo 6 px da mão, escudo a no máximo 6 px do braço e balanço entre dois instantes do passo; navegador: galeria do boneco com espada, escudo, elmo e armadura nas quatro direções |
