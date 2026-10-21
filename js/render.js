@@ -1388,14 +1388,76 @@ export function createRenderer(canvas, world) {
   }
 
   let jogadorAtual = null;
+  // A pessoa do vale recebe o mesmo acabamento dos bichos: contorno escuro de
+  // um pixel e véu de luz. O boneco e o objeto da mão são desenhados num canvas
+  // com folga, recebem o traço e voltam ao mundo no lugar de sempre.
+  let pincelA = null;
+  let pincelB = null;
+  function desenharComAcabamento(px, py, larg, alt, ox, oy, desenhar) {
+    if (typeof document === "undefined") return false;
+    if (!pincelA) {
+      pincelA = document.createElement("canvas");
+      pincelB = document.createElement("canvas");
+      pincelA.width = 72; pincelA.height = 84;
+      pincelB.width = 72; pincelB.height = 84;
+    }
+    if (larg > pincelA.width || alt > pincelA.height) return false;
+    const a = pincelA.getContext("2d");
+    const b = pincelB.getContext("2d");
+    if (!a || !b) return false;
+    a.setTransform(1, 0, 0, 1, 0, 0);
+    a.clearRect(0, 0, larg, alt);
+    a.imageSmoothingEnabled = false;
+    a.save();
+    a.translate(ox, oy);
+    desenhar(a);
+    a.restore();
+    a.save();
+    a.globalCompositeOperation = "source-atop";
+    const grad = a.createLinearGradient(0, Math.max(0, oy - 44), 0, oy + 2);
+    grad.addColorStop(0, "rgba(255,255,255,0.16)");
+    grad.addColorStop(0.5, "rgba(255,255,255,0)");
+    grad.addColorStop(1, "rgba(0,0,0,0.28)");
+    a.fillStyle = grad;
+    a.fillRect(0, 0, larg, alt);
+    a.globalCompositeOperation = "source-over";
+    a.restore();
+    b.setTransform(1, 0, 0, 1, 0, 0);
+    b.clearRect(0, 0, larg, alt);
+    b.globalCompositeOperation = "source-over";
+    b.drawImage(pincelA, 0, 0);
+    b.globalCompositeOperation = "source-in";
+    b.fillStyle = "rgba(5,7,16,0.9)";
+    b.fillRect(0, 0, larg, alt);
+    b.globalCompositeOperation = "source-over";
+    ctx.save();
+    ctx.imageSmoothingEnabled = false;
+    ctx.translate(px, py);
+    for (const [dx, dy] of [[-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [1, -1], [-1, 1], [1, 1]]) {
+      ctx.drawImage(pincelB, -ox + dx, -oy + dy);
+    }
+    ctx.drawImage(pincelA, -ox, -oy);
+    ctx.restore();
+    return true;
+  }
+
+  function drawNpcComAcabamento(npc, px, py, bob, time, colors) {
+    return desenharComAcabamento(px, py + bob, 72, 84, 36, 70, (g) => {
+      drawHuman(g, 0, 0, npc.facing || 0, !!npc.moving, time, colors, npc.scale || 0.9, npc.look || null);
+      drawNpcKit(g, npc, 0, 0, 0, time, colors);
+    });
+  }
+
   function drawNpc(npc, time) {
     const px = npc.x * TILE, py = npc.y * TILE;
     // respiração irregular: dois senos de períodos diferentes, sem ninguém
     // respirando no mesmo compasso
     const bob = Math.sin(time * 0.0013 + npc.bob) * 0.8 + Math.sin(time * 0.0007 + npc.bob * 2.3) * 0.5;
     const colors = npc.colors || { skin: "#d9b08c", hair: "#4a3a55", shirt: npc.accent, pants: "#2f2c45" };
-    drawHuman(ctx, px, py + bob, npc.facing || 0, !!npc.moving, time, colors, npc.scale || 0.9, npc.look || null);
-    drawNpcKit(ctx, npc, px, py, bob, time, colors);
+    if (!drawNpcComAcabamento(npc, px, py, bob, time, colors)) {
+      drawHuman(ctx, px, py + bob, npc.facing || 0, !!npc.moving, time, colors, npc.scale || 0.9, npc.look || null);
+      drawNpcKit(ctx, npc, px, py, bob, time, colors);
+    }
     // perto, a pessoa levanta a mão: o mundo reconhece quem chegou
     if (jogadorAtual && Math.hypot(npc.x - jogadorAtual.x, npc.y - jogadorAtual.y) < 2.6) {
       const acena = Math.sin(time * 0.008 + npc.bob) > 0.2 ? 1 : 0;
@@ -1767,8 +1829,12 @@ export function createRenderer(canvas, world) {
         const bob = Math.sin(time * 0.007) * 1.1 * player.boost;
         const onShip = player.boost > 0.35;
         if (player.boost > 0.01) drawSkiff(ctx, player.x * TILE, player.y * TILE, player.dir, time, player.boost, moving);
-        drawHuman(ctx, player.x * TILE, player.y * TILE - lift + bob, player.dir, onShip ? false : moving, time,
+        const desenhaHeroi = (g) => drawHuman(g, 0, 0, player.dir, onShip ? false : moving, time,
           player.colors || PLAYER_COLORS[0], 1, player.look, player.gear || null);
+        if (!desenharComAcabamento(player.x * TILE, player.y * TILE - lift + bob, 72, 84, 36, 70, desenhaHeroi)) {
+          drawHuman(ctx, player.x * TILE, player.y * TILE - lift + bob, player.dir, onShip ? false : moving, time,
+            player.colors || PLAYER_COLORS[0], 1, player.look, player.gear || null);
+        }
         drawNameTag(player.name, player.x * TILE, player.y * TILE - 36 - lift, player.color, vitais);
         if (player.bubble && player.bubble.until > now) {
           drawBubble(player.bubble.text, player.x * TILE, player.y * TILE - lift, player.color);

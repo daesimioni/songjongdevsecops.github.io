@@ -43,7 +43,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
     ctx.fill();
     ctx.save();
     ctx.translate(w / 2, h * 0.83);
-    const scale = rpg.duel.boss ? 4 : 4.8;
+    const scale = rpg.duel.boss ? 4.3 : 5.2;
     drawCreatureArt(ctx, rpg.duel.boss ? "boss" : rpg.duel.monster.kind, accent(), performance.now(), scale);
     ctx.restore();
   }

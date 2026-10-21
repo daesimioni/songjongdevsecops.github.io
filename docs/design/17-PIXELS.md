@@ -71,7 +71,10 @@ desenho. Agora todo bicho e todo ícone de item ganham:
   sombra.
 
 O bicho é desenhado num canvas de 112 x 112 com folga para o traço e o mesmo
-acabamento vale no mapa, no duelo, no bestiário e na wiki. O item é acabado uma
+acabamento vale no mapa, no duelo, no bestiário e na wiki. A pessoa do vale
+(jogador e NPC, com o objeto da mão) e o bicho de companhia usam o mesmo
+tratamento: canvas de 72 x 84 e 56 x 56, contorno de oito direções e véu de
+luz, com a sombra do chão por fora. O item é acabado uma
 vez só e vai para o cache, então o custo de 538 ícones é pago uma vez.
 
 Medido: quadro da caverna com três monstros foi de 0,62 para 1,34 ms, ainda

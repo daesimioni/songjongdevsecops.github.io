@@ -12,7 +12,61 @@ export const PET_COLORS = {
   parrot: { body: "#4f9a4a", light: "#7ec96a", eye: "#ffe9b0" },
 };
 
+// O bicho pequeno do jogador com o mesmo acabamento dos monstros: contorno de
+// um pixel e véu de luz. O desenho de cada espécie continua embaixo, intacto.
+let petA = null;
+let petB = null;
 export function drawPetSprite(ctx, kind, x, y, t = 0, moving = false, dir = 0) {
+  if (typeof document === "undefined") return desenharPet(ctx, kind, x, y, t, moving, dir);
+  if (!petA) {
+    petA = document.createElement("canvas");
+    petB = document.createElement("canvas");
+    for (const cv of [petA, petB]) { cv.width = 56; cv.height = 56; }
+  }
+  const S = 56, OX = 28, OY = 40;
+  const a = petA.getContext("2d");
+  const b = petB.getContext("2d");
+  if (!a || !b) return desenharPet(ctx, kind, x, y, t, moving, dir);
+  a.setTransform(1, 0, 0, 1, 0, 0);
+  a.clearRect(0, 0, S, S);
+  a.imageSmoothingEnabled = false;
+  a.save();
+  a.translate(OX, OY);
+  desenharPet(a, kind, 0, 0, t, moving, dir, true);
+  a.restore();
+  a.save();
+  a.globalCompositeOperation = "source-atop";
+  const grad = a.createLinearGradient(0, OY - 20, 0, OY + 2);
+  grad.addColorStop(0, "rgba(255,255,255,0.18)");
+  grad.addColorStop(0.5, "rgba(255,255,255,0)");
+  grad.addColorStop(1, "rgba(0,0,0,0.28)");
+  a.fillStyle = grad;
+  a.fillRect(0, 0, S, S);
+  a.globalCompositeOperation = "source-over";
+  a.restore();
+  b.setTransform(1, 0, 0, 1, 0, 0);
+  b.clearRect(0, 0, S, S);
+  b.globalCompositeOperation = "source-over";
+  b.drawImage(petA, 0, 0);
+  b.globalCompositeOperation = "source-in";
+  b.fillStyle = "rgba(5,7,16,0.9)";
+  b.fillRect(0, 0, S, S);
+  b.globalCompositeOperation = "source-over";
+  ctx.save();
+  ctx.fillStyle = "rgba(2,4,10,0.3)";
+  ctx.beginPath();
+  ctx.ellipse(x, y, kind === "frog" ? 7 : 5, 2, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.imageSmoothingEnabled = false;
+  ctx.translate(x, y);
+  for (const [dx, dy] of [[-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [1, -1], [-1, 1], [1, 1]]) {
+    ctx.drawImage(petB, -OX + dx, -OY + dy);
+  }
+  ctx.drawImage(petA, -OX, -OY);
+  ctx.restore();
+}
+
+function desenharPet(ctx, kind, x, y, t = 0, moving = false, dir = 0, semSombra = false) {
   const colors = PET_COLORS[kind] || PET_COLORS.cat;
   const bob = moving ? Math.abs(Math.sin(t * 0.02)) * 1.2 : Math.sin(t * 0.002) * 0.5;
   ctx.save();
@@ -20,10 +74,12 @@ export function drawPetSprite(ctx, kind, x, y, t = 0, moving = false, dir = 0) {
   // o bicho vira junto com quem ele segue; o espelho é em volta do próprio
   // ponto de desenho, então a sombra e o corpo vão juntos
   if (dir === 1 || dir === 4 || dir === 6) ctx.scale(-1, 1);
-  ctx.fillStyle = "rgba(2,4,10,0.3)";
-  ctx.beginPath();
-  ctx.ellipse(0, 0, kind === "frog" ? 7 : 5, 2, 0, 0, Math.PI * 2);
-  ctx.fill();
+  if (!semSombra) {
+    ctx.fillStyle = "rgba(2,4,10,0.3)";
+    ctx.beginPath();
+    ctx.ellipse(0, 0, kind === "frog" ? 7 : 5, 2, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
 
   if (kind === "owl") {
     ctx.fillStyle = colors.body;

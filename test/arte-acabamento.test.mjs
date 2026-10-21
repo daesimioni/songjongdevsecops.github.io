@@ -37,5 +37,15 @@ check(/cache\.set\(chave, canvas\)/.test(itens), "acabamento fora do cache: refa
 // a arte não pode encolher o bicho no contorno: o canvas tem folga para o traço
 check(/const S = 112, OX = 56, OY = 92;/.test(creature), "canvas do bicho sem folga para o contorno");
 
+// gente e bicho de companhia usam o mesmo acabamento
+const render = ler("render.js");
+check(/function desenharComAcabamento\(/.test(render), "pessoa sem versão com acabamento");
+check(/drawNpcComAcabamento\(npc, px, py, bob, time, colors\)/.test(render), "NPC sem acabamento");
+check(/desenharComAcabamento\(player\.x \* TILE, player\.y \* TILE - lift \+ bob/.test(render), "jogador sem acabamento");
+
+const pet = ler("pet-art.js");
+check(/function desenharPet\(ctx, kind, x, y, t = 0, moving = false, dir = 0, semSombra = false\)/.test(pet), "pet sem desenho separado da sombra");
+check(/source-in/.test(pet) && /source-atop/.test(pet), "pet sem contorno ou luz");
+
 assert.equal(problemas.length, 0, `acabamento com ${problemas.length} problema(s):\n- ${problemas.join("\n- ")}`);
-console.log("ok acabamento: bicho com contorno de oito direções e luz, em mapa, duelo, bestiário e wiki; item com contorno e luz no cache");
+console.log("ok acabamento: bicho, pessoa e pet com contorno de oito direções e luz; item com contorno e luz no cache");

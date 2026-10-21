@@ -1907,8 +1907,8 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
 }
 .duel-top { display: flex; gap: 16px; align-items: center; margin-bottom: 10px; }
 #duel-sprite {
-  width: 132px;
-  height: 132px;
+  width: 148px;
+  height: 148px;
   flex: none;
   border: 1px solid var(--line);
   border-radius: 10px;
@@ -2027,7 +2027,7 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
   .sheet-vitals { width: 100%; }
   .sheet-skills { grid-template-columns: 1fr; }
   .duel-top { flex-direction: column; align-items: stretch; gap: 10px; }
-  #duel-sprite { width: 96px; height: 96px; align-self: center; }
+  #duel-sprite { width: 112px; height: 112px; align-self: center; }
   .duel-meta h2 { font-size: 11px; }
   .duel-question { font-size: 14px; }
 }
