@@ -567,6 +567,192 @@ export const LICOES = {
         "Troque a trilha de um vídeo curto e descreva o que mudou no sentido da cena.",
     },
   },
+  "math-aplicada": {
+    "Teoria dos Jogos": {
+      contexto:
+        "Onde isso aparece: no leilão, na negociação de preço, no rodízio de trânsito e na disputa por espectro. Estratégia dominante é melhor qualquer que seja a escolha do outro; quando ela existe, o jogo fica previsível. O dilema do prisioneiro mostra o desconforto: o equilíbrio é pior que a cooperação.",
+      oQue:
+        "Teoria dos jogos estuda decisão quando o resultado depende da escolha dos outros. Cada jogador tem estratégias e ganhos, e o equilíbrio de Nash é o ponto em que ninguém melhora mudando sozinho, mesmo que todos pudessem melhorar juntos. Equilíbrio não é o mesmo que resultado ótimo, e essa diferença é o coração da teoria.",
+      passos: [
+        "Liste os jogadores, as estratégias de cada um e os ganhos de cada combinação.",
+        "Monte a matriz de ganhos com os números do problema.",
+        "Procure a célula em que nenhum jogador ganha mudando sozinho de estratégia.",
+      ],
+      exemplo:
+        "No dilema do prisioneiro, cada um tem incentivo para confessar, confesse ou não o outro. O equilíbrio é confissão dos dois, com pena maior do que se ambos ficassem calados. O resultado é estável e coletivamente pior, e é exatamente por isso que o conceito incomoda: ninguém tem motivo individual para sair dele.",
+      quebra:
+        "Confundir equilíbrio de Nash com resultado ótimo para todos. Nash é estabilidade, não bondade. Uma política pública que só olha o equilíbrio pode aceitar desfecho ruim que a cooperação evitaria.",
+      limite:
+        "O modelo supõe racionalidade e ganhos conhecidos. Gente real erra, aprende e muda de preferência, e o equilíbrio previsto pode nunca aparecer na prática. O jogo também muda quando é repetido e a reputação entra na conta.",
+      levar: "Equilíbrio é onde ninguém se mexe; ótimo é onde todos estariam melhor.",
+      maos:
+        "Monte a matriz de um jogo 2x2 e encontre a célula em que ninguém ganha mudando sozinho.",
+    },
+    "Criptografia Matemática": {
+      contexto:
+        "Onde isso aparece: no cadeado do navegador, na assinatura de documento e na mensagem que viaja pela rede. Troca de chaves Diffie-Hellman usa logaritmo discreto e resolve o problema de combinar segredo em canal público. O elo fraco costuma ser a chave curta ou o gerador de número aleatório ruim.",
+      oQue:
+        "Criptografia usa problema difícil como fechadura: cifrar é fácil e abrir sem a chave é caro. A segurança mora na dificuldade computacional, não no segredo do método. RSA se apoia em fatorar produto de primos grandes, e chave curta derruba o castelo mesmo com algoritmo bom.",
+      passos: [
+        "Identifique o problema difícil que sustenta o esquema.",
+        "Verifique o tamanho de chave exigido hoje para esse esquema.",
+        "Confira de onde vem a aleatoriedade que gera a chave.",
+      ],
+      exemplo:
+        "Um RSA de 2048 bits tem chave longa o bastante para o ataque de fatoração conhecido; 512 bits cai com esforço modesto. O algoritmo não ficou pior, o ataque ficou melhor. Por isso tamanho de chave se revisa com o tempo, e o inventário de sistema antigo é o que revela o risco escondido.",
+      quebra:
+        "Achar que esconder o algoritmo protege. A segurança deve estar na chave, e o algoritmo público é auditável. Segurança por obscuridade quebra no primeiro vazamento e não resiste a análise.",
+      limite:
+        "A conta vale para o ataque clássico. Um computador quântico grande muda o custo de fatorar e obriga a migrar o esquema, mesmo que hoje o tamanho esteja adequado.",
+      levar: "A fechadura é pública; o segredo é a chave.",
+      maos:
+        "Compare o tempo de fatorar um número de 64 bits e um de 128 e veja como o custo cresce.",
+    },
+    "Matemática Biológica": {
+      contexto:
+        "Onde isso aparece: no plano de vacinação, no manejo de praga e no controle de estoque de leito. O número reprodutivo básico mede o potencial de contágio: quantas pessoas, em média, um infectado contagia num ambiente todo suscetível. Valor acima de um indica crescimento, e a conta orienta onde apertar.",
+      oQue:
+        "Modelo matemático traduz hipótese biológica em equação: população, epidemia, competição e difusão ganham taxa e predição. O modelo SIR divide a população em suscetíveis, infectados e recuperados e mostra como a epidemia sobe e desce. Modelo é aproximação, e só vale depois de confrontado com dado.",
+      passos: [
+        "Defina as classes e as taxas do modelo.",
+        "Estime o R0 com dado real, não com número escolhido.",
+        "Simule cenário e compare a curva prevista com a série observada.",
+      ],
+      exemplo:
+        "Num SIR simples com R0 igual a 3, uma pessoa infecta três enquanto está doente, e a epidemia cresce enquanto houver suscetível. Vacinar não muda o vírus, muda a fração suscetível e derruba o número efetivo. Quando ele cai abaixo de um, a corrente se interrompe.",
+      quebra:
+        "Tomar o modelo como verdade sem confrontar com os dados. Equação bonita com parâmetro chutado produz previsão confiante e errada. A validação com série real é parte do modelo, não etapa opcional.",
+      limite:
+        "O SIR supõe mistura homogênea e imunidade permanente. Rede social, variação de comportamento e reinfecção exigem modelo mais fino, e o R0 sozinho não decide política pública.",
+      levar: "Modelo bom não adivinha: ele erra de um jeito que se pode medir.",
+      maos:
+        "Rode um SIR com R0 igual a 1,5 e a 3 e compare a altura e a largura das curvas.",
+    },
+  },
+  "physics-fluidos": {
+    "Hidrostática": {
+      contexto:
+        "Onde isso aparece: no navio que flutua, no balão que sobe e na prensa hidráulica. O empuxo depende do volume submerso e da densidade do fluido, não da massa do corpo. É por isso que ferro oco flutua e ferro maciço afunda, com a mesma massa.",
+      oQue:
+        "Em fluido em repouso, a pressão cresce com a profundidade e empurra em todas as direções. Pressão é força por área, e a diferença entre a pressão de baixo e a de cima do corpo é o empuxo. Arquimedes resume: empuxo é igual ao peso do fluido deslocado.",
+      passos: [
+        "Calcule a pressão em cada face do corpo.",
+        "Some as forças e compare com o peso do corpo.",
+        "Confira o resultado pelo peso do fluido deslocado.",
+      ],
+      exemplo:
+        "Um bloco de um litro submerso em água desloca um quilo de água, e o empuxo é o peso disso, cerca de 10 newtons. Se o bloco pesa 30 newtons, ele afunda; se pesa 5, sobe até deslocar só o necessário. O volume submerso se ajusta sozinho até o equilíbrio.",
+      quebra:
+        "Achar que o empuxo depende da massa do corpo e não do volume submerso. A confusão leva a esperar que corpo mais pesado receba mais empuxo, quando o que importa é o volume que ele desloca.",
+      limite:
+        "A fórmula direta vale para fluido em repouso e corpo totalmente envolvido. Com escoamento, superfície livre instável ou capilaridade, a conta simples não fecha e a medição vira necessária.",
+      levar: "Flutuar é deslocar o próprio peso em fluido.",
+      maos:
+        "Pese um objeto no ar e dentro da água e compare a diferença com o peso do volume deslocado.",
+    },
+    "Escoamento e Turbulência": {
+      contexto:
+        "Onde isso aparece: no encanamento, no fluxo sanguíneo, na chaminé e na asa. Laminar é previsível; turbulento mistura muito e gasta mais energia. A equação de Bernoulli vale em regime ideal, sem perda, e aplicá-la fora disso inventa energia.",
+      oQue:
+        "Fluido em movimento pode ser laminar, em camadas previsíveis, ou turbulento, com redemoinhos que misturam tudo. A viscosidade e a velocidade decidem o regime, e o número de Reynolds resume a comparação entre inércia e viscosidade. É ele que diz se a previsão simples vale.",
+      passos: [
+        "Calcule o número de Reynolds com densidade, velocidade, diâmetro e viscosidade.",
+        "Classifique o regime pela faixa do número obtido.",
+        "Escolha a equação adequada ao regime e inclua a perda de carga.",
+      ],
+      exemplo:
+        "Água a um metro por segundo num tubo de dois centímetros tem Reynolds perto de vinte mil, bem acima de 2.300, e o escoamento é turbulento. Óleo viscoso no mesmo tubo pode ficar laminar. A mesma velocidade, fluidos diferentes, regimes diferentes, e a perda de carga muda junto.",
+      quebra:
+        "Usar Bernoulli em tubulação com perda de carga e concluir que a energia apareceu. Sem perda, a conta fecha; com atrito, parte da energia vira calor e a equação precisa de termo de perda.",
+      limite:
+        "Reynolds é estimativa de regime, não resposta exata. Transição, rugosidade e entrada do tubo fazem a faixa real variar, e o projeto precisa de margem.",
+      levar: "O regime decide a equação, não o contrário.",
+      maos:
+        "Mude a vazão e veja o ponto em que o escoamento deixa de ser laminar.",
+    },
+    "Aerodinâmica": {
+      contexto:
+        "Onde isso aparece: no perfil de asa, no defletor do carro e na pá do ventilador. Arrasto cresce com o quadrado da velocidade, então dobrar a velocidade quadruplica a força. É por isso que a economia de combustível cai tanto acima de certa faixa.",
+      oQue:
+        "Aerodinâmica estuda o ar em volta de corpos que se movem. Sustentação vem da diferença de pressão entre as faces da asa, arrasto é a força que resiste, e a camada-limite é a faixa de ar freada perto da superfície. As três ideias explicam asa, carro e turbina.",
+      passos: [
+        "Desenhe o perfil e a direção do escoamento.",
+        "Identifique a camada-limite e onde ela se separa.",
+        "Calcule sustentação e arrasto com os coeficientes da faixa de operação.",
+      ],
+      exemplo:
+        "Um carro a 100 km/h gasta boa parte da potência só vencendo o ar; a 200 km/h o arrasto quadruplica e a potência exigida cresce muito mais rápido que a velocidade. Um spoiler que aumenta a carga pode aumentar o arrasto, e a escolha depende do que se quer.",
+      quebra:
+        "Explicar a sustentação só pelo tempo de percurso do ar sobre as asas, a história do caminho mais longo. A explicação certa envolve circulação, curvatura e diferença de pressão; a história simples não prevê bem.",
+      limite:
+        "Coeficientes de sustentação e arrasto valem para a faixa ensaiada. Ângulo alto, gelo na asa ou escoamento separado mudam tudo, e o número medido em túnel não se transfere sem escala.",
+      levar: "Arrasto cobra o quadrado da pressa.",
+      maos:
+        "Compare o arrasto em três velocidades e veja a curva subir ao quadrado.",
+    },
+  },
+  "physics-atomica": {
+    "Estrutura Atômica": {
+      contexto:
+        "Onde isso aparece: na tabela periódica, no isótopo do carbono e no laser. Isótopo tem mesmo número de prótons e nêutrons diferentes; a química é parecida e a massa não. Configuração eletrônica segue ordem de energia e decide a ligação.",
+      oQue:
+        "O átomo tem núcleo pequeno e denso, com elétrons em orbitais ao redor. O número de prótons define o elemento, e a configuração eletrônica explica a química. Orbital não é órbita circular: é região de probabilidade, e essa diferença muda a forma de pensar a ligação.",
+      passos: [
+        "Conte os prótons para identificar o elemento.",
+        "Conte os nêutrons para saber o isótopo.",
+        "Distribua os elétrons pelos níveis e veja a camada de valência.",
+      ],
+      exemplo:
+        "Todo carbono tem seis prótons; com seis nêutrons é o carbono-12, com oito é o carbono-14, que decai e serve para datar material orgânico. A química do carbono não muda com o isótopo, mas a massa e a estabilidade mudam, e a datação depende disso.",
+      quebra:
+        "Achar que orbital é uma órbita circular com raio definido. O elétron não tem trajetória determinada; o orbital dá a probabilidade de encontrá-lo. A imagem de planeta girando atrapalha a entender ligação, espectro e a própria leitura da tabela periódica.",
+      limite:
+        "O modelo de níveis funciona bem para átomo isolado e para a química comum. Em átomo pesado, efeito relativístico e correlação eletrônica mexem nos níveis, e a conta simples precisa de correção.",
+      levar: "Próton é identidade; nêutron é massa; elétron é química.",
+      maos:
+        "Monte a configuração eletrônica de dois elementos vizinhos e compare a camada de valência.",
+    },
+    "Espectroscopia": {
+      contexto:
+        "Onde isso aparece: na análise de estrela, no teste de chama, no sensor de gás e no laudo de liga metálica. A composição estelar sai da espectroscopia, e o desvio das linhas ainda revela velocidade. Pouca coisa na física rende tanta informação.",
+      oQue:
+        "Cada átomo absorve e emite cores próprias, porque os níveis de energia são fixos. O espectro de emissão mostra linhas brilhantes; o de absorção mostra faixas escuras no contínuo. Essa assinatura permite identificar material à distância, inclusive estrela que ninguém vai visitar.",
+      passos: [
+        "Obtenha o espectro com fonte calibrada.",
+        "Localize as linhas e compare com a tabela de referência.",
+        "Meça a intensidade e o desvio de cada linha.",
+      ],
+      exemplo:
+        "O sódio tem linhas amarelas características perto de 589 nanômetros. Se elas aparecem no espectro de uma estrela, o sódio está lá; se aparecem deslocadas, a estrela se move. O mesmo raciocínio identifica metal em liga e gás em atmosfera.",
+      quebra:
+        "Achar que espectro contínuo e de linhas são a mesma coisa. Contínuo vem de corpo quente e denso; linhas vêm de transição entre níveis. Sem separar os dois, a leitura da composição sai errada, e a linha de emissão vira ruído de fundo.",
+      limite:
+        "Linha forte não é quantidade grande: a intensidade depende de temperatura, pressão e da própria transição. Ler abundância exige modelo, e a linha sozinha não fecha a conta.",
+      levar: "O átomo assina com luz; o espectro é a assinatura.",
+      maos:
+        "Compare o espectro de uma lâmpada de sódio e de uma incandescente e marque a diferença.",
+    },
+    "Átomos Ultrafrios": {
+      contexto:
+        "Onde isso aparece: no relógio atômico que sustenta o GPS, no sensor inercial e na simulação de material. Lasers resfriam átomos por pressão de radiação, freando o movimento. O condensado não é gás comum frio: é estado quântico coletivo, com coerência de fase.",
+      oQue:
+        "Resfriando átomos a temperaturas minúsculas, o comprimento de onda quântico cresce e os efeitos deixam de ser só microscópicos. No condensado de Bose-Einstein, muitos átomos ocupam o mesmo estado quântico de menor energia e se comportam como uma onda só. Laser e relógio atômico usam a mesma física de transição.",
+      passos: [
+        "Resfrie com laser e depois com evaporação.",
+        "Confira a temperatura e a densidade da nuvem.",
+        "Veja se a fração condensada aparece na medida.",
+      ],
+      exemplo:
+        "Um relógio atômico conta transições de césio a 9,2 bilhões de vezes por segundo e erra menos de um segundo em milhões de anos. O condensado, em laboratório, mostra interferência entre átomos como se fossem onda única. A mesma mecânica quântica, aplicações bem diferentes.",
+      quebra:
+        "Confundir condensado com gás comum muito frio. A diferença é a ocupação coletiva do mesmo estado, com coerência de fase. Chamar de condensado qualquer gás gelado é erro de definição.",
+      limite:
+        "O condensado existe por fração de segundo e exige vácuo e armadilha. Fora do laboratório o estado é frágil, e aplicação prática ainda depende de engenharia de vácuo, de óptica estável e de controle de vibração.",
+      levar: "Frio extremo não congela a quântica: revela.",
+      maos:
+        "Compare a velocidade de átomo a temperatura ambiente e a microkelvin e veja o comprimento de onda crescer.",
+    },
+  },
 };
 
 // o nome da estação chega em caixa baixa do banco ("Grafos moleculares") e em
