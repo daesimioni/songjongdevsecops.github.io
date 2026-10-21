@@ -994,7 +994,7 @@ export const DEEP_QUESTIONS = {
     q: "O que o teorema de Cantor mostra sobre o conjunto das partes de um conjunto?",
     options: [
       "Ele é sempre maior que o conjunto original",
-      "Ele é sempre igual ao conjunto original",
+      "Ele é sempre menor que o conjunto original",
       "Ele é sempre vazio quando o conjunto é infinito",
       "Ele tem a mesma cardinalidade do conjunto original",
       "Ele só existe para conjuntos finitos",

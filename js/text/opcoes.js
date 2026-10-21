@@ -2000,9 +2000,10 @@ export const OPCOES_MELHORES = {
   "A lei dos grandes números diz que...": {
     "o": [
           "a média amostral se aproxima da esperada com muitas repetições",
+          "a média amostral se afasta da esperada com muitas repetições",
+          "a média amostral se aproxima da esperada com poucas repetições",
           "todo jogo tem a sorte garantida no longo prazo",
-          "a variância da amostra sempre diminui",
-          "a probabilidade de acerto cresce a cada rodada"
+          "a variância da amostra sempre diminui"
     ],
     "a": 0
   },
@@ -2245,6 +2246,7 @@ export const OPCOES_MELHORES = {
   "Um autovalor de uma matriz é...": {
     "o": [
           "um escalar que mantém a direção do autovetor",
+          "um escalar que muda a direção do autovetor",
           "o determinante da matriz quadrada",
           "a soma de todos os elementos dela",
           "o traço dividido pelo número de linhas"
@@ -2254,8 +2256,9 @@ export const OPCOES_MELHORES = {
   "Integração por partes vem...": {
     "o": [
           "da regra do produto na derivada",
+          "da regra da soma na derivada",
+          "da regra do produto na integral",
           "do teorema de Pitágoras nos triângulos",
-          "da média aritmética dos extremos",
           "da definição de limite lateral"
     ],
     "a": 0
