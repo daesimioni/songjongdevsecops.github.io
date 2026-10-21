@@ -3772,3 +3772,7 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
 .look-vocation-name { font-family: var(--pixel); font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--mint); }
 .look-vocation-force { color: var(--ink); }
 .look-vocation-weak { color: var(--muted); }
+
+/* modo leve: aparelho que engasga perde o enfeite que custa composição */
+.leve .scanlines, .leve .vignette { display: none; }
+.leve .modal-card, .leve .panel, .leve .chat, .leve .toast { backdrop-filter: none; }

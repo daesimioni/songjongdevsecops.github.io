@@ -20,6 +20,38 @@ function sementeDe(txt) {
   return h % 97;
 }
 
+// Vista de costas: cobre o rosto com a cor do corpo e marca a espinha. O
+// retângulo é por espécie porque cada uma tem a cara num lugar; sem isso as
+// costas eram a frente de novo.
+export const COSTAS = {
+  slime: [-8, -15, 16, 7, "accent"],
+  eye: [-9, -15, 18, 10, "#101426"],
+  bat: [-5, -12, 10, 5, "accent"],
+  spider: [-5, -10, 10, 5, "accent"],
+  wisp: [-5, -17, 10, 5, "accent"],
+  scorpion: [-3, -9, 7, 4, "accent"],
+  golem: [-8, -26, 16, 6, "#555a7c"],
+  ant: [7, -18, 9, 9, "#2a1f30"],
+  moth: [-2, -22, 5, 5, "#2a2238"],
+  beetle: [-5, -13, 10, 4, "accent"],
+  crab: [-12, -14, 24, 8, "accent"],
+  jelly: [-5, -20, 10, 5, "accent"],
+  imp: [-5, -21, 10, 5, "#2a1f30"],
+  sentinel: [-7, -27, 14, 23, "#3a3560"],
+  serpent: [-11, -34, 11, 8, "accent"],
+  tome: [-13, -22, 26, 17, "accent"],
+  glyph: [-6, -14, 13, 7, "accent"],
+  note: [-7, -9, 10, 5, "accent"],
+  atom: [-6, -21, 12, 6, "accent"],
+  crystal: [-6, -24, 12, 8, "accent"],
+  gear: [-7, -25, 14, 7, "accent"],
+  node: [-6, -20, 12, 6, "accent"],
+  prism: [-6, -20, 12, 6, "accent"],
+  vector: [-6, -20, 12, 6, "accent"],
+  flask: [-5, -19, 10, 6, "accent"],
+  boss: [-10, -28, 20, 8, "accent"],
+};
+
 export function drawCreature(ctx, kind, accent, time = 0, scale = 1, dir = 0) {
   const boss = kind === "boss";
   const s = sementeDe(String(kind));
@@ -558,6 +590,16 @@ export function drawCreature(ctx, kind, accent, time = 0, scale = 1, dir = 0) {
     ctx.fillStyle = accent;
     ctx.fillRect(-4, -20, 8, 2);
     ctx.fillRect(-2, -23, 4, 8);
+  }
+  if (dir === 3) {
+    const m = COSTAS[kind] || COSTAS.boss;
+    ctx.fillStyle = m[4] === "accent" ? accent : m[4];
+    ctx.fillRect(m[0], m[1], m[2], m[3]);
+    // espinha e cauda: de costas o bicho tem eixo, não rosto
+    ctx.fillStyle = "rgba(0,0,0,0.28)";
+    ctx.fillRect(Math.round(m[0] + m[2] / 2) - 1, m[1] + 1, 2, m[3] + 6);
+    ctx.fillStyle = accent;
+    ctx.fillRect(Math.round(m[0] + m[2] / 2) - 1, m[1] + m[3] + 1, 2, 2);
   }
   ctx.restore();
 }

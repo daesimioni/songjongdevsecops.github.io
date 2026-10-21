@@ -57,6 +57,19 @@ export function createRenderer(canvas, world) {
   mmFog.height = MAP_H * 2;
   const fogCtx = mmFog.getContext("2d");
   let fogVersion = -1;
+  // ---- modo leve -----------------------------------------------------------
+  // Aparelho que já está no piso de qualidade e continua engasgando entra em
+  // modo leve: some a partícula de ambiente, some o CRT e o teto de pixels cai.
+  let modoLeve = false;
+  function setModoLeve(on) {
+    if (modoLeve === on) return modoLeve;
+    modoLeve = on;
+    pixelsTeto = on ? 1300000 : 2200000;
+    document.body?.classList.toggle("leve", on);
+    resize();
+    return modoLeve;
+  }
+
   let lastFogBuild = 0;
   buildMinimapBase();
 
@@ -65,13 +78,13 @@ export function createRenderer(canvas, world) {
   // Teto de pixels do canvas. Antes o tamanho subia com o devicePixelRatio sem
   // limite: tablet denso desenhava 2,5 MP e celular 1,3 MP, mais que o
   // computador, e o quadro caía. Acima do teto, sobe por CSS.
-  const MAX_PIXELS = 2200000;
+  let pixelsTeto = 2200000;
   function resize() {
     dpr = Math.min(2, window.devicePixelRatio || 1) * quality;
     vw = window.innerWidth;
     vh = window.innerHeight;
     const bruto = vw * vh * dpr * dpr;
-    if (bruto > MAX_PIXELS) dpr *= Math.sqrt(MAX_PIXELS / bruto);
+    if (bruto > pixelsTeto) dpr *= Math.sqrt(pixelsTeto / bruto);
     canvas.width = Math.max(320, Math.round(vw * dpr));
     canvas.height = Math.max(240, Math.round(vh * dpr));
     // O tile de 16 px fica entre 21 e 26 px na tela. Antes ia até 32 px e cada
@@ -1997,7 +2010,7 @@ export function createRenderer(canvas, world) {
       ctx.fillRect(m.x, m.y, m.r, m.r);
     }
 
-    drawAmbient(areaJogador, time, camX, camY, viewW, viewH);
+    if (!modoLeve) drawAmbient(areaJogador, time, camX, camY, viewW, viewH);
     drawNpcLabels(npcs, scale, camX, camY);
     drawMinimap(player, peers, rastreador);
     const frameEnd = performance.now();
@@ -2023,6 +2036,10 @@ export function createRenderer(canvas, world) {
         quality = Math.max(0.7, quality - 0.12);
         ultimoAjuste = frameEnd;
         resize();
+      } else if (p95 > 26 && quality <= 0.7) {
+        // piso de qualidade e ainda engasgando: aparelho fraco de verdade
+        setModoLeve(true);
+        ultimoAjuste = frameEnd;
       } else if (p95 < 17.2 && quality < 1) {
         quality = Math.min(1, quality + 0.08);
         ultimoAjuste = frameEnd;
@@ -2375,7 +2392,7 @@ export function createRenderer(canvas, world) {
   resize();
   window.addEventListener("resize", resize);
   return {
-    draw, resize, kick, stats, ambiente: relogioAmbiente,
+    draw, resize, kick, stats, ambiente: relogioAmbiente, setModoLeve, get modoLeve() { return modoLeve; },
     get zoom() { return zoom; },
     get camX() { return camX; },
     get camY() { return camY; },
