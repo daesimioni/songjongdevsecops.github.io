@@ -236,6 +236,10 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 - [x] o minimapa da caverna nasce com a planta inteira apagada e ganha cor no
       que já foi andado: antes ele era um retângulo quase preto nas primeiras
       salas (2% de pixel vivo), agora abre em 31%
+- [x] o minimapa da superfície recolhe: o botão do canto deixa só a fita com
+      coordenada, piso e o próprio botão (250x227 vira 217x34), a coordenada
+      continua viva enquanto anda e o estado fica guardado, então não recolhe a
+      cada partida
 
 ### G. Bestiário
 
@@ -383,6 +387,7 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 
 | data | fase | o que entrou | prova |
 |---|---|---|---|
+| 2026-10-21 | H | minimapa recolhível: botão no canto fecha o mapa numa fita com coordenada e piso, com aria-expanded e rótulo trocando, e o estado guardado | navegador: caixa de 250x227 para 217x34, canvas escondido, coordenada ainda mudando ao andar (x 91 para 95), recolhido continuou recolhido depois de recarregar e o segundo clique reabriu |
 | 2026-10-21 | I | passeio dos bichos: ritmo por espécie (velocidade e pausa sorteadas), cadeia de dois ou três pontos, escolha do ponto mais longe dentro do campo, olhar em volta parado e chefe passeando devagar | navegador: 8 bichos na mesma caverna, 8 s de amostra, andado médio de 0,98 para 3,85 tiles, mínimo de 0 para 2,47, ninguém fora do campo (0,6 tile) e menor distância entre dois em 12,3 tiles; node verde |
 | 2026-10-21 | Z | tela de título com grimório no centro e a letra B legível: vale redesenhado (árvore com copa em camadas, pinheiro, casa com fumaça, aurora, lua com halo), alto de pedra com círculo de runas que gira, pentagrama, púlpito, grimório aberto, feixes de luz, brasas e roda de encapuzados; cartão dividido em topo e pé; interface em Silkscreen (Press Start só no logo); `kbd` do botão de entrada com tinta escura | navegador: título em 1280x717 e em 390x844 sem estouro horizontal, recorte 3x do centro mostrando livro, runas, encapuzados e brasas; HUD e bestiário com 464 fichas legíveis na fonte nova, zero transbordo em 1280 e em 390 px; botão com texto `rgb(10,12,24)` sobre âmbar e `kbd` na mesma tinta |
 | 2026-10-21 | Y | regressão de navegador e custo do modal: 12 verificações num passeio só (HUD, mochila, bestiário, diário, viagem, arrastar, névoa r2, caverna, Esc, 390 px e console) e o mundo deixou de ser redesenhado atrás do modal | navegador: 12/12 PASS, arrasto moveu o boneco de 91,61 para 96,63, névoa `r2:` de 165 caracteres, caverna com 10 salas e minimapa em 0,305, sem erro de console; fps com a mochila aberta de 8,2 para 56,9 em sessão curta |

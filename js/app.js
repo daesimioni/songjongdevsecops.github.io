@@ -2882,6 +2882,27 @@ $("minimap-canvas").addEventListener("wheel", (e) => {
   e.preventDefault();
   trocarZoomMini(e.deltaY < 0 ? 1 : -1);
 }, { passive: false });
+// o minimapa ocupa canto: dá para recolher e fica só a coordenada. O estado
+// fica guardado, senão a pessoa recolhe a cada partida
+const MINI_RECOLHIDO = "mundo-song:minimap:v1";
+function aplicarMiniRecolhido(recolhido) {
+  const caixa = $("minimap");
+  const botao = $("mini-toggle");
+  if (!caixa) return;
+  caixa.classList.toggle("mini", recolhido);
+  if (botao) {
+    botao.textContent = recolhido ? "+" : "–";
+    botao.setAttribute("aria-expanded", String(!recolhido));
+    botao.setAttribute("aria-label", recolhido ? "abrir o minimapa" : "minimizar o minimapa");
+  }
+  writeJSON(MINI_RECOLHIDO, recolhido);
+}
+$("mini-toggle").addEventListener("click", () => {
+  aplicarMiniRecolhido(!$("minimap").classList.contains("mini"));
+  audio.blip();
+});
+aplicarMiniRecolhido(readJSON(MINI_RECOLHIDO, false) === true);
+
 $("mini-in").addEventListener("click", () => trocarZoomMini(1));
 $("mini-out").addEventListener("click", () => trocarZoomMini(-1));
 $("mini-fit").addEventListener("click", () => {
