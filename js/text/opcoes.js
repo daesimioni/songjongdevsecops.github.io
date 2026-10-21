@@ -1333,5 +1333,530 @@ export const OPCOES_MELHORES = {
           "O tempo total do experimento"
     ],
     "a": 0
+  },
+  "Um indicador ácido-base muda de cor...": {
+    "o": [
+          "perto do ponto de virada do pH",
+          "quando a solução esquenta ou esfria",
+          "sempre que o pH fica neutro",
+          "quando a solução congela no frasco",
+          "só depois da titulação terminar"
+    ],
+    "a": 0
+  },
+  "O átomo é...": {
+    "o": [
+          "a menor unidade de um elemento",
+          "a menor parte de uma mistura",
+          "um grupo de moléculas ligadas",
+          "uma partícula com carga elétrica",
+          "a menor unidade de um composto"
+    ],
+    "a": 0
+  },
+  "Para que serve uma titulação?": {
+    "o": [
+          "Para determinar a concentração de uma solução por reação com volume conhecido.",
+          "Para separar os componentes por ponto de ebulição.",
+          "Para medir a cor de uma solução em um tubo.",
+          "Para pesar o precipitado formado no frasco.",
+          "Para acelerar a reação com um catalisador."
+    ],
+    "a": 0
+  },
+  "Ao diluir uma solução com água, o que acontece com o soluto?": {
+    "o": [
+          "A quantidade continua a mesma e a concentração cai",
+          "A quantidade de soluto dobra com a água",
+          "O soluto evapora junto com o solvente",
+          "A concentração sobe porque há mais volume",
+          "O soluto muda de fórmula química"
+    ],
+    "a": 0
+  },
+  "O que uma energia livre de Gibbs negativa indica?": {
+    "o": [
+          "Reação espontânea nas condições dadas",
+          "Reação impossível naquelas condições",
+          "Equilíbrio exato entre reagentes e produtos",
+          "Reação instantânea em qualquer temperatura",
+          "Ausência total de entalpia no sistema"
+    ],
+    "a": 0
+  },
+  "O que diferencia a polimerização por condensação?": {
+    "o": [
+          "Libera uma molécula pequena, como água",
+          "Não altera a massa da cadeia final",
+          "Usa sempre um único tipo de monômero",
+          "Só acontece com metais no meio",
+          "Dispensa calor em qualquer processo"
+    ],
+    "a": 0
+  },
+  "Por que metal pesado exige cuidado por longo prazo?": {
+    "o": [
+          "Ele não se degrada, fica no ambiente e na cadeia alimentar",
+          "Ele evapora rápido na temperatura ambiente",
+          "Ele vira gás inofensivo com o tempo",
+          "Ele desaparece quando recebe luz do sol",
+          "Ele só existe dentro do laboratório"
+    ],
+    "a": 0
+  },
+  "Para que serve o reciclo num processo químico?": {
+    "o": [
+          "Devolver reagente não convertido para aumentar o rendimento global",
+          "Aumentar a temperatura do reator principal",
+          "Dispensar o catalisador da etapa lenta",
+          "Eliminar a etapa de separação do produto",
+          "Mudar o produto que sai no final"
+    ],
+    "a": 0
+  },
+  "Quando a mecânica molecular é mais indicada?": {
+    "o": [
+          "Para sistemas grandes, com aproximação por campo de força",
+          "Para calcular os elétrons dos orbitais",
+          "Para reações com quebra de ligação",
+          "Para obter massas atômicas exatas",
+          "Para bandas de energia em metais"
+    ],
+    "a": 0
+  },
+  "O que a absorção de luz faz na fotoquímica?": {
+    "o": [
+          "Excita a molécula e abre caminhos de reação",
+          "Só aquece a amostra sem mudar nada",
+          "Remove elétrons do núcleo atômico",
+          "Muda o elemento químico da amostra",
+          "Não altera a molécula de forma alguma"
+    ],
+    "a": 0
+  },
+  "O que a previsão computacional dá antes do ensaio?": {
+    "o": [
+          "Um candidato provável, que ainda precisa ser testado",
+          "A certeza absoluta do resultado final",
+          "A síntese pronta para publicar",
+          "O preço do frasco no fornecedor",
+          "A cor final do composto obtido"
+    ],
+    "a": 0
+  },
+  "Por que a nomenclatura química precisa ser estável?": {
+    "o": [
+          "Para identificar a substância sem ambiguidade",
+          "Para deixar os nomes mais bonitos",
+          "Para encurtar o texto dos artigos",
+          "Para dispensar a fórmula estrutural",
+          "Para escolher a cor do composto"
+    ],
+    "a": 0
+  },
+  "A cromatografia separa por...": {
+    "o": [
+          "diferença de afinidade entre as fases",
+          "diferença de peso atômico dos átomos",
+          "cor apenas, sem interação química",
+          "tamanho do frasco usado na coluna"
+    ],
+    "a": 0
+  },
+  "Um mol é...": {
+    "o": [
+          "uma quantidade com o número de Avogadro",
+          "uma unidade de massa atômica padrão",
+          "um volume fixo de qualquer gás",
+          "uma concentração em gramas por litro"
+    ],
+    "a": 0
+  },
+  "Balancear uma equação garante...": {
+    "o": [
+          "a mesma quantidade de átomos dos dois lados",
+          "o mesmo volume de gás nos dois lados",
+          "a mesma cor das soluções envolvidas",
+          "o mesmo número de moléculas de cada tipo"
+    ],
+    "a": 0
+  },
+  "Solubilidade é...": {
+    "o": [
+          "a quantidade máxima de soluto que dissolve",
+          "a cor que a solução apresenta",
+          "a massa total do solvente usado",
+          "a velocidade com que o soluto some"
+    ],
+    "a": 0
+  },
+  "A ligação metálica envolve...": {
+    "o": [
+          "elétrons livres compartilhados entre íons",
+          "pares de elétrons fixos nos átomos",
+          "prótons que circulam pela rede",
+          "íons positivos ligados por pontes"
+    ],
+    "a": 0
+  },
+  "Concentração é...": {
+    "o": [
+          "quantidade de soluto por volume de solução",
+          "massa do solvente em cada frasco",
+          "cor da solução depois de diluída",
+          "temperatura em que o soluto dissolve"
+    ],
+    "a": 0
+  },
+  "A eletrólise usa...": {
+    "o": [
+          "corrente elétrica para forçar uma reação",
+          "calor apenas para decompor o composto",
+          "luz para romper as ligações químicas",
+          "pressão para separar os componentes"
+    ],
+    "a": 0
+  },
+  "Um hidrocarboneto saturado tem...": {
+    "o": [
+          "só ligações simples entre carbonos",
+          "ligações duplas entre os carbonos",
+          "anéis aromáticos na cadeia",
+          "triplas ligações na estrutura"
+    ],
+    "a": 0
+  },
+  "Uma solução saturada está...": {
+    "o": [
+          "no limite de soluto dissolvido",
+          "sem nenhum soluto dissolvido",
+          "sempre mais diluída que as outras",
+          "com metade do soluto que caberia"
+    ],
+    "a": 0
+  },
+  "Quando uma ligação tende a ser iônica?": {
+    "o": [
+          "Quando a diferença de eletronegatividade entre os átomos é grande",
+          "Quando os átomos têm eletronegatividade igual",
+          "Quando há hidrogênio ligado a carbono",
+          "Quando o átomo tem a camada cheia",
+          "Quando a molécula formada é apolar"
+    ],
+    "a": 0
+  },
+  "O que um catalisador muda?": {
+    "o": [
+          "A energia de ativação e a velocidade",
+          "O equilíbrio final da reação",
+          "A massa total dos produtos",
+          "A fórmula química dos reagentes",
+          "A entalpia total do sistema"
+    ],
+    "a": 0
+  },
+  "O que acontece com a enzima ao final da reação?": {
+    "o": [
+          "Ela está livre para catalisar de novo",
+          "Ela é consumida junto com o substrato",
+          "Ela se transforma no produto final",
+          "Ela muda de elemento após a catálise",
+          "Ela passa a ser o substrato da enzima"
+    ],
+    "a": 0
+  },
+  "Por que o termofixo não pode ser remoldado?": {
+    "o": [
+          "Suas cadeias formam rede reticulada permanente",
+          "Ele derrete fácil com pouco calor",
+          "É feito de metal e não de polímero",
+          "Não tem carbono na composição",
+          "Tem cadeias curtas e muito soltas"
+    ],
+    "a": 0
+  },
+  "Por que a zeólita serve como peneira molecular?": {
+    "o": [
+          "Os canais têm tamanho que deixa passar só certas moléculas",
+          "Ela derrete fácil e prende o soluto",
+          "Ela é metálica e conduz corrente",
+          "Tem pH fixo em qualquer solução",
+          "Não possui poros na sua estrutura"
+    ],
+    "a": 0
+  },
+  "Qual processo forma chuva ácida?": {
+    "o": [
+          "Óxidos de enxofre e nitrogênio reagem com água na atmosfera",
+          "Ozônio se acumula perto do solo",
+          "Metano evapora do solo úmido",
+          "Chumbo se dissolve na água da chuva",
+          "Sal se precipita nas nuvens altas"
+    ],
+    "a": 0
+  },
+  "O que é envenenamento de catalisador?": {
+    "o": [
+          "Substância que prende nos sítios ativos e reduz a atividade",
+          "Aumento de temperatura no leito catalítico",
+          "Troca do catalisador por outro mais novo",
+          "Aumento de pressão dentro do reator",
+          "Mudança na cor do catalisador usado"
+    ],
+    "a": 0
+  },
+  "O que a DFT aproxima?": {
+    "o": [
+          "A energia em função da densidade eletrônica",
+          "A massa exata do núcleo atômico",
+          "A temperatura da amostra aquecida",
+          "A taxa de reação em cada instante",
+          "A cor final do composto formado"
+    ],
+    "a": 0
+  },
+  "Por que a cadeia de custódia importa na análise forense?": {
+    "o": [
+          "Garante que a amostra não foi alterada desde a coleta",
+          "Deixa a amostra mais pura para o exame",
+          "Acelera a análise no laboratório",
+          "Dispensa o padrão de comparação",
+          "Reduz o custo do laudo pericial"
+    ],
+    "a": 0
+  },
+  "O que um relatório de laboratório precisa registrar?": {
+    "o": [
+          "Os dados obtidos, inclusive os desvios",
+          "Só o melhor resultado da série",
+          "A opinião pessoal do professor",
+          "A nota que se espera receber",
+          "A lista de compras do laboratório"
+    ],
+    "a": 0
+  },
+  "O princípio de Le Chatelier diz que o sistema...": {
+    "o": [
+          "Resiste à perturbação e desloca o equilíbrio",
+          "Ignora a perturbação e fica igual",
+          "Vira outro elemento químico qualquer",
+          "Aumenta a massa total do sistema"
+    ],
+    "a": 0
+  },
+  "O que a energia de ligação mede?": {
+    "o": [
+          "A energia para quebrar uma ligação",
+          "O pH da solução em equilíbrio",
+          "A massa total do átomo isolado",
+          "A cor final do composto estável"
+    ],
+    "a": 0
+  },
+  "A espectrometria identifica substâncias por...": {
+    "o": [
+          "padrão de absorção ou emissão de luz",
+          "cheiro característico da amostra",
+          "densidade apenas, sem outra medida",
+          "ponto de fusão medido no capilar"
+    ],
+    "a": 0
+  },
+  "Um erro sistemático...": {
+    "o": [
+          "desloca todas as medidas no mesmo sentido",
+          "varia ao acaso entre as medidas",
+          "não afeta nunca a média das medidas",
+          "só aparece na última medida feita"
+    ],
+    "a": 0
+  },
+  "A eletronegatividade mede...": {
+    "o": [
+          "a tendência de um átomo atrair elétrons",
+          "a massa atômica do elemento",
+          "o raio médio do núcleo atômico",
+          "o número de nêutrons do isótopo"
+    ],
+    "a": 0
+  },
+  "A lei de Hess diz que a entalpia depende...": {
+    "o": [
+          "dos estados inicial e final, não do caminho",
+          "do caminho detalhado da reação",
+          "só da pressão aplicada ao sistema",
+          "apenas da temperatura do reator"
+    ],
+    "a": 0
+  },
+  "Um orbital descreve...": {
+    "o": [
+          "a região provável de encontrar o elétron",
+          "a órbita exata do elétron no átomo",
+          "o núcleo e seus prótons internos",
+          "o caminho fixo em torno do núcleo"
+    ],
+    "a": 0
+  },
+  "Kp e Kc diferem porque...": {
+    "o": [
+          "Kp usa pressões parciais; Kc usa concentrações",
+          "são sempre iguais para qualquer reação",
+          "Kp só vale para sólidos e líquidos",
+          "Kc usa pressão e Kp usa volume"
+    ],
+    "a": 0
+  },
+  "Ressonância estabiliza uma molécula porque...": {
+    "o": [
+          "os elétrons se espalham por mais de uma posição",
+          "aumenta a massa da molécula formada",
+          "elimina as ligações entre os átomos",
+          "congela a geometria numa só forma"
+    ],
+    "a": 0
+  },
+  "Aromaticidade pede...": {
+    "o": [
+          "anel plano com elétrons π deslocalizados",
+          "cadeia aberta com ligações simples",
+          "só ligações simples na estrutura",
+          "pelo menos um anel que não seja plano"
+    ],
+    "a": 0
+  },
+  "Entalpia mede...": {
+    "o": [
+          "energia térmica a pressão constante",
+          "a entropia do sistema isolado",
+          "a massa molar do composto puro",
+          "a carga elétrica total do íon"
+    ],
+    "a": 0
+  },
+  "Energia de ativação é...": {
+    "o": [
+          "a barreira mínima para a reação começar",
+          "a energia total guardada nos produtos",
+          "o calor total liberado na reação",
+          "a energia do estado final do produto"
+    ],
+    "a": 0
+  },
+  "O estado de transição é...": {
+    "o": [
+          "a configuração de maior energia no caminho",
+          "o produto final estável da reação",
+          "o reagente inicial colocado no frasco",
+          "o catalisador usado na etapa lenta"
+    ],
+    "a": 0
+  },
+  "Um grupo funcional é...": {
+    "o": [
+          "um conjunto de átomos que define o comportamento",
+          "a cadeia inteira de carbonos da molécula",
+          "um isótopo radioativo do elemento",
+          "o nome comercial dado ao composto"
+    ],
+    "a": 0
+  },
+  "Polaridade de uma molécula depende...": {
+    "o": [
+          "da distribuição de carga e da geometria",
+          "só da massa molar do composto",
+          "só do nome oficial da substância",
+          "só da cor observada no frasco"
+    ],
+    "a": 0
+  },
+  "A conservação da massa diz que...": {
+    "o": [
+          "a massa total dos reagentes é a dos produtos",
+          "a massa some ao longo da reação",
+          "só vale para reações com sólidos",
+          "a massa dobra quando há catalisador"
+    ],
+    "a": 0
+  },
+  "O que é o reagente limitante?": {
+    "o": [
+          "O que é consumido primeiro e limita a quantidade de produto",
+          "O que está em maior quantidade na mistura",
+          "O catalisador que acelera a reação",
+          "O produto que sobra no final",
+          "O solvente que dissolve a mistura"
+    ],
+    "a": 0
+  },
+  "Na oxidação, o que acontece com a espécie?": {
+    "o": [
+          "Perde elétrons e o número de oxidação aumenta",
+          "Ganha elétrons e o número de oxidação cai",
+          "Não muda de carga em nenhum instante",
+          "Ganha prótons no núcleo do átomo",
+          "Perde massa e vira um isótopo"
+    ],
+    "a": 0
+  },
+  "O que a reciclagem química faz que a mecânica não faz?": {
+    "o": [
+          "Quebra o polímero em moléculas menores",
+          "Só lava o plástico que chega picado",
+          "Derrete o plástico sem separar resinas",
+          "Só prensa as peças em blocos grandes",
+          "Mistura as resinas sem separá-las"
+    ],
+    "a": 0
+  },
+  "O que o craqueamento faz no refino?": {
+    "o": [
+          "Quebra cadeias longas em moléculas menores",
+          "Junta moléculas pequenas em cadeias longas",
+          "Só resfria o óleo que sai da torre",
+          "Remove a água emulsionada no óleo",
+          "Adiciona oxigênio às moléculas"
+    ],
+    "a": 0
+  },
+  "Para que serve um código SMILES?": {
+    "o": [
+          "Representar a estrutura de uma molécula em texto",
+          "Medir a massa da amostra no balão",
+          "Aquecer a amostra no banho maria",
+          "Separar as misturas na coluna cromatográfica",
+          "Calcular o pH da solução tampão"
+    ],
+    "a": 0
+  },
+  "O que a economia de átomos mede?": {
+    "o": [
+          "Quanto dos reagentes termina dentro do produto desejado",
+          "O custo total do catalisador usado",
+          "O tempo total da reação no reator",
+          "A cor final do produto obtido",
+          "A massa de solvente descartada"
+    ],
+    "a": 0
+  },
+  "Por que filtrar candidatos por estabilidade?": {
+    "o": [
+          "Para não propor material que não existe nas condições de uso",
+          "Para acelerar a impressão do relatório",
+          "Para reduzir a cor do composto",
+          "Para aumentar a massa do produto",
+          "Para escolher o fornecedor do insumo"
+    ],
+    "a": 0
+  },
+  "Para que serve o pictograma de perigo no rótulo?": {
+    "o": [
+          "Indicar o tipo de risco de forma padronizada",
+          "Decorar o frasco com um símbolo bonito",
+          "Mostrar a marca do fabricante do frasco",
+          "Informar o preço do produto na loja",
+          "Indicar a validade do reagente"
+    ],
+    "a": 0
   }
 };
