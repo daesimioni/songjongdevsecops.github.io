@@ -15,7 +15,7 @@ export const POSTS = {
     lab: null,
     body: `
       <p>No começo há uma pedra no porto. Ela não explica o vale. Apenas aquece a mão de quem chega.</p>
-      <p>O vale foi erguido de fragmentos. Cada pedra no caminho guarda um: uma ideia que alguém deixou aqui para ser encontrada de novo. Aproxime-se e ela se abre. O instrumento ao lado espera as mãos, e nenhum dos dois cobra pressa.</p>
+      <p>O vale foi erguido de fragmentos. Cada pedra no caminho guarda um: uma ideia que alguém deixou aqui para ser encontrada de novo. Aproxime-se e ela se abre. O instrumento ao lado espera as mãos, e nenhum dos dois cobra pressa. O que sai daqui não fica aqui: a ideia que você levanta de uma pedra continua funcionando do lado de fora, quando você menos espera.</p>
       <p>Cada pedra encontrada deixa uma marca no Diário e soma experiência. As missões dos viajantes pagam experiência e um título, e o Diário mostra quanto falta para o próximo. Não há ordem certa: o vale aceita quem chega por qualquer caminho.</p>
       <p>Há quem more entre as pedras. Instrutores ensinam sem tirar vida. Viajantes pedem pequenos favores. Guardiões de caverna só devolvem o que sabem depois de uma pergunta, e cobram caro por erro. O Diário anota o que você já viu; a névoa cobre o que ainda não andou.</p>
       <p>As regiões não se ligam todas por terra. Nas docas, as Pedras do Porto acendem para quem já chegou longe; o mar continua sendo mar. Pontes levam aos vizinhos. Abaixo do chão, o túnel da conurbação passa por baixo das fronteiras e desce ao Porto Submerso.</p>

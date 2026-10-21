@@ -302,6 +302,16 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 
 ### Z. Título, letra B e botão
 
+- [x] a abertura deixou de ser catálogo: saíram os números ("sete regiões,
+      oitenta e seis lugares, quatrocentas e cinquenta e quatro pedras") e
+      entrou a promessa do vale. A régua é a de Monument Valley: frase curta,
+      imagem concreta (pedra, fogo, caminho), nada de lista, nada de exclamação
+- [x] o gancho é a magia que funciona fora: "cada pedra acende uma ideia, e a
+      ideia continua funcionando quando você sai" (tela de título) e "o que sai
+      daqui não fica aqui" (primeira pedra do porto)
+- [x] o mesmo tom foi para as metas de compartilhamento, que também listavam
+      números
+
 - [x] a tela de título ganhou o centro que faltava: alto de pedra no meio da
       relva, círculo de runas em perspectiva que gira devagar, pentagrama,
       púlpito de pedra, grimório aberto com páginas, lombada escura, runa acesa
