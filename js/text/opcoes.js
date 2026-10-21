@@ -2879,5 +2879,365 @@ export const OPCOES_MELHORES = {
           "Porque depende sempre do verbo"
     ],
     "a": 0
+  },
+  "Uma rede neural é feita de...": {
+    "o": [
+          "Camadas de neurônios artificiais",
+          "Fios de cobre ligados em série",
+          "Transistores apenas, sem pesos",
+          "Tabelas de regras escritas à mão",
+          "Um banco de dados bem indexado"
+    ],
+    "a": 0
+  },
+  "O que é um conjunto de treino?": {
+    "o": [
+          "Exemplos usados para ajustar o modelo",
+          "A tela do computador durante o uso",
+          "O teste final aplicado ao modelo",
+          "A lista de parâmetros do modelo",
+          "O servidor onde o modelo é executado"
+    ],
+    "a": 0
+  },
+  "IA é o mesmo que aprendizado de máquina?": {
+    "o": [
+          "Não; aprendizado de máquina é uma parte da IA",
+          "Sim, os dois termos são sinônimos",
+          "Aprendizado é mais amplo que a IA",
+          "Não; são áreas sem nenhuma relação",
+          "Sim, mas só para modelos grandes"
+    ],
+    "a": 0
+  },
+  "Um chatbot é...": {
+    "o": [
+          "um sistema que conversa com o usuário",
+          "um banco de dados de perguntas",
+          "uma GPU usada só para treinar",
+          "um algoritmo de compactação de texto",
+          "uma planilha de contatos antigos"
+    ],
+    "a": 0
+  },
+  "Um sistema de recomendação usa...": {
+    "o": [
+          "histórico e preferências para sugerir",
+          "senhas guardadas no servidor",
+          "compiladores da linguagem usada",
+          "o tamanho do disco do usuário",
+          "a cor da interface do aplicativo"
+    ],
+    "a": 0
+  },
+  "Dado tabular é...": {
+    "o": [
+          "organizado em linhas e colunas",
+          "uma imagem em alta resolução",
+          "um áudio gravado no microfone",
+          "um texto livre sem nenhuma ordem",
+          "um vídeo com várias cenas"
+    ],
+    "a": 0
+  },
+  "Inteligência artificial é...": {
+    "o": [
+          "um campo que constrói sistemas para tarefas cognitivas",
+          "um único algoritmo que resolve tudo",
+          "um banco de dados muito grande",
+          "um tipo de hardware mais rápido",
+          "uma linguagem de programação nova"
+    ],
+    "a": 0
+  },
+  "Um algoritmo de busca serve para...": {
+    "o": [
+          "explorar opções até encontrar uma solução",
+          "compactar dados para ocupar menos espaço",
+          "desenhar imagens na tela do usuário",
+          "ordenar arquivos por data de criação",
+          "medir a velocidade da rede local"
+    ],
+    "a": 0
+  },
+  "Um assistente virtual é...": {
+    "o": [
+          "uma interface conversacional para tarefas",
+          "um hardware com placa de vídeo",
+          "um banco de dados relacional comum",
+          "um sistema operacional completo",
+          "um compilador de linguagem antiga"
+    ],
+    "a": 0
+  },
+  "Dado estruturado está...": {
+    "o": [
+          "organizado em tabelas ou esquemas",
+          "em texto livre sem nenhum formato",
+          "em áudio gravado de conversas",
+          "em imagens sem nenhum metadado",
+          "em anotações feitas à mão livre"
+    ],
+    "a": 0
+  },
+  "Para que serve a regularização?": {
+    "o": [
+          "Penalizar complexidade e reduzir overfitting",
+          "Aumentar o número de classes do problema",
+          "Apagar os dados ruins da base",
+          "Aumentar a taxa de aprendizado",
+          "Escolher a função de perda do modelo"
+    ],
+    "a": 0
+  },
+  "A janela de contexto define...": {
+    "o": [
+          "quanto texto o modelo consegue considerar de uma vez",
+          "o número de camadas da rede neural",
+          "a velocidade da GPU durante o treino",
+          "o tamanho do vocabulário do modelo",
+          "quantos parâmetros o modelo tem"
+    ],
+    "a": 0
+  },
+  "A temperatura na geração controla...": {
+    "o": [
+          "o grau de aleatoriedade na escolha do próximo token",
+          "a velocidade do treino do modelo",
+          "o tamanho do vocabulário usado",
+          "o número de camadas da rede neural",
+          "a quantidade de memória da GPU"
+    ],
+    "a": 0
+  },
+  "Um conjunto de validação serve para...": {
+    "o": [
+          "medir generalização durante o desenvolvimento",
+          "acelerar o treino do modelo grande",
+          "aumentar os dados de treino em dobro",
+          "escolher a placa de vídeo do servidor",
+          "definir a função de perda do modelo"
+    ],
+    "a": 0
+  },
+  "Um embedding é...": {
+    "o": [
+          "um vetor que representa significado",
+          "uma imagem gerada pelo modelo",
+          "um rótulo escrito à mão pelo analista",
+          "uma tabela de preços organizada",
+          "um modelo de linguagem completo"
+    ],
+    "a": 0
+  },
+  "Aprendizado por transferência...": {
+    "o": [
+          "reaproveita um modelo treinado em outra tarefa",
+          "apaga o modelo antigo do servidor",
+          "só usa regras escritas por especialistas",
+          "começa sempre do zero a cada projeto",
+          "exige rotular todos os dados de novo"
+    ],
+    "a": 0
+  },
+  "Validação cruzada...": {
+    "o": [
+          "divide os dados em dobras para avaliar",
+          "aumenta o tamanho do modelo",
+          "apaga os outliers da base de dados",
+          "escolhe a GPU usada no treinamento",
+          "reduz o número de parâmetros da rede"
+    ],
+    "a": 0
+  },
+  "Engenharia de features é...": {
+    "o": [
+          "criar variáveis úteis para o modelo",
+          "apagar colunas do conjunto",
+          "trocar a GPU por outra melhor",
+          "reduzir o número de camadas da rede",
+          "aumentar a taxa de aprendizado"
+    ],
+    "a": 0
+  },
+  "Um pipeline de ML organiza...": {
+    "o": [
+          "as etapas de dados, treino e avaliação",
+          "só o deploy do modelo pronto",
+          "só a coleta de dados brutos da fonte",
+          "as senhas dos usuários do sistema",
+          "o layout da interface gráfica"
+    ],
+    "a": 0
+  },
+  "A atenção em transformadores permite...": {
+    "o": [
+          "Pesar relações entre tokens distantes",
+          "Treinar sem nenhum dado de exemplo",
+          "Dispensar a GPU no treinamento",
+          "Eliminar a função de perda",
+          "Reduzir o vocabulário a zero"
+    ],
+    "a": 0
+  },
+  "Alinhamento de IA pergunta...": {
+    "o": [
+          "Como fazer o objetivo da máquina coincidir com o humano",
+          "Como acelerar a rede neural no treino",
+          "Como reduzir o número de tokens",
+          "Como escolher a GPU do servidor",
+          "Como aumentar o vocabulário do modelo"
+    ],
+    "a": 0
+  },
+  "O que é viés em um modelo?": {
+    "o": [
+          "Um erro sistemático que favorece certos casos",
+          "A velocidade do treino na GPU",
+          "O tamanho da tela do usuário",
+          "A quantidade de memória usada",
+          "O custo de cada requisição feita"
+    ],
+    "a": 0
+  },
+  "O que é um modelo generativo?": {
+    "o": [
+          "Um modelo que aprende a produzir dados parecidos com os de treino",
+          "Um modelo que só classifica rótulos prontos",
+          "Um banco de dados de respostas fixas",
+          "Um sistema de busca por palavras exatas",
+          "Um algoritmo de ordenação de listas"
+    ],
+    "a": 0
+  },
+  "Overfitting costuma aparecer quando...": {
+    "o": [
+          "o modelo é complexo demais para o dado",
+          "faltam parâmetros para o modelo",
+          "o treino é curto e muito simples",
+          "a base tem poucos atributos úteis",
+          "a taxa de aprendizado é zero"
+    ],
+    "a": 0
+  },
+  "Perplexidade mede...": {
+    "o": [
+          "o quanto o modelo se surpreende com o texto",
+          "a quantidade de parâmetros do modelo",
+          "a memória usada durante o treino",
+          "a velocidade de geração dos tokens",
+          "o número de camadas da rede neural"
+    ],
+    "a": 0
+  },
+  "Um transformer precisa de codificação posicional porque...": {
+    "o": [
+          "a atenção não sabe a ordem dos tokens sozinha",
+          "não usa atenção em nenhuma camada",
+          "o texto de entrada é sempre curto",
+          "a GPU não guarda a ordem dos dados",
+          "o vocabulário muda a cada frase"
+    ],
+    "a": 0
+  },
+  "O otimizador Adam combina...": {
+    "o": [
+          "momento e taxa adaptativa por parâmetro",
+          "só gradiente puro sem histórico",
+          "só ruído aleatório na atualização",
+          "momentum fixo e taxa constante",
+          "a média dos pesos das camadas anteriores"
+    ],
+    "a": 0
+  },
+  "Vazamento de dados acontece quando...": {
+    "o": [
+          "informação do teste entra no treino",
+          "o modelo é pequeno demais para a tarefa",
+          "a GPU esquenta durante o treino",
+          "o treino termina antes do previsto",
+          "a base tem poucas colunas úteis"
+    ],
+    "a": 0
+  },
+  "Avaliação humana é importante porque...": {
+    "o": [
+          "métricas automáticas não capturam tudo o que importa",
+          "substitui o treino do modelo grande",
+          "mede a GPU usada durante o treino",
+          "dispensa o conjunto de teste",
+          "reduz o custo de cada execução"
+    ],
+    "a": 0
+  },
+  "Regularização L2...": {
+    "o": [
+          "penaliza a soma dos quadrados dos pesos",
+          "remove dados ruidosos da base",
+          "aumenta a taxa de aprendizado",
+          "zera os pesos de todas as camadas",
+          "escolhe a função de perda usada"
+    ],
+    "a": 0
+  },
+  "Um autoencoder aprende...": {
+    "o": [
+          "uma representação comprimida dos dados",
+          "a classificar apenas rótulos prontos",
+          "a gerar rótulos a partir de regras",
+          "a ordenar as colunas da tabela",
+          "a medir a velocidade da rede local"
+    ],
+    "a": 0
+  },
+  "Aprendizado auto-supervisionado...": {
+    "o": [
+          "cria o alvo a partir dos próprios dados",
+          "usa rótulos humanos em cada exemplo",
+          "só usa reforço com recompensa",
+          "dispensa qualquer dado de entrada",
+          "depende de anotação manual de especialistas"
+    ],
+    "a": 0
+  },
+  "Destilação de modelo...": {
+    "o": [
+          "treina um modelo menor para imitar o maior",
+          "apaga o modelo maior do servidor",
+          "aumenta as camadas do modelo atual",
+          "muda o framework de treinamento",
+          "reduz o vocabulário pela metade"
+    ],
+    "a": 0
+  },
+  "Busca em feixe mantém...": {
+    "o": [
+          "as k melhores hipóteses a cada passo",
+          "só uma hipótese até o final",
+          "todas as hipóteses possíveis na memória",
+          "as hipóteses piores para comparar",
+          "nenhuma hipótese intermediária"
+    ],
+    "a": 0
+  },
+  "Calibração de probabilidade verifica...": {
+    "o": [
+          "se a confiança corresponde à frequência de acerto",
+          "a velocidade do treino na GPU",
+          "o tamanho do vocabulário usado",
+          "a quantidade de camadas da rede",
+          "o custo por token gerado no serviço"
+    ],
+    "a": 0
+  },
+  "Inferência é...": {
+    "o": [
+          "usar um modelo treinado para prever",
+          "treinar o modelo do zero outra vez",
+          "coletar dados novos para a base",
+          "ajustar os hiperparâmetros da rede",
+          "avaliar a velocidade da GPU no servidor"
+    ],
+    "a": 0
   }
 };
