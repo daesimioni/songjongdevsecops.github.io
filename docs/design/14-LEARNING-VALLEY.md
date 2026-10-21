@@ -348,21 +348,21 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
       números
 
 - [x] a tela de título ganhou o centro que faltava: alto de pedra no meio da
-      relva, círculo de runas em perspectiva que gira devagar, pentagrama,
-      púlpito de pedra, grimório aberto com páginas, lombada escura, runa acesa
-      em cada página e fita marcadora
-- [x] magia saindo do livro: três feixes de luz que balançam, brasas subindo em
-      espiral, sinais de 3x5 px girando em duas órbitas e velas com chama que
-      tremula
-- [x] roda de figuras encapuzadas em volta do círculo: as de trás ficam atrás do
-      altar, as da frente ficam na frente e maiores, com olhos acesos pela luz
-      do livro
+      relva, círculo de runas em perspectiva que gira devagar, púlpito de pedra,
+      grimório aberto com capa, páginas, lombada escura, runa acesa em cada
+      página, apoios e fita marcadora
+- [x] magia saindo do livro: dois feixes de luz que balançam, brasas subindo em
+      espiral e duas velas com chama que tremula
+- [x] leitura da cena: sem pentagrama, sem sinais soltos no céu e com duas
+      figuras encapuzadas de perfil (manto, capuz, olhos acesos e luz na borda)
+      uma de cada lado do círculo; uma vinheta escurece a moldura do vale e
+      deixa o livro como único foco
 - [x] o resto do vale também ganhou detalhe: árvore com tronco, raiz, galho e
       copa em três camadas, pinheiro de quatro andares, casa com chaminé e
       fumaça, estrela que pisca em cruz e reflexo que corre no rio
-- [x] layout do título: o cartão deixou de ser uma coluna no meio da tela e
-      virou topo (marca e frase) mais pé (botão e assinatura), com `margin-top:
-      auto` empurrando o botão. O meio ficou livre para o grimório
+- [x] layout do título: o cartão virou topo (marca) mais pé (frase, botão e
+      assinatura). A frase saiu de cima do grimório e virou uma faixa legível
+      com fundo translúcido logo acima do botão; o meio ficou livre para a arte
 - [x] a letra B parecia D: no tamanho pequeno da interface o Press Start 2P
       fechava a barriga de baixo do B. A interface passou a usar Silkscreen, e o
       Press Start ficou só no logo, onde o corpo é grande
@@ -478,10 +478,11 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 
 - A tela de título é a primeira impressão: vale com camadas, céu em degradê,
   estrelas, aurora, lua com halo, rio refletindo, casas com fumaça, árvores de
-  copa redonda e pinheiros, e no meio do vale um grimório aberto num púlpito de
-  pedra, dentro de um círculo de runas, com uma roda de figuras encapuzadas,
-  brasas subindo e sinais girando. O título fica em cima e o botão no pé, para
-  o meio da tela ser da arte. Nada de imagem pesada: tudo desenhado em canvas.
+  copa redonda e pinheiros, e no meio do vale um grimório aberto num púlpito
+  de pedra, dentro de um círculo de oito runas, com duas figuras encapuzadas de
+  perfil e brasas subindo. Uma vinheta escurece as bordas do vale. O título
+  fica em cima e a frase e o botão no pé, para o meio da tela ser da arte.
+  Nada de imagem pesada: tudo desenhado em canvas.
 - O inventário usa a mesma paleta do jogo: slots escuros, borda âmbar no item
   selecionado, ícone desenhado no mesmo pixel do mapa.
 - Arrastar e soltar no desktop; no celular, tocar no item e tocar no destino.

@@ -30,20 +30,20 @@ export function startTitle(canvas) {
   canvas.height = ALTURA;
   ctx.imageSmoothingEnabled = false;
 
-  const estrelas = Array.from({ length: 110 }, (_, i) => ({
+  const estrelas = Array.from({ length: 70 }, (_, i) => ({
     x: Math.floor(aleatorio(i + 1) * LARGURA),
     y: Math.floor(aleatorio(i + 41) * 96),
     r: aleatorio(i + 7) > 0.86 ? 2 : 1,
     fase: aleatorio(i + 13) * 6.28,
   }));
-  const vagalumes = Array.from({ length: 30 }, (_, i) => ({
+  const vagalumes = Array.from({ length: 16 }, (_, i) => ({
     x: 18 + aleatorio(i + 90) * (LARGURA - 36),
     y: 130 + aleatorio(i + 120) * 36,
     fase: aleatorio(i + 150) * 6.28,
     vel: 0.4 + aleatorio(i + 180) * 0.8,
   }));
   // brasas que sobem do livro: cada uma com altura, raio e velocidade próprios
-  const brasas = Array.from({ length: 26 }, (_, i) => ({
+  const brasas = Array.from({ length: 16 }, (_, i) => ({
     raio: 6 + aleatorio(i + 210) * 30,
     altura: aleatorio(i + 240),
     vel: 0.22 + aleatorio(i + 270) * 0.5,
@@ -153,64 +153,63 @@ export function startTitle(canvas) {
     ctx.ellipse(cx, cy, rx - 5, ry - 2, 0, 0, Math.PI * 2);
     ctx.stroke();
     // doze marcas com sinais em volta, girando
-    for (let i = 0; i < 12; i++) {
-      const a = (i / 12) * Math.PI * 2 + giro;
+    for (let i = 0; i < 8; i++) {
+      const a = (i / 8) * Math.PI * 2 + giro;
       const px = cx + Math.cos(a) * rx;
       const py = cy + Math.sin(a) * ry;
       const brilho = 0.35 + Math.sin(t * 0.002 + i) * 0.28;
       ctx.fillStyle = `rgba(255, 240, 200, ${brilho.toFixed(3)})`;
       ctx.fillRect(Math.round(px), Math.round(py), 1, 1);
-      if (i % 2 === 0) {
-        const px2 = cx + Math.cos(a) * (rx - 9);
-        const py2 = cy + Math.sin(a) * (ry - 3);
-        runa(i, Math.round(px2) - 1, Math.round(py2) - 2, `rgba(196, 170, 255, ${(brilho + 0.1).toFixed(3)})`);
-      }
+      const px2 = cx + Math.cos(a) * (rx - 9);
+      const py2 = cy + Math.sin(a) * (ry - 3);
+      runa(i, Math.round(px2) - 1, Math.round(py2) - 2, `rgba(206, 184, 255, ${(brilho + 0.18).toFixed(3)})`);
     }
-    // estrela de cinco pontas, traçada por linhas retas em perspectiva
-    ctx.strokeStyle = "rgba(255, 200, 87, 0.22)";
-    ctx.beginPath();
-    for (let i = 0; i <= 5; i++) {
-      const a = ((i * 2) % 5 / 5) * Math.PI * 2 + giro - Math.PI / 2;
-      const px = cx + Math.cos(a) * (rx - 8);
-      const py = cy + Math.sin(a) * (ry - 2);
-      if (i === 0) ctx.moveTo(px, py);
-      else ctx.lineTo(px, py);
-    }
-    ctx.stroke();
+    // o anel fica limpo: oito runas legíveis e nada desenhado por cima.
   }
 
-  // a roda de figuras encapuzadas em volta do círculo, viradas para o livro
-  function figura(x, baseY, h, t, fase, longe) {
-    ctx.fillStyle = longe ? "#080b18" : "#04060f";
-    for (let row = 0; row < h; row++) {
-      const meia = 1 + Math.round(row * 0.26);
-      ctx.fillRect(Math.round(x - meia), Math.round(baseY - h + row), meia * 2 + 1, 1);
-    }
+  // figura encapuzada de perfil, virada para o livro: manto, capuz redondo,
+  // abertura escura e dois olhos acesos. Antes era um cone preto sem leitura.
+  function figura(x, baseY, h, t, fase) {
     const topo = baseY - h;
-    // capuz pontudo
-    ctx.fillRect(Math.round(x - 2), topo - 1, 5, 3);
-    ctx.fillRect(Math.round(x - 1), topo - 3, 3, 2);
-    ctx.fillRect(Math.round(x), topo - 4, 1, 1);
-    // olhos acesos pela luz do livro
-    const brilho = 0.45 + Math.sin(t * 0.002 + fase) * 0.3;
-    ctx.fillStyle = `rgba(255, 200, 87, ${Math.max(0.15, brilho).toFixed(3)})`;
-    ctx.fillRect(Math.round(x - 1), topo + 1, 1, 1);
-    ctx.fillRect(Math.round(x + 1), topo + 1, 1, 1);
-    // a luz do grimório bate de um lado do manto
-    ctx.fillStyle = "rgba(255, 226, 150, 0.10)";
-    ctx.fillRect(Math.round(x + 2), topo, 1, h - 1);
+    // manto: trapézio que abre na base
+    for (let row = 0; row < h; row++) {
+      const t2 = row / h;
+      const meia = 1.5 + t2 * 3.2;
+      ctx.fillStyle = row < h * 0.55 ? "#0a0d1c" : "#070a15";
+      ctx.fillRect(Math.round(x - meia), Math.round(topo + row), Math.round(meia * 2), 1);
+    }
+    // capuz arredondado
+    ctx.fillStyle = "#0b0f20";
+    for (let row = 0; row < 6; row++) {
+      const t2 = row / 6;
+      const meia = 3.4 * Math.sin(t2 * Math.PI * 0.9 + 0.25);
+      ctx.fillRect(Math.round(x - meia), topo - 4 + row, Math.round(meia * 2), 1);
+    }
+    // abertura do rosto; os olhos olham para o livro
+    ctx.fillStyle = "#02040a";
+    ctx.fillRect(Math.round(x - 1), topo + 1, 2, 3);
+    const brilho = 0.5 + Math.sin(t * 0.002 + fase) * 0.3;
+    ctx.fillStyle = `rgba(255, 200, 87, ${(Math.max(0.2, brilho) * 0.22).toFixed(3)})`;
+    ctx.fillRect(Math.round(x - 2), topo, 4, 5);
+    ctx.fillStyle = `rgba(255, 200, 87, ${Math.max(0.3, brilho).toFixed(3)})`;
+    ctx.fillRect(Math.round(x), topo + 2, 1, 1);
+    // luz do grimório na borda voltada para o centro
+    ctx.fillStyle = "rgba(255, 226, 150, 0.28)";
+    ctx.fillRect(Math.round(x + 3), topo + 4, 1, h - 5);
+    ctx.fillStyle = "rgba(255, 226, 150, 0.12)";
+    ctx.fillRect(Math.round(x + 4), topo + 6, 1, h - 8);
+    ctx.fillStyle = "rgba(180, 140, 255, 0.10)";
+    ctx.fillRect(Math.round(x - 4), topo + 6, 1, h - 8);
   }
 
-  function seita(cx, cy, t, longe) {
-    const rx = 43;
-    const ry = 8;
-    const pontos = longe
-      ? [{ a: 3.55, h: 8 }, { a: 4.1, h: 9 }, { a: 4.65, h: 8 }]
-      : [{ a: 0.55, h: 11 }, { a: 5.73, h: 11 }];
+  function seita(cx, cy, t) {
+    // duas figuras, uma de cada lado, fora do anel e viradas para o livro:
+    // cinco silhuetas viravam mancha preta e ninguém entendia a cena
+    const pontos = [{ a: -0.18, h: 15 }, { a: Math.PI + 0.18, h: 15 }];
     pontos.forEach((p, i) => {
-      const x = cx + Math.cos(p.a) * rx;
-      const y = cy + Math.sin(p.a) * ry + 1;
-      figura(x, y, p.h, t, i * 1.7 + (longe ? 0 : 2.2), longe);
+      const x = cx + Math.cos(p.a) * 54;
+      const y = cy + Math.sin(p.a) * 7 + 7;
+      figura(x, y, p.h, t, i * 1.7);
     });
   }
 
@@ -246,11 +245,15 @@ export function startTitle(canvas) {
     ctx.ellipse(cx, cy, 18, 4, 0, 0, Math.PI * 2);
     ctx.fill();
     ctx.fillStyle = "#20233a";
-    ctx.fillRect(cx - 13, cy - 4, 26, 4);
-    ctx.fillRect(cx - 9, cy - 11, 18, 8);
-    ctx.fillStyle = "#2c3150";
-    ctx.fillRect(cx - 13, cy - 5, 26, 2);
-    ctx.fillRect(cx - 9, cy - 12, 18, 2);
+    ctx.fillRect(cx - 18, cy - 4, 36, 4);
+    ctx.fillRect(cx - 12, cy - 11, 24, 8);
+    ctx.fillStyle = "#343a5e";
+    ctx.fillRect(cx - 18, cy - 5, 36, 2);
+    ctx.fillRect(cx - 12, cy - 12, 24, 2);
+    ctx.fillStyle = "#454c78";
+    ctx.fillRect(cx - 12, cy - 13, 24, 1);
+    ctx.fillStyle = "#181c30";
+    ctx.fillRect(cx - 12, cy - 3, 24, 1);
     // topo do púlpito, onde o livro se apoia
     ctx.fillStyle = "#3a4066";
     ctx.fillRect(cx - 12, cy - 13, 24, 2);
@@ -263,68 +266,87 @@ export function startTitle(canvas) {
     ctx.fillRect(cx + 2, cy - 9, 5, 1);
     ctx.fillRect(cx - 12, cy - 3, 6, 1);
 
-    // o grimório: capa, páginas em perspectiva e lombada
-    ctx.fillStyle = "#2a1a3f";
+    // o grimório: capa, páginas em perspectiva e lombada, 18% maior
+    ctx.save();
+    ctx.translate(cx, cy - 22);
+    ctx.scale(1.18, 1.18);
+    ctx.translate(-cx, -(cy - 22));
+    // sombra do livro no pedestal
+    ctx.fillStyle = "rgba(2, 4, 10, 0.45)";
     ctx.beginPath();
-    ctx.moveTo(cx - 27, cy - 21);
-    ctx.lineTo(cx - 2, cy - 29);
-    ctx.lineTo(cx + 2, cy - 27);
-    ctx.lineTo(cx + 27, cy - 21);
-    ctx.lineTo(cx + 27, cy - 16);
-    ctx.lineTo(cx + 2, cy - 22);
-    ctx.lineTo(cx - 2, cy - 24);
-    ctx.lineTo(cx - 27, cy - 16);
-    ctx.closePath();
+    ctx.ellipse(cx, cy - 7, 30, 3.5, 0, 0, Math.PI * 2);
     ctx.fill();
-    // páginas
-    ctx.fillStyle = "#f7eed6";
-    ctx.beginPath();
-    ctx.moveTo(cx - 25, cy - 22);
-    ctx.lineTo(cx - 2, cy - 30);
-    ctx.lineTo(cx - 2, cy - 22);
-    ctx.lineTo(cx - 25, cy - 16);
-    ctx.closePath();
-    ctx.fill();
-    ctx.beginPath();
-    ctx.moveTo(cx + 25, cy - 22);
-    ctx.lineTo(cx + 2, cy - 30);
-    ctx.lineTo(cx + 2, cy - 22);
-    ctx.lineTo(cx + 25, cy - 16);
-    ctx.closePath();
-    ctx.fill();
-    // capa aparecendo por baixo das páginas: dá corpo de livro, não folha solta
+    // capa por baixo: polígono escuro que dá volume ao livro
     ctx.fillStyle = "#1a1028";
-    ctx.fillRect(cx - 28, cy - 18, 26, 3);
-    ctx.fillRect(cx + 2, cy - 18, 26, 3);
-    ctx.fillRect(cx - 28, cy - 18, 2, 1);
-    ctx.fillRect(cx + 26, cy - 18, 2, 1);
-    ctx.fillStyle = "#3a2458";
-    ctx.fillRect(cx - 28, cy - 19, 26, 1);
-    ctx.fillRect(cx + 2, cy - 19, 26, 1);
-    // borda das páginas e lombada
-    ctx.fillStyle = "#c9b98f";
-    ctx.fillRect(cx - 25, cy - 22, 1, 7);
-    ctx.fillRect(cx + 24, cy - 22, 1, 7);
-    ctx.fillStyle = "#1c1130";
-    ctx.fillRect(cx - 2, cy - 30, 4, 10);
-    // costura da lombada: um fio claro no meio
-    ctx.fillStyle = "rgba(255, 240, 200, 0.5)";
-    ctx.fillRect(cx - 1, cy - 29, 1, 9);
-    // linhas de texto e runas acesas nas duas páginas
-    ctx.fillStyle = "rgba(120, 96, 66, 0.55)";
-    for (let i = 0; i < 4; i++) {
-      ctx.fillRect(cx - 20, cy - 25 + i * 2, 13 - i, 1);
-      ctx.fillRect(cx + 7, cy - 25 + i * 2, 13 - i, 1);
+    ctx.beginPath();
+    ctx.moveTo(cx - 34, cy - 19);
+    ctx.lineTo(cx - 2, cy - 27);
+    ctx.lineTo(cx + 2, cy - 27);
+    ctx.lineTo(cx + 34, cy - 19);
+    ctx.lineTo(cx + 32, cy - 7);
+    ctx.lineTo(cx + 2, cy - 13);
+    ctx.lineTo(cx - 2, cy - 13);
+    ctx.lineTo(cx - 32, cy - 7);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = "#4a2f6e";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    // brilho na beirada da capa
+    ctx.fillStyle = "#5a3a80";
+    ctx.fillRect(cx - 33, cy - 7, 30, 1);
+    ctx.fillRect(cx + 3, cy - 7, 30, 1);
+    // apoios do livro no pedestal: o livro não flutua
+    ctx.fillStyle = "#12152a";
+    ctx.fillRect(cx - 11, cy - 9, 3, 4);
+    ctx.fillRect(cx + 8, cy - 9, 3, 4);
+    ctx.fillStyle = "#3a4066";
+    ctx.fillRect(cx - 11, cy - 9, 3, 1);
+    ctx.fillRect(cx + 8, cy - 9, 3, 1);
+    // páginas: dois trapézios com espinha no meio, contorno escuro
+    ctx.fillStyle = "#f7eed6";
+    ctx.strokeStyle = "#3a2a1c";
+    ctx.lineWidth = 0.7;
+    ctx.beginPath();
+    ctx.moveTo(cx - 31, cy - 20);
+    ctx.lineTo(cx - 4, cy - 26);
+    ctx.lineTo(cx - 4, cy - 14);
+    ctx.lineTo(cx - 31, cy - 8);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cx + 31, cy - 20);
+    ctx.lineTo(cx + 4, cy - 26);
+    ctx.lineTo(cx + 4, cy - 14);
+    ctx.lineTo(cx + 31, cy - 8);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    // espinha escura entre as páginas
+    ctx.fillStyle = "#241636";
+    ctx.fillRect(cx - 3, cy - 26, 6, 13);
+    ctx.fillStyle = "rgba(255, 240, 200, 0.55)";
+    ctx.fillRect(cx - 0.5, cy - 25, 1, 11);
+    // texto nas páginas, acompanhando a inclinação
+    ctx.fillStyle = "rgba(96, 76, 52, 0.55)";
+    for (let i = 0; i < 3; i++) {
+      const y = cy - 20 + i * 2.4;
+      ctx.fillRect(cx - 27, y, 20 - i * 2, 0.8);
+      ctx.fillRect(cx + 7, y, 20 - i * 2, 0.8);
     }
-    runa(1, cx - 15, cy - 27, `rgba(97, 244, 192, ${(0.55 + pulso * 0.45).toFixed(3)})`);
-    runa(4, cx + 12, cy - 27, `rgba(255, 200, 87, ${(0.55 + pulso * 0.45).toFixed(3)})`);
+    // uma runa acesa em cada página
+    runa(1, cx - 22, cy - 23, `rgba(97, 244, 192, ${(0.55 + pulso * 0.45).toFixed(3)})`);
+    runa(4, cx + 19, cy - 23, `rgba(255, 200, 87, ${(0.55 + pulso * 0.45).toFixed(3)})`);
     // fita marcadora caindo da lombada
     ctx.fillStyle = "#ff7aa8";
-    ctx.fillRect(cx, cy - 21, 1, 8);
+    ctx.fillRect(cx, cy - 14, 1, 7);
     // brilho na beirada de cima das páginas
     ctx.fillStyle = `rgba(255, 250, 226, ${(0.4 + pulso * 0.4).toFixed(3)})`;
-    ctx.fillRect(cx - 24, cy - 23, 21, 1);
-    ctx.fillRect(cx + 4, cy - 23, 21, 1);
+    ctx.fillRect(cx - 30, cy - 20, 25, 0.8);
+    ctx.fillRect(cx + 5, cy - 20, 25, 0.8);
+
+    ctx.restore();
 
     // brasas subindo em espiral
     for (const b of brasas) {
@@ -340,19 +362,8 @@ export function startTitle(canvas) {
       }
     }
 
-    // sinais girando em volta do livro, em duas órbitas
-    for (let i = 0; i < 4; i++) {
-      const a = t * 0.0005 + (i / 4) * Math.PI * 2;
-      const rx = 30 + (i % 2) * 8;
-      const ry = 8 + (i % 2) * 3;
-      const px = Math.round(cx + Math.cos(a) * rx);
-      const py = Math.round(cy - 30 + Math.sin(a) * ry - 6);
-      const alfa = 0.35 + Math.sin(t * 0.003 + i * 1.3) * 0.3;
-      runa(i + 2, px, py, `rgba(196, 170, 255, ${Math.max(0.12, alfa).toFixed(3)})`);
-    }
-
-    // chama das velas em volta do círculo
-    for (const [vx, vy, fase] of [[cx - 30, cy + 1, 0], [cx + 30, cy + 1, 1.7], [cx - 19, cy + 6, 3.1], [cx + 19, cy + 6, 4.4]]) {
+    // duas velas na frente do círculo, não quatro espalhadas
+    for (const [vx, vy, fase] of [[cx - 26, cy + 7, 0], [cx + 26, cy + 7, 1.7]]) {
       const tremula = Math.sin(t * 0.008 + fase) * 0.8;
       ctx.fillStyle = "rgba(255, 190, 90, 0.10)";
       ctx.fillRect(vx - 4, vy - 11, 9, 12);
@@ -386,8 +397,8 @@ export function startTitle(canvas) {
       }
     }
 
-    // aurora em três véus
-    for (let banda = 0; banda < 3; banda++) {
+    // aurora em um véu só: três faixas cruzavam o livro e embolavam a cena
+    for (let banda = 0; banda < 1; banda++) {
       ctx.beginPath();
       for (let x = 0; x <= LARGURA; x += 6) {
         const y = 42 + banda * 10 + Math.sin(x * 0.028 + t * 0.00024 + banda) * 8;
@@ -400,23 +411,18 @@ export function startTitle(canvas) {
     }
 
     // lua com halo e crateras
-    ctx.fillStyle = "rgba(255,236,180,0.09)";
+    ctx.fillStyle = "rgba(255,236,180,0.06)";
     ctx.beginPath();
-    ctx.arc(252, 36, 26, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = "rgba(255,236,180,0.05)";
-    ctx.beginPath();
-    ctx.arc(252, 36, 36, 0, Math.PI * 2);
+    ctx.arc(272, 40, 18, 0, Math.PI * 2);
     ctx.fill();
     ctx.fillStyle = "#ffeaa7";
     ctx.beginPath();
-    ctx.arc(252, 36, 13, 0, Math.PI * 2);
+    ctx.arc(272, 40, 9, 0, Math.PI * 2);
     ctx.fill();
     ctx.fillStyle = "#d8bd7a";
-    ctx.fillRect(248, 30, 3, 2);
-    ctx.fillRect(256, 38, 2, 2);
-    ctx.fillRect(250, 42, 2, 1);
-    ctx.fillRect(255, 31, 1, 1);
+    ctx.fillRect(269, 37, 2, 1);
+    ctx.fillRect(275, 42, 2, 1);
+    ctx.fillRect(271, 44, 1, 1);
 
     // montanhas em camadas
     montanha(118, 46, "#171a3c", 0);
@@ -485,18 +491,23 @@ export function startTitle(canvas) {
     ctx.quadraticCurveTo(174, 118, 192, 152);
     ctx.closePath();
     ctx.fill();
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i < 8; i++) {
       const x = 122 + Math.floor(aleatorio(i + 810) * 76);
       const y = 122 + Math.floor(aleatorio(i + 840) * 26);
       ctx.fillStyle = i % 2 ? "#131c30" : "#0f1728";
       ctx.fillRect(x, y, 2, 1);
     }
-    circuloDeRunas(160, 116, t);
-    // quem está do outro lado do círculo fica atrás do altar; quem está deste
-    // lado fica na frente, maior, e o grimório aparece entre os dois
-    seita(160, 116, t, true);
+    // vinheta: escurece a moldura do vale e deixa o centro como único foco
+    const vinheta = ctx.createRadialGradient(160, 108, 44, 160, 108, 132);
+    vinheta.addColorStop(0, "rgba(4,6,14,0)");
+    vinheta.addColorStop(0.62, "rgba(4,6,14,0.30)");
+    vinheta.addColorStop(1, "rgba(4,6,14,0.66)");
+    ctx.fillStyle = vinheta;
+    ctx.fillRect(0, 56, LARGURA, ALTURA - 56);
+    // uma cena só: círculo no chão, duas figuras de lado e o grimório no meio
+    circuloDeRunas(160, 118, t);
+    seita(160, 118, t);
     grimorio(160, 112, t);
-    seita(160, 116, t, false);
 
     // colinas da frente, com tufos de mato
     ctx.fillStyle = "#060a16";

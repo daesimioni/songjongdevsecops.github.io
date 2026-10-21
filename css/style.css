@@ -3064,12 +3064,12 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
 }
 .splash-kicker {
   font-family: var(--pixel);
-  font-size: 7px;
+  font-size: 8px;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: var(--mint);
-  margin: 0 0 18px;
-  text-shadow: 0 0 18px rgba(97, 244, 192, 0.5);
+  color: #bfffe3;
+  margin: 0 0 16px;
+  text-shadow: 0 0 18px rgba(97, 244, 192, 0.55), 0 1px 0 rgba(0, 0, 0, 0.8);
 }
 .splash-logo {
   font-family: var(--pixel-display);
@@ -3092,14 +3092,20 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
   font-family: var(--mono);
   font-size: clamp(11px, 1.15vw, 13px);
   line-height: 1.65;
-  color: #d8d2ea;
-  max-width: 64ch;
-  margin: 0 auto 16px;
+  color: #eee8ff;
+  max-width: 62ch;
+  /* o texto sai de cima da arte e vira uma faixa legível no pé */
+  margin: auto auto 12px;
+  padding: 10px 16px;
+  background: rgba(6, 8, 18, 0.66);
+  border: 1px solid rgba(150, 160, 210, 0.18);
+  border-radius: 10px;
+  backdrop-filter: blur(2px);
   text-shadow: 0 1px 8px rgba(0, 0, 0, 0.8);
 }
 .splash-enter {
-  /* empurra o botão para o pé da tela e libera o centro para a arte */
-  margin-top: auto;
+  /* o botão fica no pé, depois da faixa de texto */
+  margin-top: 0;
   font-family: var(--pixel);
   font-size: 10px;
   letter-spacing: 0.08em;
@@ -3814,4 +3820,19 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
   .wiki-list { grid-template-columns: 1fr; }
   .wiki-detail dl { grid-template-columns: 1fr; gap: 2px; }
   .wiki-detail dt { margin-top: 6px; }
+}
+
+/* entrada em retrato: a arte não estica nem corta o centro; vira uma faixa
+   no meio da tela e o cartão fica em cima e embaixo */
+@media (max-aspect-ratio: 4/5) {
+  #splash-canvas {
+    inset: auto 0;
+    top: 50%;
+    width: 100%;
+    height: auto;
+    transform: translateY(-50%);
+    object-fit: contain;
+    -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 12%, #000 88%, transparent 100%);
+    mask-image: linear-gradient(180deg, transparent 0, #000 12%, #000 88%, transparent 100%);
+  }
 }
