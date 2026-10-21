@@ -4125,6 +4125,310 @@ export const LICOES = {
       },
     },
   },
+  "cs-engenharia": {
+    "Análise e Requisitos": {
+      contexto:
+        "Onde isso aparece: na conversa com quem pede, no documento de escopo e no critério de aceite. Requisito funcional diz o que o sistema faz, e não funcional diz com que qualidade. O erro de requisito é o mais caro de corrigir, porque contamina projeto, código e teste.",
+      oQue:
+        "Análise e requisitos levantam o que o sistema precisa fazer e com que qualidade. Requisito funcional descreve comportamento, e o não funcional descreve qualidade, como desempenho, segurança e disponibilidade. História de usuário e caso de uso organizam a conversa, e o critério de aceite fecha a dúvida.",
+      passos: [
+        "Separe o comportamento (funcional) da qualidade (não funcional).",
+        "Escreva critério de aceite verificável para cada requisito.",
+        "Confirme com quem pede antes de estimar.",
+      ],
+      exemplo:
+        "Pedido de relatório de vendas tem funcional (filtrar por período) e não funcional (responder em dois segundos com um milhão de linha). O segundo muda a arquitetura, o índice e o custo. Sem ele, o relatório funciona no teste pequeno e trava em produção.",
+      quebra:
+        "Aceitar pedido vago e codar por suposição. O requisito não dito aparece no teste de aceite, e o retrabalho é grande. A conversa de requisito é a mais barata do projeto.",
+      limite:
+        "O requisito muda com o uso, e documento congelado envelhece. A prática ágil aceita mudança, mas o critério de aceite continua necessário para saber quando terminou.",
+      levar: "Requisito não funcional decide a arquitetura, não o enfeite.",
+      maos:
+        "Pegue um pedido real e escreva três requisitos funcionais e três não funcionais.",
+    },
+    "Arquitetura e Design": {
+      contexto:
+        "Onde isso aparece: no desenho do serviço, na escolha da camada e no limite do módulo. Arquitetura decide o que depende do quê, e a dependência errada cobra manutenção. A separação boa deixa trocar a peça de fora sem tocar no miolo.",
+      oQue:
+        "Arquitetura e design organizam o sistema em partes com responsabilidade e dependência definidas. A arquitetura hexagonal isola o domínio da tecnologia de entrada e saída, e a orientada a serviço expõe contrato. Microsserviço divide por fronteira de negócio, e a divisão errada produz acoplamento distribuído.",
+      passos: [
+        "Identifique a fronteira de negócio e o contrato.",
+        "Desenhe a dependência apontando para o domínio, não para a tecnologia.",
+        "Teste a troca de uma peça sem tocar no núcleo.",
+      ],
+      exemplo:
+        "No hexagonal, o caso de uso não conhece banco nem HTTP: ele depende de porta, e o adaptador implementa. Trocar o banco não mexe na regra. Já o microsserviço mal cortado transforma chamada de função em chamada de rede, e a latência vira problema. O diagrama de dependência é a ferramenta: ele mostra o que precisa mudar junto, e a fronteira boa reduz esse conjunto.",
+      quebra:
+        "Dividir por camada técnica e chamar de microsserviço. O serviço fica acoplado ao banco do outro, e a mudança exige coordenação. A fronteira é de negócio, não de pasta.",
+      limite:
+        "Arquitetura limpa custa abstração e código a mais. Projeto pequeno pode não pagar, e a escolha depende do prazo e da vida útil do sistema.",
+      levar: "Arquitetura é sobre dependência: o miolo não conhece a borda.",
+      maos:
+        "Desenhe as dependências de um serviço e veja se o domínio aponta para fora.",
+      pergunta: {
+        q: "O que a arquitetura hexagonal isola?",
+        a: "O domínio das tecnologias de entrada e saída",
+        why: "O caso de uso depende de porta, e o adaptador implementa o banco ou a interface; trocar tecnologia não mexe na regra de negócio.",
+      },
+    },
+    "Desenvolvimento de Software": {
+      contexto:
+        "Onde isso aparece: no commit, na revisão e na ramificação. Desenvolver é escrever e manter, e a revisão pega o defeito antes do merge. O controle de versão guarda o histórico e permite desfazer.",
+      oQue:
+        "Desenvolvimento cobre implementação, revisão de código, refatoração e controle de versão. A revisão acha defeito e divide conhecimento antes do merge, e a refatoração melhora a estrutura sem mudar comportamento. A gestão de branch decide como o time integra.",
+      passos: [
+        "Faça mudança pequena e commit com mensagem que explica.",
+        "Abra revisão com contexto e teste.",
+        "Refatore com teste verde antes e depois.",
+      ],
+      exemplo:
+        "Uma mudança de cem linha é revisada de verdade; mil linha em um commit é revisada por cima. A revisão pequena pega mais defeito e ensina o time. O histórico limpo também facilita achar quando o problema entrou.",
+      quebra:
+        "Refatorar sem teste que prove comportamento igual. A melhoria vira fonte de defeito, e ninguém sabe o que quebrou. O teste de regressão é a rede. A revisão também é lugar de aprender o padrão da casa, e o comentário específico ensina mais que o comentário genérico. O tamanho do diff também importa: revisão grande vira carimbo, e o time perde a chance de achar o defeito. A revisão também é registro: o histórico explica por que a mudança foi feita.",
+      limite:
+        "Processo de branch pesado atrasa entrega, e branch longo diverge da base. A escolha entre tronco e ramificação depende do tamanho do time e da frequência de entrega.",
+      levar: "Revisão pequena acha defeito; commit grande esconde.",
+      maos:
+        "Revise um diff pequeno de verdade e anote o que encontrou.",
+      pergunta: {
+        q: "Para que serve a revisão de código?",
+        a: "Para achar defeito e dividir conhecimento antes do merge",
+        why: "A revisão é barreira antes da integração e oportunidade de aprender o código do outro; ela reduz defeito e evita que o conhecimento fique numa pessoa só.",
+      },
+    },
+    "Testes de Software": {
+      contexto:
+        "Onde isso aparece: no build, no incidente e na entrega. O teste unitário isola a peça, e o de integração testa a conversa. O de regressão garante que o que funcionava continua funcionando.",
+      oQue:
+        "Teste de software verifica comportamento em níveis: unitário, integração, sistema e aceitação. O de regressão protege o que já funcionava, e o de aceitação confirma o requisito com quem pede. A pirâmide de teste equilibra quantidade e custo.",
+      passos: [
+        "Escreva o teste que falha pelo motivo certo.",
+        "Corrija o código até o teste passar.",
+        "Mantenha a suíte rápida e confiável.",
+      ],
+      exemplo:
+        "Mudar o formato de data pode quebrar o relatório e o recibo sem que o teste novo perceba. O teste de regressão cobre os casos antigos e falha na hora. É por isso que a suíte cresce com o sistema.",
+      quebra:
+        "Escrever teste que nunca falha, com asserção fraca. A suíte fica verde e não protege nada. O teste precisa falhar se o comportamento mudar.",
+      limite:
+        "Teste não prova ausência de defeito. Ele cobre o caso escrito, e o caso não pensado escapa. A cobertura alta ajuda e não garante.",
+      levar: "Teste de regressão é a memória do que já funcionou.",
+      maos:
+        "Quebre uma funcionalidade de propósito e veja qual teste falha.",
+    },
+    "Qualidade de Software": {
+      contexto:
+        "Onde isso aparece: no acordo de nível de serviço, no incidente e na evolução. Qualidade é atributo medido, não opinião. Disponibilidade, manutenibilidade e usabilidade respondem perguntas diferentes.",
+      oQue:
+        "Qualidade de software cobre confiabilidade, disponibilidade, manutenibilidade, portabilidade e usabilidade. Disponibilidade mede a fração de tempo em que o sistema responde, e manutenibilidade mede o custo de mudar. A meta precisa de número, senão não se verifica.",
+      passos: [
+        "Defina a métrica de qualidade e a meta.",
+        "Meça no uso real, não no laboratório.",
+        "Trate o desvio como defeito com dono.",
+      ],
+      exemplo:
+        "Dizer que o sistema é disponível não vale; dizer que responde 99,9% do mês dá meta de cerca de 43 minutos de parada. A conta muda a arquitetura e o custo. O acordo de nível de serviço traduz a promessa em número.",
+      quebra:
+        "Prometer qualidade sem medir. A percepção de quem usa vira a única fonte, e o desvio aparece como reclamação. A métrica torna o problema conversável.",
+      limite:
+        "Métrica boa pode ser perseguida de forma errada. Tempo de resposta médio esconde a cauda, e o usuário sente o pior caso. A distribuição importa mais que a média. A usabilidade entra na conta com teste de pessoa real, e a portabilidade com a facilidade de levar o sistema para outro ambiente. A acessibilidade entra na usabilidade e costuma ser esquecida até o primeiro usuário com leitor de tela. A manutenibilidade, por sua vez, aparece no custo de mudar, e o código legível é parte da qualidade, porque a próxima pessoa precisa entender antes de mudar.",
+      levar: "Qualidade sem número é opinião; com número, é contrato.",
+      maos:
+        "Calcule a média e o pior caso de latência de um serviço e compare.",
+      pergunta: {
+        q: "O que a disponibilidade mede?",
+        a: "A fração de tempo em que o sistema responde",
+        why: "A disponibilidade é a razão entre tempo no ar e tempo total, e ela vira meta em minutos de parada por mês, o que orienta arquitetura e custo.",
+      },
+    },
+    "Ciclo de Vida e Evolução": {
+      contexto:
+        "Onde isso aparece: na esteira de build, na entrega semanal e no incidente de sexta. Ciclo de vida organiza como o software nasce, muda e é entregue. Integração contínua e entrega contínua encurtam o retorno.",
+      oQue:
+        "Ciclo de vida cobre metodologia ágil, desenvolvimento incremental, integração contínua, entrega contínua e implantação. A dívida técnica é solução mais rápida que deixa custo para depois, e o juro aparece na mudança seguinte. A esteira automatiza o que o time repete.",
+      passos: [
+        "Automatize build e teste a cada mudança.",
+        "Mantenha a esteira rápida e confiável.",
+        "Registre a dívida assumida e o prazo de pagamento.",
+      ],
+      exemplo:
+        "Entregar a cada semana exige build e teste automáticos; sem isso, a entrega vira evento manual e caro. A dívida assumida para cumprir prazo precisa de item no backlog, senão ninguém paga. O juro aparece como lentidão na mudança seguinte.",
+      quebra:
+        "Assumir dívida sem registrar. O atalho vira padrão e a manutenção fica caro sem que ninguém tenha decidido. A dívida consciente é decisão; a inconsciente é defeito.",
+      limite:
+        "Entrega contínua exige teste e observabilidade maduros. Sem eles, a velocidade vira incidente, e o time volta ao processo manual. A esteira cresce com a confiança, e o teste automatizado é o que autoriza a velocidade.",
+      levar: "Dívida técnica é empréstimo: o juro vem na próxima mudança.",
+      maos:
+        "Liste três atalhos recentes e o custo que cada um já gerou.",
+    },
+    "Gestão de Engenharia": {
+      contexto:
+        "Onde isso aparece: no planejamento, na estimativa e no risco do projeto. Gestão técnica decide prazo, capacidade e prioridade. A estimativa é probabilidade, não promessa.",
+      oQue:
+        "Gestão de engenharia cobre estimativa, planejamento de capacidade, gestão de risco e requisito. O ponto de história mede tamanho relativo, não tempo exato, e a velocidade do time converte em previsão. O risco precisa de dono e de plano de resposta.",
+      passos: [
+        "Estime tamanho relativo, sem cravar horas.",
+        "Converta em previsão pela velocidade medida.",
+        "Registre risco, dono e resposta antes de começar.",
+      ],
+      exemplo:
+        "Time que entrega em média vinte pontos por rodada prevê quatro rodadas para oitenta pontos, com incerteza. A previsão é faixa, não data única. Cravar a data sem olhar a distribuição é prometer o que não se controla.",
+      quebra:
+        "Tratar estimativa como compromisso. O número vira pressão, o time corta qualidade e a dívida aparece. A estimativa é instrumento de decisão, não de cobrança.",
+      limite:
+        "Velocidade passada não garante futuro. Time novo, escopo novo e dependência externa quebram a previsão, e a faixa precisa alargar.",
+      levar: "Estimativa é faixa com incerteza, não data cravada.",
+      maos:
+        "Monte a faixa de previsão de um escopo com a velocidade média e o desvio.",
+      pergunta: {
+        q: "O que a estimativa em ponto de história mede?",
+        a: "O tamanho relativo do trabalho, não o tempo exato",
+        why: "O ponto compara itens entre si; a conversão para prazo vem da velocidade medida do time, e por isso a previsão é faixa com incerteza. O risco de dependência externa também entra: prazo de fornecedor e acesso a ambiente são parte da conta e costumam atrasar mais que o código. A capacidade planejada precisa reservar folga para o imprevisto, e a folga é decisão do dono do prazo. A estimativa sem faixa esconde a incerteza que o próprio time enxerga, e a conversa de risco precisa acontecer antes do compromisso, com a faixa escrita no plano.",
+      },
+    },
+  },
+  "cs-dados": {
+    "Modelagem de Dados": {
+      contexto:
+        "Onde isso aparece: no diagrama do sistema, na tabela do banco e no relatório. Modelar é decidir entidade, relação e regra. A normalização evita repetição; a desnormalização acelera leitura.",
+      oQue:
+        "Modelagem de dados organiza o dado em conceitual, lógico e físico. A entidade e a relação viram tabela e chave, e a normalização reduz redundância. A chave estrangeira referencia a linha de outra tabela e garante integridade.",
+      passos: [
+        "Desenhe entidade e relação no modelo conceitual.",
+        "Aplique as formas normais no modelo lógico.",
+        "Decida a desnormalização só com motivo de consulta.",
+      ],
+      exemplo:
+        "Pedido e item de pedido têm relação de um para muitos; a chave estrangeira do item aponta para o pedido e impede item órfão. Guardar o nome do cliente em cada item repetiria dado e criaria divergência. A normalização resolve.",
+      quebra:
+        "Guardar dado repetido para simplificar consulta e esquecer a atualização. A inconsistência aparece quando um lado muda e o outro não. A chave estrangeira e a normalização evitam. O diagrama entidade-relacionamento é o desenho que se discute com quem conhece a regra do negócio, antes de virar tabela, e é a conversa que revela a regra que ninguém tinha escrito.",
+      limite:
+        "Modelo normalizado pode ser lento para consulta analítica. O armazém analítico desnormaliza de propósito, e a escolha depende do uso, não de dogma.",
+      levar: "Modelo bom reflete a regra do negócio, não a tela.",
+      maos:
+        "Desenhe o modelo de pedido e item e marque a chave estrangeira.",
+    },
+    "Bancos de Dados Relacionais": {
+      contexto:
+        "Onde isso aparece: na consulta do relatório, no cadastro e na transação. A tabela guarda linha e coluna, e a chave identifica. O índice acelera busca ao custo de escrita.",
+      oQue:
+        "Banco relacional organiza dado em tabela com relação, chave e índice. O SQL consulta e junta tabela, e o índice evita varrer a tabela inteira. A transação garante atomicidade, e o plano de execução mostra o caminho da consulta.",
+      passos: [
+        "Escreva a consulta e leia o plano de execução.",
+        "Crie índice para o filtro e a junção usados.",
+        "Meça a consulta antes e depois, sem índice redundante.",
+      ],
+      exemplo:
+        "Consulta por CPF numa tabela de milhão de linha sem índice varre tudo; com índice, vai direto. Mas índice em coluna que quase não aparece em filtro só atrasa a escrita. O plano de execução mostra em qual caso você está.",
+      quebra:
+        "Criar índice para toda coluna. A escrita fica lenta e o espaço cresce, e o ganho de leitura pode não existir. O índice serve à consulta real.",
+      limite:
+        "O otimizador decide o caminho, e estatística velha o engana. A consulta rápida hoje pode ficar lenta depois de mudar o volume, e a análise precisa de dado real.",
+      levar: "Índice acelera leitura e cobra escrita.",
+      maos:
+        "Rode uma consulta com e sem índice e compare o plano de execução.",
+      pergunta: {
+        q: "Por que o índice acelera a consulta?",
+        a: "Porque evita varrer a tabela inteira para achar a linha",
+        why: "O índice mantém a chave ordenada com ponteiro para a linha, e a busca vai direto ao intervalo; o custo é manter essa estrutura atualizada na escrita.",
+      },
+    },
+    "Bancos Não Relacionais": {
+      contexto:
+        "Onde isso aparece: no cache, no documento e na rede social. O modelo não relacional troca a tabela por estrutura própria. A escolha segue a forma do dado e da consulta.",
+      oQue:
+        "Banco não relacional reúne chave-valor, documento, coluna larga, grafo e temporal. Cada modelo otimiza um tipo de acesso, e o grafo é natural para rede de amizade. A consistência costuma ser ajustável, e o esquema pode ser flexível.",
+      passos: [
+        "Olhe a forma do dado e o padrão de consulta.",
+        "Escolha o modelo que deixa a consulta direta.",
+        "Confira a consistência e o custo de operação.",
+      ],
+      exemplo:
+        "Rede social de amizade consulta vizinho de vizinho, e o grafo responde direto. Guardar a mesma relação em tabela exige junção repetida e fica cara. O modelo segue a pergunta.",
+      quebra:
+        "Escolher banco pela moda. O modelo precisa casar com a consulta, senão a aplicação faz o trabalho que o banco deveria fazer. O teste com dado real revela. O modelo de documento serve a registro com estrutura variável, e o de coluna larga serve a leitura de muitas coluna em volume grande; cada um tem o seu caso. O banco temporal serve a série de evento, e o cache chave-valor serve a leitura rápida de valor pequeno. O esquema flexível não dispensa contrato: o dado precisa de formato combinado para a consulta continuar previsível.",
+      limite:
+        "Flexibilidade de esquema cobra validação na aplicação. Sem contrato, o dado vira bagunça e a consulta fica imprevisível. O esquema é disciplina, mesmo quando opcional.",
+      levar: "O modelo do banco segue a pergunta, não o modismo.",
+      maos:
+        "Modele a mesma relação em grafo e em tabela e compare a consulta.",
+      pergunta: {
+        q: "Qual modelo é mais natural para rede social de amizades?",
+        a: "Grafo",
+        why: "A amizade é relação direta entre pessoas, e o grafo guarda a ligação como aresta; consultar vizinho de vizinho fica direto, sem junção repetida.",
+      },
+    },
+    "Sistemas Analíticos": {
+      contexto:
+        "Onde isso aparece: no painel, no relatório histórico e na decisão. O sistema analítico lê muito e escreve pouco, ao contrário do transacional. A modelagem dimensional organiza para consulta.",
+      oQue:
+        "Sistema analítico inclui data warehouse, data lake, lakehouse e OLAP. O armazém otimiza consulta sobre dado histórico, e o lago guarda dado bruto em volume. A modelagem dimensional separa fato e dimensão para facilitar agregação.",
+      passos: [
+        "Separe a pergunta analítica do registro transacional.",
+        "Modele fato e dimensão para a agregação.",
+        "Meça o tempo de consulta no volume real.",
+      ],
+      exemplo:
+        "Venda vira fato com data, produto e valor; tempo e produto viram dimensão. O painel agrega por mês e por categoria com junção simples. A modelagem nasce da pergunta do painel, não da tabela de origem.",
+      quebra:
+        "Usar o banco transacional para relatório pesado. A consulta compete com a operação e derruba o atendimento. A carga analítica pede sistema próprio. O lago guarda dado bruto para uso futuro, e o lakehouse tenta juntar os dois mundos com uma camada de tabela. O OLAP organiza a consulta multidimensional, e a modelagem dimensional é o desenho que a deixa rápida. O dado histórico precisa de política de retenção, senão o armazém cresce sem limite e a consulta desacelera. A pergunta de negócio que o painel responde é o que justifica cada tabela criada, e a tabela sem pergunta vira custo sem retorno, com espaço e manutenção cobrados todo mês.",
+      limite:
+        "O armazém atrasa a atualização em relação ao transacional. Para decisão que exige segundo, o dado precisa de outro caminho, e a latência entra no projeto.",
+      levar: "Analítico lê muito e escreve pouco; o desenho segue isso.",
+      maos:
+        "Modele um fato de venda e duas dimensões para um painel simples.",
+      pergunta: {
+        q: "O que o data warehouse otimiza?",
+        a: "Consulta analítica sobre dado histórico",
+        why: "O armazém organiza o dado para leitura e agregação em volume, separado do sistema transacional, que precisa de escrita rápida e consistente.",
+      },
+    },
+    "Engenharia de Dados": {
+      contexto:
+        "Onde isso aparece: no pipeline noturno, no painel em tempo real e na integração. Engenharia de dados move e transforma dado entre sistemas. Lote e streaming respondem a necessidades diferentes.",
+      oQue:
+        "Engenharia de dados cobre ETL e ELT, pipeline, orquestração, lote e streaming. O lote processa janela em horário definido, e o streaming processa conforme chega. A orquestração garante ordem, nova tentativa e aviso de falha.",
+      passos: [
+        "Defina a janela de atualização que o negócio precisa.",
+        "Escolha lote ou streaming pela latência exigida.",
+        "Instrumente o pipeline com alerta e reprocessamento.",
+      ],
+      exemplo:
+        "O fechamento contábil do dia cabe em lote noturno; o alerta de fraude precisa de segundo e pede streaming. A mesma fonte pode alimentar os dois caminhos. A escolha é da pergunta, não da ferramenta.",
+      quebra:
+        "Usar streaming para tudo por parecer moderno. O custo de operação sobe e a maior parte do dado não precisa de segundo. O lote resolve com menos peça e mais previsibilidade, e a escolha se mede em latência exigida e custo de operação. O reprocessamento do lote é simples; no streaming, a correção de dado já emitido exige desenho à parte.",
+      limite:
+        "Pipeline com falha silenciosa é pior que pipeline parado. Sem alerta e sem contagem de registro, o dado errado chega ao painel e a decisão sai torta.",
+      levar: "Lote processa janela; streaming processa chegada.",
+      maos:
+        "Compare o custo e a latência de um pipeline em lote e em streaming.",
+    },
+    "Sistemas de Informação Empresariais": {
+      contexto:
+        "Onde isso aparece: no ERP da empresa, no CRM de venda e no painel da diretoria. O sistema empresarial integra processo e dado de área diferente. A integração é o valor e o problema.",
+      oQue:
+        "Sistema de informação empresarial inclui transacional, ERP, CRM, gestão de processo e apoio à decisão. O ERP integra processo de várias áreas, e o CRM acompanha o relacionamento com o cliente. O sistema de apoio à decisão consome o dado integrado.",
+      passos: [
+        "Mapeie o processo e as áreas que ele cruza.",
+        "Defina o dado mestre e a fonte da verdade.",
+        "Integre por contrato e monitore a divergência.",
+      ],
+      exemplo:
+        "O cadastro do cliente aparece no CRM e no ERP; sem fonte única, os dois divergem e o relatório não fecha. Definir o sistema dono do dado mestre resolve. A integração precisa de contrato e de monitoramento.",
+      quebra:
+        "Duplicar cadastro em cada sistema e reconciliar depois. A divergência cresce com o volume e a confiança cai. O dado mestre com dono é a saída.",
+      limite:
+        "ERP cobre processo padrão e sofre com processo muito específico. A customização excessiva encarece a atualização, e a escolha é de processo, não só de software. O CRM, por sua vez, não substitui o ERP: ele acompanha a relação e alimenta o processo de venda com histórico. A gestão de processo de negócio desenha o fluxo entre áreas, e o sistema de apoio à decisão consome o dado que os outros geram. A integração entre eles é o trabalho de engenharia, e o dado mestre evita a divergência.",
+      levar: "Sistema integrado precisa de dado mestre com dono.",
+      maos:
+        "Escolha um dado de cliente e defina qual sistema é a fonte da verdade.",
+      pergunta: {
+        q: "O que um ERP integra?",
+        a: "Processos e dados de várias áreas da empresa",
+        why: "O ERP reúne financeiro, estoque, compra e venda num sistema com dado compartilhado, e é essa integração que evita retrabalho e divergência entre áreas.",
+      },
+    },
+  },
 };
 
 // o nome da estação chega em caixa baixa do banco ("Grafos moleculares") e em
