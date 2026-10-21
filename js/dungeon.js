@@ -2233,6 +2233,28 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
   window.addEventListener("pointermove", (e) => seguirNoPonteiro(e, clock()));
   window.addEventListener("pointerup", pararSeguir);
   window.addEventListener("pointercancel", pararSeguir);
+  // o mapa da caverna também recolhe, e o estado fica guardado entre descidas
+  const CHAVE_MAPA = "mundo-song:cavemap:v1";
+  const aplicarMapa = (recolhido) => {
+    const alvo = $("dg-map");
+    const botao = $("dg-fold");
+    if (alvo) alvo.hidden = recolhido;
+    if (botao) {
+      botao.textContent = recolhido ? "+" : "–";
+      botao.setAttribute("aria-expanded", String(!recolhido));
+      botao.setAttribute("aria-label", recolhido ? "abrir o mapa da caverna" : "minimizar o mapa da caverna");
+    }
+    if (!recolhido && state.open) drawMinimap();
+  };
+  $("dg-fold")?.addEventListener("click", () => {
+    const alvo = $("dg-map");
+    if (!alvo) return;
+    const recolhido = !alvo.hidden;
+    aplicarMapa(recolhido);
+    try { localStorage.setItem(CHAVE_MAPA, recolhido ? "1" : "0"); } catch {}
+    audio.blip?.();
+  });
+  try { aplicarMapa(localStorage.getItem(CHAVE_MAPA) === "1"); } catch { aplicarMapa(false); }
   $("dg-exit")?.addEventListener("click", () => close("stairs", state.entryCave));
   $("dg-sheet")?.addEventListener("click", () => onSheet?.());
   $("dg-inventory")?.addEventListener("click", () => onInventory?.());

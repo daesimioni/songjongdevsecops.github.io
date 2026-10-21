@@ -1970,16 +1970,21 @@ export function createRenderer(canvas, world) {
   const MINI_SCALES = [0, 2, 3, 4, 6];
   let miniIndex = 2;
   let miniPlayer = null;
+  // o mapa pode sair do modo "atrás do boneco": arrastar solta a câmera do
+  // personagem e deixa olhar outro canto sem mudar de lugar
+  let miniFollow = true;
+  const miniPan = { x: 0, y: 0 };
 
   function miniView() {
     const tilePx = MINI_SCALES[miniIndex];
     const DW = minimap?.width || mmBase.width;
     const DH = minimap?.height || mmBase.height;
     const p = miniPlayer || { x: MAP_W / 2, y: MAP_H / 2 };
+    const foco = miniFollow ? p : { x: p.x + miniPan.x, y: p.y + miniPan.y };
     const srcW = tilePx ? Math.min(mmBase.width, (DW * 2) / tilePx) : mmBase.width;
     const srcH = tilePx ? Math.min(mmBase.height, (DH * 2) / tilePx) : mmBase.height;
-    const sx = Math.max(0, Math.min(mmBase.width - srcW, p.x * 2 - srcW / 2));
-    const sy = Math.max(0, Math.min(mmBase.height - srcH, p.y * 2 - srcH / 2));
+    const sx = Math.max(0, Math.min(mmBase.width - srcW, foco.x * 2 - srcW / 2));
+    const sy = Math.max(0, Math.min(mmBase.height - srcH, foco.y * 2 - srcH / 2));
     return { sx, sy, srcW, srcH, DW, DH };
   }
 
@@ -2098,8 +2103,27 @@ export function createRenderer(canvas, world) {
     },
     miniFit() {
       miniIndex = 0;
+      miniFollow = true;
+      miniPan.x = 0;
+      miniPan.y = 0;
       return miniLabel();
     },
+    // arrasto no mapa: converte pixel de tela em tile e solta a câmera
+    miniPanBy(dx, dy) {
+      if (!MINI_SCALES[miniIndex]) return false;
+      const view = miniView();
+      const k = (view.srcW / view.DW) / 2;
+      miniFollow = false;
+      miniPan.x += dx * k;
+      miniPan.y += dy * k;
+      return true;
+    },
+    miniRecenter() {
+      miniFollow = true;
+      miniPan.x = 0;
+      miniPan.y = 0;
+    },
+    get miniFollowing() { return miniFollow; },
     miniWorldAt(fx, fy) {
       const view = miniView();
       return {

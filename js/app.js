@@ -2851,12 +2851,38 @@ window.addEventListener("pointerup", pararSeguir);
 window.addEventListener("pointercancel", pararSeguir);
 window.addEventListener("blur", pararSeguir);
 
+// O minimapa anda: arrastar solta a câmera do boneco para espiar outro canto,
+// e um clique sem arrasto é o caminho de antes (andar até o ponto).
+let miniArraste = null;
+function pintarZoomMini(label) {
+  const rotulo = $("mini-zoom");
+  if (!rotulo) return;
+  rotulo.textContent = renderer.miniFollowing ? label : `${label} livre`;
+}
 $("minimap-canvas").addEventListener("pointerdown", (e) => {
   if (!state.started || state.panelOpen || state.modal) return;
   if (e.button !== undefined && e.button !== 0) return;
   if (state.chatOpen) closeChat();
   stopSprint();
-  const rect = e.currentTarget.getBoundingClientRect();
+  miniArraste = { x: e.clientX, y: e.clientY, id: e.pointerId, movido: false };
+});
+window.addEventListener("pointermove", (e) => {
+  if (!miniArraste || e.pointerId !== miniArraste.id) return;
+  if (!miniArraste.movido) {
+    if (Math.hypot(e.clientX - miniArraste.x, e.clientY - miniArraste.y) < 4) return;
+    miniArraste.movido = true;
+  }
+  renderer.miniPanBy(e.clientX - miniArraste.x, e.clientY - miniArraste.y);
+  miniArraste.x = e.clientX;
+  miniArraste.y = e.clientY;
+  pintarZoomMini(renderer.miniScale ? `${renderer.miniScale}×` : "1×");
+});
+window.addEventListener("pointerup", (e) => {
+  if (!miniArraste || e.pointerId !== miniArraste.id) return;
+  const arraste = miniArraste;
+  miniArraste = null;
+  if (arraste.movido) return;
+  const rect = $("minimap-canvas").getBoundingClientRect();
   const fx = (e.clientX - rect.left) / rect.width;
   const fy = (e.clientY - rect.top) / rect.height;
   // o mapa pode estar aproximado: converte o clique pela janela atual
@@ -2875,8 +2901,7 @@ $("minimap-canvas").addEventListener("pointerdown", (e) => {
 
 function trocarZoomMini(delta) {
   const res = renderer.miniZoom(delta);
-  const rotulo = $("mini-zoom");
-  if (rotulo) rotulo.textContent = res.label;
+  pintarZoomMini(res.label);
   if (res.mudou) audio.blip();
 }
 
@@ -2909,9 +2934,8 @@ aplicarMiniRecolhido(readJSON(MINI_RECOLHIDO, false) === true);
 $("mini-in").addEventListener("click", () => trocarZoomMini(1));
 $("mini-out").addEventListener("click", () => trocarZoomMini(-1));
 $("mini-fit").addEventListener("click", () => {
-  const rotulo = $("mini-zoom");
   const label = renderer.miniFit();
-  if (rotulo) rotulo.textContent = label;
+  pintarZoomMini(label);
   audio.blip();
 });
 

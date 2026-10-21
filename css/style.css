@@ -2292,8 +2292,27 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
   border: 1px solid var(--line-strong);
   border-radius: 4px;
 }
+.dg-fold {
+  position: absolute;
+  right: clamp(14px, 3vw, 34px);
+  bottom: 200px;
+  width: 22px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink);
+  background: rgba(5, 8, 20, 0.82);
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+  cursor: pointer;
+}
+.dg-fold:hover { border-color: var(--mint); color: var(--mint); }
+#dg-map[hidden] { display: none !important; }
 @media (max-width: 720px) {
   #dg-map { display: none; }
+  .dg-fold { right: 10px; bottom: calc(110px + env(safe-area-inset-bottom)); }
 }
 
 #duel-risk {

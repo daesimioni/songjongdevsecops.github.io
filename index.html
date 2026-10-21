@@ -128,6 +128,7 @@
         <span id="dg-pack" hidden></span>
         <span id="dg-buffs" hidden></span>
       </div>
+      <button type="button" id="dg-fold" class="dg-fold" aria-expanded="true" aria-controls="dg-map" aria-label="minimizar o mapa da caverna">–</button>
       <canvas id="dg-map" width="128" height="96" aria-label="Minimapa da caverna, com o que já foi andado"></canvas>
       <p id="dg-msg" class="dg-msg" role="status" aria-live="polite"></p>
       <div id="dg-prompt" class="dg-prompt" hidden><kbd>F</kbd> <span></span></div>
@@ -402,7 +403,7 @@
       <p class="help-note">No celular, o direcional anda, <strong>A</strong> interage e o <strong>Turbo</strong> liga a nave. Os botões do topo abrem Falar, Rede, Diário e Ficha, e a conversa sobe junto com o teclado. A praça é pública: quem está na mesma sala vê seu apelido, seu boneco e suas mensagens. Use um apelido, não seu nome completo.</p>
       <p class="help-note">As <strong>Pedras do Porto</strong> são os monólitos acesos nas docas. Elas abrem a viagem para os lugares que você já visitou. As pontes também levam a pé.</p>
       <p class="help-note">Clique no chão e o boneco vai até ali, contornando água, parede e árvore. Clique numa estação, num NPC ou numa boca de caverna para chegar perto e interagir. Se a conversa estiver aberta, o clique no mundo fecha a conversa e anda.</p>
-      <p class="help-note">O <strong>minimapa</strong> mostra a coordenada <kbd>x y z</kbd>: z 0 é a superfície, z -1 o subsolo e z -2 o Porto Submerso. A roda do mouse e os botões <strong>−</strong> e <strong>+</strong> aproximam, <strong>mapa</strong> abre o vale inteiro, um ponto já revelado leva o boneco até lá e o <strong>−</strong> do canto recolhe o mapa para uma fita fina.</p>
+      <p class="help-note">O <strong>minimapa</strong> mostra a coordenada <kbd>x y z</kbd>: z 0 é a superfície, z -1 o subsolo e z -2 o Porto Submerso. A roda do mouse e os botões <strong>−</strong> e <strong>+</strong> aproximam, arrastar solta o mapa do boneco para espiar outro canto e o botão <strong>mapa</strong> volta a seguir e abre o vale inteiro, um ponto já revelado leva o boneco até lá e o <strong>−</strong> do canto recolhe o mapa para uma fita fina. Dentro da caverna o mapa é o da caverna, e recolhe do mesmo jeito.</p>
       <p class="help-note">Os NPCs têm missões. Aperte <kbd>F</kbd> perto deles para aceitar, responder e entregar. O Diário (<kbd>Z</kbd>) guarda o que está em andamento e quanto falta.</p>
       <p class="help-note">Na superfície, as clareiras com bandeira têm um <strong>instrutor</strong>. Com ele você treina o tema da caverna em três dificuldades, <strong>sem perder vida e sem levar item</strong>. A <strong>Ficha</strong> (<kbd>C</kbd>) mostra vida, perícias e mochila; a <strong>mochila</strong> (<kbd>I</kbd>) abre direto, e na caverna também tem botão no topo.</p>
       <p class="help-note">A <strong>caverna</strong> é que paga: acertar fere o bicho, errar fere você. Fugir não é de graça: a chance de levar um golpe cresce com a dificuldade do monstro, e o café da horta reduz esse risco por um tempo.</p>
@@ -521,7 +522,7 @@
       <span id="mini-floor" class="mini-floor">superfície</span>
       <button type="button" id="mini-toggle" class="mini-btn mini-fold" aria-expanded="true" aria-controls="minimap-canvas mini-tools" aria-label="minimizar o minimapa">–</button>
     </div>
-    <canvas id="minimap-canvas" width="600" height="400" role="img" aria-label="Minimapa do arquipélago, centrado no personagem. Use os botões ou a roda do mouse para o zoom, e clique num ponto revelado para andar até lá."></canvas>
+    <canvas id="minimap-canvas" width="600" height="400" role="img" aria-label="Minimapa do arquipélago, centrado no personagem. Use os botões ou a roda do mouse para o zoom, arraste para espiar outro canto, e clique num ponto revelado para andar até lá."></canvas>
     <div class="mini-tools" id="mini-tools">
       <button type="button" id="mini-out" class="mini-btn" aria-label="diminuir o zoom do minimapa">−</button>
       <span id="mini-zoom" class="mini-zoom" aria-live="polite">3×</span>
