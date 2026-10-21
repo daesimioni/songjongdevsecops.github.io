@@ -3239,5 +3239,265 @@ export const OPCOES_MELHORES = {
           "avaliar a velocidade da GPU no servidor"
     ],
     "a": 0
+  },
+  "Um semitom é...": {
+    "o": [
+          "o menor intervalo da escala temperada",
+          "uma oitava inteira entre duas notas",
+          "um acorde de três notas juntas",
+          "a pausa entre dois compassos da peça",
+          "a diferença de volume entre notas"
+    ],
+    "a": 0
+  },
+  "Um acorde é...": {
+    "o": [
+          "três ou mais notas simultâneas",
+          "uma nota só tocada muito forte",
+          "um ritmo marcado pela percussão",
+          "uma escala tocada de cor pelo músico",
+          "um intervalo de dois semitons"
+    ],
+    "a": 0
+  },
+  "A série harmônica é formada por...": {
+    "o": [
+          "Múltiplos inteiros da fundamental",
+          "Ruído branco em todas as faixas",
+          "Apenas a fundamental e nada mais",
+          "Frequências que não têm relação",
+          "O dobro do volume do som original"
+    ],
+    "a": 0
+  },
+  "Ressonância ocorre quando uma vibração...": {
+    "o": [
+          "Encontra a frequência natural do corpo",
+          "Tem amplitude zero em todo o corpo",
+          "Atravessa o vácuo sem nenhum meio",
+          "Muda o timbre do instrumento",
+          "Perde energia ao tocar o corpo"
+    ],
+    "a": 0
+  },
+  "Um acorde menor é formado por...": {
+    "o": [
+          "Tônica, terça menor e quinta justa",
+          "Duas oitavas inteiras da mesma nota",
+          "Só a tônica repetida no baixo",
+          "Tônica, terça maior e quinta justa",
+          "Quarta aumentada e sétima maior"
+    ],
+    "a": 0
+  },
+  "A forma sonata costuma apresentar...": {
+    "o": [
+          "exposição, desenvolvimento e reexposição",
+          "só o improviso livre do intérprete",
+          "apenas um acorde repetido no fim",
+          "refrão e estrofe bem alternados",
+          "introdução e coda sem nenhum tema"
+    ],
+    "a": 0
+  },
+  "Um cânone é...": {
+    "o": [
+          "a mesma melodia em vozes defasadas",
+          "uma forma binária usada na dança",
+          "um solo sem nenhum acompanhamento",
+          "uma escala descendente rápida",
+          "um acorde tocado em staccato"
+    ],
+    "a": 0
+  },
+  "Transposição muda...": {
+    "o": [
+          "a tonalidade mantendo a melodia",
+          "o ritmo mantendo a melodia",
+          "o timbre mantendo a mesma altura",
+          "a letra mantendo a mesma harmonia",
+          "o andamento mantendo o mesmo tema"
+    ],
+    "a": 0
+  },
+  "Textura musical descreve...": {
+    "o": [
+          "quantas vozes e como se relacionam",
+          "o volume que o grupo usa na sala",
+          "a tonalidade escolhida na peça",
+          "o andamento marcado na partitura",
+          "o timbre de cada instrumento"
+    ],
+    "a": 0
+  },
+  "O que é uma anacruse?": {
+    "o": [
+          "Nota ou notas antes do primeiro tempo forte",
+          "Uma pausa colocada no fim do compasso",
+          "Um acorde de três notas na mão esquerda",
+          "Um andamento muito lento no início",
+          "Uma repetição do refrão no final"
+    ],
+    "a": 0
+  },
+  "Uma clave é...": {
+    "o": [
+          "um símbolo que fixa as alturas no pentagrama",
+          "um acorde de três notas no baixo",
+          "um andamento lento indicado na partitura",
+          "um sinal de repetição da seção",
+          "um tipo de escala menor antiga"
+    ],
+    "a": 0
+  },
+  "Afinação pitagórica e temperamento igual diferem porque...": {
+    "o": [
+          "As razões puras não fecham a oitava em 12 passos iguais",
+          "A pitagórica é mais nova que o temperamento",
+          "O temperamento não usa oitavas na escala",
+          "A pitagórica usa só semitons cromáticos",
+          "As duas são idênticas na prática"
+    ],
+    "a": 0
+  },
+  "O que é dissonância?": {
+    "o": [
+          "Uma combinação que pede resolução",
+          "Um som que não tem frequência",
+          "Um silêncio longo entre frases",
+          "Um acorde de três notas iguais",
+          "Um andamento muito rápido na peça"
+    ],
+    "a": 0
+  },
+  "A forma sonata organiza...": {
+    "o": [
+          "exposição, desenvolvimento e recapitulação",
+          "só refrões repetidos pela banda",
+          "apenas improvisos livres do solista",
+          "estrofe, refrão e ponte final",
+          "tema e variações sem nenhum retorno"
+    ],
+    "a": 0
+  },
+  "Contraponto é...": {
+    "o": [
+          "linhas melódicas simultâneas e independentes",
+          "um solo sem nenhum acompanhamento",
+          "uma afinação usada no coral antigo",
+          "um ritmo marcado pela percussão",
+          "uma escala tocada em oitavas"
+    ],
+    "a": 0
+  },
+  "O contraponto estuda...": {
+    "o": [
+          "a combinação de linhas melódicas independentes",
+          "o volume do amplificador na sala",
+          "a afinação do piano de concerto",
+          "o andamento marcado na partitura",
+          "o timbre de cada instrumento da orquestra"
+    ],
+    "a": 0
+  },
+  "Um acorde de sétima diminuta tem...": {
+    "o": [
+          "quatro notas com terças menores",
+          "três notas com terças maiores",
+          "uma tríade maior e uma oitava",
+          "duas notas só, no baixo do piano",
+          "cinco notas em terças maiores"
+    ],
+    "a": 0
+  },
+  "Contraponto invertível...": {
+    "o": [
+          "troca as vozes mantendo a validade",
+          "repete a melodia no mesmo registro",
+          "dobra o volume das duas vozes",
+          "elimina uma voz do trecho inteiro",
+          "muda o andamento do trecho"
+    ],
+    "a": 0
+  },
+  "Contratempo é...": {
+    "o": [
+          "um acento que desloca a expectativa do tempo forte",
+          "um silêncio no meio do compasso",
+          "uma nota alterada por acidente",
+          "uma pausa que encerra a frase",
+          "um andamento mais lento que o normal"
+    ],
+    "a": 0
+  },
+  "Os modos gregos são...": {
+    "o": [
+          "sete escalas derivadas da escala maior",
+          "doze acordes montados sobre a tônica",
+          "ritmos tradicionais da Grécia antiga",
+          "formas de sonata da época barroca",
+          "afinações usadas no órgão antigo"
+    ],
+    "a": 0
+  },
+  "O espectro harmônico de um som mostra...": {
+    "o": [
+          "as frequências e suas amplitudes",
+          "o andamento e a dinâmica da peça",
+          "a forma e a textura da obra toda",
+          "o nome e o autor do trecho tocado",
+          "as notas escritas na partitura"
+    ],
+    "a": 0
+  },
+  "Uma nona é...": {
+    "o": [
+          "uma extensão de acorde além da oitava",
+          "um intervalo de dois semitons",
+          "um ritmo de nove tempos por compasso",
+          "uma escala menor de nove notas",
+          "um acorde de nove instrumentos"
+    ],
+    "a": 0
+  },
+  "Baixo cifrado é...": {
+    "o": [
+          "uma notação de harmonia com números sobre o baixo",
+          "um instrumento de cordas antigo",
+          "uma escala usada no canto gregoriano",
+          "um tipo de compasso composto",
+          "uma forma de afinação do cravo"
+    ],
+    "a": 0
+  },
+  "Imitação em contraponto é...": {
+    "o": [
+          "repetir um motivo em outra voz",
+          "tocar mais forte o mesmo tema",
+          "mudar o timbre do instrumento",
+          "acelerar o andamento da peça",
+          "somar acordes na mesma voz"
+    ],
+    "a": 0
+  },
+  "Uma obra cíclica...": {
+    "o": [
+          "faz temas voltarem em movimentos diferentes",
+          "não tem forma definida pelo autor",
+          "é sempre improvisada pelo solista",
+          "repete o mesmo movimento do início",
+          "dispensa qualquer tema principal"
+    ],
+    "a": 0
+  },
+  "Ruído branco tem...": {
+    "o": [
+          "energia parecida em todas as frequências",
+          "só uma frequência muito pura",
+          "volume zero em qualquer aparelho",
+          "energia só nas frequências graves",
+          "picos isolados em cada harmônico"
+    ],
+    "a": 0
   }
 };

@@ -992,7 +992,13 @@ export const DEEP_QUESTIONS = {
   },
   math: {
     q: "O que o teorema de Cantor mostra sobre o conjunto das partes de um conjunto?",
-    options: ["Ele é sempre maior que o conjunto original", "Ele é sempre igual", "Ele é sempre vazio"],
+    options: [
+      "Ele é sempre maior que o conjunto original",
+      "Ele é sempre igual ao conjunto original",
+      "Ele é sempre vazio quando o conjunto é infinito",
+      "Ele tem a mesma cardinalidade do conjunto original",
+      "Ele só existe para conjuntos finitos",
+    ],
     a: 0,
     why: "Não existe correspondência um a um entre um conjunto e o conjunto de todos os seus subconjuntos.",
   },
@@ -1010,7 +1016,13 @@ export const DEEP_QUESTIONS = {
   },
   music: {
     q: "O que o timbre de um instrumento descreve?",
-    options: ["A mistura de harmônicos que dá a cor do som", "A altura da nota apenas", "O volume máximo"],
+    options: [
+      "A mistura de harmônicos que dá a cor do som",
+      "A altura da nota, medida em hertz",
+      "O volume máximo que o instrumento alcança",
+      "A duração de cada nota tocada",
+      "A afinação usada na execução",
+    ],
     a: 0,
     why: "Dois instrumentos na mesma nota soam diferentes porque os harmônicos e seus envelopes mudam.",
   },

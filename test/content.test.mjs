@@ -565,6 +565,30 @@ check(QUESTS.length === 284, `missões: ${QUESTS.length}, esperado 284`);
 check(WAYSTONES.length === 94, `faróis: ${WAYSTONES.length}, esperado 94`);
 // as 770 perguntas de posição no catálogo saíram; sobrou conceito das áreas
 check(totalQuestions === 887, `perguntas: ${totalQuestions}, esperado 887`);
+// a alternativa certa não pode entregar a resposta pelo tamanho
+const medianaDe = (a) => {
+  const s = [...a].sort((x, y) => x - y);
+  const m = s.length >> 1;
+  return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
+};
+const entrega = [];
+const opcaoRepetida = [];
+for (const c of Object.keys(QUESTIONS)) {
+  for (const t of Object.keys(QUESTIONS[c])) {
+    for (const q of QUESTIONS[c][t]) {
+      const opts = q.options || [];
+      const limpa = opts.map((o) => String(o).trim().toLowerCase());
+      if (new Set(limpa).size !== limpa.length) opcaoRepetida.push(q.q);
+      const certa = opts[q.a];
+      if (certa == null) continue;
+      const erradas = opts.filter((_, i) => i !== q.a).map((o) => String(o).length);
+      const med = medianaDe(erradas);
+      if (med > 0 && certa.length >= 30 && certa.length >= 2 * med) entrega.push(`${c}/${t}: ${q.q}`);
+    }
+  }
+}
+check(entrega.length === 0, `alternativa certa e a unica longa: ${entrega.slice(0, 5).join(" | ")}`);
+check(opcaoRepetida.length === 0, `pergunta com alternativa repetida: ${opcaoRepetida.slice(0, 5).join(" | ")}`);
 // cada área nova tem uma pergunta própria em cada dificuldade
 let semPergunta = [];
 for (const item of CATALOG) {
