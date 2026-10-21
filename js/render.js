@@ -1811,9 +1811,10 @@ export function createRenderer(canvas, world) {
         groundGrain(g, tx, ty, world.get(tx, ty));
       }
     }
-    // LRU de 120 blocos: o mapa é estático, mas caminhar por muitas ilhas
-    // encheria a memória se o cache só crescesse.
-    while (chunkCache.size >= 120) {
+    // LRU de 48 blocos: a vista maior (1280 px em 1,6) pede 12 blocos por
+    // quadro, então 48 dá 4 telas de folga e prende a memória em ~12,6 MB.
+    // Antes eram 120 blocos (~31,5 MB) para a mesma vista.
+    while (chunkCache.size >= 48) {
       const oldest = chunkCache.keys().next().value;
       if (oldest === undefined) break;
       chunkCache.delete(oldest);

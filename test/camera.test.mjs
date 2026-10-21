@@ -63,6 +63,7 @@ check((render.match(/escalaDaCamera\(vw, vh\)/g) || []).length === 1, "render.js
 check(/tilesNaVista\(/.test(dungeon), "dungeon.js não prende o desenho à vista");
 check(/dentroDaVista\(/.test(dungeon), "dungeon.js não culla o que está fora");
 check(/drawImage\(state\.terrain, sx0, sy0, sw, sh, sx0, sy0, sw, sh\)/.test(dungeon), "terreno da caverna não é recortado pela vista");
+check(/while \(chunkCache\.size >= 48\)/.test(render), "cache de chão sem o teto de 48 blocos (memória presa em ~12,6 MB)");
 
 assert.equal(problemas.length, 0, `câmera com ${problemas.length} problema(s):\n- ${problemas.join("\n- ")}`);
 console.log("ok câmera: escala única, vista presa ao mapa, desenho culling e terreno recortado");
