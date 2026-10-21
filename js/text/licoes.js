@@ -1311,6 +1311,118 @@ export const LICOES = {
         "Compare a temperatura de duas superfícies com albedo diferente sob a mesma lâmpada.",
     },
   },
+  "math-fundamentos": {
+    "Lógica Matemática": {
+      contexto:
+        "Onde isso aparece: na prova, no circuito digital e na consulta de banco com condições. A negação inverte o valor de verdade; a conjunção só é verdadeira com as duas partes verdadeiras. A condicional é a que mais engana, e confundi-la com a recíproca é o erro clássico.",
+      oQue:
+        "Lógica é o estudo das formas válidas de tirar conclusão. Os conectivos montam frases compostas: negação, conjunção, disjunção, condicional e bicondicional, e cada um tem tabela de verdade. A validade depende da forma, não do conteúdo da frase.",
+      passos: [
+        "Isole as proposições simples e dê nome a cada uma.",
+        "Monte a tabela de verdade dos conectivos envolvidos.",
+        "Veja em que linha a fórmula falha e o que isso significa.",
+      ],
+      exemplo:
+        "A condicional P→Q é falsa só na linha em que P é verdadeira e Q é falsa. Se chove e não molho, a promessa 'se chover, eu molho' falhou. Nas outras três linhas a condicional se sustenta, inclusive quando P é falsa: a promessa não é quebrada por não chover.",
+      quebra:
+        "Confundir a condicional com a recíproca. P→Q não é Q→P: 'se chove, molho' não autoriza 'se molho, chove'. A recíproca tem outra tabela, e trocar uma pela outra invalida a prova.",
+      limite:
+        "A tabela cobre lógica clássica bivalente. Em lógica intuicionista, a negação dupla não se cancela sempre, e o terceiro excluído não vale por padrão.",
+      levar: "A condicional só falha quando a promessa é quebrada: antecedente verdadeiro, consequente falso.",
+      maos:
+        "Monte a tabela de P→Q e marque a única linha em que ela dá falso.",
+    },
+    "Teoria dos Conjuntos": {
+      contexto:
+        "Onde isso aparece: na consulta de banco, na classificação de planta e na definição de função. União junta, interseção mantém o comum, e a cardinalidade distingue finito de infinito. Os reais não são enumeráveis, e essa diferença separa dois infinitos.",
+      oQue:
+        "Conjunto é coleção de elementos. Relações ligam elementos de dois conjuntos por pares ordenados; funções são relações em que cada entrada tem uma única saída. A relação de equivalência organiza o conjunto em classes que não se misturam.",
+      passos: [
+        "Descreva o conjunto e a relação que se quer testar.",
+        "Teste reflexiva, simétrica e transitiva, uma de cada vez.",
+        "Veja as classes de equivalência que a relação produz.",
+      ],
+      exemplo:
+        "A relação 'tem o mesmo resto na divisão por três' no conjunto dos inteiros é reflexiva, simétrica e transitiva, e parte o conjunto em três classes. Já 'menor que' não é reflexiva nem simétrica, então não é equivalência. O teste é direto e decide.",
+      quebra:
+        "Achar que todo conjunto infinito tem a mesma cardinalidade. Os naturais são enumeráveis; os reais não são, e há mais reais que naturais. Tratar todo infinito como igual apaga o resultado de Cantor.",
+      limite:
+        "Axiomas de conjunto têm variação: o axioma da escolha pode ser aceito ou negado sem contradizer a base. O que se prova depende do sistema escolhido, e a escolha precisa ser declarada.",
+      levar: "Conjunto é coleção; relação é par; função é relação com uma saída por entrada.",
+      maos:
+        "Teste três relações do dia a dia nos três critérios e veja quais são equivalência.",
+    },
+    "Métodos de Demonstração": {
+      contexto:
+        "Onde isso aparece: no teorema, no algoritmo e no laudo que precisa de garantia. Prova direta encadeia implicação; contraposição troca a direção; indução cobre o infinito com caso base e passo. Cada método serve a um tipo de afirmação.",
+      oQue:
+        "Demonstrar é justificar uma afirmação a partir de axiomas e resultados já provados. A prova não é retórica: cada passo precisa seguir de definição, axioma ou resultado anterior. O método é escolhido pela forma da afirmação, não pelo gosto de quem escreve.",
+      passos: [
+        "Escreva a afirmação e o que se assume no início.",
+        "Escolha o método pela forma da afirmação.",
+        "Feche cada passo com a justificativa que o autoriza.",
+      ],
+      exemplo:
+        "Para provar que a soma dos n primeiros ímpares é n ao quadrado, a indução faz o caso base n igual a um e o passo de n para n mais um. O passo soma o próximo ímpar, que é 2n mais um, e chega ao quadrado seguinte. Sem o caso base, a corrente não tem começo e nada está provado.",
+      quebra:
+        "Usar indução sem o caso base. O passo pode valer para todo n e a afirmação ainda ser falsa, porque falta o ponto de partida. A base não é formalidade: é o primeiro elo.",
+      limite:
+        "Indução prova para todo natural, não para real nem para conjunto sem ordem. Afirmação sobre contínuo pede outro método, e a prova por exaustão só vale quando o conjunto é finito e pequeno.",
+      levar: "Prova é corrente: cada elo preso ao anterior, e a base presa no chão.",
+      maos:
+        "Prove por indução a soma dos n primeiros ímpares e escreva o caso base e o passo separados.",
+    },
+    "Linguagem e Representação": {
+      contexto:
+        "Onde isso aparece: na notação de somatório, no símbolo de derivada e na definição de limite. Notação boa encurta a prova e reduz ambiguidade; notação ruim esconde hipótese. A convenção é parte da matemática, não enfeite.",
+      oQue:
+        "A linguagem matemática é ferramenta de precisão: símbolo, definição, lema e teorema formam camadas. Definição fixa o sentido, lema é resultado auxiliar, teorema é resultado principal, e corolário sai de graça do teorema. Abstração e generalização permitem aplicar a mesma estrutura a problemas diferentes.",
+      passos: [
+        "Declare as definições antes de usar qualquer símbolo.",
+        "Separe hipótese de tese na frase do resultado.",
+        "Escolha a notação que deixa a estrutura visível para quem lê.",
+      ],
+      exemplo:
+        "O mesmo teorema escrito com somatório e escrito por extenso tem o mesmo conteúdo, mas a versão simbólica deixa a estrutura visível e a prova curta. Já a notação inventada no meio do texto quebra a leitura, porque ninguém combinou o símbolo. Clareza é acordo, e o acordo precisa estar escrito no começo do texto, antes do primeiro símbolo que ninguém definiu.",
+      quebra:
+        "Usar símbolo sem definir. O leitor interpreta diferente, e a prova deixa de ser conferível. A definição é o contrato da leitura, e sem ela o texto vira adivinhação.",
+      limite:
+        "Notação muito compacta esconde hipótese e prejudica a revisão. Em ensino e em prova, o excesso de símbolo custa mais do que economiza, e a escolha depende de quem lê, do espaço da página e do que o texto quer destacar.",
+      levar: "Notação é contrato: sem definição, cada leitor assina um.",
+      maos:
+        "Reescreva uma definição com símbolo e por extenso e compare o que ficou mais claro.",
+      pergunta: {
+        q: "Por que a mesma ideia matemática precisa de notação estável?",
+        a: "Porque a notação fixa o significado e evita leitura ambígua",
+        why: "Sem símbolo combinado, cada leitor interpreta a expressão de um jeito, e a prova deixa de ser conferível.",
+      },
+    },
+    "História, Filosofia e Fundamentos da Matemática": {
+      contexto:
+        "Onde isso aparece: no debate sobre axioma, no paradoxo e no currículo escolar. Platonismo, formalismo e construtivismo respondem de formas diferentes à pergunta sobre o que é um número. A definição que usamos hoje é o ponto de chegada de uma discussão longa.",
+      oQue:
+        "A história da matemática mostra resultado construído, contestado e corrigido. Os sistemas numéricos ganharam forma com a necessidade de contar, medir e resolver equação; a crise dos fundamentos no começo do século vinte mostrou limite do formalismo. Conhecer o caminho evita tratar convenção como verdade eterna.",
+      passos: [
+        "Identifique o problema histórico que gerou a ideia.",
+        "Veja a definição atual e a que pergunta ela responde.",
+        "Compare com a crítica que contestou essa definição.",
+      ],
+      exemplo:
+        "O zero demorou a ser aceito como número porque a ideia de nada com regra própria incomodava; hoje ele é a peça que faz a aritmética fechar. Da mesma forma, o infinito passou de paradoxo a objeto com cardinalidade, depois de Cantor. O conceito muda quando a ferramenta muda.",
+      quebra:
+        "Tratar a definição atual como a única possível. Cada definição resolveu um problema de seu tempo, e outra convenção pode servir a outro propósito. A história mostra que a matemática também tem escolha.",
+      limite:
+        "A leitura histórica não substitui a prova. Saber por que o conceito surgiu ajuda a entender, mas a validade do teorema se decide pela demonstração, não pela cronologia.",
+      levar: "A matemática tem história: o que hoje é definição já foi discussão.",
+      maos:
+        "Escolha um conceito e conte o problema que ele veio resolver e o que ele deixou de fora.",
+      pergunta: {
+        q: "O que a história da matemática mostra sobre os resultados que usamos?",
+        a: "Que eles foram construídos, contestados e corrigidos ao longo do tempo",
+        why: "A definição atual é o ponto de chegada de um debate, e conhecer o caminho evita tratar convenção como verdade eterna.",
+      },
+    },
+  },
 };
 
 // o nome da estação chega em caixa baixa do banco ("Grafos moleculares") e em
