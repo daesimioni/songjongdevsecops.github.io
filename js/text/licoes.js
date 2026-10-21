@@ -2666,6 +2666,285 @@ export const LICOES = {
       },
     },
   },
+  "physics-fundamentos": {
+    "Fundamentos da Física": {
+      contexto:
+        "Onde isso aparece: no laboratório, na engenharia e na conta do dia a dia. Medir é comparar com padrão, e a unidade é parte do número. Análise dimensional confere a conta antes de ela ficar cara.",
+      oQue:
+        "Fundamentos da física fixam grandeza, unidade e medida. O Sistema Internacional define sete unidades básicas, e toda outra grandeza sai da combinação delas. Análise dimensional confere consistência, e lei de conservação dá o que não muda no processo.",
+      passos: [
+        "Escreva a grandeza com a unidade e o padrão usado.",
+        "Reduza tudo a unidade básica antes de comparar.",
+        "Confira a dimensão dos dois lados da equação.",
+      ],
+      exemplo:
+        "A velocidade tem dimensão de comprimento por tempo; a aceleração, comprimento por tempo ao quadrado. Se uma equação de movimento soma velocidade com aceleração, a dimensão não fecha e a equação está errada antes de qualquer conta. A conferência custa segundos e evita erro grande.",
+      quebra:
+        "Somar grandeza de unidade diferente sem converter. Metro com centímetro, hora com segundo: o número parece certo e a resposta erra por fator conhecido. Converter antes de somar é obrigatório.",
+      limite:
+        "A análise dimensional confere forma, não valor. Constante adimensional não aparece na conferência, e a equação pode estar dimensionalmente certa e fisicamente errada.",
+      levar: "Unidade é parte da medida, não enfeite do número.",
+      maos:
+        "Escreva três equações e confira a dimensão de cada lado antes de resolver.",
+    },
+    "Física Experimental": {
+      contexto:
+        "Onde isso aparece: no relatório de laboratório, no laudo de calibração e no teste de produto. A medida vem com incerteza, e o erro tem tipo. O experimento é planejado para separar efeito de ruído.",
+      oQue:
+        "Física experimental planeja, mede e calibra. Toda medida tem incerteza, que vem do instrumento, do método e do objeto, e o erro sistemático desloca todas as medidas para o mesmo lado. O erro aleatório varia e diminui com repetição; o sistemático só sai com calibração.",
+      passos: [
+        "Planeje o experimento para separar a variável de interesse do resto.",
+        "Calibre o instrumento com padrão conhecido.",
+        "Registre incerteza e repita para estimar a dispersão.",
+      ],
+      exemplo:
+        "Uma balança descalibrada soma 10 gramas em toda medida: o erro é sistemático, e repetir não resolve. Já a leitura que varia entre 10,1 e 9,9 gramas é aleatória, e a média de várias medidas aproxima o valor. Separar os dois tipos decide o que corrigir.",
+      quebra:
+        "Repetir a medida e achar que o erro sistemático some. Repetição reduz dispersão aleatória, não desvio de calibração. A média de muitas medidas erradas continua errada. A folha de dados registra a incerteza de cada instrumento, e o relatório declara o método de calibração usado, senão o número não se reproduz. O caderno de laboratório é parte do experimento: sem ele, nem o erro nem a correção podem ser conferidos depois.",
+      limite:
+        "A incerteza declarada depende do modelo de erro. Em sistema com fonte não controlada, a barra pode estar subestimada, e a comparação com teoria fica falsa.",
+      levar: "Erro aleatório se dilui; erro sistemático se corrige.",
+      maos:
+        "Meça a mesma peça dez vezes, calcule a média e a dispersão, e veja o que repete.",
+      pergunta: {
+        q: "Qual erro desloca todas as medidas para o mesmo lado?",
+        a: "O erro sistemático, como o da balança descalibrada",
+        why: "Ele vem do instrumento ou do método e não diminui com repetição; a correção vem da calibração contra padrão conhecido.",
+      },
+    },
+    "Física Teórica": {
+      contexto:
+        "Onde isso aparece: no modelo climático, na teoria de partícula e no cálculo de engenharia. Teoria é modelo com previsão, e modelo efetivo vale na faixa em que foi construído. A derivação transforma princípio em número comparável.",
+      oQue:
+        "Física teórica formula modelo, deriva previsão e compara com medida. Princípio fundamental gera equação, e modelo efetivo descreve só a escala de interesse, ignorando o detalhe menor. A previsão precisa ser falsificável, senão não é teoria.",
+      passos: [
+        "Escolha o princípio e o grau de aproximação.",
+        "Derive a previsão com a matemática adequada.",
+        "Compare com dado e declare a faixa de validade.",
+      ],
+      exemplo:
+        "A mecânica de Newton prevê a órbita de planeta com precisão, e a relatividade geral corrige o detalhe perto de massa grande. Nenhuma das duas é errada: cada uma vale na faixa em que foi testada. Trocar de modelo sem declarar a faixa confunde precisão com verdade.",
+      quebra:
+        "Tratar modelo efetivo como descrição final. O modelo foi construído para uma escala e generaliza mal fora dela. A extrapolação sem teste é palpite com equação.",
+      limite:
+        "Toda teoria tem faixa de validade. Fora dela, a previsão diverge ou perde sentido, e a física procura modelo mais geral, não conserto do antigo. O modelo efetivo é o que a engenharia usa todo dia, e a faixa de validade vai escrita no manual. Extrapolar para fora dela e apresentar como previsão é o erro que a revisão por pares pega rápido.",
+      levar: "Teoria é modelo com faixa: prever e declarar onde vale.",
+      maos:
+        "Compare a previsão de dois modelos na mesma faixa e veja onde eles se separam.",
+      pergunta: {
+        q: "O que é um modelo efetivo em física?",
+        a: "Um modelo que vale numa faixa de escala e ignora o detalhe fora dela",
+        why: "O modelo efetivo resume o que importa na escala de interesse; fora dessa faixa, os graus de liberdade ignorados voltam a pesar e a previsão perde validade.",
+      },
+    },
+    "Física Computacional": {
+      contexto:
+        "Onde isso aparece: na previsão de tempo, no projeto de carro e no ensaio de material. A conta substitui o experimento caro, e o passo escolhido muda o resultado. Simulação é ferramenta com erro declarado.",
+      oQue:
+        "Física computacional resolve equação por simulação numérica: diferença finita, Monte Carlo, dinâmica molecular e elemento finito. A escolha do passo muda o resultado, e o passo menor reduz o erro de discretização ao custo de mais conta. A validação contra caso conhecido é parte do método.",
+      passos: [
+        "Escolha o método pela equação e pela escala.",
+        "Diminua o passo até o resultado estabilizar.",
+        "Valide com caso de solução conhecida.",
+      ],
+      exemplo:
+        "Numa simulação de queda com passo de um segundo, a velocidade muda aos saltos e o resultado desvia; com passo de um centésimo, a curva se aproxima da solução exata. Diminuir o passo até o número não mudar mais é o teste de convergência. Sem esse teste, o resultado é chute com cara de conta.",
+      quebra:
+        "Escolher o passo pelo tempo de máquina e não pelo erro. Passo grande acelera a conta e distorce o resultado, e a diferença só aparece na comparação. O teste de convergência não é opcional.",
+      limite:
+        "Passo menor custa mais e nem sempre aumenta a precisão: arredondamento e modelo podem dominar. Existe passo ótimo, e a busca é parte do trabalho.",
+      levar: "Simulação converge quando o resultado para de mudar com o passo.",
+      maos:
+        "Rode a mesma simulação com dois passos e compare a diferença no ponto final.",
+    },
+    "História, Filosofia e Fundamentos Conceituais": {
+      contexto:
+        "Onde isso aparece: no debate sobre determinismo, na interpretação da quântica e no ensino da física. A pergunta é o que a lei física afirma sobre o mundo. Causalidade, espaço e tempo mudaram de sentido com a relatividade e a quântica.",
+      oQue:
+        "História e filosofia da física estudam como a teoria nasceu e o que ela afirma. Causalidade e determinismo dizem que o estado presente determina o futuro pelas leis, e a mecânica quântica tensiona essa ideia. A interpretação escolhe como contar a história, e a previsão segue igual.",
+      passos: [
+        "Identifique o problema conceitual que a teoria respondeu.",
+        "Separe o que é previsão do que é interpretação.",
+        "Veja que experiência separaria as alternativas.",
+      ],
+      exemplo:
+        "A relatividade mostrou que simultaneidade depende do referencial, e o conceito de tempo absoluto caiu. A equação não mudou de resultado por causa da filosofia; o que mudou foi o que se entende por tempo. Conceito e medida caminham juntos. A história mostra teoria substituída por outra mais geral, e o que fica é o limite em que a antiga continua valendo. Sem separar previsão de interpretação, o debate vira opinião e perde o vínculo com o experimento.",
+      quebra:
+        "Tomar interpretação como consequência da equação. A equação prevê probabilidade, e a interpretação diz o que isso significa. Confundir as duas transforma debate filosófico em resultado experimental.",
+      limite:
+        "A filosofia não decide a física, e a física não resolve toda questão conceitual. Enquanto o experimento não separa, a escolha é de coerência e de linguagem.",
+      levar: "Teoria prevê; interpretação diz o que a previsão significa.",
+      maos:
+        "Descreva duas interpretações da medida quântica e veja que previsão as distingue.",
+      pergunta: {
+        q: "O que o princípio da causalidade afirma na física clássica?",
+        a: "Que o estado presente determina o estado futuro pelas leis do movimento",
+        why: "Na mecânica clássica, condição inicial e lei determinam a trajetória; a mecânica quântica mantém a evolução determinística do estado, mas a medida devolve resultado probabilístico.",
+      },
+    },
+  },
+  "physics-mecanica": {
+    "Cinemática": {
+      contexto:
+        "Onde isso aparece: no carro que freia, na bola lançada e no vídeo que mede movimento. A cinemática descreve sem perguntar a causa. Posição, velocidade e aceleração são a mesma história em três derivadas.",
+      oQue:
+        "Cinemática descreve o movimento sem perguntar a causa. Posição, velocidade e aceleração se ligam por derivada e integral, e a trajetória é o caminho no espaço. No ponto mais alto do lançamento vertical, a velocidade é zero e a aceleração continua a da gravidade.",
+      passos: [
+        "Escolha o referencial e o sentido positivo.",
+        "Escreva a função de posição ou a equação do movimento.",
+        "Derive para velocidade e aceleração e confira o sinal.",
+      ],
+      exemplo:
+        "Uma bola lançada para cima a 20 metros por segundo sobe cerca de 20 metros e volta em quatro segundos. No topo, a velocidade é zero, e a aceleração continua 9,8 metros por segundo ao quadrado para baixo. É a aceleração que faz a bola voltar, não a velocidade.",
+      quebra:
+        "Achar que no ponto mais alto a aceleração também é zero. A velocidade é zero por um instante, e a gravidade continua agindo. Confundir os dois leva a concluir que a bola pararia no ar.",
+      limite:
+        "A descrição supõe aceleração conhecida e referencial inercial. Com resistência do ar ou referencial acelerado, a equação simples deixa de valer e a conta precisa de termo extra.",
+      levar: "No topo a velocidade zera; a aceleração não.",
+      maos:
+        "Meça a altura máxima de um lançamento e compare com a previsão sem resistência do ar.",
+    },
+    "Dinâmica": {
+      contexto:
+        "Onde isso aparece: no freio do carro, no elevador e no foguete. A força muda o movimento, e a massa mede a resistência à mudança. Ação e reação atuam em corpos diferentes, e é isso que permite o avanço.",
+      oQue:
+        "Dinâmica liga força, massa e movimento pelas três leis de Newton. Sem força resultante, a velocidade não muda; com força, a aceleração é proporcional e inversamente proporcional à massa. Ação e reação têm mesmo módulo e sentido oposto, em corpos diferentes.",
+      passos: [
+        "Isole o corpo e desenhe as forças que atuam nele.",
+        "Some as forças e aplique a segunda lei.",
+        "Verifique se cada ação tem reação em outro corpo.",
+      ],
+      exemplo:
+        "Num elevador que sobe acelerando, a normal é maior que o peso, e a pessoa sente-se mais pesada. Se o cabo arrebenta, a aceleração é a da gravidade e a normal é zero: a sensação é de flutuar. A mesma pessoa, forças diferentes.",
+      quebra:
+        "Somar ação e reação no mesmo corpo. As duas atuam em corpos distintos e não se cancelam. Colocá-las no mesmo diagrama de forças produz equilíbrio que não existe.",
+      limite:
+        "As leis valem em referencial inercial. Em referencial acelerado, aparece força fictícia, e a conta precisa somá-la para funcionar.",
+      levar: "Força muda velocidade; massa mede a resistência a mudar.",
+      maos:
+        "Desenhe as forças num elevador subindo e descendo e compare a normal com o peso.",
+    },
+    "Mecânica Analítica": {
+      contexto:
+        "Onde isso aparece: no pêndulo duplo, na órbita e no robô articulado. Trocar força por energia simplifica o problema com vínculo. A lagrangiana organiza a conta, e a simetria dá a lei de conservação. A formulação hamiltoniana troca a coordenada por posição e momento, e o espaço de fase mostra o retrato do sistema de uma vez, sem resolver equação por equação. O preço é abstração: a coordenada deixa de ser distância e passa a ser o que o vínculo permite.",
+      oQue:
+        "Mecânica analítica reformula a dinâmica por energia e coordenada generalizada. A lagrangiana é diferença entre energia cinética e potencial, e a equação de Euler-Lagrange dá o movimento. O princípio da ação estacionária escolhe a trajetória, e simetria gera conservação pelo teorema de Noether.",
+      passos: [
+        "Escolha as coordenadas generalizadas que respeitam o vínculo.",
+        "Escreva a lagrangiana em termos delas.",
+        "Aplique Euler-Lagrange e identifique a simetria.",
+      ],
+      exemplo:
+        "No pêndulo simples, a coordenada é o ângulo, e a lagrangiana já embute o vínculo do fio. A equação que sai é mais curta que a conta com força e tensão. Com o comprimento fixo, a simetria de rotação não gera conservação porque o vínculo quebra a translação.",
+      quebra:
+        "Escrever a lagrangiana com coordenada que não respeita o vínculo. A conta fica maior e a equação errada. A escolha da coordenada é a metade do trabalho.",
+      limite:
+        "O formalismo supõe vínculo ideal e força conservativa. Com atrito ou vínculo não holonômico, entra termo extra, e a forma simples não fecha.",
+      levar: "Trocar força por energia é trocar a conta por uma mais curta.",
+      maos:
+        "Escreva a lagrangiana do pêndulo simples e compare com a conta por força.",
+      pergunta: {
+        q: "O que a mecânica analítica troca em relação à newtoniana?",
+        a: "Força e vetor por energia e coordenada generalizada",
+        why: "A lagrangiana descreve o sistema com vínculo já embutido e gera a equação de movimento por derivação, o que simplifica problema com restrição.",
+      },
+    },
+    "Mecânica dos Corpos Rígidos": {
+      contexto:
+        "Onde isso aparece: na roda, no giroscópio e no equilíbrio da ponte. Rotação tem inércia própria, e o torque faz o papel da força. O momento de inércia depende de onde a massa está.",
+      oQue:
+        "Mecânica do corpo rígido estuda rotação, torque e momento de inércia. O torque é força vezes braço, e o momento de inércia mede a resistência à rotação, dependendo da distribuição de massa. O giroscópio conserva o eixo e sustenta o equilíbrio.",
+      passos: [
+        "Identifique o eixo de rotação e o momento de inércia.",
+        "Calcule o torque resultante.",
+        "Aplique a segunda lei na forma angular e confira o equilíbrio.",
+      ],
+      exemplo:
+        "Uma roda de bicicleta girando segura a bicicleta em pé: o momento angular conserva a direção do eixo, e o giroscópio resiste à mudança. Já uma porta gira mais fácil quando empurrada longe da dobradiça, porque o braço do torque aumenta. A mesma força, efeito diferente. A patinadora que recolhe os braços gira mais rápido porque o momento angular se conserva e o momento de inércia diminui; a energia cinética de rotação cresce à custa do trabalho dos braços. O mesmo princípio estabiliza a bicicleta e orienta o satélite.",
+      quebra:
+        "Usar massa no lugar de momento de inércia na conta de rotação. Dois corpos com a mesma massa giram diferente se a massa está distribuída de outro jeito. A distribuição importa.",
+      limite:
+        "O corpo rígido ideal não deforma. Em estrutura real, a deformação entra e a conta de corpo rígido vira aproximação, que falha perto de ressonância.",
+      levar: "Na rotação, a massa conta pelo lugar onde está.",
+      maos:
+        "Compare o giro de duas rodas de mesma massa com raios diferentes.",
+      pergunta: {
+        q: "Por que o momento de inércia depende da distribuição de massa?",
+        a: "Porque a massa longe do eixo resiste mais à rotação",
+        why: "O momento de inércia soma massa vezes distância ao quadrado do eixo; por isso duas rodas de mesma massa giram diferente se o raio muda.",
+      },
+    },
+    "Mecânica Celeste": {
+      contexto:
+        "Onde isso aparece: na órbita de satélite, na maré e no calendário. A gravidade organiza o movimento, e a órbita é consequência da lei. O problema de dois corpos tem solução fechada, o de três não.",
+      oQue:
+        "Mecânica celeste aplica gravitação a órbita. A lei da gravitação explica da queda da maçã ao período dos planetas, e a terceira lei de Kepler relaciona período orbital e raio. O problema de dois corpos tem solução exata; o de três é caótico em geral.",
+      passos: [
+        "Escreva a força gravitacional e a energia do sistema.",
+        "Relacione período e raio pela terceira lei de Kepler.",
+        "Verifique perturbação quando houver mais de dois corpos.",
+      ],
+      exemplo:
+        "Um satélite em órbita baixa dá a volta em cerca de 90 minutos; na órbita geoestacionária, em 24 horas. O período cresce com o raio elevado a três meios, e é isso que a terceira lei de Kepler diz. A conta vale para planeta, lua e satélite.",
+      quebra:
+        "Achar que a órbita depende da massa do satélite. No problema de dois corpos, a trajetória depende da massa central; o satélite pequeno segue a mesma órbita. A confusão leva a esperar órbita diferente para corpo mais pesado.",
+      limite:
+        "A solução exata vale para dois corpos. Com terceiro corpo, a órbita perturba e o sistema pode ficar caótico, como no caso de três corpos, e a previsão de longo prazo se perde.",
+      levar: "A gravidade é a mesma que faz a maçã cair e o planeta girar.",
+      maos:
+        "Calcule o período de um satélite em duas altitudes e compare com a terceira lei de Kepler.",
+    },
+    "Oscilações e Ondas Mecânicas": {
+      contexto:
+        "Onde isso aparece: no pêndulo do relógio, na corda do instrumento e no prédio que balança. A oscilação tem frequência própria, e a ressonância amplia. Onda é oscilação que viaja. A velocidade da onda depende do meio, e a frequência é do emissor; juntas, elas determinam o comprimento de onda. Numa corda, a tensão e a densidade linear decidem a velocidade, e o instrumento afina por isso. A ressonância de uma corda também depende do comprimento, e é ela que separa o harmônico que se ouve.",
+      oQue:
+        "Oscilação é movimento periódico em torno de equilíbrio. O movimento harmônico tem frequência própria, o amortecimento reduz a amplitude e a ressonância acontece quando a frequência externa bate com a natural. Onda mecânica é a oscilação que se propaga no meio.",
+      passos: [
+        "Identifique a força restauradora e a frequência natural.",
+        "Veja o amortecimento e a fonte externa.",
+        "Compare a frequência da fonte com a natural.",
+      ],
+      exemplo:
+        "Um pêndulo de um metro oscila com período de cerca de dois segundos, e o relógio de pêndulo usa isso. Se o empurrão vier no ritmo do período, a amplitude cresce: é ressonância. A mesma conta explica o prédio que balança com o vento.",
+      quebra:
+        "Achar que ressonância sempre aumenta a amplitude até quebrar. O amortecimento limita o ganho, e a frequência de ressonância desloca. Sem amortecimento, a conta diverge no papel e não representa o real.",
+      limite:
+        "O modelo linear vale para amplitude pequena. Com amplitude grande, o pêndulo deixa de ser harmônico, e a frequência depende da amplitude.",
+      levar: "Ressonância é a frequência certa encontrando a estrutura certa.",
+      maos:
+        "Meça o período de um pêndulo de dois comprimentos e compare com a previsão.",
+      pergunta: {
+        q: "O que acontece na ressonância?",
+        a: "A amplitude cresce porque a frequência externa bate com a natural",
+        why: "A energia entra em fase com a oscilação e se acumula; o amortecimento limita o crescimento, mas o ganho ainda é grande.",
+      },
+    },
+    "Mecânica do Contínuo": {
+      contexto:
+        "Onde isso aparece: na viga da ponte, no escoamento do rio e na previsão de onda. O meio é contínuo, e a conta usa densidade e tensão. A equação de conservação vale para cada volume pequeno. Sólido e fluido entram no mesmo esquema: muda a constitutiva, que no fluido liga tensão à taxa de deformação, e não à deformação. A conta do escoamento precisa ainda da condição de contorno e da hipótese de incompressibilidade, e cada uma altera o resultado. A malha de cálculo precisa acompanhar o gradiente: onde o escoamento muda rápido, o elemento tem de ser menor.",
+      oQue:
+        "Mecânica do contínuo trata meio como distribuição contínua de massa. Tensão e deformação descrevem o esforço, e a conservação de massa, momento e energia gera as equações do movimento. A equação constitutiva liga tensão e deformação do material.",
+      passos: [
+        "Escolha o volume de controle e as grandezas conservadas.",
+        "Escreva as equações de conservação.",
+        "Aplique a equação constitutiva do material.",
+      ],
+      exemplo:
+        "Numa viga sob carga, a tensão cresce na parte tracionada e na comprimida; a equação constitutiva do aço liga essa tensão à deformação. O dimensionamento usa a tensão admissível, e o cálculo é o mesmo que sustenta a ponte e o eixo do motor.",
+      quebra:
+        "Tratar o material como rígido ideal e ignorar a deformação. A estrutura real deforma, e a tensão concentra em canto e furo. Ignorar isso subestima o risco.",
+      limite:
+        "A equação constitutiva linear vale para pequena deformação. Com deformação grande, plasticidade ou fratura, a conta muda e o modelo linear não serve.",
+      levar: "Contínuo é meio com tensão: conservar e relacionar pelo material.",
+      maos:
+        "Desenhe a distribuição de tensão numa viga e marque tração e compressão.",
+      pergunta: {
+        q: "O que a equação constitutiva faz na mecânica do contínuo?",
+        a: "Liga a tensão à deformação do material",
+        why: "As equações de conservação valem para qualquer meio; a constitutiva diz como aquele material responde ao esforço e fecha o sistema.",
+      },
+    },
+  },
 };
 
 // o nome da estação chega em caixa baixa do banco ("Grafos moleculares") e em
