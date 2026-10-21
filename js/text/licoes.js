@@ -2945,6 +2945,235 @@ export const LICOES = {
       },
     },
   },
+  "chem-fundamentos": {
+    "Conceitos Fundamentais": {
+      contexto:
+        "Onde isso aparece: na fórmula do remédio, no rótulo do sal e no exame de sangue. Átomo é a unidade, elemento é o tipo, e a combinação faz a substância. Isótopo e íon mudam massa e carga sem trocar o elemento.",
+      oQue:
+        "Conceitos fundamentais fixam átomo, elemento, isótopo, íon e molécula. Elemento é definido pelo número de prótons, isótopo varia o nêutron, e íon varia o elétron, o que muda a carga. A molécula é o conjunto ligado, e a fórmula resume a composição.",
+      passos: [
+        "Conte prótons para identificar o elemento.",
+        "Veja nêutrons para o isótopo e elétrons para a carga.",
+        "Escreva a fórmula e confira a neutralidade da espécie.",
+      ],
+      exemplo:
+        "O sódio tem onze prótons; o íon sódio tem onze prótons e dez elétrons, e por isso carga mais um. Já o cloro tem dezessete prótons, e o íon cloreto tem dezoito elétrons. O cloreto de sódio junta os dois em proporção um para um, e a fórmula mostra o equilíbrio. A carga total do composto é sempre zero, e é por isso que a proporção entre os íons não é escolha.",
+      quebra:
+        "Chamar de elemento qualquer átomo parecido. Isótopo tem massa diferente e continua sendo o mesmo elemento; íon tem carga e também. O critério é o próton, não a massa nem a carga.",
+      limite:
+        "A definição vale para átomo isolado. Em sólido metálico e em plasma, os elétrons não pertencem a um átomo só, e a contagem de carga fica distribuída.",
+      levar: "Próton diz o elemento; nêutron diz a massa; elétron diz a carga.",
+      maos:
+        "Escreva três espécies com o mesmo elemento e identifique isótopo e íon em cada uma.",
+      pergunta: {
+        q: "O que distingue um íon de um átomo neutro?",
+        a: "O número de elétrons, que difere do número de prótons",
+        why: "O próton identifica o elemento e não muda na ionização; ganhar ou perder elétron cria a carga e mantém o elemento.",
+      },
+    },
+    "Estrutura Atômica": {
+      contexto:
+        "Onde isso aparece: na tabela periódica, no isótopo do carbono e no laser. O núcleo concentra a massa, e o elétron ocupa orbital. A configuração eletrônica explica a ligação e o espectro.",
+      oQue:
+        "Estrutura atômica descreve núcleo e elétron. O núcleo tem próton e nêutron, e o elétron ocupa orbital com número quântico. Isótopo tem mesmo número de prótons e nêutrons diferentes, e a configuração eletrônica decide a química.",
+      passos: [
+        "Conte prótons e nêutrons do núcleo.",
+        "Distribua os elétrons pelos orbitais pela ordem de energia.",
+        "Veja a camada de valência e a tendência de ganhar ou perder elétron.",
+      ],
+      exemplo:
+        "O carbono-12 e o carbono-14 têm seis prótons cada e seis ou oito nêutrons. A química é a mesma, e a massa muda; por isso o carbono-14 serve para datar. A configuração eletrônica idêntica explica a química igual. A massa diferente aparece na densidade e na velocidade de difusão, e a datação explora exatamente isso.",
+      quebra:
+        "Achar que isótopo é outro elemento. O número de prótons não muda, e a tabela periódica coloca os dois no mesmo lugar. Confundir massa com identidade erra a classificação.",
+      limite:
+        "O modelo de orbital funciona bem para átomo isolado. Em átomo pesado, efeito relativístico e correlação eletrônica mexem nos níveis e a conta simples precisa de correção.",
+      levar: "Isótopo muda massa, não elemento.",
+      maos:
+        "Compare o número de nêutrons de dois isótopos do mesmo elemento.",
+    },
+    "Ligações Químicas": {
+      contexto:
+        "Onde isso aparece: no sal de cozinha, no diamante e no metal do fio. A diferença de eletronegatividade decide o tipo de ligação. Tipo de ligação explica ponto de fusão, condução e solubilidade.",
+      oQue:
+        "Átomos se ligam para baixar energia. A ligação é iônica quando a diferença de eletronegatividade é grande, covalente quando é pequena, e metálica quando os elétrons circulam pela rede. A estrutura de Lewis mostra os elétrons de valência.",
+      passos: [
+        "Compare a eletronegatividade dos átomos.",
+        "Decida o tipo de ligação e desenhe a estrutura de Lewis.",
+        "Relacione o tipo com a propriedade observada.",
+      ],
+      exemplo:
+        "O sódio doa elétron e o cloro recebe: a diferença de eletronegatividade é grande, a ligação é iônica, e o sólido conduz quando fundido. Já o carbono com carbono compartilha par, a ligação é covalente, e o diamante não conduz. O tipo explica a diferença.",
+      quebra:
+        "Classificar a ligação pela aparência ou pelo nome do composto. O critério é a diferença de eletronegatividade e a estrutura. Chamar todo composto de metal de iônico erra a propriedade.",
+      limite:
+        "A fronteira entre iônica e covalente é gradual. Ligação com diferença intermediária tem caráter misto, e a classificação rígida simplifica demais.",
+      levar: "Ligação é elétron compartilhado, doado ou solto na rede.",
+      maos:
+        "Compare a diferença de eletronegatividade de três pares e classifique a ligação.",
+    },
+    "Estequiometria": {
+      contexto:
+        "Onde isso aparece: na receita industrial, na dose do fármaco e no rendimento do processo. A equação balanceada dá a proporção, e o mol é a ponte entre massa e número de partícula. O reagente limitante decide quanto produto sai.",
+      oQue:
+        "Estequiometria conta matéria em mol. A equação balanceada dá a proporção exata entre reagente e produto, e a massa molar converte massa em mol. O reagente limitante é o que se esgota primeiro, e o rendimento compara o produto obtido com o previsto.",
+      passos: [
+        "Balanceie a equação e escreva as proporções.",
+        "Converta a massa dada em mol e veja quem é o limitante.",
+        "Calcule o produto teórico e compare com o obtido.",
+      ],
+      exemplo:
+        "Na síntese da água, dois mol de hidrogênio reagem com um de oxigênio e formam dois de água. Se você tem três mol de hidrogênio e um de oxigênio, o oxigênio limita, e o produto é dois mol. O hidrogênio sobra, e o rendimento se calcula sobre o produto previsto.",
+      quebra:
+        "Calcular o produto pelo reagente que está em maior quantidade. O limitante é o que se esgota primeiro, e escolher o outro superestima o rendimento. A comparação em mol resolve.",
+      limite:
+        "A conta supõe reação completa e pura. Reação lateral, impureza e perda mecânica reduzem o rendimento, e o processo real soma esses fatores.",
+      levar: "A equação dá a proporção; o limitante decide quanto sai.",
+      maos:
+        "Calcule o produto teórico de uma reação com dois reagentes e identifique o limitante.",
+    },
+    "Estados e Propriedades da Matéria": {
+      contexto:
+        "Onde isso aparece: no gelo, no gás do botijão e no fluido supercrítico da extração. O estado depende de temperatura e pressão, e a mudança não troca a substância. A propriedade coletiva explica o comportamento.",
+      oQue:
+        "Estados e propriedades descrevem sólido, líquido, gás e fluido supercrítico. A mudança de estado conserva a substância e altera o arranjo e a energia; a temperatura e a pressão decidem o estado. A propriedade da matéria vem da interação entre as partículas.",
+      passos: [
+        "Identifique a substância e as condições de temperatura e pressão.",
+        "Localize o estado no diagrama de fase.",
+        "Veja a energia envolvida na mudança de estado.",
+      ],
+      exemplo:
+        "A água ferve a 100 graus ao nível do mar e a cerca de 70 graus no alto da montanha, porque a pressão muda. No ponto triplo, os três estados coexistem. O diagrama de fase mostra o mapa, e a mesma água segue o mapa. A energia de cada transição é medida pela quantidade de calor trocada, e o patamar de temperatura durante a fusão mostra que a energia vai para romper a organização, não para esquentar. O mesmo raciocínio explica por que o suor resfria: a evaporação leva energia embora, e a pele cede calor para a mudança de estado.",
+      quebra:
+        "Achar que a mudança de estado altera a substância. Vapor e gelo são água, com arranjo e energia diferentes. Confundir estado com identidade química leva a conclusão errada sobre reação.",
+      limite:
+        "O diagrama de fase descreve substância pura. Mistura tem faixa de temperatura e composição variável, e o mapa simples não basta.",
+      levar: "Mudança de estado muda o arranjo, não a substância.",
+      maos:
+        "Desenhe o diagrama de fase da água e marque os pontos de fusão e ebulição.",
+      pergunta: {
+        q: "O que uma mudança de estado conserva?",
+        a: "A substância; mudam o arranjo e a energia",
+        why: "Vapor, água e gelo têm a mesma composição química; a transição altera a organização das partículas e troca energia, sem criar substância nova.",
+      },
+    },
+  },
+  "chem-inorganica": {
+    "Química dos Elementos": {
+      contexto:
+        "Onde isso aparece: na pilha, no vidro e no catalisador. A tabela periódica organiza tendência, e a posição prevê comportamento. Raio, eletronegatividade e reatividade mudam em direção previsível.",
+      oQue:
+        "Química dos elementos estuda grupo e período da tabela. A eletronegatividade cresce para a direita e para cima, o raio cresce para a esquerda e para baixo, e a reatividade segue a tendência. Metal de transição tem orbital d e cor própria.",
+      passos: [
+        "Localize o elemento no grupo e no período.",
+        "Compare a tendência com os vizinhos.",
+        "Relacione a posição com a reação observada.",
+      ],
+      exemplo:
+        "O flúor é o mais eletronegativo, e o césio o menos; por isso o fluoreto puxa elétron com força. O raio do sódio é maior que o do cloro, e o íon sódio é menor que o átomo porque perdeu camada. A posição na tabela explica os dois. A mesma tendência prevê qual halogênio reage mais forte e qual metal perde elétron com mais facilidade, e a previsão se confere no experimento. É assim que a tabela deixa de ser pôster e vira ferramenta de previsão.",
+      quebra:
+        "Decorar propriedade sem olhar a posição. A tendência permite prever o comportamento de elemento que você nunca viu. Sem ela, cada caso vira memorização solta.",
+      limite:
+        "A tendência tem exceção, principalmente em metais de transição e em lantanídeo. A regra orienta, e o dado medido corrige.",
+      levar: "A posição na tabela prevê o comportamento do elemento.",
+      maos:
+        "Compare a eletronegatividade de três elementos do mesmo período e veja a direção.",
+    },
+    "Compostos Inorgânicos": {
+      contexto:
+        "Onde isso aparece: no ácido do estômago, na cal da parede e no sal do mar. Óxido, ácido, base e sal são famílias com reação típica. A nomenclatura diz a composição antes de qualquer conta.",
+      oQue:
+        "Compostos inorgânicos se organizam em óxido, ácido, base, sal e hidreto. Ácido doa próton, base recebe, e a neutralização produz sal e água. A nomenclatura combina os nomes dos elementos com o sufixo que indica o estado de oxidação.",
+      passos: [
+        "Identifique as famílias dos reagentes.",
+        "Preveja o produto pela regra da família.",
+        "Balanceie e confira a carga do composto.",
+      ],
+      exemplo:
+        "Ácido clorídrico com hidróxido de sódio produz cloreto de sódio e água: a neutralização troca os pares. Já um óxido ácido com água produz ácido, e um óxido básico com água produz base. A família do reagente indica o produto antes da conta.",
+      quebra:
+        "Escrever fórmula sem conferir a carga. O composto precisa ser neutro, e o número de cada íon vem da carga. Ignorar isso produz fórmula que não existe.",
+      limite:
+        "A classificação simples não cobre composto de coordenação e polímero inorgânico. Nessas famílias a estrutura pesa mais que a regra de par, e a nomenclatura própria entra.",
+      levar: "A família do reagente anuncia o produto da reação.",
+      maos:
+        "Preveja o produto de duas neutralizações e confira a fórmula pela carga.",
+      pergunta: {
+        q: "O que a reação de neutralização produz?",
+        a: "Sal e água, a partir de ácido e base",
+        why: "O próton do ácido e a hidroxila da base formam água, e os íons restantes se combinam no sal; a carga total fecha em zero.",
+      },
+    },
+    "Química de Coordenação": {
+      contexto:
+        "Onde isso aparece: no pigmento, no catalisador e no exame de ferro no sangue. O íon central cerca-se de ligante, e a geometria decide cor e reatividade. O campo do ligante separa os níveis do metal.",
+      oQue:
+        "Composto de coordenação tem íon metálico central e ligante ao redor. O ligante doa par de elétron, e a geometria depende do número de coordenação. A teoria de campo ligante explica a cor pela separação dos níveis de energia do metal.",
+      passos: [
+        "Identifique o metal, o estado de oxidação e o ligante.",
+        "Conte a coordenação e preveja a geometria.",
+        "Veja a separação de campo e a cor resultante.",
+      ],
+      exemplo:
+        "O íon cobre em solução aquosa aparece azul porque os ligantes de água separam os níveis do metal e a absorção cai no vermelho. Trocar o ligante muda a separação e a cor. É por isso que a mesma solução muda de tom com reagente diferente.",
+      quebra:
+        "Tratar o ligante como simples espectador. Ele doa elétron e muda a energia dos orbitais do metal, o que altera cor, magnetismo e reatividade. Ignorar o ligante erra a propriedade. Um ligante de campo forte separa mais os níveis e desloca a absorção, e o mesmo metal passa de azul para amarelo só trocando o parceiro. A química de coordenação é a química do que está em volta do metal.",
+      limite:
+        "A teoria de campo ligante é modelo, não descrição completa. Em complexo com metal pesado, o acoplamento spin-órbita pesa, e a conta simples não acerta tudo.",
+      levar: "O ligante muda a energia do metal e a cor do complexo.",
+      maos:
+        "Compare a cor de duas soluções do mesmo metal com ligantes diferentes.",
+      pergunta: {
+        q: "O que o ligante faz num complexo metálico?",
+        a: "Doa par de elétrons ao metal e altera a energia dos orbitais",
+        why: "A doação forma a ligação de coordenação e separa os níveis do metal; a separação muda a cor, o magnetismo e a reatividade do complexo.",
+      },
+    },
+    "Química Organometálica": {
+      contexto:
+        "Onde isso aparece: na catálise do plástico, no remédio e no processo industrial. A ligação carbono-metal é o motor, e o ciclo catalítico organiza a transformação. O metal segura o fragmento e muda a reatividade.",
+      oQue:
+        "Composto organometálico tem ligação carbono-metal e é base da catálise homogênea. O ciclo catalítico alterna estados de oxidação e etapas de inserção e eliminação. Reação de acoplamento forma ligação carbono-carbono com metal como intermediário.",
+      passos: [
+        "Desenhe o ciclo catalítico com os estados do metal.",
+        "Veja onde o substrato entra e onde sai o produto.",
+        "Confira a contagem de elétron e o estado de oxidação em cada etapa.",
+      ],
+      exemplo:
+        "No acoplamento que forma biarila, o paládio alterna entre estados de oxidação e organiza os dois fragmentos antes de uni-los. O metal não é consumido no fim, e por isso é catalisador. A conta de elétron em cada etapa mostra se o ciclo fecha. Se o metal não volta ao estado inicial, o processo é reagente e não catalisador, e o balanço denuncia.",
+      quebra:
+        "Achar que o metal entra no produto. Na catálise homogênea ele volta ao estado inicial, e o produto sai sem o metal. Confundir reagente com catalisador erra o balanço.",
+      limite:
+        "O ciclo ideal supõe etapas limpas. Reação lateral, envenenamento e decomposição do ligante desviam o catalisador, e o rendimento cai com o tempo.",
+      levar: "Metal organiza o fragmento e devolve o produto sem se gastar.",
+      maos:
+        "Desenhe as etapas de um ciclo catalítico e marque onde o produto sai.",
+    },
+    "Química Inorgânica Avançada": {
+      contexto:
+        "Onde isso aparece: no supercondutor, no ímã de terras raras e no catalisador de cluster. A estrutura do sólido e o arranjo de metal definem a propriedade. A química supramolecular junta as partes por interação fraca.",
+      oQue:
+        "Química inorgânica avançada estuda sólido, cluster, supramolécula, terra rara e bioinorgânica. Cluster tem vários átomos metálicos ligados entre si, e a propriedade coletiva difere da soma dos átomos. A terra rara entra em ímã e em luminóforo por causa do orbital f.",
+      passos: [
+        "Identifique a estrutura do sólido ou do cluster.",
+        "Veja a ligação entre os centros metálicos.",
+        "Relacione a estrutura com a propriedade de interesse.",
+      ],
+      exemplo:
+        "Um cluster metálico de três centros tem elétrons compartilhados entre os três, e a ligação não é a soma de três ligações isoladas. É essa deslocalização que muda cor, magnetismo e reatividade. A estrutura coletiva explica o que o átomo sozinho não explica. O mesmo arranjo de três centros aparece em enzima e em catalisador industrial, e a química bioinorgânica acompanha essa ponte. O centro metálico da enzima faz catálise com a mesma lógica do catalisador de laboratório, e a estrutura é quem conta a história da seletividade. Mistura de óxido e terra rara, por sua vez, dá o ímã que sustenta o motor elétrico e o sensor de campo.",
+      quebra:
+        "Tratar cluster como conjunto de complexos independentes. Os centros interagem e compartilham elétron, e a propriedade é coletiva. A soma de partes erra o comportamento.",
+      limite:
+        "A descrição exige cálculo de estrutura eletrônica e, em muitos casos, dado de difração. Modelo simples orienta, mas não substitui a medida da estrutura real.",
+      levar: "No cluster, a propriedade é dos centros juntos, não de cada um.",
+      maos:
+        "Desenhe um cluster de dois metais e marque os elétrons compartilhados.",
+      pergunta: {
+        q: "O que caracteriza um composto de cluster?",
+        a: "Vários átomos metálicos ligados diretamente entre si",
+        why: "A ligação metal-metal compartilha elétrons entre os centros, e a propriedade coletiva do cluster não se explica pela soma de complexos isolados.",
+      },
+    },
+  },
 };
 
 // o nome da estação chega em caixa baixa do banco ("Grafos moleculares") e em
