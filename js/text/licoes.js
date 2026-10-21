@@ -3286,6 +3286,143 @@ export const LICOES = {
       },
     },
   },
+  "chem-fisica": {
+    "Termodinâmica Química": {
+      contexto:
+        "Onde isso aparece: no motor, na pilha e na reação que não acontece. Energia livre decide a espontaneidade, e entalpia e entropia puxam em direções diferentes. Reação que libera calor pode não acontecer se a desordem cair muito.",
+      oQue:
+        "Termodinâmica química estuda energia e espontaneidade. A energia livre de Gibbs combina entalpia e entropia, e a negativa indica reação espontânea nas condições dadas. Equilíbrio acontece quando a energia livre é mínima, e o potencial químico decide o sentido do fluxo.",
+      passos: [
+        "Calcule a variação de entalpia e de entropia.",
+        "Combine na energia livre pela temperatura.",
+        "Veja o sinal e conclua a espontaneidade nas condições reais.",
+      ],
+      exemplo:
+        "A combustão do papel libera calor e acontece por si, porque a entropia também cresce. Já a formação de gelo libera calor e só acontece abaixo de zero, porque a entropia cai. O sinal da energia livre junta as duas tendências e responde pela condição.",
+      quebra:
+        "Achar que reação que libera calor acontece sempre por si. A entropia pode impedir, e a temperatura decide o peso de cada termo. Ignorar a entropia erra a previsão de espontaneidade.",
+      limite:
+        "A conta de energia livre padrão vale nas condições padrão. Concentração diferente desloca o equilíbrio, e a correção da atividade entra para o sistema real. O gráfico de energia livre contra a composição mostra o mínimo, e é para lá que o sistema caminha sozinho.",
+      levar: "A energia livre é a soma das tendências, com peso da temperatura.",
+      maos:
+        "Compare a espontaneidade de duas reações com sinais diferentes de entropia.",
+    },
+    "Cinética Química": {
+      contexto:
+        "Onde isso aparece: na conserva do alimento, no catalisador do carro e no fogo. A velocidade depende da colisão eficaz, e a barreira de ativação decide a altura. Catalisador abaixa a barreira sem mudar o equilíbrio.",
+      oQue:
+        "Cinética estuda a velocidade da reação. A energia de ativação é a barreira a vencer, e o catalisador a reduz sem ser consumido. A temperatura aumenta a velocidade pelo aumento de colisão eficaz, e a lei de velocidade relaciona concentração e taxa.",
+      passos: [
+        "Meça a velocidade em várias concentrações.",
+        "Determine a ordem pela lei de velocidade.",
+        "Veja o efeito de temperatura e de catalisador na constante.",
+      ],
+      exemplo:
+        "Uma reação com catalisador chega ao mesmo equilíbrio mais rápido. O catalisador não muda a quantidade final de produto, muda o tempo para chegar lá. O gráfico de energia contra o caminho mostra a barreira menor, sem mexer nos dois patamares.",
+      quebra:
+        "Achar que catalisador aumenta o rendimento final. Ele acelera a chegada ao equilíbrio e não desloca a posição. Confundir velocidade com rendimento é o erro clássico da cinética.",
+      limite:
+        "O modelo simples supõe etapa determinante única e meio homogêneo. Em catálise heterogênea, difusão e superfície entram, e a lei aparente muda. A temperatura entra pela equação de Arrhenius, e dobrar a temperatura pode multiplicar a velocidade por fator grande, porque a fração de colisão eficaz cresce rápido.",
+      levar: "Catalisador muda o tempo, não o destino.",
+      maos:
+        "Compare a curva de energia com e sem catalisador e meça o tempo de reação.",
+    },
+    "Eletroquímica": {
+      contexto:
+        "Onde isso aparece: na pilha, na galvanoplastia e na ferrugem. A célula separa oxidação e redução para forçar o elétron pelo circuito. Ânodo oxida, cátodo reduz, e a ponte salina fecha o circuito iônico.",
+      oQue:
+        "Eletroquímica converte energia química em elétrica e vice-versa. No ânodo ocorre a oxidação, no cátodo a redução, e o potencial de célula positivo indica reação espontânea. A equação de Nernst corrige o potencial pela concentração.",
+      passos: [
+        "Identifique quem oxida e quem reduz.",
+        "Some os potenciais para achar o potencial da célula.",
+        "Aplique Nernst para a concentração real.",
+      ],
+      exemplo:
+        "Na pilha de zinco e cobre, o zinco oxida no ânodo e o cobre reduz no cátodo. O potencial positivo mostra que a reação acontece por si, e o elétron caminha pelo fio. Inverter a leitura de ânodo e cátodo inverte a conclusão toda. A ponte salina não transporta elétron: ela fecha o circuito iônico, e sem ela a pilha para mesmo com os eletrodos no lugar. Na eletrólise, a fonte externa empurra a reação no sentido contrário, e o potencial aplicado precisa superar o da célula.",
+      quebra:
+        "Trocar ânodo e cátodo e inverter a conclusão. O ânodo é sempre onde ocorre oxidação, na pilha e na eletrólise. O nome não depende de ser positivo ou negativo.",
+      limite:
+        "O potencial padrão supõe concentração unitária. Fora disso, Nernst corrige; com sobretensão e queda ôhmica, a célula real entrega menos que o previsto.",
+      levar: "Ânodo oxida, cátodo reduz, sempre.",
+      maos:
+        "Monte duas pilhas e confira o sentido do elétron pelo potencial de célula.",
+    },
+    "Química Quântica": {
+      contexto:
+        "Onde isso aparece: no espectro, na ligação e na simulação de fármaco. O elétron da molécula ocupa orbital que se espalha por vários núcleos. A conta quântica explica ligação, cor e reatividade.",
+      oQue:
+        "Química quântica descreve a estrutura eletrônica molecular por orbital, que é a distribuição de probabilidade do elétron. A combinação de orbitais atômicos gera ligante e antiligante, e a ocupação decide estabilidade. Método aproximado e DFT calculam a energia sem resolver a equação exata.",
+      passos: [
+        "Monte a geometria e escolha o método.",
+        "Calcule os orbitais moleculares e a ocupação.",
+        "Compare a energia com dado espectroscópico ou termoquímico.",
+      ],
+      exemplo:
+        "Na molécula de oxigênio, a ocupação dos orbitais antiligantes explica o paramagnetismo, que a estrutura de Lewis não prevê. A conta quântica acerta o que o desenho de traço erra. É por isso que a teoria de orbital molecular entrou no lugar da regra simples. A mesma conta explica a cor do complexo: a transição entre orbitais absorve comprimento de onda específico, e a cor que sobra é a que se vê. O mesmo raciocínio vale para o semicondutor: a ocupação da banda define o gap e a cor do material. O método de cálculo é o mesmo, e a diferença está no tamanho do sistema e na aproximação escolhida.",
+      quebra:
+        "Tratar orbital molecular como traço de ligação. O orbital é distribuição de elétron, e a ocupação importa mais que o desenho. Contar traço e concluir magnetismo erra o caso do oxigênio.",
+      limite:
+        "Os métodos aproximados têm erro típico e dependem da base e do funcional. O resultado é modelo, e a validação com experimento é parte do trabalho.",
+      levar: "Orbital molecular é elétron espalhado, não traço de caneta.",
+      maos:
+        "Compare a previsão de Lewis e de orbital molecular para o magnetismo do oxigênio.",
+      pergunta: {
+        q: "O que um orbital molecular descreve?",
+        a: "A distribuição de probabilidade dos elétrons na molécula",
+        why: "O orbital é obtido pela combinação dos orbitais atômicos e mostra onde o elétron pode estar; a ocupação desses orbitais explica ligação, cor e magnetismo.",
+      },
+    },
+    "Química Estatística": {
+      contexto:
+        "Onde isso aparece: no cálculo de entropia, na constante de equilíbrio e na simulação. A função de partição resume os estados acessíveis, e dela saem as propriedades macroscópicas. A ponte entre micro e macro é estatística.",
+      oQue:
+        "Química estatística liga estado microscópico a propriedade macroscópica pela função de partição. A distribuição de Boltzmann diz a população dos níveis, e a função de partição gera energia, entropia e constante de equilíbrio. A dinâmica molecular amostra o estado e estima o transporte.",
+      passos: [
+        "Liste os estados acessíveis e a energia de cada um.",
+        "Calcule a função de partição na temperatura dada.",
+        "Derive a propriedade macroscópica e compare com a medida.",
+      ],
+      exemplo:
+        "Dois isômeros com energias próximas têm população parecida na temperatura ambiente; a diferença de energia decide a razão. A função de partição de cada um entra na constante de equilíbrio. O número que parece só microscópico aparece na conta de laboratório. A entropia medida por calorimetria confere com a entropia calculada pela função de partição, e o encontro das duas é a prova do modelo. A energia livre também sai da função de partição, o que fecha a ponte entre mecânica estatística e termodinâmica. A simulação de dinâmica molecular é a mesma ideia em movimento: amostra o estado e calcula o transporte.",
+      quebra:
+        "Achar que a população depende só da energia. Ela depende da temperatura e do número de estados com aquela energia. Ignorar a degenerescência erra a razão entre isômeros.",
+      limite:
+        "A conta exige amostragem suficiente do espaço de estados. Em sistema com barreira alta, a simulação fica presa e não vê o estado de interesse, e o resultado enviesa.",
+      levar: "A função de partição é a ponte entre estado e medida.",
+      maos:
+        "Calcule a razão de população de dois níveis com diferença de energia conhecida.",
+      pergunta: {
+        q: "O que a função de partição liga?",
+        a: "Os estados microscópicos às propriedades macroscópicas",
+        why: "Ela soma o peso de Boltzmann de cada estado acessível, e dessa soma saem energia, entropia, pressão e constante de equilíbrio na temperatura dada.",
+      },
+    },
+    "Fenômenos Interfaciais": {
+      contexto:
+        "Onde isso aparece: no detergente, na tinta e no catalisador poroso. A superfície tem energia própria, e a molécula se acumula nela. Adsorção, tensão superficial e coloide explicam o que acontece na fronteira.",
+      oQue:
+        "Fenômenos interfaciais estudam superfície, adsorção, tensão e coloide. Adsorção prende molécula na superfície sem entrar no volume, e tensão superficial mede a energia da interface. Micela se forma quando o surfactante passa da concentração crítica.",
+      passos: [
+        "Identifique a interface e as fases envolvidas.",
+        "Meça a adsorção em função da concentração.",
+        "Veja a tensão e a formação de micela acima da crítica.",
+      ],
+      exemplo:
+        "O detergente abaixa a tensão da água e forma micela em volta da gordura, que sai na lavagem. Abaixo da concentração crítica, não há micela e a limpeza é fraca. A curva de tensão contra concentração mostra o ponto de virada. A mesma ideia explica por que a água sobe pelo papel e por que a tinta molha a parede: a interface decide o caminho, e a química de superfície controla a molhabilidade. O surfactante tem cabeça hidrofílica e cauda hidrofóbica, e é essa dupla natureza que permite montar a micela em meio aquoso. Acima da concentração crítica, a interface some e a micela domina; abaixo, a molécula fica dispersa e a limpeza cai junto com o efeito da superfície.",
+      quebra:
+        "Confundir adsorção com absorção. Adsorção fica na superfície; absorção entra no volume. A confusão erra a capacidade do material e a curva de saturação.",
+      limite:
+        "A isoterma simples supõe superfície homogênea e camada única. Em material poroso e superfície heterogênea, a curva real desvia, e o modelo precisa de correção.",
+      levar: "Na interface, a molécula muda de comportamento.",
+      maos:
+        "Compare a tensão da água com e sem detergente e veja o ponto de micela.",
+      pergunta: {
+        q: "O que a adsorção faz?",
+        a: "Prende a molécula na superfície sem entrar no volume do material",
+        why: "A adsorção ocupa sítio na interface e satura em certa concentração; é diferente de absorção, que penetra no volume.",
+      },
+    },
+  },
 };
 
 // o nome da estação chega em caixa baixa do banco ("Grafos moleculares") e em
