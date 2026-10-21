@@ -537,6 +537,44 @@ export function itemIconCanvas(item) {
   if (ctx) {
     ctx.imageSmoothingEnabled = false;
     desenhar(ctx, item || {});
+    // Acabamento: o ícone cru ganha contorno escuro de um pixel e um véu de
+    // luz em cima. É feito uma vez por item, no cache, e vale para os 538.
+    const S = 40;
+    const bruto = document.createElement("canvas");
+    bruto.width = S;
+    bruto.height = S;
+    const gb = bruto.getContext("2d");
+    // no teste o canvas é de mentira e não tem drawImage: o desenho cru basta
+    if (!gb || typeof gb.drawImage !== "function") {
+      cache.set(chave, canvas);
+      return canvas;
+    }
+    gb.imageSmoothingEnabled = false;
+    gb.drawImage(canvas, 4, 4);
+    gb.globalCompositeOperation = "source-atop";
+    const luz = gb.createLinearGradient(0, 4, 0, 36);
+    luz.addColorStop(0, "rgba(255,255,255,0.20)");
+    luz.addColorStop(0.5, "rgba(255,255,255,0)");
+    luz.addColorStop(1, "rgba(0,0,0,0.34)");
+    gb.fillStyle = luz;
+    gb.fillRect(0, 0, S, S);
+    gb.globalCompositeOperation = "source-over";
+    const silhueta = document.createElement("canvas");
+    silhueta.width = S;
+    silhueta.height = S;
+    const gs = silhueta.getContext("2d");
+    gs.imageSmoothingEnabled = false;
+    gs.drawImage(bruto, 0, 0);
+    gs.globalCompositeOperation = "source-in";
+    gs.fillStyle = "rgba(4,6,14,0.9)";
+    gs.fillRect(0, 0, S, S);
+    gs.globalCompositeOperation = "source-over";
+    ctx.clearRect(0, 0, 32, 32);
+    for (const [dx, dy] of [[-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [1, -1], [-1, 1], [1, 1]]) {
+      ctx.drawImage(silhueta, -4 + dx, -4 + dy);
+    }
+    ctx.drawImage(bruto, -4, -4);
+    ctx.imageSmoothingEnabled = false;
   }
   cache.set(chave, canvas);
   return canvas;

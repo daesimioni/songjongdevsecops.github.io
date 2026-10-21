@@ -5,7 +5,7 @@ import { TILE, PLAYER_W, PLAYER_H } from "./config.js";
 import { dungeonById, creatureId, creatureKind, creatureAccent } from "./dungeon-data.js";
 import { GROUNDS, ITEMS, RELICS, TIERS } from "./rpg-data.js";
 import { PET_BY_CONTINENT, PETS } from "./pets.js";
-import { drawCreature } from "./creature.js";
+import { drawCreatureArt } from "./creature.js";
 import { drawHuman } from "./human.js";
 import { findPathIn } from "./path.js";
 import { hash2 } from "./world.js";
@@ -2345,7 +2345,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     }
     ctx.save();
     ctx.translate(x, y);
-    drawCreature(ctx, m.kind, m.accent, t + m.x * 90, m.boss ? 1.15 : 0.95, m.dir);
+    drawCreatureArt(ctx, m.kind, m.accent, t + m.x * 90, m.boss ? 1.15 : 0.95, m.dir);
     ctx.restore();
     if (state.alert?.monster === m) {
       ctx.save();

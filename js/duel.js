@@ -1,7 +1,7 @@
 // A janela do duelo: monstro, vida, pergunta, consequência e recompensa.
 import { CONTINENTS } from "./config.js";
 import { ITEMS, TIERS, MONSTER_TRAITS } from "./rpg-data.js";
-import { drawCreature } from "./creature.js";
+import { drawCreatureArt } from "./creature.js";
 
 const $ = (id) => document.getElementById(id);
 const LETTERS = "ABCDE";
@@ -44,7 +44,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
     ctx.save();
     ctx.translate(w / 2, h * 0.83);
     const scale = rpg.duel.boss ? 4 : 4.8;
-    drawCreature(ctx, rpg.duel.boss ? "boss" : rpg.duel.monster.kind, accent(), performance.now(), scale);
+    drawCreatureArt(ctx, rpg.duel.boss ? "boss" : rpg.duel.monster.kind, accent(), performance.now(), scale);
     ctx.restore();
   }
 

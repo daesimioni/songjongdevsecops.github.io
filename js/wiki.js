@@ -14,7 +14,7 @@ import { VOCACOES } from "./vocations.js";
 import { PETS, MOUNTS } from "./pets.js";
 import { OUTFITS } from "./outfits.js";
 import { itemIconCanvas } from "./item-art.js";
-import { drawCreature } from "./creature.js";
+import { drawCreatureArt } from "./creature.js";
 import { drawPetSprite } from "./pet-art.js";
 
 const CATEGORIAS = [
@@ -503,7 +503,7 @@ function iconeDaEntrada(icone) {
   } else if (icone.tipo === "bicho") {
     g.save();
     g.translate(32, 58);
-    drawCreature(g, icone.kind, icone.accent, 0, 2, 0);
+    drawCreatureArt(g, icone.kind, icone.accent, 0, 2, 0);
     g.restore();
   } else if (icone.tipo === "pet") {
     drawPetSprite(g, icone.kind, 32, 58, 0, false, 0);

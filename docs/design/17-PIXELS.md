@@ -56,3 +56,25 @@ O andar ficou até mais leve que antes: com menos tiles na tela, o detalhe novo
 cabe no mesmo orçamento. A resolução forçada em 2x foi testada e recusada: em
 tela comum derrubava para 51 fps; o dpr continua seguindo o aparelho e o ganho
 vem da arte em 2x com a câmera em 2,0.
+
+## Acabamento de bicho e item
+
+O desenho de cada espécie e de cada item já existia; faltava o que envolve o
+desenho. Agora todo bicho e todo ícone de item ganham:
+
+- **contorno escuro de um pixel**, carimbando a própria silhueta em oito
+  direções (`drawCreatureArt`, em `js/creature.js`, e `itemIconCanvas`, em
+  `js/item-art.js`);
+- **véu de luz** preso ao corpo por `source-atop`: 17% de branco em cima, 30% de
+  breu embaixo, o que dá volume a um sprite chapado;
+- **sombra no chão** desenhada fora do sprite, para o contorno não copiar a
+  sombra.
+
+O bicho é desenhado num canvas de 112 x 112 com folga para o traço e o mesmo
+acabamento vale no mapa, no duelo, no bestiário e na wiki. O item é acabado uma
+vez só e vai para o cache, então o custo de 538 ícones é pago uma vez.
+
+Medido: quadro da caverna com três monstros foi de 0,62 para 1,34 ms, ainda
+muito abaixo dos 16,7 ms de um quadro a 60 fps; o vale continua em 60,3 fps.
+O teste `arte-acabamento.test.mjs` cobra as oito direções do contorno, o véu de
+luz e o uso do acabamento nas quatro telas.

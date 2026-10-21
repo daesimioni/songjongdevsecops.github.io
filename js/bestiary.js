@@ -3,7 +3,7 @@
 import { AREAS, CONTINENTS, CONTINENT_ORDER } from "./config.js";
 import { DUNGEONS, dungeonCreatures } from "./dungeon-data.js";
 import { MONSTER_LABELS, MONSTER_TRAITS, MONSTER_WEAKNESS, TIERS } from "./rpg-data.js";
-import { drawCreature } from "./creature.js";
+import { drawCreatureArt } from "./creature.js";
 
 const el = (tag, cls = "", text = "") => {
   const node = document.createElement(tag);
@@ -103,7 +103,7 @@ export function createBestiary({ rpg, getAreaId }) {
     if (!ctx) return "";
     ctx.imageSmoothingEnabled = false;
     ctx.translate(32, 58);
-    drawCreature(ctx, bicho.tipo, visto ? bicho.accent : "#4d5b7d", 0, bicho.chefe ? 1 : 1.45);
+    drawCreatureArt(ctx, bicho.tipo, visto ? bicho.accent : "#4d5b7d", 0, bicho.chefe ? 1 : 1.45);
     const url = canvas.toDataURL("image/png");
     sprites.set(chave, url);
     return url;
