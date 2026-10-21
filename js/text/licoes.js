@@ -5387,6 +5387,180 @@ export const LICOES = {
         "Explique a regra de gênero com três pares de substantivo e adjetivo. A prática em contexto autêntico vale mais que a tabela de exceção, e o erro recorrente precisa de retorno específico.",
     },
   },
+  "lingua-discurso": {
+    "Linguística Textual": {
+      contexto:
+        "Onde isso aparece: na redação, no relatório e no texto de lei. O texto é mais que frase em sequência, e a ligação entre partes faz o sentido. Coesão liga as partes; coerência dá unidade de sentido.",
+      oQue:
+        "Linguística textual estuda texto e textualidade. A coesão liga as partes por conectivo, pronome e repetição, e a coerência dá unidade de sentido ao todo. A progressão temática evita repetir sem avançar, e o leitor precisa reconstruir o fio.",
+      passos: [
+        "Veja se cada parágrafo avança o tema.",
+        "Confira os conectivos e as retomadas.",
+        "Teste se o texto faz sentido fora da ordem original.",
+      ],
+      exemplo:
+        "Texto com conectivo certo e tema trocado a cada frase tem coesão e não tem coerência. Já o texto sem conectivo pode manter a coerência se a ordem das ideias sustenta a leitura. As duas coisas são diferentes.",
+      quebra:
+        "Encher o texto de conectivo e achar que resolveu a coerência. O conectivo liga a forma, e a unidade depende do conteúdo. O texto fica amarrado e ainda sem fio.",
+      limite:
+        "A coerência depende do leitor e do contexto. Texto técnico exige mais explicação, e o mesmo texto pode ser coerente para um público e opaco para outro.",
+      levar: "Coesão costura; coerência dá sentido ao pano todo.",
+      maos:
+        "Retire os conectivos de um parágrafo e veja se o sentido sobrevive. Depois devolva um por um e marque o ponto em que a leitura fica mais fácil: esse é o conectivo que faltava. A experiência mostra que coesão e coerência se testam separadas, e o texto ganha quando as duas são conferidas em passada diferente.",
+    },
+    "Análise do Discurso": {
+      contexto:
+        "Onde isso aparece: na notícia, no discurso político e na peça de propaganda. O discurso tem contexto histórico e posição. Intertextualidade é a relação de sentido entre textos.",
+      oQue:
+        "Análise do discurso estuda enunciado em contexto, com relação de poder e identidade. A intertextualidade estuda as relações de sentido entre textos, e o posicionamento do enunciador aparece na escolha de palavra. O discurso não é neutro por construção.",
+      passos: [
+        "Identifique quem fala, para quem e em que situação.",
+        "Veja quais textos o enunciado retoma ou nega.",
+        "Observe a palavra que revela posicionamento.",
+      ],
+      exemplo:
+        "Duas notícias do mesmo fato escolhem palavra diferente para o mesmo grupo, e a escolha orienta a leitura. A intertextualidade aparece na citação e na paródia. O leitor atento compara as versões.",
+      quebra:
+        "Ler o texto como se fosse transparente. Toda escolha de palavra posiciona, e ignorar isso deixa o leitor à mercê do enquadramento. A análise não é desconfiança de tudo: é leitura do contexto.",
+      limite:
+        "A análise interpreta e não tem resposta única. Duas leituras plausíveis podem coexistir, e a evidência do texto é o que separa interpretação de projeção.",
+      levar: "Discurso é texto com lugar, história e interesse.",
+      maos:
+        "Compare duas manchetes do mesmo fato e marque a palavra que muda a leitura. Depois troque a palavra por outra e veja o efeito no leitor: o teste revela o posicionamento que passava despercebido. A análise do discurso trabalha com a escolha concreta, e não com a intenção suposta de quem escreveu.",
+    },
+    "Análise Crítica do Discurso": {
+      contexto:
+        "Onde isso aparece: na política pública, na propaganda e no discurso institucional. A escolha de palavra representa grupo e legitima poder. A persuasão usa estratégia, e o analista pergunta a quem serve.",
+      oQue:
+        "Análise crítica do discurso estuda representação de grupo social, linguagem institucional, persuasão e legitimidade. A representação pode apagar agente ou naturalizar hierarquia, e a estratégia de persuasão trabalha com o implícito. O analista pergunta quem ganha e quem some no texto.",
+      passos: [
+        "Veja como o texto nomeia os grupos.",
+        "Procure a voz apagada: quem age e quem só aparece como objeto.",
+        "Pergunte que interesse a escolha sustenta.",
+      ],
+      exemplo:
+        "Manchete que diz que houve erro sem dizer quem errou apaga o agente. A escolha parece neutra e distribui responsabilidade de um jeito. A análise recupera a voz apagada.",
+      quebra:
+        "Confundir análise crítica com opinar contra o texto. A análise mostra o mecanismo, não substitui o argumento. Sem a evidência da escolha linguística, vira opinião.",
+      limite:
+        "A leitura crítica pode forçar a interpretação e ver ideologia onde há estilo. A evidência precisa ser a escolha concreta, e a hipótese precisa ser falseável.",
+      levar: "Pergunte quem age e quem some no texto.",
+      maos:
+        "Reescreva uma manchete com o agente explícito e compare o efeito. Em seguida, troque o grupo citado por outro e observe se o tom muda sem o fato mudar. A análise crítica ganha força quando mostra a escolha no texto e a consequência na leitura, sem precisar acusar o autor de má-fé. O relatório da análise fica mais forte quando separa o que está no texto, o que é inferência do leitor e o que é hipótese sobre a intenção.",
+      pergunta: {
+        q: "O que a análise crítica do discurso investiga?",
+        a: "Como a escolha de linguagem representa grupos e legitima poder",
+        why: "A análise liga a escolha concreta de palavra e estrutura à relação de poder que ela sustenta, e pergunta quem ganha e quem desaparece no enunciado.",
+      },
+    },
+    "Gêneros do Discurso": {
+      contexto:
+        "Onde isso aparece: no e-mail, na bula e na tese. O gênero nasce da situação comunicativa e organiza a expectativa. O leitor reconhece o gênero antes do conteúdo.",
+      oQue:
+        "Gênero do discurso é forma de enunciado ligada a uma situação comunicativa, com finalidade, público e estilo. O gênero organiza a expectativa do leitor e orienta a escolha de recurso. Mudar o gênero muda o que se espera do texto.",
+      passos: [
+        "Identifique a situação e a finalidade.",
+        "Reconheça o gênero e o que o leitor espera.",
+        "Ajuste estilo e estrutura ao gênero.",
+      ],
+      exemplo:
+        "Um pedido por e-mail e o mesmo pedido em ofício têm estrutura e tom diferente. O conteúdo é parecido, e a expectativa do leitor muda. Escrever ofício como se fosse mensagem quebra a situação.",
+      quebra:
+        "Misturar gênero por descuido e quebrar a expectativa. O leitor procura a parte que o gênero costuma ter e não encontra. A leitura trava antes do conteúdo.",
+      limite:
+        "Gênero muda com a mídia e com o tempo. O gênero digital mistura recurso do antigo, e a fronteira é instável. A regra orienta e não engessa.",
+      levar: "Gênero é expectativa: o leitor reconhece antes de ler.",
+      maos:
+        "Reescreva o mesmo pedido em dois gêneros e compare a estrutura. Marque o que o leitor de cada gênero procura primeiro: no ofício, o assunto e a providência; na mensagem, o pedido direto. O gênero orienta a leitura antes do conteúdo, e respeitar a expectativa é parte de ser entendido.",
+    },
+  },
+  "lingua-argumentacao": {
+    "Retórica": {
+      contexto:
+        "Onde isso aparece: no discurso, na propaganda e na audiência. Persuadir usa credibilidade, emoção e razão. O ethos é a credibilidade de quem fala, e ela se constrói no texto.",
+      oQue:
+        "Retórica organiza a persuasão em ethos, pathos e logos. O ethos é a credibilidade de quem fala, o pathos é a emoção do ouvinte e o logos é o argumento. O bom discurso combina os três sem esconder a razão.",
+      passos: [
+        "Construa a credibilidade com dado e experiência.",
+        "Reconheça a emoção que o assunto mobiliza.",
+        "Sustente a conclusão com argumento verificável.",
+      ],
+      exemplo:
+        "Quem apresenta credencial e mostra dado antes de pedir decisão constrói ethos e logos. A história de quem foi afetado mobiliza pathos. Sem logos, a comoção sozinha não sustenta a decisão.",
+      quebra:
+        "Usar só emoção e chamar de argumento. A plateia pode se comover e não mudar de ideia, porque falta razão para agir. A persuasão sem logos é frágil.",
+      limite:
+        "Retórica pode manipular e não é sinônimo de verdade. O estudo da persuasão não garante o argumento certo, e a ética do discurso entra na conta.",
+      levar: "Credibilidade, emoção e razão: os três, não um só.",
+      maos:
+        "Analise um anúncio e marque onde aparecem ethos, pathos e logos. Depois retire cada um e veja o que o anúncio perde: sem ethos, a promessa fica sem fiador; sem pathos, a mensagem fica fria; sem logos, a razão de comprar desaparece. A análise mostra qual dos três está sustentando a peça e qual está apenas decorando. O relatório aponta a passagem que prova cada um, porque a classificação sem citação do texto vira opinião sobre o anúncio.",
+    },
+    "Lógica Informal": {
+      contexto:
+        "Onde isso aparece: na redação, no laudo e na conversa. O argumento do dia a dia não vem em forma simbólica. Dedução, indução, analogia e causa têm força diferente.",
+      oQue:
+        "Lógica informal estuda argumento em linguagem natural. A dedução conclui do geral, e a indução generaliza a partir de caso observado. A analogia compara, e o argumento causal liga causa e efeito com evidência.",
+      passos: [
+        "Identifique o tipo de argumento.",
+        "Veja se a conclusão segue com a força que o tipo permite.",
+        "Procure a evidência que sustenta a inferência.",
+      ],
+      exemplo:
+        "Dois casos observados não sustentam generalização ampla. A indução forte precisa de amostra representativa, e a analogia precisa de semelhança relevante. O tipo do argumento define o que conta como boa evidência.",
+      quebra:
+        "Tratar indução como dedução. A conclusão indutiva é provável e não necessária, e apresentá-la como certa exagera a força. A linguagem precisa refletir o tipo.",
+      limite:
+        "A lógica informal não decide valor de verdade sozinha. Ela avalia a força da inferência, e o dado de base ainda precisa ser conferido.",
+      levar: "Cada tipo de argumento tem força própria; não confunda as forças.",
+      maos:
+        "Classifique três argumentos do noticiário em dedutivo, indutivo e causal. Para cada um, escreva a evidência que o sustentaria e a objeção que o enfraqueceria. A classificação serve para ajustar a força da conclusão: indutivo não se apresenta como certo, e causal exige controle da variável concorrente. A objeção bem escrita é a que aponta o dado que faltaria, e não a que discorda do resultado por preferência. O argumento causal forte mostra o mecanismo, e não só a correlação observada.",
+    },
+    "Falácias": {
+      contexto:
+        "Onde isso aparece: no debate, no anúncio e na rede social. A falácia parece argumento e não sustenta a conclusão. Reconhecer o padrão é mais útil que decorar o nome.",
+      oQue:
+        "Falácia é raciocínio que parece válido e não sustenta a conclusão. A generalização precipitada conclui de amostra pequena, e o falso dilema reduz a duas opções. O espantalho distorce a posição do outro para atacá-la, e o apelo à autoridade indevida usa credencial fora do domínio.",
+      passos: [
+        "Isole a conclusão e as premissas.",
+        "Teste se a premissa sustenta a conclusão.",
+        "Nomeie o padrão de falha e responda ao argumento real.",
+      ],
+      exemplo:
+        "Dizer que a pessoa não entende do assunto porque é nova na empresa é atacar quem fala, não o argumento. A resposta boa separa a pessoa da tese e examina a tese. Nomear a falácia não substitui o argumento contrário.",
+      quebra:
+        "Gritar o nome da falácia e não responder ao ponto. O rótulo vira defesa e a discussão não avança. A falácia se mostra refazendo o argumento sem o defeito.",
+      limite:
+        "Nem toda falha de argumento é falácia formal. Contexto e conhecimento de fundo pesam, e o que parece espantalho pode ser síntese legítima. A caridade na leitura evita acusação falsa.",
+      levar: "Nomear a falácia não é argumentar; refazer o argumento é.",
+      maos:
+        "Pegue um anúncio e identifique a falácia, depois reescreva o argumento sem ela. A versão reescrita mostra o que o anúncio realmente consegue sustentar, e a diferença entre as duas é a medida do exagero. Nomear a falácia é o começo; responder ao argumento real é o trabalho.",
+    },
+    "Debate e Comunicação Argumentativa": {
+      contexto:
+        "Onde isso aparece: no plenário, na reunião e na defesa de projeto. O debate constrói tese e responde ao outro. A refutação exige escutar antes de responder.",
+      oQue:
+        "Debate e comunicação argumentativa cobrem construção de tese, argumentação oral, debate formal e refutação. A tese precisa ser clara e defensável, e a refutação responde ao argumento apresentado. O formato do debate define tempo e ordem.",
+      passos: [
+        "Formule a tese em uma frase clara.",
+        "Ouça o argumento do outro e resuma antes de refutar.",
+        "Responda com evidência e feche com a consequência.",
+      ],
+      exemplo:
+        "Quem refuta o argumento resumido pelo adversário mostra que ouviu e ganha credibilidade. Quem responde a outra pergunta parece não ter escutado. A refutação eficaz é específica.",
+      quebra:
+        "Preparar a resposta enquanto o outro fala e responder ao que imaginou. A réplica atinge um argumento que ninguém fez, e o debate perde o fio. Escutar até o fim é parte da técnica.",
+      limite:
+        "O formato do debate limita o que se pode dizer. Tempo curto exige escolha de argumento, e a profundidade fica para o texto. A habilidade é de seleção.",
+      levar: "Refutar é responder ao argumento real, não ao esperado.",
+      maos:
+        "Em um debate de dez minutos, resuma o argumento do outro antes da réplica. Cronometre: o resumo não pode consumir mais que um quinto do tempo. No fim, escreva a tese que você defendeu em uma frase e verifique se a réplica realmente a sustentou ou só desviou do ponto. A autoavaliação do debate vale mais que a memória de quem falou mais alto, e o critério é sempre o argumento respondido. Quem resumiu antes de responder chega mais perto do ponto do outro e evita a réplica no vazio, que é o erro mais comum de quem tem argumento pronto.",
+      pergunta: {
+        q: "O que a refutação precisa fazer para ser eficaz?",
+        a: "Responder ao argumento real do outro, com evidência",
+        why: "A refutação que responde ao argumento apresentado avança a discussão; responder a um argumento imaginado deixa o ponto do outro de pé e desgasta a credibilidade.",
+      },
+    },
+  },
 };
 
 // o nome da estação chega em caixa baixa do banco ("Grafos moleculares") e em
