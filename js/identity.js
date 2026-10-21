@@ -106,7 +106,10 @@ const BIOME_NAMES = {
   "inter-todas": "Praça das Cinco",
 };
 
-const HUE = { math: 268, physics: 342, chem: 132, cs: 166, lingua: 42, music: 28, ai: 198, inter: 48 };
+// Matizes das famílias, afastados o bastante para dois quarteirões vizinhos não
+// caírem na mesma cor. Antes cs 166 encostava em chem 132 e em ai 198, e o
+// quarteirão de computação lia como o de química.
+const HUE = { math: 268, physics: 340, chem: 128, cs: 192, lingua: 46, music: 10, ai: 238, inter: 92 };
 const PATTERNS = ["dots", "grid", "waves", "runes", "cracks", "stars", "dunes", "bricks"];
 const SPECIES = {
   math: ["eye", "golem", "slime", "beetle", "moth", "crab"],
@@ -204,15 +207,23 @@ for (const lista of Object.values(ordemPorDisciplina)) {
 }
 
 // matiz de cada área: espalha a disciplina e, na interseção, mistura as mães
+// O matiz de cada área fica perto do matiz da disciplina: a família é o
+// assunto, e a ilha é uma variação dentro dela. O passo era 13° fixos, então a
+// matemática ia de 216 a 320 e encostava na física; agora a família inteira
+// cabe em ±22°, venha ela com 9 ou 14 áreas.
 function hueFor(area) {
   const lista = ordemPorDisciplina[area.discipline];
   const i = lista.findIndex((a) => a.id === area.id);
+  const n = lista.length;
+  const passo = n > 1 ? Math.min(11, 44 / (n - 1)) : 0;
+  // A interseção tinha o matiz da média dos pais, e a média de física com
+  // língua caía exatamente em computação: três ilhas com o mesmo piso. Agora
+  // toda interseção é âmbar, a cor do cruzamento, e o lugar dela na lista só
+  // abre um pouco o leque.
   if (area.discipline === "inter") {
-    const links = area.links || ["math", "physics"];
-    const media = links.reduce((n, d) => n + HUE[d], 0) / links.length;
-    return media + (i - lista.length / 2) * 9;
+    return HUE.inter + (i - (n - 1) / 2) * Math.min(8, 40 / Math.max(1, n - 1));
   }
-  return HUE[area.discipline] + (i - (lista.length - 1) / 2) * 13;
+  return HUE[area.discipline] + (i - (n - 1) / 2) * passo;
 }
 
 // ---------------------------------------------------------------- bioma
@@ -240,10 +251,17 @@ for (const area of AREAS) {
   const hue = hueFor(area);
   const ordem = ordemPorDisciplina[area.discipline].findIndex((a) => a.id === area.id);
   const pattern = PATTERNS[(ordem + hash(area.id)) % PATTERNS.length];
-  const base = corUnica(hue, 26, 10 + (ordem % 4));
-  const floor = corUnica(hue, 30, 15 + (ordem % 3));
-  const path = corUnica(hue, 34, 27 + (ordem % 3));
-  const accent = corUnica(hue, 58, 56 + (ordem % 3));
+  // Piso e picada se separam em luz e saturação, não só em matiz: dentro da
+  // mesma família o matiz varia pouco, então é a luz que diz onde se anda.
+  const cruzamento = area.discipline === "inter";
+  const luz = 14 + (ordem % 4) * 3 + (cruzamento ? 2 : 0);
+  const sat = 28 + (ordem % 3) * 3 + (cruzamento ? 4 : 0);
+  const base = corUnica(hue, sat - 6, Math.max(8, luz - 4));
+  const floor = corUnica(hue, sat, luz);
+  const path = corUnica(hue, sat + 8, luz + 13);
+  // acento mais claro que 60 de luz: roxo e azul em 57 rendem menos de 3:1
+  // contra o piso, e o marcador do mapa some
+  const accent = corUnica(hue, 58, 62 + (ordem % 3));
   const accent2 = corUnica(hue + 24, 62, 62 + (ordem % 3));
   const nome = BIOME_NAMES[area.id] || `Domínio ${articleOf(area.name).article} ${articleOf(area.name).noun}`;
   const materials = MATERIALS[area.discipline] || MATERIALS.math;
