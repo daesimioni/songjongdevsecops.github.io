@@ -57,6 +57,11 @@ check(/const quique = moving/.test(human), "passo sem quique");
 check(/const pisca = Math\.sin\(time \* 0\.0017/.test(creature), "olho do bicho não pisca");
 check(/a tocha tremula/.test(dungeon), "halo da tocha não tremula");
 
+// ---- arrasto do minimapa: agarrar e puxar ----
+const renderFonte = fs.readFileSync(new URL("../js/render.js", import.meta.url), "utf8");
+check(/miniPan\.x -= dx \* k/.test(renderFonte), "arrasto do mapa empurra a câmera em vez de puxar o mapa");
+check(/miniPan\.y -= dy \* k/.test(renderFonte), "arrasto vertical do mapa no sentido errado");
+
 // ---- a resolução forçada não voltou: dpr segue o aparelho ----
 check(/dpr = Math\.min\(2, window\.devicePixelRatio \|\| 1\) \* quality/.test(render), "dpr com piso forçado (perde fps em tela comum)");
 check(/Math\.round\(\(larg - 2\) \* f\.vida\)/.test(render), "barra de vida do nome não usa a fração");

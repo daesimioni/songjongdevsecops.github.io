@@ -2282,14 +2282,16 @@ export function createRenderer(canvas, world) {
       miniPan.y = 0;
       return miniLabel();
     },
-    // arrasto no mapa: converte pixel de tela em tile e solta a câmera
+    // arrasto no mapa: converte pixel de tela em tile e solta a câmera.
+    // O sinal é o do "agarrar e puxar": arrastar para a direita traz o mapa
+    // para a direita (a janela anda para a esquerda), e não o contrário.
     miniPanBy(dx, dy) {
       if (!MINI_SCALES[miniIndex]) return false;
       const view = miniView();
       const k = (view.srcW / view.DW) / 2;
       miniFollow = false;
-      miniPan.x += dx * k;
-      miniPan.y += dy * k;
+      miniPan.x -= dx * k;
+      miniPan.y -= dy * k;
       return true;
     },
     miniRecenter() {
