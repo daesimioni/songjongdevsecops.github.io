@@ -35,7 +35,8 @@ check(/detalhe\("rgba\(0,0,0,0\.10\)"/.test(render) && /detalhe\("rgba\(255,255,
 check(/for \(let y = -ry; y < ry; y \+= 0\.5\)/.test(veg), "elipse da copa não usa passo de meio pixel");
 check(/row \+= 0\.5/.test(veg), "conífera não usa passo de meio pixel");
 check(/elipseFina/.test(veg), "vegetação sem elipse fina");
-check(/swayAt\(a\.x, a\.y, time, moodAtual\)/.test(render), "vegetação sem balanço de vento");
+check(/const vegetal = assetDe\(a\.tipo\)\?\.grupo === "vegetacao"/.test(render), "vento não separa vegetação de construção");
+check(/const inclinacao = vegetal \? swayAt\(a\.x, a\.y, time, moodAtual\) \* 0\.03 : 0/.test(render), "vento ainda verga construção");
 
 // ---- animações com mais quadros ----
 const quadros = (fonte, tipo) => {

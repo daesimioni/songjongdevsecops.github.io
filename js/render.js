@@ -15,7 +15,7 @@ import { drawNpcKit } from "./npc-art.js";
 import { drawCaveFacade } from "./cave-art.js";
 import { gustAt, ondaAt, espumaAt, swayAt, windMood } from "./wind.js";
 import { escalaDaCamera, tilesNaVista } from "./camera.js";
-import { desenharAsset } from "./assets/index.js";
+import { desenharAsset, assetDe } from "./assets/index.js";
 import { desenharIcone } from "./assets/icones.js";
 import { hexA } from "./assets/nucleo.js";
 import { fracoesDeVida } from "./vitais.js";
@@ -1619,8 +1619,10 @@ export function createRenderer(canvas, world) {
             ctx.drawImage(glowSprite("#ff9a55"), px - 36, py - 44);
             ctx.restore();
           }
-          // a vegetação acompanha o vento do lugar, com a mesma rajada da copa
-          const inclinacao = a.camada === "chao" ? 0 : swayAt(a.x, a.y, time, moodAtual) * 0.03;
+          // só vegetação verga com o vento: cabana, torre e barril ficam
+          // parados, senão a construção inteira balança como árvore
+          const vegetal = assetDe(a.tipo)?.grupo === "vegetacao";
+          const inclinacao = vegetal ? swayAt(a.x, a.y, time, moodAtual) * 0.03 : 0;
           if (desenharAsset(ctx, a.tipo, px, py, {
             tempo: time, bioma: BIOMES[a.bioma], seed: hash2(a.x * 5, a.y * 11), inclinacao,
           })) assetsVisiveis++;
