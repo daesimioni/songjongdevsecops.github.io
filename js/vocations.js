@@ -95,15 +95,3 @@ export function multDe(id) {
   return { ...base, ...(vocacaoDe(id).mult || {}) };
 }
 
-// nenhuma vocação pode ter tudo acima de 1 e todo ganho tem que ter fraqueza
-export function equilibrioOk() {
-  for (const v of VOCACOES) {
-    const m = v.mult;
-    const ganhos = Object.entries(m).filter(([, n]) => n > 1);
-    const perdas = Object.entries(m).filter(([, n]) => n < 1);
-    if (ganhos.length === 0 || perdas.length === 0) return `vocação ${v.id} sem ganho ou sem fraqueza`;
-    if (Object.values(m).every((n) => n > 1)) return `vocação ${v.id} acima de 1 em tudo`;
-    if (v.subs.length !== 3) return `vocação ${v.id} com ${v.subs.length} subcategorias`;
-  }
-  return "";
-}

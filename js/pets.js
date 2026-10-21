@@ -110,6 +110,3 @@ export function mountById(id) {
   return MOUNTS[id] || null;
 }
 
-export function petPrice(pet) {
-  return pet?.price ? Object.entries(pet.price).map(([id, qty]) => `${ITEMS[id]?.name || id} ${qty}`).join(" · ") : "";
-}

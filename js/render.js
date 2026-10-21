@@ -1811,8 +1811,8 @@ export function createRenderer(canvas, world) {
         groundGrain(g, tx, ty, world.get(tx, ty));
       }
     }
-    // ponytail: cache sem LRU; o mapa é estático e 120 blocos já cobrem
-    // muitos minutos de caminhada. Se o mapa crescer, trocar por LRU.
+    // LRU de 120 blocos: o mapa é estático, mas caminhar por muitas ilhas
+    // encheria a memória se o cache só crescesse.
     while (chunkCache.size >= 120) {
       const oldest = chunkCache.keys().next().value;
       if (oldest === undefined) break;

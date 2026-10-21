@@ -364,4 +364,3 @@ export function buildCatalogContent() {
 }
 
 export const CATALOG_CONTENT = buildCatalogContent();
-export const CATALOG_READY = new Set(CATALOG_CONTENT.areas.map((a) => a.id));
