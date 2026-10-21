@@ -55,6 +55,7 @@
       <button id="btn-bestiary" class="hud-btn" type="button">Bestiário <kbd>B</kbd></button>
       <button id="btn-inventory" class="hud-btn" type="button">Mochila <kbd>I</kbd></button>
       <button id="btn-sheet" class="hud-btn" type="button">Ficha <kbd>C</kbd></button>
+      <button id="btn-wiki" class="hud-btn" type="button">Wiki <kbd>H</kbd></button>
       <button id="admin-badge" class="admin-badge" type="button" hidden title="poderes do GOD">GOD</button>
       <button id="btn-sound" class="hud-btn" type="button" aria-pressed="false">Som</button>
       <button id="btn-help" class="hud-btn hud-btn-icon" type="button" aria-label="Ajuda">?</button>
@@ -114,6 +115,7 @@
           <button id="dg-sprint" class="dg-exit" type="button" aria-label="ligar ou desligar a nave" aria-pressed="false">turbo <kbd>Espaço</kbd></button>
           <button id="dg-inventory" class="dg-exit" type="button">mochila <kbd>I</kbd></button>
           <button id="dg-sheet" class="dg-exit" type="button">ficha <kbd>C</kbd></button>
+          <button id="dg-wiki" class="dg-exit" type="button">wiki <kbd>H</kbd></button>
           <button id="dg-exit" class="dg-exit" type="button">sair <kbd>Esc</kbd></button>
         </div>
       </div>
@@ -262,6 +264,26 @@
     </div>
   </div>
 
+  <div id="wiki" class="modal" role="dialog" aria-modal="true" aria-labelledby="wiki-title" hidden>
+    <div class="modal-card wiki-card">
+      <div class="modal-head">
+        <div>
+          <p class="inv-kicker">tudo sobre o vale, aberto para todos</p>
+          <h2 id="wiki-title">Wiki do Vale</h2>
+        </div>
+        <button type="button" class="hud-btn" data-close="wiki">fechar <kbd>Esc</kbd></button>
+      </div>
+      <div class="wiki-tools">
+        <input id="wiki-search" class="travel-filter" type="search" placeholder="buscar área, bicho, item, missão, página..." autocomplete="off" aria-label="buscar na wiki">
+        <div id="wiki-tabs" class="wiki-tabs" role="tablist" aria-label="categorias da wiki"></div>
+      </div>
+      <p id="wiki-resumo" class="wiki-resumo" aria-live="polite"></p>
+      <div id="wiki-list" class="wiki-list"></div>
+      <div id="wiki-detail" class="wiki-detail" hidden></div>
+      <p class="inv-hint">a wiki nasce dos mesmos dados do jogo: área, caverna, bicho, item, missão, NPC, vocação e página. o que entra no jogo entra aqui. <kbd>H</kbd> abre e fecha.</p>
+    </div>
+  </div>
+
   <div id="outfits" class="modal" role="dialog" aria-modal="true" aria-labelledby="outfits-title" hidden>
     <div class="modal-card outfits-card">
       <div class="modal-head">
@@ -406,6 +428,7 @@
         <div><kbd>Z</kbd><span>diário</span></div>
         <div><kbd>B</kbd><span>bestiário</span></div>
         <div><kbd>I</kbd><span>mochila</span></div>
+        <div><kbd>H</kbd><span>wiki do vale</span></div>
         <div><kbd>C</kbd><span>ficha</span></div>
         <div><kbd>Esc</kbd><span>fechar</span></div>
       </div>
@@ -415,6 +438,7 @@
       <p class="help-note">As <strong>Pedras do Porto</strong> são os monólitos acesos nas docas. Elas abrem a viagem para os lugares que você já visitou. As pontes também levam a pé.</p>
       <p class="help-note">Clique no chão e o boneco vai até ali, contornando água, parede e árvore. Clique numa estação, num NPC ou numa boca de caverna para chegar perto e interagir. Se a conversa estiver aberta, o clique no mundo fecha a conversa e anda.</p>
       <p class="help-note">O <strong>minimapa</strong> mostra a coordenada <kbd>x y z</kbd>: z 0 é a superfície, z -1 o subsolo e z -2 o Porto Submerso. A roda do mouse e os botões <strong>−</strong> e <strong>+</strong> aproximam, arrastar solta o mapa do boneco para espiar outro canto e o botão <strong>mapa</strong> volta a seguir e abre o vale inteiro, um ponto já revelado leva o boneco até lá e o <strong>−</strong> do canto recolhe o mapa para uma fita fina. Dentro da caverna o mapa é o da caverna, e recolhe do mesmo jeito.</p>
+      <p class="help-note">A <strong>Wiki</strong> (<kbd>H</kbd>) reúne tudo sobre o jogo: as 86 áreas, as 93 cavernas, os 351 bichos e chefes, os 538 itens, as 284 missões, os 194 NPCs, as 454 páginas de curso e as 5 vocações. A busca ignora acento, e o que entra no jogo entra na wiki sozinho.</p>
       <p class="help-note">Os NPCs têm missões. Aperte <kbd>F</kbd> perto deles para aceitar, responder e entregar. O Diário (<kbd>Z</kbd>) guarda o que está em andamento e quanto falta.</p>
       <p class="help-note">Na superfície, as clareiras com bandeira têm um <strong>instrutor</strong>. Com ele você treina o tema da caverna em três dificuldades, <strong>sem perder vida e sem levar item</strong>. A <strong>Ficha</strong> (<kbd>C</kbd>) mostra vida, perícias e mochila; a <strong>mochila</strong> (<kbd>I</kbd>) abre direto, e na caverna também tem botão no topo.</p>
       <p class="help-note">A <strong>caverna</strong> é que paga: acertar fere o bicho, errar fere você. Fugir não é de graça: a chance de levar um golpe cresce com a dificuldade do monstro, e o café da horta reduz esse risco por um tempo.</p>

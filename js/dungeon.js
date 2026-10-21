@@ -586,7 +586,7 @@ function drawBuilding(ctx, x, y, w, h, palette, accent) {
 }
 
 // ---------- a caverna em si ----------
-export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, onGather, onExit, onKeeper, onConurbation, onPortal, onVocacao, isBlocked, avatar = {}, look = null, gear = null }) {
+export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, onWiki, onGather, onExit, onKeeper, onConurbation, onPortal, onVocacao, isBlocked, avatar = {}, look = null, gear = null }) {
   const canvas = $("dungeon-canvas");
   const ctx = canvas?.getContext("2d", { alpha: false }) || null;
 
@@ -2280,6 +2280,10 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     }
     if (k === "i") {
       onInventory?.();
+      return;
+    }
+    if (k === "h") {
+      onWiki?.();
       return;
     }
     if (["w", "a", "s", "d", "arrowup", "arrowdown", "arrowleft", "arrowright"].includes(k)) pararSeguir();

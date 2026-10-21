@@ -37,6 +37,7 @@ import { createInventoryUI } from "./inventory-ui.js";
 import { createBestiary } from "./bestiary.js";
 import { itemIconElement } from "./item-art.js";
 import { createDungeon } from "./dungeon.js";
+import { wikiUi } from "./wiki.js";
 import { CONURBATION, DUNGEONS, dungeonById } from "./dungeon-data.js";
 
 const $ = (id) => document.getElementById(id);
@@ -329,6 +330,7 @@ dungeon = createDungeon({
   },
   onSheet: () => openSheet(),
   onInventory: () => openInventory(),
+  onWiki: () => openWiki(),
   onGather: (ctx) => openGather(ctx.kind, ctx),
   onKeeper: () => openShop(),
   onConurbation: () => openTravel("caves"),
@@ -1540,6 +1542,21 @@ function openBestiary() {
   audio.open();
 }
 
+// A wiki é de todos: não depende de descoberta nem de nível. Abre por cima do
+// vale e da caverna, fecha com Esc ou com o mesmo atalho.
+function openWiki() {
+  if (!state.started) return;
+  if (state.modal === "wiki") { closeModal("wiki"); return; }
+  if (state.modal) return;
+  stopSprint();
+  if (state.panelOpen) closePanel();
+  closeChat();
+  openModal("wiki");
+  wikiUi.abrir();
+  audio.open();
+}
+wikiUi.configurar({ abrirPost: (id) => { closeModal("wiki"); openPost(id); }, fechar: () => closeModal("wiki") });
+
 function buildJournalBestiary() {
   const box = $("journal-bestiary");
   if (!box) return;
@@ -2591,7 +2608,11 @@ window.addEventListener("keydown", (e) => {
   if (e.key === "Tab" && trapFocus(e)) return;
   const tag = (e.target.tagName || "").toLowerCase();
   if (tag === "input" || tag === "textarea") {
-    if (e.key === "Escape") closeChat();
+    // Esc dentro de um campo fecha o modal que o contém, não só a conversa
+    if (e.key === "Escape") {
+      if (state.modal) closeModal(state.modal);
+      else closeChat();
+    }
     return;
   }
   const k = e.key.toLowerCase();
@@ -2620,6 +2641,8 @@ window.addEventListener("keydown", (e) => {
   // guarda de modal abaixo impediria o fechamento
   if (state.modal === "inventory" && k === "i") { closeModal("inventory"); return; }
   if (state.modal === "bestiary" && k === "b") { closeModal("bestiary"); return; }
+  if (state.modal === "wiki" && k === "h") { closeModal("wiki"); return; }
+  if (k === "h" && !state.modal && !state.panelOpen) { openWiki(); return; }
   if (state.panelOpen || state.modal) return;
   if (dungeon?.isOpen()) return;
   if (k === " " || e.code === "Space") {
@@ -3077,6 +3100,8 @@ $("panel-live").addEventListener("pointerdown", () => {
 }, { passive: true });
 $("btn-journal").addEventListener("click", openJournal);
 $("btn-bestiary").addEventListener("click", openBestiary);
+$("btn-wiki").addEventListener("click", openWiki);
+$("dg-wiki").addEventListener("click", openWiki);
 $("steps-min")?.addEventListener("click", () => $("steps").classList.toggle("min"));
 
 $("btn-help").addEventListener("click", () => { openModal("help"); audio.open(); });

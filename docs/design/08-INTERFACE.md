@@ -58,6 +58,7 @@ toque, ainda em texto, para aprovação antes do código.
 ## 4. Exploração
 
 - Câmera segue com suavidade; a escala é a mesma no vale e na caverna (`js/camera.js`, 1,3 a 1,6 conforme a janela); balanço só em impacto.
+- Menu: Diário, Bestiário, Mochila, Ficha, **Wiki** (`H`) e Ajuda; a wiki reúne tudo sobre o jogo e é montada dos mesmos dados (`docs/design/16-WIKI.md`).
 - Nome do lugar aparece ao entrar; some depois de 3 s; o chip fica.
 - Bichos mostram o **cone de visão** no chão, o estado (`?`, `!`) e a direção do
   olhar.
