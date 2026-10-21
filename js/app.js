@@ -116,6 +116,9 @@ player.color = player.colors.shirt;
 
 const state = {
   started: false,
+  // quem já tem nome guardado já passou pela criação: sem isso, toda recarga
+  // pedia a vocação de novo e a entrada travava porque o seletor fica escondido
+  personagemCriado: Boolean(saved.name) || Boolean(avatarGuardado),
   panelOpen: false,
   panelCleanup: null,
   currentPost: null,

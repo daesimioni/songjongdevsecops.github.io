@@ -112,3 +112,11 @@ console.log("ok casca: ids, imports, botões, rótulos, aria e handlers");
   const semArte = [...new Set(SITES.map((s) => s.icon))].filter((icon) => !supported.has(icon));
   assert.equal(semArte.length, 0, `estação com ícone sem desenho: ${semArte.join(", ")}`);
 }
+
+// entrada: quem já tem personagem não pode ser barrado pelo pedido de vocação
+// (o seletor fica escondido para quem volta, e a entrada travava sem aviso)
+{
+  const app = fs.readFileSync(path.join(root, "js/app.js"), "utf8");
+  assert.match(app, /personagemCriado: Boolean\(saved\.name\) \|\| Boolean\(avatarGuardado\)/, "entrada: personagemCriado não vem do save");
+  assert.match(app, /if \(!state\.personagemCriado && !vocacaoEscolhida\)/, "entrada: checagem de vocação mudou de forma");
+}
