@@ -96,12 +96,22 @@ export function drawCreature(ctx, kind, accent, time = 0, scale = 1, dir = 0) {
     ctx.fillRect(-11, -17, 22, 14);
     ctx.fillStyle = "#e9e3ff";
     ctx.fillRect(-9, -15, 18, 10);
-    ctx.fillStyle = accent;
-    ctx.fillRect(-5, -13, 10, 7);
+    // o olho pisca de vez em quando: a pálpebra desce e a íris some
+    const pisca = Math.sin(time * 0.0017 + s * 1.7) > 0.985;
+    if (pisca) {
+      ctx.fillStyle = "#101426";
+      ctx.fillRect(-9, -15, 18, 5);
+      ctx.fillStyle = "#e9e3ff";
+      ctx.fillRect(-9, -10, 18, 2);
+    } else {
+      ctx.fillStyle = accent;
+      ctx.fillRect(-5, -13, 10, 7);
+      ctx.fillStyle = "#101426";
+      ctx.fillRect(-2, -11, 4, 4);
+      ctx.fillStyle = "#fff";
+      ctx.fillRect(-1, -11, 1, 1);
+    }
     ctx.fillStyle = "#101426";
-    ctx.fillRect(-2, -11, 4, 4);
-    ctx.fillStyle = "#fff";
-    ctx.fillRect(-1, -11, 1, 1);
     ctx.fillStyle = "#101426";
     ctx.fillRect(-9, -3, 18, 2);
   } else if (kind === "bat") {

@@ -15,6 +15,9 @@ function chama(g, x, y, largura, altura, quadro, p) {
   }
   g.fillStyle = p.luz;
   g.fillRect(x - 1 + oscila, y + altura - 3, 2, 2);
+  g.fillStyle = "rgba(255,255,255,0.75)";
+  g.fillRect(x - 0.5 + oscila, y + altura - 2, 1, 1);
+  g.fillRect(x + 0.5 + oscila, y + altura - 4, 0.5, 0.5);
 }
 
 function brilho(g, x, y, r, cor) {
@@ -99,7 +102,7 @@ function lanterna(g, p, _v, quadro) {
   g.fillRect(3, 4, 8, 10);
   g.fillStyle = p.metal;
   g.fillRect(4, 5, 6, 8);
-  const pulso = quadro % 2 === 0 ? 0.9 : 1;
+  const pulso = 0.88 + ((quadro % 4) * 0.04);
   g.globalAlpha = pulso;
   g.fillStyle = p.luz;
   g.fillRect(5, 6, 4, 6);
@@ -115,11 +118,11 @@ function lanterna(g, p, _v, quadro) {
 
 function fumaca(g, p, _v, quadro) {
   const w = 16, h = 30;
-  for (let i = 0; i < 4; i++) {
-    const fase = (quadro + i) % 4;
+  for (let i = 0; i < 5; i++) {
+    const fase = (quadro + i) % 6;
     const y = h - 6 - i * 6 - fase;
     const x = w / 2 + Math.sin((quadro + i) * 1.1) * (2 + i * 0.6);
-    const r = 1.6 + i * 0.9;
+    const r = 1.4 + i * 0.75;
     g.globalAlpha = 0.26 - i * 0.04;
     g.fillStyle = i % 2 ? p.tecido : "#c8c4d8";
     g.beginPath();
@@ -130,9 +133,9 @@ function fumaca(g, p, _v, quadro) {
 }
 
 export const FOGOS = {
-  fogueira: { w: 24, h: 20, variantes: 1, quadros: 4, ms: 130, desenhar: fogueira },
-  braseiro: { w: 16, h: 22, variantes: 1, quadros: 4, ms: 120, desenhar: braseiro },
-  tocha: { w: 10, h: 24, variantes: 1, quadros: 3, ms: 110, desenhar: tocha },
-  lanterna: { w: 14, h: 24, variantes: 1, quadros: 2, ms: 420, desenhar: lanterna },
-  fumaca: { w: 16, h: 30, variantes: 1, quadros: 4, ms: 240, desenhar: fumaca },
+  fogueira: { w: 24, h: 20, variantes: 1, quadros: 8, ms: 95, desenhar: fogueira },
+  braseiro: { w: 16, h: 22, variantes: 1, quadros: 8, ms: 95, desenhar: braseiro },
+  tocha: { w: 10, h: 24, variantes: 1, quadros: 6, ms: 85, desenhar: tocha },
+  lanterna: { w: 14, h: 24, variantes: 1, quadros: 4, ms: 300, desenhar: lanterna },
+  fumaca: { w: 16, h: 30, variantes: 1, quadros: 6, ms: 200, desenhar: fumaca },
 };

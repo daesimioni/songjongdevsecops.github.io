@@ -17,6 +17,18 @@ function spans(g, cx, cy, rx, ry, cor) {
   }
 }
 
+// elipse em passo de meio pixel: a borda da copa ganha o dobro de degraus
+function elipseFina(g, cx, cy, rx, ry, cor, chiado = 0) {
+  g.fillStyle = cor;
+  for (let y = -ry; y < ry; y += 0.5) {
+    const t = y / ry;
+    let meia = Math.sqrt(Math.max(0, 1 - t * t)) * rx;
+    if (chiado) meia *= 0.9 + (Math.sin((y + cx) * 12.9) * 0.5 + 0.5) * chiado;
+    if (meia <= 0.5) continue;
+    g.fillRect(cx - meia, cy + y, meia * 2, 0.5);
+  }
+}
+
 function sombra(g, p, w, h, raio = 0.34) {
   g.fillStyle = p.sombra;
   g.beginPath();
@@ -30,44 +42,58 @@ function folhuda(g, p, v) {
   sombra(g, p, w, h, 0.32);
   const cx = w / 2;
   const topo = v === 1 ? 7 : 10;
-  // tronco e raiz
+  // tronco com casca em meio pixel e raiz que abre no chão
   g.fillStyle = p.contorno;
-  g.fillRect(cx - 2, h - 14, 5, 12);
-  g.fillRect(cx - 4, h - 4, 9, 2);
+  g.fillRect(cx - 2.5, h - 14, 6, 12);
+  g.fillRect(cx - 4.5, h - 4, 10, 2);
   g.fillStyle = p.tronco;
-  g.fillRect(cx - 2, h - 13, 3, 11);
+  g.fillRect(cx - 2, h - 13, 4, 11);
   g.fillStyle = p.troncoClaro;
-  g.fillRect(cx - 1, h - 13, 1, 9);
+  g.fillRect(cx - 1.5, h - 13, 1, 10);
+  g.fillStyle = "rgba(0,0,0,0.28)";
+  g.fillRect(cx + 1, h - 12, 0.5, 9);
+  g.fillRect(cx - 0.5, h - 7, 0.5, 1);
   g.fillStyle = p.contorno;
-  g.fillRect(cx - 3, h - 8, 2, 1);
-  g.fillRect(cx + 2, h - 7, 2, 1);
-  // copa: camada escura de fora, média e clara em cima à esquerda
+  g.fillRect(cx - 3.5, h - 8, 2, 0.5);
+  g.fillRect(cx + 2.5, h - 7, 2, 0.5);
+  // copa: quatro camadas em passo de meio pixel, com chiado no contorno
   const camadas = v === 1
-    ? [[16, 15, p.folhaEscura], [12, 11, p.folha], [7, 7, p.folhaClara]]
-    : [[18, 14, p.folhaEscura], [14, 10, p.folha], [8, 6, p.folhaClara]];
+    ? [[17, 16, p.folhaEscura, 0.12], [14, 12, p.folha, 0.10], [9, 8, p.folhaClara, 0.08], [4.5, 4, p.folhaClara, 0.05]]
+    : [[19, 15, p.folhaEscura, 0.12], [15.5, 11, p.folha, 0.10], [9.5, 7, p.folhaClara, 0.08], [5, 3.5, p.folhaClara, 0.05]];
   const cy = topo + (v === 1 ? 17 : 15);
   for (let i = 0; i < camadas.length; i++) {
-    const [rx, ry, cor] = camadas[i];
-    spans(g, cx + (i === 2 ? -2 : 0), cy + i * 1.5, rx, ry, cor);
+    const [rx, ry, cor, chiado] = camadas[i];
+    elipseFina(g, cx + (i >= 2 ? -2 : 0), cy + i * 1.2, rx, ry, cor, chiado);
   }
-  // recorte de folha: entalhes no contorno de baixo
+  // moitas de folha: pequenas elipses de dois tons espalhadas pela copa
+  for (let i = 0; i < 12; i++) {
+    const a = (i * 2.399) % (Math.PI * 2);
+    const r = 2.5 + (i % 4) * 2.2;
+    const fx = cx - 2 + Math.cos(a) * r * 1.5;
+    const fy = cy + Math.sin(a) * r + (i % 3) * 1.5;
+    elipseFina(g, fx, fy, 2.2 + (i % 3) * 0.6, 1.4 + (i % 2) * 0.5, i % 3 === 0 ? p.folhaClara : p.folhaEscura, 0.12);
+  }
+  // recorte de folha no contorno de baixo
   g.fillStyle = p.folhaEscura;
-  for (let i = 0; i < 4; i++) {
-    const x = Math.round(cx - 12 + i * 8 + (v === 1 ? 2 : 0));
-    g.fillRect(x, cy + 12 - (i % 2) * 2, 2, 2);
+  for (let i = 0; i < 5; i++) {
+    const x = cx - 13 + i * 6 + (v === 1 ? 2 : 0);
+    g.fillRect(x, cy + 12 - (i % 2) * 2, 2, 1);
   }
-  // folhas soltas e brilho
+  // folhas soltas, veios e brilho
   g.fillStyle = p.folhaClara;
-  g.fillRect(Math.round(cx - 9), cy - 4, 2, 1);
-  g.fillRect(Math.round(cx - 6), cy - 7, 1, 1);
+  g.fillRect(cx - 9.5, cy - 4.5, 1.5, 0.5);
+  g.fillRect(cx - 6.5, cy - 7.5, 0.5, 0.5);
+  g.fillRect(cx + 7.5, cy + 2, 0.5, 1);
+  g.fillRect(cx + 5.5, cy + 8.5, 0.5, 0.5);
+  g.fillStyle = "rgba(255,255,255,0.22)";
+  g.fillRect(cx - 3.5, cy - 9.5, 2.5, 0.5);
   g.fillStyle = p.folha;
-  g.fillRect(Math.round(cx + 8), cy + 3, 1, 2);
-  g.fillRect(Math.round(cx + 5), cy + 8, 1, 1);
-  // fruto em algumas variantes
+  g.fillRect(cx + 8.5, cy + 4, 0.5, 1.5);
+  g.fillRect(cx - 10.5, cy + 5, 0.5, 1);
   if (v === 0) {
     g.fillStyle = p.luz;
-    g.fillRect(Math.round(cx - 4), cy + 4, 1, 1);
-    g.fillRect(Math.round(cx + 6), cy - 2, 1, 1);
+    g.fillRect(cx - 4, cy + 4, 1, 1);
+    g.fillRect(cx + 6, cy - 2, 1, 1);
   }
 }
 
@@ -79,37 +105,40 @@ function conifera(g, p, v) {
   g.fillStyle = p.contorno;
   g.fillRect(cx - 2, h - 10, 4, 8);
   g.fillStyle = p.tronco;
-  g.fillRect(cx - 1, h - 10, 2, 7);
+  g.fillRect(cx - 1.5, h - 10, 3, 7);
+  g.fillStyle = p.troncoClaro;
+  g.fillRect(cx - 1, h - 10, 0.5, 6);
   const tiers = v === 1 ? 5 : 4;
   const passo = v === 1 ? 7 : 8;
   for (let t = 0; t < tiers; t++) {
-    // as camadas se sobrepõem: sem isso a copa vira uma pilha de triângulos
-    // soltos e a árvore parece listrada
     const y = 4 + t * passo;
     const larg = 4 + t * 4.2;
     const alt = passo + 3;
-    g.fillStyle = p.folhaEscura;
-    for (let row = 0; row < alt; row++) {
-      const meia = Math.round((larg * (row + 1)) / alt);
-      g.fillRect(Math.round(cx - meia), y + row, meia * 2, 1);
+    // galho em passo de meio pixel: o triângulo deixa de ser escada de 1 px
+    for (let row = 0; row < alt; row += 0.5) {
+      const meia = Math.round(((larg * (row + 0.5)) / alt) * 2) / 2;
+      const chiado = Math.sin((row + t * 3) * 9.7) > 0.15 ? 0.5 : 0;
+      g.fillStyle = p.folhaEscura;
+      g.fillRect(cx - meia, y + row, meia * 2, 0.5);
+      if (row > 1) {
+        g.fillStyle = p.folha;
+        g.fillRect(cx - meia + 0.5 + chiado, y + row, meia * 2 - 1, 0.5);
+      }
+      if (row > alt * 0.35) {
+        g.fillStyle = p.folhaClara;
+        g.fillRect(cx - meia + 0.5 + chiado, y + row, Math.max(0.5, meia * 0.38), 0.5);
+      }
     }
-    g.fillStyle = p.folha;
-    for (let row = 2; row < alt - 1; row++) {
-      const meia = Math.round((larg * row) / alt);
-      g.fillRect(Math.round(cx - meia) + 1, y + row, meia * 2 - 2, 1);
-    }
-    // luz do lado esquerdo
+    // agulhas soltas nas bordas
     g.fillStyle = p.folhaClara;
-    for (let row = 3; row < alt - 2; row++) {
-      const meia = Math.round((larg * row) / alt);
-      g.fillRect(Math.round(cx - meia) + 1, y + row, Math.max(1, Math.round(meia * 0.4)), 1);
-    }
+    g.fillRect(cx - larg - 0.5, y + 3, 0.5, 0.5);
+    g.fillRect(cx + larg - 1, y + 4, 1, 0.5);
+    g.fillRect(cx - larg * 0.6, y + 5, 0.5, 0.5);
   }
-  // ponta e neve
   g.fillStyle = p.folhaClara;
-  g.fillRect(cx - 1, 3, 2, 3);
+  g.fillRect(cx - 1, 2.5, 2, 3);
   g.fillStyle = "rgba(255,255,255,0.28)";
-  g.fillRect(cx - 1, 4, 1, 1);
+  g.fillRect(cx - 1, 3.5, 1, 1);
   g.fillRect(cx - 3, 14, 2, 1);
 }
 
@@ -141,6 +170,17 @@ function palmeira(g, p, v) {
     g.stroke();
     g.fillStyle = p.folhaClara;
     g.fillRect(tx + Math.round(dx * 0.55), ty - 3 + Math.round(dy * 0.25), 1, 1);
+  }
+  // folíolos de meio pixel nas frondes
+  g.fillStyle = p.folhaClara;
+  for (let i = 0; i < 6; i++) {
+    const [dx, dy] = frondes[i];
+    for (let k = 0.25; k < 1; k += 0.25) {
+      const fx = tx + dx * k;
+      const fy = ty + (dy - 3) * k;
+      g.fillRect(fx - 0.5, fy, 0.5, 0.5);
+      g.fillRect(fx + 0.5, fy + 0.5, 0.5, 0.5);
+    }
   }
   g.fillStyle = p.brasa;
   g.fillRect(tx - 2, ty + 2, 2, 2);
@@ -184,6 +224,9 @@ function arbusto(g, p, v) {
   spans(g, w / 2, h - 8, 9, 6, p.folhaEscura);
   spans(g, w / 2 - 1, h - 9, 6.5, 4, p.folha);
   spans(g, w / 2 - 2, h - 10, 3.5, 2, p.folhaClara);
+  g.fillStyle = p.folhaClara;
+  g.fillRect(w / 2 - 6.5, h - 11, 0.5, 0.5);
+  g.fillRect(w / 2 + 3.5, h - 8, 0.5, 0.5);
   g.fillStyle = v === 1 ? p.brasa : p.luz;
   g.fillRect(w / 2 - 5, h - 9, 1, 1);
   g.fillRect(w / 2 + 4, h - 11, 1, 1);
@@ -227,6 +270,8 @@ function florada(g, p, v) {
     g.fillRect(x, y - 1, 1, 4);
     g.fillStyle = p.luz;
     g.fillRect(x, y, 1, 1);
+    g.fillRect(x - 0.5, y + 1.5, 0.5, 0.5);
+    g.fillRect(x + 1.5, y + 0.5, 0.5, 0.5);
   }
 }
 

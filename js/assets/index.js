@@ -53,7 +53,12 @@ export function desenharAsset(ctx, tipo, x, y, { tempo = 0, bioma = null, seed =
   const v = variante(seed, def.variantes || 1);
   const q = def.quadros ? quadroAnimado(tempo, def.quadros, def.ms || 160) : 0;
   const chave = `${tipo}:${v}:${p.chave}:${q}`;
-  const sprite = cache.pegar(chave, def.w, def.h, (g) => def.desenhar(g, p, v, q));
+  // o sprite nasce em 2x: cada pixel antigo vira quatro pixels de desenho, e o
+  // quadro copia no mesmo tamanho de mundo. O detalhe de meio pixel aparece.
+  const sprite = cache.pegar(chave, def.w * 2, def.h * 2, (g) => {
+    g.scale(2, 2);
+    def.desenhar(g, p, v, q);
+  });
   const dx = Math.round(x - def.w / 2);
   const dy = camada === "chao"
     ? Math.round(y - def.h / 2)
@@ -64,11 +69,11 @@ export function desenharAsset(ctx, tipo, x, y, { tempo = 0, bioma = null, seed =
     ctx.save();
     ctx.translate(x, y);
     ctx.transform(1, 0, inclinacao, 1, 0, 0);
-    ctx.drawImage(sprite, -def.w / 2, -def.h);
+    ctx.drawImage(sprite, -def.w / 2, -def.h, def.w, def.h);
     ctx.restore();
     return true;
   }
-  ctx.drawImage(sprite, dx, dy);
+  ctx.drawImage(sprite, dx, dy, def.w, def.h);
   return true;
 }
 

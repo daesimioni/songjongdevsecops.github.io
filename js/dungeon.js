@@ -2158,7 +2158,8 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
       const tx = (prop.x * TILE - camX) * scale;
       const ty = (prop.y * TILE - camY) * scale;
       if (tx < -140 || tx > vw + 140 || ty < -140 || ty > vh + 140) continue;
-      const r = 4.6 * TILE * scale;
+      // a tocha tremula: o halo respira com a chama
+      const r = (4.45 + Math.sin(t * 0.012 + prop.x * 7) * 0.18 + Math.sin(t * 0.0031 + prop.y) * 0.08) * TILE * scale;
       ctx.drawImage(glowSprite, tx - r, ty - r, r * 2, r * 2);
     }
     ctx.restore();

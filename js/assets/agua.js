@@ -41,12 +41,12 @@ function juncoAgua(g, p, v) {
 
 function espuma(g, p, _v, quadro) {
   const w = 22, h = 9;
-  for (let i = 0; i < 5; i++) {
-    const x = 1 + i * 4 + (quadro % 3);
+  for (let i = 0; i < 6; i++) {
+    const x = 1 + i * 3.5 + (quadro % 6) * 0.5;
     const y = h - 3 - ((i + quadro) % 2);
-    g.fillStyle = `rgba(220,245,255,${0.34 + ((i + quadro) % 3) * 0.12})`;
-    g.fillRect(x, y, 3, 1);
-    g.fillRect(x + 1, y - 1, 1, 1);
+    g.fillStyle = `rgba(220,245,255,${0.3 + ((i + quadro) % 4) * 0.09})`;
+    g.fillRect(x, y, 2.5, 0.5);
+    g.fillRect(x + 1, y - 0.5, 0.5, 0.5);
   }
   g.fillStyle = "rgba(18,55,84,0.4)";
   g.fillRect(0, h - 2, w, 2);
@@ -73,6 +73,6 @@ function lirio(g, p, v) {
 export const AGUAS = {
   pedraAgua: { w: 20, h: 14, variantes: 2, desenhar: pedraAgua },
   juncoAgua: { w: 22, h: 26, variantes: 2, desenhar: juncoAgua },
-  espuma: { w: 22, h: 9, variantes: 1, quadros: 3, ms: 260, desenhar: espuma },
+  espuma: { w: 22, h: 9, variantes: 1, quadros: 6, ms: 200, desenhar: espuma },
   lirio: { w: 18, h: 12, variantes: 2, desenhar: lirio },
 };

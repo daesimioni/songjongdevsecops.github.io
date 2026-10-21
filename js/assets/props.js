@@ -133,7 +133,7 @@ function fardo(g, p, v) {
 
 function gaivota(g, p, _v, quadro) {
   const w = 18, h = 12;
-  const asa = quadro % 2 === 0 ? 1 : -1;
+  const asa = [1, 2, 1, 0][quadro % 4];
   g.fillStyle = "rgba(240,245,255,0.92)";
   g.fillRect(w / 2 - 1, h / 2, 3, 2);
   g.fillStyle = "rgba(220,232,248,0.85)";
@@ -150,5 +150,5 @@ export const PROPS = {
   saco: { w: 16, h: 16, variantes: 2, desenhar: saco },
   caixote: { w: 18, h: 18, variantes: 2, desenhar: caixote },
   fardo: { w: 20, h: 15, variantes: 2, desenhar: fardo },
-  gaivota: { w: 18, h: 12, variantes: 1, quadros: 2, ms: 300, desenhar: gaivota },
+  gaivota: { w: 18, h: 12, variantes: 1, quadros: 4, ms: 210, desenhar: gaivota },
 };

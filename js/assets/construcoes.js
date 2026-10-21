@@ -20,6 +20,8 @@ function janela(g, p, x, y, w = 4, h = 4, acesa = true) {
   if (acesa) {
     g.fillStyle = "rgba(255,227,161,0.28)";
     g.fillRect(x - 1, y - 1, w + 2, h + 2);
+    g.fillStyle = "rgba(255,255,255,0.5)";
+    g.fillRect(x + 0.5, y + 0.5, 1, 0.5);
   }
 }
 
@@ -30,6 +32,8 @@ function tabuas(g, p, x, y, w, h, cor) {
   for (let i = 0; i < h; i += 3) g.fillRect(x, y + i, w, 1);
   g.fillStyle = p.madeiraClara;
   g.fillRect(x, y, w, 1);
+  g.fillStyle = "rgba(0,0,0,0.12)";
+  for (let i = 0; i < w; i += 6) g.fillRect(x + i, y + 1.5, 3, 0.5);
 }
 
 function telhado(g, p, x, y, w, h, cor, corClara) {
@@ -43,6 +47,11 @@ function telhado(g, p, x, y, w, h, cor, corClara) {
     g.fillRect(x + (i % 2), y + i, w - (i % 2), 1);
     g.fillStyle = p.contorno;
     g.fillRect(x, y + i + 2, w, 1);
+  }
+  // brilho de meio pixel na fiada: a telha deixa de ser faixa chapada
+  g.fillStyle = "rgba(255,255,255,0.18)";
+  for (let i = 0; i < h; i += 3) {
+    for (let k = 1; k < w; k += 5) g.fillRect(x + k + (i % 2), y + i + 0.5, 1.5, 0.5);
   }
 }
 
@@ -78,6 +87,11 @@ function cabana(g, p, v) {
     g.lineTo(18 + (y - 4) * 0.6, y);
     g.stroke();
   }
+  g.fillStyle = "rgba(255,255,255,0.12)";
+  for (let i = 0; i < 7; i++) {
+    const y = 7 + i * 3;
+    g.fillRect(18 - (y - 4) * 0.55 + 1, y + 0.5, (y - 4) * 0.5, 0.5);
+  }
   g.fillStyle = p.contorno;
   g.fillRect(15, h - 10, 7, 9);
   g.fillStyle = p.luz;
@@ -105,6 +119,9 @@ function casa(g, p, v) {
   for (let i = 0; i < 4; i++) g.fillRect(7 + i * 8, h - 18, 5, 1);
   g.fillStyle = p.pedraEscura;
   for (let i = 0; i < 6; i++) g.fillRect(6 + i * 5, h - 8, 1, 7);
+  g.fillStyle = "rgba(255,255,255,0.12)";
+  for (let i = 0; i < 5; i++) g.fillRect(7 + i * 6, h - 17.5, 4, 0.5);
+  for (let i = 0; i < 4; i++) g.fillRect(8 + i * 7, h - 11.5, 3, 0.5);
   tabuas(g, p, 6, h - 13, 32, 12, p.madeira);
   // telhado de duas águas
   g.fillStyle = p.contorno;
@@ -164,6 +181,9 @@ function torre(g, p, v) {
   }
   g.fillStyle = p.pedraEscura;
   for (let i = 0; i < 5; i++) g.fillRect(8, 16 + i * 7, 12, 1);
+  g.fillStyle = "rgba(255,255,255,0.14)";
+  for (let i = 0; i < 5; i++) g.fillRect(9, 15.5 + i * 7, 4, 0.5);
+  for (let i = 0; i < 4; i++) g.fillRect(14, 19.5 + i * 7, 3, 0.5);
   // ameias
   g.fillStyle = p.contorno;
   g.fillRect(4, 4, 20, 6);

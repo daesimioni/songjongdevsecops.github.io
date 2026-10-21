@@ -39,8 +39,15 @@ export function ladoDaDiagonal(dir) {
 export function drawHuman(ctx, px, py, dir, moving, time, colors, scale = 1, look = null, gear = null) {
   const s = scale;
   const step = moving ? Math.sin(time * 0.016) : 0;
+  // parado, o corpo respira: meio pixel para cima e para baixo, sem trocar a
+  // pose. É o que tira o boneco de estátua.
+  const respira = moving ? 0 : Math.sin(time * 0.0042) * 0.45;
+  // pisca de vez em quando; o olho fechado é uma linha de 1 px
+  const pisca = !moving && Math.floor(time / 170) % 23 === 0;
+  // passo com quique: o corpo sobe e desce um terço de pixel no compasso
+  const quique = moving ? -Math.abs(Math.sin(time * 0.016)) * 0.6 : 0;
   ctx.save();
-  ctx.translate(px, py);
+  ctx.translate(px, py + respira + quique);
   ctx.scale(s, s);
 
   ctx.fillStyle = "rgba(2,4,10,0.38)";
@@ -320,13 +327,14 @@ export function drawHuman(ctx, px, py, dir, moving, time, colors, scale = 1, loo
   }
   // rosto: olho e nariz do lado para onde anda
   ctx.fillStyle = colors.eyes || "#14121f";
+  const olhoAlto = pisca ? 1 : 2;
   if (base === 0) {
-  ctx.fillRect(-2, -17, 1, 2);
-  ctx.fillRect(1, -17, 1, 2);
+  ctx.fillRect(-2, -17, 1, olhoAlto);
+  ctx.fillRect(1, -17, 1, olhoAlto);
   } else if (base === 1) {
-  ctx.fillRect(-3, -17, 1, 2);
+  ctx.fillRect(-3, -17, 1, olhoAlto);
   } else if (base === 2) {
-  ctx.fillRect(2, -17, 1, 2);
+  ctx.fillRect(2, -17, 1, olhoAlto);
   }
   if (base === 1 || base === 2) {
   ctx.fillStyle = colors.skin;

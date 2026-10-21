@@ -156,6 +156,10 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 - [x] copa de árvore arredondada em spans de 1 px, com camadas, tronco e sombra
 - [x] a caverna pinta chão e parede num canvas por descida: o xadrez de 16 px
       saiu, entrou rachadura, cascalho, cogumelo e parede com borda serrada
+- [x] pixel em 2x: sprite de asset nasce em 4x pixels, copa e construção usam
+      passo de 0,5 px, chão ganha duas passadas de detalhe fino, e fogo, fumaça,
+      espuma, gaivota, capim, água, boneco e bicho animam mais
+      (`docs/design/17-PIXELS.md`). Medido: 60 fps parado, +1,2 ms andando
 - [x] camada de ambiente por cima do chão: vegetação, construção, fogo, água e
       props em grupos com paleta por bioma, cache LRU de sprite e desenho só da
       vista (`docs/design/15-ASSETS.md`); medido 2.416 peças nas 86 áreas, 60 fps

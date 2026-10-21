@@ -770,13 +770,15 @@ export function createRenderer(canvas, world) {
   // pequeno de posição, então dá para ver o vento atravessando o campo.
   function drawWindBlades(x, y, t, time) {
     const rajada = gustAt(x, y, time, moodAtual);
-    if (rajada < 0.34) return;
+    // mesmo sem rajada o capim balança devagar: o campo não é estátua
+    const forca = Math.max(0.22, rajada);
     const px = x * TILE;
     const py = y * TILE;
     const lado = swayAt(x, y, time, moodAtual) >= 0 ? 1 : -1;
-    const curva = Math.round(1 + rajada * 2);
+    const curva = Math.round(1 + forca * 2);
     ctx.fillStyle = t === K.MOSS ? "rgba(126, 196, 150, 0.55)" : "rgba(154, 214, 132, 0.5)";
-    for (let i = 0; i < 3; i++) {
+    const quantas = rajada > 0.34 ? 3 : 2;
+    for (let i = 0; i < quantas; i++) {
       if (hash2(x * 3 + i, y * 5 + 1) < 0.3) continue;
       const bx = px + 2 + Math.floor(hash2(x + i * 7, y + 2) * 12);
       const by = py + 14;
@@ -784,6 +786,7 @@ export function createRenderer(canvas, world) {
       ctx.fillRect(bx, by - sobe, 1, sobe);
       ctx.fillRect(bx + lado, by - sobe - 1, 1, 1);
       ctx.fillRect(bx + lado * curva, by - sobe, 1, 1);
+      ctx.fillRect(bx + lado * curva + 1, by - sobe - 0.5, 0.5, 0.5);
     }
   }
 
@@ -807,6 +810,8 @@ export function createRenderer(canvas, world) {
         ctx.fillRect(lx + 1, yy + 1, Math.max(1, rx - lx - 1), 3);
         ctx.fillStyle = "rgba(255,255,255,0.06)";
         ctx.fillRect(lx + 1, yy + 1, Math.max(1, rx - lx - 1), 1);
+        ctx.fillStyle = "rgba(0,0,0,0.18)";
+        ctx.fillRect(lx + 1, yy + 3.5, Math.max(1, rx - lx - 1), 0.5);
       }
     }
     ctx.fillStyle = "rgba(6, 4, 14, 0.5)";
@@ -1450,9 +1455,8 @@ export function createRenderer(canvas, world) {
         groundGrain(g, tx, ty, world.get(tx, ty));
       }
     }
-    // LRU de 48 blocos: a vista maior (1280 px em 1,6) pede 12 blocos por
-    // quadro, então 48 dá 4 telas de folga e prende a memória em ~12,6 MB.
-    // Antes eram 120 blocos (~31,5 MB) para a mesma vista.
+    // LRU de 48 blocos de 16x16 tiles: a vista pede 12, então 48 dá folga e
+    // prende a memória em ~12,6 MB.
     while (chunkCache.size >= 48) {
       const oldest = chunkCache.keys().next().value;
       if (oldest === undefined) break;
@@ -1464,6 +1468,14 @@ export function createRenderer(canvas, world) {
 
   function drawWaterMagma(x, y, t, time) {
     drawGroundOn(ctx, x, y, t, time, true);
+    // brilho de meio pixel viajando: a água ganha uma segunda camada fina
+    const px = x * TILE, py = y * TILE;
+    const fase = (time * 0.0007 + hash2(x, y)) % 1;
+    const cor = t === K.WATER ? "rgba(200,240,255,0.22)" : "rgba(255,150,80,0.18)";
+    ctx.fillStyle = cor;
+    ctx.fillRect(px + fase * 13, py + 3.5 + hash2(y, x) * 5, 2, 0.5);
+    ctx.fillStyle = t === K.WATER ? "rgba(255,255,255,0.10)" : "rgba(255,220,150,0.10)";
+    ctx.fillRect(px + ((fase + 0.45) % 1) * 13, py + 9.5, 1.5, 0.5);
   }
 
   function draw(now, player, peers, npcs, cat, moving, rastreador = false, vitais = null) {
@@ -1518,6 +1530,24 @@ export function createRenderer(canvas, world) {
       }
     }
     stats.terrainMs = stats.terrainMs ? stats.terrainMs * 0.9 + (performance.now() - tTerrain) * 0.1 : performance.now() - tTerrain;
+    // detalhe de meio pixel do chão, ao vivo e em três passadas de cor: o
+    // chão ganha quatro pixels de desenho por pixel antigo sem inflar o cache
+    const detalhe = (cor, semente, tamanho) => {
+      ctx.fillStyle = cor;
+      for (let y = y0; y <= y1; y++) {
+        for (let x = x0; x <= x1; x++) {
+          const t = world.get(x, y);
+          if (t === K.TREE || t === K.WALL || t === K.WATER || t === K.MAGMA) continue;
+          const h = hash2(x * 29 + semente, y * 31 + semente * 3);
+          if (h < 0.22) continue;
+          const px = x * TILE + 0.5 + hash2(x + semente, y + 3) * 15;
+          const py = y * TILE + 0.5 + hash2(x + 5, y + semente) * 15;
+          ctx.fillRect(px, py, tamanho, tamanho * 0.5);
+        }
+      }
+    };
+    detalhe("rgba(0,0,0,0.10)", 7, 1);
+    detalhe("rgba(255,255,255,0.07)", 13, 0.5);
     stats.tiles = (x1 - x0 + 1) * (y1 - y0 + 1);
     stats.chunks = chunks;
 
