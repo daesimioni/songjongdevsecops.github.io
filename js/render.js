@@ -848,11 +848,11 @@ export function createRenderer(canvas, world) {
   function drawStation(s, time) {
     const px = s.x * TILE, py = s.y * TILE;
     const pulse = 0.5 + Math.sin(time * 0.0024 + s.x) * 0.5;
-    // subárea tem pedestal menor: a ilha tem várias e o ícone grande encostava
-    // no da estação vizinha
-    const k = s.minor ? 0.72 : 1;
-    const halo = Math.round(36 * k);
-    ctx.globalAlpha = (s.minor ? 0.34 : 0.62) + pulse * 0.3;
+    // subárea tem totem um pouco menor: a ilha tem várias e o monumento
+    // grande encostava no da estação vizinha
+    const k = s.minor ? 0.72 : 0.92;
+    const halo = Math.round(30 * k);
+    ctx.globalAlpha = (s.minor ? 0.22 : 0.4) + pulse * 0.22;
     ctx.drawImage(glowSprite(s.accent), px - halo, py - halo, halo * 2, halo * 2);
     ctx.globalAlpha = 1;
 
@@ -899,25 +899,101 @@ export function createRenderer(canvas, world) {
       return;
     }
 
-    // pedestal comum
-    ctx.fillStyle = "rgba(2,6,10,0.35)";
-    ctx.beginPath(); ctx.ellipse(px, py + 9 * k, 14 * k, 4.5 * k, 0, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = "#141a2e";
-    ctx.fillRect(px - 13 * k, py - 3 * k, 26 * k, 10 * k);
-    ctx.fillStyle = "#232c48";
-    ctx.fillRect(px - 12 * k, py - 4 * k, 24 * k, 3 * k);
-    ctx.fillStyle = hexA(s.accent, 0.35);
-    ctx.fillRect(px - 10 * k, py - 4 * k, 20 * k, 1);
-    ctx.fillStyle = "#0d1220";
-    for (const [dx, dy] of [[-11, 3], [9, 3], [-11, -1], [9, -1]]) {
-      ctx.fillRect(px + dx * k, py + dy * k, 2, 2);
+    drawTotem(s, px, py, k, time);
+  }
+
+  // O totem de conhecimento: lajotas no chão, degraus, fuste de pedra com
+  // runas gastas, capitel e o sigilo aceso logo acima. Antes era uma placa
+  // escura com o ícone solto no ar, e lia como enfeite caído no chão.
+  function drawTotem(s, px, py, k, time) {
+    const h = hash2(s.x, s.y);
+    const pulso = 0.5 + Math.sin(time * 0.0021 + h * 6.283) * 0.5;
+    // luz no adro: o totem acende o chão em volta, então ele se acha de longe
+    ctx.globalAlpha = 0.24 + pulso * 0.14;
+    ctx.drawImage(glowSprite(s.accent), px - 26 * k, py - 20 * k, 52 * k, 52 * k);
+    ctx.globalAlpha = 1;
+    // lajotas do adro: doze pedras em volta da base, meio-pixel de brilho
+    ctx.fillStyle = "rgba(2,6,10,0.42)";
+    ctx.beginPath(); ctx.ellipse(px, py + 7 * k, 19 * k, 6 * k, 0, 0, Math.PI * 2); ctx.fill();
+    for (let i = 0; i < 12; i++) {
+      const a = (i / 12) * Math.PI * 2 + h;
+      const raio = 14 + (i % 3) * 1.6;
+      const sx = Math.round(px + Math.cos(a) * raio * k);
+      const sy = Math.round(py + 5 + Math.sin(a) * 5.4 * k);
+      ctx.fillStyle = i % 2 ? "#4b5679" : "#333c5a";
+      ctx.fillRect(sx - 2, sy - 1, 5, 3);
+      ctx.fillStyle = "rgba(255,255,255,0.16)";
+      ctx.fillRect(sx - 2, sy - 1, 5, 1);
     }
-    const beam = ctx.createLinearGradient(px, py - 4, px, py - 28);
-    beam.addColorStop(0, hexA(s.accent, 0.16));
-    beam.addColorStop(1, hexA(s.accent, 0));
-    ctx.fillStyle = beam;
-    ctx.fillRect(px - 8 * k, py - 30 * k, 16 * k, 28 * k);
-    drawStationIcon(s.icon, px, py - 24 * k, time, s.accent, k);
+    // degraus: dois blocos, o de cima recuado
+    ctx.fillStyle = "#1d2438";
+    ctx.fillRect(px - 12 * k, py + 2 * k, 24 * k, 5 * k);
+    ctx.fillStyle = "#39425f";
+    ctx.fillRect(px - 10 * k, py - 2 * k, 20 * k, 5 * k);
+    ctx.fillStyle = "#5b6894";
+    ctx.fillRect(px - 10 * k, py - 2 * k, 20 * k, 1);
+    // fuste: face iluminada à esquerda, ombro escuro à direita
+    const topo = py - 27 * k;
+    ctx.fillStyle = "#46516f";
+    ctx.fillRect(px - 8 * k, topo, 16 * k, 25 * k);
+    ctx.fillStyle = "#66739e";
+    ctx.fillRect(px - 8 * k, topo, 3 * k, 25 * k);
+    ctx.fillStyle = "#2b3349";
+    ctx.fillRect(px + 5 * k, topo, 3 * k, 25 * k);
+    ctx.fillStyle = "rgba(255,255,255,0.12)";
+    ctx.fillRect(px - 6 * k, topo + 1 * k, 1, 23 * k);
+    // tabuleta gravada: o painel rebaixado é o que faz o fuste ler como
+    // pedra de conhecimento, e não como coluna lisa
+    ctx.fillStyle = "#2f3854";
+    ctx.fillRect(px - 5 * k, topo + 4 * k, 10 * k, 14 * k);
+    ctx.fillStyle = "#5d6a96";
+    ctx.fillRect(px - 5 * k, topo + 4 * k, 10 * k, 1);
+    ctx.fillRect(px - 5 * k, topo + 4 * k, 1, 14 * k);
+    ctx.fillStyle = "#1b2134";
+    ctx.fillRect(px - 5 * k, topo + 17 * k, 10 * k, 1);
+    ctx.fillRect(px + 4 * k, topo + 4 * k, 1, 14 * k);
+    // runas gravadas, acesas de leve dentro da tabuleta
+    ctx.fillStyle = hexA(s.accent, 0.45 + pulso * 0.25);
+    for (let i = 0; i < 3; i++) {
+      const ry = Math.round(topo + (7 + i * 4) * k);
+      ctx.fillRect(Math.round(px - 2 * k), ry, Math.round(4 * k), 1);
+      ctx.fillRect(Math.round(px - 2 * k), ry + Math.round(1 * k), Math.round(2 * k), 1);
+    }
+    // capitel
+    ctx.fillStyle = "#55628c";
+    ctx.fillRect(px - 10 * k, topo - 5 * k, 20 * k, 5 * k);
+    ctx.fillStyle = "#7d8bb8";
+    ctx.fillRect(px - 10 * k, topo - 5 * k, 20 * k, 1);
+    // braços do totem: dois blocos curtos no ombro, para não ler como coluna lisa
+    ctx.fillStyle = "#3d4866";
+    ctx.fillRect(px - 12 * k, topo - 3 * k, 3 * k, 4 * k);
+    ctx.fillRect(px + 9 * k, topo - 3 * k, 3 * k, 4 * k);
+    ctx.fillStyle = "#66739e";
+    ctx.fillRect(px - 12 * k, topo - 3 * k, 3 * k, 1);
+    ctx.fillRect(px + 9 * k, topo - 3 * k, 3 * k, 1);
+    ctx.fillStyle = "#121728";
+    ctx.fillRect(px - 10 * k, topo, 20 * k, 1);
+    // pedras soltas e musgo na base
+    ctx.fillStyle = "#4b5679";
+    ctx.fillRect(Math.round(px - 16 * k), py + 4 * k, 3, 2);
+    ctx.fillRect(Math.round(px + 13 * k), py + 6 * k, 4, 2);
+    ctx.fillStyle = "#4b7a5c";
+    ctx.fillRect(Math.round(px - 11 * k), py + 6 * k, 2, 1);
+    ctx.fillRect(Math.round(px + 8 * k), py + 7 * k, 3, 1);
+    ctx.fillRect(Math.round(px - 6 * k), py + 7 * k, 2, 1);
+    // sigilo: o desenho da pedra flutua abaixo do capitel, com brilho próprio
+    const gy = topo - 9 * k;
+    ctx.globalAlpha = 0.45 + pulso * 0.4;
+    ctx.drawImage(glowSprite(s.accent), px - 17 * k, gy - 17 * k, 34 * k, 34 * k);
+    ctx.globalAlpha = 0.92;
+    drawStationIcon(s.icon, px, gy, time, s.accent, 0.66 * k);
+    ctx.globalAlpha = 1;
+    // vaga-lumes: três pontos girando devagar em volta do capitel
+    for (let i = 0; i < 3; i++) {
+      const a = time * 0.0006 + h * 6 + (i / 3) * Math.PI * 2;
+      ctx.fillStyle = hexA(s.accent, 0.35 + Math.sin(a * 3) * 0.2);
+      ctx.fillRect(Math.round(px + Math.cos(a) * 14 * k), Math.round(topo - 8 * k + Math.sin(a) * 7 * k), 1, 1);
+    }
   }
 
   function drawStationIcon(icon, px, py, time, accent, escala = 1) {

@@ -82,6 +82,7 @@ export function labFor(text, discipline, index) {
 
 const html = (text) => String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 export const topicLabel = (text) => String(text || "").trim().replace(/[.;:]$/, "").trim();
+const semAcento = (text) => String(text || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, " ").trim();
 const hashText = (text) => {
   let h = 2166136261;
   for (let i = 0; i < text.length; i++) h = Math.imul(h ^ text.charCodeAt(i), 16777619);
@@ -134,30 +135,43 @@ export function subareaBody({ sectionNum, sectionName, discipline, name, topics,
     ? catalogNeighbors(catalogId).slice(0, 4).map((id) => CATALOG_BY_ID.get(id)?.short).filter(Boolean)
     : [];
   const conexoes = areasVizinhas.length
-    ? `<p>Os caminhos daqui seguem para ${areasVizinhas.map((v) => `<em>${html(v)}</em>`).join(", ")}.</p>`
+    ? `<p class="page-mapa"><strong>No mapa.</strong> Os caminhos daqui seguem para ${areasVizinhas.map((v) => `<em>${html(v)}</em>`).join(", ")}.</p>`
     : "";
   const linha = vizinhas.length
-    ? `<p>Na mesma área, outras pedras: ${vizinhas.map((s) => `<em>${html(s)}</em>`).join(", ")}.</p>`
+    ? `<p class="page-mapa"><strong>Perto daqui.</strong> Outras pedras da mesma seção: ${vizinhas.map((s) => `<em>${html(s)}</em>`).join(", ")}.</p>`
     : "";
   if (!licao) {
     return `<p class="page-epigrafe">${epigrafe(name)}</p>${abertura}<p><strong>${html(name)}</strong> é o nome desta pedra, no caminho de ${html(sectionName)}. Ela guarda ${topics.length} ${topics.length === 1 ? "marca" : "marcas"}.</p><ul>${lista}</ul>${pratica}${erro}${conexoes}${linha}`;
   }
   const marcas = Array.isArray(bankTopic?.keys) ? bankTopic.keys : [];
+  const defDoBanco = bankTopic?.def || "";
   const listaPerguntas = [...perguntas, licao.pergunta].filter((q) => q && q.q);
   const perguntam = listaPerguntas
     .filter((q) => q && q.q)
     .map((q) => {
-      const certa = Array.isArray(q.o) ? q.o[q.a] : q.answer;
+      // a pergunta do banco traz o (o array e o índice a); a da lição traz "a" como
+    // texto da resposta, então o fallback é q.a, não q.answer
+    const certa = Array.isArray(q.o) ? q.o[q.a] : q.a;
       return `<p><em>Se perguntarem</em> ${html(q.q)} <em>a resposta é</em> <strong>${html(certa || "")}</strong>. ${frase(q.why)}</p>`;
     })
     .join("");
+  // A pedra ensina um assunto só e na ordem da aula: o que é, o que guardar,
+  // como se usa, onde quebra, o limite, o que perguntam, o que levar e o que
+  // fazer com as mãos. Só depois vêm o que é da seção (prática e armadilha) e
+  // o que é do mapa (pedras irmãs e áreas vizinhas), rotulados, porque no meio
+  // da lição essas partes liam como mistura de assuntos.
   return [
     `<p class="page-epigrafe">${epigrafe(name)}</p>`,
     abertura,
-    `<p><strong>${html(name)}</strong> é o nome desta pedra, no caminho de ${html(sectionName)}. Ela guarda ${topics.length} ${topics.length === 1 ? "marca" : "marcas"}.</p>`,
-    `<p><strong>O que é.</strong> ${frase(licao.oQue)} ${frase(bankTopic?.def)}</p>`,
+    `<p><strong>${html(name)}</strong>, no caminho de ${html(sectionName)}.</p>`,
+    `<p><strong>O que é.</strong> ${frase(licao.oQue)}</p>`,
+    // A definição do banco entra só quando acrescenta: quando a lição já abre
+    // com as mesmas palavras, repetir a frase não ensina nada.
+    defDoBanco && !semAcento(licao.oQue).includes(semAcento(defDoBanco).split(" ").slice(0, 10).join(" "))
+      ? `<p><strong>A definição do banco.</strong> ${frase(defDoBanco)}</p>`
+      : "",
     licao.contexto ? `<p>${frase(licao.contexto)}</p>` : "",
-    marcas.length ? `<p>${marcas.map(frase).join(" ")}</p>` : "",
+    marcas.length ? `<p><strong>O que guardar.</strong> ${marcas.map(frase).join(" ")}</p>` : "",
     `<p><strong>Como se usa.</strong> O caminho é sempre o mesmo, e o exemplo abaixo faz ele inteiro.</p>`,
     `<ol>${(licao.passos || []).map((p) => `<li>${frase(p)}</li>`).join("")}</ol>`,
     `<p>${frase(licao.exemplo)}</p>`,
@@ -166,11 +180,11 @@ export function subareaBody({ sectionNum, sectionName, discipline, name, topics,
     perguntam ? `<p><strong>O que perguntam.</strong> O bicho da área cobra a ideia, não a decoreba. Estes são os formatos que já apareceram:</p>${perguntam}` : "",
     `<blockquote><strong>Para levar.</strong> ${frase(licao.levar)}</blockquote>`,
     `<p><strong>Com as mãos.</strong> ${frase(licao.maos)}</p>`,
-    `<p><strong>As marcas desta pedra.</strong> ${topics.length} ${topics.length === 1 ? "marca" : "marcas"} para reconhecer no caminho: </p><ul>${lista}</ul>`,
+    `<p><strong>O que esta pedra cobre.</strong> ${topics.length} ${topics.length === 1 ? "marca" : "marcas"} do assunto, para reconhecer quando aparecerem:</p><ul>${lista}</ul>`,
     pratica,
     erro,
-    conexoes,
     linha,
+    conexoes,
   ].filter(Boolean).join("");
 }
 

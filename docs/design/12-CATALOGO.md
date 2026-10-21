@@ -138,3 +138,4 @@ Sem banco preenchido, a área não entra no jogo: o teste cobra cobertura.
 | enfeite e placa caindo no mar | ponto puxado para dentro da ilha | teste de decoração na água |
 | nome de NPC repetido e id com acento | elencos separados e ids sem acento | teste de nomes únicos |
 | ícones de estação sem desenho | terminal e placa desenhados | teste de cobertura de ícones |
+| página misturava outros assuntos e resposta vazia | a pedra ensina o assunto dela primeiro; definição do banco só entra quando acrescenta; lista de tópicos, prática e armadilha da seção e mapa vão para o fim, rotulados; a resposta da lição passou a ler o campo `a` | teste de totens: 454 páginas sem resposta vazia, ordem da lição e contraste do caminho |

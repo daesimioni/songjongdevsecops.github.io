@@ -80,3 +80,26 @@ posição de vento. Medido: 759 canais de pixel diferentes entre inclinação ze
 
 Não há atlas de sprite: `drawImage` de canvas pequeno é o caminho barato no
 canvas 2D e o cache já evita repintura.
+
+## Totens de conhecimento
+
+A estação deixou de ser uma placa escura com o ícone flutuando solto. Agora é um
+monumento de pedra desenhado no renderer (`drawTotem`), com:
+
+- **adro** de doze lajotas em volta da base, cada uma com meio-pixel de brilho;
+- dois **degraus** e um **fuste** de 16 px com face iluminada à esquerda, ombro
+  escuro à direita e braços curtos no ombro;
+- **tabuleta gravada** rebaixada no fuste, com três runas acesas na cor da área;
+- **capitel** com aresta clara e o **sigilo** do assunto logo acima, a 0,66 de
+  escala, com halo que pulsa e três vaga-lumes orbitando;
+- **musgo** e pedras soltas na base.
+
+O totem da subárea é 0,72 do tamanho do totem de seção, porque a ilha tem de 3 a
+11 estações e os monumentos encostavam uns nos outros.
+
+A picada até a pedra já existia na malha do mundo, mas nascia com o matiz do
+piso: em matemática o caminho era `#57462f` sobre piso `#2a2244` com o mesmo
+tom da área, e sumia. Agora o caminho é terra batida (`32` de matiz, luz `44` a
+`48`) e contrasta com o piso de todas as 86 ilhas. O teste `totens.test.mjs`
+cobra o contraste mínimo, a peça de cada parte do desenho e a ausência do
+pedestal antigo.

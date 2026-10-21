@@ -707,7 +707,7 @@ export const LICOES = {
       quebra:
         "Achar que orbital é uma órbita circular com raio definido. O elétron não tem trajetória determinada; o orbital dá a probabilidade de encontrá-lo. A imagem de planeta girando atrapalha a entender ligação, espectro e a própria leitura da tabela periódica.",
       limite:
-        "O modelo de níveis funciona bem para átomo isolado e para a química comum. Em átomo pesado, efeito relativístico e correlação eletrônica mexem nos níveis, e a conta simples precisa de correção.",
+        "O modelo de níveis funciona bem para átomo isolado e para a química comum. Em átomo pesado, efeito relativístico e correlação eletrônica mexem nos níveis, e a conta simples precisa de correção. Para íon, some ou tire elétrons antes de distribuir: a carga muda a contagem e a ordem dos níveis.",
       levar: "Próton é identidade; nêutron é massa; elétron é química.",
       maos:
         "Monte a configuração eletrônica de dois elementos vizinhos e compare a camada de valência.",
@@ -727,7 +727,7 @@ export const LICOES = {
       quebra:
         "Achar que espectro contínuo e de linhas são a mesma coisa. Contínuo vem de corpo quente e denso; linhas vêm de transição entre níveis. Sem separar os dois, a leitura da composição sai errada, e a linha de emissão vira ruído de fundo.",
       limite:
-        "Linha forte não é quantidade grande: a intensidade depende de temperatura, pressão e da própria transição. Ler abundância exige modelo, e a linha sozinha não fecha a conta.",
+        "Linha forte não é quantidade grande: a intensidade depende de temperatura, pressão e da própria transição. Ler abundância exige modelo, e a linha sozinha não fecha a conta. A largura da linha diz a pressão do gás: gás denso alarga o traço e apaga o detalhe fino.",
       levar: "O átomo assina com luz; o espectro é a assinatura.",
       maos:
         "Compare o espectro de uma lâmpada de sódio e de uma incandescente e marque a diferença.",
@@ -1186,7 +1186,7 @@ export const LICOES = {
       quebra:
         "Achar que a gasolina é substância pura. É mistura de hidrocarbonetos com faixa de ebulição e aditivos, e o comportamento no motor depende da mistura. Tratar como pura erra a volatilidade e a octanagem.",
       limite:
-        "O refino é otimização de mercado e de especificação, e a transição energética muda a demanda. A mesma planta pode precisar de outra mistura, e o ativo fica preso ao produto que ajudou a criar.",
+        "O refino é otimização de mercado e de especificação, e a transição energética muda a demanda. A mesma planta pode precisar de outra mistura, e o ativo fica preso ao produto que ajudou a criar. Octanagem, enxofre e ponto de fulgor são especificação, não propriedade única: o mesmo barril rende produtos diferentes conforme a planta.",
       levar: "Refinar é separar e recompor: a molécula certa para o uso certo.",
       maos:
         "Compare a faixa de ebulição de três frações e veja o que cada uma vira.",
@@ -1228,7 +1228,7 @@ export const LICOES = {
       quebra:
         "Achar que todo funcional dá o mesmo resultado. Cada um tem erro típico, e comparar números de funcionais diferentes sem declarar é comparar coisas distintas.",
       limite:
-        "DFT é teoria de estado fundamental; estado excitado e dinâmica pedem extensão. Sistema fortemente correlacionado escapa da aproximação simples, e o erro não é pequeno.",
+        "DFT é teoria de estado fundamental; estado excitado e dinâmica pedem extensão. Sistema fortemente correlacionado escapa da aproximação simples, e o erro não é pequeno. Antes de comparar números, declare funcional, base e geometria: sem isso o valor não é reproduzível nem por quem rodou a conta.",
       levar: "O funcional escolhe o que a conta enxerga; o erro vem junto.",
       maos:
         "Rode o mesmo sistema com dois funcionais e compare com o valor experimental.",
@@ -1290,7 +1290,7 @@ export const LICOES = {
       quebra:
         "Achar que exame de imagem é sempre inofensivo e pode repetir sem critério. Dose se acumula, e o risco é probabilístico. O princípio é justificar cada exame, não fazer por hábito.",
       limite:
-        "A dose medida no aparelho não é a dose no órgão, e o cálculo depende de modelo. Em criança e gestante, a sensibilidade muda, e a conta precisa de coeficiente próprio. O histórico de exames do paciente entra no cálculo, e não só o exame de agora.",
+        "A dose medida no aparelho não é a dose no órgão, e o cálculo depende de modelo. Em criança e gestante, a sensibilidade muda, e a conta precisa de coeficiente próprio. O histórico de exames do paciente entra no cálculo, e não só o exame de agora. A decisão é sempre comparar benefício e risco: não existe dose zero em exame que usa radiação.",
       levar: "Dose é energia por massa: o número tem que ser justificado.",
       maos:
         "Compare a dose de dois exames e discuta o que cada um acrescenta ao diagnóstico.",
@@ -3026,7 +3026,7 @@ export const LICOES = {
       quebra:
         "Calcular o produto pelo reagente que está em maior quantidade. O limitante é o que se esgota primeiro, e escolher o outro superestima o rendimento. A comparação em mol resolve.",
       limite:
-        "A conta supõe reação completa e pura. Reação lateral, impureza e perda mecânica reduzem o rendimento, e o processo real soma esses fatores.",
+        "A conta supõe reação completa e pura. Reação lateral, impureza e perda mecânica reduzem o rendimento, e o processo real soma esses fatores. Rendimento de cem por cento é hipótese de exercício, não promessa de bancada: a diferença entre o cálculo e a planta é o que a produção mede todo dia.",
       levar: "A equação dá a proporção; o limitante decide quanto sai.",
       maos:
         "Calcule o produto teórico de uma reação com dois reagentes e identifique o limitante.",
@@ -3046,7 +3046,7 @@ export const LICOES = {
       quebra:
         "Achar que a mudança de estado altera a substância. Vapor e gelo são água, com arranjo e energia diferentes. Confundir estado com identidade química leva a conclusão errada sobre reação.",
       limite:
-        "O diagrama de fase descreve substância pura. Mistura tem faixa de temperatura e composição variável, e o mapa simples não basta.",
+        "O diagrama de fase descreve substância pura. Mistura tem faixa de temperatura e composição variável, e o mapa simples não basta. Perto do ponto crítico, líquido e gás deixam de se distinguir, e a fronteira do diagrama desaparece. Em mistura, a curva de bolha e a de orvalho dizem a composição do vapor, e é por elas que a destilação se desenha.",
       levar: "Mudança de estado muda o arranjo, não a substância.",
       maos:
         "Desenhe o diagrama de fase da água e marque os pontos de fusão e ebulição.",
@@ -6692,6 +6692,8 @@ export const LICOES = {
       quebra:
         "O erro é apresentar número com cinco casas quando a medida só sustenta duas. A casa extra não é neutra: ela sugere que a diferença entre 23,48 e 23,50 é real, e quem decide com base nisso escolhe errado. Arredondar demais também mente, só para o outro lado. O critério é a incerteza, não o gosto de quem escreve.",
       levar: "Número sem incerteza promete precisão que ninguém mediu.",
+      limite:
+        "Incerteza não é só o erro do instrumento: ela soma o que a repetição mostra e o que a calibração garante, e as duas parcelas não se substituem. Medir mais vezes reduz a primeira e não corrige a segunda.",
       maos:
         "Meça cinco vezes algo com régua ou termômetro, calcule média e dispersão e escreva o resultado com o número de algarismos que a medida sustenta.",
     },

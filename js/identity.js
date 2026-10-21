@@ -258,7 +258,10 @@ for (const area of AREAS) {
   const sat = 28 + (ordem % 3) * 3 + (cruzamento ? 4 : 0);
   const base = corUnica(hue, sat - 6, Math.max(8, luz - 4));
   const floor = corUnica(hue, sat, luz);
-  const path = corUnica(hue, sat + 8, luz + 13);
+  // A picada é terra batida, não o piso um tom acima: com o mesmo matiz ela
+  // sumia no chão de cada ilha e o caminho até a pedra não existia aos olhos.
+  // O matiz puxa para a terra e a luz fica bem acima do piso.
+  const path = corUnica(32 + (ordem % 3) * 5, 28 + (ordem % 2) * 4, 44 + (ordem % 3) * 2);
   // acento mais claro que 60 de luz: roxo e azul em 57 rendem menos de 3:1
   // contra o piso, e o marcador do mapa some
   const accent = corUnica(hue, 58, 62 + (ordem % 3));
