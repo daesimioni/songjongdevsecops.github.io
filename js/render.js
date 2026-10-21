@@ -60,12 +60,18 @@ export function createRenderer(canvas, world) {
 
   let quality = 1;
 
+  // Teto de pixels do canvas. Antes o tamanho subia com o devicePixelRatio sem
+  // limite: tablet denso desenhava 2,5 MP e celular 1,3 MP, mais que o
+  // computador, e o quadro caía. Acima do teto, sobe por CSS.
+  const MAX_PIXELS = 2200000;
   function resize() {
     dpr = Math.min(2, window.devicePixelRatio || 1) * quality;
     vw = window.innerWidth;
     vh = window.innerHeight;
-    canvas.width = Math.round(vw * dpr);
-    canvas.height = Math.round(vh * dpr);
+    const bruto = vw * vh * dpr * dpr;
+    if (bruto > MAX_PIXELS) dpr *= Math.sqrt(MAX_PIXELS / bruto);
+    canvas.width = Math.max(320, Math.round(vw * dpr));
+    canvas.height = Math.max(240, Math.round(vh * dpr));
     // O tile de 16 px fica entre 24 e 40 px na tela. Antes o zoom subia até
     // 3,5 em monitor grande e cada bloco virava uma parede de 56 px.
     const z = Math.min(vw / 600, vh / 380);
@@ -1644,6 +1650,10 @@ export function createRenderer(canvas, world) {
   const CHUNK = 16;
   const chunkCache = new Map();
   const stats = { tiles: 0, chunks: 0, terrainMs: 0, drawMs: 0, fps: 60, quality: 1 };
+  // últimos quadros, para o p95, e o instante do último ajuste de qualidade
+  const amostrasQuadro = [];
+  let ultimoAjuste = 0;
+  let quadrosTotais = 0;
 
   function groundChunk(cx, cy) {
     const key = `${cx}:${cy}`;
@@ -1885,20 +1895,33 @@ export function createRenderer(canvas, world) {
     const frameEnd = performance.now();
     if (stats._prev) {
       const dt = frameEnd - stats._prev;
-      if (dt > 0 && dt < 250) stats.fps = stats.fps * 0.92 + (1000 / dt) * 0.08;
+      if (dt > 0 && dt < 250) {
+        stats.fps = stats.fps * 0.92 + (1000 / dt) * 0.08;
+        amostrasQuadro.push(dt);
+        if (amostrasQuadro.length > 45) amostrasQuadro.shift();
+      }
     }
     stats._prev = frameEnd;
     stats.drawMs = stats.drawMs ? stats.drawMs * 0.9 + (frameEnd - frameStart) * 0.1 : frameEnd - frameStart;
     stats.quality = quality;
-    // ponytail: resolução adaptativa simples (passos de 15%); troca por
-    // render em camadas quando houver mais efeitos por cima do chão.
-    if (stats.fps < 38 && quality > 0.6) {
-      quality = Math.max(0.6, quality - 0.15);
-      resize();
-    } else if (stats.fps > 56 && quality < 1) {
-      quality = Math.min(1, quality + 0.1);
-      resize();
+    // A qualidade olha o p95 do quadro, não a média: o engasgo é o que a pessoa
+    // sente, e a média esconde um quadro de 40 ms no meio de vinte de 16 ms.
+    if (quadrosTotais > 90 && amostrasQuadro.length >= 30 && frameEnd - ultimoAjuste > 1800) {
+      const ordenadas = [...amostrasQuadro].sort((a, b) => a - b);
+      const p95 = ordenadas[Math.floor(ordenadas.length * 0.95)];
+      // 60 Hz dá 16,7 ms por quadro: acima de 20 ms já é engasgo de verdade,
+      // e abaixo de 17,2 ms está liso e pode voltar a subir
+      if (p95 > 20 && quality > 0.7) {
+        quality = Math.max(0.7, quality - 0.12);
+        ultimoAjuste = frameEnd;
+        resize();
+      } else if (p95 < 17.2 && quality < 1) {
+        quality = Math.min(1, quality + 0.08);
+        ultimoAjuste = frameEnd;
+        resize();
+      }
     }
+    quadrosTotais++;
   }
 
   function drawNameTag(name, px, py, color) {

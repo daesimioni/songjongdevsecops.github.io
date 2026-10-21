@@ -385,6 +385,29 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
       conserto, escada diagonal da boca visível no recorte 5x, e nenhuma
       exceção no console
 
+### AB. Desempenho medido
+
+- [x] **teto de pixels** no canvas: 2,2 MP. O canvas crescia com o
+      `devicePixelRatio` sem limite, e um tablet denso desenhava 2,55 MP (mais
+      que o computador) e um celular 1,32 MP
+- [x] **qualidade pelo p95 do quadro**, não pela média: 60 Hz dá 16,7 ms, então
+      acima de 20 ms é engasgo de verdade e abaixo de 17,2 ms está liso e sobe
+      de novo. Piso de 0,7 para a arte não virar borrão, e 90 quadros de
+      aquecimento antes de decidir
+- [x] medido nos três perfis, antes e depois, com o mesmo jogo aberto no porto:
+
+| perfil | fps | p95 | pior quadro | canvas | memória |
+|---|---|---|---|---|---|
+| computador 1920x1080 | 48,3 → **58,5** | 23,7 → 20,5 ms | 34,7 → 26,2 ms | 1,68 → 1,02 MP | 14,9 → 13,2 MB |
+| tablet 1024x768 densidade 2 | 41,5 → **57,1** | 27,3 → 20,3 ms | 34,6 → 24,9 ms | 2,55 → 1,54 MP | 20,8 → 14,2 MB |
+| celular 390x844 densidade 3 | 60,3 → 60,2 | 17,5 → 17,3 ms | 19,6 → 21,7 ms | 1,32 → 0,97 MP | 18,1 → 16,4 MB |
+
+- limite conhecido: no Chromium sem GPU o p95 fica em ~20 ms e a qualidade
+  assenta no piso; numa máquina com GPU o p95 fica em ~17 ms e ela volta para 1,
+  que é o canvas 1:1 e mais nítido
+- próximo passo do item 33: cache de sprite para enfeite e criatura (hoje o
+  desenho custa 3 a 3,8 ms por quadro, não é o gargalo) e LRU no cache de bloco
+
 ## 3. Regras de desenho
 
 - A tela de título é a primeira impressão: vale com camadas, céu em degradê,
@@ -417,6 +440,7 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 
 | data | fase | o que entrou | prova |
 |---|---|---|---|
+| 2026-10-21 | AB | desempenho nos três perfis: teto de 2,2 MP no canvas (antes crescia com a densidade da tela) e qualidade pelo p95 do quadro com piso 0,7 e aquecimento de 90 quadros | navegador: computador 48,3 → 58,5 fps, tablet 41,5 → 57,1, celular 60,3 → 60,2; p95 de 23,7 e 27,3 para 20,5 e 20,3; canvas de 1,68 e 2,55 MP para 1,02 e 1,54; memória de 20,8 para 14,2 MB no tablet |
 | 2026-10-21 | AA | oito direções em tudo: passo diagonal com pose própria (cabeça deslocada, arma do lado, escudo atrás), bicho espelhando, NPC, gato, pet, casco e viajante; e o conserto do `skiffRear` que faltava importar e apagava o boneco com a nave ligada | navegador: quatro diagonais andando no mundo (dir 4, 5, 6, 7) com recorte do boneco, bichos da caverna em dir 4 e 7, boneco de costas na caverna visível depois do conserto, zero exceção; node: oito direções no gearView, direcaoBase e ladoDaDiagonal |
 | 2026-10-21 | H | minimapa recolhível: botão no canto fecha o mapa numa fita com coordenada e piso, com aria-expanded e rótulo trocando, e o estado guardado | navegador: caixa de 250x227 para 217x34, canvas escondido, coordenada ainda mudando ao andar (x 91 para 95), recolhido continuou recolhido depois de recarregar e o segundo clique reabriu |
 | 2026-10-21 | I | passeio dos bichos: ritmo por espécie (velocidade e pausa sorteadas), cadeia de dois ou três pontos, escolha do ponto mais longe dentro do campo, olhar em volta parado e chefe passeando devagar | navegador: 8 bichos na mesma caverna, 8 s de amostra, andado médio de 0,98 para 3,85 tiles, mínimo de 0 para 2,47, ninguém fora do campo (0,6 tile) e menor distância entre dois em 12,3 tiles; node verde |
