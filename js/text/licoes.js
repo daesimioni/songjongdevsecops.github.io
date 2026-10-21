@@ -3901,6 +3901,230 @@ export const LICOES = {
       },
     },
   },
+  "cs-distribuida": {
+    "Sistemas Distribuídos": {
+      contexto:
+        "Onde isso aparece: no banco replicado, no serviço de mensagem e na rede de loja. Vários nós cooperam, e a falha de um não pode derrubar o todo. Consistência, replicação e partição são as decisões centrais.",
+      oQue:
+        "Sistema distribuído é conjunto de nó que se comunica por rede e aparece como um serviço só. Replicação aumenta disponibilidade, partição divide carga, e a tolerância a falha é requisito. O teorema CAP diz que, sob partição, não se tem consistência e disponibilidade plenas ao mesmo tempo.",
+      passos: [
+        "Defina o que o usuário precisa: consistência forte ou disponibilidade.",
+        "Escolha a replicação e o protocolo de consenso.",
+        "Teste a falha de nó e de rede antes de produção.",
+      ],
+      exemplo:
+        "Um banco replicado em duas regiões precisa decidir o que fazer quando a rede entre elas cai: continuar aceitando escrita e reconciliar depois, ou recusar até restabelecer. A escolha é de negócio, e o teorema só formaliza o custo. Cada opção tem consequência no dado.",
+      quebra:
+        "Prometer consistência forte e disponibilidade total sob partição. O teorema mostra que não dá; a promessa falha no primeiro incidente de rede. A decisão precisa ser declarada antes.",
+      limite:
+        "CAP fala de partição, e a maioria do tempo não há partição. Fora dela, consistência e disponibilidade convivem, e a discussão real é de latência e de modelo de consistência.",
+      levar: "Sob partição, consistência e disponibilidade disputam.",
+      maos:
+        "Simule a queda de um nó e veja qual das duas propriedades o sistema sacrifica.",
+    },
+    "Armazenamento Distribuído": {
+      contexto:
+        "Onde isso aparece: no object storage, no banco replicado e no backup de região. O dado mora em vários lugares, e a cópia precisa ser consistente. Falha de disco, de nó e de região pede resposta diferente.",
+      oQue:
+        "Armazenamento distribuído replica dado em vários nó e regiões. A replicação geográfica protege contra falha de região inteira, e a recuperação de desastre testa se a cópia serve. Consistência e durabilidade são promessas distintas.",
+      passos: [
+        "Defina o alvo de durabilidade e de disponibilidade.",
+        "Escolha o fator e a distância da réplica.",
+        "Teste a restauração de verdade, não só o backup.",
+      ],
+      exemplo:
+        "Guardar três réplicas no mesmo prédio protege contra disco, não contra incêndio. Uma cópia em outra região protege, e custa latência de escrita. O desenho equilibra os dois riscos, e a restauração é o que prova que a cópia presta. A regra prática de três cópias em dois meios e uma fora do site resume o cuidado, e o teste de restauração é o que mostra que a cópia abre. A criptografia da réplica e a chave de recuperação fazem parte do desenho: cópia que ninguém consegue abrir não é cópia, e a chave precisa estar guardada fora do mesmo sistema que guarda o dado. O teste de recuperação inclui a chave, não só o arquivo.",
+      quebra:
+        "Achar que backup feito é backup que volta. Sem teste de restauração, o arquivo pode estar corrompido ou o procedimento errado. A recuperação é parte do desenho.",
+      limite:
+        "A réplica remota aumenta o custo e a latência. Para dado que muda rápido, a sincronização geográfica fica cara, e o modelo assíncrono aceita perda pequena em troca de velocidade.",
+      levar: "Durabilidade se prova restaurando, não gravando.",
+      maos:
+        "Restaure um backup antigo e meça o tempo até o serviço voltar.",
+      pergunta: {
+        q: "O que a replicação geográfica protege?",
+        a: "Contra falha de uma região inteira, mantendo cópia longe",
+        why: "A cópia em outra região sobrevive a desastre local, incêndio ou indisponibilidade do provedor; o custo é latência e sincronização.",
+      },
+    },
+    "Computação de Alto Desempenho": {
+      contexto:
+        "Onde isso aparece: na previsão de tempo, no treino de modelo e na simulação de engenharia. O problema é dividido entre processadores, e a comunicação custa. A lei de Amdahl limita o ganho antes da compra.",
+      oQue:
+        "Computação de alto desempenho usa paralelismo, cluster, supercomputador e GPU. A parte paralela acelera, e a parte serial não; a lei de Amdahl calcula o ganho máximo. MPI troca mensagem entre processo, e a comunicação é o gargalo crescente.",
+      passos: [
+        "Meça a fração paralelizável do código.",
+        "Aplique Amdahl e compare com o ganho esperado.",
+        "Meça a comunicação e o balanceamento entre nós.",
+      ],
+      exemplo:
+        "Código com 90% paralelizável tem ganho máximo de dez vezes, não importa quantos núcleos. Além disso, cada nó gasta tempo trocando dado, e a curva satura antes do teórico. A conta de Amdahl evita comprar máquina para ganho que não existe.",
+      quebra:
+        "Comprar mais núcleo sem medir a fração serial. O ganho satura e o custo continua crescendo. A lei de Amdahl mostra o teto antes do investimento.",
+      limite:
+        "Amdahl supõe fração fixa. Em problema que cresce com o dado, a parte paralela aumenta e o ganho pode superar a conta simples, e a lei de Gustafson descreve esse caso. Na prática, o balanceamento entre nós pesa tanto quanto a fração paralela, e um nó lento atrasa a barreira de sincronização.",
+      levar: "A parte serial é o teto do ganho paralelo.",
+      maos:
+        "Calcule o ganho máximo para 80%, 90% e 99% de código paralelo.",
+    },
+    "Sistemas de Nuvem": {
+      contexto:
+        "Onde isso aparece: na máquina alugada, no container e no serviço gerenciado. A nuvem oferece infraestrutura, plataforma ou software como serviço, e a escolha muda o controle e o custo. Virtualização e container são a base.",
+      oQue:
+        "Sistema de nuvem entrega infraestrutura, plataforma ou software. Virtualização isola máquina inteira, e container isola processo com menos custo. A computação de borda busca reduzir latência processando perto do usuário, em vez de mandar tudo ao data center.",
+      passos: [
+        "Escolha o modelo de serviço pelo controle que se quer.",
+        "Dimensione a região e o tipo de recurso.",
+        "Meça o custo e a latência no uso real.",
+      ],
+      exemplo:
+        "Serviço de vídeo que roda no data center distante acumula latência de rede. Processar na borda, perto do usuário, corta a ida e volta, e a experiência muda. O custo de gerenciar muitos pontos pequenos é o preço.",
+      quebra:
+        "Escolher o modelo de serviço pelo preço da hora e ignorar o custo operacional. Servidor gerenciado custa mais na fatura e menos em pessoa, e a conta total inverte a escolha. A reserva de recurso e o limite de gasto entram no desenho, senão o pico de tráfego vira fatura inesperada e o serviço é desligado no pior momento.",
+      limite:
+        "A nuvem não elimina capacidade nem falha. Região cai, cota estoura, e o desenho precisa de saída e de limite declarado, ou o incidente vira surpresa.",
+      levar: "Nuvem troca capex por contrato: o controle muda junto.",
+      maos:
+        "Compare a latência de processar no data center e na borda para uma requisição.",
+    },
+    "Computação de Borda": {
+      contexto:
+        "Onde isso aparece: na câmera inteligente, no carro e na fábrica. Processar perto do dispositivo corta a ida à nuvem. O dado pequeno sobe resumido, e o grande fica local.",
+      oQue:
+        "Computação de borda processa dado perto do dispositivo, e fog estende a nuvem para a camada intermediária. O ganho é latência e tráfego, e o custo é gerenciar muitos pontos. Sistema distribuído geograficamente precisa de sincronização e de política local.",
+      passos: [
+        "Meça a latência que o caso exige.",
+        "Decida o que processar localmente e o que subir.",
+        "Planeje atualização e monitoramento de cada ponto.",
+      ],
+      exemplo:
+        "Uma câmera de segurança que manda todo vídeo para a nuvem gasta banda e adiciona atraso. Processar o movimento no próprio dispositivo e subir só o evento reduz os dois. O modelo de dado muda junto. O que sobe é resumo ou alerta, e a nuvem guarda histórico e treina modelo; a divisão de trabalho entre as camadas é o projeto da borda. A atualização do software no ponto remoto também precisa de plano, porque ninguém vai até a câmera para instalar versão. A frota heterogênea e o ponto sem rede tornam a atualização parte crítica do projeto, e o rollback remoto precisa existir antes da primeira falha.",
+      quebra:
+        "Levar a nuvem inteira para a borda sem critério. Muitos pontos pequenos custam operação e atualização, e o ganho de latência não paga. A escolha é por carga, não por moda.",
+      limite:
+        "A borda tem menos recurso e menos observabilidade. Falha em ponto remoto é difícil de diagnosticar, e o desenho precisa prever operação offline.",
+      levar: "Borda é processar onde o dado nasce.",
+      maos:
+        "Meça a diferença de latência de processar um evento local e na nuvem.",
+      pergunta: {
+        q: "Por que processar na borda reduz latência?",
+        a: "Porque o dado não precisa atravessar a rede até o data center",
+        why: "A distância física e o número de saltos caem, e a resposta volta em menos tempo; o tráfego enviado à nuvem também diminui.",
+      },
+    },
+  },
+  "cs-sistemas": {
+    "Fundamentos": {
+      contexto:
+        "Onde isso aparece: no programa que trava, no servidor lento e na corrida de dado. Processo e thread são a unidade de execução, e o escalonador decide quem roda. A concorrência sem sincronização produz resultado imprevisível.",
+      oQue:
+        "Fundamentos de sistema operacional cobrem processo, thread, escalonamento, sincronização e concorrência. Processo tem memória própria e thread compartilha a do processo. Duas threads alterando a mesma variável sem sincronizar produzem resultado que depende da ordem, e a trava garante exclusão.",
+      passos: [
+        "Identifique o recurso compartilhado.",
+        "Proteja a seção crítica com trava ou operação atômica.",
+        "Teste com carga concorrente e verifique a ordem.",
+      ],
+      exemplo:
+        "Duas threads incrementam o mesmo contador mil vezes e o total sai menor que dois mil, porque a leitura e a escrita se intercalam. A trava serializa a seção crítica e o total fecha. O bug não aparece em teste de uma thread só. A operação atômica e a trava de leitura também evitam a corrida, e a escolha depende do padrão de acesso.",
+      quebra:
+        "Achar que o teste comum pega corrida de dado. A falha depende de intercalação rara e aparece em produção com carga. O teste precisa de concorrência real e de repetição.",
+      limite:
+        "Trava resolve exclusão e traz risco de deadlock. Com muitas travas, a ordem de aquisição precisa ser definida, senão dois processos se esperam para sempre.",
+      levar: "Concorrência sem sincronização é resultado que ninguém controla.",
+      maos:
+        "Rode o contador com duas threads sem trava e com trava e compare o total.",
+    },
+    "Memória": {
+      contexto:
+        "Onde isso aparece: no programa que consome memória demais e no sistema que fica lento. Memória virtual dá a cada processo um espaço próprio e usa disco quando falta. A página é a unidade de movimento.",
+      oQue:
+        "Memória virtual combina paginação e segmentação para isolar processo e permitir mais memória que a física. A falta de página faz o sistema buscar a página no armazenamento, e o custo aparece como lentidão. A memória compartilhada permite troca rápida entre processo.",
+      passos: [
+        "Identifique o padrão de acesso do programa.",
+        "Meça a falta de página e o consumo real.",
+        "Reduza o conjunto de trabalho ou aumente a memória disponível.",
+      ],
+      exemplo:
+        "Programa que percorre matriz por coluna com acesso por linha gera falta de página a cada passo, e o tempo explode. A mesma conta com acesso na ordem certa fica rápida. O sistema não mudou; o padrão mudou.",
+      quebra:
+        "Achar que memória virtual resolve qualquer falta de memória sem custo. A página vem do disco, e o disco é ordens de grandeza mais lento. O sintoma é o sistema arrastando, e o gerenciador de memória começa a despejar página para o disco cada vez mais.",
+      limite:
+        "A paginação depende de localidade. Programa com acesso aleatório em conjunto de trabalho grande sofre mesmo com memória adequada, e a solução é algoritmo, não mais RAM.",
+      levar: "Memória virtual dá espaço próprio, não velocidade infinita.",
+      maos:
+        "Meça a falta de página de um laço com acesso em ordem e em ordem trocada.",
+    },
+    "Armazenamento e Sistemas de Arquivos": {
+      contexto:
+        "Onde isso aparece: no arquivo do servidor, na permissão e na queda de energia. O sistema de arquivos organiza dado e metadado. O journaling protege contra corrupção na queda.",
+      oQue:
+        "Sistema de arquivos organiza arquivo, diretório, permissão e inode. O inode guarda metadado e aponta para os blocos, e a permissão decide quem lê e escreve. Journaling registra a operação antes de aplicar, e a recuperação desfaz o que ficou pela metade.",
+      passos: [
+        "Identifique o arquivo, o dono e a permissão.",
+        "Veja o metadado e o bloco em uso.",
+        "Confira a recuperação após queda simulada.",
+      ],
+      exemplo:
+        "Uma queda no meio da gravação pode deixar metadado inconsistente. Com journaling, o registro da operação permite desfazer ou completar na volta do sistema. Sem ele, a checagem demorada tenta consertar, e às vezes perde dado.",
+      quebra:
+        "Confundir backup com journaling. O journal protege a consistência do sistema, não recupera arquivo apagado por engano. A cópia é outra coisa. A permissão, por sua vez, é checada em cada acesso, e o modo de montagem pode alterar o comportamento do journal. Diretório com muitos arquivo pequeno custa metadado, e o sistema de arquivos escolhido pesa nesse caso. O ponto de montagem e o cache de metadado explicam por que a leitura repetida fica rápida e a varredura inicial demora.",
+      limite:
+        "Journaling protege metadado; o dado do arquivo pode ainda ficar inconsistente em queda. A garantia real depende do modo de montagem e do hardware.",
+      levar: "Journaling é o diário que o sistema lê ao acordar.",
+      maos:
+        "Simule gravação interrompida e veja o sistema de arquivos recuperar.",
+    },
+    "Núcleo e Interfaces": {
+      contexto:
+        "Onde isso aparece: no driver, na chamada de sistema e no módulo carregado. O núcleo controla o hardware e o acesso protegido. Monolítico e microkernel distribuem o serviço de forma diferente.",
+      oQue:
+        "Núcleo e interfaces cobrem kernel monolítico, microkernel, chamada de sistema, driver e módulo. O monolítico concentra os serviços no núcleo e ganha eficiência; o microkernel empurra driver e sistema de arquivo para o espaço do usuário e ganha isolamento ao custo de comunicação.",
+      passos: [
+        "Identifique o serviço e o modo de execução (núcleo ou usuário).",
+        "Veja a interface de chamada e o contrato.",
+        "Avalie o custo de comunicação e o risco de falha.",
+      ],
+      exemplo:
+        "Em microkernel, o driver de rede roda como processo e, se falhar, o sistema continua; em monolítico, a falha do driver pode derrubar tudo. A troca é desempenho contra isolamento. O contrato da chamada é o mesmo dos dois lados.",
+      quebra:
+        "Achar que driver roda sempre no núcleo. Em microkernel ele roda no usuário, e o custo de mensagem aparece. Projetar sem olhar o modelo erra a latência. O módulo carregado sob demanda permite adaptar o núcleo sem recompilar, e o contrato do módulo é o que mantém a estabilidade. A chamada de sistema é a fronteira de segurança: o núcleo valida o pedido antes de tocar o hardware, e o modo de execução muda junto: o processo pede, o núcleo decide, e o bit de privilégio separa os dois.",
+      limite:
+        "O microkernel não é sempre melhor. O custo de comunicação em carga alta pode superar o ganho de isolamento, e a escolha depende do perfil do sistema.",
+      levar: "Núcleo decide onde o serviço mora e quanto custa a conversa.",
+      maos:
+        "Compare o caminho de uma chamada de sistema num modelo monolítico e num microkernel.",
+      pergunta: {
+        q: "O que o microkernel empurra para o espaço do usuário?",
+        a: "Serviços como driver e sistema de arquivo",
+        why: "O microkernel mantém no núcleo só o mínimo e roda o resto como processo de usuário; isso isola falha ao custo de mais comunicação entre as partes.",
+      },
+    },
+    "Especializações": {
+      contexto:
+        "Onde isso aparece: no servidor, no celular e no sistema embarcado. Cada sistema operacional otimiza um perfil de uso. A escolha muda, não a física.",
+      oQue:
+        "Especializações incluem Linux, Windows, macOS, Unix e sistema móvel. Cada um prioriza coisa diferente: servidor prioriza estabilidade e rede, móvel prioriza energia e ciclo de vida de aplicativo, embarcado prioriza tempo real. A interface com o hardware é o que muda.",
+      passos: [
+        "Identifique o perfil: servidor, móvel ou embarcado.",
+        "Compare o que o sistema prioriza: energia, latência ou throughput.",
+        "Teste o caso do perfil, não o benchmark genérico.",
+      ],
+      exemplo:
+        "No celular, o sistema suspende aplicativo em segundo plano para economizar bateria; no servidor, o processo em segundo plano fica rodando. O mesmo código se comporta diferente, e a arquitetura precisa respeitar o ciclo de vida.",
+      quebra:
+        "Aplicar regra de servidor em dispositivo móvel. O processo é suspenso, a conexão cai, e a sincronização falha. O sistema móvel está cumprindo o papel dele. O mesmo raciocínio vale para embarcado: o sistema prioriza prazo fixo e previsibilidade, e a média não basta quando o motor precisa responder em milissegundo. O mesmo contraste aparece na nuvem gerenciada, onde o provedor escolhe o núcleo e o cliente escolhe a configuração. O tempo real exige análise de pior caso, e a média do servidor não serve de garantia. O mesmo critério de pior caso aparece no freio do carro e no controlador de voo.",
+      limite:
+        "A fronteira entre os perfis diminui, mas a prioridade continua. Container em móvel e servidor leve existem, e o caso de uso ainda decide.",
+      levar: "Sistema operacional é escolha de prioridade, não de ideologia.",
+      maos:
+        "Compare o comportamento de um processo em segundo plano no servidor e no celular.",
+      pergunta: {
+        q: "O que um sistema operacional móvel prioriza?",
+        a: "Consumo de energia e ciclo de vida do aplicativo",
+        why: "O dispositivo tem bateria limitada e memória pequena, então o sistema suspende aplicativo em segundo plano e controla o recurso com rigor diferente do servidor.",
+      },
+    },
+  },
 };
 
 // o nome da estação chega em caixa baixa do banco ("Grafos moleculares") e em
