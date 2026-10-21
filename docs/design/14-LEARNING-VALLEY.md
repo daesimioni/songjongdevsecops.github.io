@@ -156,6 +156,9 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 - [x] copa de árvore arredondada em spans de 1 px, com camadas, tronco e sombra
 - [x] a caverna pinta chão e parede num canvas por descida: o xadrez de 16 px
       saiu, entrou rachadura, cascalho, cogumelo e parede com borda serrada
+- [x] camada de ambiente por cima do chão: vegetação, construção, fogo, água e
+      props em grupos com paleta por bioma, cache LRU de sprite e desenho só da
+      vista (`docs/design/15-ASSETS.md`); medido 2.416 peças nas 86 áreas, 60 fps
 - [x] conferido: 60 fps a 1x, ~50 a 4x e ~46 a 6x de CPU; 1920x1080 em zoom 2;
       sem erro de console
 

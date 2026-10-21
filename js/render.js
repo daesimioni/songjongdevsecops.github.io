@@ -15,6 +15,7 @@ import { drawNpcKit } from "./npc-art.js";
 import { drawCaveFacade } from "./cave-art.js";
 import { gustAt, ondaAt, espumaAt, swayAt, windMood } from "./wind.js";
 import { escalaDaCamera, tilesNaVista } from "./camera.js";
+import { desenharAsset } from "./assets/index.js";
 import { criarAmbiente, ambienteDe } from "./ambient.js";
 
 const BODY_W = 12;
@@ -1926,6 +1927,37 @@ export function createRenderer(canvas, world) {
           d.y * TILE < camY - 40 || d.y * TILE > camY + viewH + 40) continue;
       drawables.push({ y: d.y * TILE + 14, fn: () => drawDecor(d, time) });
     }
+    // camada de ambiente: decalque de chão entra chapado agora, antes de quem
+    // tem volume; o resto entra na fila ordenada por y, como o decor
+    let assetsVisiveis = 0;
+    for (const a of world.ambiente || []) {
+      if (a.x * TILE < camX - 80 || a.x * TILE > camX + viewW + 80 ||
+          a.y * TILE < camY - 80 || a.y * TILE > camY + viewH + 80) continue;
+      if (a.camada === "chao") {
+        if (desenharAsset(ctx, a.tipo, a.x * TILE, a.y * TILE, {
+          tempo: time, bioma: BIOMES[a.bioma], seed: hash2(a.x * 7, a.y * 3), camada: "chao",
+        })) assetsVisiveis++;
+        continue;
+      }
+      drawables.push({
+        y: (a.y + 0.5) * TILE,
+        fn: () => {
+          const px = a.x * TILE;
+          const py = a.y * TILE + TILE / 2;
+          // fogo acende o chão em volta: o brilho pulsa e some no escuro
+          if (a.tipo === "fogueira" || a.tipo === "braseiro") {
+            ctx.save();
+            ctx.globalAlpha = 0.5 + Math.sin(time * 0.005 + a.x * 3) * 0.12;
+            ctx.drawImage(glowSprite("#ff9a55"), px - 36, py - 44);
+            ctx.restore();
+          }
+          if (desenharAsset(ctx, a.tipo, px, py, {
+            tempo: time, bioma: BIOMES[a.bioma], seed: hash2(a.x * 5, a.y * 11),
+          })) assetsVisiveis++;
+        },
+      });
+    }
+    stats.assets = 0;
     const onScreen = (wx, wy, pad = 48) => {
       const px = wx * TILE;
       const py = wy * TILE;
@@ -1997,6 +2029,7 @@ export function createRenderer(canvas, world) {
     });
     jogadorAtual = player;
     drawables.sort((a, b) => a.y - b.y).forEach((d) => d.fn());
+    stats.assets = assetsVisiveis;
 
     // partículas
     for (const m of motes) {

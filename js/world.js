@@ -5,6 +5,7 @@ import {
 import { GROUNDS } from "./rpg-data.js";
 import { dungeonById } from "./dungeon-data.js";
 import { CATALOG_CONTENT } from "./catalog-gen.js";
+import { espalharAmbiente } from "./assets/povoado.js";
 import { CATALOG_BRIDGES, CATALOG_AREAS } from "./catalog-layout.js";
 import { AREA_ITEMS, BIOMES, npcStyle } from "./identity.js";
 
@@ -616,6 +617,18 @@ export function createWorld() {
     set(ix + 2, iy + 1, SAND);
   }
 
+  // ---- camada de ambiente: vegetação, construção, fogo, água e props ----
+  // A mesma regra em toda ilha, com a paleta e o material do bioma. Tudo é
+  // preso a tile macio, longe de caminho, praça, estação e pedra; a malha de
+  // caminhada não muda.
+  const ambiente = espalharAmbiente({
+    areas: AREAS,
+    get,
+    hash2,
+    waystones: WAYSTONES,
+    livre: (x, y) => !nearUsed(x, y),
+  });
+
   // 8. estado de jogo
   const stations = SITES.map((s) => ({ ...s }));
   const waystones = WAYSTONES.map((w) => ({ ...w }));
@@ -1094,7 +1107,7 @@ export function createWorld() {
   }
 
   return {
-    tiles, decor, props, stations, waystones, npcs, hunters, monsters, caves, groundItems, takeGroundItem,
+    tiles, decor, ambiente, props, stations, waystones, npcs, hunters, monsters, caves, groundItems, takeGroundItem,
     cat: { ...CAT_SPAWN, facing: 1, t: 0, moving: false },
     get, set, isSolidTile, boxCollides, updateNpcs, setClima,
     continentAt, continentAtTile, areaAt, areaAtTile,
