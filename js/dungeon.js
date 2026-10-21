@@ -1011,6 +1011,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     cancelAnimationFrame(state.raf);
     state.raf = 0;
     state.paused = false;
+    pararSeguir();
     state.path = null;
     state.pending = null;
     state.keys.clear();
@@ -1187,9 +1188,9 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     return moved;
   }
 
-  function setPathTo(x, y, pending = null) {
-    state.path = null;
-    state.pending = pending;
+  function setPathTo(x, y, pending = null, silencioso = false) {
+    // acha antes de limpar: arrastar por cima da parede não pode parar a
+    // caminhada que já estava em curso
     const path = findPathIn(
       state.map.W,
       state.map.H,
@@ -1199,11 +1200,11 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
       { goalPad: PATH_PAD },
     );
     if (!path || !path.length) {
-      state.pending = null;
-      say("Não há passagem por ali.", 2200);
+      if (!silencioso) say("Não há passagem por ali.", 2200);
       return false;
     }
     state.path = path;
+    state.pending = pending;
     return true;
   }
 
@@ -2071,6 +2072,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     }
     if (k === "f") {
       e.preventDefault();
+      pararSeguir();
       interact();
       return;
     }
@@ -2082,6 +2084,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
       onInventory?.();
       return;
     }
+    if (["w", "a", "s", "d", "arrowup", "arrowdown", "arrowleft", "arrowright"].includes(k)) pararSeguir();
     state.keys.add(k);
   }
 
@@ -2091,8 +2094,48 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
   }
 
   function onBlur() {
+    pararSeguir();
     state.keys.clear();
     setSprint(false);
+  }
+
+  // Arrastar o chão da caverna também faz o boneco seguir o ponteiro. O
+  // caminho é refeito quando o cursor muda de tile, com respiro de 140 ms.
+  let seguindoPonteiro = false;
+  let seguirInicio = null;
+  let seguirUltimo = 0;
+  let seguirTile = "";
+
+  function pararSeguir() {
+    seguindoPonteiro = false;
+    seguirInicio = null;
+  }
+
+  function iniciarSeguir(e, goal) {
+    seguindoPonteiro = true;
+    seguirInicio = { x: e.clientX, y: e.clientY };
+    seguirUltimo = 0;
+    seguirTile = `${goal.x.toFixed(2)}:${goal.y.toFixed(2)}`;
+  }
+
+  function seguirNoPonteiro(e, agora) {
+    if (!seguindoPonteiro) return;
+    if (!state.open || state.paused || blocked() || !state.view) {
+      pararSeguir();
+      return;
+    }
+    if (seguirInicio && Math.hypot(e.clientX - seguirInicio.x, e.clientY - seguirInicio.y) < 12) return;
+    if (agora - seguirUltimo < 140) return;
+    const rect = canvas.getBoundingClientRect();
+    const { scale, camX, camY } = state.view;
+    const wx = ((e.clientX - rect.left) / scale + camX) / TILE;
+    const wy = ((e.clientY - rect.top) / scale + camY) / TILE;
+    const chave = `${Math.floor(wx)}:${Math.floor(wy)}`;
+    if (chave === seguirTile) return;
+    if (Math.hypot(wx - state.player.x, wy - state.player.y) < 0.6) return;
+    if (!setPathTo(wx, wy, null, true)) return;
+    seguirTile = chave;
+    seguirUltimo = agora;
   }
 
   function onPointer(e) {
@@ -2106,11 +2149,15 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     if (hit) {
       const d = Math.hypot(hit.x - state.player.x, hit.y - state.player.y);
       const clear = dungeonLineOfSight(state.map, state.player.x, state.player.y, hit.x, hit.y);
-      if (d <= 1.7 && clear) act(hit);
-      else setPathTo(hit.x, hit.y, hit);
+      if (d <= 1.7 && clear) {
+        pararSeguir();
+        act(hit);
+      } else if (setPathTo(hit.x, hit.y, hit, true)) {
+        iniciarSeguir(e, hit);
+      }
       return;
     }
-    setPathTo(wx, wy);
+    if (setPathTo(wx, wy, null, true)) iniciarSeguir(e, { x: wx, y: wy });
   }
 
   function onResize() {
@@ -2122,6 +2169,9 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
   window.addEventListener("blur", onBlur);
   window.addEventListener("resize", onResize);
   canvas?.addEventListener("pointerdown", onPointer);
+  window.addEventListener("pointermove", (e) => seguirNoPonteiro(e, clock()));
+  window.addEventListener("pointerup", pararSeguir);
+  window.addEventListener("pointercancel", pararSeguir);
   $("dg-exit")?.addEventListener("click", () => close("stairs", state.entryCave));
   $("dg-sheet")?.addEventListener("click", () => onSheet?.());
   $("dg-inventory")?.addEventListener("click", () => onInventory?.());

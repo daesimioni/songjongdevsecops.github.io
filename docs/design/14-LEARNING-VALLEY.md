@@ -63,6 +63,19 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 - [x] desempenho e carga medidos
 - [x] commit e push com evidência
 
+### R. Arrastar para andar
+
+- [x] segurar o botão e arrastar no chão faz o boneco seguir o ponteiro, sem
+      precisar de um clique por trecho
+- [x] o destino é recalculado quando o cursor muda de tile, com respiro de
+      140 ms; clique curto continua sendo clique
+- [x] arrastar por cima de água ou parede não cancela o caminho que já estava
+      em curso
+- [x] funciona na superfície e na caverna; o toque longo ainda abre o menu
+- [x] conferido no navegador: um pointerdown e dois movimentos andaram sozinhos
+      no mundo e na caverna, sem segundo clique; clique curto e menu de toque
+      longo continuam
+
 ### P. Equipamento por visão
 
 - [x] arma e escudo trocam de lado conforme a direção: frente, perfil esquerdo,
@@ -208,6 +221,7 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 
 | data | fase | o que entrou | prova |
 |---|---|---|---|
+| 2026-10-20 | R | arrastar para andar: segurar o botão e mover o ponteiro faz o boneco seguir o destino, com caminho recalculado por tile na superfície e na caverna; clique curto e toque longo continuam | navegador: um pointerdown e dois movimentos moveram o boneco no mundo e na caverna sem segundo clique, destino mudou no arrasto, clique curto abriu caminho, toque longo abriu o menu, console limpo |
 | 2026-10-20 | P | equipamento acompanha a visão: arma e escudo trocam de lado, de costas ficam atrás do corpo, elmo ganha frente, perfil e costas | node: gearView nas quatro direções; navegador: quatro capturas com arma, elmo, armadura e escudo e a prévia da mochila, console limpo |
 | 2026-10-20 | Q | névoa guardada com assinatura do mundo; save antigo revela a terra das áreas novas na primeira abertura e migra para r2 | navegador: névoa r1 com tudo zero migrou para r2 e a estação de uma área antiga apareceu no mapa, console limpo |
 | 2026-10-20 | O | desenho granular: zoom da superfície em 2x (antes 3,5x), grão de 1 px e tom por mancha, lajota na praça, pedra na parede, tábua na ponte, copa de árvore arredondada, dither na costa e no caminho; caverna com chão e parede pintados uma vez por descida | navegador: 1920x1080 em zoom 2, capturas antes/depois do porto, floresta e caverna, 60 fps a 1x, 49,8 a 4x e 46,5 a 6x de CPU, console limpo; node verde |

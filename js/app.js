@@ -2089,13 +2089,15 @@ function clearPath() {
   player.pathGoal = null;
 }
 
-function setPathTo(x, y, pending = null) {
-  clearPath();
+function setPathTo(x, y, pending = null, silencioso = false) {
+  // acha o caminho antes de limpar: arrastar por cima da água não pode
+  // interromper a caminhada que já estava em curso
   const path = findPath(world, { x: player.x, y: player.y }, { x, y });
   if (!path || !path.length) {
-    toast("Não achei um caminho até aí.", 2800);
+    if (!silencioso) toast("Não achei um caminho até aí.", 2800);
     return false;
   }
+  clearPath();
   state.path = path;
   state.pending = pending;
   player.pathLine = path;
@@ -2498,7 +2500,10 @@ window.addEventListener("keydown", (e) => {
     interact();
     return;
   }
-  if (["w", "a", "s", "d", "arrowup", "arrowdown", "arrowleft", "arrowright"].includes(k)) clearPath();
+  if (["w", "a", "s", "d", "arrowup", "arrowdown", "arrowleft", "arrowright"].includes(k)) {
+    pararSeguir();
+    clearPath();
+  }
   state.keys.add(k);
 });
 window.addEventListener("keyup", (e) => {
@@ -2702,6 +2707,48 @@ $("world").addEventListener("contextmenu", (e) => {
   abrirMenuNoPonto(e.clientX, e.clientY);
 });
 
+// Arrastar o chão faz o boneco seguir o ponteiro, em vez de fixar um ponto.
+// O caminho é refeito quando o cursor muda de tile, com um respiro de 140 ms
+// para não rodar o A* a cada pixel.
+let seguindoPonteiro = false;
+let seguirInicio = null;
+let seguirUltimo = 0;
+let seguirTile = "";
+
+function pararSeguir() {
+  seguindoPonteiro = false;
+  seguirInicio = null;
+}
+
+function iniciarSeguir(e, goal) {
+  seguindoPonteiro = true;
+  seguirInicio = { x: e.clientX, y: e.clientY };
+  seguirUltimo = 0;
+  seguirTile = `${goal.x.toFixed(2)}:${goal.y.toFixed(2)}`;
+}
+
+function seguirNoPonteiro(e, agora) {
+  if (!seguindoPonteiro) return;
+  if (!state.started || state.panelOpen || state.modal || state.chatOpen || dungeon?.isOpen()) {
+    pararSeguir();
+    return;
+  }
+  // clique curto ainda é clique: só vira arrasto depois de 14 px
+  if (seguirInicio && Math.hypot(e.clientX - seguirInicio.x, e.clientY - seguirInicio.y) < 14) return;
+  if (agora - seguirUltimo < 140) return;
+  const rect = $("world").getBoundingClientRect();
+  const wx = ((e.clientX - rect.left) / renderer.zoom + renderer.camX) / 16;
+  const wy = ((e.clientY - rect.top) / renderer.zoom + renderer.camY) / 16;
+  const goal = nearestWalkable(world, wx, wy, 6);
+  if (!goal) return;
+  if (Math.hypot(goal.x - player.x, goal.y - player.y) < 0.6) return;
+  const chave = `${goal.x.toFixed(2)}:${goal.y.toFixed(2)}`;
+  if (chave === seguirTile) return;
+  if (!setPathTo(goal.x, goal.y, null, true)) return;
+  seguirTile = chave;
+  seguirUltimo = agora;
+}
+
 // toque longo abre o mesmo menu no celular
 let toqueMenuTimer = null;
 let toqueMenuOrigem = null;
@@ -2711,6 +2758,7 @@ $("world").addEventListener("pointerdown", (e) => {
   toqueMenuOrigem = { x: e.clientX, y: e.clientY };
   toqueMenuTimer = setTimeout(() => {
     if (!toqueMenuOrigem) return;
+    pararSeguir();
     clearPath();
     abrirMenuNoPonto(toqueMenuOrigem.x, toqueMenuOrigem.y);
     toqueMenuOrigem = null;
@@ -2748,8 +2796,8 @@ $("world").addEventListener("pointerdown", (e) => {
     if (d <= INTERACT_RADIUS + 0.7) {
       clearPath();
       interactTarget(hit);
-    } else {
-      setPathTo(hit.obj.x, hit.obj.y, hit);
+    } else if (setPathTo(hit.obj.x, hit.obj.y, hit)) {
+      iniciarSeguir(e, hit.obj);
     }
     return;
   }
@@ -2758,9 +2806,13 @@ $("world").addEventListener("pointerdown", (e) => {
     toast("Não dá para andar aí. A água e as paredes ficam de fora.", 3000);
     return;
   }
-  clearPath();
-  setPathTo(goal.x, goal.y, null);
+  if (setPathTo(goal.x, goal.y, null)) iniciarSeguir(e, goal);
 });
+
+window.addEventListener("pointermove", (e) => seguirNoPonteiro(e, performance.now()));
+window.addEventListener("pointerup", pararSeguir);
+window.addEventListener("pointercancel", pararSeguir);
+window.addEventListener("blur", pararSeguir);
 
 $("minimap-canvas").addEventListener("pointerdown", (e) => {
   if (!state.started || state.panelOpen || state.modal) return;

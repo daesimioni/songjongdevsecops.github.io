@@ -85,7 +85,9 @@ e o botão de concluir quando o objetivo está cumprido.
 ## Treino na superfície, caçada na caverna
 
 Clique no chão e o boneco anda até ali sozinho, contornando água, parede e
-árvore. Clique também no minimapa, desde que o ponto já esteja revelado. Clique
+árvore. Segure o botão e arraste: ele segue o ponteiro e recalcula o caminho a
+cada tile, sem precisar soltar e clicar de novo (na superfície e na caverna).
+Clique também no minimapa, desde que o ponto já esteja revelado. Clique
 numa estação, NPC ou boca de caverna para ele ir até perto e interagir. Se a
 conversa estiver aberta, o clique no mundo fecha a conversa e anda. WASD ou as
 setas cancelam o caminho.
