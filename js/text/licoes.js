@@ -3174,6 +3174,118 @@ export const LICOES = {
       },
     },
   },
+  "chem-bioquimica": {
+    "Biomoléculas": {
+      contexto:
+        "Onde isso aparece: no rótulo do alimento, no exame de sangue e no remédio. Cada classe de biomolécula tem função e estrutura própria. A ligação que monta a cadeia decide a propriedade do conjunto.",
+      oQue:
+        "Biomoléculas são aminoácido, carboidrato, lipídio e ácido nucleico. Cada classe tem monômero e ligação típica: aminoácido se une por ligação peptídica, açúcar por glicosídica, e nucleotídeo por fosfodiéster. A estrutura define a função. Celulose e amido são ambos polímero de glicose, e a diferença está na ligação: o corpo humano digere um e não o outro, e a mesma molécula vira alimento ou fibra. O teste de glicemia explora a velocidade de quebra: monossacarídeo sobe rápido, amido sobe devagar.",
+      passos: [
+        "Identifique a classe e o monômero.",
+        "Veja a ligação que une as unidades.",
+        "Relacione a estrutura com a função no organismo.",
+      ],
+      exemplo:
+        "Dois aminoácidos se unem pelo grupo carboxila de um com o amino do outro, e sai água: é a ligação peptídica. A cadeia cresce e a ordem dos aminoácidos vira informação. A mesma lógica monta proteína, amido e DNA, com monômero diferente.",
+      quebra:
+        "Achar que a ligação é igual em todas as classes. Peptídica, glicosídica e fosfodiéster são diferentes, e a enzima que quebra uma não quebra a outra. Generalizar erra a digestão e o teste.",
+      limite:
+        "A estrutura simples não explica toda função. Enovelamento, modificação e interação com membrana mudam o comportamento, e a bioquímica estrutural entra aí.",
+      levar: "Cada biomolécula tem monômero e ligação próprios.",
+      maos:
+        "Desenhe a ligação peptídica entre dois aminoácidos e marque a água que sai.",
+    },
+    "Estrutura e Função de Proteínas": {
+      contexto:
+        "Onde isso aparece: na enzima da digestão, no anticorpo e no receptor do remédio. A forma decide o encaixe, e o encaixe decide a função. Desnaturar a proteína é perder a forma e a função junto.",
+      oQue:
+        "Proteína tem estrutura primária, secundária, terciária e quaternária. O enovelamento leva a cadeia à forma ativa, e o sítio ativo encaixa no substrato. A enzima acelera a reação e sai livre no fim, pronta para catalisar de novo.",
+      passos: [
+        "Identifique a sequência e a estrutura da proteína.",
+        "Localize o sítio ativo e o substrato.",
+        "Veja como a forma muda com temperatura, pH ou ligante.",
+      ],
+      exemplo:
+        "A enzima digestiva trabalha no estômago ácido e perde função no intestino, porque o pH muda a forma. Já a enzima do intestino trabalha no pH básico. A mesma cadeia, formas diferentes, funções diferentes. A enzima não muda o equilíbrio da reação: ela acelera o caminho, e o equilíbrio final continua o mesmo. A especificidade vem do encaixe: substrato de forma errada não entra no sítio ativo.",
+      quebra:
+        "Achar que a enzima é consumida na reação. Ela sai livre e pode repetir o ciclo; o substrato é que vira produto. Confundir enzima com reagente erra o balanço e a dose.",
+      limite:
+        "A forma ativa depende do ambiente. Temperatura, pH e sal alteram o enovelamento, e a atividade cai antes de a proteína se desfazer por completo.",
+      levar: "Forma é função: desnaturar a proteína é desligar a máquina.",
+      maos:
+        "Compare a atividade de uma enzima em dois pH e veja onde ela para.",
+    },
+    "Metabolismo": {
+      contexto:
+        "Onde isso aparece: na dieta, no exercício e no exame de glicose. Metabolismo quebra para obter energia e sintetiza para construir. A via tem local próprio na célula, e o local importa.",
+      oQue:
+        "Metabolismo é o conjunto de reações da célula, dividido em catabolismo e anabolismo. A glicólise acontece no citoplasma e o ciclo do ácido cítrico e a fosforilação oxidativa na mitocôndria. A energia passa por transportador antes de virar ATP.",
+      passos: [
+        "Identifique a via e o local celular.",
+        "Veja qual molécula entra e qual sai.",
+        "Conte o saldo de ATP e de transportador de elétron.",
+      ],
+      exemplo:
+        "A glicólise quebra glicose em piruvato no citoplasma e rende pouco ATP. Se houver oxigênio, o piruvato entra na mitocôndria e o saldo cresce muito na fosforilação oxidativa. Sem oxigênio, a via para na fermentação, com saldo pequeno. O oxigênio é o aceptor final da cadeia, e é ele que permite extrair o resto da energia do alimento. O ciclo do ácido cítrico também fornece intermediário para a síntese de aminoácido e de lipídio, e por isso não é só via de queima.",
+      quebra:
+        "Achar que toda energia da glicose sai na glicólise. A maior parte vem da cadeia de elétron, na mitocôndria. Parar a conta na primeira via subestima o rendimento.",
+      limite:
+        "O esquema clássico descreve célula e tecido comuns. Metabolismo varia com tecido, hormônio e condição, e o mesmo caminho tem regulação própria em cada contexto.",
+      levar: "A célula quebra e constrói ao mesmo tempo, em locais diferentes.",
+      maos:
+        "Siga uma glicose da boca até a mitocôndria e anote o saldo em cada etapa.",
+    },
+    "Biologia Molecular Química": {
+      contexto:
+        "Onde isso aparece: no teste de paternidade, na vacina de RNA e na edição gênica. A informação está na sequência, e a química do ácido nucleico permite copiar e reparar. Erro na cópia vira mutação.",
+      oQue:
+        "Biologia molecular química estuda replicação, transcrição e tradução. O DNA copia pela complementaridade das bases, e o reparo corrige erro. A expressão gênica converte sequência em proteína, e a modificação química regula o processo.",
+      passos: [
+        "Identifique a fita molde e a base complementar.",
+        "Veja a etapa: replicação, transcrição ou tradução.",
+        "Acompanhe a modificação que regula a expressão.",
+      ],
+      exemplo:
+        "Na replicação, a adenina de uma fita pareia com timina da nova, e a guanina com citosina. A enzima copia e o reparo confere. Se a cópia troca uma base e o reparo não corrige, a mutação passa para a célula filha. O RNA mensageiro leva a receita ao ribossomo, e o transportador leva o aminoácido, e é nessa tradução que a sequência vira proteína. O reparo por excisão remove a base errada e a polimerase preenche o vazio; falha nesse reparo aparece ligada a câncer, e é por isso que a enzima de reparo é alvo de estudo.",
+      quebra:
+        "Tratar a cópia como perfeita. A polimerase erra às vezes, e o reparo é o que mantém a taxa baixa. Ignorar o reparo superestima a estabilidade do genoma.",
+      limite:
+        "O modelo de complementaridade não explica toda regulação. Metilação, estrutura da cromatina e RNA regulador mudam a expressão sem mudar a sequência.",
+      levar: "A informação está na sequência; a química copia, repara e regula.",
+      maos:
+        "Escreva a fita complementar de um trecho curto de DNA.",
+      pergunta: {
+        q: "O que a replicação do DNA garante?",
+        a: "Que cada célula filha receba uma cópia da informação",
+        why: "A complementaridade das bases permite copiar a fita molde com alta fidelidade, e o reparo corrige o erro que escapa, mantendo a informação ao longo das divisões.",
+      },
+    },
+    "Especializações": {
+      contexto:
+        "Onde isso aparece: no desenvolvimento de fármaco, no laudo clínico e na membrana celular. A especialização aplica a química a um problema concreto. O candidato a remédio precisa de efeito, seletividade e segurança.",
+      oQue:
+        "Especializações incluem química medicinal, bioquímica clínica, enzimologia, bioquímica estrutural e de membranas. A química medicinal otimiza estrutura para melhorar efeito e reduzir toxicidade, e a clínica mede marcador para diagnóstico. Cada área usa a mesma base com pergunta própria.",
+      passos: [
+        "Defina a pergunta prática: efeito, diagnóstico ou estrutura.",
+        "Escolha o método e o modelo adequados.",
+        "Valide com dado de paciente, de ensaio ou de estrutura.",
+      ],
+      exemplo:
+        "Na química medicinal, trocar um grupo da molécula pode aumentar a potência e piorar a solubilidade. O candidato precisa passar por absorção, metabolismo e toxicidade, e cada etapa é uma disciplina. A otimização é negociação entre propriedades, não busca de um número só. O ensaio clínico compara com controle, e o efeito precisa superar o risco para o candidato virar remédio. A bioquímica clínica usa marcador para diagnóstico precoce: a enzima do fígado no sangue indica lesão, e a leitura depende do valor de referência da população. A bioquímica de membranas, por sua vez, estuda o transporte e o receptor, e é ali que muitos fármacos agem, do anestésico ao antialérgico.",
+      quebra:
+        "Achar que molécula potente no tubo é remédio. Absorção, distribuição, metabolismo e excreção decidem se ela chega ao alvo. A potência é uma parte da conta.",
+      limite:
+        "O modelo de laboratório não representa todo paciente. População, genética e doença mudam a resposta, e o ensaio clínico é o que fecha a avaliação.",
+      levar: "Remédio é molécula que chega ao alvo e sai sem estrago.",
+      maos:
+        "Compare duas moléculas parecidas e liste o que muda em potência e em solubilidade.",
+      pergunta: {
+        q: "O que a química medicinal busca ao otimizar um candidato?",
+        a: "Melhorar o efeito no alvo e reduzir a toxicidade ao mesmo tempo",
+        why: "A otimização negocia potência, seletividade, absorção e segurança; melhorar só um dos números pode inviabilizar o candidato.",
+      },
+    },
+  },
 };
 
 // o nome da estação chega em caixa baixa do banco ("Grafos moleculares") e em
