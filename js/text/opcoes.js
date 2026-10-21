@@ -1858,5 +1858,550 @@ export const OPCOES_MELHORES = {
           "Indicar a validade do reagente"
     ],
     "a": 0
+  },
+  "Um limite descreve...": {
+    "o": [
+          "o valor que uma sequência se aproxima",
+          "o valor máximo que a sequência atinge",
+          "a média aritmética dos termos dela",
+          "o primeiro termo da sequência dada",
+          "a soma de todos os termos da lista"
+    ],
+    "a": 0
+  },
+  "O que significa dizer que uma sequência converge para L?": {
+    "o": [
+          "Os termos ficam tão perto de L quanto se queira, a partir de certo ponto.",
+          "Em algum índice a sequência vale exatamente L.",
+          "A média dos termos da sequência é L.",
+          "A sequência é sempre crescente e termina em L.",
+          "Todos os termos ficam iguais a L depois de um ponto."
+    ],
+    "a": 0
+  },
+  "Numa rede de visão, a convolução serve para...": {
+    "o": [
+          "combinar cada pixel com a vizinhança, procurando padrões locais.",
+          "guardar a imagem inteira dentro de uma única cor.",
+          "traduzir a imagem em texto para o usuário.",
+          "apagar o ruído da imagem por completo.",
+          "aumentar a resolução da imagem de entrada."
+    ],
+    "a": 0
+  },
+  "O que um autovetor representa numa transformação linear?": {
+    "o": [
+          "Uma direção que a transformação não muda de sentido",
+          "Um vetor de tamanho zero por definição",
+          "A soma de todas as colunas da matriz",
+          "O determinante da matriz aplicada",
+          "Uma linha nula da matriz original"
+    ],
+    "a": 0
+  },
+  "O que um homeomorfismo preserva?": {
+    "o": [
+          "A estrutura topológica dos espaços",
+          "As distâncias exatas entre os pontos",
+          "Os ângulos entre as retas do plano",
+          "As áreas das figuras transformadas",
+          "As coordenadas dos pontos na malha"
+    ],
+    "a": 0
+  },
+  "O que é um equilíbrio de Nash?": {
+    "o": [
+          "Situação em que ninguém ganha mudando sozinho de estratégia",
+          "O resultado com a maior soma de pontos",
+          "O jogo sem nenhum vencedor declarado",
+          "A estratégia mais arriscada da rodada",
+          "O ponto de partida de qualquer jogo"
+    ],
+    "a": 0
+  },
+  "O que o princípio da mínima ação determina?": {
+    "o": [
+          "O caminho que extremiza a ação entre dois pontos no tempo",
+          "A velocidade da luz em qualquer vácuo",
+          "A massa da partícula em movimento",
+          "O campo magnético gerado pela carga",
+          "A temperatura do sistema isolado"
+    ],
+    "a": 0
+  },
+  "O que um isômero tem igual ao outro?": {
+    "o": [
+          "A fórmula molecular, com arranjo diferente",
+          "A estrutura completa dos átomos",
+          "A propriedade química observada",
+          "O ponto de ebulição da substância",
+          "A cor e a reatividade química"
+    ],
+    "a": 0
+  },
+  "O que o problema SAT pergunta?": {
+    "o": [
+          "Se existe atribuição que torna a fórmula verdadeira",
+          "Qual é a raiz da equação dada",
+          "Quanto tempo o programa leva para rodar",
+          "Qual o tipo da variável de entrada",
+          "Quantas linhas tem o código fonte"
+    ],
+    "a": 0
+  },
+  "Por que a IA científica precisa de conhecimento de domínio?": {
+    "o": [
+          "Para descartar previsão que viola lei conhecida",
+          "Para treinar o modelo mais rápido",
+          "Para reduzir a memória usada no treino",
+          "Para escolher a cor do gráfico",
+          "Para traduzir os artigos antigos"
+    ],
+    "a": 0
+  },
+  "O teorema de Bayes atualiza o quê?": {
+    "o": [
+          "A probabilidade de uma hipótese diante da evidência",
+          "A média dos dados observados no teste",
+          "O determinante da matriz de dados",
+          "A variância da amostra coletada",
+          "A moda da distribuição original"
+    ],
+    "a": 0
+  },
+  "Um número é divisível por 3 quando...": {
+    "o": [
+          "A soma dos algarismos é múltipla de 3",
+          "O último algarismo é igual a 3",
+          "O número é ímpar e maior que três",
+          "O último algarismo é par ou cinco",
+          "A diferença entre os algarismos é 3"
+    ],
+    "a": 0
+  },
+  "A definição épsilon-delta de limite garante...": {
+    "o": [
+          "que a função fica perto do limite para todo ponto perto",
+          "que a função é sempre crescente perto do ponto",
+          "que o limite é um número inteiro qualquer",
+          "que a função é contínua em todo o domínio"
+    ],
+    "a": 0
+  },
+  "A série harmônica, soma de 1/n...": {
+    "o": [
+          "diverge, mesmo com termos indo a zero",
+          "converge para 1 no limite infinito",
+          "converge para e, a base dos logaritmos",
+          "converge para zero quando n cresce"
+    ],
+    "a": 0
+  },
+  "A lei dos grandes números diz que...": {
+    "o": [
+          "a média amostral se aproxima da esperada com muitas repetições",
+          "todo jogo tem a sorte garantida no longo prazo",
+          "a variância da amostra sempre diminui",
+          "a probabilidade de acerto cresce a cada rodada"
+    ],
+    "a": 0
+  },
+  "Uma função é sobrejetora quando...": {
+    "o": [
+          "todo elemento do contradomínio é imagem de algum ponto",
+          "cada entrada tem duas saídas possíveis",
+          "a função é constante em todo o domínio",
+          "cada imagem tem no máximo uma entrada"
+    ],
+    "a": 0
+  },
+  "Um número irracional...": {
+    "o": [
+          "não pode ser escrito como fração de inteiros",
+          "tem dízima finita e periódica",
+          "é sempre negativo na reta real",
+          "é sempre raiz de um polinômio"
+    ],
+    "a": 0
+  },
+  "Média ponderada usa...": {
+    "o": [
+          "pesos diferentes para cada valor",
+          "só os valores extremos da lista",
+          "a mediana no lugar da média",
+          "a moda da distribuição dos dados"
+    ],
+    "a": 0
+  },
+  "Uma progressão aritmética tem...": {
+    "o": [
+          "diferença constante entre termos",
+          "razão constante entre os termos",
+          "termos escolhidos ao acaso na reta",
+          "soma constante entre os termos"
+    ],
+    "a": 0
+  },
+  "Um número primo tem...": {
+    "o": [
+          "exatamente dois divisores positivos",
+          "apenas um divisor positivo na conta",
+          "infinitos divisores positivos",
+          "sempre dois algarismos na base dez"
+    ],
+    "a": 0
+  },
+  "A mediana é...": {
+    "o": [
+          "o valor central dos dados ordenados",
+          "o valor mais frequente da lista",
+          "a média aritmética dos valores",
+          "a diferença entre o maior e o menor"
+    ],
+    "a": 0
+  },
+  "A função inversa...": {
+    "o": [
+          "desfaz a operação da função original",
+          "é sempre uma função quadrática",
+          "não existe para funções crescentes",
+          "tem o mesmo gráfico da original"
+    ],
+    "a": 0
+  },
+  "Motivo, na música, é...": {
+    "o": [
+          "a menor ideia reconhecível que se repete e varia.",
+          "o compasso inteiro que abre a obra.",
+          "a tonalidade principal escolhida para a peça.",
+          "o instrumento que toca a melodia principal.",
+          "o final da seção que fecha a frase."
+    ],
+    "a": 0
+  },
+  "A atenção, dentro do transformer, serve para...": {
+    "o": [
+          "ponderar quais partes do texto importam para cada passo.",
+          "guardar a resposta final antes de imprimir.",
+          "impedir que o modelo repita as mesmas palavras.",
+          "traduzir automaticamente qualquer idioma.",
+          "contar quantas palavras tem a entrada."
+    ],
+    "a": 0
+  },
+  "Por que 1 não é primo?": {
+    "o": [
+          "Porque tem apenas um divisor, e primo precisa de exatamente dois",
+          "Porque é ímpar e todo primo é par",
+          "Porque é menor que 2 e por isso é par",
+          "Porque não pode ser fatorado em nenhum caso",
+          "Porque é quadrado perfeito de si mesmo"
+    ],
+    "a": 0
+  },
+  "Para que serve um invariante de nós?": {
+    "o": [
+          "Provar que dois nós não podem ser deformados um no outro",
+          "Desenhar o nó mais rápido na tela",
+          "Calcular o comprimento total da corda",
+          "Medir a espessura do nó no desenho",
+          "Contar os cruzamentos de qualquer desenho"
+    ],
+    "a": 0
+  },
+  "O que a teoria das filas estuda?": {
+    "o": [
+          "Espera e atendimento em sistemas com chegadas",
+          "Cores usadas nos gráficos de rede",
+          "Derivadas de polinômios de grau alto",
+          "Números primos e sua distribuição",
+          "Formas topológicas e suas bordas"
+    ],
+    "a": 0
+  },
+  "O que acontece numa bifurcação de um sistema dinâmico?": {
+    "o": [
+          "O comportamento muda de qualidade quando o parâmetro varia",
+          "O sistema para de existir de repente",
+          "A equação perde todas as soluções",
+          "A massa do sistema dobra de valor",
+          "O estado fica constante para sempre"
+    ],
+    "a": 0
+  },
+  "O que a redundância num código faz?": {
+    "o": [
+          "Permite detectar e corrigir erro na transmissão",
+          "Reduz o tamanho da mensagem enviada",
+          "Aumenta a velocidade da rede local",
+          "Criptografa o conteúdo da mensagem",
+          "Comprime a imagem antes de enviar"
+    ],
+    "a": 0
+  },
+  "O que torna um argumento válido?": {
+    "o": [
+          "A conclusão seguir necessariamente das premissas",
+          "A conclusão ser verdadeira no mundo real",
+          "O autor ser especialista no assunto",
+          "O texto ser longo e bem escrito",
+          "As premissas serem famosas e aceitas"
+    ],
+    "a": 0
+  },
+  "O que fecha o ciclo de descoberta de material?": {
+    "o": [
+          "A síntese e a medida experimental",
+          "O gráfico bonito da simulação",
+          "O artigo publicado na revista",
+          "O financiamento aprovado do projeto",
+          "O banco de dados organizado do grupo"
+    ],
+    "a": 0
+  },
+  "O axioma da escolha é independente de ZF. Isso quer dizer que...": {
+    "o": [
+          "Pode ser aceito ou negado sem contradizer ZF",
+          "É falso em qualquer sistema axiomático",
+          "Não pode ser usado em nenhuma prova",
+          "Vale só para conjuntos finitos",
+          "Foi provado a partir dos axiomas de ZF"
+    ],
+    "a": 0
+  },
+  "Uma sequência de Cauchy é aquela em que...": {
+    "o": [
+          "os termos ficam arbitrariamente próximos entre si",
+          "os termos são todos inteiros positivos",
+          "a soma dos termos sempre diverge",
+          "cada termo é maior que o anterior"
+    ],
+    "a": 0
+  },
+  "O que é um conjunto incontável?": {
+    "o": [
+          "Um conjunto sem fim que não pode ser listado em sequência",
+          "Um conjunto vazio sem nenhum elemento",
+          "Um conjunto com apenas dois elementos",
+          "Um conjunto finito de números reais"
+    ],
+    "a": 0
+  },
+  "O que o teorema da incompletude de Gödel mostra?": {
+    "o": [
+          "Que há verdades não demonstráveis em sistemas consistentes fortes",
+          "Que toda conta tem resposta em algum sistema",
+          "Que a matemática é inútil na prática",
+          "Que nenhum sistema tem axiomas",
+          "Que todo teorema pode ser provado por computador"
+    ],
+    "a": 0
+  },
+  "O teorema do valor médio garante que existe um ponto onde...": {
+    "o": [
+          "a derivada iguala a taxa média de variação",
+          "a função é constante em todo o intervalo",
+          "a integral definida é igual a zero",
+          "a derivada é maior que qualquer valor"
+    ],
+    "a": 0
+  },
+  "Um conjunto é enumerável quando...": {
+    "o": [
+          "pode ser posto em bijeção com os naturais",
+          "é finito e tem poucos elementos",
+          "tem medida de Lebesgue igual a zero",
+          "é um subconjunto dos números reais"
+    ],
+    "a": 0
+  },
+  "Uma matriz quadrada é invertível quando...": {
+    "o": [
+          "o determinante é diferente de zero",
+          "a matriz é simétrica e real",
+          "tem muitos elementos iguais a zero",
+          "a diagonal principal é toda de uns"
+    ],
+    "a": 0
+  },
+  "Um limite lateral...": {
+    "o": [
+          "aproxima-se por um dos lados do ponto",
+          "é o limite quando x vai ao infinito",
+          "é a derivada calculada no ponto dado",
+          "só existe em funções sempre contínuas"
+    ],
+    "a": 0
+  },
+  "Uma sequência converge quando...": {
+    "o": [
+          "seus termos se aproximam de um limite",
+          "cresce sempre sem nunca oscilar",
+          "alterna de sinal sem parar nunca",
+          "fica constante desde o primeiro termo"
+    ],
+    "a": 0
+  },
+  "Um autovalor de uma matriz é...": {
+    "o": [
+          "um escalar que mantém a direção do autovetor",
+          "o determinante da matriz quadrada",
+          "a soma de todos os elementos dela",
+          "o traço dividido pelo número de linhas"
+    ],
+    "a": 0
+  },
+  "Integração por partes vem...": {
+    "o": [
+          "da regra do produto na derivada",
+          "do teorema de Pitágoras nos triângulos",
+          "da média aritmética dos extremos",
+          "da definição de limite lateral"
+    ],
+    "a": 0
+  },
+  "O teorema de Taylor aproxima uma função por...": {
+    "o": [
+          "um polinômio em torno de um ponto",
+          "uma reta só, sem nenhuma curvatura",
+          "uma constante igual ao valor médio",
+          "uma parábola que passa na origem"
+    ],
+    "a": 0
+  },
+  "Um limite no infinito descreve...": {
+    "o": [
+          "o comportamento quando x cresce sem parar",
+          "o valor da função no ponto zero",
+          "a derivada da função no ponto",
+          "o valor máximo que a função atinge"
+    ],
+    "a": 0
+  },
+  "Uma derivada parcial mede...": {
+    "o": [
+          "a taxa de variação em relação a uma variável, mantendo as outras fixas",
+          "a área total sob a superfície da função",
+          "o máximo global da função no domínio",
+          "a média da função em toda a região",
+          "o volume delimitado pelo gráfico da função"
+    ],
+    "a": 0
+  },
+  "A lei dos cossenos generaliza...": {
+    "o": [
+          "o teorema de Pitágoras para qualquer triângulo",
+          "a média aritmética para dados agrupados",
+          "a derivada para funções compostas",
+          "a regra de três para proporções"
+    ],
+    "a": 0
+  },
+  "A distribuição de Poisson modela...": {
+    "o": [
+          "contagem de eventos raros num intervalo",
+          "altura de pessoas numa população",
+          "soma dos valores de dois dados lançados",
+          "tempo até a primeira falha do equipamento"
+    ],
+    "a": 0
+  },
+  "O espaço amostral é...": {
+    "o": [
+          "o conjunto de todos os resultados possíveis",
+          "um resultado só do experimento",
+          "a média dos resultados obtidos",
+          "a probabilidade de cada evento"
+    ],
+    "a": 0
+  },
+  "Um número transcendente é...": {
+    "o": [
+          "não é raiz de polinômio com coeficientes inteiros",
+          "sempre racional e periódico no decimal",
+          "sempre infinito e não limitado",
+          "a raiz de qualquer polinômio de grau 2"
+    ],
+    "a": 0
+  },
+  "Por que a série harmônica diverge se os termos vão para zero?": {
+    "o": [
+          "Termo indo a zero não garante soma finita: a soma acumulada cresce sem teto.",
+          "Porque ela alterna de sinal a cada termo.",
+          "Porque o primeiro termo é maior que 1.",
+          "Porque a razão entre termos é maior que 1.",
+          "Ela não diverge: a soma total é finita."
+    ],
+    "a": 0
+  },
+  "O que a teoria de Galois relaciona?": {
+    "o": [
+          "Equações polinomiais e grupos de simetria",
+          "Números primos e logaritmos naturais",
+          "Matrizes e derivadas parciais",
+          "Funções e integrais definidas",
+          "Grafos e coloração de vértices"
+    ],
+    "a": 0
+  },
+  "O que a homologia persistente mede?": {
+    "o": [
+          "Quais buracos sobrevivem em várias escalas de análise",
+          "A média dos dados coletados no teste",
+          "O desvio padrão das variáveis medidas",
+          "A correlação entre as colunas da tabela",
+          "A quantidade de linhas da tabela"
+    ],
+    "a": 0
+  },
+  "O que o número reprodutivo básico R0 indica?": {
+    "o": [
+          "Quantas pessoas em média um infectado contagia",
+          "A taxa de mortalidade da doença",
+          "O tempo médio de cura do paciente",
+          "A quantidade de vacinas necessárias",
+          "O total de pessoas suscetíveis"
+    ],
+    "a": 0
+  },
+  "O que uma onda eletromagnética é, na teoria de campos?": {
+    "o": [
+          "Uma perturbação que se propaga nos campos elétrico e magnético",
+          "Um material que viaja pelo espaço vazio",
+          "Uma partícula com massa de repouso",
+          "Um fluido invisível que preenche o vácuo",
+          "Uma força de contato entre duas cargas"
+    ],
+    "a": 0
+  },
+  "O que é função objetivo num problema de otimização?": {
+    "o": [
+          "A quantidade que se quer maximizar ou minimizar",
+          "A regra de segurança do processo",
+          "O erro de medida do instrumento",
+          "O catalisador usado na reação",
+          "A temperatura ambiente do laboratório"
+    ],
+    "a": 0
+  },
+  "Para que serve um invariante de laço?": {
+    "o": [
+          "Provar que a propriedade vale em cada iteração",
+          "Acelerar a execução do laço no processador",
+          "Reduzir a memória usada pelo programa",
+          "Gerar o gráfico do desempenho",
+          "Medir o tempo de execução do laço"
+    ],
+    "a": 0
+  },
+  "O que torna um conjunto de dados realmente reutilizável?": {
+    "o": [
+          "Licença, dicionário e contexto de coleta",
+          "Só o arquivo compactado em zip",
+          "Apenas o link para baixar o arquivo",
+          "Apenas o gráfico gerado na análise",
+          "O nome do autor no cabeçalho do arquivo"
+    ],
+    "a": 0
   }
 };
