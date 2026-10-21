@@ -2403,5 +2403,481 @@ export const OPCOES_MELHORES = {
           "O nome do autor no cabeçalho do arquivo"
     ],
     "a": 0
+  },
+  "A semântica estuda...": {
+    "o": [
+          "o significado das palavras e frases",
+          "a pronúncia dos sons da fala",
+          "a pontuação e a acentuação",
+          "a ordem das palavras na frase",
+          "a história das palavras antigas"
+    ],
+    "a": 0
+  },
+  "Rima é...": {
+    "o": [
+          "semelhança de som no fim ou interior do verso",
+          "repetição da mesma palavra no verso",
+          "pausa que separa dois versos",
+          "contagem das sílabas de um verso",
+          "divisão do poema em estrofes"
+    ],
+    "a": 0
+  },
+  "Sentido literal e sentido figurado se distinguem porque...": {
+    "o": [
+          "o figurado depende do contexto para dizer outra coisa.",
+          "o literal é sempre mais antigo que o figurado.",
+          "o figurado é errado e deve ser evitado.",
+          "o literal só existe na fala cotidiana.",
+          "os dois são idênticos na prática."
+    ],
+    "a": 0
+  },
+  "O que um par mínimo demonstra?": {
+    "o": [
+          "Que a troca de um único som muda o significado",
+          "Que a palavra é longa e difícil",
+          "Que a escrita segue sempre a fala",
+          "Que há sílaba tônica na palavra",
+          "Que o texto é ambíguo na leitura"
+    ],
+    "a": 0
+  },
+  "O que o preconceito linguístico faz?": {
+    "o": [
+          "Desqualifica a pessoa pela variedade que ela fala",
+          "Corrige a gramática da fala popular",
+          "Ensina a norma padrão na escola",
+          "Compara os dialetos de cada região",
+          "Registra a fala em pesquisa de campo"
+    ],
+    "a": 0
+  },
+  "Qual é a diferença entre coesão e coerência?": {
+    "o": [
+          "Coesão liga as partes; coerência dá unidade de sentido",
+          "As duas são a mesma coisa na prática",
+          "Coesão é sobre ortografia; coerência, sobre pontuação",
+          "Coesão é só repetição; coerência, só o tema",
+          "Coerência é a ordem das palavras na frase"
+    ],
+    "a": 0
+  },
+  "O que caracteriza um texto expositivo?": {
+    "o": [
+          "Explicar um assunto sem defender posição",
+          "Contar uma história com personagens",
+          "Convencer o leitor a mudar de ideia",
+          "Dar comandos para o leitor executar",
+          "Descrever um lugar com detalhes"
+    ],
+    "a": 0
+  },
+  "O que caracteriza o gênero lírico?": {
+    "o": [
+          "A expressão da emoção pelo ritmo e pela imagem",
+          "O enredo longo com muitos personagens",
+          "O diálogo escrito para o palco",
+          "A notícia factual com data e fonte",
+          "A instrução de uso de um aparelho"
+    ],
+    "a": 0
+  },
+  "O que a escuta ativa faz?": {
+    "o": [
+          "Confirma e retoma o que o outro disse antes de responder",
+          "Só espera a vez de falar sem ouvir",
+          "Interrompe para discordar do outro",
+          "Muda de assunto quando fica difícil",
+          "Fala mais alto para ser ouvido"
+    ],
+    "a": 0
+  },
+  "O que é polissemia?": {
+    "o": [
+          "Uma palavra com vários sentidos relacionados",
+          "Duas palavras iguais com origens diferentes",
+          "Uma palavra antiga que saiu de uso",
+          "Uma gíria usada por um grupo",
+          "Um erro de ortografia comum"
+    ],
+    "a": 0
+  },
+  "O que caracteriza o símbolo na semiótica?": {
+    "o": [
+          "A relação convencional com o que representa",
+          "A semelhança física com o objeto",
+          "A relação de causa e efeito",
+          "A cor escolhida para representar",
+          "O tamanho do objeto representado"
+    ],
+    "a": 0
+  },
+  "Por que a tradução palavra por palavra costuma falhar?": {
+    "o": [
+          "Porque expressões e sentidos não funcionam igual nas duas línguas",
+          "Porque muda o autor do texto original",
+          "Porque diminui o texto traduzido",
+          "Porque aumenta a pontuação da frase",
+          "Porque altera a ortografia das palavras"
+    ],
+    "a": 0
+  },
+  "Referência e sentido são diferentes porque...": {
+    "o": [
+          "duas expressões podem apontar para o mesmo objeto com sentidos distintos",
+          "sentido é o som da palavra e referência é a classe gramatical",
+          "referência é a classe gramatical e sentido é o som",
+          "os dois termos são sinônimos na filosofia da linguagem"
+    ],
+    "a": 0
+  },
+  "Uma implicatura conversacional é...": {
+    "o": [
+          "um sentido sugerido sem ser dito literalmente",
+          "uma mentira dita de propósito ao ouvinte",
+          "um erro de concordância na fala",
+          "uma verdade dita sem nenhum contexto"
+    ],
+    "a": 0
+  },
+  "O sujeito oculto é...": {
+    "o": [
+          "não aparece, mas pode ser identificado",
+          "inexistente na oração analisada",
+          "sempre o objeto direto da frase",
+          "o mesmo que sujeito indeterminado",
+          "o verbo que não tem concordância"
+    ],
+    "a": 0
+  },
+  "Denotação e conotação diferem porque...": {
+    "o": [
+          "denotação é o sentido literal; conotação é figurado",
+          "são iguais na prática da leitura",
+          "conotação é erro de gramática",
+          "denotação só aparece na poesia"
+    ],
+    "a": 0
+  },
+  "Oração subordinada é...": {
+    "o": [
+          "a que exerce função na principal",
+          "a que é independente na frase",
+          "a que não tem verbo nenhum",
+          "a que repete o sujeito da anterior"
+    ],
+    "a": 0
+  },
+  "Um conectivo...": {
+    "o": [
+          "liga ideias e estabelece relação",
+          "nomeia os objetos e as pessoas",
+          "marca o plural das palavras da frase",
+          "indica o tempo verbal da oração"
+    ],
+    "a": 0
+  },
+  "Ambiguidade lexical é...": {
+    "o": [
+          "uma palavra com mais de um sentido possível.",
+          "uma frase longa e difícil de ler.",
+          "um erro de concordância verbal.",
+          "um sotaque regional muito marcado.",
+          "um silêncio longo no meio da fala."
+    ],
+    "a": 0
+  },
+  "O que é implicatura conversacional?": {
+    "o": [
+          "Um sentido inferido do contexto, não dito literalmente",
+          "Um erro de gramática na fala espontânea",
+          "Uma palavra nova criada por um grupo",
+          "Um tipo de acento regional marcado",
+          "Uma figura de sintaxe da norma"
+    ],
+    "a": 0
+  },
+  "O que uma refutação faz na redação argumentativa?": {
+    "o": [
+          "Responde ao contra-argumento e reforça a tese",
+          "Repete a tese sem apresentar prova",
+          "Muda de assunto quando fica difícil",
+          "Conta uma história para ilustrar",
+          "Lista opiniões sem nenhuma ordem"
+    ],
+    "a": 0
+  },
+  "O que a indução faz?": {
+    "o": [
+          "Generaliza a partir de casos observados",
+          "Deduz do geral para o particular",
+          "Inventa a premissa que faltava",
+          "Troca o tema no meio do texto",
+          "Apela sempre à emoção do leitor"
+    ],
+    "a": 0
+  },
+  "Qual é o problema de ler o slide durante a apresentação?": {
+    "o": [
+          "A fala perde função e a atenção se dispersa",
+          "O público aprende mais e mais rápido",
+          "O tempo da apresentação diminui",
+          "A apresentação fica mais clara",
+          "O slide melhora com a leitura"
+    ],
+    "a": 0
+  },
+  "O que é empréstimo linguístico?": {
+    "o": [
+          "Palavra incorporada de outra língua por contato",
+          "Erro de concordância na fala popular",
+          "Mudança de acento na mesma palavra",
+          "Palavra inventada sem uso nenhum",
+          "Cópia de um texto sem citar fonte"
+    ],
+    "a": 0
+  },
+  "Por que a consistência terminológica importa?": {
+    "o": [
+          "Porque o termo técnico tem sentido fixo no domínio",
+          "Porque deixa o texto mais bonito",
+          "Porque aumenta o tamanho do texto",
+          "Porque dispensa a definição inicial",
+          "Porque evita a tradução do texto"
+    ],
+    "a": 0
+  },
+  "O que o enquadramento faz numa imagem?": {
+    "o": [
+          "Decide o que aparece e o que fica fora",
+          "Define a resolução do arquivo",
+          "Escolhe a fonte da legenda",
+          "Mede a intensidade da luz na cena",
+          "Corrige a cor da fotografia"
+    ],
+    "a": 0
+  },
+  "Qual é a diferença entre revisão e editoração?": {
+    "o": [
+          "Revisão ajusta língua e sentido; editoração prepara a publicação",
+          "As duas corrigem só a ortografia do texto",
+          "Editoração escreve o texto do começo",
+          "Revisão escolhe a capa e o formato",
+          "Editoração traduz o texto para outra língua"
+    ],
+    "a": 0
+  },
+  "O foco narrativo em primeira pessoa...": {
+    "o": [
+          "limita a informação ao que o narrador sabe",
+          "é sempre onisciente na narrativa",
+          "não tem narrador dentro da história",
+          "mostra o que todos os personagens pensam"
+    ],
+    "a": 0
+  },
+  "Uma pressuposição é...": {
+    "o": [
+          "uma informação tomada como dada pela frase",
+          "uma pergunta indireta na fala",
+          "um sinônimo perfeito da palavra",
+          "uma afirmação negada no final"
+    ],
+    "a": 0
+  },
+  "Um ato de fala é...": {
+    "o": [
+          "a ação realizada ao dizer algo, como prometer ou pedir",
+          "a pronúncia correta das palavras",
+          "o número de sílabas da palavra",
+          "a ordem das palavras na frase",
+          "o significado literal do dicionário"
+    ],
+    "a": 0
+  },
+  "A ambiguidade estrutural vem...": {
+    "o": [
+          "da sintaxe permitir duas leituras",
+          "do léxico ter palavras raras",
+          "da prosódia marcar a entonação",
+          "da pontuação marcar as pausas"
+    ],
+    "a": 0
+  },
+  "Metonímia é...": {
+    "o": [
+          "trocar um termo por outro próximo",
+          "exagerar a expressão de propósito",
+          "suavizar uma ideia desagradável",
+          "repetir o som no fim do verso"
+    ],
+    "a": 0
+  },
+  "A coesão lexical ocorre por...": {
+    "o": [
+          "repetição, sinônimo ou hiperônimo",
+          "só pontuação e acentuação",
+          "só conectivo entre as orações",
+          "só a ordem das palavras na frase"
+    ],
+    "a": 0
+  },
+  "Regência verbal estuda...": {
+    "o": [
+          "a relação entre verbo e complemento",
+          "a acentuação das palavras",
+          "a pontuação usada na frase",
+          "a concordância do sujeito"
+    ],
+    "a": 0
+  },
+  "Concordância nominal...": {
+    "o": [
+          "faz adjetivo e artigo acompanharem o substantivo",
+          "concorda o verbo com o sujeito",
+          "marca o plural só no verbo",
+          "define a regência do verbo"
+    ],
+    "a": 0
+  },
+  "Coesão referencial...": {
+    "o": [
+          "retoma termos por pronome, sinônimo ou elipse",
+          "usa só conectivos entre as frases",
+          "marca os parágrafos do texto",
+          "define o tema do primeiro parágrafo"
+    ],
+    "a": 0
+  },
+  "Intertextualidade implícita...": {
+    "o": [
+          "referencia outro texto sem citar",
+          "copia o texto original com aspas",
+          "resume outro texto em poucas linhas",
+          "traduz o texto para outra língua"
+    ],
+    "a": 0
+  },
+  "Pressuposição é...": {
+    "o": [
+          "a informação que o enunciado toma como já dada.",
+          "a resposta que o ouvinte deve dar.",
+          "a mensagem principal do parágrafo.",
+          "o erro cometido por quem fala.",
+          "o oposto exato do sentido literal."
+    ],
+    "a": 0
+  },
+  "O que sustenta a leitura irônica de uma frase?": {
+    "o": [
+          "O contexto e a contradição com o que se sabe",
+          "A pontuação usada na frase apenas",
+          "O número de sílabas da frase",
+          "A classe gramatical das palavras",
+          "O dicionário consultado sozinho"
+    ],
+    "a": 0
+  },
+  "O que define um gênero do discurso?": {
+    "o": [
+          "Uma forma de enunciado ligada a uma situação comunicativa",
+          "Só a extensão do texto na página",
+          "Só o tipo de letra escolhido",
+          "Apenas o assunto tratado no texto",
+          "O número de páginas do original"
+    ],
+    "a": 0
+  },
+  "O que a leitura crítica faz com a fonte?": {
+    "o": [
+          "Verifica origem, método e interesse antes de aceitar",
+          "Ignora a fonte se o texto for bonito",
+          "Aceita porque está escrito e publicado",
+          "Só olha a data da publicação",
+          "Dispensa evidência para acreditar"
+    ],
+    "a": 0
+  },
+  "Por que revisar além da ortografia?": {
+    "o": [
+          "Para ajustar clareza, coesão e adequação ao leitor",
+          "Porque a ortografia não importa no texto",
+          "Para aumentar o texto com exemplos",
+          "Para trocar o tema do trabalho",
+          "Para encurtar o texto sem critério"
+    ],
+    "a": 0
+  },
+  "O que é o argumento espantalho?": {
+    "o": [
+          "Distorcer a posição do outro para atacá-la com facilidade",
+          "Citar uma autoridade famosa na área",
+          "Apelar à emoção de quem está lendo",
+          "Generalizar cedo a partir de um caso",
+          "Repetir a tese sem nenhuma prova"
+    ],
+    "a": 0
+  },
+  "O que o hipertexto permite?": {
+    "o": [
+          "Leitura por caminhos ligados, não só linear",
+          "Texto sem imagens nem formatação",
+          "Leitura em voz alta do texto",
+          "Texto sem autor nem data de publicação",
+          "Correção ortográfica automática"
+    ],
+    "a": 0
+  },
+  "O que fortalece a posição num debate?": {
+    "o": [
+          "Responder ao argumento do outro com evidência",
+          "Falar mais alto que todos os outros",
+          "Interromper sempre que possível",
+          "Mudar de assunto quando pressionado",
+          "Ignorar a pergunta feita pelo outro"
+    ],
+    "a": 0
+  },
+  "O que um acordo ortográfico muda?": {
+    "o": [
+          "A grafia oficial, não a pronúncia",
+          "A pronúncia das palavras do país",
+          "A gramática toda da língua",
+          "O vocabulário usado no dia a dia",
+          "O sotaque regional dos falantes"
+    ],
+    "a": 0
+  },
+  "Qual é a função de um glossário?": {
+    "o": [
+          "Explicar termos usados num texto ou domínio",
+          "Listar todas as palavras da língua",
+          "Corrigir a ortografia do texto",
+          "Traduzir o texto para outra língua",
+          "Contar quantas palavras tem o texto"
+    ],
+    "a": 0
+  },
+  "O que acontece quando legenda e imagem se contradizem?": {
+    "o": [
+          "O sentido nasce do conflito entre as linguagens",
+          "A imagem perde o sentido e o texto vale",
+          "O texto vence sempre e a imagem é ignorada",
+          "Nada muda no sentido final da peça",
+          "O leitor ignora os dois por completo"
+    ],
+    "a": 0
+  },
+  "Por que o gênero gramatical é difícil para alguns aprendizes?": {
+    "o": [
+          "Porque pode não existir na língua materna deles",
+          "Porque não tem nenhuma regra na língua",
+          "Porque muda de cor em cada região",
+          "Porque só existe no plural das palavras",
+          "Porque depende sempre do verbo"
+    ],
+    "a": 0
   }
 };
