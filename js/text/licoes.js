@@ -6396,6 +6396,458 @@ export const LICOES = {
       },
     },
   },
+  "inter-math-physics": {
+    "Métodos Variacionais": {
+      oQue:
+        "Um princípio variacional troca a pergunta 'qual é a força agora' por 'qual caminho o sistema escolhe entre todos os possíveis'. A natureza não resolve a equação passo a passo: ela torna estacionária uma quantidade global, a ação, que é a integral da lagrangiana no tempo. Da condição de derivada nula sai a equação de movimento, e ela coincide com a segunda lei de Newton quando o sistema é simples.",
+      passos: [
+        "Escreva a energia cinética e a potencial em coordenadas que já respeitem o vínculo, como um ângulo para o pêndulo.",
+        "Monte a lagrangiana, que é a cinética menos a potencial, e integre no tempo entre os dois instantes do movimento.",
+        "Aplique a equação de Euler-Lagrange a cada coordenada e confira o resultado contra um caso limite conhecido.",
+      ],
+      exemplo:
+        "O pêndulo simples tem uma coordenada, o ângulo, e a lagrangiana é a energia cinética menos a potencial. A equação que sai dela é a mesma do torque, mas o caminho foi outro: ninguém precisou decompor força em eixos. Para ângulo pequeno, o seno vira o próprio ângulo e a solução é um cosseno com período que depende do comprimento e da gravidade. O método não deu só a equação, deu a estrutura: se a lagrangiana não depende explicitamente do tempo, a energia se conserva; se não depende de um ângulo, o momento associado se conserva. Cada simetria da ação vira uma quantidade que não muda, e essa é a parte que sobrevive quando o sistema fica complicado.",
+      quebra:
+        "O erro é achar que o caminho físico é o mais curto no espaço. A ação estacionária pode ser máximo local ou ponto de sela, e o caminho pode ser longo. O que se pede é derivada primeira nula, não mínimo global. Outro erro comum é esquecer o vínculo ao escolher as coordenadas e depois estranhar a força que aparece do nada na conta.",
+      levar: "Simetria da ação é lei de conservação.",
+      maos:
+        "Monte a lagrangiana do pêndulo, derive a equação e confira o caso de ângulo pequeno contra a solução conhecida; depois olhe a lagrangiana e diga qual quantidade se conserva sem resolver nada.",
+    },
+    "Sistemas Dinâmicos": {
+      oQue:
+        "Um sistema dinâmico é uma regra que diz como o estado muda no tempo, escrita como equação diferencial ou como mapa. O interesse não está na trajetória de um ponto só: está no comportamento de todas as trajetórias juntas. Ponto fixo, ciclo, toro e caos são tipos de destino, e a mesma equação pode trocar de tipo quando um parâmetro atravessa um valor crítico.",
+      passos: [
+        "Desenhe o campo de direções ou o retrato de fase antes de tentar a fórmula fechada, que quase nunca existe.",
+        "Ache os pontos fixos, onde a derivada é zero, e classifique a estabilidade pela derivada em volta deles.",
+        "Varra o parâmetro devagar e marque onde o número ou o tipo de atrator muda: ali mora a bifurcação.",
+      ],
+      exemplo:
+        "No modelo presa-predador, as populações giram em ciclo em torno de um ponto de equilíbrio. Aumente a taxa de reprodução da presa e o ciclo pode se fechar num ponto estável, ou virar oscilação de amplitude crescente, dependendo de como o modelo trata a saturação. Um pêndulo com atrito tem ponto fixo estável no repouso; sem atrito, tem ciclo. A equação é quase a mesma e o atrator não é. Por isso a pergunta certa não é onde o sistema está agora, é para onde ele vai se ninguém mexer.",
+      quebra:
+        "O erro é linearizar e confiar no resultado longe do ponto fixo. Perto dele a linearização acerta; longe, o termo quadrático que você jogou fora é que decide. O controle projetado na aproximação linear oscila ou satura no sistema real. Antes de projetar, meça a faixa em que a aproximação ainda vale e escreva essa faixa junto do projeto.",
+      levar: "Perto do ponto fixo a reta serve; longe, ela mente.",
+      maos:
+        "Pegue o mapa logístico, escolha três valores do parâmetro e conte o destino de cada um: ponto fixo, ciclo de período dois ou caos. A contagem diz mais que a fórmula, e o exercício mostra que caos é determinístico.",
+    },
+    "Teoria dos Campos": {
+      oQue:
+        "Campo é uma grandeza com valor em cada ponto do espaço, como a temperatura de uma sala ou o vetor do vento. Na física, o campo não é um desenho sobre o espaço: ele carrega energia, momento e se propaga. A teoria clássica dos campos escreve as leis como equações diferenciais parciais, e a solução delas é o campo em todos os pontos e instantes.",
+      passos: [
+        "Escolha a grandeza e o tipo, escalar, vetorial ou tensorial, e escreva o campo em função da posição.",
+        "Escreva a equação que o campo obedece, com fonte e condição de contorno, como as de Maxwell no eletromagnetismo.",
+        "Resolva ou simule e confira contra uma medida: campo medido, força sentida por uma carga de teste.",
+      ],
+      exemplo:
+        "Uma carga parada cria campo elétrico que cai com o quadrado da distância. Se ela acelera, o campo na região distante não acompanha na hora: a mudança viaja como onda. As equações de Maxwell mostram que campo elétrico variável gera campo magnético e vice-versa, e a combinação se propaga na velocidade da luz. Não há meio material empurrando nada; o campo é a entidade. É por isso que a luz do Sol chega aqui e o espaço entre nós dois não precisa de éter.",
+      quebra:
+        "O erro é tratar o campo como ilustração e não como coisa com energia. Quem calcula a energia armazenada num capacitor e esquece o termo do campo erra o balanço. Quem desenha linha de campo e conclui que a linha é o campo erra a natureza: a linha é mapa, o campo é a grandeza. E o campo não some quando a fonte some, ele continua viajando.",
+      levar: "O campo tem energia própria e viaja com notícia atrasada.",
+      maos:
+        "Desenhe o campo de duas cargas iguais e de duas cargas opostas e diga, sem calcular, onde a força sobre uma carga de teste é nula; depois confira com a soma vetorial.",
+    },
+  },
+  "inter-math-cs": {
+    "Lógica Computacional": {
+      oQue:
+        "A lógica formal virou base da computação porque circuito e programa também são fórmulas: proposições ligadas por e, ou, não, com quantificadores por cima. Perguntar se uma fórmula pode ser verdadeira é perguntar se existe configuração de entrada que satisfaça o circuito. A mesma estrutura serve para provar que um programa faz o que promete, sem rodar todos os casos.",
+      passos: [
+        "Traduza a condição para uma fórmula booleana, nomeando cada variável que pode ser verdadeira ou falsa.",
+        "Teste satisfatibilidade: procure uma atribuição que deixe a fórmula verdadeira, por resolução ou por busca.",
+        "Leve o resultado para o programa ou circuito como prova de que a propriedade vale em todos os casos cobertos.",
+      ],
+      exemplo:
+        "Um circuito de alarme com três sensores vira uma fórmula com três variáveis. Dizer que o alarme nunca dispara com a porta fechada é dizer que certa combinação não é satisfatível. O programa de verificação procura uma atribuição que quebre a promessa; se não acha, a propriedade está provada para o modelo. O trabalho não termina aí: é preciso conferir se o modelo do circuito corresponde ao circuito de verdade, porque prova sobre modelo errado não vale nada.",
+      quebra:
+        "O erro é achar que satisfatibilidade é fácil porque a fórmula é curta. O custo cresce de forma brutal com o número de variáveis, e o mesmo problema que roda instantâneo com vinte variáveis pode não terminar com duzentas. Outro erro é confundir a prova formal com teste: teste acha defeito, prova mostra ausência de defeito no modelo, e são garantias diferentes.",
+      levar: "Prova vale para o modelo; o modelo ainda precisa ser conferido.",
+      maos:
+        "Escreva a fórmula de um alarme com três sensores e procure, na mão, uma atribuição que dispare o alarme com a porta fechada. Se achar, o projeto está errado; se não achar, justifique por quê.",
+    },
+    "Teoria dos Códigos": {
+      oQue:
+        "Código corretor de erro acrescenta redundância controlada para que o receptor reconstrua a mensagem mesmo com bits trocados no caminho. A álgebra faz o trabalho: a mensagem vira vetor num espaço sobre corpo finito, e o código é um subespaço escolhido para que palavras válidas fiquem longe umas das outras. Quanto maior a distância mínima, mais erro se corrige.",
+      passos: [
+        "Escolha o código e a taxa: quantos bits de mensagem entram e quantos de redundância saem.",
+        "Calcule a distância mínima entre palavras válidas, que é o número de bits em que duas delas diferem.",
+        "No receptor, calcule a síndrome e use a tabela para achar e corrigir o erro antes de entregar a mensagem.",
+      ],
+      exemplo:
+        "O código de Hamming acrescenta bits de paridade em posições que são potência de dois. Com sete bits totais para quatro de mensagem, ele corrige um erro simples: o receptor calcula a síndrome, que aponta a posição exata do bit trocado. Se dois bits erram, a síndrome aponta um terceiro e a correção piora a mensagem, então o código precisa saber o limite. O ganho tem preço: para cada quatro bits úteis, três viajam só para conferir.",
+      quebra:
+        "O erro é confundir compressão com correção de erro. Comprimir tira redundância para gastar menos; corrigir acrescenta redundância para errar menos. Fazer as duas coisas ao mesmo tempo exige projeto separado, e aplicar um codec de compressão sobre um código corretor destrói a estrutura que permitia corrigir. A ordem importa: comprime primeiro, protege depois, e o receptor desfaz na ordem inversa.",
+      levar: "Corrigir erro custa bits; comprimir economiza bits. Não são a mesma conta.",
+      maos:
+        "Monte o código de Hamming de quatro bits de mensagem, troque um bit de uma palavra válida e refaça a síndrome para ver se ela aponta a posição certa.",
+    },
+    "Análise de Algoritmos": {
+      oQue:
+        "A matemática da contagem dá o custo de um algoritmo sem depender da máquina: quantas operações crescem quando a entrada cresce. Somatório, recorrência e limite assintótico são as ferramentas. O resultado não é segundos, é a forma da curva, e é ela que decide se o programa aguenta o dobro de dados ou se para.",
+      passos: [
+        "Conte as operações dominantes em função do tamanho da entrada e escreva a recorrência quando houver divisão e conquista.",
+        "Resolva a recorrência ou simplifique para o termo que cresce mais rápido, descartando constante e termo menor.",
+        "Prove a correção com invariante de laço e confira o custo no pior caso, não no caso médio que você testou.",
+      ],
+      exemplo:
+        "A busca binária corta o intervalo pela metade a cada passo, então o custo é o logaritmo do tamanho. Dobrar a lista acrescenta uma comparação, não dobra o trabalho. Já a busca linear dobra junto com a lista. Num teste com mil elementos a diferença é de dez contra mil; com um milhão, vinte contra um milhão. A notação assintótica captura exatamente essa diferença de forma, e é por isso que ela vale mais que o cronômetro.",
+      quebra:
+        "O erro é medir tempo em segundos e concluir qual algoritmo é melhor. O relógio mistura máquina, cache, linguagem e ruído. O mesmo código roda diferente em dois computadores, e a ordenação que perde no teste pequeno pode ganhar no grande. Meça para achar constante escondida, mas decida pela contagem e pelo caso que importa.",
+      levar: "A forma da curva decide; o cronômetro só confirma.",
+      maos:
+        "Conte as comparações da busca binária e da linear para listas de 16, 256 e 4096 elementos e veja a razão entre elas dobrar de forma diferente.",
+    },
+  },
+  "inter-math-lingua": {
+    "Semântica Formal": {
+      oQue:
+        "Semântica formal traduz frase em estrutura lógica e calcula em que situações ela é verdadeira. O significado deixa de ser impressão e vira condição: dado um mundo possível, a frase é verdadeira ou falsa, e a regra de composição diz como as partes se juntam. É o encontro da gramática com a lógica, e ele mostra que ambiguidade não é falha de quem ouve, é estrutura.",
+      passos: [
+        "Separe a frase em constituintes e atribua a cada um um tipo lógico, indivíduo, predicado ou quantificador.",
+        "Combine as partes pela regra de composição e verifique o escopo de cada quantificador e de cada negação.",
+        "Teste a condição de verdade em situações concretas para ver se a leitura prevista é a que os falantes reconhecem.",
+      ],
+      exemplo:
+        "A frase 'todo estudante leu um livro' tem duas leituras formais. Numa, existe um livro específico que todos leram; noutra, cada estudante leu um livro qualquer, possivelmente diferente. As duas são compatíveis com a mesma sequência de palavras porque o escopo do quantificador não está marcado na superfície. A semântica formal não escolhe por você: ela mostra as duas estruturas e diz qual leitura cada uma gera.",
+      quebra:
+        "O erro é ignorar o escopo e tratar toda leitura como equivalente. Em contrato e em norma técnica, a diferença entre um responsável para todos e um responsável por caso muda quem assina. A análise precisa nomear a leitura adotada, não só apontar que existe ambiguidade. Linguagem jurídica vive desse detalhe.",
+      levar: "Ambiguidade é estrutura, não descuido de quem ouve.",
+      maos:
+        "Pegue uma frase com dois quantificadores, escreva as duas leituras em linguagem comum e diga em que situação cada uma é falsa.",
+    },
+    "Argumentação Formal": {
+      oQue:
+        "Argumento tem forma e conteúdo, e a validade mora na forma. Premissas, regra de inferência e conclusão podem ser checadas sem saber se as premissas são verdadeiras. Um argumento válido com premissa falsa leva a conclusão falsa, e isso não é defeito da lógica: é informação sobre o mundo que entrou errada.",
+      passos: [
+        "Escreva as premissas e a conclusão em linguagem formal, uma proposição por linha.",
+        "Identifique a regra de inferência usada e confira se a conclusão segue mesmo das premissas.",
+        "Procure um contraexemplo: uma situação em que as premissas são verdadeiras e a conclusão é falsa.",
+      ],
+      exemplo:
+        "De 'se chove, a rua fica molhada' e 'choveu', concluir 'a rua ficou molhada' é válido: é modus ponens. De 'se chove, a rua fica molhada' e 'a rua ficou molhada', concluir 'choveu' não é válido: o vizinho pode ter lavado a calçada. A segunda forma, afirmação do consequente, é o erro mais comum em texto argumentativo, e ela parece certa porque a conclusão é plausível. Validade não é plausibilidade.",
+      quebra:
+        "O erro é achar que argumento com conclusão verdadeira é automaticamente válido. A conclusão pode estar certa por outra razão e o raciocínio continuar furado. Quem avalia só o resultado aprova texto que não sustenta nada. A pergunta é sempre se a conclusão precisa ser verdadeira quando as premissas são, não se ela é verdadeira de fato.",
+      levar: "Validade é sobre a forma; verdade é sobre o mundo.",
+      maos:
+        "Reescreva um argumento de notícia em premissas e conclusão, identifique a regra usada e tente achar um contraexemplo antes de aceitar.",
+    },
+    "Estatística de Texto": {
+      oQue:
+        "Medir texto permite comparar frequência, extensão, riqueza de vocabulário e tamanho de frase, e assim caracterizar estilo, gênero e época. A conta é simples e o risco está na conclusão: número descreve padrão, não explica causa. Atribuir autoria é o exemplo clássico do salto que os dados não autorizam sozinhos.",
+      passos: [
+        "Defina a unidade de contagem, palavra, lema ou frase, e normalize o texto para que a comparação seja justa.",
+        "Compare o perfil do texto com um conjunto de referência do mesmo gênero e da mesma época.",
+        "Trate o resultado como indício e teste contra outros marcadores antes de afirmar qualquer coisa sobre autoria.",
+      ],
+      exemplo:
+        "Um texto usa a palavra 'coração' vinte vezes em mil, e outro usa cinco. A diferença é real, mas pode vir do tema, do gênero ou da época, não de um autor diferente. Se os dois textos comparados são do mesmo gênero e mesmo período, a diferença pesa mais. Se um é sermão e outro é manual técnico, o vocabulário diverge por assunto e a comparação não diz nada sobre quem escreveu.",
+      quebra:
+        "O erro é atribuir autoria a texto só por vocabulário parecido. Estilo semelhante pode vir de imitação, de escola literária, de tradução ou de revisor. A estatística de texto dá força ao indício, nunca prova sozinha, e a conclusão precisa dizer isso. Em perícia, o laudo que trata indício como prova é frágil e derruba o caso.",
+      levar: "Número descreve padrão; autoria exige mais de um indício.",
+      maos:
+        "Conte as dez palavras mais frequentes de dois textos do mesmo gênero e de gêneros diferentes, e escreva o que a diferença permite e o que ela não permite concluir.",
+    },
+  },
+  "inter-physics-chem": {
+    "Espectroscopia Molecular": {
+      oQue:
+        "Molécula absorve radiação em frequências ligadas aos seus movimentos internos: vibração de ligação e rotação da molécula inteira. O espectro é a impressão digital dessas frequências, e por isso identifica grupos funcionais e padrões de ligação. A mesma molécula pode ter espectros diferentes em técnicas diferentes, e eles se completam.",
+      passos: [
+        "Prepare a amostra no estado e na concentração que a técnica pede, porque espectro de amostra errada não tem interpretação.",
+        "Registre o espectro na faixa da técnica, infravermelho, Raman ou ressonância, e localize as bandas.",
+        "Compare cada banda com tabela de frequência característica e confira a atribuição contra a estrutura proposta.",
+      ],
+      exemplo:
+        "Uma carbonila de cetona aparece perto de 1700 cm menos um no infravermelho, e a posição muda conforme a ligação vizinha. O infravermelho vê vibração que altera o momento de dipolo; o Raman vê a que altera a polarizabilidade. Uma banda forte no Raman pode ser fraca no infravermelho, e é exatamente por isso que as duas técnicas juntas identificam mais que cada uma sozinha. A ressonância magnética nuclear acrescenta o ambiente do hidrogênio e fecha o quebra-cabeça.",
+      quebra:
+        "O erro é achar que toda absorção visível vem de elétrons. Vibração e rotação também absorvem, em faixas próprias, e confundir as faixas leva a atribuir cor a transição eletrônica quando a causa é outra. Outro erro é interpretar espectro de amostra contaminada: a banda do solvente ou da umidade entra na conta e a estrutura proposta nasce torta.",
+      levar: "Cada banda é uma ligação falando; a tabela é o dicionário.",
+      maos:
+        "Compare o espectro de duas amostras, uma com grupo carbonila e outra sem, e veja qual banda aparece e qual some; depois justifique pela vibração da ligação.",
+    },
+    "Termodinâmica Química": {
+      oQue:
+        "A direção de uma reação é decidida por energia e entropia juntas, e a energia livre combina as duas numa conta só. Entalpia mede calor trocado, entropia mede dispersão de energia, e o sinal da variação de energia livre diz se o processo acontece por si. O equilíbrio é o ponto em que a energia livre para de cair.",
+      passos: [
+        "Meça ou estime a variação de entalpia da reação, com sinal e unidade.",
+        "Estime a variação de entropia, lembrando que gás tem muito mais entropia que líquido e sólido.",
+        "Combine as duas na energia livre e interprete o sinal no contexto de temperatura em que o processo roda.",
+      ],
+      exemplo:
+        "A dissolução do nitrato de amônio em água é endotérmica: o frasco esfria. Mesmo assim ela acontece, porque o aumento de desordem na solução compensa o custo de energia, e a energia livre cai. Já a combustão do metano libera calor e aumenta a desordem, então é espontânea com folga em qualquer temperatura razoável. O sinal da entalpia sozinho não responde: é a conta das duas que decide.",
+      quebra:
+        "O erro é dizer que reação exotérmica é sempre espontânea. Existem processos que liberam calor e não acontecem porque a entropia cai demais, e existem processos que absorvem calor e acontecem. A temperatura entra na conta e pode inverter o sinal da energia livre. Quem usa só a entalpia acerta por sorte no caso comum e erra nos casos interessantes.",
+      levar: "Entalpia e entropia decidem juntas; sozinha, cada uma engana.",
+      maos:
+        "Para três reações conhecidas, anote o sinal de entalpia e de entropia e preveja se são espontâneas a 25 graus; depois confira na tabela.",
+    },
+    "Fotoquímica": {
+      oQue:
+        "Fotoquímica é química ativada por luz. O fóton entrega energia em pacote, e a molécula só absorve se a energia do pacote casar com a diferença entre dois níveis dela. Depois de excitada, a molécula reage de forma que o estado fundamental não permitia: quebra, isomeriza, emite ou transfere energia. É a base de protetor solar, de fotossíntese e de degradação de material.",
+      passos: [
+        "Registre o espectro de absorção da molécula para saber que faixa de luz ela aproveita.",
+        "Calcule a energia do fóton na faixa de interesse e compare com a transição disponível.",
+        "Analise o estado excitado: meia-vida, caminhos de decaimento e produtos que ele pode formar.",
+      ],
+      exemplo:
+        "Um protetor solar com filtro que absorve no ultravioleta transforma a energia em calor antes que ela chegue ao DNA da pele. A molécula do filtro volta ao estado fundamental sem se decompor, e é por isso que ele funciona por muitas horas. Já um pigmento que absorve no visível e não consegue dissipar a energia quebra e perde a cor: é fotodegradação. A diferença entre os dois é o caminho de decaimento, não a absorção.",
+      quebra:
+        "O erro é achar que intensidade substitui frequência na excitação. Pouca luz de energia certa excita; muita luz de energia errada não excita nada. É por isso que lâmpada fraca de cor certa funciona em reação fotoquímica e refletor potente de cor errada não. Exposição solar também não se mede só por tempo: a faixa importa.",
+      levar: "Fóton de energia errada não excita, por mais luz que haja.",
+      maos:
+        "Compare a faixa de absorção de dois pigmentos, um estável e outro que desbota, e diga qual caminho de decaimento explica a diferença.",
+    },
+  },
+  "inter-physics-cs": {
+    "Simulação Numérica": {
+      oQue:
+        "Simular física é integrar a equação do movimento passo a passo no computador, com erro controlado e comparação com medida real. O passo escolhido decide o erro: menor passo, mais conta e menos erro de truncamento. A simulação não é a verdade, é uma previsão que precisa ser verificada em duas frentes, a convergência numérica e a aderência ao experimento.",
+      passos: [
+        "Discretize a equação com um método explícito, implícito ou simplético, e registre o passo usado.",
+        "Repita a simulação com passo menor e compare o resultado para medir convergência.",
+        "Confira a conservação de energia ou de momento e valide contra uma medida de laboratório.",
+      ],
+      exemplo:
+        "Um pêndulo simulado com Euler explícito ganha energia a cada passo e acaba girando sem parar, o que é impossível. O método de Verlet, que trata posição e velocidade de forma simétrica, conserva energia dentro de uma faixa e mantém o pêndulo oscilando. Os dois usam o mesmo passo e a mesma equação; a diferença está na estrutura do integrador. Trocar de método é mais eficiente que reduzir o passo até o erro sumir.",
+      quebra:
+        "O erro é publicar resultado de simulação sem conferir convergência. O número sai bonito e estável na tela, e ninguém vê que ele muda quando o passo cai pela metade. Simulação não convergida é opinião com casas decimais. O relatório precisa mostrar a tabela de passo contra resultado, e a diferença entre eles é a barra de erro que o leitor vai usar.",
+      levar: "Simulação sem convergência é opinião com casas decimais.",
+      maos:
+        "Simule o pêndulo com dois passos diferentes e compare a energia no fim; se ela cresceu, o integrador está errado, não a física.",
+    },
+    "Computação Quântica": {
+      oQue:
+        "Computador quântico usa qubits, que podem estar em superposição de zero e um, e portas que embaralham amplitudes antes de uma leitura que devolve um resultado só. O ganho não vem de testar tudo em paralelo: vem de construir interferência para que as respostas erradas se cancelem. Sem algoritmo desenhado para isso, o hardware quântico não ajuda.",
+      passos: [
+        "Escreva o problema como circuito de portas sobre qubits, com estado inicial e leitura definidos.",
+        "Verifique se há ganho estrutural: o algoritmo explora interferência ou só repete a conta clássica em superposição.",
+        "Conte os qubits e a profundidade do circuito, porque erro cresce com os dois e correção custa caro.",
+      ],
+      exemplo:
+        "O algoritmo de Grover busca num espaço não ordenado e reduz a raiz quadrada do número de tentativas. Com um milhão de itens, a busca clássica média gasta quinhentas mil consultas e o quântico gasta cerca de mil. O algoritmo de Shor ataca fatoração e quebra RSA, e é por isso que a criptografia pós-quântica existe. Repare que a aceleração é quadrática num caso e exponencial no outro: o ganho depende do problema, não da máquina.",
+      quebra:
+        "O erro é achar que qualquer tarefa fica mais rápida em hardware quântico. Para a maioria dos problemas não se conhece ganho, e o custo de corrigir erro quântico pode comer a vantagem. Vender superposição como paralelismo é o mal-entendido mais comum, e ele leva a projeto que não escala. A pergunta certa é qual estrutura o algoritmo explora.",
+      levar: "Qubit não corre tudo mais rápido: o algoritmo é que decide.",
+      maos:
+        "Compare o número de consultas de Grover e da busca linear para mil e um milhão de itens e veja a razão mudar de raiz quadrada para nada.",
+    },
+    "Gêmeos Digitais": {
+      oQue:
+        "Gêmeo digital é um modelo computacional de um equipamento ou processo, alimentado por dados de sensor em tempo real, usado para prever, testar cenário e detectar desvio sem mexer no físico. Ele só vale enquanto acompanha o real: modelo que envelhece sem recalibração vira ficção com cara de gráfico.",
+      passos: [
+        "Modele o equipamento com as grandezas que importam e ligue cada uma a um sensor real.",
+        "Alimente o modelo com dados atuais e compare a previsão com a medida para medir desvio.",
+        "Recalibre quando o desvio passar do limite e registre a data e a causa da recalibração.",
+      ],
+      exemplo:
+        "Uma turbina com gêmeo digital recebe temperatura, pressão e vibração em tempo real. O modelo simula o desgaste e avisa quando a manutenção deve acontecer, antes da falha. Se um sensor descalibra e ninguém percebe, o modelo segue prevendo com dado ruim e o aviso vira ruído. A manutenção que confia no gêmeo sem conferir sensor troca a falha do equipamento pela falha do dado, e as duas param a linha.",
+      quebra:
+        "O erro é tomar o gêmeo como verdade e ignorar o desvio em relação ao real. O modelo é útil justamente porque pode errar de forma visível: a diferença entre previsão e medida é sinal de diagnóstico. Quem esconde o desvio para o gráfico ficar bonito joga fora a única informação que o gêmeo tinha para dar.",
+      levar: "Gêmeo digital vale pelo desvio que mostra, não pelo gráfico que desenha.",
+      maos:
+        "Escolha um equipamento com dois sensores, escreva a previsão de cada um e diga qual desvio indicaria sensor ruim e qual indicaria equipamento mudando.",
+    },
+  },
+  "inter-physics-lingua": {
+    "Divulgação Científica": {
+      oQue:
+        "Divulgar é traduzir ciência para quem não é da área sem perder exatidão nem esconder incerteza. A analogia é a ferramenta principal e também o risco principal: toda analogia tem limite, e o texto honesto diz onde ele está. O objetivo não é simplificar até virar mentira, é dar ao leitor o que ele precisa para entender e para não ser enganado.",
+      passos: [
+        "Identifique o achado em uma frase, com o que foi medido e em que condições.",
+        "Escolha a analogia que preserva a relação central e escreva explicitamente onde ela deixa de valer.",
+        "Diga o tamanho do efeito e a incerteza em número, não em adjetivo, e evite prometer aplicação que o estudo não testou.",
+      ],
+      exemplo:
+        "Um estudo observa que quem toma café vive mais. A manchete que escreve 'café aumenta expectativa de vida' troca associação por causa. O texto honesto diz que o grupo que toma café difere em renda, sono e acesso a saúde, e que o estudo não separou esses fatores. A notícia fica menos atraente e mais verdadeira, e o leitor ganha o que precisa para decidir se muda o hábito.",
+      quebra:
+        "O erro é trocar associação por causa na manchete. O corpo do texto pode estar correto e a manchete já ter feito o estrago, porque é ela que circula. Sensacionalismo troca precisão por clique de forma consciente, e o custo aparece depois, quando a ciência precisa ser levada a sério em crise. Rigor de causalidade é parte da informação, não enfeite.",
+      levar: "Associação não é causa, e a manchete também precisa saber disso.",
+      maos:
+        "Pegue um estudo com número e reescreva o achado em duas frases, uma com o que foi medido e outra com o que não se pode concluir.",
+    },
+    "Redação de Artigo": {
+      oQue:
+        "Artigo científico organiza objetivo, método, resultado e discussão para que outro grupo consiga repetir o trabalho e avaliar a conclusão. A estrutura é rígida de propósito: ela separa o que foi feito do que se pensa sobre o que foi feito. Método claro é o que transforma resultado em conhecimento verificável.",
+      passos: [
+        "Escreva o objetivo em uma frase e confira se cada seção responde a ele.",
+        "Descreva o método com material, quantidade, equipamento, versão de software e análise estatística, no nível que permite repetição.",
+        "Separe resultado de interpretação: número e figura na seção de resultados, significado e comparação com a literatura na discussão.",
+      ],
+      exemplo:
+        "Um artigo que mede crescimento de planta em duas condições precisa dizer quantas plantas, por quanto tempo, com que luz e com que teste estatístico. O resultado é a curva com barra de erro; a interpretação é dizer que a diferença provavelmente vem da luz. Se as duas coisas aparecem juntas no mesmo parágrafo, o leitor não sabe o que foi medido e o que foi inferido, e a replicação fica impossível.",
+      quebra:
+        "O erro é misturar resultado com opinião na seção de resultados. Frase como 'os dados mostram claramente que o tratamento é superior' é interpretação disfarçada de dado. O revisor corta, mas o texto já perdeu a chance de convencer quem lê rápido. Outro erro é omitir a versão do software e os parâmetros, que é o que impede repetir a análise.",
+      levar: "Método é o que permite repetir; resultado é o que se mediu.",
+      maos:
+        "Pegue um parágrafo de resultado de artigo e marque, com duas cores, o que é medida e o que é interpretação; reescreva separando.",
+    },
+    "Incerteza Explicada": {
+      oQue:
+        "Comunicar incerteza é dizer o que a medida garante e o quanto ela pode variar, sem prometer precisão que o instrumento não tem. Toda medida tem faixa, e toda média tem dispersão. O número sozinho mente por omissão; com a incerteza, ele informa o suficiente para o leitor decidir.",
+      passos: [
+        "Registre a resolução do instrumento e a dispersão das repetições antes de calcular a média.",
+        "Propague a incerteza pela conta e arredonde o resultado no algarismo que a incerteza permite.",
+        "Apresente o valor com a faixa e diga o nível de confiança quando houver intervalo estatístico.",
+      ],
+      exemplo:
+        "Um termômetro com resolução de meio grau não sustenta leitura de 23,47 graus. A medida honesta é 23,5 mais ou menos 0,3, e a incerteza vem da resolução e da repetição. Se cinco leituras deram 23,4, 23,6, 23,5, 23,5 e 23,4, a média é 23,48 e a dispersão é pequena, mas a resolução ainda limita a resposta. Arredondar para 23,5 é correto; escrever 23,48 é fingir precisão.",
+      quebra:
+        "O erro é apresentar número com cinco casas quando a medida só sustenta duas. A casa extra não é neutra: ela sugere que a diferença entre 23,48 e 23,50 é real, e quem decide com base nisso escolhe errado. Arredondar demais também mente, só para o outro lado. O critério é a incerteza, não o gosto de quem escreve.",
+      levar: "Número sem incerteza promete precisão que ninguém mediu.",
+      maos:
+        "Meça cinco vezes algo com régua ou termômetro, calcule média e dispersão e escreva o resultado com o número de algarismos que a medida sustenta.",
+    },
+  },
+  "inter-chem-lingua": {
+    "Nomenclatura": {
+      oQue:
+        "Nomenclatura química é uma língua técnica com regra estável: cada substância tem um nome que a identifica sem ambiguidade, e cada nome reconstrói a estrutura. O sistema IUPAC fixa prefixo de quantidade, sufixo de função e posição de cada grupo. Nome ambíguo não é problema de estilo, é risco de segurança em laboratório.",
+      passos: [
+        "Identifique a função principal da molécula, que decide o sufixo do nome.",
+        "Numere a cadeia a partir da ponta que dá o menor número ao grupo principal e nomeie os substituintes com posição.",
+        "Monte o nome com prefixo de quantidade, substituintes em ordem alfabética e sufixo, e confira contra a estrutura desenhada.",
+      ],
+      exemplo:
+        "Propan-1-ol e propan-2-ol têm a mesma fórmula e nomes diferentes porque a hidroxila está em carbonos diferentes. No primeiro, o grupo fica na ponta; no segundo, no carbono do meio. A posição muda ponto de ebulição, solubilidade e reatividade. Quem escreve só 'álcool propílico' deixa a posição em aberto e pode comprar ou produzir o composto errado.",
+      quebra:
+        "O erro é usar nome popular em documento oficial. Nome popular é regional e pode designar substâncias diferentes em lugares diferentes. A ficha de segurança, o rótulo e o pedido de compra precisam do nome técnico com a posição. O nome popular fica para a conversa, desde que acompanhado do técnico.",
+      levar: "Nome técnico não é enfeite: é o que evita trocar a substância.",
+      limite:
+        "A regra IUPAC cobre o caso geral e ainda deixa espaço para nome tradicional aceito. Alguns compostos têm nome consagrado que a comunidade mantém, e a ficha técnica costuma trazer os dois. A regra não elimina a consulta: ela dá o caminho para chegar ao nome estável.",
+      maos:
+        "Desenhe dois isômeros de posição, nomeie os dois pela regra e confira se os nomes distinguem o que o desenho distingue. Depois escreva o nome popular de cada um e mostre por que ele não serve para pedir a substância a quem está longe; a comparação deixa claro onde a língua técnica carrega informação que a popular perdeu.",
+    },
+    "Relatório de Laboratório": {
+      oQue:
+        "Relatório registra objetivo, método, dados, análise e conclusão de forma que outra pessoa refaça o trabalho e chegue ao mesmo resultado. O dado bruto entra inteiro, inclusive o que saiu fora da curva, porque é dele que sai a avaliação de erro. O relatório não é diário de sucesso, é registro de evidência.",
+      passos: [
+        "Escreva o objetivo em uma frase e o método com quantidade, equipamento e condição de cada etapa.",
+        "Registre todos os dados medidos, com unidade e data, sem apagar o que parece estranho.",
+        "Analise o dado, calcule o resultado com incerteza e conclua respondendo ao objetivo, inclusive quando a resposta é negativa.",
+      ],
+      exemplo:
+        "Numa titulação, o volume gasto em cada repetição vai para a tabela, inclusive a repetição que destoou. A média sem a repetição estranha precisa de justificativa, e a justificativa se escreve no relatório. Se a última gota passou do ponto de virada, o registro mostra o erro e o leitor sabe por que o número foi descartado. Relatório que só mostra a média bonita esconde exatamente a informação que avalia a qualidade da medida.",
+      quebra:
+        "O erro é contar só o resultado que deu certo e omitir as medidas fora da curva. A omissão parece proteger o trabalho e faz o contrário: quem tenta repetir não consegue, e a conclusão fica sem base de erro. Dado descartado se registra com o motivo, não se apaga. O caderno de laboratório vale mais que o relatório final justamente por guardar o bruto.",
+      levar: "Relatório registra o que aconteceu, não o que devia ter acontecido.",
+      maos:
+        "Pegue uma tabela de medidas, calcule média com e sem o ponto fora da curva e escreva a justificativa do descarte antes de decidir qual número usar.",
+    },
+    "Comunicação de Risco": {
+      oQue:
+        "Rotulagem e ficha de segurança comunicam perigo com símbolo padronizado, palavra de advertência e instrução clara. O pictograma é reconhecido antes da leitura e vale em qualquer língua; a palavra indica gravidade; a instrução diz o que fazer. A combinação é o que protege, e cada parte tem regra própria.",
+      passos: [
+        "Classifique o perigo do produto: inflamável, corrosivo, tóxico, oxidante, saúde.",
+        "Escolha o pictograma e a palavra de advertência conforme a classificação, sem inventar símbolo.",
+        "Escreva as instruções de precaução e de primeiros socorros na língua de quem vai usar, junto do contato de emergência.",
+      ],
+      exemplo:
+        "O hipoclorito de sódio usado na limpeza é corrosivo e oxidante: o rótulo traz pictograma de corrosão, palavra de advertência e a instrução de não misturar com amônia, porque a mistura libera gás tóxico. O símbolo aparece antes de qualquer leitura, e é ele que salva quem não fala a língua do rótulo. A instrução completa o que o símbolo não diz: com o que não misturar.",
+      quebra:
+        "O erro é trocar o símbolo por desenho livre e perder o padrão. Símbolo criado no local não é reconhecido por bombeiro, por colega de outro turno nem por quem chega depois. Outro erro é traduzir o rótulo pela metade e deixar a instrução de socorro na língua original. Risco se comunica no idioma de quem está exposto.",
+      levar: "Símbolo padronizado avisa antes da leitura; instrução diz o que fazer.",
+      maos:
+        "Escolha um produto de limpeza da casa, identifique os pictogramas do rótulo e escreva a instrução de primeiros socorros que falta nele.",
+    },
+  },
+  "inter-cs-lingua": {
+    "Processamento de Linguagem": {
+      oQue:
+        "Processamento de linguagem natural ensina a máquina a analisar e gerar língua, e o caminho começa na tokenização: o texto vira unidades que o modelo processa. O modelo aprende padrão de contexto, não significado no sentido humano, e por isso precisa de avaliação com conjunto de referência que ele nunca viu. Sem isso, o número de acerto é ilusão.",
+      passos: [
+        "Tokenize o texto de forma consistente e registre o vocabulário e o tratamento de palavra desconhecida.",
+        "Escolha o modelo e o contexto que ele enxerga, e treine ou ajuste com dados separados da avaliação.",
+        "Avalie num conjunto que o modelo não viu, com métrica adequada à tarefa, e compare com um baseline simples.",
+      ],
+      exemplo:
+        "A palavra 'banco' muda de sentido conforme o contexto: banco de praça, banco de dados, banco financeiro. Um modelo que olha só a palavra não distingue; um modelo contextual usa as palavras vizinhas para escolher a leitura. Se a avaliação usa frases parecidas com as do treino, o acerto parece alto e não se sustenta em texto novo. O conjunto de referência é o que separa modelo útil de modelo decorado.",
+      quebra:
+        "O erro é medir qualidade do modelo só com exemplos que ele já viu. A métrica sobe, o produto parece pronto e falha no primeiro uso real. Outro erro é escolher métrica que não corresponde à tarefa: acurácia alta em classe desbalanceada pode esconder que o modelo nunca acerta a classe que importa. A avaliação é parte do projeto, não etapa final.",
+      levar: "Modelo bom é o que acerta no texto que nunca viu.",
+      maos:
+        "Separe vinte frases em treino e cinco em avaliação, veja o acerto nos dois conjuntos e explique a diferença antes de confiar no número.",
+    },
+    "Fala e Voz": {
+      oQue:
+        "Reconhecimento de fala converte áudio em texto e síntese faz o caminho inverso. O áudio vira espectro antes do modelo, porque a forma de onda crua carrega informação demais e ruído junto. Ruído, sotaque, microfone e distância mudam a taxa de erro, e é no uso real que o sistema é testado de verdade.",
+      passos: [
+        "Grave o áudio na taxa e no formato que o modelo espera, e confira o nível sem estourar.",
+        "Converta para espectro e alimente o modelo acústico, que devolve hipóteses de texto.",
+        "Combine com modelo de língua e avalie em gravações do ambiente real, com ruído e sotaque de quem vai usar.",
+      ],
+      exemplo:
+        "Um reconhecedor treinado com locução de estúdio acerta quase tudo em gravação limpa e erra quando o usuário fala de dentro do carro. O ruído de estrada cobre as frequências que distinguem sons parecidos, e o modelo escolhe a palavra errada com confiança. Sintetizar voz tem o problema espelhado: prosódia robótica cansa o ouvinte mesmo com todas as palavras certas. A naturalidade não está no vocabulário, está no ritmo e na entonação.",
+      quebra:
+        "O erro é testar reconhecimento só com gravação limpa de estúdio. O número de acerto parece excelente e o produto falha no primeiro celular com vento. O conjunto de teste precisa ter o ruído do uso, não o silêncio do laboratório. Do outro lado, voz sintética testada só com frase curta parece boa e falha em nome próprio e número.",
+      levar: "Reconhecer fala se prova no ruído, não no silêncio.",
+      maos:
+        "Grave a mesma frase limpa e com ruído de fundo, compare a transcrição das duas e liste os sons que o modelo confundiu.",
+    },
+    "Busca Semântica": {
+      oQue:
+        "Busca semântica encontra por sentido, não por palavra exata: o texto vira vetor, e vetores próximos indicam significado parecido. Ela resolve o caso em que a pessoa lembra da ideia e não do termo, e falha onde o sentido não ajuda, como nome próprio, código e número de série. Por isso ela complementa a busca exata em vez de substituí-la.",
+      passos: [
+        "Transforme documentos e consulta em vetores com o mesmo modelo, sem misturar modelos diferentes no mesmo índice.",
+        "Compare por distância ou similaridade, que precisa ser a mesma na indexação e na consulta.",
+        "Combine o resultado semântico com filtro exato para nome, data e código, e avalie com consultas reais.",
+      ],
+      exemplo:
+        "Quem busca 'como fazer pão crescer' encontra texto que fala em fermento e levedura mesmo sem a palavra pão no documento. A busca por palavra exata falharia. Já a busca pelo código 'XJ-2040' precisa do filtro exato, porque vetor de código parecido não garante o item certo. O índice híbrido ganha dos dois: semântico para a ideia, exato para o identificador.",
+      quebra:
+        "O erro é achar que busca semântica substitui a busca exata em nome próprio e código. Dois códigos podem ficar próximos no espaço de vetores e ser peças diferentes, e trocar uma pela outra quebra o pedido. O inverso também acontece: busca exata sozinha perde quem não lembrou o termo. O sistema honesto oferece as duas e diz qual usou.",
+      levar: "Vetor acha a ideia; exato acha o identificador. Os dois juntos.",
+      maos:
+        "Faça duas consultas, uma por ideia e outra por código, e veja qual método acerta em cada uma; depois escreva quando usar cada um.",
+    },
+  },
+  "inter-todas": {
+    "IA Científica": {
+      oQue:
+        "IA científica combina dado, simulação e conhecimento de domínio para acelerar descoberta em física, química e biologia. O modelo propõe hipótese e o especialista verifica se ela respeita as leis conhecidas. Sem essa restrição, o modelo pode gerar algo plausível na conta e impossível no mundo, e a velocidade vira risco.",
+      passos: [
+        "Defina a pergunta científica e o dado disponível, com a precisão e a cobertura que ele tem.",
+        "Treine ou ajuste o modelo junto de restrições de domínio, como conservação e simetria.",
+        "Valide a previsão contra experimento ou simulação de referência antes de usar o resultado em decisão.",
+      ],
+      exemplo:
+        "Um modelo propõe um material com propriedade excelente e estrutura que viola a conservação de carga. A conta fecha e o composto não existe. O especialista reconhece a violação e descarta o candidato em segundos, coisa que o modelo não faz sozinho. O ganho da IA científica vem de gerar candidatos em quantidade e de descartar rápido os impossíveis; quem aceita a saída sem filtro acelera o erro.",
+      quebra:
+        "O erro é aceitar previsão que viola lei física conhecida porque o número saiu bom. O modelo não sabe que a lei existe; ele aprendeu correlação nos dados. Confiar sem filtro transfere para o laboratório um custo que a revisão de domínio teria evitado. A colaboração entre especialista e cientista de dados não é formalidade, é o que impede o modelo de otimizar o impossível.",
+      levar: "Modelo propõe; lei física e experimento decidem.",
+      maos:
+        "Pegue uma previsão de modelo publicada e procure qual lei ou restrição ela precisa respeitar; escreva o teste que a descartaria.",
+    },
+    "Descoberta de Materiais": {
+      oQue:
+        "Descobrir material novo é um ciclo: banco de dados, simulação, aprendizado e ensaio de laboratório se alimentam. A simulação triagem candidatos baratos; a síntese e a medida fecham o ciclo. O custo do ensaio limita quantos candidatos testar, e é por isso que a triagem computacional tem valor: ela encurta a fila.",
+      passos: [
+        "Filtre o banco por critério físico, como estabilidade e abundância dos elementos, antes de rodar modelo caro.",
+        "Rode a simulação ou o modelo de aprendizado e ordene os candidatos por potencial e por facilidade de síntese.",
+        "Sintetize, meça e registre o resultado, inclusive o negativo, para alimentar a próxima rodada.",
+      ],
+      exemplo:
+        "Um grupo busca eletrólito para bateria, filtra o banco por estabilidade eletroquímica e chega a duzentos candidatos. A simulação reduz para vinte, e o laboratório testa cinco. Se nenhum funciona, o resultado negativo volta para o banco e o próximo ciclo começa melhor. O ciclo não termina no modelo: ele termina na medida. Material anunciado sem síntese é hipótese com nome bonito.",
+      quebra:
+        "O erro é parar na simulação e anunciar material sem síntese. O número previsto vira manchete e ninguém consegue reproduzir. O custo do erro é a credibilidade do grupo inteiro, e o laboratório que tenta repetir gasta meses. O relatório honesto diz que o candidato é promissor e ainda não foi sintetizado, com a incerteza da previsão.",
+      levar: "Sem síntese e medida, o material é hipótese, não descoberta.",
+      maos:
+        "Monte um funil com dez candidatos, descarte por critério físico e diga quantos chegam ao laboratório e por quê.",
+    },
+    "Ciência Aberta": {
+      oQue:
+        "Ciência aberta compartilha dados, código e método para que outro grupo reproduza e reutilize. Aberto não é só publicar arquivo: precisa de licença que permita uso, dicionário que explique cada campo e contexto de coleta. Sem isso, o dado existe e ninguém consegue usar.",
+      passos: [
+        "Escolha a licença antes de publicar e verifique se ela permite reuso e citação.",
+        "Escreva o dicionário de dados com unidade, faixa e significado de cada campo.",
+        "Publique o código com ambiente, versão e comando que reproduz a figura principal, e registre onde o dado está.",
+      ],
+      exemplo:
+        "Um conjunto de dados de clima publicado sem dicionário traz colunas com nome abreviado e unidade implícita. Quem baixa não sabe se a temperatura está em graus ou décimos, e a análise começa errada. O mesmo conjunto com dicionário e script de leitura vale muito mais, e o custo de produzir isso é uma tarde. Reprodutibilidade é parte do resultado, não sobra de projeto bem financiado.",
+      quebra:
+        "O erro é publicar dado sem dicionário e achar que está aberto. O arquivo está lá, a licença não, o contexto não, e o reuso não acontece. Outro erro é publicar código sem versão de dependência: roda na máquina do autor e em nenhuma outra. Aberto de fachada custa a confiança de quem tentou usar.",
+      levar: "Dado sem dicionário e licença não é aberto, é abandonado em público.",
+      maos:
+        "Pegue um conjunto de dados aberto e tente descobrir o significado de três campos sem olhar o artigo; o que faltar é o que você deve incluir no seu.",
+    },
+  },
 };
 
 // o nome da estação chega em caixa baixa do banco ("Grafos moleculares") e em
