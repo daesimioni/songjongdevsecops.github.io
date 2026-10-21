@@ -1987,6 +1987,243 @@ export const LICOES = {
       },
     },
   },
+  "math-geometria": {
+    "Geometria Euclidiana": {
+      contexto:
+        "Onde isso aparece: na planta da casa, no telhado e na sombra que mede altura. Ângulo, semelhança e congruência resolvem o que a régua não alcança. O teorema de Pitágoras é a ponte entre comprimento e perpendicularidade.",
+      oQue:
+        "Geometria euclidiana estuda ponto, reta, plano e figura a partir dos postulados clássicos. Ângulo, semelhança e congruência vêm daí, e área e volume saem da decomposição. A construção com régua e compasso é o teste histórico de que o objeto existe.",
+      passos: [
+        "Identifique os elementos dados e o que se quer medir ou provar.",
+        "Procure triângulo retângulo, semelhança ou congruência que ligue os dados.",
+        "Aplique a relação e confira a coerência das unidades.",
+      ],
+      exemplo:
+        "Um poste de 4 metros projeta sombra de 3 metros, e uma pessoa de 1,8 metro projeta sombra de 1,35. A semelhança de triângulos resolve a altura do poste sem subir nele. Já o Pitágoras exige triângulo retângulo: sem o ângulo de 90 graus, a relação entre lados muda.",
+      quebra:
+        "Usar Pitágoras em triângulo que não é retângulo. A conta fecha no papel e erra na obra. A hipótese do ângulo reto é parte do teorema, não detalhe do desenho.",
+      limite:
+        "A geometria euclidiana vale no plano e no espaço de curvatura zero. Em superfície curva, a soma dos ângulos do triângulo deixa de ser 180 graus, e a conta precisa de outra geometria.",
+      levar: "Semelhança resolve o que a régua não alcança.",
+      maos:
+        "Meça a sombra de um objeto e a sua própria sombra e calcule a altura pela semelhança.",
+    },
+    "Geometria Analítica": {
+      contexto:
+        "Onde isso aparece: no gráfico de função, no GPS e no projeto de peça por coordenada. A figura vira equação, e o problema de desenho vira problema de álgebra. Interseção de curva é sistema de equações.",
+      oQue:
+        "Geometria analítica coloca coordenadas no plano e no espaço e traduz figura em equação. Ponto é par ordenado, reta é relação linear, cônica é equação de segundo grau. Distância, ângulo e interseção saem de fórmula algébrica.",
+      passos: [
+        "Escolha o sistema de coordenadas e a origem que simplificam a conta.",
+        "Escreva a equação da figura e a da outra figura.",
+        "Resolva o sistema para achar interseção ou posição relativa.",
+      ],
+      exemplo:
+        "A reta que passa por dois pontos tem equação que vem da inclinação e de um ponto. Duas retas são paralelas quando a inclinação é igual e o coeficiente linear difere; coincidentes quando os dois coeficientes batem. A pergunta geométrica virou comparação de número.",
+      quebra:
+        "Esquecer a origem e a escala ao interpretar o gráfico. A mesma figura desenhada em escala diferente parece outra, e a leitura do coeficiente muda. A conta está certa; a interpretação não. Em três dimensões, o plano tem equação linear com três coeficientes, e a distância de ponto a plano sai da norma do vetor normal, com sinal que indica o lado do plano. A escolha da equação depende do que se quer medir: distância, interseção ou ângulo.",
+      limite:
+        "A coordenada cartesiana descreve bem o plano, mas nem toda figura tem equação simples. Curva definida por processo, como fractal, não se escreve por polinômio, e a análise muda.",
+      levar: "Coordenada transforma desenho em conta.",
+      maos:
+        "Ache a interseção de uma reta e uma circunferência resolvendo o sistema e confira no gráfico.",
+      pergunta: {
+        q: "O que a equação de uma reta representa no plano cartesiano?",
+        a: "O conjunto de pontos que satisfazem a relação entre x e y",
+        why: "Cada par ordenado que cumpre a equação está na reta; a equação é a descrição algébrica da figura geométrica.",
+      },
+    },
+    "Geometria Vetorial": {
+      contexto:
+        "Onde isso aparece: na força resultante, na projeção de sombra e no motor 3D. Vetor carrega direção, sentido e tamanho, e a operação respeita isso. Produto escalar mede alinhamento; produto vetorial mede área e perpendicularidade.",
+      oQue:
+        "Geometria vetorial trata o vetor como ente com direção, sentido e módulo, e define soma, múltiplo e produto. O produto escalar entrega número ligado ao cosseno do ângulo, e o vetorial entrega vetor perpendicular aos dois. Reta e plano no espaço ganham equação vetorial.",
+      passos: [
+        "Escreva os vetores em coordenadas.",
+        "Escolha o produto pela pergunta: ângulo e projeção pedem escalar; perpendicular pede vetorial.",
+        "Interprete o resultado com a unidade e o sinal.",
+      ],
+      exemplo:
+        "Dois vetores de módulo 3 e 4 com produto escalar 0 são perpendiculares, porque o cosseno é zero. O produto vetorial deles tem módulo 12 e aponta na perpendicular, que é a área do paralelogramo formado. O mesmo par de vetores responde a duas perguntas diferentes.",
+      quebra:
+        "Trocar produto escalar por vetorial sem olhar o tipo de resposta. Um devolve número, o outro devolve vetor. Usar o errado quebra a conta e a interpretação geométrica. Em física, o escalar aparece no trabalho e o vetorial no torque, e a mesma conta muda de nome quando muda o contexto, mas a interpretação tem de acompanhar. O produto misto, que combina os três, acrescenta o volume do paralelepípedo.",
+      limite:
+        "O produto vetorial é próprio do espaço tridimensional. Em dimensão maior, a perpendicularidade existe, mas o produto vetorial clássico não generaliza do mesmo jeito.",
+      levar: "Escalar mede alinhamento; vetorial mede área e perpendicular.",
+      maos:
+        "Calcule o produto escalar e o vetorial de dois vetores e compare o que cada um informa.",
+      pergunta: {
+        q: "O que o produto escalar informa sobre dois vetores?",
+        a: "O quanto um aponta na direção do outro, ligado ao cosseno do ângulo",
+        why: "O produto escalar é o produto dos módulos pelo cosseno do ângulo entre eles; zero indica perpendicularidade.",
+      },
+    },
+    "Geometria Diferencial": {
+      contexto:
+        "Onde isso aparece: na curva da estrada, na casca do ovo e na curvatura do espaço na relatividade. A ferramenta é o cálculo, e a pergunta é como a forma se dobra sem referência externa. Geodésica é o caminho mais curto na superfície.",
+      oQue:
+        "Geometria diferencial estuda curva e superfície com cálculo: curvatura, geodésica e variedade. A curvatura mede o quanto a curva se afasta da reta ou a superfície do plano, e a geodésica generaliza a reta para o espaço curvo. É a base da relatividade geral.",
+      passos: [
+        "Parametrize a curva ou a superfície.",
+        "Calcule a curvatura e o referencial móvel.",
+        "Ache a geodésica pela equação ou pela variação do comprimento.",
+      ],
+      exemplo:
+        "Na esfera, a geodésica é o arco de círculo máximo, e é por isso que o voo entre duas cidades longe do equador parece curvar no mapa plano. A curvatura da esfera é constante e positiva; a da sela é negativa. O sinal muda o comportamento das geodésicas.",
+      quebra:
+        "Achar que geodésica é sempre a linha reta do desenho. Na superfície curva, a reta do papel não é o caminho mais curto. A intuição plana engana.",
+      limite:
+        "A conta local descreve vizinhança pequena. Comportamento global, como fechamento de geodésica, depende da topologia da superfície e não sai da curvatura sozinha.",
+      levar: "Curvatura é o que a forma faz sem sair dela mesma.",
+      maos:
+        "Desenhe duas geodésicas na esfera e veja o que acontece quando elas se cruzam.",
+    },
+    "Geometria Algébrica": {
+      contexto:
+        "Onde isso aparece: na curva de nível, na interseção de superfície e no código corretor. A figura é o conjunto de soluções de polinômio. Traduzir figura em equação permite usar álgebra para provar propriedade geométrica.",
+      oQue:
+        "Geometria algébrica estuda variedade algébrica: o conjunto de pontos que anulam um sistema de polinômios. Curva e superfície algébrica ganham grau e singularidade, e ideal é o objeto algébrico correspondente. Geometria aritmética estuda solução inteira e racional das mesmas equações.",
+      passos: [
+        "Escreva o sistema de polinômios que define a figura.",
+        "Veja o grau e a dimensão da variedade.",
+        "Estude singularidade e interseção com outras variedades.",
+      ],
+      exemplo:
+        "A circunferência é a variedade definida por x ao quadrado mais y ao quadrado igual a um. Interseção com a reta y igual a x dá dois pontos, e a conta é resolver o sistema. A figura e o sistema são a mesma coisa escrita de dois jeitos.",
+      quebra:
+        "Supor que toda equação polinomial desenha figura suave. A curva pode ter bico, cruzamento ou ponto isolado, e a geometria muda no ponto singular. Ignorar a singularidade erra a conclusão sobre interseção. O grau da equação controla quantas interseções são esperadas, e o teorema de Bézout formaliza essa contagem no caso sem singularidade.",
+      limite:
+        "O estudo clássico pede corpo algebricamente fechado. Sobre os racionais, a mesma equação pode ter pouquíssima solução, e a geometria aritmética é bem mais difícil.",
+      levar: "Figura algébrica é conjunto de soluções de polinômio.",
+      maos:
+        "Escreva a equação de uma circunferência e ache a interseção com uma reta.",
+      pergunta: {
+        q: "O que é uma variedade algébrica?",
+        a: "O conjunto de pontos que anulam um sistema de polinômios",
+        why: "A definição liga a figura geométrica ao ideal gerado pelos polinômios, e é essa ligação que permite usar álgebra para provar propriedade da figura.",
+      },
+    },
+    "Geometria Euclidiana e Não Euclidiana": {
+      contexto:
+        "Onde isso aparece: no mapa da Terra, na navegação e no modelo cosmológico. Trocar o postulado das paralelas muda a soma dos ângulos do triângulo. Cada geometria é uma escolha axiomática com aplicação própria.",
+      oQue:
+        "A geometria não euclidiana troca o postulado das paralelas. Na hiperbólica, por um ponto passam infinitas paralelas e a soma dos ângulos do triângulo é menor que 180 graus; na elíptica, não passa nenhuma e a soma é maior. Geometria projetiva e afim estudam o que sobrevive a outra transformação.",
+      passos: [
+        "Identifique qual postulado está sendo trocado.",
+        "Veja o modelo concreto: esfera, disco ou plano projetivo.",
+        "Recalcule a propriedade que dependia do postulado antigo.",
+      ],
+      exemplo:
+        "Num triângulo na esfera com três ângulos de 90 graus, a soma dá 270 graus, e cada lado é arco de círculo máximo. No plano, a mesma construção é impossível. A diferença não é de desenho: é de axioma. Na elíptica, o modelo é a esfera com pontos antipodais identificados, e a distância é o arco menor; a soma dos ângulos passa de 180 graus em qualquer triângulo, e a distância entre dois pontos é o arco menor, não a corda.",
+      quebra:
+        "Usar resultado euclidiano em geometria curva. A soma dos ângulos, a relação de Pitágoras e o paralelismo mudam. Aplicar a fórmula antiga no modelo novo erra por construção.",
+      limite:
+        "Cada geometria tem modelo e alcance próprios. A escolha depende do problema físico, e não existe uma mais verdadeira em abstrato: existem axiomas e consequências.",
+      levar: "Mudar o axioma muda o mundo que a geometria descreve.",
+      maos:
+        "Desenhe um triângulo na bola e meça a soma dos ângulos.",
+      pergunta: {
+        q: "O que muda na geometria hiperbólica em relação à euclidiana?",
+        a: "O postulado das paralelas: por um ponto passam infinitas retas paralelas",
+        why: "Com a troca, a soma dos ângulos do triângulo fica menor que 180 graus e várias relações euclidianas deixam de valer.",
+      },
+    },
+    "Geometria Topológica": {
+      contexto:
+        "Onde isso aparece: na classificação de superfície, no mapa do globo e no estudo de forma que estica. A pergunta é o que sobrevive a deformação contínua. Gênero e orientabilidade separam as superfícies fechadas.",
+      oQue:
+        "Geometria topológica estuda propriedade que não muda por deformação contínua. Superfície fechada se classifica por gênero e orientabilidade: esfera, toro, plano projetivo e soma conexa. Invariante geométrico liga propriedade de forma a estrutura topológica.",
+      passos: [
+        "Determine se a superfície é fechada e orientável.",
+        "Conte o gênero, que é o número de furos.",
+        "Classifique pela lista e compare com a forma estudada.",
+      ],
+      exemplo:
+        "A esfera e o toro não são a mesma superfície: o toro tem um furo e a esfera não. Já a caneca e o toro são o mesmo objeto topológico, porque a caneca tem exatamente um furo na alça. A deformação não cria nem destrói furo. A soma conexa de dois toros é o toro de dois furos, e a classificação diz que toda superfície fechada orientável é uma esfera com alças; a borda entra como disco removido. A orientabilidade separa o toro do plano projetivo, e o gênero conta quantas alças a superfície tem. A caneca e o toro são o mesmo objeto; a caneca com duas alças não é.",
+      quebra:
+        "Confundir topologia com geometria. Duas formas podem ser topologicamente iguais e geometricamente diferentes: mesma estrutura, distância e curvatura distintas. A pergunta precisa dizer qual propriedade interessa.",
+      limite:
+        "A classificação completa vale para superfície fechada. Com borda, dimensão maior ou singularidade, a lista cresce e o problema fica mais difícil.",
+      levar: "Topologia conta furos; geometria mede distâncias.",
+      maos:
+        "Classifique uma caneca, uma bola e uma rosquinha por gênero e orientabilidade.",
+      pergunta: {
+        q: "O que a topologia de superfícies classifica?",
+        a: "Superfícies pela estrutura: gênero e orientabilidade",
+        why: "A classificação ignora distância e curvatura e usa apenas o que sobrevive a deformação contínua, como o número de furos.",
+      },
+    },
+    "Geometria Simplética e Complexa": {
+      contexto:
+        "Onde isso aparece: na mecânica hamiltoniana, na óptica e no estudo de variedade de Kähler. A forma simplética mede área orientada e gera o fluxo do sistema. A estrutura complexa dá o que a real não tem.",
+      oQue:
+        "Geometria simplética estuda variedade com forma que mede área orientada e define fluxo hamiltoniano. Geometria complexa estuda variedade com estrutura de número complexo, e a de Kähler junta as duas. Aplicação vai da mecânica clássica à física matemática.",
+      passos: [
+        "Identifique a forma simplética e verifique se é fechada e não degenerada.",
+        "Obtenha o campo de vetor hamiltoniano a partir da função de energia.",
+        "Veja se a estrutura complexa é compatível, no caso de Kähler.",
+      ],
+      exemplo:
+        "No plano com coordenadas de posição e momento, a forma simplética mede a área orientada do paralelogramo formado por dois vetores. O fluxo hamiltoniano preserva essa área, e é por isso que o volume no espaço de fase se conserva. A conta geométrica sustenta a lei física. Em mecânica, a função de energia é o hamiltoniano, e as equações de movimento saem da forma simplética sem precisar de coordenada especial.",
+      quebra:
+        "Tratar a forma simplética como métrica. Ela mede área orientada, não distância. Trocar uma pela outra muda o que se conserva e a interpretação do fluxo.",
+      limite:
+        "A estrutura simplética existe em dimensão par. Em dimensão ímpar, o análogo é a variedade de Poisson, com comportamento diferente.",
+      levar: "Simplética mede área que o fluxo não muda.",
+      maos:
+        "Calcule a área orientada de dois vetores no plano de fase e veja o sinal.",
+      pergunta: {
+        q: "O que uma variedade simplética carrega que a diferencia de uma variedade comum?",
+        a: "Uma forma que mede área orientada e gera o fluxo hamiltoniano",
+        why: "A forma é fechada e não degenerada, e é ela que define a dinâmica e garante a conservação do volume no espaço de fase.",
+      },
+    },
+    "Geometria Convexa": {
+      contexto:
+        "Onde isso aparece: no projeto de antena, no corte de material e na otimização. Conjunto convexo contém o segmento entre dois pontos quaisquer. A convexidade simplifica: mínimo local vira global, e separação de conjunto vira teorema.",
+      oQue:
+        "Geometria convexa estuda conjunto que contém o segmento entre dois de seus pontos. Poliedro é interseção de semiespaço, e hiperplano de suporte toca a fronteira sem cortar o conjunto. Separação de conjuntos garante que dois convexos disjuntos podem ser separados por plano.",
+      passos: [
+        "Verifique a convexidade pela definição ou pela representação.",
+        "Escreva o conjunto como interseção de semiespaço, quando possível.",
+        "Use separação ou suporte para resolver o problema de otimização.",
+      ],
+      exemplo:
+        "Um polígono regular é convexo; uma estrela de cinco pontas não é, porque o segmento entre duas pontas sai da figura. No problema de otimização com função convexa e região convexa, qualquer mínimo local é global, e a busca não precisa de reinício. A forma garante a conta. O teorema de separação, que garante plano entre dois convexos disjuntos, é a base do algoritmo de máquina de vetor de suporte.",
+      quebra:
+        "Supor convexidade pela aparência do desenho. Figura regular pode ter reentrância pequena que quebra a propriedade, e a otimização perde a garantia. A definição tem de ser verificada, não intuída.",
+      limite:
+        "Convexidade garante otimalidade, mas o custo computacional cresce com a dimensão. Em dimensão alta, o volume some nas pontas e os algoritmos sofrem, mesmo com a estrutura boa.",
+      levar: "Convexo é o que não tem reentrância: toda corda fica dentro.",
+      maos:
+        "Teste três figuras na definição e veja qual delas não é convexa.",
+      pergunta: {
+        q: "O que a convexidade garante num problema de otimização?",
+        a: "Que todo mínimo local também é global",
+        why: "Com função e região convexas, não existe vale falso: qualquer ponto que não melhora por perto já é o melhor da região.",
+      },
+    },
+    "Geometria Discreta e Computacional": {
+      contexto:
+        "Onde isso aparece: no mapa de cobertura de antena, na malha de jogo e no recorte de imagem. O problema é geométrico, mas a solução é algoritmo. Envoltória convexa, triangulação e vizinhança são os blocos.",
+      oQue:
+        "Geometria computacional resolve problema geométrico por algoritmo: envoltória convexa, triangulação, interseção e vizinhança. Diagrama de Voronoi reparte o plano pelo ponto mais próximo, e a triangulação de Delaunay é a dual. A eficiência depende da estrutura e do caso degenerado.",
+      passos: [
+        "Formule o problema em termos de ponto, reta e região.",
+        "Escolha o algoritmo pela estrutura: varredura, divisão e conquista ou incremental.",
+        "Trate caso degenerado: ponto colinear, coincidente e sobre a borda.",
+      ],
+      exemplo:
+        "Numa lista de antenas, o diagrama de Voronoi diz qual está mais perto de cada ponto, e a célula de cada antena é a área de cobertura. A fronteira entre duas células é a mediatriz. O mapa de cobertura sai direto da estrutura geométrica.",
+      quebra:
+        "Ignorar caso degenerado no algoritmo. Ponto colinear e ponto coincidente quebram a ordenação e a interseção, e o programa falha em entrada real, mesmo com a teoria certa.",
+      limite:
+        "O algoritmo ótimo em teoria pode ser lento na prática por constante e memória. Em entrada enorme e dimensão alta, a maldição da dimensionalidade muda a escolha.",
+      levar: "Geometria computacional é desenho com prova de tempo.",
+      maos:
+        "Desenhe quatro pontos e trace o diagrama de Voronoi deles à mão.",
+    },
+  },
 };
 
 // o nome da estação chega em caixa baixa do banco ("Grafos moleculares") e em
