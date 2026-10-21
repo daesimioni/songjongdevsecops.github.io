@@ -252,6 +252,23 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
       desce de um lado da ilha e volta pelo outro (antes as duas ficavam a
       menos de nove tiles uma da outra em 24 dos 93 pares)
 
+### W. Vento e onda
+
+- [x] o vento virou um lugar: uma frente de rajada atravessa o mapa, com fase
+      por posição, então o mesmo trecho de campo verga junto em vez de cada
+      folha tremer sozinha
+- [x] a pedra da área decide a força: fibra e papel batem forte, cristal,
+      obsidiana e vidro quase não mexem (16 materiais mapeados)
+- [x] a copa da árvore verga na rajada, solta folha quando ela chega e o capim
+      do chão dobra na mesma faixa, inclusive musgo e flor
+- [x] o mar ganhou crista que viaja de lado, cava entre duas cristas e espuma
+      que respira na costa, em vez de brilho fixo pintado uma vez
+- [x] custo medido: terreno de 0,60 para 0,66 ms por quadro na área de grama,
+      com fps dentro do ruído da máquina (45,1 com vento, 48,7 sem, e 45,3 na
+      segunda medida sem vento)
+- [ ] falta fauna e NPC com respiração e passo parado, e clima por bioma
+      (chuva, neblina, poeira)
+
 ## 3. Regras de desenho
 
 - A tela de título é a primeira impressão: vale com camadas, céu em degradê,
@@ -281,6 +298,7 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 
 | data | fase | o que entrou | prova |
 |---|---|---|---|
+| 2026-10-21 | W | vento e onda: frente de rajada que atravessa o mapa com fase por posição e força por material da área; copa, folha solta, capim, musgo e flor respondem à mesma rajada; o mar ganhou crista que viaja, cava entre cristas e espuma que respira | node: rajada com pico e calmaria, vizinho de 1 tile na mesma frente, 14 tiles adiante em outra fase, pico levando tempo para atravessar 40 tiles, fibra mais forte que cristal, crista do mar andando; navegador: dois quadros congelados no pico e no calmo, crista e quadro seguinte, fps 45,1 com vento e 48,7 sem, terreno 0,66 contra 0,60 ms |
 | 2026-10-21 | P | equipamento preso na mão: o punho saiu do ombro e foi para o último par de pixels do braço, subindo, descendo e balançando com o passo; arma ganhou contorno escuro, aço em dois tons, guarda dourada, cabo com a mão por cima e pomo; escudo ganhou aro, brilho, sombra, cravos, umbo e alça | node: quatro direções com parado e andando, punho a no máximo 6 px da mão, escudo a no máximo 6 px do braço e balanço entre dois instantes do passo; navegador: galeria do boneco com espada, escudo, elmo e armadura nas quatro direções |
 | 2026-10-21 | V | caverna com cara de lugar: planta semeada pelo id (93 desenhos distintos, progressão por profundidade e chefe no fundo) e fachada pela pedra da área, com a boca do fundo diferente da entrada; a segunda boca foi para o lado oposto da ilha | node: 93 plantas distintas, todas as salas com chão e alcançáveis desde a entrada, chefe em tier 3; navegador: galeria das cinco famílias com a paleta real de cada área e as duas bocas, mina e fenda no mundo com placa e sem placa, console limpo; pares de boca: min 9,2 e mediana 17,0 tiles (antes 7,1 e 12,0, com 24 pares abaixo de 9), zero saída obstruída |
 | 2026-10-20 | U | colisão do tamanho do desenho: morro da caverna, estação, pedra, enfeites e altar/forja/pedra da cidade; boca e saída livres; caminho mira a frente; NPC sai de prop novo | navegador: 13 caminhos de caverna, topo do morro sólido, saída livre, boneco parado, altar/forja/pedra sólidos, console limpo; node verde |

@@ -314,6 +314,12 @@ desenhada em linhas de 1 px, com sombra, tronco e galho. O piso da caverna é
 pintado uma vez por descida num canvas do mapa inteiro, então o xadrez de 16 px
 saiu e entrou rachadura, cascalho, cogumelo e parede com borda serrada.
 
+O mundo se mexe. Uma frente de rajada atravessa o mapa e verga junto o capim,
+o musgo, o arbusto e a copa das árvores: árvores vizinhas vão na mesma lâmina de
+vento, e a pedra da área decide a força (fibra e papel batem forte, cristal e
+obsidiana quase não mexem). O mar ganhou crista que viaja de lado, cava entre
+duas cristas e espuma que respira na costa, no lugar do brilho fixo.
+
 A caverna também deixou de ser sempre a mesma. A pedra da área decide a
 fachada: ruína de pedra lavrada no giz, ardósia e papel; boca de mina com
 barrote e trilho no ferro, cobre, latão e silício; fenda de cristal no vidro,

@@ -12,6 +12,7 @@ import { drawPetSprite } from "./pet-art.js";
 import { BIOMES, TILE_STYLE } from "./identity.js";
 import { drawSkiff } from "./skiff.js";
 import { drawCaveFacade } from "./cave-art.js";
+import { gustAt, ondaAt, espumaAt, swayAt, windMood } from "./wind.js";
 
 const BODY_W = 12;
 const BODY_H = 17;
@@ -33,6 +34,8 @@ export function createRenderer(canvas, world) {
   let camX = 0, camY = 0, shake = 0;
   let rendererReady = false;
   let trail = [];
+  // o vento do lugar onde o jogador está: troca de bioma, troca a força do ar
+  let moodAtual = windMood(null);
   const motes = Array.from({ length: 90 }, () => ({
     x: Math.random() * WORLD_W,
     y: Math.random() * WORLD_H,
@@ -440,9 +443,25 @@ export function createRenderer(canvas, world) {
           c.fillRect(bx, by, 2, 1);
         }
       }
+      if (animated) {
+        // a crista viaja de lado, em faixas: não é um brilho que pisca no lugar
+        const o = ondaAt(x, y, time);
+        if (o > 0.42) {
+          const cx = Math.round((hash2(x, y) * 9 + o * 7) % 12);
+          const cy = py + 4 + Math.round(hash2(x + 2, y) * 7);
+          c.fillStyle = `rgba(150, 228, 255, ${(0.06 + (o - 0.42) * 0.24).toFixed(3)})`;
+          c.fillRect(px + cx, cy, 4, 1);
+          c.fillRect(px + Math.max(0, cx - 2), cy + 1, 2, 1);
+        } else if (o < -0.55) {
+          // cava entre duas cristas: a água ganha ondulação, não só brilho
+          c.fillStyle = "rgba(3, 12, 24, 0.32)";
+          c.fillRect(px + 2, py + 9, 6, 1);
+        }
+      }
       if (shallow) {
         // espuma pontilhada: a costa fica redonda, não uma linha reta
-        c.fillStyle = "rgba(150, 228, 255, 0.3)";
+        const respira = animated ? 0.2 + espumaAt(x, y, time) * 0.26 : 0.3;
+        c.fillStyle = `rgba(150, 228, 255, ${respira.toFixed(3)})`;
         if (landN) for (let i = 0; i < 6; i++) if (hash2(x * 5 + i, y) > 0.3) c.fillRect(px + 1 + i * 2, py, 2, 1);
         if (landS) for (let i = 0; i < 6; i++) if (hash2(x * 3 - i, y) > 0.3) c.fillRect(px + 1 + i * 2, py + TILE - 1, 2, 1);
         if (landW) for (let i = 0; i < 6; i++) if (hash2(x, y * 7 + i) > 0.3) c.fillRect(px, py + 1 + i * 2, 1, 2);
@@ -625,7 +644,9 @@ export function createRenderer(canvas, world) {
     const px = x * TILE, py = y * TILE;
     const h = hash2(x, y);
     const r = hash2(x + 3, y + 9);
-    const sway = Math.sin(time * 0.0012 + x * 1.7 + y) * 0.7;
+    // a copa verga com a frente de rajada: árvores vizinhas vão juntas
+    const rajada = gustAt(x, y, time, moodAtual);
+    const sway = swayAt(x, y, time, moodAtual) * 0.8;
     const cx = px + 8 + sway + (h - 0.5) * 1.4;
     // sombra
     ctx.fillStyle = "rgba(2, 6, 10, 0.32)";
@@ -666,6 +687,14 @@ export function createRenderer(canvas, world) {
       const ly = Math.round(py + 3 + hash2(x + i * 5, y * 3) * 9);
       ctx.fillRect(lx, ly, 1, 1);
     }
+    if (rajada > 0.45) {
+      // com a rajada, folha solta atravessa o tile: o vento fica visível
+      ctx.fillStyle = "rgba(126, 196, 150, 0.8)";
+      for (let i = 0; i < 2; i++) {
+        const t2 = (time * 0.06 + i * 90 + hash2(x, y) * 60) % 22;
+        ctx.fillRect(Math.round(cx + 2 + t2 * (sway >= 0 ? 1 : -1)), py + 6 + Math.round(hash2(x + i, y + 3) * 5), 1, 1);
+      }
+    }
     ctx.fillStyle = "rgba(180, 255, 214, 0.22)";
     ctx.fillRect(Math.round(cx - 4), py + 4, 3, 1);
     ctx.fillRect(Math.round(cx - 2), py + 3, 1, 1);
@@ -685,6 +714,27 @@ export function createRenderer(canvas, world) {
       ctx.beginPath();
       ctx.ellipse(cx - 5.8, py + 13.4, 2.3, 1.3, 0, 0, Math.PI * 2);
       ctx.fill();
+    }
+  }
+
+  // A grama verga na frente da rajada: o mesmo trecho vai junto, com atraso
+  // pequeno de posição, então dá para ver o vento atravessando o campo.
+  function drawWindBlades(x, y, t, time) {
+    const rajada = gustAt(x, y, time, moodAtual);
+    if (rajada < 0.34) return;
+    const px = x * TILE;
+    const py = y * TILE;
+    const lado = swayAt(x, y, time, moodAtual) >= 0 ? 1 : -1;
+    const curva = Math.round(1 + rajada * 2);
+    ctx.fillStyle = t === K.MOSS ? "rgba(126, 196, 150, 0.55)" : "rgba(154, 214, 132, 0.5)";
+    for (let i = 0; i < 3; i++) {
+      if (hash2(x * 3 + i, y * 5 + 1) < 0.3) continue;
+      const bx = px + 2 + Math.floor(hash2(x + i * 7, y + 2) * 12);
+      const by = py + 14;
+      const sobe = 2 + Math.floor(hash2(x + i, y + i * 3) * 3);
+      ctx.fillRect(bx, by - sobe, 1, sobe);
+      ctx.fillRect(bx + lado, by - sobe - 1, 1, 1);
+      ctx.fillRect(bx + lado * curva, by - sobe, 1, 1);
     }
   }
 
@@ -1642,6 +1692,8 @@ export function createRenderer(canvas, world) {
   function draw(now, player, peers, npcs, cat, moving) {
     const frameStart = performance.now();
     const time = now;
+    const areaJogador = world.areaAt(player.x, player.y);
+    moodAtual = windMood(areaJogador ? BIOMES[areaJogador.id]?.material : null);
     if (shake > 0) shake = Math.max(0, shake - 0.016);
     const shx = shake ? (Math.random() - 0.5) * shake * 4 : 0;
     const shy = shake ? (Math.random() - 0.5) * shake * 4 : 0;
@@ -1687,6 +1739,7 @@ export function createRenderer(canvas, world) {
       for (let x = x0; x <= x1; x++) {
         const tile = world.get(x, y);
         if (tile === K.WATER || tile === K.MAGMA) drawWaterMagma(x, y, tile, time);
+        else if (tile === K.GRASS || tile === K.FLOWER || tile === K.MOSS) drawWindBlades(x, y, tile, time);
       }
     }
     stats.terrainMs = stats.terrainMs ? stats.terrainMs * 0.9 + (performance.now() - tTerrain) * 0.1 : performance.now() - tTerrain;
