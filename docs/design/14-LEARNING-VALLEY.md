@@ -452,6 +452,17 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 - [ ] a grade de ilhas do catálogo continua regular: as áreas ainda nascem numa
       malha de 24x16 tiles, o que dá o aspecto de tabuleiro
 
+### AE. Geografia dos assuntos
+
+- [x] as cinco disciplinas viraram **cinco quarteirões compactos** (grade de três
+      colunas cada) em vez de uma malha de 24x16 espalhada pelo mapa
+- [x] as onze ilhas de interseção saem do meio do caminho entre os dois
+      quarteirões que ligam, empurradas em espiral quando o lugar está ocupado
+- [x] antes a interseção de computação com língua ficava a **239 tiles** de um
+      dos pais; agora a pior distância é 135 e a mediana 68
+- [x] nenhuma caixa de área sobrepõe outra, e as 454 estações, 94 pedras, 186
+      cavernas, 194 NPCs e 172 itens continuam alcançáveis a pé
+
 ## 3. Regras de desenho
 
 - A tela de título é a primeira impressão: vale com camadas, céu em degradê,
@@ -484,6 +495,7 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 
 | data | fase | o que entrou | prova |
 |---|---|---|---|
+| 2026-10-21 | AE | geografia dos assuntos: cinco quarteirões por disciplina e interseções no meio do caminho entre os pais | medido: pior distância interseção-pai de 239 para 135 tiles, mediana 68; zero caixas sobrepostas; alcance a pé segue 454/454 estações, 94/94 pedras, 186/186 cavernas, 194/194 NPCs e 172/172 itens |
 | 2026-10-21 | AD | zero ponto órfão: passada 0-1-2 do spawn abrindo ponte sobre água e picada no mato, e cada ponto de interesse liga o próprio trajeto | medido: 454/454 estações, 94/94 pedras, 186/186 cavernas, 194/194 NPCs e 172/172 itens alcançáveis a pé desde o spawn (antes 82, 15, 27, 34 e 20); todo o chão caminhável subiu de 11.830 para 33.246 tiles |
 | 2026-10-21 | AC | mapa orgânico (fatia 1): caminho com passo torto, largura variável e ponte sobre água; divisa de bioma serrilhada; tile de 21 a 26 px na tela | navegador: captura do caminho torto e da divisa, desempenho nos três perfis mantido com o tile menor; node verde; alcance a pé 82/454 estações, 27/186 cavernas e 34/194 NPCs contra 82, 28 e 37 antes |
 | 2026-10-21 | AB | desempenho nos três perfis: teto de 2,2 MP no canvas (antes crescia com a densidade da tela) e qualidade pelo p95 do quadro com piso 0,7 e aquecimento de 90 quadros | navegador: computador 48,3 → 58,5 fps, tablet 41,5 → 57,1, celular 60,3 → 60,2; p95 de 23,7 e 27,3 para 20,5 e 20,3; canvas de 1,68 e 2,55 MP para 1,02 e 1,54; memória de 20,8 para 14,2 MB no tablet |

@@ -143,6 +143,86 @@ export const CATALOG_AREAS = [{"id":"math-fundamentos","discipline":"math","cx":
 {"id":"inter-todas","discipline":"inter","cx":458,"cy":240,"land":{"cx":458,"cy":240,"rx":10,"ry":6},"rect":{"x":447,"y":233,"w":22,"h":14},"sites":[{"x":454,"y":242},
 {"x":463,"y":239}],"waystone":{"x":458,"y":244},"npc":{"x":456,"y":237},"hunt":{"x":461,"y":237},"accent":"inter-todas"}];
 
+// Geografia dos assuntos: as cinco disciplinas viram cinco quarteirões
+// compactos e as ilhas de interseção ficam entre os dois quarteirões que ligam.
+// Antes as ilhas eram uma malha de 24x16 espalhada pelo mapa inteiro, e uma
+// interseção de computação com língua caía a 239 tiles de um dos pais.
+// É mutação de módulo: roda antes de quem lê as posições, então tudo (terra,
+// caixa, sites, pedra, NPC e caçada) anda junto.
+{
+  const ANCORAS = {
+    math: { x: 392, y: 74 },
+    cs: { x: 500, y: 106 },
+    physics: { x: 470, y: 226 },
+    chem: { x: 356, y: 300 },
+    lingua: { x: 340, y: 176 },
+  };
+  const move = (spot, tx, ty) => {
+    const dx = Math.round(tx) - spot.cx;
+    const dy = Math.round(ty) - spot.cy;
+    if (!dx && !dy) return;
+    spot.cx += dx;
+    spot.cy += dy;
+    spot.land.cx += dx;
+    spot.land.cy += dy;
+    spot.rect.x += dx;
+    spot.rect.y += dy;
+    for (const site of spot.sites || []) { site.x += dx; site.y += dy; }
+    for (const chave of ["waystone", "npc", "hunt"]) {
+      if (spot[chave]) { spot[chave].x += dx; spot[chave].y += dy; }
+    }
+  };
+  const livre = (r, ocupados) => !ocupados.some((o) =>
+    r.x < o.x + o.w + 1 && r.x + r.w + 1 > o.x && r.y < o.y + o.h + 1 && r.y + r.h + 1 > o.y);
+  const ocupados = [];
+
+  // quarteirão de cada disciplina: grade compacta de três colunas
+  for (const disciplina of Object.keys(ANCORAS)) {
+    const spots = CATALOG_AREAS.filter((a) => a.discipline === disciplina);
+    const colunas = 3;
+    const linhas = Math.ceil(spots.length / colunas);
+    spots.forEach((spot, i) => {
+      const col = i % colunas;
+      const lin = Math.floor(i / colunas);
+      const x = ANCORAS[disciplina].x + (col - (colunas - 1) / 2) * 24;
+      const y = ANCORAS[disciplina].y + (lin - (linhas - 1) / 2) * 16;
+      move(spot, x, y);
+      ocupados.push({ x: spot.rect.x, y: spot.rect.y, w: spot.rect.w, h: spot.rect.h });
+    });
+  }
+
+  // interseção no meio do caminho entre os dois quarteirões que ela liga
+  const todas = Object.values(ANCORAS).reduce(
+    (acc, c) => ({ x: acc.x + c.x / 5, y: acc.y + c.y / 5 }),
+    { x: 0, y: 0 },
+  );
+  for (const spot of CATALOG_AREAS) {
+    if (spot.discipline !== "inter") continue;
+    const pais = spot.id.replace(/^inter-/, "").split("-").filter((p) => p !== "todas" && ANCORAS[p]);
+    const alvo = pais.length
+      ? {
+          x: pais.reduce((soma, p) => soma + ANCORAS[p].x, 0) / pais.length,
+          y: pais.reduce((soma, p) => soma + ANCORAS[p].y, 0) / pais.length,
+        }
+      : todas;
+    let posto = null;
+    for (let anel = 0; anel < 26 && !posto; anel++) {
+      for (let i = 0; i < (anel === 0 ? 1 : 12) && !posto; i++) {
+        const a = (i / 12) * Math.PI * 2 - Math.PI / 2;
+        const x = Math.round(alvo.x + Math.cos(a) * anel * 3);
+        const y = Math.round(alvo.y + Math.sin(a) * anel * 3);
+        const r = { x: x - 11, y: y - 7, w: 22, h: 14 };
+        if (r.x < 250 || r.y < 4 || r.x + r.w > 556 || r.y + r.h > 356) continue;
+        if (!livre(r, ocupados)) continue;
+        posto = { x, y };
+      }
+    }
+    if (!posto) continue;
+    move(spot, posto.x, posto.y);
+    ocupados.push({ x: spot.rect.x, y: spot.rect.y, w: spot.rect.w, h: spot.rect.h });
+  }
+}
+
 export const CATALOG_BRIDGES = [["math-fundamentos","math-aritmetica"],["math-aritmetica","math-algebra"],["math-algebra","math-geometria"],["math-geometria","math-topologia"],["math-topologia","math-edo"],["math-edo","math-discreta"],["math-discreta","math-otimizacao"],["math-otimizacao","math-aplicada"],["physics-fundamentos","physics-mecanica"],["physics-mecanica","physics-fluidos"],["physics-fluidos","physics-eletronica"],["physics-eletronica","physics-relatividade"],["physics-relatividade","physics-quantica"],["physics-quantica","physics-atomica"],["physics-atomica","physics-nuclear"],["physics-nuclear","physics-condensada"],["physics-condensada","physics-plasma"],["physics-plasma","physics-astro"],["physics-astro","physics-outras"],["chem-fundamentos","chem-geral"],["chem-geral","chem-inorganica"],["chem-inorganica","chem-fisica"],["chem-fisica","chem-bioquimica"],["chem-bioquimica","chem-polimeros"],["chem-polimeros","chem-materiais"],["chem-materiais","chem-ambiental"],["chem-ambiental","chem-industrial"],["chem-industrial","chem-computacional"],["chem-computacional","chem-outras"],["cs-fundamentos","cs-algoritmos"],["cs-algoritmos","cs-teorica"],["cs-teorica","cs-linguagens"],["cs-linguagens","cs-engenharia"],["cs-engenharia","cs-sistemas"],["cs-sistemas","cs-distribuida"],["cs-distribuida","cs-dados"],["cs-dados","cs-ia"],["cs-ia","cs-devops"],["cs-devops","cs-interfaces"],["cs-interfaces","cs-hardware"],["cs-hardware","cs-dataciencia"],["cs-dataciencia","cs-emergente"],["lingua-gramatica","lingua-pragmatica"],["lingua-pragmatica","lingua-linguistica"],["lingua-linguistica","lingua-discurso"],["lingua-discurso","lingua-leitura"],["lingua-leitura","lingua-redacao"],["lingua-redacao","lingua-argumentacao"],["lingua-argumentacao","lingua-generos"],["lingua-generos","lingua-oralidade"],["lingua-oralidade","lingua-historia"],["lingua-historia","lingua-lexico"],["lingua-lexico","lingua-semitica"],["lingua-semitica","lingua-traducao"]];
 
 export const CATALOG_TUNNELS = [["inter-math-physics","math"],["inter-math-physics","physics"],["inter-math-chem","math"],["inter-math-chem","chem"],["inter-math-cs","math"],["inter-math-cs","cs"],["inter-math-lingua","math"],["inter-math-lingua","lingua"],["inter-physics-chem","physics"],["inter-physics-chem","chem"],["inter-physics-cs","physics"],["inter-physics-cs","cs"],["inter-physics-lingua","physics"],["inter-physics-lingua","lingua"],["inter-chem-cs","chem"],["inter-chem-cs","cs"],["inter-chem-lingua","chem"],["inter-chem-lingua","lingua"],["inter-cs-lingua","cs"],["inter-cs-lingua","lingua"],["inter-todas","math"],["inter-todas","physics"],["inter-todas","chem"],["inter-todas","cs"],["inter-todas","lingua"]];
