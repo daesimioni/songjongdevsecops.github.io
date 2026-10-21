@@ -2,7 +2,7 @@
 // O bicho que vê você começa a batalha sozinho, como nos jogos de bolso: anda
 // pelo corredor, entra no campo de visão, exclama e chama o duelo de perguntas.
 import { TILE, PLAYER_W, PLAYER_H } from "./config.js";
-import { DUNGEON_LAYOUT, dungeonById, creatureId, creatureKind, creatureAccent } from "./dungeon-data.js";
+import { dungeonById, creatureId, creatureKind, creatureAccent } from "./dungeon-data.js";
 import { GROUNDS, ITEMS, TIERS } from "./rpg-data.js";
 import { PET_BY_CONTINENT, PETS } from "./pets.js";
 import { drawCreature } from "./creature.js";
@@ -41,7 +41,7 @@ function torchGlowSprite() {
 
 // ---------- mapa ----------
 export function buildDungeonMap(def) {
-  const layout = def.layout || DUNGEON_LAYOUT;
+  const layout = def.layout;
   const W = layout.width;
   const H = layout.height;
   const grid = new Uint8Array(W * H);
@@ -667,7 +667,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
   function spawnMonsters(def) {
     if (def.hub) return [];
     const names = def.monsters || [];
-    const bossRoom = def.rooms.find((r) => r.id === (def.layout || DUNGEON_LAYOUT).bossRoom);
+    const bossRoom = def.rooms.find((r) => r.id === def.layout.bossRoom);
     const planos = [];
     let n = 0;
     for (const room of def.rooms) {
@@ -717,7 +717,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
 
   function spawnBoss(def) {
     if (def.hub || !def.boss) return null;
-    const room = def.rooms.find((r) => r.id === (def.layout || DUNGEON_LAYOUT).bossRoom) || def.rooms[def.rooms.length - 2];
+    const room = def.rooms.find((r) => r.id === def.layout.bossRoom) || def.rooms[def.rooms.length - 2];
     const x = room.x + room.w / 2;
     const y = room.y + room.h / 2;
     return {

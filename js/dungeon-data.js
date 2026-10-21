@@ -5,44 +5,6 @@
 import { CATALOG_CONTENT } from "./catalog-gen.js";
 import { AREA_ITEMS, BIOMES, FAUNA } from "./identity.js";
 
-export const DUNGEON_LAYOUT = {
-  width: 64,
-  height: 48,
-  rooms: [
-    { id: "entrada", x: 26, y: 39, w: 12, h: 6, tier: 0, kind: "entrance" },
-    { id: "a", x: 12, y: 31, w: 9, h: 7, tier: 1 },
-    { id: "b", x: 27, y: 29, w: 11, h: 7, tier: 1 },
-    { id: "c", x: 45, y: 31, w: 9, h: 7, tier: 2 },
-    { id: "d", x: 12, y: 17, w: 9, h: 7, tier: 2 },
-    { id: "e", x: 27, y: 16, w: 11, h: 7, tier: 3 },
-    { id: "f", x: 45, y: 17, w: 9, h: 7, tier: 3 },
-    { id: "cidade", x: 23, y: 2, w: 18, h: 10, tier: 3, kind: "city" },
-    // dois braços laterais que fecham o labirinto em anel
-    { id: "g", x: 2, y: 24, w: 8, h: 6, tier: 2 },
-    { id: "h", x: 55, y: 24, w: 7, h: 6, tier: 3 },
-  ],
-  corridors: [
-    ["entrada", "b"],
-    ["b", "a"],
-    ["b", "c"],
-    ["a", "d"],
-    ["c", "f"],
-    ["d", "e"],
-    ["e", "f"],
-    ["e", "cidade"],
-    ["d", "b"],
-    // atalhos que fecham o labirinto em anel: dá para se perder, e dá para
-    // voltar por outro caminho.
-    ["a", "e"],
-    ["c", "d"],
-    ["a", "g"],
-    ["d", "g"],
-    ["f", "h"],
-    ["c", "h"],
-  ],
-  bossRoom: "f",
-};
-
 const COMMON = {
   cs: {
     name: "Catacumbas do Silício",
@@ -50,7 +12,6 @@ const COMMON = {
     material: "ferro",
     tunnel: "elbow",
     equipment: ["chave-longa", "colete-malha", "colar-corrente"],
-    shift: { a: [-2, 1], c: [2, -1], g: [1, 2] },
     boss: "O Compilador Ancestral",
     rooms: [
       ["Boca do Silício", "entrada"],
@@ -73,7 +34,6 @@ const COMMON = {
     material: "veio",
     tunnel: "split",
     equipment: ["espada-prova", "manto-giz", "pernas-reforcadas", "anel-fractal"],
-    shift: { b: [2, 1], d: [-2, -2], h: [-1, 2] },
     boss: "O Infinito Profundo",
     rooms: [
       ["Boca dos Números", "entrada"],
@@ -96,7 +56,6 @@ const COMMON = {
     material: "ferro",
     tunnel: "wide",
     equipment: ["cajado-luz", "lentes-prisma", "botas-marcha", "colar-inercia"],
-    shift: { a: [2, 2], c: [-2, 2], e: [1, -1], h: [-2, 1] },
     boss: "O Observador Cego",
     rooms: [
       ["Fenda do Campo", "entrada"],
@@ -119,7 +78,6 @@ const COMMON = {
     material: "erva",
     tunnel: "cross",
     equipment: ["frasco-acido", "avental-alquimista", "escudo-cristal", "anel-equilibrio"],
-    shift: { b: [-2, 2], d: [2, 1], g: [-1, -2] },
     boss: "O Catalisador",
     rooms: [
       ["Boca do Reagente", "entrada"],
@@ -142,7 +100,6 @@ const COMMON = {
     material: "madeira",
     tunnel: "zigzag",
     equipment: ["batuta-maestro", "casaca-harmonia", "colar-ressonancia"],
-    shift: { a: [-1, -2], c: [1, 2], e: [-2, 1] },
     boss: "A Dissonância",
     rooms: [
       ["Fenda Sonora", "entrada"],
@@ -165,7 +122,6 @@ const COMMON = {
     material: "veio",
     tunnel: "narrow",
     equipment: ["cajado-vetores", "capuz-dados", "anel-atencao"],
-    shift: { b: [1, -2], d: [-2, 1], f: [2, -1] },
     boss: "A Caixa Preta",
     rooms: [
       ["Boca da Máquina", "entrada"],
@@ -188,7 +144,6 @@ const COMMON = {
     material: "tinta",
     tunnel: "split",
     equipment: ["pena-poeta", "sobretudo-pergaminho", "oculos-revisor", "anel-virgula"],
-    shift: { a: [2, -1], c: [-2, 2], g: [1, -2] },
     boss: "O Latim Ancestral",
     rooms: [
       ["Boca da Língua", "entrada"],
@@ -212,7 +167,6 @@ const COMMON = {
     material: "cobre",
     tunnel: "cross",
     equipment: ["anel-bobina", "escudo-capacitor", "manto-dieletrico"],
-    shift: { b: [-2, 2], d: [2, -1], h: [-1, 1] },
     boss: "O Eletromagneto",
     rooms: [
       ["Boca da Corrente", "entrada"],
@@ -236,7 +190,6 @@ const COMMON = {
     material: "ferro",
     tunnel: "wide",
     equipment: ["anel-pipeline", "capuz-registrador", "escudo-barramento"],
-    shift: { a: [2, 1], c: [-2, -1], g: [1, 2] },
     boss: "O Von Neumann",
     rooms: [
       ["Boca da Instrução", "entrada"],
@@ -260,7 +213,6 @@ const COMMON = {
     material: "veio",
     tunnel: "narrow",
     equipment: ["anel-serie", "manto-limite", "escudo-delta"],
-    shift: { b: [-2, 1], e: [2, -1], h: [-1, -2] },
     boss: "O Limite Silencioso",
     rooms: [
       ["Boca da Sequência", "entrada"],
@@ -284,7 +236,6 @@ const COMMON = {
     material: "erva",
     tunnel: "zigzag",
     equipment: ["oculos-organicos", "jaleco-organico", "colar-quiral"],
-    shift: { a: [-1, 2], c: [2, -1], h: [1, 1] },
     boss: "O Carbono Quiral",
     rooms: [
       ["Clareira do Carbono", "entrada"],
@@ -308,7 +259,6 @@ const COMMON = {
     material: "madeira",
     tunnel: "cross",
     equipment: ["anel-harmonico", "manto-acustico", "fones-eco"],
-    shift: { b: [2, -1], d: [-1, 2], g: [2, 1] },
     boss: "O Eco Profundo",
     rooms: [
       ["Boca do Eco", "entrada"],
@@ -332,7 +282,6 @@ const COMMON = {
     material: "veio",
     tunnel: "narrow",
     equipment: ["lente-convolucao", "manto-pixels", "anel-detector"],
-    shift: { b: [-2, 2], d: [2, -1], h: [-1, 1] },
     boss: "A Alucinação",
     rooms: [
       ["Boca da Imagem", "entrada"],
@@ -356,7 +305,6 @@ const COMMON = {
     material: "tinta",
     tunnel: "split",
     equipment: ["caneta-narrativa", "casaco-personagem", "oculos-narrador"],
-    shift: { a: [1, 2], c: [-2, -1], g: [-1, 2] },
     boss: "O Narrador Não Confiável",
     rooms: [
       ["Boca da História", "entrada"],
@@ -380,7 +328,6 @@ const COMMON = {
     material: "ferro",
     tunnel: "wide",
     equipment: ["anel-roteador", "manto-malha", "capuz-latencia"],
-    shift: { a: [2, -1], c: [-1, 2], h: [1, -2] },
     boss: "O Roteador Antigo",
     rooms: [
       ["Boca da Malha", "entrada"],
@@ -404,7 +351,6 @@ const COMMON = {
     material: "ferro",
     tunnel: "elbow",
     equipment: ["anel-carnot", "manto-termico", "capuz-entropia"],
-    shift: { b: [2, 1], d: [-2, -2], g: [1, 1] },
     boss: "O Motor Perfeito",
     rooms: [
       ["Boca da Fornalha", "entrada"],
@@ -428,7 +374,6 @@ const COMMON = {
     material: "erva",
     tunnel: "split",
     equipment: ["anel-analitico", "avental-analitico", "oculos-espectro"],
-    shift: { a: [1, -2], c: [2, 1], h: [-1, 2] },
     boss: "O Reagente Puro",
     rooms: [
       ["Boca do Vestígio", "entrada"],
@@ -452,7 +397,6 @@ const COMMON = {
     material: "madeira",
     tunnel: "zigzag",
     equipment: ["anel-forma", "manto-contraponto", "oculos-forma"],
-    shift: { b: [-2, 1], e: [2, -1], g: [1, 2] },
     boss: "A Fuga Final",
     rooms: [
       ["Boca do Motivo", "entrada"],
@@ -476,7 +420,6 @@ const COMMON = {
     material: "veio",
     tunnel: "cross",
     equipment: ["anel-probavel", "manto-amostra", "oculos-estatistica"],
-    shift: { b: [2, 1], d: [-2, -1], h: [1, 2] },
     boss: "O Acaso",
     rooms: [
       ["Boca da Aposta", "entrada"],
@@ -500,7 +443,6 @@ const COMMON = {
     material: "veio",
     tunnel: "narrow",
     equipment: ["anel-contexto", "manto-tokens", "capuz-prompt"],
-    shift: { a: [2, 2], c: [-2, 2], g: [1, -1] },
     boss: "O Papagaio Estatístico",
     rooms: [
       ["Boca do Token", "entrada"],
@@ -524,7 +466,6 @@ const COMMON = {
     material: "tinta",
     tunnel: "split",
     equipment: ["anel-sentido", "manto-pragmatica", "oculos-ironia"],
-    shift: { a: [-2, 1], c: [1, -2], g: [2, 2] },
     boss: "O Duplo Sentido",
     rooms: [
       ["Boca do Sentido", "entrada"],
@@ -548,7 +489,6 @@ const COMMON = {
     material: "veio",
     tunnel: "split",
     equipment: ["oculos-optica", "manto-luz", "anel-foco"],
-    shift: { b: [2, -2], e: [-1, 2], h: [2, 1] },
     boss: "O Espectro Branco",
     rooms: [
       ["Boca da Luz", "entrada"],
@@ -572,7 +512,6 @@ const COMMON = {
     material: "ferro",
     tunnel: "narrow",
     equipment: ["anel-seguro", "manto-cifra", "capuz-chave"],
-    shift: { a: [2, 2], c: [-1, -2], h: [2, -1] },
     boss: "A Chave Mestra",
     rooms: [
       ["Boca da Cifra", "entrada"],
@@ -743,7 +682,7 @@ export function creatureId(def, roomId, k = 0) {
 // bicho só, com todos os ids em que ele pode aparecer.
 export function dungeonCreatures(def) {
   const porNome = new Map();
-  const bossRoom = (def.layout || DUNGEON_LAYOUT).bossRoom;
+  const bossRoom = def.layout.bossRoom;
   let n = 0;
   for (const room of def.rooms) {
     if (room.kind === "entrance" || room.kind === "city") continue;
@@ -774,7 +713,7 @@ export function dungeonCreatures(def) {
   }
   const bichos = [...porNome.values()];
   if (def.boss) {
-    const sala = def.rooms.find((r) => r.id === (def.layout || DUNGEON_LAYOUT).bossRoom) || def.rooms[def.rooms.length - 2];
+    const sala = def.rooms.find((r) => r.id === def.layout.bossRoom) || def.rooms[def.rooms.length - 2];
     bichos.push({
       id: `${def.id}-boss`,
       ids: [`${def.id}-boss`],

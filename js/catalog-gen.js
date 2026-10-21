@@ -251,19 +251,13 @@ export function buildCatalogContent() {
       reward: { xp: 38, title: `Aprendiz de ${keeperName}` },
     });
 
-    // cada terceira caverna usa outra planta: espelhada e com salas deslocadas
-    const SHIFTS = [
-      { b: [2, -2], e: [-1, 2], h: [2, 1] },
-      { a: [1, 1], c: [-1, -1], g: [0, 2] },
-      { d: [1, -1], f: [-1, 1], h: [-2, 0] },
-    ];
+    // a planta da caverna é semeada pelo id em dungeon-data; aqui só entram
+    // o tema, o bicho e o estilo de túnel
     dungeons[area.id] = {
       continent,
       name: `Cripta ${article} ${noun}`,
       sub: area.sub,
       material: caverna.material,
-      mirror: order % 2 === 1,
-      shift: SHIFTS[order % 3],
       tunnel: ["wide", "split", "zigzag", "cross"][order % 4],
       equipment: [conjunto.weapon.id, conjunto.armor.id, conjunto.helmet.id],
       boss: `O Guardião ${article} ${noun}`,
