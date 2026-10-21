@@ -120,8 +120,15 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
       braço de trás e a arma aponta para o lado da cara
 - [x] o elmo tem três desenhos: frente com abertura, perfil com protetor de
       nariz e costas fechadas
+- [x] a peça sai da mão, não do ombro: o punho fica preso ao último par de
+      pixels do braço e sobe, desce e balança junto com o passo
+- [x] arma com contorno escuro para separar do corpo, aço em dois tons, guarda
+      dourada, cabo de couro com a mão por cima e pomo na cor da área
+- [x] escudo com aro em volta, campo na cor da área, brilho, sombra, cravos nos
+      cantos, umbo no meio e a alça aparecendo na borda
 - [x] conferido: quatro direções no mapa com arma, elmo, armadura e escudo, e a
-      prévia da mochila; node confere lado e camada de cada peça
+      prévia da mochila; node confere lado, camada, distância do punho à mão,
+      escudo cobrindo o braço e o balanço entre dois instantes do passo
 
 ### Q. Névoa com assinatura
 
@@ -274,6 +281,7 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 
 | data | fase | o que entrou | prova |
 |---|---|---|---|
+| 2026-10-21 | P | equipamento preso na mão: o punho saiu do ombro e foi para o último par de pixels do braço, subindo, descendo e balançando com o passo; arma ganhou contorno escuro, aço em dois tons, guarda dourada, cabo com a mão por cima e pomo; escudo ganhou aro, brilho, sombra, cravos, umbo e alça | node: quatro direções com parado e andando, punho a no máximo 6 px da mão, escudo a no máximo 6 px do braço e balanço entre dois instantes do passo; navegador: galeria do boneco com espada, escudo, elmo e armadura nas quatro direções |
 | 2026-10-21 | V | caverna com cara de lugar: planta semeada pelo id (93 desenhos distintos, progressão por profundidade e chefe no fundo) e fachada pela pedra da área, com a boca do fundo diferente da entrada; a segunda boca foi para o lado oposto da ilha | node: 93 plantas distintas, todas as salas com chão e alcançáveis desde a entrada, chefe em tier 3; navegador: galeria das cinco famílias com a paleta real de cada área e as duas bocas, mina e fenda no mundo com placa e sem placa, console limpo; pares de boca: min 9,2 e mediana 17,0 tiles (antes 7,1 e 12,0, com 24 pares abaixo de 9), zero saída obstruída |
 | 2026-10-20 | U | colisão do tamanho do desenho: morro da caverna, estação, pedra, enfeites e altar/forja/pedra da cidade; boca e saída livres; caminho mira a frente; NPC sai de prop novo | navegador: 13 caminhos de caverna, topo do morro sólido, saída livre, boneco parado, altar/forja/pedra sólidos, console limpo; node verde |
 | 2026-10-20 | T | paleta e rolagem: barra única escura/violeta na vertical e horizontal; acento por área no fio, kicker, epígrafe, viagem e Diário; texto de acento com contraste 8,95:1; placas nos cartões flutuantes | navegador: dois painéis com cores próprias, 94 destinos e 32 acentos, 86 grupos do Diário com acento, barra horizontal de teste, 390 px sem estouro, console limpo |

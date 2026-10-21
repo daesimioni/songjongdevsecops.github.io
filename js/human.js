@@ -62,39 +62,101 @@ export function drawHuman(ctx, px, py, dir, moving, time, colors, scale = 1, loo
     const arma = equip.weapon;
     if (!arma) return;
     const gume = arma.accent || "#d8d2ea";
+    // a peça sai da mão, não do ombro: a mão é o último par de pixels do braço
+    // daquele lado, e ela sobe e desce com o passo
+    const maoY = -6 + (armaLado > 0 ? -1 : 1) * Math.max(0, legOff);
+    const hx = armX - 1;
+    const balanco = moving ? Math.sin(time * 0.016) * 0.7 : 0;
     comLado(armaLado, () => {
       if (arma.weapon === "wand" || arma.weapon === "rod") {
-        ctx.fillStyle = "#6b4a2a";
-        ctx.fillRect(armX + 1, -15, 2, 11);
+        // cajado: cabo comprido na mão, ponta com a pedra da área
+        ctx.fillStyle = "#5b3a22";
+        ctx.fillRect(hx, maoY - 12, 2, 15);
+        ctx.fillStyle = "#7a5433";
+        ctx.fillRect(hx, maoY - 12, 1, 14);
+        ctx.fillStyle = "#3a2414";
+        ctx.fillRect(hx, maoY - 1, 2, 1);
         ctx.fillStyle = gume;
-        ctx.fillRect(armX, -18, 4, 4);
-        ctx.fillStyle = "rgba(255,255,255,0.5)";
-        ctx.fillRect(armX + 1, -17, 1, 1);
+        ctx.fillRect(hx - 1, maoY - 16, 4, 4);
+        ctx.fillStyle = "rgba(255,255,255,0.55)";
+        ctx.fillRect(hx - 1, maoY - 16, 1, 1);
+        ctx.fillStyle = "rgba(0,0,0,0.22)";
+        ctx.fillRect(hx + 1, maoY - 13, 2, 1);
       } else if (arma.weapon === "club") {
-        ctx.fillStyle = "#6b4a2a";
-        ctx.fillRect(armX + 1, -15, 2, 11);
+        // maça: cabo curto e cabeça pesada, com cravos
+        ctx.fillStyle = "#5b3a22";
+        ctx.fillRect(hx, maoY - 8, 2, 10);
         ctx.fillStyle = gume;
-        ctx.fillRect(armX - 1, -21, 6, 7);
-        ctx.fillStyle = "rgba(0,0,0,0.25)";
-        ctx.fillRect(armX, -20, 4, 1);
+        ctx.fillRect(hx - 2, maoY - 15, 6, 7);
+        ctx.fillRect(hx - 1, maoY - 16, 4, 1);
+        ctx.fillStyle = "rgba(255,255,255,0.22)";
+        ctx.fillRect(hx - 2, maoY - 15, 2, 1);
+        ctx.fillStyle = "rgba(0,0,0,0.3)";
+        ctx.fillRect(hx - 1, maoY - 12, 4, 1);
+        ctx.fillRect(hx, maoY - 10, 3, 1);
       } else {
-        ctx.fillStyle = "#d8d2ea";
-        ctx.fillRect(armX + 2, -24, 2, 13);
+        // espada: contorno escuro para separar do corpo, aço no meio, gume
+        // claro na borda de fora, guarda dourada, cabo de couro e pomo na cor
+        // da área. Tudo preso na mão, que sobe e desce com o passo.
+        const px0 = hx + 1 + (balanco > 0 ? 1 : 0);
+        ctx.fillStyle = "#20233a";
+        ctx.fillRect(px0 - 1, maoY - 12, 4, 12);
+        ctx.fillStyle = "#a9b0c9";
+        ctx.fillRect(px0, maoY - 12, 2, 10);
+        ctx.fillStyle = "#e8eefb";
+        ctx.fillRect(px0 + 1, maoY - 11, 1, 8);
+        ctx.fillStyle = "#6b7292";
+        ctx.fillRect(px0, maoY - 11, 1, 8);
+        // guarda
+        ctx.fillStyle = "#c9a227";
+        ctx.fillRect(px0 - 2, maoY - 3, 6, 1);
+        ctx.fillRect(px0 - 2, maoY - 2, 1, 1);
+        ctx.fillRect(px0 + 3, maoY - 2, 1, 1);
+        // cabo, com a mão por cima para o punho parecer seguro
+        ctx.fillStyle = "#4a2f1b";
+        ctx.fillRect(px0, maoY - 1, 2, 3);
+        ctx.fillStyle = colors.skin;
+        ctx.fillRect(px0, maoY, 2, 1);
         ctx.fillStyle = gume;
-        ctx.fillRect(armX + 2, -24, 1, 11);
-        ctx.fillStyle = "#8a6a4a";
-        ctx.fillRect(armX, -11, 6, 2);
+        ctx.fillRect(px0 - 1, maoY + 2, 4, 2);
+        ctx.fillStyle = "rgba(0,0,0,0.3)";
+        ctx.fillRect(px0 - 1, maoY + 3, 4, 1);
       }
     });
   };
   const desenharEscudo = () => {
     if (!equip.shield) return;
     const cor = equip.shield.accent || "#ffc857";
+    const maoY = -6 + (escudoLado > 0 ? -1 : 1) * Math.max(0, legOff);
+    const hx = armX - 1;
     comLado(escudoLado, () => {
-      ctx.fillStyle = "#101426";
-      ctx.fillRect(armX - 1, -13, 5, 9);
+      // broquel no antebraço: aro escuro em volta, campo na cor da área, umbo
+      // de metal e a alça aparecendo na borda de baixo
+      const sx0 = hx - 2;
+      const sy0 = maoY - 4;
+      ctx.fillStyle = "#0a0d19";
+      ctx.fillRect(sx0 - 1, sy0 + 1, 8, 11);
+      ctx.fillRect(sx0, sy0, 6, 13);
       ctx.fillStyle = cor;
-      ctx.fillRect(armX, -12, 3, 7);
+      ctx.fillRect(sx0, sy0 + 1, 6, 11);
+      ctx.fillStyle = "rgba(255,255,255,0.2)";
+      ctx.fillRect(sx0, sy0 + 1, 1, 10);
+      ctx.fillRect(sx0 + 1, sy0 + 1, 4, 1);
+      ctx.fillStyle = "rgba(0,0,0,0.28)";
+      ctx.fillRect(sx0 + 5, sy0 + 2, 1, 9);
+      ctx.fillRect(sx0 + 1, sy0 + 11, 4, 1);
+      // cravos nos cantos e umbo no meio
+      ctx.fillStyle = "rgba(0,0,0,0.35)";
+      ctx.fillRect(sx0 + 1, sy0 + 2, 1, 1);
+      ctx.fillRect(sx0 + 4, sy0 + 2, 1, 1);
+      ctx.fillRect(sx0 + 1, sy0 + 10, 1, 1);
+      ctx.fillRect(sx0 + 4, sy0 + 10, 1, 1);
+      ctx.fillStyle = "#e8e2f6";
+      ctx.fillRect(sx0 + 2, sy0 + 5, 2, 3);
+      ctx.fillStyle = "#9aa0bd";
+      ctx.fillRect(sx0 + 2, sy0 + 7, 2, 1);
+      ctx.fillStyle = "#6b4a2a";
+      ctx.fillRect(sx0 + 1, sy0 + 12, 4, 1);
     });
   };
   if (armaAtras) desenharArma();
