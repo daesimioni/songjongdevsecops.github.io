@@ -1080,6 +1080,75 @@ export function createRenderer(canvas, world) {
       ctx.strokeStyle = a; ctx.lineWidth = 1;
       ctx.beginPath(); ctx.moveTo(px, py + 7); ctx.lineTo(px + swing, py - 14); ctx.stroke();
       ctx.fillStyle = a; ctx.fillRect(px + swing - 1, py - 15, 2, 2);
+    } else if (d.type === "crate") {
+      // caixote do cais: tábua, travessa e prego
+      const a = d.accent || "#ffc857";
+      ctx.fillStyle = "rgba(2,6,10,0.35)";
+      ctx.beginPath(); ctx.ellipse(px + 1, py + 7, 8, 2.4, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#4a3322"; ctx.fillRect(px - 6, py - 5, 13, 12);
+      ctx.fillStyle = "#6b4a2f"; ctx.fillRect(px - 5, py - 4, 11, 10);
+      ctx.fillStyle = "#7d5a38"; ctx.fillRect(px - 5, py - 4, 11, 1);
+      ctx.fillStyle = "#3d2a1a"; ctx.fillRect(px - 5, py - 1, 11, 1); ctx.fillRect(px - 1, py - 4, 1, 10);
+      ctx.fillStyle = hexA(a, 0.8); ctx.fillRect(px - 4, py + 3, 1, 1); ctx.fillRect(px + 3, py + 3, 1, 1);
+    } else if (d.type === "crane") {
+      // guindaste: base, mastro, lança sobre a água e o cabo com o caixote
+      const a = d.accent || "#ffc857";
+      ctx.fillStyle = "rgba(2,6,10,0.4)";
+      ctx.beginPath(); ctx.ellipse(px, py + 9, 11, 3, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#3a2a1e"; ctx.fillRect(px - 7, py + 5, 15, 4);
+      ctx.fillStyle = "#5a4030"; ctx.fillRect(px - 2, py - 22, 4, 28);
+      ctx.fillStyle = "#7a5636"; ctx.fillRect(px - 1, py - 22, 1, 27);
+      ctx.strokeStyle = "#5a4030"; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(px, py - 22); ctx.lineTo(px + 18, py - 20); ctx.stroke();
+      ctx.strokeStyle = "#8a623d"; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(px, py - 23); ctx.lineTo(px + 18, py - 21); ctx.stroke();
+      const balanco = Math.sin(time * 0.0016 + d.x) * 1.5;
+      ctx.strokeStyle = "rgba(220,210,190,0.7)";
+      ctx.beginPath(); ctx.moveTo(px + 18, py - 20); ctx.lineTo(px + 18 + balanco, py - 8); ctx.stroke();
+      ctx.fillStyle = "#6b4a2f"; ctx.fillRect(px + 15 + balanco, py - 8, 7, 6);
+      ctx.fillStyle = "#3d2a1a"; ctx.fillRect(px + 15 + balanco, py - 5, 7, 1);
+      ctx.fillStyle = a; ctx.fillRect(px - 1, py - 24, 2, 2);
+    } else if (d.type === "bell") {
+      // sino do porto: armação, sino e badalo
+      const a = d.accent || "#ffc857";
+      ctx.fillStyle = "#3a2a1e";
+      ctx.fillRect(px - 1, py - 12, 3, 22);
+      ctx.fillRect(px - 8, py - 12, 17, 2);
+      ctx.fillStyle = "#5a4030"; ctx.fillRect(px - 9, py - 12, 3, 2);
+      ctx.fillStyle = "#c9a227";
+      ctx.beginPath();
+      ctx.moveTo(px - 5, py - 9); ctx.lineTo(px + 5, py - 9);
+      ctx.lineTo(px + 7, py - 1); ctx.lineTo(px - 7, py - 1);
+      ctx.closePath(); ctx.fill();
+      ctx.fillStyle = "#8f6f1a"; ctx.fillRect(px - 7, py - 2, 15, 2);
+      const bal = Math.sin(time * 0.006 + d.x) * 1;
+      ctx.fillStyle = a; ctx.fillRect(px - 1 + bal, py - 1, 2, 3);
+      ctx.fillStyle = "#2a2438"; ctx.fillRect(px - 1, py - 10, 2, 1);
+    } else if (d.type === "mast") {
+      // mastro com bandeira que tremula
+      ctx.fillStyle = "#4a3322"; ctx.fillRect(px - 1, py - 26, 3, 34);
+      ctx.fillStyle = "#7a5636"; ctx.fillRect(px - 1, py - 26, 1, 33);
+      const onda = Math.sin(time * 0.004 + d.x) * 2;
+      ctx.fillStyle = d.accent || "#ffc857";
+      ctx.beginPath();
+      ctx.moveTo(px + 2, py - 25);
+      ctx.lineTo(px + 13, py - 23 + onda);
+      ctx.lineTo(px + 2, py - 18);
+      ctx.closePath(); ctx.fill();
+      ctx.fillStyle = "rgba(255,255,255,0.35)";
+      ctx.fillRect(px + 3, py - 23, 3, 1);
+    } else if (d.type === "gull") {
+      // gaivota: duas asas que sobem e descem, sem sombra no chão
+      const t = time * 0.005 + d.x * 6;
+      const asa = Math.sin(t) * 2;
+      const x = px;
+      const y = py - 16 + Math.sin(time * 0.0012 + d.x * 9) * 3;
+      ctx.fillStyle = "rgba(240,244,255,0.9)";
+      ctx.fillRect(x - 3, y - 1 + asa, 3, 1);
+      ctx.fillRect(x + 1, y - 1 + asa, 3, 1);
+      ctx.fillRect(x - 1, y, 2, 1);
+      ctx.fillStyle = "rgba(255,200,87,0.9)";
+      ctx.fillRect(x + 1, y, 1, 1);
     }
   }
 

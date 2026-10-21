@@ -331,6 +331,19 @@ export function createWorld() {
   set(91, 62, PATH);
   set(98, 64, PLAZA);
 
+  // o porto é o cartão de visitas e a régua de carinho: guindaste no cais,
+  // sino na praça, caixotes, mastro e gaivotas sobre a água. Antes ele era
+  // praça vazia com enfeite sorteado.
+  const PORTO = [
+    ["crane", 97.5, 62.5], ["bell", 92.5, 58.5],
+    ["crate", 97.5, 65.5], ["crate", 98.5, 65.5],
+    ["mast", 98.5, 55.5],
+    ["gull", 102.5, 58.5], ["gull", 104.5, 63.5], ["gull", 100.5, 52.5],
+  ];
+  for (const [tipo, px, py] of PORTO) {
+    decor.push({ type: tipo, x: px, y: py, accent: "#ffc857", hue: hash2(Math.floor(px), Math.floor(py)) });
+  }
+
   // 7. decoração
   const used = new Set();
   const key = (x, y) => `${x},${y}`;
@@ -429,6 +442,127 @@ export function createWorld() {
         continue;
       }
       decor.push({ type: kind, x: x + 0.5, y: y + 0.5, accent: area?.accent || CONTINENTS[c].accent, hue: hash2(x, y) });
+    }
+  }
+
+  // ---- praça do farol: toda ilha tem um centro ----
+  // O enfeite solto dava mediana de 5 peças por ilha, sem centro e sem eixo.
+  // A praça é montada em volta da pedra do farol: peça central do material do
+  // chão, quatro lâmpadas nas diagonais, dois bancos no eixo, duas placas, e
+  // quatro canteiros com o enfeite do assunto da área.
+  const PLAZA_FOCAL = {
+    giz: "orb", "ardósia": "pillar", papel: "book", pergaminho: "book", tinta: "book",
+    cobre: "terminal", "latão": "speaker", ferro: "pillar",
+    "silício": "terminal", vidro: "crystal", cristal: "crystal", obsidiana: "crystal",
+    "âmbar": "flask", "cerâmica": "flask", fibra: "bubble", "ébano": "note",
+  };
+  const PLAZA_PLANTA = ["star", "petal", "bubble", "node", "shard", "mushroom"];
+  const canteiro = new Set();
+  for (const d of decor) canteiro.add(key(Math.floor(d.x), Math.floor(d.y)));
+  let pracaW = null;
+  const chaoDePraca = (x, y) => {
+    const t = get(x, y);
+    if (t === WATER || t === TREE || t === K.WALL || t === PATH || t === BRIDGE) return false;
+    if (canteiro.has(key(x, y))) return false;
+    // a volta da pedra fica livre: sem isso um banco desviado fecha o anel e
+    // o caminho até o farol deixa de existir (o A* só procura início em raio 1)
+    if (pracaW && Math.hypot(x + 0.5 - pracaW.x, y + 0.5 - pracaW.y) < 2.1) return false;
+    for (const s of SITES) if (Math.hypot(s.x - x - 0.5, s.y - y - 0.5) < 1.7) return false;
+    for (const n of NPC_SPAWNS) if (Math.hypot(n.x - x - 0.5, n.y - y - 0.5) < 1.7) return false;
+    return true;
+  };
+  const por = (x, y, tipo, accent) => {
+    if (!chaoDePraca(x, y)) return false;
+    canteiro.add(key(x, y));
+    // enfeite de praça é fino: fica no chão e o corpo passa por cima. Com
+    // caixa, o anel de banco e lâmpada virava cerca e o A* com folga deixava
+    // de achar a saída da ilha.
+    const placa = tipo === "sign" ? { text: "Praça do farol" } : {};
+    decor.push({ type: tipo, x: x + 0.5, y: y + 0.5, accent, hue: hash2(x, y), fino: true, ...placa });
+    return true;
+  };
+  // ilha pequena tem canto no mar: o ponto exato é o preferido, mas a peça
+  // aceita um desvio de até dois tiles em volta para caber na praça
+  const porPerto = (x, y, tipo, accent) => {
+    if (por(x, y, tipo, accent)) return true;
+    for (let r = 1; r <= 2; r++) {
+      for (const [dx, dy] of [[-r, 0], [r, 0], [0, -r], [0, r], [-r, -r], [r, -r], [-r, r], [r, r]]) {
+        if (por(x + dx, y + dy, tipo, accent)) return true;
+      }
+    }
+    return false;
+  };
+  for (const stone of CATALOG_CONTENT.waystones) {
+    const area = areaAtTile(Math.round(stone.x), Math.round(stone.y));
+    const bioma = area ? BIOMES[area.id] : null;
+    const accent = bioma?.accent || stone.accent || "#ffc857";
+    const tipos = area ? (catalogDecor[area.id] || []) : [];
+    const wx = Math.round(stone.x);
+    const wy = Math.round(stone.y);
+    pracaW = { x: wx + 0.5, y: wy + 0.5 };
+    // o chão da praça é o piso da própria área, não grama com enfeite em cima:
+    // um disco de raio 3 em volta do farol, sem tocar água nem árvore
+    if (area) {
+      for (let dy = -3; dy <= 3; dy++) {
+        for (let dx = -3; dx <= 3; dx++) {
+          if (dx * dx + dy * dy > 10) continue;
+          const tx = wx + dx;
+          const ty = wy + dy;
+          const t = get(tx, ty);
+          if (t === WATER || t === TREE || t === K.WALL) continue;
+          set(tx, ty, area.floor);
+        }
+      }
+    }
+    // o farol precisa de saída: as oito direções de raio 2 e 3 ficam limpas
+    // antes de a praça crescer, senão um enfeite sorteado fecha o anel
+    const saidas = [[0, -2], [0, 2], [-2, 0], [2, 0], [0, -3], [0, 3], [-3, 0], [3, 0], [-2, -2], [2, -2], [-2, 2], [2, 2]];
+    for (const [dx, dy] of saidas) {
+      const kx = wx + dx;
+      const ky = wy + dy;
+      for (let i = decor.length - 1; i >= 0; i--) {
+        if (Math.floor(decor[i].x) === kx && Math.floor(decor[i].y) === ky) decor.splice(i, 1);
+      }
+      canteiro.delete(key(kx, ky));
+    }
+    const antes = decor.length;
+    // a peça central vem do material da pedra: giz pede orbe, vidro pede
+    // cristal. Se o norte do farol é mar, tenta os outros lados antes de
+    // desistir: ilha pequena não fica sem centro.
+    const focal = PLAZA_FOCAL[bioma?.material] || "pillar";
+    let achouFocal = false;
+    for (const [fx, fy] of [[0, -4], [0, 4], [-4, 0], [4, 0], [0, -5], [-5, 0], [5, 0], [0, 5]]) {
+      if (porPerto(wx + fx, wy + fy, focal, accent)) { achouFocal = true; break; }
+    }
+    for (const [dx, dy] of [[-3, -3], [3, -3], [-3, 3], [3, 3]]) porPerto(wx + dx, wy + dy, "lamp", accent);
+    for (const [dx, dy] of [[0, 4], [4, 0], [-4, 0]]) porPerto(wx + dx, wy + dy, "bench", accent);
+    for (const [dx, dy] of [[-2, 4], [2, 4], [0, -5]]) porPerto(wx + dx, wy + dy, "sign", accent);
+    let giro = 0;
+    for (const [dx, dy] of [[-5, -2], [5, -2], [-5, 2], [5, 2]]) {
+      const tipo = tipos.length ? tipos[giro++ % tipos.length] : PLAZA_PLANTA[giro++ % PLAZA_PLANTA.length];
+      porPerto(wx + dx, wy + dy, tipo, accent);
+    }
+    for (const [dx, dy] of [[-5, -4], [5, -4]]) {
+      porPerto(wx + dx, wy + dy, PLAZA_PLANTA[giro++ % PLAZA_PLANTA.length], accent);
+    }
+    // ilha estreita recusa metade dos postos fixos. Varre o anel até a praça
+    // ter doze peças, que é o mínimo da régua do porto.
+    const contaNaArea = () => decor.reduce((n, d) => n + (d.x >= area.rect.x && d.x < area.rect.x + area.rect.w && d.y >= area.rect.y && d.y < area.rect.y + area.rect.h ? 1 : 0), 0);
+    for (let r = 2.6; r <= 7 && contaNaArea() < 12; r += 0.8) {
+      for (let i = 0; i < 24 && contaNaArea() < 12; i++) {
+        const a = (i / 24) * Math.PI * 2;
+        const tipo = PLAZA_PLANTA[(giro++) % PLAZA_PLANTA.length];
+        porPerto(wx + Math.round(Math.cos(a) * r), wy + Math.round(Math.sin(a) * r), tipo, accent);
+      }
+    }
+    // e o centro nunca fica sem peça: último recurso, o anel inteiro
+    if (!achouFocal) {
+      for (let r = 2.4; r <= 8 && !achouFocal; r += 0.7) {
+        for (let i = 0; i < 24 && !achouFocal; i++) {
+          const a = (i / 24) * Math.PI * 2;
+          if (porPerto(wx + Math.round(Math.cos(a) * r), wy + Math.round(Math.sin(a) * r), focal, accent)) achouFocal = true;
+        }
+      }
     }
   }
 
@@ -632,6 +766,21 @@ export function createWorld() {
   }
 
   function isSolidTile(tx, ty) { return SOLID.has(get(tx, ty)); }
+  // As caixas passavam de 1.900 depois das praças, e varrer a lista inteira
+  // em cada consulta derrubava o quadro de 58 para 25 fps. Índice espacial de
+  // 8 tiles: a consulta olha só as caixas do quarteirão.
+  const PROP_CELL = 8;
+  const baldes = new Map();
+  function indexar(p) {
+    for (let by = Math.floor((p.y - p.hh) / PROP_CELL); by <= Math.floor((p.y + p.hh) / PROP_CELL); by++) {
+      for (let bx = Math.floor((p.x - p.hw) / PROP_CELL); bx <= Math.floor((p.x + p.hw) / PROP_CELL); bx++) {
+        const k = bx + by * 4096;
+        let lista = baldes.get(k);
+        if (!lista) { lista = []; baldes.set(k, lista); }
+        lista.push(p);
+      }
+    }
+  }
   function boxCollides(x, y, w, h) {
     const x0 = Math.floor(x - w / 2);
     const x1 = Math.floor(x + w / 2 - 0.001);
@@ -644,15 +793,27 @@ export function createWorld() {
     }
     const hw = w / 2;
     const hh = h / 2;
-    for (const p of props) {
-      if (p.active && !p.active()) continue;
-      if (Math.abs(x - p.x) < hw + p.hw && Math.abs(y - p.y) < hh + p.hh) return true;
+    const bx0 = Math.floor((x - hw) / PROP_CELL);
+    const bx1 = Math.floor((x + hw) / PROP_CELL);
+    const by0 = Math.floor((y - hh) / PROP_CELL);
+    const by1 = Math.floor((y + hh) / PROP_CELL);
+    for (let by = by0; by <= by1; by++) {
+      for (let bx = bx0; bx <= bx1; bx++) {
+        const lista = baldes.get(bx + by * 4096);
+        if (!lista) continue;
+        for (const p of lista) {
+          if (p.active && !p.active()) continue;
+          if (Math.abs(x - p.x) < hw + p.hw && Math.abs(y - p.y) < hh + p.hh) return true;
+        }
+      }
     }
     return false;
   }
 
   function addProp(x, y, hw, hh, active = null) {
-    props.push({ x, y, hw, hh, active });
+    const p = { x, y, hw, hh, active };
+    props.push(p);
+    indexar(p);
   }
 
   const monsters = [];
@@ -671,10 +832,12 @@ export function createWorld() {
     terminal: [0.4, 0.3], pillar: [0.45, 0.35], book: [0.35, 0.2],
     orb: [0.3, 0.25], crystal: [0.35, 0.3], flask: [0.3, 0.25],
     speaker: [0.35, 0.25],
+    // peças do cais: caixote e mastro barram, gaivota não pisa no chão
+    crate: [0.4, 0.3], crane: [0.45, 0.35], bell: [0.3, 0.25], mast: [0.2, 0.3],
   };
   for (const d of decor) {
     const size = decorSize[d.type];
-    if (!size) continue;
+    if (!size || d.fino) continue;
     // O enfeite nasceu antes da picada, então uma lâmpada podia ficar em cima
     // do único caminho da ilha. Quem está no chão do caminho ou da ponte sai:
     // enfeite não fecha passagem.
