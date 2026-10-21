@@ -103,3 +103,22 @@ tom da área, e sumia. Agora o caminho é terra batida (`32` de matiz, luz `44` 
 `48`) e contrasta com o piso de todas as 86 ilhas. O teste `totens.test.mjs`
 cobra o contraste mínimo, a peça de cada parte do desenho e a ausência do
 pedestal antigo.
+
+## Floresta organizada
+
+Árvore grande (36 x 46) não pode nascer na mesma densidade do capim: a copa
+cobria rua, totem e telhado. A regra agora é de floresta, não de confete:
+
+- árvore só em **bosque**, uma célula grossa de 7 x 7 tiles decidida pela
+  semente da área;
+- **teto por ilha**: 5 a 14 árvores conforme o tamanho (área de tiles / 62),
+  nunca mais que 14;
+- **copa livre**: 3 tiles entre duas árvores, 2 tiles de estação e de farol,
+  2,4 de NPC e 3 da clareira de caçada;
+- **metrópole** (área antiga, sem `catalog`) é praça: no máximo 4 árvores e
+  todas na beirada, com raio normalizado acima de 0,42;
+- a cobertura rasteira (arbusto, florada, capim) continua densa por baixo.
+
+Resultado: 1.365 para 582 árvores no mundo, com a ilha ainda verde. O teste
+`test/floresta.test.mjs` cobra o teto, o bosque da metrópole, o espaçamento de
+copa e a distância de estação, farol, NPC e caçada.

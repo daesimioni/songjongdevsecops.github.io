@@ -30,7 +30,7 @@ const DECAL = {
   hub: ["folhada", "tufo", "pedra", "musgo"],
 };
 
-export function espalharAmbiente({ areas, get, hash2, waystones, livre = () => true }) {
+export function espalharAmbiente({ areas, get, hash2, waystones, hunts = [], gente = [], livre = () => true }) {
   const ambiente = [];
   const ocupado = new Set();
   const emPe = new Set();
@@ -150,23 +150,54 @@ export function espalharAmbiente({ areas, get, hash2, waystones, livre = () => t
       }
     }
 
-    // ---- vegetação: manchas por disciplina, sem tocar no caminho ----
-    const densidade = 0.2;
-    for (let y = Math.floor(area.rect.y); y < Math.ceil(area.rect.y + area.rect.h); y++) {
-      for (let x = Math.floor(area.rect.x); x < Math.ceil(area.rect.x + area.rect.w); x++) {
-        if (hash2(x * 3 + ai, y * 5 + ai * 7) > densidade) continue;
-        if (!pode(x, y)) continue;
-        const px = x + 0.5, py = y + 0.5;
-        if (hash2(x, y) < 0.16) {
-          const tipo = hash2(x + 2, y + 3) < 0.5 ? "arbusto" : "florada";
-          por(px, py, tipo, { bioma: area.id }, 1);
-          continue;
+    // metrópole é praça e telhado, não floresta: capim fino e árvore só na borda
+    const metropole = !area.catalog;
+
+    // ---- árvore grande: primeiro a floresta, depois o capim ----
+    // Antes cada tile sorteava árvore com a mesma densidade do capim, e a copa
+    // de 36 x 46 cobria caminho, totem e telhado. Agora a árvore nasce em
+    // bosque (célula grossa de 7 tiles), com 2 tiles de folga entre copas e um
+    // teto por ilha, então a região metropolitana não vira floresta fechada.
+    const ARVORES = new Set(["arvore", "conifera", "palmeira", "seca"]);
+    const pertoDaCacada = (x, y) => hunts.some((h) => Math.abs(h.x - (x + 0.5)) < 3 && Math.abs(h.y - (y + 0.5)) < 3);
+    const pertoDeGente = (x, y) => gente.some((n) => Math.abs(n.x - (x + 0.5)) < 2.4 && Math.abs(n.y - (y + 0.5)) < 2.4);
+    const maxArvores = metropole
+      ? 4
+      : Math.min(14, Math.max(5, Math.round((area.rect.w * area.rect.h) / 62)));
+    let arvores = 0;
+    for (let y = Math.floor(area.rect.y); y < Math.ceil(area.rect.y + area.rect.h) && arvores < maxArvores; y++) {
+      for (let x = Math.floor(area.rect.x); x < Math.ceil(area.rect.x + area.rect.w) && arvores < maxArvores; x++) {
+        if (metropole) {
+          // praça arborizada: a árvore fica no arredor, nunca no miolo
+          const nx = (x + 0.5 - area.land.cx) / area.land.rx;
+          const ny = (y + 0.5 - area.land.cy) / area.land.ry;
+          if (Math.hypot(nx, ny) < 0.5) continue;
+        } else {
+          const bosque = hash2(Math.floor(x / 7) + ai * 13, Math.floor(y / 7) - ai * 7);
+          if (bosque < 0.32) continue;
         }
+        if (hash2(x * 7 + ai * 5, y * 11 - ai) > (metropole ? 0.06 : 0.18)) continue;
+        if (!pode(x, y, 1)) continue;
+        if (pertoDaCacada(x, y) || pertoDeGente(x, y)) continue;
+        const px = x + 0.5, py = y + 0.5;
         const t = get(x, y);
         let tipo = ARVORE[disc] || "arvore";
         if (t === K.SAND) tipo = "palmeira";
         else if (hash2(x + 9, y + 4) < 0.16) tipo = "seca";
         else if (tipo === "arvore" && hash2(x + 5, y + 8) < 0.35) tipo = "conifera";
+        if (!por(px, py, tipo, { bioma: area.id }, 2)) continue;
+        arvores++;
+      }
+    }
+
+    // ---- cobertura rasteira: mancha por disciplina, sem tocar no caminho ----
+    const densidade = metropole ? 0.1 : 0.2;
+    for (let y = Math.floor(area.rect.y); y < Math.ceil(area.rect.y + area.rect.h); y++) {
+      for (let x = Math.floor(area.rect.x); x < Math.ceil(area.rect.x + area.rect.w); x++) {
+        if (hash2(x * 3 + ai, y * 5 + ai * 7) > densidade) continue;
+        if (!pode(x, y)) continue;
+        const px = x + 0.5, py = y + 0.5;
+        const tipo = hash2(x + 2, y + 3) < 0.5 ? "arbusto" : "florada";
         por(px, py, tipo, { bioma: area.id }, 1);
       }
     }

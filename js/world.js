@@ -626,6 +626,9 @@ export function createWorld() {
     get,
     hash2,
     waystones: WAYSTONES,
+    // a clareira de caçada não pode nascer debaixo de copa
+    hunts: GROUNDS.map((g) => g.center),
+    gente: NPC_SPAWNS,
     livre: (x, y) => !nearUsed(x, y),
   });
 
