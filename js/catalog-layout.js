@@ -176,14 +176,17 @@ export const CATALOG_AREAS = [{"id":"math-fundamentos","discipline":"math","cx":
     r.x < o.x + o.w + 1 && r.x + r.w + 1 > o.x && r.y < o.y + o.h + 1 && r.y + r.h + 1 > o.y);
   const ocupados = [];
 
-  // quarteirão de cada disciplina: grade compacta de três colunas
+  // quarteirão de cada disciplina: grade compacta de três colunas em
+  // serpentina. A ordem da lista é a ordem da corrente de pontes (conferida em
+  // teste), então a linha ímpar anda da direita para a esquerda: sem isso a
+  // ponte que vira a linha pulava uma coluna inteira, 50 tiles.
   for (const disciplina of Object.keys(ANCORAS)) {
     const spots = CATALOG_AREAS.filter((a) => a.discipline === disciplina);
     const colunas = 3;
     const linhas = Math.ceil(spots.length / colunas);
     spots.forEach((spot, i) => {
-      const col = i % colunas;
       const lin = Math.floor(i / colunas);
+      const col = lin % 2 ? colunas - 1 - (i % colunas) : i % colunas;
       const x = ANCORAS[disciplina].x + (col - (colunas - 1) / 2) * 24;
       const y = ANCORAS[disciplina].y + (lin - (linhas - 1) / 2) * 16;
       move(spot, x, y);

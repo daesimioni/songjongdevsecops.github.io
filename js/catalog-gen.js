@@ -32,6 +32,38 @@ const TILES = {
   inter: { base: 0, floor: 19, path: 1 },
 };
 
+// enfeite pela pedra da área: o objeto diz de que o chão é feito
+const DECOR_MATERIAL = {
+  giz: ["compass", "book"],
+  "ardósia": ["book", "quill"],
+  papel: ["quill", "book"],
+  pergaminho: ["book", "quill"],
+  tinta: ["quill", "mask"],
+  cobre: ["coil", "gauge"],
+  "latão": ["gauge", "coil"],
+  ferro: ["rack", "lock"],
+  "silício": ["terminal", "node"],
+  vidro: ["lens", "bubble"],
+  cristal: ["crystal", "lens"],
+  obsidiana: ["crystal", "mask"],
+  "âmbar": ["bubble", "petal"],
+  "cerâmica": ["flask", "mushroom"],
+  fibra: ["mushroom", "petal"],
+  "ébano": ["lamp", "mask"],
+};
+
+// e o padrão do chão dá o terceiro: a área lê como o desenho dela
+const DECOR_PADRAO = {
+  waves: ["wave"],
+  dots: ["orb"],
+  cracks: ["crystal"],
+  dunes: ["petal"],
+  grid: ["die"],
+  bricks: ["pillar"],
+  runes: ["mask"],
+  stars: ["star"],
+};
+
 const DECOR = {
   math: [["compass", "book", "star"], ["pillar", "orb", "book"], ["die", "star", "orb"]],
   physics: [["coil", "crystal", "wave"], ["gauge", "coil", "crystal"], ["lens", "star", "orb"]],
@@ -119,8 +151,16 @@ export function buildCatalogContent() {
       catalog: true,
     });
 
+    // Enfeite pela pedra e pelo padrão da área, não pela disciplina: dois
+    // lugares de matemática tinham o mesmo compasso, livro e estrela porque o
+    // conjunto vinha da família inteira. Agora a área puxa dois enfeites do
+    // material dela e um do padrão do chão.
     const families = DECOR[spot.discipline] || DECOR.inter;
-    decor[area.id] = families[order % families.length];
+    const familia = families[order % families.length];
+    const porMaterial = DECOR_MATERIAL[bioma?.material] || [];
+    const porPadrao = DECOR_PADRAO[bioma?.pattern] || [];
+    const escolhidos = [...new Set([...porMaterial, ...porPadrao, ...familia])].slice(0, 4);
+    decor[area.id] = escolhidos.length ? escolhidos : familia.slice(0, 2);
 
     waystones.push({ id: area.id, continent, name: `Farol ${article} ${noun}`, x: spot.waystone.x, y: spot.waystone.y, accent });
 
