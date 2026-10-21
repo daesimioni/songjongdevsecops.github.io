@@ -63,6 +63,25 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 - [x] desempenho e carga medidos
 - [x] commit e push com evidência
 
+### P. Equipamento por visão
+
+- [x] arma e escudo trocam de lado conforme a direção: frente, perfil esquerdo,
+      perfil direito e costas
+- [x] de costas arma e escudo ficam atrás do corpo; de perfil o escudo fica no
+      braço de trás e a arma aponta para o lado da cara
+- [x] o elmo tem três desenhos: frente com abertura, perfil com protetor de
+      nariz e costas fechadas
+- [x] conferido: quatro direções no mapa com arma, elmo, armadura e escudo, e a
+      prévia da mochila; node confere lado e camada de cada peça
+
+### Q. Névoa com assinatura
+
+- [x] a névoa guardada leva a assinatura do mapa e da lista de áreas
+- [x] save antigo (r1, binário ou outra assinatura) revela a terra dentro das
+      áreas novas na primeira abertura e migra para r2
+- [x] conferido no navegador: névoa r1 toda zero virou r2 e a estação de uma
+      área antiga passou a aparecer no mapa
+
 ### O. Desenho granular
 
 - [x] o zoom da superfície trava em 2x (24 a 32 px por tile); antes chegava a
@@ -189,6 +208,8 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 
 | data | fase | o que entrou | prova |
 |---|---|---|---|
+| 2026-10-20 | P | equipamento acompanha a visão: arma e escudo trocam de lado, de costas ficam atrás do corpo, elmo ganha frente, perfil e costas | node: gearView nas quatro direções; navegador: quatro capturas com arma, elmo, armadura e escudo e a prévia da mochila, console limpo |
+| 2026-10-20 | Q | névoa guardada com assinatura do mundo; save antigo revela a terra das áreas novas na primeira abertura e migra para r2 | navegador: névoa r1 com tudo zero migrou para r2 e a estação de uma área antiga apareceu no mapa, console limpo |
 | 2026-10-20 | O | desenho granular: zoom da superfície em 2x (antes 3,5x), grão de 1 px e tom por mancha, lajota na praça, pedra na parede, tábua na ponte, copa de árvore arredondada, dither na costa e no caminho; caverna com chão e parede pintados uma vez por descida | navegador: 1920x1080 em zoom 2, capturas antes/depois do porto, floresta e caverna, 60 fps a 1x, 49,8 a 4x e 46,5 a 6x de CPU, console limpo; node verde |
 | 2026-10-20 | N | coleta com pergunta: veio, árvore e água com raridade de quatro degraus (comum, incomum, raro e lendário); a pergunta vem do tier da raridade pedido sozinho, sem misturar baralhos; o lendário pede duas perguntas seguidas e só entrega acertando as duas; peixes lagoa/prateado/escama azul/Peixe do Espelho com cura 10/16/24/40 | node: 900 sorteios sem recurso fora de ITEMS, fronteiras de raridade, rodadas do lendário e cura crescente dos peixes; navegador: pesca comum, lendário com duas perguntas (duas certas entregam, errar a segunda não entrega), veio gastando 1 de 3 cargas, 390 px sem estouro, console limpo |
 | 2026-10-20 | M | mochila no HUD da caverna e tecla I dentro da caverna; o modal abre por cima, Esc fecha só a mochila e a caverna continua; no celular os quatro botões cabem sem cortar sair | navegador: botão visível, clique abriu a mochila com 40 espaços e a caverna atrás, Esc voltou, I abriu, 390 px com turbo/mochila/ficha/sair dentro da tela, console limpo |

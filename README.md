@@ -22,7 +22,7 @@ No jogo, a vida e a mana ficam em barras no topo. A mochila abre com <kbd>I</kbd
 
 O **Bestiário** abre com <kbd>B</kbd> ou pelo botão escrito no menu. São as 93 cavernas agrupadas por continente, com 464 fichas: nome, espécie, andar, o que o bicho faz contra você e a fraqueza dele. O que você ainda não encontrou aparece como silhueta e `???`; o primeiro encontro revela a ficha, e a vitória marca o bicho como vencido. Tem busca sem acento, filtro por conhecidos/vencidos/por ver, placar de descobertas por continente e a caverna onde você está já vem aberta. A forma vem do nome, não de um sorteio: `Ácido` é um frasco, `Acorde` uma nota, `Instrução` uma engrenagem, `Sílaba` um símbolo, `Fóton` um prisma. São 25 formas desenhadas, cada uma com nome de leitura, fraqueza e jeito próprio de atrapalhar o duelo.
 
-O **minimapa** tem coordenada `x y z` (z 0 superfície, -1 subsolo, -2 Porto Submerso), zoom de 1× a 6× pela roda do mouse ou pelos botões, o botão **mapa** para ver o arquipélago inteiro e clique num ponto revelado para andar até lá. O personagem é uma seta branca com anel, apontando para onde olha; a caverna tem a mesma coordenada e profundidade no minimapa dela, que ficou maior.
+O **minimapa** tem coordenada `x y z` (z 0 superfície, -1 subsolo, -2 Porto Submerso), zoom de 1× a 6× pela roda do mouse ou pelos botões, o botão **mapa** para ver o arquipélago inteiro e clique num ponto revelado para andar até lá. O personagem é uma seta branca com anel, apontando para onde olha; a caverna tem a mesma coordenada e profundidade no minimapa dela, que ficou maior. A névoa guardada leva a assinatura do mundo: quando o mapa ganha áreas novas, o save antigo revela a terra dessas áreas na primeira abertura, em vez de deixar o mapa preso no mundo velho.
 
 ## O arquipélago
 
@@ -178,7 +178,10 @@ para os outros jogadores pela rede.
 A Ficha também tem **equipamento**: arma, elmo, armadura, pernas, botas, escudo,
 anel e colar. Cada peça soma pouco (arma +1 ou +2 de dano; armadura +4 ou +5 de
 vida) e cai de baú de caverna ou de chefe. A ideia é fôlego e vocabulário, nunca
-resolver a pergunta pelo número. São 23 peças, incluindo anéis e colares.
+resolver a pergunta pelo número. São 23 peças, incluindo anéis e colares. O
+boneco desenha a peça na visão certa: de frente a arma e o escudo aparecem
+inteiros; de perfil a arma aponta para o lado da cara e o escudo fica no braço
+de trás; de costas o elmo é fechado e arma e escudo somem atrás do corpo.
 
 ## Companhia: bichos e montarias
 

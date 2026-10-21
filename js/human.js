@@ -1,5 +1,18 @@
 import { hairById } from "./avatar.js";
 
+// O lado e a camada de cada peça de equipamento mudam com a visão. De frente
+// arma e escudo aparecem inteiros; de costas os dois ficam atrás do corpo; de
+// perfil o escudo fica no braço de trás e a arma aponta para o lado da cara.
+export function gearView(dir) {
+  const armaLado = dir === 0 || dir === 2 ? 1 : -1;
+  return {
+    armaLado,
+    escudoLado: -armaLado,
+    armaAtras: dir === 3,
+    escudoAtras: dir !== 0,
+  };
+}
+
 // O mesmo boneco na superfície e no subsolo: cabelo, gênero e cores vêm do
 // personagem salvo. Quem chama decide o chão, a sombra e o que fica por cima.
 export function drawHuman(ctx, px, py, dir, moving, time, colors, scale = 1, look = null, gear = null) {
@@ -34,6 +47,58 @@ export function drawHuman(ctx, px, py, dir, moving, time, colors, scale = 1, loo
     ctx.fillRect(-5, -19, 1, Math.max(0, hair.back - 2));
     ctx.fillRect(4, -19, 1, Math.max(0, hair.back - 2));
   }
+
+  // Arma e escudo trocam de lado com a visão. De costas os dois ficam atrás
+  // do corpo; de lado o escudo fica no braço de trás. O desenho é feito do
+  // lado direito e espelhado, para não duplicar cada peça de arte.
+  const { armaLado, escudoLado, armaAtras, escudoAtras } = gearView(dir);
+  const comLado = (lado, fn) => {
+    ctx.save();
+    ctx.scale(lado, 1);
+    fn();
+    ctx.restore();
+  };
+  const desenharArma = () => {
+    const arma = equip.weapon;
+    if (!arma) return;
+    const gume = arma.accent || "#d8d2ea";
+    comLado(armaLado, () => {
+      if (arma.weapon === "wand" || arma.weapon === "rod") {
+        ctx.fillStyle = "#6b4a2a";
+        ctx.fillRect(armX + 1, -15, 2, 11);
+        ctx.fillStyle = gume;
+        ctx.fillRect(armX, -18, 4, 4);
+        ctx.fillStyle = "rgba(255,255,255,0.5)";
+        ctx.fillRect(armX + 1, -17, 1, 1);
+      } else if (arma.weapon === "club") {
+        ctx.fillStyle = "#6b4a2a";
+        ctx.fillRect(armX + 1, -15, 2, 11);
+        ctx.fillStyle = gume;
+        ctx.fillRect(armX - 1, -21, 6, 7);
+        ctx.fillStyle = "rgba(0,0,0,0.25)";
+        ctx.fillRect(armX, -20, 4, 1);
+      } else {
+        ctx.fillStyle = "#d8d2ea";
+        ctx.fillRect(armX + 2, -24, 2, 13);
+        ctx.fillStyle = gume;
+        ctx.fillRect(armX + 2, -24, 1, 11);
+        ctx.fillStyle = "#8a6a4a";
+        ctx.fillRect(armX, -11, 6, 2);
+      }
+    });
+  };
+  const desenharEscudo = () => {
+    if (!equip.shield) return;
+    const cor = equip.shield.accent || "#ffc857";
+    comLado(escudoLado, () => {
+      ctx.fillStyle = "#101426";
+      ctx.fillRect(armX - 1, -13, 5, 9);
+      ctx.fillStyle = cor;
+      ctx.fillRect(armX, -12, 3, 7);
+    });
+  };
+  if (armaAtras) desenharArma();
+  if (escudoAtras) desenharEscudo();
 
   // pernas
   ctx.fillStyle = pants;
@@ -128,14 +193,43 @@ export function drawHuman(ctx, px, py, dir, moving, time, colors, scale = 1, loo
   }
   if (equip.helmet) {
     const metal = equip.helmet.accent || "#b8b0d8";
-    ctx.fillStyle = "#101426";
-    ctx.fillRect(-5, -23, 10, 3);
-    ctx.fillStyle = metal;
-    ctx.fillRect(-5, -23, 10, 2);
-    ctx.fillRect(-5, -21, 2, 5);
-    ctx.fillRect(3, -21, 2, 5);
-    ctx.fillStyle = "rgba(255,255,255,0.28)";
-    ctx.fillRect(-3, -23, 3, 1);
+    if (dir === 3) {
+      // de costas o elmo é fechado: sem rosto, com a costura no meio
+      ctx.fillStyle = "#101426";
+      ctx.fillRect(-5, -23, 10, 11);
+      ctx.fillStyle = metal;
+      ctx.fillRect(-5, -23, 10, 8);
+      ctx.fillRect(-4, -15, 8, 2);
+      ctx.fillStyle = "rgba(0,0,0,0.3)";
+      ctx.fillRect(-1, -23, 1, 8);
+      ctx.fillStyle = "rgba(255,255,255,0.22)";
+      ctx.fillRect(-3, -23, 2, 1);
+    } else if (dir === 0) {
+      // de frente: aba, laterais e abertura para o rosto
+      ctx.fillStyle = "#101426";
+      ctx.fillRect(-5, -23, 10, 3);
+      ctx.fillStyle = metal;
+      ctx.fillRect(-5, -23, 10, 2);
+      ctx.fillRect(-5, -21, 2, 5);
+      ctx.fillRect(3, -21, 2, 5);
+      ctx.fillStyle = "rgba(255,255,255,0.28)";
+      ctx.fillRect(-3, -23, 3, 1);
+      ctx.fillStyle = "rgba(0,0,0,0.22)";
+      ctx.fillRect(-4, -21, 8, 1);
+    } else {
+      // de perfil: o elmo cobre a nuca e projeta a proteção para o lado da cara
+      const frente = dir === 1 ? -1 : 1;
+      ctx.fillStyle = "#101426";
+      ctx.fillRect(-5, -23, 10, 3);
+      ctx.fillStyle = metal;
+      ctx.fillRect(-5, -23, 10, 2);
+      ctx.fillRect(frente < 0 ? -5 : 3, -21, 2, 6);
+      ctx.fillRect(frente < 0 ? -4 : 3, -20, 1, 4);
+      ctx.fillStyle = "rgba(255,255,255,0.28)";
+      ctx.fillRect(frente < 0 ? -4 : 1, -23, 3, 1);
+      ctx.fillStyle = "rgba(0,0,0,0.2)";
+      ctx.fillRect(frente < 0 ? 2 : -4, -21, 2, 5);
+    }
   }
   // rosto: olho e nariz do lado para onde anda
   ctx.fillStyle = colors.eyes || "#14121f";
@@ -155,38 +249,8 @@ export function drawHuman(ctx, px, py, dir, moving, time, colors, scale = 1, loo
   ctx.fillStyle = colors.accent || "#fff3d1";
   ctx.fillRect(-1, -11, 2, 2);
 
-  const arma = equip.weapon;
-  if (arma) {
-    const gume = arma.accent || "#d8d2ea";
-    if (arma.weapon === "wand" || arma.weapon === "rod") {
-      ctx.fillStyle = "#6b4a2a";
-      ctx.fillRect(armX + 1, -15, 2, 11);
-      ctx.fillStyle = gume;
-      ctx.fillRect(armX, -18, 4, 4);
-      ctx.fillStyle = "rgba(255,255,255,0.5)";
-      ctx.fillRect(armX + 1, -17, 1, 1);
-    } else if (arma.weapon === "club") {
-      ctx.fillStyle = "#6b4a2a";
-      ctx.fillRect(armX + 1, -15, 2, 11);
-      ctx.fillStyle = gume;
-      ctx.fillRect(armX - 1, -21, 6, 7);
-      ctx.fillStyle = "rgba(0,0,0,0.25)";
-      ctx.fillRect(armX, -20, 4, 1);
-    } else {
-      ctx.fillStyle = "#d8d2ea";
-      ctx.fillRect(armX + 2, -24, 2, 13);
-      ctx.fillStyle = gume;
-      ctx.fillRect(armX + 2, -24, 1, 11);
-      ctx.fillStyle = "#8a6a4a";
-      ctx.fillRect(armX, -11, 6, 2);
-    }
-  }
-  if (equip.shield) {
-    ctx.fillStyle = "#101426";
-    ctx.fillRect(-armX - 4, -13, 5, 9);
-    ctx.fillStyle = equip.shield.accent || "#ffc857";
-    ctx.fillRect(-armX - 3, -12, 3, 7);
-  }
+  if (!armaAtras) desenharArma();
+  if (!escudoAtras) desenharEscudo();
 
   ctx.restore();
   }

@@ -2346,26 +2346,78 @@ function pegarItem(g) {
   audio.chime();
 }
 
+// A assinatura muda quando o mapa ou a lista de áreas muda. Névoa guardada
+// sem a assinatura atual é de um mundo mais velho: nesse caso a migração
+// revela a terra dentro das áreas, senão o mapa esconde as áreas novas que
+// já existem no mundo (o save antigo só conhecia as antigas).
+let assinaturaMundo = null;
+function worldSignature() {
+  if (assinaturaMundo) return assinaturaMundo;
+  let h = 0x811c9dc5;
+  const texto = `${MAP_W}x${MAP_H}|${AREAS.map((a) => a.id).join(",")}`;
+  for (let i = 0; i < texto.length; i++) {
+    h ^= texto.charCodeAt(i);
+    h = Math.imul(h, 0x01000193);
+  }
+  assinaturaMundo = (h >>> 0).toString(36);
+  return assinaturaMundo;
+}
+
+function decodeRuns(raw, bytes) {
+  let at = 0;
+  for (const part of raw.split(";")) {
+    if (!part) continue;
+    const [v, n] = part.split(":").map(Number);
+    if (!Number.isFinite(v) || !Number.isFinite(n)) continue;
+    for (let i = 0; i < n && at < bytes.length; i++) bytes[at++] = v;
+  }
+}
+
+function fogRevealAreas(bytes) {
+  const out = new Uint8Array(bytes);
+  for (const area of AREAS) {
+    const r = area.rect;
+    for (let y = Math.max(0, r.y); y < Math.min(MAP_H, r.y + r.h); y++) {
+      for (let x = Math.max(0, r.x); x < Math.min(MAP_W, r.x + r.w); x++) {
+        if (world.get(x, y) !== 3) out[y * MAP_W + x] = 1;
+      }
+    }
+  }
+  return out;
+}
+
 function loadFog() {
   try {
     const raw = localStorage.getItem(STORAGE.explored);
     if (!raw) return;
-    if (raw.startsWith("r1:")) {
-      world.setExplored(decodeFog(raw));
+    const bytes = new Uint8Array(world.exploredBytes.length);
+    let assinatura = null;
+    if (raw.startsWith("r2:")) {
+      const resto = raw.slice(3);
+      const sep = resto.indexOf(":");
+      assinatura = resto.slice(0, sep);
+      decodeRuns(resto.slice(sep + 1), bytes);
+    } else if (raw.startsWith("r1:")) {
+      decodeRuns(raw.slice(3), bytes);
+    } else {
+      const bin = atob(raw);
+      if (bin.length !== bytes.length) return;
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    }
+    if (assinatura !== worldSignature()) {
+      world.setExplored(fogRevealAreas(bytes));
+      state.fogDirty = true;
+      saveFog();
       return;
     }
-    const bin = atob(raw);
-    const size = world.exploredBytes.length;
-    if (bin.length !== size) return;
-    const bytes = new Uint8Array(bin.length);
-    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
     world.setExplored(bytes);
   } catch { /* sem storage */ }
 }
 // A névoa é praticamente toda zero: guardar em RLE derruba de 269 KB para
-// poucos KB e o save deixa de pesar no laço. O formato antigo continua sendo lido.
+// poucos KB e o save deixa de pesar no laço. O formato antigo continua sendo
+// lido e migra para o r2 com a assinatura do mundo.
 function encodeFog(bytes) {
-  let out = "r1:";
+  let out = "";
   let i = 0;
   while (i < bytes.length) {
     const value = bytes[i];
@@ -2374,17 +2426,7 @@ function encodeFog(bytes) {
     out += `${value}:${run};`;
     i += run;
   }
-  return out;
-}
-function decodeFog(raw) {
-  const out = new Uint8Array(world.exploredBytes.length);
-  let at = 0;
-  for (const part of raw.slice(3).split(";")) {
-    if (!part) continue;
-    const [v, n] = part.split(":").map(Number);
-    for (let i = 0; i < n && at < out.length; i++) out[at++] = v;
-  }
-  return out;
+  return `r2:${worldSignature()}:${out}`;
 }
 function saveFog() {
   if (!state.fogDirty) return;

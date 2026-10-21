@@ -818,5 +818,14 @@ const peixes = ["peixe", "peixe-prata", "peixe-raro", "peixe-lendario"].map((id)
 check(peixes.every((p) => p && p.heal > 0), "peixe sem cura no ITEMS");
 check(peixes.every((p, i) => i === 0 || p.heal > peixes[i - 1].heal), "peixes sem cura crescente");
 
+// equipamento visível acompanha a direção: frente, perfil esquerdo, perfil
+// direito e costas não podem desenhar arma e escudo do mesmo jeito
+const { gearView } = await import("../js/human.js");
+const olhares = [0, 1, 2, 3].map((d) => gearView(d));
+check(olhares[0].armaLado === 1 && olhares[0].escudoLado === -1 && !olhares[0].armaAtras && !olhares[0].escudoAtras, "frente: arma e escudo fora do lado");
+check(olhares[1].armaLado === -1 && olhares[1].escudoLado === 1 && !olhares[1].armaAtras && olhares[1].escudoAtras, "perfil esquerdo: arma e escudo fora do lado");
+check(olhares[2].armaLado === 1 && olhares[2].escudoLado === -1 && !olhares[2].armaAtras && olhares[2].escudoAtras, "perfil direito: arma e escudo fora do lado");
+check(olhares[3].armaLado === -1 && olhares[3].escudoLado === 1 && olhares[3].armaAtras && olhares[3].escudoAtras, "costas: arma e escudo deveriam ficar atrás do corpo");
+
 assert.equal(faults.length, 0, `conteúdo com ${faults.length} problema(s):\n- ${faults.join("\n- ")}`);
 console.log("ok conteúdo, estações, NPCs, missões, itens, receitas, perguntas, PvP, cavernas e mundo");
