@@ -10,7 +10,9 @@ globalThis.localStorage = { getItem: () => null, setItem: () => {}, removeItem: 
 const wiki = await import("../js/wiki.js");
 const { AREAS } = await import("../js/config.js");
 const { DUNGEONS } = await import("../js/dungeon-data.js");
-const { ITEMS } = await import("../js/rpg-data.js");
+const { ITEMS, RELICS, RECIPES, ENCHANTS, SKILLS, TIERS } = await import("../js/rpg-data.js");
+const { PETS, MOUNTS } = await import("../js/pets.js");
+const { OUTFITS } = await import("../js/outfits.js");
 const { QUESTS } = await import("../js/quests.js");
 const { NPCS, POSTS } = await import("../js/content.js");
 const { FAUNA } = await import("../js/identity.js");
@@ -34,6 +36,12 @@ check(contagem.missoes === QUESTS.length, `missões: ${contagem.missoes}, espera
 check(contagem.npcs === Object.keys(NPCS).length, `NPCs: ${contagem.npcs}, esperado ${Object.keys(NPCS).length}`);
 check(contagem.paginas === Object.keys(POSTS).length, `páginas: ${contagem.paginas}, esperado ${Object.keys(POSTS).length}`);
 check(contagem.vocacoes === VOCACOES.length, `vocações: ${contagem.vocacoes}, esperado ${VOCACOES.length}`);
+check(contagem.receitas === RECIPES.length, `receitas: ${contagem.receitas}, esperado ${RECIPES.length}`);
+check(contagem.encantamentos === ENCHANTS.length, `encantamentos: ${contagem.encantamentos}, esperado ${ENCHANTS.length}`);
+check(contagem.reliquias === Object.keys(RELICS).length, `relíquias: ${contagem.reliquias}, esperado ${Object.keys(RELICS).length}`);
+check(contagem.pets === Object.keys(PETS).length + Object.keys(MOUNTS).length, `pets: ${contagem.pets}, esperado ${Object.keys(PETS).length + Object.keys(MOUNTS).length}`);
+check(contagem.trajes === OUTFITS.length, `trajes: ${contagem.trajes}, esperado ${OUTFITS.length}`);
+check(contagem.sistemas === Object.keys(TIERS).length + Object.keys(SKILLS).length + wiki.COMO_JOGAR.length, `sistemas: ${contagem.sistemas}, esperado ${Object.keys(TIERS).length + Object.keys(SKILLS).length + wiki.COMO_JOGAR.length}`);
 check(contagem.tudo === undefined, "categoria tudo não é uma entrada do índice");
 
 const cats = wiki.categoriasDaWiki(indice);
@@ -52,6 +60,16 @@ for (const e of indice) {
   check(e.busca === e.busca.normalize("NFD").replace(/[\u0300-\u036f]/g, ""), `busca com acento em ${e.nome}`);
   check(Array.isArray(e.campos), `campos não é lista em ${e.nome}`);
 }
+
+// ---- fichas com imagem: item, bicho, pet e relíquia ----
+const comIcone = indice.filter((e) => e.icone);
+check(comIcone.length >= 880, `só ${comIcone.length} fichas com ícone, esperado ao menos 880`);
+for (const e of comIcone) {
+  check(["item", "bicho", "pet", "gema"].includes(e.icone.tipo), `ícone de tipo inválido em ${e.nome}: ${e.icone.tipo}`);
+}
+check(indice.some((e) => e.icone?.tipo === "item"), "nenhum item com ícone");
+check(indice.some((e) => e.icone?.tipo === "bicho"), "nenhum bicho com icon");
+check(indice.some((e) => e.icone?.tipo === "gema"), "nenhuma relíquia com gema");
 
 // ---- páginas abrem; só páginas têm atalho ----
 for (const e of indice.filter((x) => x.cat === "paginas")) {
@@ -80,6 +98,14 @@ check(!!caverna && caverna.campos.some(([r, v]) => r === "Chefe" && v === DUNGEO
 const missao = indice.find((e) => e.cat === "missoes" && e.nome === QUESTS[0].title);
 check(!!missao && missao.campos.some(([r]) => r === "Recompensa"), "missão sem recompensa");
 
+// ---- link direto separa categoria e nome ----
+const linkItem = wiki.separarConsulta("itens:Espada da Prova");
+check(linkItem.categoria === "itens" && linkItem.termo === "Espada da Prova", `link de item errado: ${JSON.stringify(linkItem)}`);
+const linkSolto = wiki.separarConsulta("calculo");
+check(linkSolto.categoria === "tudo" && linkSolto.termo === "calculo", "link solto devia buscar em tudo");
+const linkInvalido = wiki.separarConsulta("naoexiste:algo");
+check(linkInvalido.categoria === "tudo" && linkInvalido.termo === "naoexiste:algo", "categoria inválida devia virar busca");
+
 // ---- a interface está ligada nos dois lugares ----
 const html = fs.readFileSync(new URL("../index.html", import.meta.url), "utf8");
 const app = fs.readFileSync(new URL("../js/app.js", import.meta.url), "utf8");
@@ -87,10 +113,14 @@ const dungeon = fs.readFileSync(new URL("../js/dungeon.js", import.meta.url), "u
 check(/id="wiki"/.test(html) && /id="wiki-search"/.test(html) && /id="wiki-list"/.test(html), "modal da wiki ausente no HTML");
 check(/id="btn-wiki"/.test(html) && /id="dg-wiki"/.test(html), "wiki sem botão no HUD do vale ou da caverna");
 check(/from "\.\/wiki\.js"/.test(app), "app.js não importa a wiki");
-check(/function openWiki\(\)/.test(app), "app.js não define openWiki");
-check(/btn-wiki"\)\.addEventListener\("click", openWiki\)/.test(app), "botão da wiki sem ligação");
+check(/function openWiki\(/.test(app), "app.js não define openWiki");
+check(/btn-wiki"\)\.addEventListener\("click", \(\) => openWiki\(\)\)/.test(app), "botão da wiki sem ligação");
 check(/onWiki: \(\) => openWiki\(\)/.test(app), "caverna não recebe onWiki");
 check(/onWiki/.test(dungeon) && /k === "h"/.test(dungeon), "caverna não abre a wiki com H");
+check(/id="intro-wiki"/.test(html) && /intro-wiki/.test(app), "wiki não abre antes de criar personagem");
+check(/get\("wiki"\)/.test(app), "link ?wiki= não abre a wiki");
+check(/separarConsulta/.test(fs.readFileSync(new URL("../js/wiki.js", import.meta.url), "utf8")), "wiki sem parser de link");
+check(/onWiki: \(\) => openWiki\(\)/.test(app), "caverna sem callback da wiki");
 
 assert.equal(problemas.length, 0, `wiki com ${problemas.length} problema(s):\n- ${problemas.slice(0, 12).join("\n- ")}`);
 console.log(`ok wiki: ${indice.length} entradas em ${cats.length} categorias (${contagem.mundo} áreas, ${contagem.cavernas} cavernas, ${contagem.criaturas} criaturas, ${contagem.itens} itens, ${contagem.missoes} missões, ${contagem.npcs} NPCs, ${contagem.paginas} páginas, ${contagem.vocacoes} vocações)`);

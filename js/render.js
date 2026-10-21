@@ -16,6 +16,8 @@ import { drawCaveFacade } from "./cave-art.js";
 import { gustAt, ondaAt, espumaAt, swayAt, windMood } from "./wind.js";
 import { escalaDaCamera, tilesNaVista } from "./camera.js";
 import { desenharAsset } from "./assets/index.js";
+import { desenharIcone } from "./assets/icones.js";
+import { hexA } from "./assets/nucleo.js";
 import { fracoesDeVida } from "./vitais.js";
 import { criarAmbiente, ambienteDe } from "./ambient.js";
 
@@ -818,356 +820,8 @@ export function createRenderer(canvas, world) {
     }
   }
 
-  function drawDecor(d, time) {
-    const px = d.x * TILE, py = d.y * TILE;
-    if (d.type === "lamp") {
-      ctx.fillStyle = "rgba(2, 6, 10, 0.4)";
-      ctx.beginPath(); ctx.ellipse(px, py + 12, 6, 2.4, 0, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = "#2b2438";
-      ctx.fillRect(px - 1, py - 10, 2, 22);
-      ctx.fillStyle = "#4a3f5f";
-      ctx.fillRect(px - 3, py - 12, 6, 2);
-      const glow = 0.78 + Math.sin(time * 0.003 + d.x) * 0.16;
-      ctx.globalAlpha = glow;
-      ctx.drawImage(lampGlow(), px - 18, py - 28);
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = "#ffe3a1";
-      ctx.fillRect(px - 1, py - 11, 2, 2);
-    } else if (d.type === "sign") {
-      ctx.fillStyle = "#2a2130";
-      ctx.fillRect(px - 1, py - 6, 2, 16);
-      ctx.fillStyle = "#1a1526";
-      ctx.fillRect(px - 8, py - 12, 16, 7);
-      ctx.strokeStyle = d.accent;
-      ctx.globalAlpha = 0.8;
-      ctx.strokeRect(px - 7.5, py - 11.5, 15, 6);
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = d.accent;
-      ctx.fillRect(px - 5, py - 9, 10, 1);
-      ctx.fillRect(px - 5, py - 7, 6, 0.5);
-    } else if (d.type === "mushroom") {
-      const hue = d.hue > 0.7 ? "#6bd5ff" : "#61f4c0";
-      ctx.fillStyle = "#d8d0c4";
-      ctx.fillRect(px, py + 3, 2, 4);
-      ctx.fillStyle = hue;
-      ctx.fillRect(px - 2, py, 6, 3);
-      ctx.fillStyle = "rgba(255,255,255,0.5)";
-      ctx.fillRect(px - 1, py + 1, 1, 1);
-    } else if (d.type === "shard") {
-      const a = 0.5 + Math.sin(time * 0.002 + d.x) * 0.2;
-      ctx.fillStyle = `rgba(255, 122, 168, ${a * 0.25})`;
-      ctx.fillRect(px - 6, py - 10, 12, 20);
-      ctx.fillStyle = "#ff9bc0";
-      ctx.beginPath();
-      ctx.moveTo(px, py - 9); ctx.lineTo(px + 3, py + 2); ctx.lineTo(px, py + 6);
-      ctx.lineTo(px - 3, py + 2); ctx.closePath(); ctx.fill();
-    } else if (d.type === "star") {
-      const a = 0.35 + Math.sin(time * 0.003 + d.x * 3) * 0.3;
-      ctx.fillStyle = `rgba(200, 180, 255, ${a})`;
-      ctx.fillRect(px, py - 1, 1, 3);
-      ctx.fillRect(px - 1, py, 3, 1);
-    } else if (d.type === "node") {
-      ctx.fillStyle = "rgba(97, 244, 192, 0.35)";
-      ctx.fillRect(px, py, 2, 2);
-      ctx.strokeStyle = "rgba(97, 244, 192, 0.12)";
-      ctx.beginPath();
-      ctx.moveTo(px, py); ctx.lineTo(px + 8, py);
-      ctx.stroke();
-    } else if (d.type === "petal") {
-      ctx.fillStyle = "rgba(255, 200, 87, 0.35)";
-      ctx.fillRect(px, py, 1, 1);
-    } else if (d.type === "bench") {
-      ctx.fillStyle = "rgba(2,6,10,0.35)";
-      ctx.beginPath(); ctx.ellipse(px + 8, py + 10, 10, 3, 0, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = "#2a2030";
-      ctx.fillRect(px + 1, py + 6, 2, 5);
-      ctx.fillRect(px + 13, py + 6, 2, 5);
-      ctx.fillStyle = "#6b4a2f";
-      ctx.fillRect(px - 2, py + 2, 20, 4);
-      ctx.fillStyle = "#8a623d";
-      ctx.fillRect(px - 2, py + 2, 20, 1);
-      ctx.fillStyle = "#4a3322";
-      ctx.fillRect(px - 2, py + 6, 20, 1);
-      ctx.fillStyle = "#5a3d28";
-      ctx.fillRect(px - 2, py - 6, 2, 9);
-      ctx.fillRect(px + 16, py - 6, 2, 9);
-      ctx.fillStyle = "#7a5636";
-      ctx.fillRect(px - 2, py - 6, 20, 2);
-    } else if (d.type === "terminal") {
-      const a = d.accent || "#61f4c0";
-      ctx.fillStyle = "rgba(2,6,10,0.35)";
-      ctx.beginPath(); ctx.ellipse(px + 7, py + 12, 8, 2.5, 0, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = "#162032";
-      ctx.fillRect(px, py - 16, 14, 28);
-      ctx.fillStyle = "#22304a";
-      ctx.fillRect(px + 2, py - 14, 10, 4);
-      ctx.fillStyle = hexA(a, 0.75);
-      for (let i = 0; i < 3; i++) {
-        if (Math.sin(time * 0.002 + i * 2 + d.x) > -0.2) {
-          ctx.fillRect(px + 3 + i * 3, py - 5 + i * 3, 2, 1);
-        }
-      }
-      ctx.fillStyle = "rgba(255,255,255,0.08)";
-      ctx.fillRect(px + 2, py - 9, 10, 1);
-    } else if (d.type === "pillar") {
-      const a = d.accent || "#b48cff";
-      ctx.fillStyle = "rgba(2,6,10,0.35)";
-      ctx.beginPath(); ctx.ellipse(px + 6, py + 12, 8, 2.5, 0, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = "#2a2648";
-      ctx.fillRect(px, py - 14, 12, 26);
-      ctx.fillStyle = "#3d3766";
-      ctx.fillRect(px + 1, py - 14, 3, 24);
-      ctx.fillStyle = "#1c1933";
-      ctx.fillRect(px - 2, py + 10, 16, 4);
-      ctx.fillStyle = hexA(a, 0.8);
-      ctx.fillRect(px + 4, py - 8, 4, 1);
-      ctx.fillRect(px + 5, py - 10, 2, 5);
-    } else if (d.type === "book") {
-      const a = d.accent || "#ffc857";
-      ctx.fillStyle = "#2a1f33";
-      ctx.fillRect(px - 6, py + 4, 14, 5);
-      ctx.fillStyle = "#4a3a5c";
-      ctx.fillRect(px - 5, py, 13, 4);
-      ctx.fillStyle = a;
-      ctx.fillRect(px - 4, py + 1, 11, 1);
-      ctx.fillStyle = "#d9d0ff";
-      ctx.fillRect(px - 3, py - 5, 10, 4);
-      ctx.fillStyle = "#8d82b8";
-      ctx.fillRect(px - 3, py - 5, 1, 4);
-    } else if (d.type === "orb") {
-      const a = d.accent || "#ff7aa8";
-      const bob = Math.sin(time * 0.002 + d.x * 3) * 3;
-      ctx.fillStyle = hexA(a, 0.16);
-      ctx.beginPath(); ctx.arc(px, py + bob, 12, 0, Math.PI * 2); ctx.fill();
-      ctx.strokeStyle = hexA(a, 0.8);
-      ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.arc(px, py + bob, 5, 0, Math.PI * 2); ctx.stroke();
-      ctx.beginPath(); ctx.ellipse(px, py + bob, 10, 3, 0.4, 0, Math.PI * 2); ctx.stroke();
-    } else if (d.type === "crystal") {
-      const a = d.accent || "#ff7aa8";
-      const glow = 0.25 + Math.sin(time * 0.002 + d.x) * 0.1;
-      ctx.fillStyle = hexA(a, glow);
-      ctx.fillRect(px - 6, py - 14, 12, 26);
-      ctx.fillStyle = a;
-      ctx.beginPath();
-      ctx.moveTo(px, py - 16); ctx.lineTo(px + 4, py - 1);
-      ctx.lineTo(px + 1, py + 8); ctx.lineTo(px - 4, py - 2);
-      ctx.closePath(); ctx.fill();
-      ctx.fillStyle = "rgba(255,255,255,0.4)";
-      ctx.fillRect(px - 1, py - 8, 1, 5);
-    } else if (d.type === "flask") {
-      const a = d.accent || "#7ee787";
-      ctx.fillStyle = "#d9d0e8";
-      ctx.fillRect(px - 4, py - 14, 8, 2);
-      ctx.fillRect(px - 2, py - 12, 4, 7);
-      ctx.beginPath();
-      ctx.moveTo(px - 2, py - 5); ctx.lineTo(px - 8, py + 9);
-      ctx.lineTo(px + 8, py + 9); ctx.lineTo(px + 2, py - 5);
-      ctx.closePath(); ctx.fill();
-      ctx.fillStyle = hexA(a, 0.75);
-      ctx.beginPath();
-      ctx.moveTo(px - 5, py + 2); ctx.lineTo(px - 8, py + 9);
-      ctx.lineTo(px + 8, py + 9); ctx.lineTo(px + 5, py + 2);
-      ctx.closePath(); ctx.fill();
-    } else if (d.type === "bubble") {
-      const a = d.accent || "#7ee787";
-      const bob = Math.sin(time * 0.003 + d.x * 5) * 2;
-      ctx.strokeStyle = hexA(a, 0.55);
-      ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.arc(px, py + bob, 3, 0, Math.PI * 2); ctx.stroke();
-      ctx.beginPath(); ctx.arc(px + 4, py - 5 + bob, 1.6, 0, Math.PI * 2); ctx.stroke();
-    } else if (d.type === "note") {
-      const a = d.accent || "#ffb26b";
-      const bob = Math.sin(time * 0.002 + d.x * 3) * 3;
-      ctx.fillStyle = hexA(a, 0.18);
-      ctx.beginPath(); ctx.arc(px, py + bob, 10, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = a;
-      ctx.beginPath(); ctx.ellipse(px - 2, py + 5 + bob, 4, 3, -0.3, 0, Math.PI * 2); ctx.fill();
-      ctx.fillRect(px + 1, py - 10 + bob, 2, 16);
-      ctx.fillRect(px + 1, py - 10 + bob, 6, 2);
-    } else if (d.type === "speaker") {
-      const a = d.accent || "#ffb26b";
-      ctx.fillStyle = "#2a2038";
-      ctx.fillRect(px - 7, py - 6, 7, 12);
-      ctx.fillStyle = "#4a3a5c";
-      ctx.beginPath();
-      ctx.moveTo(px, py - 6); ctx.lineTo(px + 7, py - 11);
-      ctx.lineTo(px + 7, py + 11); ctx.lineTo(px, py + 6); ctx.closePath(); ctx.fill();
-      const pulse = 0.3 + Math.sin(time * 0.003 + d.x) * 0.2;
-      ctx.strokeStyle = hexA(a, pulse);
-      ctx.beginPath(); ctx.arc(px + 8, py, 9, -0.7, 0.7); ctx.stroke();
-      ctx.beginPath(); ctx.arc(px + 8, py, 15, -0.6, 0.6); ctx.stroke();
-    } else if (d.type === "synapse") {
-      const a = d.accent || "#6bd5ff";
-      const pulse = 0.35 + Math.sin(time * 0.002 + d.x * 4) * 0.25;
-      ctx.strokeStyle = hexA(a, pulse);
-      ctx.beginPath();
-      ctx.moveTo(px - 8, py + 6); ctx.lineTo(px, py - 6); ctx.lineTo(px + 8, py + 6);
-      ctx.stroke();
-      ctx.fillStyle = hexA(a, 0.8);
-      ctx.beginPath(); ctx.arc(px - 8, py + 6, 2, 0, Math.PI * 2); ctx.fill();
-      ctx.beginPath(); ctx.arc(px, py - 6, 2, 0, Math.PI * 2); ctx.fill();
-      ctx.beginPath(); ctx.arc(px + 8, py + 6, 2, 0, Math.PI * 2); ctx.fill();
-    } else if (d.type === "wave") {
-      const a = d.accent || "#ffb26b";
-      ctx.strokeStyle = hexA(a, 0.45);
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      for (let i = -8; i <= 8; i += 2) {
-        const yy = py + Math.sin(i * 0.8 + time * 0.003) * 3;
-        if (i === -8) ctx.moveTo(px + i, yy); else ctx.lineTo(px + i, yy);
-      }
-      ctx.stroke();
-    } else if (d.type === "antenna") {
-      const a = d.accent || "#6bd5ff";
-      ctx.strokeStyle = "#2a3048"; ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.moveTo(px, py + 10); ctx.lineTo(px, py - 18); ctx.stroke();
-      ctx.strokeStyle = hexA(a, 0.55); ctx.lineWidth = 1;
-      for (let r = 5; r <= 13; r += 4) { ctx.beginPath(); ctx.arc(px, py - 18, r, -2.4, -0.7); ctx.stroke(); }
-      ctx.fillStyle = a; ctx.fillRect(px - 1, py - 20, 2, 2);
-    } else if (d.type === "rack") {
-      const a = d.accent || "#61f4c0";
-      ctx.fillStyle = "#141c2b"; ctx.fillRect(px - 7, py - 20, 14, 30);
-      ctx.fillStyle = "#24324a"; ctx.fillRect(px - 5, py - 18, 10, 26);
-      for (let i = 0; i < 4; i++) {
-        ctx.fillStyle = Math.sin(time * 0.003 + i + d.x) > 0 ? a : "#1c2a3a";
-        ctx.fillRect(px - 4, py - 15 + i * 5, 2, 2);
-        ctx.fillStyle = "#0d1420"; ctx.fillRect(px, py - 15 + i * 5, 3, 2);
-      }
-    } else if (d.type === "lock") {
-      const a = d.accent || "#ffc857";
-      ctx.strokeStyle = "#3a4466"; ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.arc(px, py - 10, 5, Math.PI, 0); ctx.stroke();
-      ctx.fillStyle = "#24304a"; ctx.fillRect(px - 7, py - 10, 14, 13);
-      ctx.fillStyle = hexA(a, 0.85); ctx.fillRect(px - 1, py - 5, 2, 4);
-      ctx.fillRect(px - 2, py - 1, 4, 2);
-    } else if (d.type === "compass") {
-      const a = d.accent || "#b48cff";
-      ctx.strokeStyle = "#4a4466"; ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.arc(px, py, 8, 0, Math.PI * 2); ctx.stroke();
-      ctx.strokeStyle = hexA(a, 0.9);
-      ctx.beginPath(); ctx.moveTo(px - 5, py + 4); ctx.lineTo(px + 4, py - 5); ctx.stroke();
-      ctx.fillStyle = a; ctx.fillRect(px - 1, py - 1, 2, 2);
-    } else if (d.type === "die") {
-      const a = d.accent || "#b48cff";
-      ctx.fillStyle = "#2a2438"; ctx.fillRect(px - 6, py - 6, 12, 12);
-      ctx.fillStyle = a;
-      for (const [dx, dy] of [[-3,-3],[3,-3],[0,0],[-3,3],[3,3]]) ctx.fillRect(px + dx, py + dy, 2, 2);
-    } else if (d.type === "coil") {
-      const a = d.accent || "#ffb26b";
-      ctx.strokeStyle = hexA(a, 0.7); ctx.lineWidth = 1;
-      for (let i = 0; i < 4; i++) { ctx.beginPath(); ctx.arc(px, py - i * 3, 6, 0, Math.PI * 2); ctx.stroke(); }
-      ctx.fillStyle = "#2a3048"; ctx.fillRect(px - 7, py + 9, 14, 3);
-    } else if (d.type === "gauge") {
-      const a = d.accent || "#ff7aa8";
-      ctx.strokeStyle = "#3a3a55"; ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.arc(px, py, 7, Math.PI, 0); ctx.stroke();
-      const ang = -Math.PI + (0.5 + Math.sin(time * 0.002 + d.x) * 0.35) * Math.PI;
-      ctx.strokeStyle = a; ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px + Math.cos(ang) * 6, py + Math.sin(ang) * 6); ctx.stroke();
-    } else if (d.type === "lens") {
-      const a = d.accent || "#ff7aa8";
-      ctx.fillStyle = "#1a2434"; ctx.fillRect(px - 1, py - 2, 2, 10);
-      ctx.fillStyle = hexA(a, 0.28); ctx.beginPath(); ctx.ellipse(px, py - 6, 5, 8, 0, 0, Math.PI * 2); ctx.fill();
-      ctx.strokeStyle = hexA(a, 0.8); ctx.lineWidth = 1; ctx.beginPath(); ctx.ellipse(px, py - 6, 5, 8, 0, 0, Math.PI * 2); ctx.stroke();
-      ctx.fillStyle = "rgba(255,255,255,0.35)"; ctx.fillRect(px - 2, py - 10, 1, 3);
-    } else if (d.type === "molecule") {
-      const a = d.accent || "#7ee787";
-      ctx.strokeStyle = hexA(a, 0.5); ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(px - 7, py + 5); ctx.lineTo(px, py - 5); ctx.lineTo(px + 7, py + 5); ctx.stroke();
-      ctx.fillStyle = hexA(a, 0.85);
-      for (const [dx, dy] of [[-7,5],[0,-5],[7,5]]) { ctx.beginPath(); ctx.arc(px + dx, py + dy, 2.4, 0, Math.PI * 2); ctx.fill(); }
-    } else if (d.type === "quill") {
-      const a = d.accent || "#e8c07a";
-      ctx.strokeStyle = a; ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(px - 5, py + 9); ctx.quadraticCurveTo(px + 2, py - 8, px + 7, py - 12); ctx.stroke();
-      ctx.fillStyle = hexA(a, 0.5); ctx.fillRect(px + 4, py - 13, 4, 2); ctx.fillRect(px + 2, py - 10, 4, 2);
-    } else if (d.type === "mask") {
-      const a = d.accent || "#e8c07a";
-      ctx.fillStyle = "#2a2438"; ctx.fillRect(px - 7, py - 10, 14, 12);
-      ctx.fillStyle = hexA(a, 0.8);
-      ctx.fillRect(px - 5, py - 7, 3, 2); ctx.fillRect(px + 2, py - 7, 3, 2);
-      ctx.beginPath(); ctx.arc(px, py + 1, 4, 0, Math.PI); ctx.fill();
-    } else if (d.type === "metronome") {
-      const a = d.accent || "#ffb26b";
-      ctx.fillStyle = "#2a2438";
-      ctx.beginPath(); ctx.moveTo(px, py - 18); ctx.lineTo(px + 7, py + 10); ctx.lineTo(px - 7, py + 10); ctx.closePath(); ctx.fill();
-      const swing = Math.sin(time * 0.004 + d.x) * 6;
-      ctx.strokeStyle = a; ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(px, py + 7); ctx.lineTo(px + swing, py - 14); ctx.stroke();
-      ctx.fillStyle = a; ctx.fillRect(px + swing - 1, py - 15, 2, 2);
-    } else if (d.type === "crate") {
-      // caixote do cais: tábua, travessa e prego
-      const a = d.accent || "#ffc857";
-      ctx.fillStyle = "rgba(2,6,10,0.35)";
-      ctx.beginPath(); ctx.ellipse(px + 1, py + 7, 8, 2.4, 0, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = "#4a3322"; ctx.fillRect(px - 6, py - 5, 13, 12);
-      ctx.fillStyle = "#6b4a2f"; ctx.fillRect(px - 5, py - 4, 11, 10);
-      ctx.fillStyle = "#7d5a38"; ctx.fillRect(px - 5, py - 4, 11, 1);
-      ctx.fillStyle = "#3d2a1a"; ctx.fillRect(px - 5, py - 1, 11, 1); ctx.fillRect(px - 1, py - 4, 1, 10);
-      ctx.fillStyle = hexA(a, 0.8); ctx.fillRect(px - 4, py + 3, 1, 1); ctx.fillRect(px + 3, py + 3, 1, 1);
-    } else if (d.type === "crane") {
-      // guindaste: base, mastro, lança sobre a água e o cabo com o caixote
-      const a = d.accent || "#ffc857";
-      ctx.fillStyle = "rgba(2,6,10,0.4)";
-      ctx.beginPath(); ctx.ellipse(px, py + 9, 11, 3, 0, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = "#3a2a1e"; ctx.fillRect(px - 7, py + 5, 15, 4);
-      ctx.fillStyle = "#5a4030"; ctx.fillRect(px - 2, py - 22, 4, 28);
-      ctx.fillStyle = "#7a5636"; ctx.fillRect(px - 1, py - 22, 1, 27);
-      ctx.strokeStyle = "#5a4030"; ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.moveTo(px, py - 22); ctx.lineTo(px + 18, py - 20); ctx.stroke();
-      ctx.strokeStyle = "#8a623d"; ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(px, py - 23); ctx.lineTo(px + 18, py - 21); ctx.stroke();
-      const balanco = Math.sin(time * 0.0016 + d.x) * 1.5;
-      ctx.strokeStyle = "rgba(220,210,190,0.7)";
-      ctx.beginPath(); ctx.moveTo(px + 18, py - 20); ctx.lineTo(px + 18 + balanco, py - 8); ctx.stroke();
-      ctx.fillStyle = "#6b4a2f"; ctx.fillRect(px + 15 + balanco, py - 8, 7, 6);
-      ctx.fillStyle = "#3d2a1a"; ctx.fillRect(px + 15 + balanco, py - 5, 7, 1);
-      ctx.fillStyle = a; ctx.fillRect(px - 1, py - 24, 2, 2);
-    } else if (d.type === "bell") {
-      // sino do porto: armação, sino e badalo
-      const a = d.accent || "#ffc857";
-      ctx.fillStyle = "#3a2a1e";
-      ctx.fillRect(px - 1, py - 12, 3, 22);
-      ctx.fillRect(px - 8, py - 12, 17, 2);
-      ctx.fillStyle = "#5a4030"; ctx.fillRect(px - 9, py - 12, 3, 2);
-      ctx.fillStyle = "#c9a227";
-      ctx.beginPath();
-      ctx.moveTo(px - 5, py - 9); ctx.lineTo(px + 5, py - 9);
-      ctx.lineTo(px + 7, py - 1); ctx.lineTo(px - 7, py - 1);
-      ctx.closePath(); ctx.fill();
-      ctx.fillStyle = "#8f6f1a"; ctx.fillRect(px - 7, py - 2, 15, 2);
-      const bal = Math.sin(time * 0.006 + d.x) * 1;
-      ctx.fillStyle = a; ctx.fillRect(px - 1 + bal, py - 1, 2, 3);
-      ctx.fillStyle = "#2a2438"; ctx.fillRect(px - 1, py - 10, 2, 1);
-    } else if (d.type === "mast") {
-      // mastro com bandeira que tremula
-      ctx.fillStyle = "#4a3322"; ctx.fillRect(px - 1, py - 26, 3, 34);
-      ctx.fillStyle = "#7a5636"; ctx.fillRect(px - 1, py - 26, 1, 33);
-      const onda = Math.sin(time * 0.004 + d.x) * 2;
-      ctx.fillStyle = d.accent || "#ffc857";
-      ctx.beginPath();
-      ctx.moveTo(px + 2, py - 25);
-      ctx.lineTo(px + 13, py - 23 + onda);
-      ctx.lineTo(px + 2, py - 18);
-      ctx.closePath(); ctx.fill();
-      ctx.fillStyle = "rgba(255,255,255,0.35)";
-      ctx.fillRect(px + 3, py - 23, 3, 1);
-    } else if (d.type === "gull") {
-      // gaivota: duas asas que sobem e descem, sem sombra no chão
-      const t = time * 0.005 + d.x * 6;
-      const asa = Math.sin(t) * 2;
-      const x = px;
-      const y = py - 16 + Math.sin(time * 0.0012 + d.x * 9) * 3;
-      ctx.fillStyle = "rgba(240,244,255,0.9)";
-      ctx.fillRect(x - 3, y - 1 + asa, 3, 1);
-      ctx.fillRect(x + 1, y - 1 + asa, 3, 1);
-      ctx.fillRect(x - 1, y, 2, 1);
-      ctx.fillStyle = "rgba(255,200,87,0.9)";
-      ctx.fillRect(x + 1, y, 1, 1);
-    }
-  }
-
+  // os ícones de conceito moram em js/assets/icones.js
+  function drawDecor(d, time) { desenharIcone(ctx, d, time); }
   const glowCache = new Map();
   function glowSprite(accent) {
     let sprite = glowCache.get(accent);
@@ -1185,20 +839,6 @@ export function createRenderer(canvas, world) {
     return sprite;
   }
 
-  let lampSprite = null;
-  function lampGlow() {
-    if (lampSprite) return lampSprite;
-    lampSprite = document.createElement("canvas");
-    lampSprite.width = 36;
-    lampSprite.height = 36;
-    const g = lampSprite.getContext("2d");
-    const grad = g.createRadialGradient(18, 18, 0, 18, 18, 18);
-    grad.addColorStop(0, "rgba(255, 214, 128, 0.55)");
-    grad.addColorStop(1, "rgba(255, 214, 128, 0)");
-    g.fillStyle = grad;
-    g.fillRect(0, 0, 36, 36);
-    return lampSprite;
-  }
 
   function drawStation(s, time) {
     const px = s.x * TILE, py = s.y * TILE;
@@ -1760,10 +1400,7 @@ export function createRenderer(canvas, world) {
     ctx.textAlign = "left";
   }
 
-  function hexA(hex, a) {
-    const n = parseInt(hex.slice(1), 16);
-    return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${a})`;
-  }
+
 
   // O chão é estático: pinta uma vez em blocos de 16x16 tiles e só copia o
   // bloco visível por frame. Água e magma ganham o brilho por cima, animado.
@@ -1952,8 +1589,10 @@ export function createRenderer(canvas, world) {
             ctx.drawImage(glowSprite("#ff9a55"), px - 36, py - 44);
             ctx.restore();
           }
+          // a vegetação acompanha o vento do lugar, com a mesma rajada da copa
+          const inclinacao = a.camada === "chao" ? 0 : swayAt(a.x, a.y, time, moodAtual) * 0.03;
           if (desenharAsset(ctx, a.tipo, px, py, {
-            tempo: time, bioma: BIOMES[a.bioma], seed: hash2(a.x * 5, a.y * 11),
+            tempo: time, bioma: BIOMES[a.bioma], seed: hash2(a.x * 5, a.y * 11), inclinacao,
           })) assetsVisiveis++;
         },
       });

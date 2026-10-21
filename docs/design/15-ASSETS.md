@@ -15,6 +15,7 @@ que está na vista.
 | fogo | `js/assets/fogo.js` | fogueira, braseiro, tocha, lanterna, fumaça |
 | água | `js/assets/agua.js` | pedra molhada, junco d'água, espuma, lírio |
 | props | `js/assets/props.js` | barril, saco, caixote, fardo, gaivota |
+| ícones | `js/assets/icones.js` | os 36 enfeites de conceito (livro, frasco, terminal, guindaste, sino...) que antes moravam no renderer |
 
 Cada asset declara `w`, `h`, `variantes`, `quadros`/`ms` quando anima e uma
 função `desenhar(g, paleta, variante, quadro)`. O contrato é cobrado por
@@ -72,8 +73,10 @@ quadro: fogueira, braseiro, tocha, lanterna, fumaça, espuma e gaivota.
 | cache de sprites | 240 no teto, estável |
 | exceções no console | 0 |
 
-O que ficou de fora de propósito: os ícones de conceito (livro, frasco,
-terminal, compasso) continuam no `drawDecor` inline; migrá-los para a
-biblioteca não muda o desenho e fica para quando houver arte nova para eles.
+A vegetação verga com a rajada do lugar: o renderer passa a inclinação e o
+sprite é desenhado com um cisalhamento no pé, sem criar quadro de cache por
+posição de vento. Medido: 759 canais de pixel diferentes entre inclinação zero e
+0,05.
+
 Não há atlas de sprite: `drawImage` de canvas pequeno é o caminho barato no
 canvas 2D e o cache já evita repintura.

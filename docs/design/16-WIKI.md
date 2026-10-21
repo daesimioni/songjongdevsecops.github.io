@@ -12,10 +12,20 @@ dos mesmos módulos que o jogo usa, então o que entra no jogo entra na wiki.
 | Cavernas | `dungeon-data.js` | 93 |
 | Criaturas | `identity.js` (FAUNA) e chefes de `dungeon-data.js` | 351 |
 | Itens | `rpg-data.js` (ITEMS) | 538 |
+| Receitas | `rpg-data.js` (RECIPES) | 18 |
+| Encantos | `rpg-data.js` (ENCHANTS) | 3 |
+| Relíquias | `rpg-data.js` (RELICS) | 86 |
+| Pets | `pets.js` (PETS e MOUNTS) | 10 |
 | Missões | `quests.js` | 284 |
 | NPCs | `content.js` (NPCS) | 194 |
 | Páginas | `content.js` (POSTS): as 454 pedras | 454 |
+| Trajes | `outfits.js` | 102 |
 | Vocações | `vocations.js` | 5 |
+| Sistemas | `TIERS`, `SKILLS` e os resumos de como jogar | 22 |
+
+Total: **2.246 fichas**. Item, bicho, pet e relíquia mostram o ícone na ficha
+(o ícone do item vem de `item-art.js`, o bicho de `creature.js`, o pet de
+`pet-art.js`).
 
 Cada entrada mostra os campos que o jogo já tem: disciplina, material e caverna
 da área; salas, chefe e equipamento da caverna; tipo e fraqueza do bicho; tipo e
@@ -47,5 +57,7 @@ carregamento do site: só na primeira abertura, e custa poucos milissegundos.
 ## Acesso
 
 O botão está no HUD da superfície e no HUD da caverna. Não depende de nível,
-pedra descoberta ou missão concluída. A wiki pausa o jogo enquanto está aberta,
-como os outros modais, e fechar a wiki dentro da caverna não fecha a caverna.
+pedra descoberta ou missão concluída. Também abre antes de criar personagem,
+pelo botão da tela de entrada, e por link direto: `?wiki=termo` abre a wiki já
+buscando o termo. A wiki pausa o jogo enquanto está aberta, como os outros
+modais, e fechar a wiki dentro da caverna não fecha a caverna.

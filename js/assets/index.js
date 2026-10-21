@@ -46,7 +46,7 @@ function paletaDoBioma(bioma) {
   return p;
 }
 
-export function desenharAsset(ctx, tipo, x, y, { tempo = 0, bioma = null, seed = 0, camada = "ser" } = {}) {
+export function desenharAsset(ctx, tipo, x, y, { tempo = 0, bioma = null, seed = 0, camada = "ser", inclinacao = 0 } = {}) {
   const def = POR_TIPO.get(tipo);
   if (!def) return false;
   const p = paletaDoBioma(bioma);
@@ -58,6 +58,16 @@ export function desenharAsset(ctx, tipo, x, y, { tempo = 0, bioma = null, seed =
   const dy = camada === "chao"
     ? Math.round(y - def.h / 2)
     : Math.round(y - def.h);
+  // vegetação verga com a rajada: um cisalhamento no pé, sem redesenhar o
+  // sprite nem gastar um quadro de cache por posição de vento
+  if (inclinacao && camada !== "chao") {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.transform(1, 0, inclinacao, 1, 0, 0);
+    ctx.drawImage(sprite, -def.w / 2, -def.h);
+    ctx.restore();
+    return true;
+  }
   ctx.drawImage(sprite, dx, dy);
   return true;
 }

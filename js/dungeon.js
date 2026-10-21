@@ -12,6 +12,7 @@ import { hash2 } from "./world.js";
 import { drawPetSprite } from "./pet-art.js";
 import { drawSkiff } from "./skiff.js";
 import { escalaDaCamera, tilesNaVista, dentroDaVista, caixaNaVista } from "./camera.js";
+import { fracoesDeVida } from "./vitais.js";
 
 const $ = (id) => document.getElementById(id);
 const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
@@ -586,7 +587,7 @@ function drawBuilding(ctx, x, y, w, h, palette, accent) {
 }
 
 // ---------- a caverna em si ----------
-export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, onWiki, onGather, onExit, onKeeper, onConurbation, onPortal, onVocacao, isBlocked, avatar = {}, look = null, gear = null }) {
+export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, onWiki, onGather, onExit, onKeeper, onConurbation, onPortal, onVocacao, isBlocked, vitais = null, avatar = {}, look = null, gear = null }) {
   const canvas = $("dungeon-canvas");
   const ctx = canvas?.getContext("2d", { alpha: false }) || null;
 
@@ -2167,6 +2168,25 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     if (!state.stats) state.stats = { drawMs: ms };
     else state.stats.drawMs = state.stats.drawMs * 0.9 + ms * 0.1;
     state.stats.visiveis = visiveis;
+
+    // vida e mana acima do herói, em espaço de tela: o breu não apaga
+    if (vitais) {
+      const f = fracoesDeVida(vitais());
+      const vx = (state.player.x * TILE - camX) * scale;
+      const vy = (state.player.y * TILE - camY) * scale - 46;
+      const larg = 30, alto = 2, folga = 1;
+      ctx.fillStyle = "rgba(8,10,20,0.82)";
+      ctx.fillRect(vx - larg / 2, vy, larg, alto * 2 + folga * 3 + 2);
+      const x0 = vx - larg / 2 + 1;
+      ctx.fillStyle = "#3a1f2c";
+      ctx.fillRect(x0, vy + 1, larg - 2, alto);
+      ctx.fillStyle = "#ff5a86";
+      ctx.fillRect(x0, vy + 1, Math.round((larg - 2) * f.vida), alto);
+      ctx.fillStyle = "#16283a";
+      ctx.fillRect(x0, vy + 1 + alto + folga, larg - 2, alto);
+      ctx.fillStyle = "#6bd5ff";
+      ctx.fillRect(x0, vy + 1 + alto + folga, Math.round((larg - 2) * f.mana), alto);
+    }
   }
 
   function drawMonster(m, t) {

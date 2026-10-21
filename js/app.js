@@ -331,6 +331,7 @@ dungeon = createDungeon({
   onSheet: () => openSheet(),
   onInventory: () => openInventory(),
   onWiki: () => openWiki(),
+  vitais: () => ({ hp: rpg.hp(), hpMax: rpg.hpMax(), mana: rpg.mana(), manaMax: rpg.manaMax() }),
   onGather: (ctx) => openGather(ctx.kind, ctx),
   onKeeper: () => openShop(),
   onConurbation: () => openTravel("caves"),
@@ -1544,16 +1545,19 @@ function openBestiary() {
 
 // A wiki é de todos: não depende de descoberta nem de nível. Abre por cima do
 // vale e da caverna, fecha com Esc ou com o mesmo atalho.
-function openWiki() {
-  if (!state.started) return;
+function openWiki({ consulta = "", livre = false } = {}) {
+  // livre: abre por cima da tela de entrada, antes de criar personagem
+  if (!livre && !state.started) return;
   if (state.modal === "wiki") { closeModal("wiki"); return; }
   if (state.modal) return;
-  stopSprint();
-  if (state.panelOpen) closePanel();
-  closeChat();
+  if (!livre) {
+    stopSprint();
+    if (state.panelOpen) closePanel();
+    closeChat();
+  }
   openModal("wiki");
-  wikiUi.abrir();
-  audio.open();
+  wikiUi.abrir(consulta);
+  if (!livre) audio.open();
 }
 wikiUi.configurar({ abrirPost: (id) => { closeModal("wiki"); openPost(id); }, fechar: () => closeModal("wiki") });
 
@@ -3100,8 +3104,9 @@ $("panel-live").addEventListener("pointerdown", () => {
 }, { passive: true });
 $("btn-journal").addEventListener("click", openJournal);
 $("btn-bestiary").addEventListener("click", openBestiary);
-$("btn-wiki").addEventListener("click", openWiki);
-$("dg-wiki").addEventListener("click", openWiki);
+$("btn-wiki").addEventListener("click", () => openWiki());
+$("intro-wiki")?.addEventListener("click", () => openWiki({ livre: true }));
+$("dg-wiki").addEventListener("click", () => openWiki());
 $("steps-min")?.addEventListener("click", () => $("steps").classList.toggle("min"));
 
 $("btn-help").addEventListener("click", () => { openModal("help"); audio.open(); });
@@ -3409,6 +3414,10 @@ window.addEventListener("beforeunload", () => {
   }, { capture: true });
 
   if (new URLSearchParams(location.search).has("debug")) {
-    window.__mundo = { player, state, world, renderer, audio, quests, rede, backup, rpg, sheetUi, duelUi, dungeon, pvpUi, knockDown, findPath, assets: { cache: cacheDeAssets, total: totalDeAssets }, openPost: (id) => openPost(id), openTravel: (mode) => openTravel(mode), openVocacoes: () => openVocacoes(), catalog: CATALOG_CONTENT, catalogStones: [...CATALOG_STONES], waystones: WAYSTONES, get social() { return social; } };
+    window.__mundo = { player, state, world, renderer, audio, quests, rede, backup, rpg, sheetUi, duelUi, dungeon, pvpUi, knockDown, findPath, assets: { cache: cacheDeAssets, total: totalDeAssets }, openPost: (id) => openPost(id), openTravel: (mode) => openTravel(mode), openVocacoes: () => openVocacoes(), openWiki: (opcoes) => openWiki(opcoes), catalog: CATALOG_CONTENT, catalogStones: [...CATALOG_STONES], waystones: WAYSTONES, get social() { return social; } };
   }
+
+  // link direto: ?wiki=termo abre a wiki por cima da entrada, sem personagem
+  const wikiParam = new URLSearchParams(location.search).get("wiki");
+  if (wikiParam) openWiki({ consulta: wikiParam === "1" ? "" : wikiParam, livre: true });
 })();

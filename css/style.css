@@ -3778,6 +3778,7 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
 .leve .modal-card, .leve .panel, .leve .chat, .leve .toast { backdrop-filter: none; }
 
 /* ---- wiki: tudo sobre o jogo, gerado dos mesmos dados ---- */
+#wiki { z-index: 95; }
 .wiki-card { width: min(1120px, 96vw); }
 .wiki-card .modal-head { margin-bottom: 12px; }
 .wiki-card .modal-head h2 { margin: 0; }
@@ -3801,6 +3802,7 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
 .wiki-item span { font-family: var(--mono); font-size: 10px; color: var(--muted); line-height: 1.35; }
 .wiki-item em { font-style: normal; font-family: var(--mono); font-size: 9px; letter-spacing: .08em; text-transform: uppercase; color: var(--mint); }
 .wiki-detail { border: 1px solid var(--line-strong); border-radius: 10px; padding: 14px 16px; background: rgba(9, 12, 22, .82); max-height: min(58dvh, 620px); overflow-y: auto; }
+.wiki-icone { float: left; width: 64px; height: 64px; margin: 0 12px 8px 0; border: 1px solid var(--line); border-radius: 8px; background: rgba(4, 6, 14, .7); image-rendering: pixelated; }
 .wiki-detail h3 { margin: 0 0 4px; font-family: var(--pixel); font-size: 12px; letter-spacing: .04em; color: var(--text); }
 .wiki-detail .wiki-cat { margin: 0 0 10px; font-family: var(--mono); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--mint); }
 .wiki-detail dl { display: grid; grid-template-columns: 120px 1fr; gap: 6px 12px; margin: 0 0 12px; }

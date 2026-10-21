@@ -33,6 +33,10 @@ check(/drawNameTag\(player\.name[^)]*vitais\)/.test(render), "o nome do jogador 
 check(/fracoesDeVida\(vitais\)/.test(render), "as barras não usam a conta de fração");
 check(/#ff5a86/.test(render) && /#6bd5ff/.test(render), "cores de vida e mana diferentes do HUD");
 check(/hp: rpg\.hp\(\), hpMax: rpg\.hpMax\(\), mana: rpg\.mana\(\), manaMax: rpg\.manaMax\(\)/.test(app), "app.js não entrega os vitais ao renderer");
+const dungeon = fs.readFileSync(new URL("../js/dungeon.js", import.meta.url), "utf8");
+check(/from "\.\/vitais\.js"/.test(dungeon), "caverna não usa a conta dos vitais");
+check(/fracoesDeVida\(vitais\(\)\)/.test(dungeon), "caverna não desenha as barras");
+check(/vitais: \(\) => \(\{ hp: rpg\.hp\(\)/.test(app), "app.js não passa os vitais para a caverna");
 
 assert.equal(problemas.length, 0, `vitais com ${problemas.length} problema(s):\n- ${problemas.join("\n- ")}`);
 console.log("ok vitais: fração presa entre 0 e 1, renderer recebe vida e mana e desenha as barras com as cores do HUD");

@@ -74,6 +74,7 @@ check(criados === 4, `fabrica chamada ${criados} vezes, esperado 4`);
 
 // ---- colocação no mundo ----
 const { createWorld } = await import("../js/world.js");
+const { ICONES } = await import("../js/assets/icones.js");
 const world = createWorld();
 check(world.ambiente.length >= 1800, `camada de ambiente com ${world.ambiente.length} peças, esperado ao menos 1800`);
 const porTipo = {};
@@ -128,6 +129,15 @@ const render = fs.readFileSync(new URL("../js/render.js", import.meta.url), "utf
 check(/from "\.\/assets\/index\.js"/.test(render), "render.js não importa a biblioteca");
 check(/world\.ambiente/.test(render), "render.js não desenha a camada de ambiente");
 check(/stats\.assets = 0/.test(render), "render.js não zera a contagem de assets do quadro");
+check(/from "\.\/assets\/icones\.js"/.test(render), "render.js não importa os ícones da biblioteca");
+check(/desenharIcone\(ctx, d, time\)/.test(render), "render.js não delega o ícone para a biblioteca");
+check(!/d\.type === "/.test(render), "render.js ainda desenha ícone inline");
+check(/inclinacao/.test(render) && /swayAt\(a\.x, a\.y, time, moodAtual\)/.test(render), "vegetação sem balanço de vento");
+for (const tipo of ["lamp", "sign", "terminal", "crane", "gull", "book", "flask"]) {
+  check(ICONES.has(tipo), `ícone ${tipo} fora da biblioteca`);
+}
+const tiposDecor = new Set(world.decor.map((d) => d.type));
+for (const tipo of tiposDecor) check(ICONES.has(tipo), `decor ${tipo} sem ícone na biblioteca`);
 check(/camada === "chao"[\s\S]{0,200}desenharAsset/.test(render), "decalque de chão não entra antes do volume");
 
 assert.equal(problemas.length, 0, `assets com ${problemas.length} problema(s):\n- ${problemas.slice(0, 12).join("\n- ")}`);

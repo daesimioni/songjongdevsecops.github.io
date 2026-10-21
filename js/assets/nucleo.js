@@ -96,3 +96,9 @@ export function variante(seed, n) {
 export function quadroAnimado(tempo, quadros, ms = 160) {
   return Math.floor(tempo / ms) % quadros;
 }
+
+// Cor com alfa, usada pelos ícones de conceito.
+export function hexA(hex, a) {
+  const n = parseInt(hex.slice(1), 16);
+  return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${a})`;
+}
