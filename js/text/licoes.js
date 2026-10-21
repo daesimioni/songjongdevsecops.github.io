@@ -809,10 +809,15 @@ export const LICOES = {
       quebra:
         "Imaginar que o acelerador tira energia do vácuo. Ele injeta energia nos campos e gasta potência para isso. A conta de energia fecha no sistema, e o que se ganha é concentração, não criação.",
       limite:
-        "A energia de colisão cresce, mas o custo e o tamanho crescem mais rápido. Há limite prático de túnel e de ímã, e é por isso que a próxima geração estuda outro esquema de aceleração.",
+        "A energia de colisão cresce, mas o custo e o tamanho crescem mais rápido. Há limite prático de túnel e de ímã, e é por isso que a próxima geração estuda outro esquema de aceleração. O detector, por sua vez, cresce junto: quanto maior a energia, mais fragmento e mais camada de medida.",
       levar: "Acelerador é lupa de energia: concentra para ver o que estava junto.",
       maos:
         "Compare a curvatura de partícula com carga oposta no mesmo campo e veja o que muda.",
+      pergunta: {
+        q: "O que um detector de raios cósmicos mede na superfície?",
+        a: "A cascata de partículas que o raio cósmico produz na atmosfera",
+        why: "O raio cósmico de alta energia colide no ar e gera um chuveiro de partículas; o detector mede o rastro do chuveiro e reconstrói a energia e a direção do primário.",
+      },
     },
   },
   "physics-condensada": {
@@ -1484,10 +1489,15 @@ export const LICOES = {
       quebra:
         "Confundir recorrência com fórmula fechada. A recorrência descreve o passo, não o valor em n; para prever longe é preciso iterar ou resolver a forma fechada, e nem toda recorrência tem forma simples.",
       limite:
-        "A análise de ponto fixo descreve comportamento local. Longe dele, ciclo e caos podem aparecer, e a linearização não decide. A simulação entra para ver o regime global.",
+        "A análise de ponto fixo descreve comportamento local. Longe dele, ciclo e caos podem aparecer, e a linearização não decide. A simulação entra para ver o regime global, e o mapa da recorrência desenhado à mão ajuda a enxergar o destino antes de rodar conta longa.",
       levar: "Recorrência é o futuro escrito em função do presente.",
       maos:
         "Itere a mesma recorrência com dois valores iniciais próximos e veja se as trajetórias se juntam ou se separam.",
+      pergunta: {
+        q: "Quando a iteração de uma recorrência linear converge para o ponto fixo?",
+        a: "Quando o fator de amplificação tem módulo menor que um",
+        why: "A cada passo o erro é multiplicado pelo fator; com módulo abaixo de um o erro encolhe e a trajetória se aproxima do ponto fixo.",
+      },
     },
     "Sistemas Dinâmicos": {
       contexto:
@@ -1619,6 +1629,173 @@ export const LICOES = {
         q: "Por que a simulação numérica precisa de validação experimental?",
         a: "Porque modelo, malha e contorno podem errar juntos sem aviso",
         why: "O resultado numérico herda as escolhas do modelador; só a comparação com dado real ou caso conhecido mostra se a conta representa o fenômeno.",
+      },
+    },
+  },
+  "math-aritmetica": {
+    "Aritmética": {
+      contexto:
+        "Onde isso aparece: na compra, na receita e na conta de luz. Fração, porcentagem e potência são a mesma ideia escrita de jeitos diferentes, e a ordem das operações muda o resultado. Estimativa antes da conta pega erro grosseiro.",
+      oQue:
+        "Aritmética é a gramática do número: operação, fração, razão, porcentagem, potência e raiz. Cada operação tem prioridade e cada representação tem uso. Notação científica encurta número grande, e arredondamento declara a precisão que se tem.",
+      passos: [
+        "Escreva a expressão com parênteses explícitos.",
+        "Transforme fração e porcentagem numa mesma forma antes de comparar.",
+        "Estime antes de calcular e confira a ordem de grandeza do resultado.",
+      ],
+      exemplo:
+        "20% de 250 é 50: um quinto de 250. A conta de cabeça pega o erro antes da calculadora. Já 2 mais 3 vezes 4 é 14, não 20, porque a multiplicação vem antes. A regra de prioridade não é capricho: ela mantém a fatoração legível e evita ambiguidade na escrita.",
+      quebra:
+        "Confundir porcentagem com proporção direta em aumento e desconto encadeados. Aumentar 10% e depois descontar 10% não volta ao valor original: 100 vira 110 e depois 99. A base muda a cada passo.",
+      limite:
+        "A aritmética exata cobre inteiro e racional; irracional entra por aproximação, e aí o erro precisa ser declarado. Em conta financeira longa, o arredondamento por passo muda o total.",
+      levar: "A ordem da operação e a base da porcentagem decidem o resultado.",
+      maos:
+        "Calcule um aumento e um desconto de 10% em sequência e veja o valor final.",
+      pergunta: {
+        q: "Por que 1/3 tem dízima infinita e ainda assim é racional?",
+        a: "Porque é fração de inteiros e a dízima se repete em ciclo",
+        why: "Racional é todo número que se escreve como fração de inteiros; a repetição periódica é consequência da divisão, não sinal de irracionalidade.",
+      },
+    },
+    "Sistemas Numéricos": {
+      contexto:
+        "Onde isso aparece: na reta real, na representação binária e no computador que só guarda fração. Cada conjunto amplia o anterior para fechar uma operação: inteiro fecha subtração, racional fecha divisão. Irracional não é dízima infinita; é o que não se escreve como fração.",
+      oQue:
+        "Os números se organizam em naturais, inteiros, racionais, irracionais, reais e complexos. Cada conjunto amplia o anterior para resolver operações que antes não fechavam, e a reta real junta racionais e irracionais sem buraco. Bases posicionais mudam a escrita, não o número.",
+      passos: [
+        "Identifique a operação que precisa fechar.",
+        "Escolha o menor conjunto que a contém.",
+        "Escreva o número na forma que prova a que conjunto ele pertence.",
+      ],
+      exemplo:
+        "A raiz de dois é irracional: não existe fração de inteiros que a represente, e a prova por contradição mostra que a suposição de fração leva a par e ímpar ao mesmo tempo. Já um terço tem dízima infinita e é racional, porque é fração. Dízima infinita não é critério.",
+      quebra:
+        "Chamar de irracional todo número com infinitas casas decimais. Um terço tem infinitas e é racional. O critério é a representação em fração, não o tamanho da escrita.",
+      limite:
+        "A construção dos reais depende de completude, e a definição rigorosa usa corte ou sequência de Cauchy. Sem isso, a reta é intuição, não objeto definido.",
+      levar: "O conjunto cresce para fechar a operação que faltava.",
+      maos:
+        "Classifique dez números nos conjuntos e justifique cada um pela representação.",
+    },
+    "Teoria Elementar dos Números": {
+      contexto:
+        "Onde isso aparece: na criptografia, no código de barras e na prova de divisibilidade. Primo é tijolo da fatoração, e congruência é relógio. Trabalhar módulo n simplifica conta gigante.",
+      oQue:
+        "Teoria elementar dos números estuda divisibilidade, primo, fatoração e congruência. Todo inteiro maior que um se decompõe em primos de forma única, e trabalhar módulo n é olhar só o resto. Somar, subtrair e multiplicar funcionam normalmente; dividir exige inverso.",
+      passos: [
+        "Fatore o número ou reduza a conta módulo n.",
+        "Verifique se o divisor é coprimo antes de dividir numa congruência.",
+        "Confira o resultado com uma conta pequena do mesmo resto.",
+      ],
+      exemplo:
+        "17 módulo 5 é 2, porque 17 é três vezes 5 mais 2. Para saber em que algarismo termina 2 elevado a 100, reduza o expoente módulo 4: o ciclo do 2 tem quatro posições, e 100 deixa resto zero, então o algarismo é 6. A conta gigante vira conta pequena.",
+      quebra:
+        "Dividir os dois lados de uma congruência sem verificar se o divisor é invertível. Módulo 6, dividir por 2 não é permitido porque 2 não tem inverso, e a conclusão sai errada.",
+      limite:
+        "A aritmética modular funciona bem no anel dos inteiros; em módulo composto, nem todo elemento tem inverso. A estrutura muda, e o cálculo precisa respeitar isso.",
+      levar: "Primo é tijolo; módulo é relógio.",
+      maos:
+        "Calcule o último algarismo de 2 elevado a 100 reduzindo o expoente módulo 4.",
+    },
+    "Teoria Analítica dos Números": {
+      contexto:
+        "Onde isso aparece: na estimativa de quantos primos existem até um valor e na prova de que há infinitos primos em progressão. A análise entra para contar o que a aritmética sozinha não conta. Função zeta liga primo a série.",
+      oQue:
+        "Teoria analítica dos números usa ferramenta de análise para responder pergunta de contagem. A função zeta de Riemann codifica os primos numa série, e o teorema dos números primos dá a ordem de grandeza da contagem. Problema aditivo pergunta quantas somas de duas parcelas caem num conjunto.",
+      passos: [
+        "Traduza a contagem numa função de x.",
+        "Escreva a série ou o produto de Euler correspondente.",
+        "Use estimativa assintótica e compare com a contagem numérica.",
+      ],
+      exemplo:
+        "O teorema dos números primos diz que a quantidade até x é próxima de x dividido pelo logaritmo de x. Para x igual a um milhão, a estimativa dá cerca de 72 mil, e a contagem real é 78 mil. A ordem de grandeza acerta; o termo de erro é a parte difícil.",
+      quebra:
+        "Confundir estimativa assintótica com fórmula exata. O teorema diz o comportamento para x grande; para x pequeno, a diferença pode ser grande. Usar como igualdade erra a conta.",
+      limite:
+        "A hipótese de Riemann, sobre os zeros da zeta, ainda não foi provada, e muitos resultados dependem dela. Sem essa prova, a estimativa carrega folga maior do que se gostaria.",
+      levar: "A análise conta primos por aproximação, e a aproximação é o resultado.",
+      maos:
+        "Compare a contagem real de primos até mil com a estimativa x sobre log x.",
+      pergunta: {
+        q: "O que o teorema dos números primos afirma?",
+        a: "Que a quantidade de primos até x cresce como x dividido pelo logaritmo de x",
+        why: "É um resultado assintótico: descreve a ordem de grandeza da contagem para x grande, não uma fórmula exata para cada x.",
+      },
+    },
+    "Teoria Algébrica dos Números": {
+      contexto:
+        "Onde isso aparece: na solução de equação que não cabe nos racionais e na fatoração que deixa de ser única. Ampliar o corpo resolve uma equação e cria outro problema. Ideal entra para recuperar a fatoração única.",
+      oQue:
+        "Teoria algébrica dos números estuda corpo numérico, inteiro algébrico e ideal. Ampliar o corpo dos racionais com uma raiz resolve equação que antes não tinha solução, mas a fatoração única pode se perder. Ideais são a estrutura que devolve a fatoração num anel maior.",
+      passos: [
+        "Identifique o polinômio e o corpo que contém a raiz.",
+        "Veja se o anel de inteiros mantém fatoração única.",
+        "Troque número por ideal quando a fatoração única não valer.",
+      ],
+      exemplo:
+        "No anel dos inteiros de um corpo quadrático, um número pode se fatorar de duas maneiras diferentes em irredutíveis. O ideal contorna: cada ideal se fatora de forma única em ideal primo. A fatoração volta, mas no nível do ideal, não do elemento.",
+      quebra:
+        "Achar que a fatoração única vale em qualquer anel de inteiros algébricos. Não vale. A suposição leva a prova falsa, e o contraexemplo clássico mostra a falha.",
+      limite:
+        "A teoria descreve bem o anel de Dedekind, que tem a propriedade boa. Fora dessa classe, a estrutura é mais complicada e a conclusão muda, e o contraexemplo deixa de ser exceção para virar aviso sobre generalização: o que se prova é sempre relativo à estrutura do anel em questão.",
+      levar: "Quando o número não fatora bem, o ideal fatora.",
+      maos:
+        "Procure um anel de inteiros algébricos sem fatoração única e mostre duas fatorações do mesmo elemento.",
+      pergunta: {
+        q: "Por que a teoria algébrica troca número por ideal?",
+        a: "Porque em alguns anéis de inteiros algébricos a fatoração única se perde",
+        why: "O ideal recupera a fatoração única num nível mais fino, e a teoria consegue provar o que o elemento sozinho não permite.",
+      },
+    },
+    "Teoria Transcendental dos Números": {
+      contexto:
+        "Onde isso aparece: na prova de que pi e e não são raiz de polinômio e na aproximação de número por fração. A pergunta é quão bem um irracional se aproxima de racional. Quanto melhor a aproximação, mais longe do algébrico o número fica.",
+      oQue:
+        "Número algébrico é raiz de polinômio com coeficiente inteiro; transcendente não é. Aproximação diofantina mede quão perto um irracional chega de fração, e a medida de irracionalidade quantifica isso. A transcendência prova que nenhum polinômio captura o número.",
+      passos: [
+        "Suponha que o número é algébrico e escreva o polinômio que o anula.",
+        "Use a aproximação racional para gerar contradição.",
+        "Conclua a transcendência e verifique a hipótese usada.",
+      ],
+      exemplo:
+        "A prova de que e é transcendente supõe polinômio com coeficiente inteiro que anula e, e chega a contradição pela aproximação da série. O mesmo tipo de argumento vale para pi, com mais trabalho. O número não é raiz de polinômio nenhum.",
+      quebra:
+        "Achar que todo irracional é transcendente. A raiz de dois é irracional e algébrica, porque resolve x ao quadrado menos dois igual a zero. Irracionalidade e transcendência são categorias diferentes.",
+      limite:
+        "Provar transcendência é difícil e caso a caso. Não existe método geral que decida para qualquer número, e muitas constantes ainda estão em aberto, o que faz da área um conjunto de provas isoladas com técnica própria, cada uma ajustada ao número e ao método que melhor o cerca.",
+      levar: "Algébrico é raiz de polinômio; transcendente escapa de todos.",
+      maos:
+        "Mostre que a raiz de dois é algébrica e compare com a definição de transcendente.",
+      pergunta: {
+        q: "Qual é a diferença entre irracional e transcendente?",
+        a: "Irracional não é fração de inteiros; transcendente não é raiz de polinômio com coeficiente inteiro",
+        why: "A raiz de dois é irracional e algébrica; pi e e são transcendentes. Todo transcendente é irracional, mas nem todo irracional é transcendente.",
+      },
+    },
+    "Matemática Comercial e Financeira": {
+      contexto:
+        "Onde isso aparece: no financiamento, no cartão e na decisão de comprar à vista. Juro composto é exponencial disfarçada, e taxa ao mês não se converte em ao ano por multiplicação simples. O valor do dinheiro muda com o tempo.",
+      oQue:
+        "Matemática financeira compara dinheiro em instantes diferentes. Juro simples cresce linear, juro composto cresce exponencial, e a taxa equivalente converte prazo sem mudar o efeito. Valor presente traz o fluxo futuro para hoje, e a amortização reparte o pagamento entre juro e principal.",
+      passos: [
+        "Desenhe a linha do tempo dos fluxos de caixa.",
+        "Converta toda taxa para a mesma unidade de prazo.",
+        "Compare valor presente em vez de somar valor nominal.",
+      ],
+      exemplo:
+        "Uma taxa de 1% ao mês não é 12% ao ano: um mais 0,01 elevado a 12 menos um dá cerca de 12,68%. Em trinta anos, a diferença entre 12% e 12,68% muda o montante em milhares. A conversão é exponencial, e a conta de juros compostos segue a mesma regra.",
+      quebra:
+        "Somar taxa de juros simples quando o regime é composto. A soma ignora o juro sobre juro, e o resultado subestima o custo. Em prazo longo, o erro cresce sem aviso.",
+      limite:
+        "O modelo supõe taxa constante e ausência de inflação ou risco. Em cenário real, a taxa muda e a decisão envolve incerteza, que a conta sozinha não resolve.",
+      levar: "Dinheiro tem data: comparar exige trazer tudo para o mesmo instante.",
+      maos:
+        "Converta 1% ao mês para ao ano pelas duas contas, simples e composta, e compare.",
+      pergunta: {
+        q: "Por que 1% ao mês não é 12% ao ano em juro composto?",
+        a: "Porque o juro do mês seguinte incide sobre o montante já corrigido",
+        why: "A conversão é exponencial: um mais 0,01 elevado a 12 menos um dá cerca de 12,68%, e a diferença cresce com o prazo.",
       },
     },
   },

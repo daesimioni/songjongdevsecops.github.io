@@ -139,34 +139,23 @@ const tokensDoTema = (texto) =>
     .filter((w) => w.length > 3);
 
 function atribuirTemas(bank, estacoes) {
-  const usado = new Set();
-  const mapa = estacoes.map(() => -1);
-  estacoes.forEach((estacao, i) => {
-    const alvo = new Set([
-      ...tokensDoTema(estacao.nome),
-      ...(estacao.topicos || []).flatMap(tokensDoTema),
-    ]);
-    let melhor = -1;
-    let score = 0;
-    bank.forEach((tema, j) => {
-      if (usado.has(j)) return;
-      const pontos = tokensDoTema(tema.name).filter((w) => alvo.has(w)).length;
-      if (pontos > score) {
-        score = pontos;
-        melhor = j;
-      }
-    });
-    if (melhor >= 0) {
-      usado.add(melhor);
-      mapa[i] = melhor;
-    }
+  const alvos = estacoes.map(
+    (e) => new Set([...tokensDoTema(e.nome), ...(e.topicos || []).flatMap(tokensDoTema)]),
+  );
+  const mapa = estacoes.map(() => []);
+  const pendentes = [];
+  bank.forEach((tema, j) => {
+    const tokens = tokensDoTema(tema.name);
+    const pontos = alvos.map((alvo) => tokens.filter((w) => alvo.has(w)).length);
+    const melhor = pontos.indexOf(Math.max(...pontos));
+    if (pontos[melhor] > 0) mapa[melhor].push(j);
+    else pendentes.push(j);
   });
-  bank.forEach((_, j) => {
-    if (usado.has(j)) return;
-    const livre = mapa.findIndex((m) => m < 0);
-    if (livre >= 0) mapa[livre] = j;
-    usado.add(j);
-  });
+  for (const j of pendentes) {
+    let livre = mapa.findIndex((lista) => lista.length === 0);
+    if (livre < 0) livre = mapa.reduce((a, lista, i) => (lista.length < mapa[a].length ? i : a), 0);
+    mapa[livre].push(j);
+  }
   return mapa;
 }
 
@@ -275,8 +264,8 @@ export function buildCatalogContent() {
         catalog: true,
       });
       const inter = item.bankTopic ? (SECAO_TEXT[area.num] || INTER_TEXT[area.num]) : null;
-      const indiceTema = temasDasEstacoes[i] ?? -1;
-      const tema = item.bankTopic || (indiceTema >= 0 ? bank[indiceTema] : null);
+      const indicesDoTema = item.bankTopic ? [] : temasDasEstacoes[i] || [];
+      const tema = item.bankTopic || (indicesDoTema.length ? bank[indicesDoTema[0]] : null);
       const licao = licaoDe(area.id, item.nome);
       const corpo = licao
         ? subareaBody({
@@ -289,7 +278,9 @@ export function buildCatalogContent() {
             catalogId: area.id,
             licao,
             bankTopic: tema,
-            perguntas: tema?.q ? [tema.q] : [],
+            perguntas: item.bankTopic
+              ? (item.bankTopic.q ? [item.bankTopic.q] : [])
+              : indicesDoTema.map((j) => bank[j]?.q).filter(Boolean),
             extra: inter ? { abre: inter.abre, pratica: inter.pratica, erro: inter.erro } : null,
           })
         : item.bankTopic
@@ -305,8 +296,8 @@ export function buildCatalogContent() {
             // a lição escrita transforma o totem em curso; a pergunta da
             // trilha é a do banco da área, na mesma ordem das estações
             licao: licaoDe(area.id, item.nome),
-            bankTopic: bank[i] || null,
-            perguntas: bank[i]?.q ? [bank[i].q] : [],
+            bankTopic: tema,
+            perguntas: indicesDoTema.map((j) => bank[j]?.q).filter(Boolean),
           });
       posts[postId] = {
         kicker: `${discipline.name.toLowerCase()} · ${area.short.toLowerCase()}`,
