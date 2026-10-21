@@ -4840,6 +4840,305 @@ export const LICOES = {
         "Quebre a métrica de acerto por grupo e compare com a média.",
     },
   },
+  "cs-dataciencia": {
+    "Preparação e Exploração de Dados": {
+      contexto:
+        "Onde isso aparece: na planilha suja, no modelo que não converge e no relatório errado. Preparar dado é a maior parte do trabalho. Normalizar põe grandeza diferente em escala comparável, e a limpeza decide o resultado.",
+      oQue:
+        "Preparação e exploração cobrem coleta, limpeza, transformação, normalização e engenharia de atributo. A normalização coloca variável de unidade diferente em escala comparável, e a engenharia de atributo cria variável que ajuda o modelo. A exploração revela distribuição e valor faltante antes de qualquer modelo.",
+      passos: [
+        "Descreva a distribuição e o valor faltante de cada coluna.",
+        "Trate o faltante com critério declarado.",
+        "Normalize quando o modelo for sensível à escala.",
+      ],
+      exemplo:
+        "Idade em ano e renda em milhar têm escala muito diferente, e o modelo de distância fica dominado pela renda. Normalizar coloca as duas em faixa comparável, e o modelo passa a usar as duas. A transformação precisa ser aprendida no treino e aplicada no teste.",
+      quebra:
+        "Calcular a normalização no conjunto inteiro antes de separar treino e teste. A estatística do teste vaza para o treino e o resultado fica otimista. A transformação se ajusta só no treino.",
+      limite:
+        "Nem todo modelo precisa de normalização. Árvore e floresta não se importam com escala, e a transformação só adiciona etapa. A escolha depende do modelo. O valor faltante, por sua vez, pede decisão declarada: remover a linha, preencher com média ou tratar como categoria própria muda o resultado, e a escolha fica registrada no caderno de análise.",
+      levar: "Dado preparado vale mais que modelo sofisticado.",
+      maos:
+        "Compare a média e o desvio de duas colunas e normalize uma delas.",
+    },
+    "Mineração de Dados": {
+      contexto:
+        "Onde isso aparece: na cesta de compra, na segmentação de cliente e no alerta de fraude. Minerar é achar padrão que não estava à vista. A regra de associação e o agrupamento respondem perguntas diferentes.",
+      oQue:
+        "Mineração de dado descobre padrão em volume: associação, segmentação, anomalia e classificação. A associação encontra item que aparece junto, e a segmentação agrupa registro parecido. A detecção de anomalia procura registro que foge do padrão aprendido.",
+      passos: [
+        "Defina a pergunta e a medida de interesse.",
+        "Escolha a técnica compatível com o dado.",
+        "Valide o padrão em dado novo antes de agir.",
+      ],
+      exemplo:
+        "Na cesta de compra, a regra mostra que pão e manteiga aparecem juntos com frequência. Isso orienta a prateleira, mas não prova causa. O padrão precisa de teste e de conhecimento do negócio para virar ação.",
+      quebra:
+        "Tratar correlação como causa. O padrão encontrado pode ter explicação comum, e a ação baseada nele erra. O teste controlado é o que separa associação de causa. A segmentação agrupa cliente parecido e serve à ação de marketing, mas o grupo precisa ser interpretável para virar campanha. A classificação treina com rótulo, e o rótulo histórico carrega o viés de quem decidiu no passado, então a auditoria do rótulo é parte do trabalho. A regra de associação também precisa de suporte e confiança mínimos, senão o achado é coincidência. A cesta grande gera combinação demais, e a taxa de falso positivo sobe com o tamanho do catálogo.",
+      limite:
+        "Mineração encontra padrão em qualquer dado, inclusive ruído. Com muita combinação, o falso positivo aparece por acaso, e a correção de múltipla comparação é necessária.",
+      levar: "Padrão encontrado é hipótese, não conclusão.",
+      maos:
+        "Procure uma regra de associação numa cesta pequena e escreva a hipótese.",
+      pergunta: {
+        q: "O que a detecção de anomalia procura?",
+        a: "O registro que foge do padrão aprendido",
+        why: "O modelo aprende o comportamento normal e sinaliza o desvio; o limiar escolhido define o que conta como anomalia e o custo de cada erro.",
+      },
+    },
+    "Aprendizado Estatístico": {
+      contexto:
+        "Onde isso aparece: na previsão de demanda, no diagnóstico e no risco. O modelo precisa generalizar, não decorar. Validação cruzada e seleção de modelo controlam o sobreajuste.",
+      oQue:
+        "Aprendizado estatístico cobre modelo preditivo, validação cruzada, generalização, seleção e incerteza. O sobreajuste é o modelo que decorou o treino e generaliza mal, e a validação cruzada estima o desempenho em dado não visto. A incerteza da previsão precisa acompanhar o número.",
+      passos: [
+        "Separe treino, validação e teste.",
+        "Use validação cruzada para escolher o modelo.",
+        "Reporte a incerteza junto com a previsão.",
+      ],
+      exemplo:
+        "Modelo com erro baixo no treino e alto na validação decorou. A diferença entre os dois é o diagnóstico, e regularizar ou simplificar corrige. O teste final confirma se a correção funcionou. A incerteza da previsão também precisa de relato: intervalo largo indica modelo inseguro, e a decisão que ignora a faixa erra no caso concreto. A seleção de modelo pelo erro médio também precisa de penalidade por complexidade, senão o modelo grande vence por decorar.",
+      quebra:
+        "Escolher modelo pelo desempenho no teste. O teste vira parte do ajuste e o número fica otimista. A escolha acontece na validação, e o teste é usado uma vez.",
+      limite:
+        "A validação cruzada supõe dado independente e distribuição estável. Em série temporal, a divisão aleatória vaza o futuro para o passado, e a validação precisa respeitar a ordem.",
+      levar: "Generalizar é acertar no dado que não foi visto.",
+      maos:
+        "Compare o erro de treino e de validação de dois modelos e escolha um.",
+    },
+    "Engenharia de Machine Learning": {
+      contexto:
+        "Onde isso aparece: no modelo em produção, na queda silenciosa e na auditoria. MLOps leva o modelo do notebook ao serviço com versão e monitoração. A deriva de dado derruba o desempenho sem o código mudar.",
+      oQue:
+        "Engenharia de machine learning cobre pipeline de treino, versionamento de dado e modelo, registro, monitoração e MLOps. A deriva de dado é a mudança no perfil do dado que chega ao modelo, e o monitoramento compara a distribuição com a do treino. O registro guarda qual modelo está em produção e com qual dado foi treinado.",
+      passos: [
+        "Versionamento dado, código e modelo juntos.",
+        "Automatize treino e publicação com teste.",
+        "Monitore a distribuição de entrada e o desempenho.",
+      ],
+      exemplo:
+        "Modelo de crédito treinado antes de uma crise recebe perfil de cliente diferente e erra mais. O código não mudou, o mundo mudou. O monitor de deriva avisa antes de o prejuízo aparecer. O registro de modelo responde qual versão está no ar, com qual dado treinou e quem aprovou; sem isso, a auditoria vira arqueologia.",
+      quebra:
+        "Publicar modelo sem versão e sem monitor. Quando o desempenho cai, ninguém sabe qual modelo está no ar nem com que dado foi treinado. A reprodutibilidade se perde.",
+      limite:
+        "Monitorar deriva não corrige o modelo. O aviso indica retreinar ou revisar, e a decisão precisa de dono e de critério de aceite novo.",
+      levar: "Modelo em produção é sistema com versão e vigia.",
+      maos:
+        "Compare a distribuição de uma coluna no treino e na produção.",
+    },
+    "Especialidades": {
+      contexto:
+        "Onde isso aparece: no preço do imóvel, na sequência genética e no mapa de doença. A especialidade aplica o método ao dado do domínio. A estrutura do dado muda a técnica.",
+      oQue:
+        "Especialidades incluem econometria computacional, bioinformática, análise geoespacial, grafo e dado temporal. A análise geoespacial acrescenta a dependência de espaço entre registro, e o dado temporal acrescenta a ordem. A escolha do método segue a estrutura do dado.",
+      passos: [
+        "Identifique a estrutura: espaço, tempo, rede ou sequência.",
+        "Escolha o modelo que respeita essa estrutura.",
+        "Valide com a divisão adequada ao domínio.",
+      ],
+      exemplo:
+        "Preço de imóvel depende do vizinho, e ignorar o espaço deixa erro sistemático. Já série de venda tem ordem, e embaralhar a validação vaza o futuro. O dado dita a validação. A métrica da especialidade também muda: econometria olha coeficiente e causalidade, bioinformática olha falso positivo em teste em massa, e cada uma tem custo de erro próprio. A análise de grafo em rede social mede centralidade e comunidade, e a temporal mede tendência e sazonalidade; trocar a medida troca a conclusão. A análise geoespacial acrescenta também o efeito de borda, porque o vizinho fora do mapa pesa, e o recorte do território muda o coeficiente estimado, então a análise precisa declarar a escala em que foi feita.",
+      quebra:
+        "Ignorar a estrutura e tratar tudo como linha independente. O modelo parece bom na validação aleatória e falha no uso. A validação precisa respeitar espaço e tempo.",
+      limite:
+        "Cada especialidade tem vocabulário e métrica própria. Trocar de domínio sem entender a medida leva a otimizar número errado.",
+      levar: "A estrutura do dado decide a validação.",
+      maos:
+        "Separe dado temporal em treino e teste respeitando a ordem e compare com divisão aleatória.",
+      pergunta: {
+        q: "O que a análise geoespacial acrescenta ao dado tabular?",
+        a: "A dependência de espaço entre os registros",
+        why: "Registro vizinho tende a se parecer, e o modelo precisa considerar a coordenada e a autocorrelação; ignorar isso produz erro sistemático e validação otimista.",
+      },
+    },
+  },
+  "cs-devops": {
+    "Devops": {
+      contexto:
+        "Onde isso aparece: no pipeline, no ambiente reproduzível e na entrega. Devops junta desenvolvimento e operação com automação. Infraestrutura como código descreve ambiente em arquivo versionado e reproduzível.",
+      oQue:
+        "Devops automatiza o ciclo com integração, entrega e implantação contínua. A infraestrutura como código descreve o ambiente em arquivo versionado, e a gestão de ambiente garante que teste e produção sejam parecidos. A automação reduz diferença manual e erro humano.",
+      passos: [
+        "Automatize build e teste a cada mudança.",
+        "Descreva o ambiente em código versionado.",
+        "Mantenha os ambientes parecidos e rastreáveis.",
+      ],
+      exemplo:
+        "Ambiente criado à mão diverge do outro em detalhe que ninguém lembra. Com arquivo versionado, o ambiente é recriado igual e a diferença fica visível no diff. O ambiente vira artefato como o código. A revisão do arquivo mostra a mudança de infraestrutura antes do apply, e o histórico explica quando o ambiente mudou. O segredo fica fora do arquivo e entra por referência ao cofre, senão a infraestrutura versionada vira vazamento.",
+      quebra:
+        "Tratar ambiente como máquina de estimação e não como código. A divergência aparece no incidente, quando não se sabe o que mudou. O arquivo versionado resolve na origem.",
+      limite:
+        "IaC não elimina estado real: recurso criado fora do código gera deriva. A reconciliação e a leitura periódica são parte da prática.",
+      levar: "Ambiente também é código, com versão e revisão.",
+      maos:
+        "Descreva um ambiente pequeno em arquivo e recrie a partir dele.",
+    },
+    "SRE — Engenharia de Confiabilidade de Sites": {
+      contexto:
+        "Onde isso aparece: no acordo de serviço, no alerta e na decisão de parar entrega. SRE mede confiabilidade com indicador e meta. O orçamento de erro transforma a meta em decisão operacional.",
+      oQue:
+        "SRE cobre disponibilidade, latência, capacidade e SLI, SLO e SLA. O indicador mede o serviço, o objetivo fixa a meta e o acordo formaliza com o cliente. O orçamento de erro é a margem de falha aceitável dentro da meta de serviço.",
+      passos: [
+        "Escolha o indicador que representa a experiência.",
+        "Fixe o objetivo e calcule o orçamento de erro.",
+        "Use o orçamento para decidir entre entrega e estabilidade.",
+      ],
+      exemplo:
+        "Meta de 99,9% no mês dá cerca de 43 minutos de indisponibilidade. Se o orçamento acaba, o time prioriza estabilidade em vez de recurso novo. A decisão deixa de ser discussão e passa a ser conta.",
+      quebra:
+        "Definir meta sem medir o indicador. O número vira promessa e a operação não sabe se cumpre. O indicador precisa ser medido continuamente e visível.",
+      limite:
+        "Indicador médio esconde a cauda. O usuário sente o pior caso, e a meta precisa de percentil, não só de média.",
+      levar: "Confiabilidade é meta com orçamento, não desejo.",
+      maos:
+        "Calcule os minutos de indisponibilidade que uma meta de 99,9% permite no mês.",
+    },
+    "Observabilidade": {
+      contexto:
+        "Onde isso aparece: no painel, no alerta e na investigação do incidente. Métrica, log e rastro respondem perguntas diferentes. O rastro distribuído mostra o caminho e o tempo de cada etapa.",
+      oQue:
+        "Observabilidade reúne métrica, log, rastro distribuído, instrumentação e telemetria. A métrica mostra tendência, o log mostra evento e o rastro mostra o caminho da requisição entre serviço. A instrumentação precisa nascer com o código, senão o incidente chega sem dado.",
+      passos: [
+        "Instrumente a requisição com identificador de rastro.",
+        "Colete métrica, log e rastro com contexto comum.",
+        "Monte alerta pelo sintoma que o usuário sente.",
+      ],
+      exemplo:
+        "A requisição passa por quatro serviço, e o rastro mostra que 80% do tempo está no terceiro. Sem rastro, a investigação chuta. Com rastro, a causa fica visível no caminho. O alerta bom dispara pelo sintoma do usuário e não por cada métrica interna, senão o time vive apagando falso alarme. A correlação entre rastro, log e métrica pelo mesmo identificador é o que transforma três ferramentas em uma investigação só.",
+      quebra:
+        "Instrumentar depois do incidente. O sistema já está em produção sem dado, e a investigação vira tentativa. A observabilidade é requisito de projeto.",
+      limite:
+        "Volume de telemetria custa caro. Amostragem e retenção precisam de política, senão o custo de observabilidade supera o benefício.",
+      levar: "Sem rastro, incidente vira adivinhação.",
+      maos:
+        "Siga uma requisição de ponta a ponta e anote o tempo de cada etapa.",
+    },
+    "Engenharia de Plataforma": {
+      contexto:
+        "Onde isso aparece: no portal interno, no template e no catálogo de serviço. Plataforma serve o time de desenvolvimento e reduz atrito. O caminho pronto e suportado é o que acelera sem virar dependência.",
+      oQue:
+        "Engenharia de plataforma oferece plataforma interna, golden path, catálogo de serviço, self-service e template. O golden path é caminho pronto e suportado para o caso comum, e o catálogo diz quem é dono de quê. A plataforma é produto, com usuário e suporte.",
+      passos: [
+        "Descubra o atrito que o time repete.",
+        "Ofereça caminho pronto e suportado.",
+        "Meça adoção e tempo até a primeira entrega.",
+      ],
+      exemplo:
+        "Time que cria serviço novo gasta dia configurando pipeline e observabilidade. O template da plataforma reduz a horas e já nasce com padrão. A plataforma transforma trabalho repetido em caminho único. O catálogo de serviço com dono também encurta o incidente, porque a primeira pergunta é sempre com quem falar. O self-service reduz fila, mas precisa de limite e de cota, senão a plataforma vira fonte de gasto descontrolado. A plataforma também precisa de canal de suporte e de versão, como qualquer produto interno, com dono, versão e plano de retirada do que não é mais usado.",
+      quebra:
+        "Construir plataforma sem usuário. O time não adota, e o esforço não rende. A plataforma nasce da dor real, não da ideia bonita.",
+      limite:
+        "Golden path não cobre todo caso. O time com necessidade específica precisa de saída, e a plataforma não pode virar prisão.",
+      levar: "Plataforma é produto interno: usuário, dor e adoção.",
+      maos:
+        "Liste o passo que todo time repete ao criar serviço e desenhe o template.",
+      pergunta: {
+        q: "O que um golden path oferece?",
+        a: "Um caminho pronto e suportado para o caso comum",
+        why: "O caminho reduz atrito e já nasce com o padrão da casa; quem tem caso fora dele precisa de alternativa, e a adoção se mede pelo uso.",
+      },
+    },
+    "Infraestrutura e Automação": {
+      contexto:
+        "Onde isso aparece: no servidor, no cluster e na configuração. A infraestrutura descreve estado e reconcilia. Container e orquestração organizam a execução.",
+      oQue:
+        "Infraestrutura e automação cobrem Linux, container, Kubernetes, virtualização, Ansible e Terraform. O Terraform descreve o estado desejado e reconcilia com o real, e o Kubernetes agenda container com recurso e serviço. A configuração automatizada evita divergência.",
+      passos: [
+        "Descreva o estado desejado em arquivo.",
+        "Aplique e confira a diferença.",
+        "Monitore deriva entre código e realidade.",
+      ],
+      exemplo:
+        "O arquivo pede três réplica e o cluster mostra duas; a diferença é o alarme. O reconciliador tenta voltar ao desejado, e a deriva aparece no plano. A infraestrutura vira estado declarado. O plano antes do apply mostra o que vai mudar, e a revisão evita destruir recurso por acidente. O módulo reutilizável também padroniza a criação e reduz a variação entre ambiente. A automação de configuração e o provisionamento descrevem camadas diferentes, e a fronteira precisa estar clara: o que cria recurso e o que configura o sistema já instalado, para não duplicar a mesma declaração em duas ferramentas.",
+      quebra:
+        "Mudar o ambiente à mão e não registrar. A deriva cresce e o próximo apply desfaz a mudança sem ninguém entender. O código precisa ser a fonte da verdade.",
+      limite:
+        "Estado declarado não cobre tudo: dado e recurso externo têm ciclo próprio. A fronteira entre o que é código e o que é dado precisa ser desenhada.",
+      levar: "Infraestrutura declarada: código diz o estado, ferramenta reconcilia.",
+      maos:
+        "Compare o estado descrito com o real e anote a diferença.",
+      pergunta: {
+        q: "O que o Terraform faz com a infraestrutura?",
+        a: "Descreve o estado desejado e reconcilia com o real",
+        why: "O arquivo versionado é a fonte da verdade, e o plano mostra a diferença antes de aplicar; mudança fora do código aparece como deriva.",
+      },
+    },
+    "Operações em Nuvem": {
+      contexto:
+        "Onde isso aparece: na fatura, na rede e no acesso. Operar nuvem é desenhar região, rede e permissão. O custo precisa de dono e de visão por serviço.",
+      oQue:
+        "Operações em nuvem cobrem arquitetura, rede, segurança e FinOps. FinOps controla o custo do uso por time e por serviço, com visibilidade e meta. A rede e a permissão são a fronteira de segurança, e a região decide latência e risco.",
+      passos: [
+        "Desenhe região, rede e permissão antes do recurso.",
+        "Marque o custo por serviço e por time.",
+        "Revise gasto e acesso periodicamente.",
+      ],
+      exemplo:
+        "Recurso esquecido ligado no fim de semana aparece na fatura sem dono. Com etiqueta de time e alerta de gasto, o custo tem responsável. FinOps é disciplina e não relatório de fim de mês. A revisão de acesso também entra: permissão antiga esquecida é porta aberta, e a rotina de retirar acesso custa pouco. A arquitetura de região precisa considerar a distância do usuário, porque latência e disponibilidade são decisões de desenho. A conta de saída de dado também surpreende, e a transferência entre região entra no orçamento, junto com armazenamento e banco gerenciado, e o alerta de orçamento fecha o ciclo de controle, com revisão mensal do gasto.",
+      quebra:
+        "Deixar o custo sem dono. Ninguém olha a fatura até o susto, e o gasto cresce por inércia. A etiqueta e o alerta resolvem.",
+      limite:
+        "Custo baixo não é meta isolada: cortar redundância pode derrubar disponibilidade. A decisão equilibra custo, risco e meta de serviço.",
+      levar: "Custo de nuvem precisa de dono e de etiqueta.",
+      maos:
+        "Etiquete um recurso por time e veja o custo dele no painel.",
+      pergunta: {
+        q: "O que o FinOps controla?",
+        a: "O custo do uso de nuvem por time e por serviço",
+        why: "Visibilidade por etiqueta, meta de gasto e revisão periódica dão dono ao custo e permitem decidir entre cortar e investir sem quebrar a meta de serviço.",
+      },
+    },
+    "Devsecops": {
+      contexto:
+        "Onde isso aparece: no pipeline, na dependência e na imagem. Segurança entra no fluxo, não depois da entrega. O scanner procura vulnerabilidade conhecida e política vira código.",
+      oQue:
+        "Devsecops integra segurança ao pipeline com análise de código, dependência, imagem e política como código. O scanner de dependência procura versão com vulnerabilidade conhecida, e a política automatizada barra o que não cumpre regra. A correção chega antes da produção.",
+      passos: [
+        "Analise código e dependência a cada mudança.",
+        "Assine e escaneie a imagem do container.",
+        "Aplique política como código no gate.",
+      ],
+      exemplo:
+        "Dependência com falha conhecida entra pela atualização automática sem revisão. O scanner aponta a versão e a correção entra no mesmo dia. O gate impede que a falha chegue a produção. A política como código precisa de dono e de exceção registrada, senão o time contorna a regra sem que ninguém saiba. A assinatura de imagem e a verificação de procedência fecham a cadeia até o código. A gestão de vulnerabilidade precisa de prazo por severidade, senão o backlog de segurança cresce sem fim e esconde a falha crítica entre as de baixo risco.",
+      quebra:
+        "Tratar segurança como etapa final antes do lançamento. A falha encontrada tarde custa retrabalho e atrasa a entrega. O gate no pipeline resolve cedo.",
+      limite:
+        "Scanner gera falso positivo e ruído. Sem priorização por risco e por uso real, o time ignora o aviso, e a segurança perde credibilidade.",
+      levar: "Segurança no pipeline custa menos que segurança no incidente.",
+      maos:
+        "Rode o scanner numa dependência e classifique o achado por risco.",
+      pergunta: {
+        q: "O que o scanner de dependência procura?",
+        a: "Versão de biblioteca com vulnerabilidade conhecida",
+        why: "Ele compara a dependência declarada com base de falha conhecida e aponta a versão e a correção; o achado entra no gate com prioridade por risco.",
+      },
+    },
+    "Engenharia de Releases": {
+      contexto:
+        "Onde isso aparece: na publicação, no incidente e no rollback. A estratégia de implantação controla o risco da mudança. O canário testa em fração do tráfego antes de expandir.",
+      oQue:
+        "Engenharia de release cobre implantação, canário, blue-green, feature flag e rollback. O canário libera para fração do tráfego e compara antes de expandir, e o blue-green mantém dois ambientes para trocar. A feature flag separa publicação de ativação.",
+      passos: [
+        "Escolha a estratégia pelo risco da mudança.",
+        "Libere para fração e compare indicador.",
+        "Tenha rollback pronto antes de expandir.",
+      ],
+      exemplo:
+        "Versão nova vai para 5% do tráfego; se o erro sobe, o rollback é imediato e a maior parte do usuário nem viu. Sem canário, o erro atinge todos de uma vez. A estratégia compra tempo de reação. A feature flag permite desligar função sem publicar versão nova, e o rollback testado é o que separa incidente curto de incidente longo. A publicação também precisa de janela e de comunicação, e o horário da mudança é decisão de risco. A troca blue-green mantém a versão anterior pronta para voltar em segundo, e a flag permite desligar função sem publicar de novo, mas a flag esquecida vira dívida e precisa de limpeza.",
+      quebra:
+        "Publicar tudo de uma vez sem rollback testado. O incidente atinge todo mundo, e a volta é lenta. O canário e o rollback reduzem o raio.",
+      limite:
+        "Canário exige métrica confiável e volume suficiente. Com tráfego pequeno, a diferença demora a aparecer, e a estratégia perde eficácia.",
+      levar: "Release boa é a que erra pouco para pouca gente.",
+      maos:
+        "Descreva o canário de 5% e o critério que autoriza expandir.",
+      pergunta: {
+        q: "O que o canário faz numa publicação?",
+        a: "Libera para fração do tráfego e compara antes de expandir",
+        why: "A fração pequena limita o impacto de defeito, e a comparação de indicador decide se a versão avança; o rollback fica pronto para o caso de piora.",
+      },
+    },
+  },
 };
 
 // o nome da estação chega em caixa baixa do banco ("Grafos moleculares") e em
