@@ -907,6 +907,8 @@ function questCard(q, npc) {
       fb.correct ? `certo. ${fb.why}` : "não é essa. Leia de novo e tente outra."));
   }
 
+  const premio = q.reward?.item ? (ITEMS[q.reward.item]?.name || q.reward.item) : "";
+  if (premio) card.appendChild(el("p", "quest-note quest-prize", `recompensa: ${premio}`));
   if (quests.ready(q)) {
     const btn = el("button", "quest-btn ready", `concluir · +${q.reward?.xp || 0} XP`);
     btn.type = "button";
@@ -918,7 +920,13 @@ function questCard(q, npc) {
         ...HAIRS.filter((h) => h.quest === q.id).map((h) => `cabelo ${h.name}`),
       ];
       const extra = ganhos.length ? ` · você ganhou ${ganhos.join(" e ")}` : "";
-      toast(`Missão concluída: ${q.title}. +${res.xp} XP${res.title ? ` · título ${res.title}` : ""}${extra}`, 6200);
+      if (res.item) {
+        rpg.addItem(res.item, 1);
+        const nomeItem = ITEMS[res.item]?.name || res.item;
+        ganhos.push(`item ${nomeItem}`);
+      }
+      const ganhou = ganhos.length ? ` · você ganhou ${ganhos.join(", ")}` : "";
+      toast(`Missão concluída: ${q.title}. +${res.xp} XP${res.title ? ` · título ${res.title}` : ""}${ganhou}`, 6200);
       audio.chime();
       renderer.kick(0.5);
       buildNpc(npc);

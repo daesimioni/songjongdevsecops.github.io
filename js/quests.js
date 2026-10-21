@@ -633,6 +633,38 @@ for (const area of IDENTITY_AREAS) {
   QUESTS.push(...questsForArea(area, keeper, giver));
 }
 
+// ---- recompensa de item --------------------------------------------------
+// Toda missão entrega uma peça ligada ao assunto dela, além de XP e título.
+// O item sai do baralho do continente do NPC, sem relíquia (relíquia é do baú
+// selado da caverna e some se a missão der outra).
+const ITEM_POR_CONTINENTE = {
+  cs: ["chip", "fita", "parafuso", "instrucao", "registrador", "barramento", "pacote", "datagrama", "cifra", "assinatura"],
+  math: ["regua", "teorema", "axioma", "amostra", "limite", "serie", "epsilon", "dado"],
+  physics: ["ima", "prisma", "quanta", "cobre", "bobina", "fusivel", "capacitor", "calor", "lente", "reflexo"],
+  chem: ["frasco", "catalisador", "cristal", "carbono", "cadeia", "solvente", "titulante", "espectro"],
+  music: ["diapasao", "partitura", "metronomo", "harmonico", "tubo", "membrana", "motivo", "tema", "coda"],
+  ai: ["peso", "embedding", "matriz", "caixa", "pixel", "borda", "kernel", "prompt", "contexto", "vocabulario"],
+  lingua: ["pergaminho", "tinta", "letra", "verso", "estrofe", "pagina", "sentido", "ironia"],
+  hub: ["runa-faisca", "runa-trovao", "pocao", "ferro", "erva", "veio", "madeira", "chave", "tocha", "caldo", "peixe"],
+};
+function hashQuest(txt) {
+  let h = 2166136261;
+  for (let i = 0; i < txt.length; i++) {
+    h ^= txt.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+for (const q of QUESTS) {
+  if (q.reward?.item) continue;
+  const spawn = NPC_SPAWNS.find((n) => n.id === q.npc);
+  const prefixo = String(q.id || "").replace(/^(missao|trilha)-/, "").split("-")[0];
+  const continente = spawn?.continent || (ITEM_POR_CONTINENTE[prefixo] ? prefixo : "hub");
+  const baralho = ITEM_POR_CONTINENTE[continente] || ITEM_POR_CONTINENTE.hub;
+  q.reward = q.reward || {};
+  q.reward.item = baralho[hashQuest(q.id) % baralho.length];
+}
+
 const QUEST_BY_ID = new Map(QUESTS.map((q) => [q.id, q]));
 
 function readData() {
@@ -772,7 +804,7 @@ export class Quests {
     this.save();
     if (q.reward?.xp) this.gainXp(q.reward.xp);
     this.changed();
-    return { ok: true, quest: q, xp: q.reward?.xp || 0, title: q.reward?.title || "" };
+    return { ok: true, quest: q, xp: q.reward?.xp || 0, title: q.reward?.title || "", item: q.reward?.item || "" };
   }
 
   report(kind, value) {

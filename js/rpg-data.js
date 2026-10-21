@@ -298,6 +298,44 @@ for (const conjunto of Object.values(AREA_ITEMS)) {
   ITEMS[conjunto.helmet.id] = conjunto.helmet;
 }
 
+// ---- relíquia de cada área ------------------------------------------------
+// Uma peça por caverna, com nome do lugar: a relíquia é o troféu que só aquela
+// descida dá. Baú selado entrega a relíquia da caverna uma vez.
+const TIPO_RELIQUIA = {
+  math: "Selo", physics: "Núcleo", chem: "Ampola", cs: "Circuito",
+  lingua: "Códice", music: "Diapasão", ai: "Modelo", inter: "Cruz", hub: "Moeda",
+};
+// gênero da primeira palavra do nome do bioma, para a preposição certa
+const FEMININAS = new Set(["Alfândega", "Alquimia", "Bancada", "Biblioteca", "Casa", "Colina", "Corredeira", "Cratera", "Enseada", "Estação", "Estufa", "Feira", "Forja", "Fábrica", "Galeria", "Geleira", "Malha", "Mina", "Oficina", "Ponte", "Praça", "Ribeira", "Torre", "Trilha", "Varanda", "Vila", "Vitrine", "Ágora"]);
+const PLURAIS = { Ruínas: "das", Mares: "dos" };
+function prepDe(nome) {
+  const primeira = String(nome).split(" ")[0];
+  if (PLURAIS[primeira]) return PLURAIS[primeira];
+  if (FEMININAS.has(primeira)) return "da";
+  return "do";
+}
+export const RELICS = {};
+for (const [areaId, bioma] of Object.entries(BIOMES)) {
+  const tipo = TIPO_RELIQUIA[bioma.discipline] || "Relíquia";
+  const nome = `${tipo} ${prepDe(bioma.name)} ${bioma.name}`;
+  const reliquia = {
+    id: `${areaId}-reliquia`,
+    name: nome,
+    continent: bioma.discipline === "inter" ? "hub" : bioma.discipline,
+    relic: true,
+    accent: bioma.accent,
+    desc: `A peça que só a caverna ${bioma.name} guarda. Relíquia: +5 de vida máxima.`,
+  };
+  ITEMS[reliquia.id] = reliquia;
+  RELICS[areaId] = reliquia;
+}
+
+// o id é a chave do mapa, mas o desenho e o cache leem item.id: sem isso 194
+// itens sem campo id dividiam o mesmo ícone cacheado
+for (const [id, item] of Object.entries(ITEMS)) {
+  if (!item.id) item.id = id;
+}
+
 export const RECIPES = [
   { id: "pocao", name: "Poção de Café", out: "pocao", qty: 1, need: { erva: 2, veio: 1 } },
   { id: "tocha", name: "Tocha de Veio", out: "tocha", qty: 1, need: { madeira: 1, veio: 1 } },
