@@ -314,6 +314,17 @@ desenhada em linhas de 1 px, com sombra, tronco e galho. O piso da caverna é
 pintado uma vez por descida num canvas do mapa inteiro, então o xadrez de 16 px
 saiu e entrou rachadura, cascalho, cogumelo e parede com borda serrada.
 
+## Cor e contraste
+
+A barra de rolagem é uma só em todo o jogo: trilho escuro e polegar violeta, na
+vertical e na horizontal, inclusive nas caixas que rolam de lado. Cada área
+temática tem um acento próprio, tirado da família de cor da disciplina, e ele
+aparece no fio do painel, no kicker, na epígrafe, no ponto da viagem e na borda
+do grupo do Diário. O acento nunca vira fundo de texto: o texto usa uma mistura
+clara do acento com branco, com contraste acima de 8,9:1 no pior caso. Os
+cartões flutuantes (marca, passos, minimapa, zona) ganharam fundo mais opaco e
+placa própria para o mundo não atravessar a leitura.
+
 ## Desempenho
 
 O chão é pintado uma vez em blocos de 16x16 tiles e só o bloco visível é

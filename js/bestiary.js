@@ -200,6 +200,7 @@ export function createBestiary({ rpg, getAreaId }) {
       const cacadas = grupo.cacadas.filter((cacada) => cacada.bichos.some((bicho) => combina(bicho, cacada, grupo)));
       if (!cacadas.length) continue;
       const secao = el("section", "best-continente");
+      secao.style.setProperty("--c", grupo.accent);
       const achados = grupo.cacadas.flatMap((cacada) => cacada.bichos).filter(conhecido).length;
       const totalGrupo = grupo.cacadas.flatMap((cacada) => cacada.bichos).length;
       const head = el("header", "best-continente-head");

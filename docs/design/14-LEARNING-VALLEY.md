@@ -63,6 +63,19 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 - [x] desempenho e carga medidos
 - [x] commit e push com evidência
 
+### T. Cor, contraste e rolagem
+
+- [x] uma barra de rolagem para o jogo inteiro: trilho escuro, polegar violeta,
+      vertical e horizontal, no Chrome e no Firefox
+- [x] cada área pinta o próprio painel: fio, kicker, epígrafe, ponto de viagem
+      e grupo do Diário usam o acento da área, nunca como fundo de texto
+- [x] texto de acento é acento com branco; pior contraste medido: 8,95:1
+- [x] marca, cartão de zona, passos e minimapa com placa/fundo mais opaco para
+      não deixar o mundo atravessar a leitura
+- [x] conferido no navegador: duas áreas com painéis de cores diferentes, 94
+      destinos com 32 acentos, 86 grupos de Diário com acento, barra horizontal
+      de teste, 390 px sem estouro, console limpo
+
 ### S. Voz do vale
 
 - [x] abertura, ajuda, diário, menus e mensagens sem "blog", "catálogo",
@@ -233,6 +246,7 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 
 | data | fase | o que entrou | prova |
 |---|---|---|---|
+| 2026-10-20 | T | paleta e rolagem: barra única escura/violeta na vertical e horizontal; acento por área no fio, kicker, epígrafe, viagem e Diário; texto de acento com contraste 8,95:1; placas nos cartões flutuantes | navegador: dois painéis com cores próprias, 94 destinos e 32 acentos, 86 grupos do Diário com acento, barra horizontal de teste, 390 px sem estouro, console limpo |
 | 2026-10-20 | S | voz do vale: abertura, ajuda, diário, menus, NPCs, missões, itens e mensagens reescritos sem "blog/catálogo/página"; cada pedra ganha epígrafe e a lição técnica continua precisa; metas e README na mesma voz | navegador: abertura e boas-vindas sem texto de bastidor, página gerada com epígrafe e lição, console limpo; node verde |
 | 2026-10-20 | R | arrastar para andar: segurar o botão e mover o ponteiro faz o boneco seguir o destino, com caminho recalculado por tile na superfície e na caverna; clique curto e toque longo continuam | navegador: um pointerdown e dois movimentos moveram o boneco no mundo e na caverna sem segundo clique, destino mudou no arrasto, clique curto abriu caminho, toque longo abriu o menu, console limpo |
 | 2026-10-20 | P | equipamento acompanha a visão: arma e escudo trocam de lado, de costas ficam atrás do corpo, elmo ganha frente, perfil e costas | node: gearView nas quatro direções; navegador: quatro capturas com arma, elmo, armadura e escudo e a prévia da mochila, console limpo |

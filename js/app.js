@@ -1451,12 +1451,14 @@ function buildJournal() {
     const done = opened === sites.length;
     const head = document.createElement("div");
     head.className = "journal-continent";
+    head.style.setProperty("--c", continent.accent);
     head.innerHTML = `<h3>${continent.name} <span class="${done ? "done" : ""}">${opened}/${sites.length}${done ? " · selo" : ""}</span></h3>`;
     list.appendChild(head);
     const groups = [
       { title: "", sites: sites.filter((site) => !world.areaAt(site.x, site.y)) },
       ...AREAS.filter((area) => area.continent === cid).map((area) => ({
         title: area.name,
+        accent: area.accent,
         sites: sites.filter((site) => world.areaAt(site.x, site.y)?.id === area.id),
       })),
     ].filter((group) => group.sites.length);
@@ -1465,6 +1467,7 @@ function buildJournal() {
       const wrap = group.title ? document.createElement("details") : document.createElement("div");
       if (group.title) {
         wrap.className = "journal-area-group";
+        if (group.accent) wrap.style.setProperty("--c", group.accent);
         const summary = document.createElement("summary");
         const openedHere = group.sites.filter((site) => state.cards.has(site.post)).length;
         summary.textContent = `${group.title} · ${openedHere}/${group.sites.length}`;
@@ -1537,6 +1540,13 @@ function wireTravelFilter() {
   };
 }
 
+function travelDot(color) {
+  const dot = document.createElement("i");
+  dot.className = "travel-dot";
+  dot.style.setProperty("--c", color || "#b48cff");
+  return dot;
+}
+
 function buildTravel() {
   const list = $("travel-list");
   list.textContent = "";
@@ -1554,6 +1564,7 @@ function buildTravel() {
     underLeft.append(underTitle, underSub);
     const underRight = document.createElement("em");
     underRight.textContent = here === CONURBATION.id ? "aqui" : "descer";
+    under.prepend(travelDot(CONURBATION.accent || "#6bd5ff"));
     under.append(underLeft, underRight);
     if (here !== CONURBATION.id) under.addEventListener("click", enterUnderworld);
     list.appendChild(under);
@@ -1584,6 +1595,7 @@ function buildTravel() {
       left.append(b, sub);
       const right = document.createElement("em");
       right.textContent = def.id === here ? "aqui" : known ? "ir" : "trancado";
+      btn.prepend(travelDot(def.palette?.accent || CONTINENTS[def.continent]?.accent));
       btn.append(left, right);
       if (def.id !== here && known) btn.addEventListener("click", () => travelConurbation(def.id));
       list.appendChild(btn);
@@ -1614,6 +1626,7 @@ function buildTravel() {
       left.append(b, s);
       const right = document.createElement("em");
       right.textContent = "expedição";
+      btn.prepend(travelDot(stone.accent));
       btn.append(left, right);
       btn.addEventListener("click", () => travelTo(stone.id));
       list.appendChild(btn);
@@ -1649,6 +1662,7 @@ function buildTravel() {
       left.append(b, s);
       const right = document.createElement("em");
       right.textContent = known ? "viajar" : "trancado";
+      btn.prepend(travelDot(stone.accent || c.accent));
       btn.append(left, right);
       if (known) btn.addEventListener("click", () => travelTo(stone.id));
       list.appendChild(btn);
@@ -1790,6 +1804,8 @@ async function openPost(id, site) {
     toast("Esta pedra ainda está em silêncio.");
     return;
   }
+  const siteAccent = SITE_BY_POST.get(id)?.accent || CONTINENTS[post.continent]?.accent || "#b48cff";
+  $("panel").style.setProperty("--accent", siteAccent);
   let opener = document.activeElement;
   if (state.modal && MODAL_FOCUS_BACK[state.modal] && $(state.modal)?.contains(opener)) {
     opener = $(MODAL_FOCUS_BACK[state.modal]);
