@@ -109,10 +109,19 @@ export function epigrafe(name) {
 
 // Corpo da pedra: a abertura curada, as marcas da subárea e os caminhos
 // vizinhos, sem falar de catálogo ou de página para quem está lendo.
-export function subareaBody({ sectionNum, sectionName, discipline, name, topics, siblings = [], catalogId = null }) {
+// Com lição escrita (js/text/licoes.js), a página vira o curso de seis partes
+// que o totem promete: o que é, como se usa, onde quebra, o que perguntam,
+// para levar e com as mãos.
+const frase = (texto) => {
+  const limpo = String(texto || "").trim();
+  if (!limpo) return "";
+  return /[.!?]$/.test(limpo) ? limpo : `${limpo}.`;
+};
+
+export function subareaBody({ sectionNum, sectionName, discipline, name, topics, siblings = [], catalogId = null, licao = null, bankTopic = null, perguntas = [], extra = null }) {
   const lista = topics.map((t) => `<li>${html(t)}</li>`).join("");
   const vizinhas = siblings.filter((s) => s !== name);
-  const curado = CURADO[discipline]?.[`${sectionNum}|${name}`] || CURADO[discipline]?.[name];
+  const curado = extra || CURADO[discipline]?.[`${sectionNum}|${name}`] || CURADO[discipline]?.[name];
   const abertura = curado
     ? `<p>${curado.abre}</p>`
     : `<p>Uma pedra baixa, coberta de marcas. ${html(name)}, no caminho de ${html(sectionName)}.</p>`;
@@ -128,7 +137,35 @@ export function subareaBody({ sectionNum, sectionName, discipline, name, topics,
   const linha = vizinhas.length
     ? `<p>Na mesma área, outras pedras: ${vizinhas.map((s) => `<em>${html(s)}</em>`).join(", ")}.</p>`
     : "";
-  return `<p class="page-epigrafe">${epigrafe(name)}</p>${abertura}<p><strong>${html(name)}</strong> é o nome desta pedra, no caminho de ${html(sectionName)}. Ela guarda ${topics.length} ${topics.length === 1 ? "marca" : "marcas"}.</p><ul>${lista}</ul>${pratica}${erro}${conexoes}${linha}`;
+  if (!licao) {
+    return `<p class="page-epigrafe">${epigrafe(name)}</p>${abertura}<p><strong>${html(name)}</strong> é o nome desta pedra, no caminho de ${html(sectionName)}. Ela guarda ${topics.length} ${topics.length === 1 ? "marca" : "marcas"}.</p><ul>${lista}</ul>${pratica}${erro}${conexoes}${linha}`;
+  }
+  const marcas = Array.isArray(bankTopic?.keys) ? bankTopic.keys : [];
+  const perguntam = perguntas
+    .filter((q) => q && q.q)
+    .map((q) => {
+      const certa = Array.isArray(q.o) ? q.o[q.a] : q.answer;
+      return `<p><em>Se perguntarem</em> ${html(q.q)} <em>a resposta é</em> <strong>${html(certa || "")}</strong>. ${frase(q.why)}</p>`;
+    })
+    .join("");
+  return [
+    `<p class="page-epigrafe">${epigrafe(name)}</p>`,
+    abertura,
+    `<p><strong>O que é.</strong> ${frase(licao.oQue)} ${frase(bankTopic?.def)}</p>`,
+    marcas.length ? `<p>${marcas.map(frase).join(" ")}</p>` : "",
+    `<p><strong>Como se usa.</strong> O caminho é sempre o mesmo, e o exemplo abaixo faz ele inteiro.</p>`,
+    `<ol>${(licao.passos || []).map((p) => `<li>${frase(p)}</li>`).join("")}</ol>`,
+    `<p>${frase(licao.exemplo)}</p>`,
+    `<p><strong>Onde quebra.</strong> ${frase(bankTopic?.mistake)} ${frase(licao.quebra)}</p>`,
+    perguntam ? `<p><strong>O que perguntam.</strong> O bicho da área cobra a ideia, não a decoreba. Estes são os formatos que já apareceram:</p>${perguntam}` : "",
+    `<blockquote><strong>Para levar.</strong> ${frase(licao.levar)}</blockquote>`,
+    `<p><strong>Com as mãos.</strong> ${frase(licao.maos)}</p>`,
+    `<p><strong>As marcas desta pedra.</strong> ${topics.length} ${topics.length === 1 ? "marca" : "marcas"} para reconhecer no caminho: </p><ul>${lista}</ul>`,
+    pratica,
+    erro,
+    conexoes,
+    linha,
+  ].filter(Boolean).join("");
 }
 
 // Todas as subáreas de uma disciplina, para tirar alternativas quando a seção

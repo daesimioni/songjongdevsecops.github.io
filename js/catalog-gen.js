@@ -11,6 +11,7 @@ import { placeStations } from "./catalog-place.js";
 import { AREA_ITEMS, BIOMES, FAUNA, dungeonIdentity, prepBioma } from "./identity.js";
 import { INTER_TEXT } from "./text/inter.js";
 import { SECAO_TEXT } from "./text/secoes.js";
+import { licaoDe } from "./text/licoes.js";
 
 // cada área tem um tom próprio dentro da cor da disciplina: 14 ilhas da mesma
 // cor seriam quatorze vezes o mesmo lugar
@@ -228,7 +229,23 @@ export function buildCatalogContent() {
         catalog: true,
       });
       const inter = item.bankTopic ? (SECAO_TEXT[area.num] || INTER_TEXT[area.num]) : null;
-      const corpo = item.bankTopic
+      const tema = item.bankTopic || bank[i] || null;
+      const licao = licaoDe(area.id, item.nome);
+      const corpo = licao
+        ? subareaBody({
+            sectionNum: area.num,
+            sectionName: secao.name,
+            discipline: spot.discipline,
+            name: item.nome,
+            topics: item.topicos,
+            siblings: lista.map((x) => x.nome),
+            catalogId: area.id,
+            licao,
+            bankTopic: tema,
+            perguntas: tema?.q ? [tema.q] : [],
+            extra: inter ? { abre: inter.abre, pratica: inter.pratica, erro: inter.erro } : null,
+          })
+        : item.bankTopic
         ? `<p class="page-epigrafe">${epigrafe(item.nome)}</p>${inter ? `<p>${inter.abre}</p>` : ""}<p>${item.bankTopic.def}</p><ul>${item.bankTopic.keys.map((k) => `<li>${k}</li>`).join("")}</ul><blockquote>${item.bankTopic.mistake}</blockquote><p><strong>Parte ${i + 1} de ${lista.length}.</strong> O caminho desta trilha passa por estas marcas:</p><ul>${item.topicos.map((t) => `<li>${t}</li>`).join("")}</ul>${inter ? `<p><strong>Com as mãos.</strong> ${inter.pratica}</p><p><strong>O passo em falso.</strong> ${inter.erro}</p>` : ""}`
         : subareaBody({
             sectionNum: area.num,
@@ -238,6 +255,11 @@ export function buildCatalogContent() {
             topics: item.topicos,
             siblings: lista.map((x) => x.nome),
             catalogId: area.id,
+            // a lição escrita transforma o totem em curso; a pergunta da
+            // trilha é a do banco da área, na mesma ordem das estações
+            licao: licaoDe(area.id, item.nome),
+            bankTopic: bank[i] || null,
+            perguntas: bank[i]?.q ? [bank[i].q] : [],
           });
       posts[postId] = {
         kicker: `${discipline.name.toLowerCase()} · ${area.short.toLowerCase()}`,
