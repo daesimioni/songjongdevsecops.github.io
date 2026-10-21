@@ -445,6 +445,128 @@ export const LICOES = {
         "Liste os dados que o sistema pede e marque, para cada um, qual problema ele resolve e por quanto tempo precisa ficar.",
     },
   },
+  "lingua-pragmatica": {
+    "Atos de Fala": {
+      contexto:
+        "Onde isso aparece: no contrato verbal, no aviso de segurança e no pedido que só vale dito na hora. Uma promessa exige intenção e compromisso; sem eles, a frase é encenação. Já um pedido de desculpa não se resolve com a palavra certa se a ação continua igual.",
+      oQue:
+        "Falar também é agir. Quando alguém diz que promete, não está descrevendo o mundo: está assumindo compromisso, e a fala cria obrigação que antes não existia. Pedir, advertir, declarar e agradecer são atos com condições próprias, e a condição faz parte do ato tanto quanto a frase.",
+      passos: [
+        "Separe o que se diz, o ato locutório, do que se faz ao dizer, o ato ilocutório.",
+        "Confira se as condições do ato estão presentes na situação.",
+        "Veja se o papel de quem fala autoriza o ato que ele realiza.",
+      ],
+      exemplo:
+        "Um juiz diz que declara o casamento e o casamento existe: o papel e a situação autorizam o ato. A mesma frase dita por um estranho na praça não muda nada. Com a promessa é parecido, mas a autorização é interior: quem promete precisa poder cumprir e assumir a obrigação diante de quem ouve.",
+      quebra:
+        "Achar que declarar oficialmente funciona fora da situação que autoriza o ato. Sem o papel e o contexto, a frase é só frase. O erro oposto é achar que promessa é sempre só palavra: quando as condições valem, o compromisso é real e cobra consequência.",
+      levar: "Há frases que não descrevem o mundo: elas mudam o mundo.",
+      maos:
+        "Diga uma promessa, um pedido e uma advertência e marque, em cada uma, a condição que a torna ato.",
+    },
+    "Máximas Conversacionais": {
+      limite:
+        "A teoria descreve cooperação, não conversa hostil. Em interrogatório, propaganda ou briga, as máximas são quebradas de propósito para confundir, e inferir cooperação ali leva a erro. O modelo vale onde as partes querem se entender, e mesmo na conversa cooperativa a inferência pode falhar, porque quem infere completa com o próprio repertório.",
+      contexto:
+        "Onde isso aparece: na resposta que foge da pergunta, no elogio que corta e no quase chegando de quem nem saiu. A implicatura é o que se infere sem estar dito, e ela pode ser cancelada com uma ressalva. Quem lê só o literal perde o recado.",
+      oQue:
+        "A conversa segue expectativas de cooperação: quantidade, qualidade, relevância e clareza. Ninguém obedece a isso como regra escrita, mas todos notam quando é quebrado. A quebra proposital gera inferência, e o ouvinte calcula o que o falante quis dizer sem ter dito.",
+      passos: [
+        "Identifique qual máxima a fala parece quebrar.",
+        "Pergunte por que o falante quebraria a expectativa justamente ali.",
+        "Formule o sentido inferido e teste se uma ressalva cancela a implicatura.",
+      ],
+      exemplo:
+        "Alguém pergunta se o relatório ficou bom e a resposta é que ele está no prazo. A máxima de quantidade foi quebrada: faltou dizer da qualidade. O ouvinte infere que a qualidade não é boa, e a inferência se cancela se o falante emendar que ficou ótimo.",
+      quebra:
+        "Tratar implicatura como significado literal da frase. O dicionário não traz o recado; ele nasce do contexto e do cálculo. Confundir os dois faz ler ameaça onde há piada e piada onde há aviso sério.",
+      levar: "O que se infere não está escrito, mas foi dito.",
+      maos:
+        "Responda a uma pergunta com informação parcial e peça a alguém para dizer o que entendeu nas entrelinhas.",
+    },
+    "Ironia e Humor": {
+      limite:
+        "Nem toda contradição é ironia. Erro, mentira e mal-entendido também contradizem o contexto, e a diferença está na intenção e na marca. Sem sinal de inversão, atribuir ironia é adivinhação.",
+      contexto:
+        "Onde isso aparece: na manchete irônica, na legenda que comenta a foto e na piada que só funciona no tom. Sem o contexto, a frase é literal e o efeito desaparece; com contexto demais, a piada morre explicada.",
+      oQue:
+        "Ironia diz o contrário do que se quer significar, apoiada no contexto e na entonação. O humor joga com ambiguidade e expectativa: monta uma expectativa e quebra no fim. As duas coisas se parecem porque ambas dependem de o ouvinte perceber a distância entre o dito e o pretendido.",
+      passos: [
+        "Veja se o dito contradiz o que se sabe da situação.",
+        "Procure a marca de entonação ou de contexto que sinaliza a inversão.",
+        "Teste a leitura literal e veja se ela faz sentido ali.",
+      ],
+      exemplo:
+        "Depois de um dia de chuva no deserto, dizer que o verão está agradável só é irônico para quem sabe do temporal. A mesma frase, numa praia em janeiro, é elogio literal. O contexto e a contradição com o que se sabe é o que sustenta a leitura irônica.",
+      quebra:
+        "Ler ironia sem contexto e concluir que o falante acredita no que disse. O erro aparece em resposta automática e em processo que toma frase de rede social ao pé da letra. A leitura irônica exige o quadro, não só a palavra.",
+      levar: "Ironia não está na frase: está na distância entre a frase e a situação.",
+      maos:
+        "Escreva a mesma frase para duas situações opostas e veja quando ela vira ironia.",
+    },
+  },
+  "lingua-semitica": {
+    "Teoria dos Signos": {
+      limite:
+        "A divisão em três tipos é ferramenta, não caixa rígida. Um mesmo signo pode funcionar de mais de um modo, e o uso é que decide. Perguntar como ele funciona vale mais do que discuti-lo numa categoria.",
+      contexto:
+        "Onde isso aparece: no ícone do aplicativo, na seta que aponta e na palavra que nomeia. Distinguir os três evita discussão inútil: bandeira é símbolo, pegada é índice, retrato é ícone. A convenção muda com a cultura, e é por isso que símbolo precisa ser aprendido.",
+      oQue:
+        "Semiótica estuda signo e sentido. Ícone se parece com o que representa, índice indica por relação causal ou física, símbolo depende de convenção compartilhada. A mesma coisa pode funcionar dos três jeitos: uma foto de fumaça é ícone, a fumaça é índice de fogo e a placa de proibido é símbolo.",
+      passos: [
+        "Pergunte como o signo se liga ao objeto que representa.",
+        "Veja se a ligação é semelhança, causa ou convenção.",
+        "Confira se o leitor compartilha a convenção, quando for símbolo.",
+      ],
+      exemplo:
+        "Uma placa vermelha com traço diagonal não se parece com proibido e não é causada por nada: ela vale porque a convenção foi combinada. Já a fumaça não foi combinada com ninguém, ela indica fogo por relação física. O mesmo desenho pode ser ícone numa cultura e símbolo em outra.",
+      quebra:
+        "Chamar de símbolo tudo que significa, sem distinguir ícone e índice. A confusão faz procurar convenção onde há causa e faz ignorar que o símbolo precisa ser ensinado. Cada tipo de signo exige uma pergunta diferente sobre o sentido.",
+      levar: "Símbolo se aprende; ícone se reconhece; índice se conclui.",
+      maos:
+        "Separe cinco signos do dia a dia em ícone, índice e símbolo e justifique cada um.",
+    },
+    "Linguagem Visual": {
+      limite:
+        "Ler intenção em toda escolha pode virar paranoia. Nem todo recorte é ideologia; às vezes é limitação de lente ou de prazo. A pergunta continua, mas a resposta exige contexto de produção, de prazo e de quem publicou a imagem, que raramente aparece no quadro.",
+      contexto:
+        "Onde isso aparece: na foto de capa, no gráfico que corta o eixo e no close que esconde o contexto. Cor tem valor cultural e não é universal, e o contraste guia o olho para o ponto principal. Quem lê imagem precisa perguntar o que ficou de fora.",
+      oQue:
+        "Imagem também argumenta: cor, enquadramento, luz e composição orientam a leitura. O enquadramento decide o que aparece e o que fica fora, e essa escolha já é uma tese sobre o que importa. Nenhuma imagem é neutra, porque toda imagem recorta o mundo antes de mostrá-lo.",
+      passos: [
+        "Descreva o que está dentro do quadro.",
+        "Liste o que o recorte deixou de fora.",
+        "Veja qual ponto o contraste destaca e que ideia isso sustenta.",
+      ],
+      exemplo:
+        "Uma foto de manifestação enquadrada no rosto de uma pessoa sugere multidão pequena; a mesma cena aberta mostra milhares. Nenhuma das duas mentiu, mas cada uma sustenta conclusão diferente. O enquadramento é a decisão editorial que o olho não vê, e a legenda costuma confirmar ou esconder essa escolha.",
+      quebra:
+        "Achar que imagem é neutra e não faz escolha. O recorte, a luz e a cor são decisões, e elas chegam antes do texto. Consumir imagem sem perguntar pelo fora do quadro é aceitar a tese sem discutir.",
+      levar: "Toda imagem escolhe o que você vê; a pergunta é o que ela escondeu.",
+      maos:
+        "Pegue uma foto e faça dois recortes dela; escreva a conclusão que cada recorte sugere.",
+    },
+    "Multimodalidade": {
+      limite:
+        "Nem toda combinação gera sentido novo. Às vezes a legenda só repete a imagem, e o efeito é redundância. Procurar conflito onde há reforço inventa leitura que o texto não sustenta, e a análise perde credibilidade diante de quem conhece a produção.",
+      contexto:
+        "Onde isso aparece: no vídeo com trilha tensa, no gráfico com legenda de alerta e na notícia com foto escolhida. Som altera o clima da cena, e o ritmo de edição participa do sentido. A relação entre as partes é o que o leitor monta.",
+      oQue:
+        "Texto multimodal combina palavra, imagem, som e movimento, e o sentido nasce da relação entre eles. Legenda e imagem podem se reforçar ou se contradizer, e a contradição também significa. Ler só uma das linguagens é ler metade do texto e concluir pelo todo.",
+      passos: [
+        "Separe cada linguagem e descreva o que ela diz sozinha.",
+        "Veja se as partes se reforçam ou se contradizem.",
+        "Formule o sentido que nasce da relação entre elas.",
+      ],
+      exemplo:
+        "Uma cena de criança brincando com trilha de suspense muda de sentido: o espectador espera o perigo. A imagem continua alegre, mas o som reescreve a leitura. Quando legenda e imagem se contradizem, o sentido nasce do conflito entre as linguagens, e não da soma delas.",
+      quebra:
+        "Ler só o texto e ignorar o que a imagem e o som dizem. O recado está na combinação, e a parte ignorada costuma ser justamente a que muda a conclusão. O erro é comum em resumo automático, que lê legenda e não vê cena.",
+      levar: "Sentido multimodal é relação: cada parte muda o que a outra diz.",
+      maos:
+        "Troque a trilha de um vídeo curto e descreva o que mudou no sentido da cena.",
+    },
+  },
 };
 
 // o nome da estação chega em caixa baixa do banco ("Grafos moleculares") e em
