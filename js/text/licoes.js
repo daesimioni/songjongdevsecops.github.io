@@ -753,6 +753,192 @@ export const LICOES = {
         "Compare a velocidade de átomo a temperatura ambiente e a microkelvin e veja o comprimento de onda crescer.",
     },
   },
+  "physics-nuclear": {
+    "Física Nuclear": {
+      contexto:
+        "Onde isso aparece: na datação por carbono, no laudo de contaminação e na medicina nuclear. Alfa, beta e gama têm poder de penetração diferente, e o cuidado muda com o tipo. Carbono-14 data matéria orgânica antiga porque a proporção na atmosfera se mantém e o decaimento começa na morte do organismo.",
+      oQue:
+        "Núcleo instável decai emitindo partícula ou radiação até chegar a uma configuração mais estável. O processo é aleatório no átomo individual e regular no conjunto, e é essa regularidade que a meia-vida mede: o tempo para metade dos núcleos decair. Meia-vida não é o tempo em que a amostra inteira some.",
+      passos: [
+        "Identifique o isótopo e o tipo de decaimento.",
+        "Meça a atividade e compare com a esperada para a massa da amostra.",
+        "Aplique a meia-vida para datar o material ou calcular a dose.",
+      ],
+      exemplo:
+        "O carbono-14 tem meia-vida de 5.730 anos. Um osso com metade do carbono-14 esperado tem cerca de 5.730 anos; com um quarto, cerca de 11.460. Duas meias-vidas, dois quartos, e a conta segue a mesma regra para qualquer isótopo. A amostra nunca fica com zero: ela se aproxima do zero sem encostar.",
+      quebra:
+        "Achar que meia-vida significa que a amostra inteira decai naquele tempo. Metade decai, depois metade do que restou, e a curva não tem fim. Confundir as duas coisas erra a data e erra a dose.",
+      limite:
+        "A conta supõe amostra fechada, sem ganho nem perda de isótopo. Contaminação, troca com o ambiente ou material muito velho estouram o limite de detecção e invalidam a data.",
+      levar: "Meia-vida é metade do que sobrou, não metade do que havia no começo.",
+      maos:
+        "Calcule a fração restante depois de três meias-vidas e compare com o que a sonda mostra.",
+    },
+    "Física de Partículas": {
+      contexto:
+        "Onde isso aparece: no acelerador, no decaimento do méson e no bóson de Higgs. O Higgs explica a massa das partículas elementares, e a descoberta em 2012 fechou uma peça que faltava. O modelo acerta com precisão enorme e ainda assim não é a teoria final.",
+      oQue:
+        "O Modelo Padrão descreve quarks, léptons e as forças forte, fraca e eletromagnética. Prótons e nêutrons são feitos de quarks, e as forças viajam por bósons: fóton, glúon, W e Z. A gravidade fica fora do modelo, e essa ausência é uma das pistas do que ainda falta.",
+      passos: [
+        "Identifique a partícula e a força que ela sente.",
+        "Desenhe o diagrama de interação com o que entra e o que sai.",
+        "Confira a conservação de carga, de energia e de número de família.",
+      ],
+      exemplo:
+        "O decaimento do nêutron em próton, elétron e antineutrino acontece pela força fraca, com bóson W. A carga se conserva, a energia se conserva e o número de família também. O diagrama mostra o caminho, e a conta fecha em cada vértice.",
+      quebra:
+        "Achar que o Modelo Padrão inclui gravidade. Ele não inclui. Isso não o torna errado no que descreve; torna-o incompleto. Confundir os dois leva a esperar que ele explique a expansão do universo.",
+      limite:
+        "O modelo não inclui matéria escura nem explica a massa do neutrino como deveria, e a gravidade fica fora. Fora dessas lacunas a precisão é altíssima, e por isso a física procura extensão, não substituição.",
+      levar: "O Modelo Padrão acerta quase tudo e não é o fim da história.",
+      maos:
+        "Desenhe o decaimento do nêutron e confira carga e energia antes e depois.",
+    },
+    "Astropartículas": {
+      contexto:
+        "Onde isso aparece: no LHC, no acelerador de hospital e na fonte de luz síncrotron. O acelerador não tira energia do vácuo: ele injeta energia nos campos. O que se mede depois é o rastro do que sobrou, e é dele que se deduz a partícula.",
+      oQue:
+        "Acelerador empurra partícula a energia alta para criar colisão e revelar estrutura interna. Campo elétrico acelera, campo magnético curva, e o detector mede trajetória e energia dos fragmentos. A colisão recria condição do universo primordial em escala de laboratório.",
+      passos: [
+        "Identifique o feixe e a energia de projeto.",
+        "Veja como o campo curva a trajetória de cada carga.",
+        "Meça o rastro no detector e reconstrua a massa da partícula.",
+      ],
+      exemplo:
+        "Um elétron num campo magnético de um tesla com energia de um gigaelétron-volt descreve curva de raio próximo de 3,3 metros. O raio mede o momento, e a curvatura no detector é a régua. Duas partículas com a mesma energia e cargas opostas curvam para lados opostos.",
+      quebra:
+        "Imaginar que o acelerador tira energia do vácuo. Ele injeta energia nos campos e gasta potência para isso. A conta de energia fecha no sistema, e o que se ganha é concentração, não criação.",
+      limite:
+        "A energia de colisão cresce, mas o custo e o tamanho crescem mais rápido. Há limite prático de túnel e de ímã, e é por isso que a próxima geração estuda outro esquema de aceleração.",
+      levar: "Acelerador é lupa de energia: concentra para ver o que estava junto.",
+      maos:
+        "Compare a curvatura de partícula com carga oposta no mesmo campo e veja o que muda.",
+    },
+  },
+  "physics-condensada": {
+    "Estrutura Cristalina": {
+      contexto:
+        "Onde isso aparece: no laudo de mineral, no projeto de liga e no remédio cristalino. Vidro é amorfo: não tem periodicidade de longo alcance, e por isso não dá picos de difração. A anisotropia é consequência da rede: a propriedade muda com a direção.",
+      oQue:
+        "Sólido cristalino tem átomos em rede periódica, e a repetição explica dureza, condutividade e anisotropia. A célula unitária é o bloco que se repete, e os índices de Miller nomeiam planos da rede. A difração de raios X revela a estrutura porque o espaçamento é da ordem do comprimento de onda.",
+      passos: [
+        "Identifique a célula unitária e os parâmetros de rede.",
+        "Nomeie os planos de interesse com os índices de Miller.",
+        "Compare o padrão de difração com a estrutura proposta.",
+      ],
+      exemplo:
+        "Um cristal de sal tem rede cúbica com aresta de cerca de 0,56 nanômetro. O padrão de difração mostra picos em ângulos que dependem desse espaçamento, e a posição dos picos identifica a estrutura. Mudou a rede, mudou o padrão, e a medida vira impressão digital.",
+      quebra:
+        "Tratar sólido amorfo como cristal. Vidro não tem periodicidade de longo alcance; tem ordem local e desordem global. Esperar picos de difração de vidro é esperar o que a estrutura não pode dar.",
+      limite:
+        "A difração dá a média da estrutura, e defeito, impureza e domínio pequeno alargam o pico. Cristal muito pequeno ou mal formado não rende estrutura limpa, e a análise precisa de outra técnica.",
+      levar: "A rede periódica é o que dá ao cristal a impressão digital.",
+      maos:
+        "Compare o padrão de difração de um cristal e de um vidro e veja a diferença.",
+    },
+    "Bandas e Magnetismo": {
+      contexto:
+        "Onde isso aparece: no diodo, no ímã permanente e no sensor de campo. A mesma ideia de banda explica por que cobre conduz e diamante não, mesmo sendo os dois sólidos organizados. A temperatura e a dopagem mexem na ocupação e mudam o comportamento.",
+      oQue:
+        "Em sólido, os níveis eletrônicos se juntam em bandas. A ocupação dessas bandas separa metal, isolante e semicondutor: banda parcialmente cheia conduz, banda cheia com gap grande isola, gap pequeno permite conduzir com pouco estímulo. O magnetismo também nasce da organização dos spins.",
+      passos: [
+        "Desenhe as bandas de valência e de condução.",
+        "Veja a ocupação e o tamanho do gap.",
+        "Relacione com a condutividade medida e com a resposta magnética.",
+      ],
+      exemplo:
+        "O cobre tem banda parcialmente cheia e conduz bem; o diamante tem gap de cerca de 5,5 elétron-volt e é isolante; o silício tem gap de 1,1 e conduz quando recebe energia. A diferença não está no átomo sozinho, está no arranjo e na ocupação.",
+      quebra:
+        "Achar que todo material que conduz um pouco é metal. Condução fraca pode ser semicondutor, eletrólito ou isolante com defeito. A teoria de bandas separa os casos pelo gap e pela ocupação, não pela aparência.",
+      limite:
+        "A imagem de banda é boa para sólido periódico e bem ordenado. Em vidro metálico, polímero condutor e material fortemente correlacionado, a conta simples precisa de modelo mais fino.",
+      levar: "O gap é a distância entre não conduzir e conduzir.",
+      maos:
+        "Compare o gap de três materiais e preveja qual conduz à temperatura ambiente.",
+    },
+    "Nanofísica": {
+      contexto:
+        "Onde isso aparece: no marcador biológico, na célula solar e no catalisador. A nanopartícula não é só uma versão pequena do material: é outra coisa, com propriedade que depende do tamanho. Por isso a especificação precisa dizer diâmetro e revestimento, não só a fórmula.",
+      oQue:
+        "Em escala nanométrica, superfície e efeito quântico dominam as propriedades. A razão superfície/volume cresce muito, e boa parte dos átomos fica na fronteira. Ponto quântico muda de cor pelo tamanho, e o ouro pode deixar de ser dourado.",
+      passos: [
+        "Meça o diâmetro e a dispersão de tamanho da amostra.",
+        "Calcule a fração de átomos que está na superfície.",
+        "Relacione essa fração com a propriedade medida.",
+      ],
+      exemplo:
+        "Um ponto quântico de seleneto de cádmio com dois nanômetros emite azul; com cinco, emite vermelho. O material é o mesmo, o tamanho muda a energia do estado e a cor. A aplicação em tela usa exatamente esse controle de tamanho.",
+      quebra:
+        "Esperar que nanopartícula tenha as mesmas propriedades do material volumoso. A superfície e o confinamento mudam ponto de fusão, cor, reatividade e magnetismo. Comparar sem declarar o tamanho é comparar coisas diferentes.",
+      limite:
+        "Abaixo de certo tamanho a partícula fica instável e aglomera, e a medida depende do revestimento. Escalar a síntese mantendo o tamanho é o desafio de produção, e o laboratório não garante a fábrica.",
+      levar: "No nano, o tamanho é parte da identidade do material.",
+      maos:
+        "Compare a cor de duas suspensões de mesmo material com tamanhos diferentes.",
+    },
+  },
+  "physics-plasma": {
+    "Ionização e Ondas": {
+      contexto:
+        "Onde isso aparece: na lâmpada fluorescente, na solda a arco, na aurora e no vento solar. Ondas de plasma têm frequência ligada à densidade de elétrons, e é por isso que a medida de rádio revela densidade. Chamar qualquer gás quente de plasma sem ionização é erro de definição.",
+      oQue:
+        "Plasma é gás ionizado que responde a campo elétrico e magnético. Elétrons e íons livres tornam o meio condutor, e a resposta coletiva é o que separa plasma de gás quente comum. É o estado mais comum do universo visível: estrela, raio e aurora são plasma.",
+      passos: [
+        "Meça o grau de ionização do gás.",
+        "Confira a resposta a campo magnético.",
+        "Veja a frequência de oscilação do plasma e a densidade de elétrons.",
+      ],
+      exemplo:
+        "Num gás a dez mil graus com ionização pequena, a resposta ao campo ainda é fraca; a partir de ionização apreciável, o meio conduz e reflete onda de rádio. A ionosfera reflete ondas curtas e permite comunicação a longa distância por esse motivo.",
+      quebra:
+        "Chamar qualquer gás quente de plasma sem ionização. A temperatura sozinha não define; o que define é a presença de carga livre e a resposta coletiva. A confusão leva a esperar condução onde não há.",
+      limite:
+        "A descrição coletiva vale quando há muitos elétrons por esfera de Debye. Plasma muito rarefeito ou muito frio escapa do modelo, e a fronteira entre gás e plasma é gradual.",
+      levar: "Plasma não é gás quente: é gás com carga livre que responde junto.",
+      maos:
+        "Compare a resposta ao ímã de um gás quente e de uma chama ionizada.",
+    },
+    "Confinamento Magnético": {
+      contexto:
+        "Onde isso aparece: no tokamak, no stellarator e na garrafa magnética. Alta temperatura sozinha não basta: sem confinamento, o plasma esfria na hora em que encosta no material. O tempo de confinamento e a densidade entram na conta junto com a temperatura.",
+      oQue:
+        "Campo magnético curva partícula carregada e pode prender plasma quente longe das paredes. Tokamak é câmara em forma de rosca com campo toroidal, e a instabilidade é o inimigo: se o plasma toca a parede, esfria e a reação para. Confinamento é o desafio central da fusão.",
+      passos: [
+        "Desenhe o campo e a trajetória da partícula carregada.",
+        "Meça densidade, temperatura e tempo de confinamento.",
+        "Verifique a estabilidade do plasma durante o pulso.",
+      ],
+      exemplo:
+        "Num tokamak, o campo toroidal soma com o campo gerado pela própria corrente do plasma e produz linhas helicoidais. Se a corrente desalinha, a instabilidade cresce e o plasma encosta na parede em milissegundos. O controle da corrente é o que segura a descarga.",
+      quebra:
+        "Achar que só a temperatura alta basta. Sem confinamento, o plasma esfria na parede e a fusão para. Temperatura, densidade e tempo precisam valer juntos, e o produto é o critério.",
+      limite:
+        "O tokamak funciona em pulso e sofre com instabilidade; o stellarator busca estabilidade com geometria complexa. Nenhum dos dois resolveu a conta econômica ainda, e o material da parede também é limite.",
+      levar: "Fusão é tão difícil pelo confinamento quanto pela temperatura.",
+      maos:
+        "Siga a trajetória de uma partícula carregada num campo toroidal e veja por que ela não escapa reta.",
+    },
+    "Fusão Controlada": {
+      contexto:
+        "Onde isso aparece: no reator experimental, no projeto de usina e no debate sobre resíduo. Fusão não produz resíduo radioativo de longa duração como a fissão, mas ativa o material da parede e exige trítio, que é escasso. A conta técnica e a econômica não são a mesma.",
+      oQue:
+        "Fusão junta núcleos leves e libera energia, ao contrário da fissão, que quebra núcleo pesado. No Sol a fusão acontece por gravidade; na Terra é preciso plasma quente e confinado. Deutério e trítio são os combustíveis mais estudados, e a reação libera nêutron que carrega a maior parte da energia.",
+      passos: [
+        "Escolha a reação e calcule a energia liberada por evento.",
+        "Aplique o critério de Lawson para o combustível e a geometria.",
+        "Veja como extrair a energia que o nêutron carrega.",
+      ],
+      exemplo:
+        "A reação de deutério com trítio libera 17,6 megaelétron-volt, e cerca de 80% vão para o nêutron. O nêutron atravessa o plasma e deposita energia no módulo de parede, que precisa aguentar o fluxo. Sem extrair essa energia, o reator não fecha a conta.",
+      quebra:
+        "Confundir fusão nuclear com fusão de sólido ou de metal. A palavra é a mesma, o processo não. A confusão aparece em conversa sobre energia e leva a conclusão errada sobre prazo e risco.",
+      limite:
+        "A fusão ainda não é comercial: o ganho de energia precisa superar o consumo com margem, e o trítio tem de ser reproduzido no próprio reator. O prazo depende de engenharia de material, não só de física de plasma.",
+      levar: "Fusão é a energia da estrela, e a dificuldade é trazer a estrela para a Terra.",
+      maos:
+        "Compare a energia liberada por fusão de deutério-trítio e por fissão de urânio por núcleo.",
+    },
+  },
 };
 
 // o nome da estação chega em caixa baixa do banco ("Grafos moleculares") e em
