@@ -1125,6 +1125,192 @@ export const LICOES = {
         "Meça o ângulo de contato de uma gota antes e depois de limpar a superfície.",
     },
   },
+  "chem-industrial": {
+    "Processos Industriais": {
+      contexto:
+        "Onde isso aparece: na planta de amônia, na refinaria e na fábrica de fertilizante. O reciclo interno aumenta o rendimento global sem mudar a conversão por passagem, e a purga evita acúmulo de inertes. Projetar só pelo equilíbrio ideal esquece cinética e segurança.",
+      oQue:
+        "Processo químico industrial soma reação, separação, energia e controle, e o objetivo é rendimento com segurança. Reação raramente converte tudo, por causa de equilíbrio e de perda, então o reciclo devolve o que não reagiu. Controle de temperatura existe para evitar reação descontrolada, não só para melhorar número.",
+      passos: [
+        "Monte o fluxograma com reação, separação e reciclo.",
+        "Calcule a conversão por passagem e a conversão global.",
+        "Verifique a purga e o acúmulo de inertes no loop.",
+      ],
+      exemplo:
+        "Numa síntese com conversão de 20% por passagem, o reciclo devolve os 80% que não reagiram, e o rendimento global sobe bem acima de 20%. O limite aparece com os inertes, que se acumulam e pedem purga. Sem purga, o reciclo sufoca a planta e a pressão sobe sem controle.",
+      quebra:
+        "Projetar só pelo equilíbrio ideal e esquecer a cinética e a segurança. O equilíbrio diz onde a reação para; a cinética diz quanto tempo leva, e o reator tem volume e temperatura limitados.",
+      limite:
+        "O reciclo perfeito existe no papel; na prática, pressão, purga e custo de compressão limitam. A conta fecha na planta inteira, não na conversão da reação isolada.",
+      levar: "Reciclo não cria reagente: devolve o que sobrou para tentar de novo.",
+      maos:
+        "Calcule a conversão global de um processo com reciclo e sem reciclo e compare.",
+    },
+    "Catálise Industrial": {
+      contexto:
+        "Onde isso aparece: no craqueamento, na hidrogenação e no conversor catalítico. Enxofre, chumbo e metais pesados envenenam de forma difícil de reverter; coque sai por queima controlada. Ignorar o desgaste no projeto é decidir por troca cara depois.",
+      oQue:
+        "Catalisador industrial precisa durar. A reação acontece na superfície ativa, e envenenamento bloqueia sítio com substância que se prende. Coque cobre a superfície com carbono e reduz a atividade, e regeneração devolve parte do desempenho.",
+      passos: [
+        "Meça a atividade ao longo do tempo de operação.",
+        "Identifique o agente que está reduzindo a atividade.",
+        "Escolha entre regenerar o leito e trocar a carga.",
+      ],
+      exemplo:
+        "Um catalisador de hidrogenação perde atividade em semanas com enxofre na carga. O enxofre se liga ao sítio ativo e não sai com tratamento térmico. Já o coque no craqueamento queima em corrente de ar e devolve a maior parte da atividade, e por isso a unidade alterna reação e regeneração.",
+      quebra:
+        "Ignorar que catalisador se desgasta e pede troca. O projeto que não prevê regeneração nem estoque de reposição para na primeira queda de atividade, e o prejuízo é parada não planejada.",
+      limite:
+        "Regeneração devolve parte da atividade, nunca tudo: cada ciclo deixa perda. A vida útil total é a soma dos ciclos, e o metal também sinteriza com o calor, e a troca programada custa menos que a parada não planejada.",
+      levar: "Catalisador bom é o que dura; o melhor é o que se regenera.",
+      maos:
+        "Compare a atividade nova e a usada e veja quanto de sítio se perdeu.",
+    },
+    "Combustíveis e Petróleo": {
+      contexto:
+        "Onde isso aparece: no posto, na petroquímica e no gás de cozinha. A mistura de hidrocarbonetos na gasolina tem faixa de ebulição e aditivos, e por isso a especificação é medida em laboratório. Combustão libera energia e produz gás carbônico e água, e a conta de emissão acompanha o carbono que entrou.",
+      oQue:
+        "Combustível fóssil vem do refino do petróleo. Destilação separa frações por ponto de ebulição, e conversões ajustam tamanho de cadeia. Craqueamento quebra cadeia longa em curta; reforma reorganiza para aumentar octanagem. A gasolina é mistura, não substância pura.",
+      passos: [
+        "Identifique a fração e a faixa de ebulição dela.",
+        "Escolha a conversão que leva ao produto desejado.",
+        "Verifique a especificação do combustível e a emissão associada.",
+      ],
+      exemplo:
+        "O petróleo cru destila em faixas: gás no topo, gasolina, diesel, óleo e resíduo no fundo. Se a demanda por gasolina é maior que a fração natural, o craqueamento quebra molécula maior para produzir mais. A planta se ajusta à demanda, não à composição original.",
+      quebra:
+        "Achar que a gasolina é substância pura. É mistura de hidrocarbonetos com faixa de ebulição e aditivos, e o comportamento no motor depende da mistura. Tratar como pura erra a volatilidade e a octanagem.",
+      limite:
+        "O refino é otimização de mercado e de especificação, e a transição energética muda a demanda. A mesma planta pode precisar de outra mistura, e o ativo fica preso ao produto que ajudou a criar.",
+      levar: "Refinar é separar e recompor: a molécula certa para o uso certo.",
+      maos:
+        "Compare a faixa de ebulição de três frações e veja o que cada uma vira.",
+    },
+  },
+  "chem-computacional": {
+    "Modelagem Molecular": {
+      contexto:
+        "Onde isso aparece: no desenho de fármaco, no estudo de proteína e na triagem de catalisador. A escolha do método é decisão de custo e de validade: campo de força não quebra ligação. Resultado de simulação precisa de validação experimental.",
+      oQue:
+        "Modelagem calcula estrutura e energia de molécula por mecânica molecular ou quântica, conforme o problema. Mecânica molecular usa campo de força, é rápida e serve para sistema grande. Química quântica resolve elétrons, custa mais e serve quando a ligação muda.",
+      passos: [
+        "Defina a pergunta e o tamanho do sistema.",
+        "Escolha o método compatível com a pergunta.",
+        "Valide o resultado contra dado experimental ou método mais caro.",
+      ],
+      exemplo:
+        "Simular uma proteína inteira com química quântica é inviável hoje; o campo de força dá a conformação em tempo razoável. Já para saber se uma ligação se rompe, o campo de força não serve, e a conta quântica entra no sítio ativo. Muitas vezes o estudo combina os dois métodos.",
+      quebra:
+        "Tratar resultado de simulação como medida exata. O número tem erro de método e de parâmetro, e a barra de erro não aparece sozinha. Simulação guia o experimento, não substitui.",
+      limite:
+        "O campo de força é ajustado para uma classe de molécula; fora dela o erro cresce sem aviso. A quântica também depende de funcional e base, e o resultado herda essa escolha.",
+      levar: "Simulação é lanterna: ilumina o caminho, não é o caminho.",
+      maos:
+        "Compare a mesma molécula por campo de força e por método quântico e veja a diferença de energia.",
+    },
+    "DFT e Estrutura Eletrônica": {
+      contexto:
+        "Onde isso aparece: no estudo de catalisador, de banda de semicondutor e de reação. Cada funcional tem erro típico: alguns erram gap, outros erram energia de ligação. Escolher o funcional é escolher o que a conta vai acertar.",
+      oQue:
+        "A teoria do funcional da densidade calcula a energia a partir da densidade eletrônica, com custo menor que métodos de onda. A densidade substitui a função de onda completa, e o funcional aproximado é a escolha que define o erro. É padrão em molécula e sólido.",
+      passos: [
+        "Monte a geometria e escolha a base de cálculo.",
+        "Escolha o funcional pelo tipo de propriedade buscada.",
+        "Compare com dado experimental ou com método mais caro.",
+      ],
+      exemplo:
+        "Para gap de sólido, funcional simples subestima; para energia de formação, o erro muda de sinal. O mesmo sistema, funcionais diferentes, respostas diferentes. Por isso o artigo sério declara o funcional e mostra o teste com um caso conhecido.",
+      quebra:
+        "Achar que todo funcional dá o mesmo resultado. Cada um tem erro típico, e comparar números de funcionais diferentes sem declarar é comparar coisas distintas.",
+      limite:
+        "DFT é teoria de estado fundamental; estado excitado e dinâmica pedem extensão. Sistema fortemente correlacionado escapa da aproximação simples, e o erro não é pequeno.",
+      levar: "O funcional escolhe o que a conta enxerga; o erro vem junto.",
+      maos:
+        "Rode o mesmo sistema com dois funcionais e compare com o valor experimental.",
+    },
+    "Quimioinformática": {
+      contexto:
+        "Onde isso aparece: no banco de compostos, na triagem virtual e no registro de patente. Estrutura parecida não garante efeito parecido: um detalhe pode mudar a atividade. O código é a chave que liga molécula a dado.",
+      oQue:
+        "Quimioinformática representa molécula em dado, busca padrão e prevê propriedade. A string de SMILES descreve a estrutura em texto, e similaridade estrutural agrupa compostos parecidos. Modelo de aprendizado precisa de dado representativo, senão prevê fora da faixa.",
+      passos: [
+        "Converta a estrutura em representação canônica.",
+        "Calcule descritores ou similaridade com os compostos conhecidos.",
+        "Verifique se o composto está na faixa coberta pelo treino.",
+      ],
+      exemplo:
+        "Dois compostos com SMILES parecidos podem ter atividade oposta por causa de um grupo. A similaridade mede o quanto a estrutura se parece, não o quanto o efeito se parece. O filtro por similaridade reduz a lista, e o ensaio decide.",
+      quebra:
+        "Achar que estrutura parecida garante efeito parecido. Pode mudar no detalhe, e o modelo aprende o que os dados mostram. A conclusão vale para a faixa treinada, não para toda a química. Por isso a triagem termina em ensaio, e o modelo só ordena a fila de candidatos, com o critério declarado antes da conta.",
+      limite:
+        "SMILES não guarda conformação nem estereoquímica em todos os casos, e a representação canônica depende da ferramenta. Duas strings podem descrever a mesma molécula, e o banco precisa normalizar.",
+      levar: "Estrutura em texto é o começo: o dado e o ensaio decidem.",
+      maos:
+        "Escreva o SMILES de duas moléculas parecidas e veja o que muda na similaridade.",
+    },
+  },
+  "physics-outras": {
+    "Biofísica": {
+      contexto:
+        "Onde isso aparece: na respiração, no impulso nervoso e no remédio que atravessa a membrana. Difusão não precisa de bomba: ela acontece por agitação, e a célula gasta energia para ir contra o gradiente. O transporte ativo existe justamente porque a difusão sozinha não basta.",
+      oQue:
+        "Biofísica aplica física a sistema vivo: membrana, proteína, força molecular e transporte. Difusão move partícula do mais concentrado ao menos concentrado por movimento térmico, sem bomba. Membrana mantém potencial elétrico dos dois lados, e proteína muda de forma ao receber energia ou ligante.",
+      passos: [
+        "Meça o gradiente de concentração.",
+        "Veja se a membrana permite a passagem da molécula.",
+        "Compare o tempo de difusão com o tamanho do sistema.",
+      ],
+      exemplo:
+        "Uma molécula pequena atravessa a membrana em milissegundos por difusão; uma proteína não atravessa sem canal. O tempo de difusão cresce com o quadrado da distância, e é por isso que célula grande precisa de transporte ativo e de fluxo interno.",
+      quebra:
+        "Achar que difusão precisa de bomba. Ela acontece por movimento térmico e dissipa gradiente. A bomba existe para criar gradiente, não para difundir.",
+      limite:
+        "A difusão simples descreve meio homogêneo e partícula sem interação. Em citoplasma cheio de obstáculo, o movimento é mais lento que a conta ideal, e a célula compensa com fluxo.",
+      levar: "Difusão é o mundo se misturando sozinho.",
+      maos:
+        "Compare o tempo de difusão para duas distâncias e veja o crescimento ao quadrado.",
+    },
+    "Física Médica": {
+      contexto:
+        "Onde isso aparece: na radiografia, na tomografia e na radioterapia. Radioterapia concentra dose no volume do tumor e poupa o entorno, com direções combinadas. Exame de imagem não é inofensivo e não se repete sem critério.",
+      oQue:
+        "Física médica usa radiação e imagem para diagnosticar e tratar. A dose é energia depositada por massa de tecido, e o objetivo é suficiente sem ferir. Raios X atravessam tecido mole e são barrados por osso, e é da diferença que nasce o contraste.",
+      passos: [
+        "Identifique o tipo de radiação e a energia dela.",
+        "Calcule a dose depositada no tecido.",
+        "Compare com o limite e justifique o exame ou o tratamento.",
+      ],
+      exemplo:
+        "Uma tomografia de tórax deposita dose equivalente a dezenas de radiografias. O benefício aparece quando o exame muda a conduta, e é essa a justificativa. Acumular exame sem pergunta clínica só soma risco.",
+      quebra:
+        "Achar que exame de imagem é sempre inofensivo e pode repetir sem critério. Dose se acumula, e o risco é probabilístico. O princípio é justificar cada exame, não fazer por hábito.",
+      limite:
+        "A dose medida no aparelho não é a dose no órgão, e o cálculo depende de modelo. Em criança e gestante, a sensibilidade muda, e a conta precisa de coeficiente próprio. O histórico de exames do paciente entra no cálculo, e não só o exame de agora.",
+      levar: "Dose é energia por massa: o número tem que ser justificado.",
+      maos:
+        "Compare a dose de dois exames e discuta o que cada um acrescenta ao diagnóstico.",
+    },
+    "Física Ambiental": {
+      contexto:
+        "Onde isso aparece: no gelo que derrete, na cidade que aquece e no painel solar. Neve tem albedo alto e devolve luz; asfalto tem albedo baixo e esquenta. Difusão atmosférica espalha poluente conforme vento e estabilidade, e a previsão depende dos dois. O albedo da nuvem também entra no balanço, e é por isso que tempo e clima são contas com escalas diferentes.",
+      oQue:
+        "Física ambiental modela clima, dispersão de poluente, radiação solar e balanço de energia da Terra. Albedo é a fração da radiação que a superfície reflete, e ele muda com o material e com a cobertura. Efeito estufa retém radiação infravermelha emitida pela superfície.",
+      passos: [
+        "Meça a radiação incidente e a refletida.",
+        "Calcule o albedo pela razão entre as duas.",
+        "Relacione com o balanço de energia e com a temperatura.",
+      ],
+      exemplo:
+        "Neve fresca reflete até 90% da luz solar; oceano reflete menos de 10%. Trocar gelo por água escura aumenta a energia absorvida e aquece mais, num ciclo que se reforça. O albedo não é detalhe: é termo do balanço.",
+      quebra:
+        "Confundir efeito estufa, que existe naturalmente, com camada de ozônio. São fenômenos diferentes, com gases e altitudes diferentes. Misturar os dois leva a política ambiental errada.",
+      limite:
+        "Albedo de superfície é medido por satélite e depende do ângulo e da nuvem. O valor local não representa o planeta, e a conta climática usa média com peso.",
+      levar: "Superfície clara devolve luz; escura guarda calor.",
+      maos:
+        "Compare a temperatura de duas superfícies com albedo diferente sob a mesma lâmpada.",
+    },
+  },
 };
 
 // o nome da estação chega em caixa baixa do banco ("Grafos moleculares") e em
