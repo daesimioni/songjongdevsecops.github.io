@@ -353,9 +353,9 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
       página, apoios e fita marcadora
 - [x] magia saindo do livro: dois feixes de luz que balançam, brasas subindo em
       espiral e duas velas com chama que tremula
-- [x] leitura da cena: sem pentagrama, sem sinais soltos no céu e com duas
-      figuras encapuzadas de perfil (manto, capuz, olhos acesos e luz na borda)
-      uma de cada lado do círculo; uma vinheta escurece a moldura do vale e
+- [x] leitura da cena: sem pentagrama, sem sinais soltos no céu e sem figuras
+      (as silhuetas viravam postes pretos); ficaram o livro, o círculo de runas,
+      duas velas na frente e brasas. Uma vinheta escurece a moldura do vale e
       deixa o livro como único foco
 - [x] o resto do vale também ganhou detalhe: árvore com tronco, raiz, galho e
       copa em três camadas, pinheiro de quatro andares, casa com chaminé e
@@ -479,8 +479,8 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 - A tela de título é a primeira impressão: vale com camadas, céu em degradê,
   estrelas, aurora, lua com halo, rio refletindo, casas com fumaça, árvores de
   copa redonda e pinheiros, e no meio do vale um grimório aberto num púlpito
-  de pedra, dentro de um círculo de oito runas, com duas figuras encapuzadas de
-  perfil e brasas subindo. Uma vinheta escurece as bordas do vale. O título
+  de pedra, dentro de um círculo de oito runas, com duas velas na frente e
+  brasas subindo. Uma vinheta escurece as bordas do vale. O título
   fica em cima e a frase e o botão no pé, para o meio da tela ser da arte.
   Nada de imagem pesada: tudo desenhado em canvas.
 - O inventário usa a mesma paleta do jogo: slots escuros, borda âmbar no item

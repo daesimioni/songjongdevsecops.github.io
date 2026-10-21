@@ -167,52 +167,6 @@ export function startTitle(canvas) {
     // o anel fica limpo: oito runas legíveis e nada desenhado por cima.
   }
 
-  // figura encapuzada de perfil, virada para o livro: manto, capuz redondo,
-  // abertura escura e dois olhos acesos. Antes era um cone preto sem leitura.
-  function figura(x, baseY, h, t, fase) {
-    const topo = baseY - h;
-    // manto: trapézio que abre na base
-    for (let row = 0; row < h; row++) {
-      const t2 = row / h;
-      const meia = 1.5 + t2 * 3.2;
-      ctx.fillStyle = row < h * 0.55 ? "#0a0d1c" : "#070a15";
-      ctx.fillRect(Math.round(x - meia), Math.round(topo + row), Math.round(meia * 2), 1);
-    }
-    // capuz arredondado
-    ctx.fillStyle = "#0b0f20";
-    for (let row = 0; row < 6; row++) {
-      const t2 = row / 6;
-      const meia = 3.4 * Math.sin(t2 * Math.PI * 0.9 + 0.25);
-      ctx.fillRect(Math.round(x - meia), topo - 4 + row, Math.round(meia * 2), 1);
-    }
-    // abertura do rosto; os olhos olham para o livro
-    ctx.fillStyle = "#02040a";
-    ctx.fillRect(Math.round(x - 1), topo + 1, 2, 3);
-    const brilho = 0.5 + Math.sin(t * 0.002 + fase) * 0.3;
-    ctx.fillStyle = `rgba(255, 200, 87, ${(Math.max(0.2, brilho) * 0.22).toFixed(3)})`;
-    ctx.fillRect(Math.round(x - 2), topo, 4, 5);
-    ctx.fillStyle = `rgba(255, 200, 87, ${Math.max(0.3, brilho).toFixed(3)})`;
-    ctx.fillRect(Math.round(x), topo + 2, 1, 1);
-    // luz do grimório na borda voltada para o centro
-    ctx.fillStyle = "rgba(255, 226, 150, 0.28)";
-    ctx.fillRect(Math.round(x + 3), topo + 4, 1, h - 5);
-    ctx.fillStyle = "rgba(255, 226, 150, 0.12)";
-    ctx.fillRect(Math.round(x + 4), topo + 6, 1, h - 8);
-    ctx.fillStyle = "rgba(180, 140, 255, 0.10)";
-    ctx.fillRect(Math.round(x - 4), topo + 6, 1, h - 8);
-  }
-
-  function seita(cx, cy, t) {
-    // duas figuras, uma de cada lado, fora do anel e viradas para o livro:
-    // cinco silhuetas viravam mancha preta e ninguém entendia a cena
-    const pontos = [{ a: -0.18, h: 15 }, { a: Math.PI + 0.18, h: 15 }];
-    pontos.forEach((p, i) => {
-      const x = cx + Math.cos(p.a) * 54;
-      const y = cy + Math.sin(p.a) * 7 + 7;
-      figura(x, y, p.h, t, i * 1.7);
-    });
-  }
-
   // o púlpito de pedra e o grimório aberto em cima
   function grimorio(cx, cy, t) {
     const pulso = 0.5 + Math.sin(t * 0.0026) * 0.5;
@@ -312,6 +266,7 @@ export function startTitle(canvas) {
     ctx.lineTo(cx - 4, cy - 26);
     ctx.lineTo(cx - 4, cy - 14);
     ctx.lineTo(cx - 31, cy - 8);
+    ctx.quadraticCurveTo(cx - 34, cy - 14, cx - 31, cy - 20);
     ctx.closePath();
     ctx.fill();
     ctx.stroke();
@@ -320,9 +275,14 @@ export function startTitle(canvas) {
     ctx.lineTo(cx + 4, cy - 26);
     ctx.lineTo(cx + 4, cy - 14);
     ctx.lineTo(cx + 31, cy - 8);
+    ctx.quadraticCurveTo(cx + 34, cy - 14, cx + 31, cy - 20);
     ctx.closePath();
     ctx.fill();
     ctx.stroke();
+    // espessura do bloco de páginas
+    ctx.fillStyle = "#d8c9a4";
+    ctx.fillRect(cx - 32, cy - 9, 27, 1);
+    ctx.fillRect(cx + 5, cy - 9, 27, 1);
     // espinha escura entre as páginas
     ctx.fillStyle = "#241636";
     ctx.fillRect(cx - 3, cy - 26, 6, 13);
@@ -504,9 +464,8 @@ export function startTitle(canvas) {
     vinheta.addColorStop(1, "rgba(4,6,14,0.66)");
     ctx.fillStyle = vinheta;
     ctx.fillRect(0, 56, LARGURA, ALTURA - 56);
-    // uma cena só: círculo no chão, duas figuras de lado e o grimório no meio
+    // uma cena só: círculo no chão, velas e o grimório no meio
     circuloDeRunas(160, 118, t);
-    seita(160, 118, t);
     grimorio(160, 112, t);
 
     // colinas da frente, com tufos de mato
