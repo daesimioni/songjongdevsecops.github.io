@@ -1,10 +1,13 @@
 // Bichos das caçadas desenhados na unha, em blocos, para o mapa e para a
 // janela de duelo usarem o mesmo desenho.
-export function drawCreature(ctx, kind, accent, time = 0, scale = 1) {
+export function drawCreature(ctx, kind, accent, time = 0, scale = 1, dir = 0) {
   const boss = kind === "boss";
   const bob = Math.sin(time * 0.004 + (boss ? 1.7 : 0)) * (boss ? 1.8 : 1.1);
+  // oito direções: espelha para a esquerda e inclina um pixel na diagonal
+  const vira = dir === 1 || dir === 4 || dir === 6 ? -1 : 1;
+  const deLado = dir === 1 || dir === 2 || dir >= 4;
   ctx.save();
-  ctx.scale(scale, scale);
+  ctx.scale(scale * (deLado ? vira : 1), scale);
   ctx.translate(0, bob);
 
   // sombra

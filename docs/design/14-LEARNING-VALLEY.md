@@ -122,6 +122,10 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
       nariz e costas fechadas
 - [x] a peça sai da mão, não do ombro: o punho fica preso ao último par de
       pixels do braço e sobe, desce e balança junto com o passo
+- [x] as oito direções chegaram: o passo já era diagonal, mas a visão caía
+      sempre em esquerda ou direita. Agora 4 a 7 são diagonais de verdade, com
+      cabeça um pixel para o lado, arma no lado do corpo e escudo no braço de
+      trás em toda vista que não seja de frente
 - [x] arma com contorno escuro para separar do corpo, aço em dois tons, guarda
       dourada, cabo de couro com a mão por cima e pomo na cor da área
 - [x] escudo com aro em volta, campo na cor da área, brilho, sombra, cravos nos
@@ -355,6 +359,27 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
       cor dentro do botão âmbar. Agora o `kbd` da entrada usa tinta escura,
       fundo escuro translúcido e borda escura
 
+### AA. Oito direções
+
+- [x] `dir` vai de 0 a 7 (0 frente, 1 esquerda, 2 direita, 3 costas, 4 baixo-
+      esquerda, 5 baixo-direita, 6 cima-esquerda, 7 cima-direita) no mundo e na
+      caverna; o caminho automático também escolhe a diagonal
+- [x] a diagonal desenha o perfil (ou as costas) com a cabeça deslocada um pixel
+      para o lado da caminhada e o segundo olho na borda, então lê como 3/4
+- [x] equipamento acompanha: arma no lado para onde o corpo virou, escudo no
+      braço de trás em toda vista que não seja de frente
+- [x] bicho, NPC, gato, pet, casco e outros viajantes também: bicho espelha e
+      inclina, NPC vira oito, pet e gato espelham pelo lado em que andam, e a
+      popa do casco aponta para a diagonal
+- [x] defeito antigo encontrado no caminho: `skiffRear` era usada no desenho da
+      superfície sem estar importada. Com a nave ligada, o laço estourava em
+      todo quadro e o boneco, os bichos e os objetos paravam de ser desenhados.
+      Era o "o mapa some com a nave" que não reproduzia na medição antiga porque
+      a medição contava pixel de cenário, não o boneco
+- [x] conferido: quatro diagonais andando de verdade no mundo, bicho com
+      direção 4 e 7 na caverna, boneco de costas desenhado na caverna depois do
+      conserto, e nenhuma exceção no console
+
 ## 3. Regras de desenho
 
 - A tela de título é a primeira impressão: vale com camadas, céu em degradê,
@@ -387,6 +412,7 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 
 | data | fase | o que entrou | prova |
 |---|---|---|---|
+| 2026-10-21 | AA | oito direções em tudo: passo diagonal com pose própria (cabeça deslocada, arma do lado, escudo atrás), bicho espelhando, NPC, gato, pet, casco e viajante; e o conserto do `skiffRear` que faltava importar e apagava o boneco com a nave ligada | navegador: quatro diagonais andando no mundo (dir 4, 5, 6, 7) com recorte do boneco, bichos da caverna em dir 4 e 7, boneco de costas na caverna visível depois do conserto, zero exceção; node: oito direções no gearView, direcaoBase e ladoDaDiagonal |
 | 2026-10-21 | H | minimapa recolhível: botão no canto fecha o mapa numa fita com coordenada e piso, com aria-expanded e rótulo trocando, e o estado guardado | navegador: caixa de 250x227 para 217x34, canvas escondido, coordenada ainda mudando ao andar (x 91 para 95), recolhido continuou recolhido depois de recarregar e o segundo clique reabriu |
 | 2026-10-21 | I | passeio dos bichos: ritmo por espécie (velocidade e pausa sorteadas), cadeia de dois ou três pontos, escolha do ponto mais longe dentro do campo, olhar em volta parado e chefe passeando devagar | navegador: 8 bichos na mesma caverna, 8 s de amostra, andado médio de 0,98 para 3,85 tiles, mínimo de 0 para 2,47, ninguém fora do campo (0,6 tile) e menor distância entre dois em 12,3 tiles; node verde |
 | 2026-10-21 | Z | tela de título com grimório no centro e a letra B legível: vale redesenhado (árvore com copa em camadas, pinheiro, casa com fumaça, aurora, lua com halo), alto de pedra com círculo de runas que gira, pentagrama, púlpito, grimório aberto, feixes de luz, brasas e roda de encapuzados; cartão dividido em topo e pé; interface em Silkscreen (Press Start só no logo); `kbd` do botão de entrada com tinta escura | navegador: título em 1280x717 e em 390x844 sem estouro horizontal, recorte 3x do centro mostrando livro, runas, encapuzados e brasas; HUD e bestiário com 464 fichas legíveis na fonte nova, zero transbordo em 1280 e em 390 px; botão com texto `rgb(10,12,24)` sobre âmbar e `kbd` na mesma tinta |

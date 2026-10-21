@@ -12,11 +12,14 @@ export const PET_COLORS = {
   parrot: { body: "#4f9a4a", light: "#7ec96a", eye: "#ffe9b0" },
 };
 
-export function drawPetSprite(ctx, kind, x, y, t = 0, moving = false) {
+export function drawPetSprite(ctx, kind, x, y, t = 0, moving = false, dir = 0) {
   const colors = PET_COLORS[kind] || PET_COLORS.cat;
   const bob = moving ? Math.abs(Math.sin(t * 0.02)) * 1.2 : Math.sin(t * 0.002) * 0.5;
   ctx.save();
   ctx.translate(x, y);
+  // o bicho vira junto com quem ele segue; o espelho é em volta do próprio
+  // ponto de desenho, então a sombra e o corpo vão juntos
+  if (dir === 1 || dir === 4 || dir === 6) ctx.scale(-1, 1);
   ctx.fillStyle = "rgba(2,4,10,0.3)";
   ctx.beginPath();
   ctx.ellipse(0, 0, kind === "frog" ? 7 : 5, 2, 0, 0, Math.PI * 2);

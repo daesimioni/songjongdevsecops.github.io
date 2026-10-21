@@ -3,7 +3,7 @@
 // punho até a mão e se o punho muda de altura quando o passo muda.
 import assert from "node:assert/strict";
 
-const { drawHuman } = await import("../js/human.js");
+const { drawHuman, gearView, direcaoBase, ladoDaDiagonal } = await import("../js/human.js");
 
 const colors = { shirt: "#2f6f86", pants: "#1b1c2c", shoes: "#101426", skin: "#f0c9a8", hair: "#3a2a55", eyes: "#14121f", accent: "#fff3d1" };
 const look = { gender: "f", hair: "longo" };
@@ -36,7 +36,7 @@ function desenhar(dir, moving, time) {
 
 const perto = (a, b, tol) => Math.abs(a - b) <= tol;
 
-for (const dir of [0, 1, 2, 3]) {
+for (const dir of [0, 1, 2, 3, 4, 5, 6, 7]) {
   for (const moving of [false, true]) {
     const rets = desenhar(dir, moving, 90);
     const mao = rets.filter((r) => r.cor === colors.skin && r.w === 2 && r.h === 2);
@@ -75,5 +75,18 @@ assert.ok(
   passoA.some((r) => r.x !== passoB[0]?.x) || altura(passoA) !== altura(passoB),
   "o punho balança entre dois instantes do passo",
 );
+
+// oito direções: quatro diagonais novas, cada uma com lado e camada próprios
+assert.deepEqual([0, 1, 2, 3, 4, 5, 6, 7].map(direcaoBase), [0, 1, 2, 3, 1, 2, 3, 3], "diagonal usa perfil ou costas");
+assert.deepEqual([0, 4, 5, 6, 7].map(ladoDaDiagonal), [0, -1, 1, -1, 1], "lado da diagonal");
+const g4 = gearView(4);
+const g5 = gearView(5);
+assert.equal(g4.armaLado, -1, "diagonal baixo-esquerda arma à esquerda");
+assert.equal(g5.armaLado, 1, "diagonal baixo-direita arma à direita");
+assert.equal(gearView(6).armaAtras, true, "diagonal cima-esquerda arma atrás");
+assert.equal(gearView(5).armaAtras, false, "diagonal baixo-direita arma na frente");
+for (const dir of [0, 1, 2, 3, 4, 5, 6, 7]) {
+  assert.equal(gearView(dir).escudoAtras, dir !== 0, `dir ${dir}: escudo atrás menos de frente`);
+}
 
 console.log("ok equipamento sai da mão, cobre o braço e acompanha o passo");

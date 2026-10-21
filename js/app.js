@@ -2077,8 +2077,9 @@ function walkStep(dx, dy, dt) {
   player.x = Math.max(0.5, Math.min(MAP_W - 0.5, player.x));
   player.y = Math.max(0.5, Math.min(MAP_H - 0.5, player.y));
   const moved = player.x !== oldX || player.y !== oldY;
-  if (dx !== 0 && dy !== 0) player.dir = dx > 0 ? 2 : 1;
-  else if (Math.abs(dx) > Math.abs(dy)) player.dir = dx > 0 ? 2 : 1;
+  // oito direções: a diagonal tem pose própria em vez de cair na lateral
+  if (dx !== 0 && dy !== 0) player.dir = dy > 0 ? (dx < 0 ? 4 : 5) : (dx < 0 ? 6 : 7);
+  else if (dx !== 0) player.dir = dx > 0 ? 2 : 1;
   else player.dir = dy > 0 ? 0 : 3;
   player.moving = moved;
   if (!moved) return false;
@@ -2137,8 +2138,8 @@ function updateAutoWalk(dt) {
     player.x = target.x;
     player.y = target.y;
     player.moving = true;
-    if (dx !== 0 && dy !== 0) player.dir = dx > 0 ? 2 : 1;
-    else if (Math.abs(dx) > Math.abs(dy)) player.dir = dx > 0 ? 2 : 1;
+    if (dx !== 0 && dy !== 0) player.dir = dy > 0 ? (dx < 0 ? 4 : 5) : (dx < 0 ? 6 : 7);
+    else if (dx !== 0) player.dir = dx > 0 ? 2 : 1;
     else player.dir = dy > 0 ? 0 : 3;
     path.shift();
     if (!path.length) {

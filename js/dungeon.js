@@ -1216,8 +1216,8 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     p.y = clamp(p.y, 0.6, state.map.H - 0.6);
     const moved = p.x !== ox || p.y !== oy;
     p.moving = moved;
-    if (dx !== 0 && dy !== 0) p.dir = dx > 0 ? 2 : 1;
-    else if (Math.abs(dx) > Math.abs(dy)) p.dir = dx > 0 ? 2 : 1;
+    if (dx !== 0 && dy !== 0) p.dir = dy > 0 ? (dx < 0 ? 4 : 5) : (dx < 0 ? 6 : 7);
+    else if (dx !== 0) p.dir = dx > 0 ? 2 : 1;
     else p.dir = dy > 0 ? 0 : 3;
     return moved;
   }
@@ -1576,7 +1576,8 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
               m.x = nx;
               m.y = ny;
               m.moving = true;
-              if (Math.abs(dx) > Math.abs(dy)) m.dir = dx > 0 ? 2 : 1;
+              if (Math.abs(dx) > 0.2 && Math.abs(dy) > 0.2) m.dir = dy > 0 ? (dx < 0 ? 4 : 5) : (dx < 0 ? 6 : 7);
+              else if (Math.abs(dx) > Math.abs(dy)) m.dir = dx > 0 ? 2 : 1;
               else m.dir = dy > 0 ? 0 : 3;
             } else {
               m.waitUntil = t + 400;
@@ -1983,7 +1984,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
       if (Math.hypot(trail.x - state.player.x, trail.y - state.player.y) < 5) {
         drawables.push({
           y: trail.y,
-          draw: () => drawPetSprite(ctx, companion.kind, trail.x * TILE, trail.y * TILE, t, state.player.moving),
+          draw: () => drawPetSprite(ctx, companion.kind, trail.x * TILE, trail.y * TILE, t, state.player.moving, state.player.dir),
         });
       }
     }
@@ -2068,7 +2069,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     }
     ctx.save();
     ctx.translate(x, y);
-    drawCreature(ctx, m.kind, m.accent, t + m.x * 90, m.boss ? 1.15 : 0.95);
+    drawCreature(ctx, m.kind, m.accent, t + m.x * 90, m.boss ? 1.15 : 0.95, m.dir);
     ctx.restore();
     if (state.alert?.monster === m) {
       ctx.save();

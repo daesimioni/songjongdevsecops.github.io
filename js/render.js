@@ -10,7 +10,7 @@ import { itemIconCanvas } from "./item-art.js";
 import { ITEMS } from "./rpg-data.js";
 import { drawPetSprite } from "./pet-art.js";
 import { BIOMES, TILE_STYLE } from "./identity.js";
-import { drawSkiff } from "./skiff.js";
+import { drawSkiff, skiffRear } from "./skiff.js";
 import { drawCaveFacade } from "./cave-art.js";
 import { gustAt, ondaAt, espumaAt, swayAt, windMood } from "./wind.js";
 
@@ -1594,7 +1594,7 @@ export function createRenderer(canvas, world) {
   }
 
   function drawCat(cat, moving, time) {
-    drawPetSprite(ctx, cat.kind || "cat", cat.x * TILE, cat.y * TILE, time, moving);
+    drawPetSprite(ctx, cat.kind || "cat", cat.x * TILE, cat.y * TILE, time, moving, cat.facing === -1 ? 1 : 2);
   }
 
   function drawBubble(text, px, py, color) {

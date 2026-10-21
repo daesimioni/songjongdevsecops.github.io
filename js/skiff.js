@@ -2,6 +2,12 @@
 // desenho de um lugar não divergir do outro.
 
 export function skiffRear(dir) {
+  // a popa fica atrás da direção: nas diagonais ela é meia torta, para o rastro
+  // e o brilho acompanharem a curva
+  if (dir === 4) return { x: 0.7, y: 0.7 };
+  if (dir === 5) return { x: -0.7, y: 0.7 };
+  if (dir === 6) return { x: 0.7, y: -0.7 };
+  if (dir === 7) return { x: -0.7, y: -0.7 };
   return {
     x: dir === 1 ? -1 : dir === 2 ? 1 : 0,
     y: dir === 3 ? -1 : dir === 0 ? 1 : 0,

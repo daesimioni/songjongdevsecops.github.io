@@ -3,14 +3,35 @@ import { hairById } from "./avatar.js";
 // O lado e a camada de cada peça de equipamento mudam com a visão. De frente
 // arma e escudo aparecem inteiros; de costas os dois ficam atrás do corpo; de
 // perfil o escudo fica no braço de trás e a arma aponta para o lado da cara.
+// Oito direções: 0 frente, 1 esquerda, 2 direita, 3 costas e as quatro
+// diagonais (4 baixo-esquerda, 5 baixo-direita, 6 cima-esquerda, 7 cima-direita).
 export function gearView(dir) {
-  const armaLado = dir === 0 || dir === 2 ? 1 : -1;
+  const ladoDiag = dir === 4 || dir === 6 ? -1 : dir === 5 || dir === 7 ? 1 : 0;
+  // na diagonal a arma fica do lado para onde o corpo virou
+  const armaLado = ladoDiag || (dir === 0 || dir === 2 ? 1 : -1);
   return {
     armaLado,
     escudoLado: -armaLado,
-    armaAtras: dir === 3,
+    armaAtras: dir === 3 || dir === 6 || dir === 7,
+    // só de frente os dois braços estão à vista; em qualquer outra vista o
+    // escudo fica no braço de trás, senão ele cobre o peito
     escudoAtras: dir !== 0,
   };
+}
+
+// A diagonal desenha o perfil (ou as costas) com a cabeça um pixel para o lado
+// e o tronco virado: é o 3/4 de quem está andando torto no mapa.
+export function direcaoBase(dir) {
+  if (dir === 4) return 1;
+  if (dir === 5) return 2;
+  if (dir === 6 || dir === 7) return 3;
+  return dir;
+}
+
+export function ladoDaDiagonal(dir) {
+  if (dir === 4 || dir === 6) return -1;
+  if (dir === 5 || dir === 7) return 1;
+  return 0;
 }
 
 // O mesmo boneco na superfície e no subsolo: cabelo, gênero e cores vêm do
@@ -35,6 +56,8 @@ export function drawHuman(ctx, px, py, dir, moving, time, colors, scale = 1, loo
   const legOff = step > 0 ? 1 : step < -0 ? -1 : 0;
   const lift = moving ? Math.abs(step) * 1.1 : 0;
   const hair = hairById(look?.hair);
+  const base = direcaoBase(dir);
+  const ladoDiag = ladoDaDiagonal(dir);
   // feminino tem ombro mais estreito e quadril mais largo; masculino o contrário
   const fem = look?.gender !== "m";
   const shoulder = fem ? 4 : 5;
@@ -186,7 +209,9 @@ export function drawHuman(ctx, px, py, dir, moving, time, colors, scale = 1, loo
   ctx.fillRect(-armX, -6 + Math.max(0, legOff), 2, 2);
   ctx.fillRect(armX - 1, -6 - Math.max(0, legOff), 2, 2);
 
-  // cabeça
+  // cabeça: na diagonal ela desliza um pixel para o lado da caminhada
+  ctx.save();
+  if (ladoDiag) ctx.translate(ladoDiag, 0);
   ctx.fillStyle = colors.skin;
   ctx.fillRect(-4, -20, 8, 8);
   // cabelo: topo, costeleta e nuca, sempre deixando o rosto de fora
@@ -216,18 +241,18 @@ export function drawHuman(ctx, px, py, dir, moving, time, colors, scale = 1, loo
     }
   }
   if (hair.side) {
-    if (dir === 0) {
+    if (base === 0) {
       ctx.fillRect(-5, -20, 1, hair.side);
       ctx.fillRect(4, -20, 1, hair.side);
-    } else if (dir === 1) {
+    } else if (base === 1) {
       ctx.fillRect(2, -20, 3, hair.side + 1);
-    } else if (dir === 2) {
+    } else if (base === 2) {
       ctx.fillRect(-5, -20, 3, hair.side + 1);
     } else {
       ctx.fillRect(-4, -20, 8, Math.min(7, hair.side + 2));
     }
   }
-  if (hair.bang && dir !== 3) ctx.fillRect(-4, -20, 8, hair.bang);
+  if (hair.bang && base !== 3) ctx.fillRect(-4, -20, 8, hair.bang);
   // cabelo comprido cai pelos lados do corpo, senão a camisa come tudo
   if (hair.back) {
     const bottom = -21 + 8 + hair.back;
@@ -243,19 +268,19 @@ export function drawHuman(ctx, px, py, dir, moving, time, colors, scale = 1, loo
 
   if (hair.tail) {
     const tailY = hair.tailY ?? -18;
-    if (dir === 0) {
+    if (base === 0) {
       ctx.fillRect(-8, tailY, 3, hair.tail);
       ctx.fillRect(5, tailY, 3, hair.tail);
-    } else if (dir === 3) {
+    } else if (base === 3) {
       ctx.fillRect(-3, tailY + 1, 6, hair.tail - 1);
     } else {
-      const tx = dir === 1 ? 4 : -9;
+      const tx = base === 1 ? 4 : -9;
       ctx.fillRect(tx, tailY, 5, hair.tail);
     }
   }
   if (equip.helmet) {
     const metal = equip.helmet.accent || "#b8b0d8";
-    if (dir === 3) {
+    if (base === 3) {
       // de costas o elmo é fechado: sem rosto, com a costura no meio
       ctx.fillStyle = "#101426";
       ctx.fillRect(-5, -23, 10, 11);
@@ -266,7 +291,7 @@ export function drawHuman(ctx, px, py, dir, moving, time, colors, scale = 1, loo
       ctx.fillRect(-1, -23, 1, 8);
       ctx.fillStyle = "rgba(255,255,255,0.22)";
       ctx.fillRect(-3, -23, 2, 1);
-    } else if (dir === 0) {
+    } else if (base === 0) {
       // de frente: aba, laterais e abertura para o rosto
       ctx.fillStyle = "#101426";
       ctx.fillRect(-5, -23, 10, 3);
@@ -280,7 +305,7 @@ export function drawHuman(ctx, px, py, dir, moving, time, colors, scale = 1, loo
       ctx.fillRect(-4, -21, 8, 1);
     } else {
       // de perfil: o elmo cobre a nuca e projeta a proteção para o lado da cara
-      const frente = dir === 1 ? -1 : 1;
+      const frente = base === 1 ? -1 : 1;
       ctx.fillStyle = "#101426";
       ctx.fillRect(-5, -23, 10, 3);
       ctx.fillStyle = metal;
@@ -295,18 +320,24 @@ export function drawHuman(ctx, px, py, dir, moving, time, colors, scale = 1, loo
   }
   // rosto: olho e nariz do lado para onde anda
   ctx.fillStyle = colors.eyes || "#14121f";
-  if (dir === 0) {
+  if (base === 0) {
   ctx.fillRect(-2, -17, 1, 2);
   ctx.fillRect(1, -17, 1, 2);
-  } else if (dir === 1) {
+  } else if (base === 1) {
   ctx.fillRect(-3, -17, 1, 2);
-  } else if (dir === 2) {
+  } else if (base === 2) {
   ctx.fillRect(2, -17, 1, 2);
   }
-  if (dir === 1 || dir === 2) {
+  if (base === 1 || base === 2) {
   ctx.fillStyle = colors.skin;
-  ctx.fillRect(dir === 1 ? -5 : 4, -16, 1, 2);
+  ctx.fillRect(base === 1 ? -5 : 4, -16, 1, 2);
   }
+  // na diagonal de frente o segundo olho aparece na borda mais próxima
+  if (dir === 4 || dir === 5) {
+    ctx.fillStyle = colors.eyes || "#14121f";
+    ctx.fillRect(dir === 4 ? 1 : -2, -17, 1, 1);
+  }
+  ctx.restore();
   // detalhe no peito
   ctx.fillStyle = colors.accent || "#fff3d1";
   ctx.fillRect(-1, -11, 2, 2);

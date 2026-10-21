@@ -581,7 +581,10 @@ export function createWorld() {
       n.moving = true;
       const dx = n.tx - n.x;
       const dy = n.ty - n.y;
-      n.facing = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 2 : 1) : (dy > 0 ? 0 : 3);
+      n.facing =
+        Math.abs(dx) > 0.2 && Math.abs(dy) > 0.2
+          ? dy > 0 ? (dx < 0 ? 4 : 5) : dx < 0 ? 6 : 7
+          : Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 2 : 1) : (dy > 0 ? 0 : 3);
     }
   }
 
