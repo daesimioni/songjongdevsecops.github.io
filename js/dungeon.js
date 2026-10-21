@@ -941,7 +941,19 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
         continue;
       }
       if (p.kind === "enchanter") {
-        state.solids.push({ x: p.x, y: p.y, hw: 0.6, hh: 0.35 });
+        state.solids.push({ x: p.x, y: p.y, hw: 0.7, hh: 0.4 });
+        continue;
+      }
+      if (p.kind === "altar") {
+        state.solids.push({ x: p.x, y: p.y, hw: 0.65, hh: 0.4 });
+        continue;
+      }
+      if (p.kind === "forge") {
+        state.solids.push({ x: p.x, y: p.y, hw: 0.7, hh: 0.45 });
+        continue;
+      }
+      if (p.kind === "waystone") {
+        state.solids.push({ x: p.x, y: p.y, hw: 0.4, hh: 0.35 });
         continue;
       }
       if (!p.solid) continue;

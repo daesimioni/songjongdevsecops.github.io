@@ -615,14 +615,16 @@ export function createWorld() {
   // colisão some quando eles caem e volta quando renascem.
   for (const s of stations) {
     const fountain = s.icon === "fountain";
-    addProp(s.x, s.y, fountain ? 0.9 : 0.7, fountain ? 0.5 : 0.45);
+    // a base desenhada tem 26 px (32 no chafariz); a colisão acompanha o
+    // desenho, senão o boneco atravessa metade do pedestal
+    addProp(s.x, s.y, fountain ? 1 : 0.82, fountain ? 0.55 : 0.5);
   }
-  for (const w of waystones) addProp(w.x, w.y, 0.45, 0.3);
+  for (const w of waystones) addProp(w.x, w.y, 0.55, 0.4);
   const decorSize = {
-    lamp: [0.12, 0.12], sign: [0.3, 0.12], bench: [0.55, 0.18],
-    terminal: [0.35, 0.25], pillar: [0.3, 0.25], book: [0.2, 0.15],
-    orb: [0.2, 0.2], crystal: [0.25, 0.25], flask: [0.2, 0.2],
-    speaker: [0.22, 0.2],
+    lamp: [0.18, 0.15], sign: [0.4, 0.2], bench: [0.6, 0.22],
+    terminal: [0.4, 0.3], pillar: [0.45, 0.35], book: [0.35, 0.2],
+    orb: [0.3, 0.25], crystal: [0.35, 0.3], flask: [0.3, 0.25],
+    speaker: [0.35, 0.25],
   };
   for (const d of decor) {
     const size = decorSize[d.type];
@@ -689,7 +691,30 @@ export function createWorld() {
       });
     });
   }
-  for (const c of caves) addProp(c.x, c.y, 0.78, 0.42);
+  // O morro da caverna tem 40x31 px (2,5 x 2 tiles). A caixa antiga cobria só
+  // a boca; o corpo do morro era atravessável. A caixa agora cobre o teto e o
+  // miolo, e deixa a boca e a saída em c.y + 1,5 livres para chegar e descer.
+  for (const c of caves) addProp(c.x, c.y - 1.2, 0.95, 0.7);
+
+  // nenhum NPC nasce dentro de pedra: se o posto caiu na área nova de uma
+  // estação, caverna ou enfeite, ele anda para o ponto livre mais próximo.
+  for (const n of npcs) {
+    if (!boxCollides(n.x, n.y, 0.3, 0.24)) continue;
+    let achou = null;
+    for (let r = 0.5; r <= 3 && !achou; r += 0.5) {
+      for (let i = 0; i < 12 && !achou; i++) {
+        const a = (i / 12) * Math.PI * 2;
+        const x = n.hx + Math.cos(a) * r;
+        const y = n.hy + Math.sin(a) * r;
+        if (!boxCollides(x, y, 0.3, 0.24)) achou = { x, y };
+      }
+    }
+    if (!achou) continue;
+    n.x = n.hx = achou.x;
+    n.y = n.hy = achou.y;
+    n.tx = achou.x;
+    n.ty = achou.y;
+  }
 
   // itens no chão: um equipamento e um consumível por área, em terra, longe
   // das estações, do farol e da boca da caverna. O id é estável para o que já

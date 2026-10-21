@@ -2686,8 +2686,9 @@ function abrirMenu(e, wx, wy) {
     adicionarUsos();
     if (!perto) {
       ctxMenu.appendChild(acaoMenu("➜", "andar até aqui", "", () => {
-        const goal = nearestWalkable(world, alvo.obj.x, alvo.obj.y, 4);
-        if (goal) { clearPath(); setPathTo(goal.x, goal.y, alvo); }
+        const ponto = alvo.kind === "cave" ? alvo.obj.exit : alvo.obj;
+        const goal = nearestWalkable(world, ponto.x, ponto.y + (alvo.kind === "cave" ? 0.4 : 0), 4);
+        if (goal) setPathTo(goal.x, goal.y, alvo);
       }));
     }
   } else {
@@ -2812,6 +2813,11 @@ $("world").addEventListener("pointerdown", (e) => {
     if (d <= INTERACT_RADIUS + 0.7) {
       clearPath();
       interactTarget(hit);
+    } else if (hit.kind === "cave") {
+      // o morro é sólido: o caminho vai para a frente da boca, não para o
+      // centro da pedra
+      const goal = nearestWalkable(world, hit.obj.exit.x, hit.obj.exit.y + 0.4, 3);
+      if (goal && setPathTo(goal.x, goal.y, hit)) iniciarSeguir(e, goal);
     } else if (setPathTo(hit.obj.x, hit.obj.y, hit)) {
       iniciarSeguir(e, hit.obj);
     }

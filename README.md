@@ -314,6 +314,15 @@ desenhada em linhas de 1 px, com sombra, tronco e galho. O piso da caverna é
 pintado uma vez por descida num canvas do mapa inteiro, então o xadrez de 16 px
 saiu e entrou rachadura, cascalho, cogumelo e parede com borda serrada.
 
+## Colisão
+
+A colisão acompanha o desenho, não um ponto no centro. A caverna bloqueia o
+teto e o miolo do morro, mas deixa a boca e a saída livres; a estação, a pedra
+do porto, os enfeites e as peças da cidade subterrânea (altar, forja, pedra)
+têm caixa do tamanho do que se vê. NPC que nasce dentro de uma área nova anda
+para o ponto livre mais próximo. O caminho até a caverna mira a frente da boca,
+não o meio da pedra.
+
 ## Cor e contraste
 
 A barra de rolagem é uma só em todo o jogo: trilho escuro e polegar violeta, na

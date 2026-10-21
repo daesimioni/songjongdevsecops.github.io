@@ -63,6 +63,17 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 - [x] desempenho e carga medidos
 - [x] commit e push com evidência
 
+### U. Colisão do tamanho do desenho
+
+- [x] caverna: o teto e o miolo do morro bloqueiam, a boca e a saída ficam
+      livres, e o caminho mira a frente da boca
+- [x] estação, pedra do porto, enfeites (pilar, terminal, banco, placa, livro,
+      orbe, cristal, frasco, caixa) com caixa do tamanho do desenho
+- [x] cidade subterrânea: altar, forja e pedra de retorno entram na colisão
+- [x] NPC que nasce dentro de prop novo anda para o ponto livre mais próximo
+- [x] conferido: 13 caminhos de caverna, morro bloqueado, saída livre, boneco
+      parado ao subir, altar/forja/pedra sólidos, todas as suítes verdes
+
 ### T. Cor, contraste e rolagem
 
 - [x] uma barra de rolagem para o jogo inteiro: trilho escuro, polegar violeta,
@@ -246,6 +257,7 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 
 | data | fase | o que entrou | prova |
 |---|---|---|---|
+| 2026-10-20 | U | colisão do tamanho do desenho: morro da caverna, estação, pedra, enfeites e altar/forja/pedra da cidade; boca e saída livres; caminho mira a frente; NPC sai de prop novo | navegador: 13 caminhos de caverna, topo do morro sólido, saída livre, boneco parado, altar/forja/pedra sólidos, console limpo; node verde |
 | 2026-10-20 | T | paleta e rolagem: barra única escura/violeta na vertical e horizontal; acento por área no fio, kicker, epígrafe, viagem e Diário; texto de acento com contraste 8,95:1; placas nos cartões flutuantes | navegador: dois painéis com cores próprias, 94 destinos e 32 acentos, 86 grupos do Diário com acento, barra horizontal de teste, 390 px sem estouro, console limpo |
 | 2026-10-20 | S | voz do vale: abertura, ajuda, diário, menus, NPCs, missões, itens e mensagens reescritos sem "blog/catálogo/página"; cada pedra ganha epígrafe e a lição técnica continua precisa; metas e README na mesma voz | navegador: abertura e boas-vindas sem texto de bastidor, página gerada com epígrafe e lição, console limpo; node verde |
 | 2026-10-20 | R | arrastar para andar: segurar o botão e mover o ponteiro faz o boneco seguir o destino, com caminho recalculado por tile na superfície e na caverna; clique curto e toque longo continuam | navegador: um pointerdown e dois movimentos moveram o boneco no mundo e na caverna sem segundo clique, destino mudou no arrasto, clique curto abriu caminho, toque longo abriu o menu, console limpo |
