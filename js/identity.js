@@ -345,6 +345,17 @@ for (const area of AREAS) {
   const bioma = BIOMES[area.id];
   const { article, noun } = articleOf(area.name);
   const bicho = FAUNA[area.id][0]?.name || "o guardião";
+  // o nome do item diz o assunto da ilha, não o rótulo dela: "Lâmina de
+  // Lógica Proposicional" em vez de "Lâmina dos Fundamentos", que não diz
+  // nada sobre lógica, conjuntos ou prova. O "de" evita concordância errada.
+  const curtos = (t) => {
+    const limpo = titleCase(topicLabel(t).split(/[,:;(]/)[0].trim());
+    if (limpo.length <= 28) return limpo;
+    const corte = limpo.slice(0, 28);
+    return corte.slice(0, corte.lastIndexOf(" ")).replace(/ (de|da|do|e|em)$/i, "");
+  };
+  const conceitos = topicosDaArea(area).map(curtos).filter((t) => t.length >= 4);
+  const conceito = (i) => (conceitos.length ? conceitos[(bioma.ordem + i * 2) % conceitos.length] : area.short);
   const prefixos = {
     weapon: ["Lâmina", "Cajado", "Martelo", "Estilete", "Bastão"],
     armor: ["Manto", "Casaca", "Colete", "Avental", "Capa"],
@@ -358,7 +369,7 @@ for (const area of AREAS) {
   AREA_ITEMS[area.id] = {
     weapon: {
       id: `${idBase}-lamina`,
-      name: nomeItem(area, armaNome, `${article} ${noun}`),
+      name: nomeItem(area, armaNome, `de ${conceito(0)}`),
       slot: "weapon",
       weapon: armaTipo,
       accent: bioma.accent,
@@ -368,7 +379,7 @@ for (const area of AREAS) {
     },
     armor: {
       id: `${idBase}-manto`,
-      name: nomeItem(area, prefixos.armor[ordem], `${article} ${noun}`),
+      name: nomeItem(area, prefixos.armor[ordem], `de ${conceito(1)}`),
       slot: "armor",
       accent: bioma.accent2,
       hp: 4 + (bioma.ordem % 3),
@@ -377,7 +388,7 @@ for (const area of AREAS) {
     },
     helmet: {
       id: `${idBase}-elmo`,
-      name: nomeItem(area, prefixos.helmet[ordem], `${article} ${noun}`),
+      name: nomeItem(area, prefixos.helmet[ordem], `de ${conceito(2)}`),
       slot: "helmet",
       accent: bioma.path,
       hp: 3 + (bioma.ordem % 2),
@@ -486,7 +497,12 @@ export function questsForArea(area, keeper, giver) {
 }
 
 // ---------------------------------------------------------------- caverna
+// sala com o mesmo tópico em duas ilhas ganhava o mesmo nome ("Sala
+// Supercondutividade" na física e na química). A segunda leva o nome da ilha.
+const salasUsadas = new Set();
+const CAVERNAS = new Map();
 export function dungeonIdentity(areaId) {
+  if (CAVERNAS.has(areaId)) return CAVERNAS.get(areaId);
   const area = AREAS.find((a) => a.id === areaId);
   const bioma = BIOMES[areaId];
   if (!area || !bioma) return null;
@@ -505,7 +521,13 @@ export function dungeonIdentity(areaId) {
     if (!salas.includes(nome)) salas.push(nome);
   }
   const nomes = FAUNA[areaId].map((m) => m.name);
-  return {
+  for (let i = 0; i < salas.length; i++) {
+    if (!salasUsadas.has(salas[i].toLowerCase())) continue;
+    const unico = `${salas[i]} ${article} ${noun}`;
+    if (!salasUsadas.has(unico.toLowerCase())) salas[i] = unico;
+  }
+  for (const nome of salas) salasUsadas.add(nome.toLowerCase());
+  const caverna = {
     material: bioma.material,
     faixa: area.short,
     rooms: [
@@ -524,6 +546,8 @@ export function dungeonIdentity(areaId) {
     },
     fauna: FAUNA[areaId].map((m) => m.kind),
   };
+  CAVERNAS.set(areaId, caverna);
+  return caverna;
 }
 
 export const IDENTITY_AREAS = AREAS;

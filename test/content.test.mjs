@@ -854,4 +854,21 @@ check(olhares[2].armaLado === 1 && olhares[2].escudoLado === -1 && !olhares[2].a
 check(olhares[3].armaLado === -1 && olhares[3].escudoLado === 1 && olhares[3].armaAtras && olhares[3].escudoAtras, "costas: arma e escudo deveriam ficar atrás do corpo");
 
 assert.equal(faults.length, 0, `conteúdo com ${faults.length} problema(s):\n- ${faults.join("\n- ")}`);
+// nome de item de área vem do conceito da ilha e não repete no mundo
+const itensDeArea = [];
+for (const area of IDENTITY_AREAS) {
+  for (const slot of ["weapon", "armor", "helmet"]) {
+    const item = AREA_ITEMS[area.id]?.[slot];
+    if (item) itensDeArea.push(item.name);
+  }
+}
+check(itensDeArea.length === 258, `itens de área: ${itensDeArea.length}, esperado 258`);
+check(new Set(itensDeArea).size === itensDeArea.length, "nome de item de área repetido no mundo");
+const nomeLongo = itensDeArea.filter((nome) => nome.length > 40);
+check(nomeLongo.length === 0, `nome de item acima de 40 caracteres: ${nomeLongo.slice(0, 3).join(" | ")}`);
+// sala de caverna também não repete entre ilhas diferentes
+const salasDoMundo = DUNGEONS.flatMap((d) => d.rooms.map((r) => (Array.isArray(r) ? r[0] : r)));
+const salaRepetida = salasDoMundo.filter((nome, i) => salasDoMundo.indexOf(nome) !== i);
+check(salaRepetida.length === 0, `sala repetida no mundo: ${salaRepetida.slice(0, 3).join(" | ")}`);
+
 console.log("ok conteúdo, estações, NPCs, missões, itens, receitas, perguntas, PvP, cavernas e mundo");
