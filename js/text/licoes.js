@@ -6134,6 +6134,268 @@ export const LICOES = {
       },
     },
   },
+  "lingua-gramatica": {
+    "Fonética": {
+      contexto:
+        "Onde isso aparece: no sotaque, na alfabetização e na fonoaudiologia. A fonética descreve o som da fala, e a articulação mostra como ele nasce. Ponto e modo de articulação organizam a descrição.",
+      oQue:
+        "Fonética descreve os sons da fala: articulação, ponto e modo. A vogal e a consoante se distinguem pelo fluxo de ar, e o aparelho fonador produz cada som. A transcrição fonética registra o som, não a letra.",
+      passos: [
+        "Descreva o ponto de articulação do som.",
+        "Descreva o modo e o vozeamento.",
+        "Transcreva o som com o alfabeto fonético.",
+      ],
+      exemplo:
+        "O som inicial de pata e de bata tem o mesmo ponto e modo, e difere só pelo vozeamento. A transcrição mostra a diferença que a letra não mostra. A fonética descreve o que a boca faz.",
+      quebra:
+        "Ler a letra como se fosse som. O português escreve com letra que não corresponde sempre ao som, e a análise fonética precisa da transcrição. A letra engana.",
+      limite:
+        "A descrição depende da variedade: o mesmo fonema pode ter realização diferente por região. A transcrição de um falante não representa todos.",
+      levar: "Fonética descreve o som; a letra é outra camada.",
+      maos:
+        "Transcreva três pares de palavra que só diferem por um som e marque o que muda na articulação. Depois compare a transcrição com a escrita e anote onde a letra engana.",
+    },
+    "Fonologia": {
+      contexto:
+        "Onde isso aparece: no par mínimo, no sotaque e na regra de pronúncia. A fonologia estuda o som como unidade que distingue sentido. O fonema é a unidade, e o alofone é a variante.",
+      oQue:
+        "Fonologia estuda o fonema: a unidade de som que distingue significado. O par mínimo demonstra que a troca de um único som muda o significado, e o alofone é a variante que não muda. A regra fonológica descreve a distribuição das variantes.",
+      passos: [
+        "Procure par de palavra que difere por um som.",
+        "Veja se a troca muda o significado.",
+        "Descreva a distribuição dos alofones.",
+      ],
+      exemplo:
+        "A troca entre dois sons que faz pata e bata mostra dois fonemas distintos. Já duas pronúncias do mesmo som conforme a posição são alofones. O teste é o significado.",
+      quebra:
+        "Achar que toda diferença de som é fonema. A variante regional pode ser alofone e não mudar palavra nenhuma. Sem o teste do par mínimo, a classificação erra.",
+      limite:
+        "O par mínimo depende da variedade e do léxico disponível. Língua com pouco par pode dificultar a análise, e a conclusão fica probabilística.",
+      levar: "Fonema distingue palavra; alofone não.",
+      maos:
+        "Encontre dois pares mínimos no português e descreva o som que troca; depois procure uma variante regional que não mude o significado e classifique como alofone. O exercício mostra que a análise precisa de contraste: sem par de palavra, não há como afirmar que dois sons são fonemas distintos, e a intuição de falante sozinha não fecha a descrição, porque a variedade regional muda o contraste e o par de palavra disponível.",
+      pergunta: {
+        q: "O que é um alofone?",
+        a: "Uma variante de som que não muda o significado",
+        why: "O alofone é a realização do mesmo fonema em contexto diferente; a troca não cria palavra nova, e por isso não passa no teste do par mínimo.",
+      },
+    },
+    "Ortografia": {
+      contexto:
+        "Onde isso aparece: no texto, no cartaz e na prova. A ortografia fixa a forma escrita, e a norma define o padrão. A escrita oficial não muda com a pronúncia.",
+      oQue:
+        "Ortografia fixa o sistema oficial de escrita: emprego de letra, dígrafo e acento. A forma escrita é convenção, e o acordo ortográfico altera a regra sem mudar a fala. A ortografia não descreve o som: padroniza o registro.",
+      passos: [
+        "Consulte a regra para a dúvida específica.",
+        "Verifique a forma no vocabulário oficial.",
+        "Aplique a regra ao texto e confira.",
+      ],
+      exemplo:
+        "Duas letras podem representar o mesmo som, e a escolha é convenção. A pronúncia regional varia, e a escrita permanece. Se cada um escrevesse como fala, o texto comum se perderia.",
+      quebra:
+        "Escrever como fala e chamar de liberdade. A escrita padronizada é o que permite leitura comum, e a variação fica na fala. A ortografia é acordo, não prisão.",
+      limite:
+        "A ortografia tem exceção e mudança histórica. A regra geral orienta, e a lista de exceção precisa ser consultada. Nenhum falante domina tudo de memória.",
+      levar: "Ortografia padroniza a escrita; a fala segue variação.",
+      maos:
+        "Pegue dez palavras com dúvida de ortografia, consulte a regra de cada uma e agrupe por motivo; a lista mostra o padrão que você mais erra. Agrupe as dúvidas por motivo e estude só o grupo maior: a ortografia melhora mais por padrão do que por decorar palavra solta; a regra aprendida cobre mil palavra de uma vez, e a lista de exceção fica curta.",
+      pergunta: {
+        q: "O que a ortografia fixa?",
+        a: "A forma escrita oficial, não a pronúncia",
+        why: "A escrita é convenção comum a todos os falantes, e a pronúncia varia por região; o acordo ortográfico muda a regra escrita e deixa a fala como está.",
+      },
+    },
+    "Morfologia": {
+      contexto:
+        "Onde isso aparece: no dicionário, na formação de palavra e na leitura. A morfologia estuda a estrutura da palavra. Radical e afixo montam o sentido, e a derivação cria palavra nova.",
+      oQue:
+        "Morfologia estuda a estrutura e a formação da palavra. O radical carrega o sentido base, e o afixo modifica; a derivação cria palavra nova, e a flexão muda a forma sem criar. A análise mostra o que o falante faz sem perceber.",
+      passos: [
+        "Separe radical e afixo.",
+        "Distinga derivação de flexão.",
+        "Veja o sentido que o afixo acrescenta.",
+      ],
+      exemplo:
+        "Pedra e pedreiro mostram derivação: a palavra nova nomeia ofício. Já pedra e pedras mostram flexão: número muda, e a palavra é a mesma. A distinção orienta a análise e a escrita.",
+      quebra:
+        "Chamar flexão de palavra nova. O plural não muda o léxico, e a derivação muda. Confundir as duas bagunça a análise e a contagem de palavra.",
+      limite:
+        "A fronteira entre composição e derivação é discutida, e a língua cria caso híbrido. A classificação orienta, e a exceção precisa de explicação.",
+      levar: "Derivação cria palavra; flexão só muda a forma.",
+      maos:
+        "Separe cinco palavras em radical e afixo e classifique cada uma em derivação ou flexão; justifique a classificação pela mudança de sentido. Se a palavra nova nomeia outra coisa, é derivação; se só muda número, gênero ou tempo, é flexão. O critério do sentido evita a discussão de nomenclatura.",
+    },
+    "Classes Gramaticais": {
+      contexto:
+        "Onde isso aparece: na análise da frase, no dicionário e na escola. A classe descreve a função, e a mesma palavra pode mudar de classe. Substantivo, artigo e adjetivo organizam o núcleo do sujeito.",
+      oQue:
+        "Classe gramatical descreve a função que a palavra exerce na frase. A mesma forma pode ser substantivo ou adjetivo conforme o uso, e a classe não é essência da palavra. Artigo, adjetivo e numeral acompanham o substantivo.",
+      passos: [
+        "Veja a função da palavra na frase.",
+        "Compare com o contexto de outra ocorrência.",
+        "Classifique pelo uso, não pela aparência.",
+      ],
+      exemplo:
+        "A palavra em função de núcleo do sujeito é substantivo, e a mesma palavra modificando outro nome é adjetivo. O dicionário lista as possibilidades, e a frase decide. A classe é relacional.",
+      quebra:
+        "Classificar palavra fora da frase. A mesma forma muda de classe com o uso, e a lista decorada erra no contexto. A frase é o lugar da decisão.",
+      limite:
+        "A tradição lista dez classes, e a descrição moderna agrupa de outro jeito. A nomenclatura varia, e o critério funcional é o mais estável.",
+      levar: "A frase decide a classe, não o dicionário.",
+      maos:
+        "Escolha três palavras que mudam de classe e escreva uma frase para cada uso; marque a função que define a classe. A comparação mostra que a mesma forma pode ser substantivo num contexto e adjetivo em outro, e o dicionário só lista as possibilidades, sem decidir por você. A pergunta sobre a função na frase é o que resolve o caso concreto, e a mesma palavra pode mudar de classe na frase seguinte. O exercício fica completo quando você encontra um caso em que a troca de classe muda o sentido da frase inteira.",
+      pergunta: {
+        q: "O que a classe gramatical descreve?",
+        a: "A função que a palavra exerce na frase",
+        why: "A mesma forma pode funcionar como substantivo ou adjetivo conforme o contexto; a classe é definida pelo uso na frase, e não pela aparência isolada.",
+      },
+    },
+    "Verbos": {
+      contexto:
+        "Onde isso aparece: na narrativa, na instrução e no pedido. O verbo carrega tempo, modo e pessoa. O modo subjuntivo expressa possibilidade, dúvida ou desejo.",
+      oQue:
+        "Verbo expressa ação, estado e processo, com tempo, modo e pessoa. O indicativo afirma, o subjuntivo expressa possibilidade ou desejo, e o imperativo ordena. As formas nominais entram como substantivo, adjetivo ou advérbio.",
+      passos: [
+        "Identifique o tempo e o modo.",
+        "Veja a pessoa e o número.",
+        "Confira a forma nominal quando o verbo não é núcleo.",
+      ],
+      exemplo:
+        "Dizer que algo acontece, que pode acontecer e que aconteça muda o compromisso do falante. O modo carrega a atitude. A escolha do modo muda o sentido mesmo com o mesmo verbo.",
+      quebra:
+        "Trocar indicativo por subjuntivo sem perceber. O texto muda de certeza para hipótese, e o leitor entende outra coisa. O modo é parte do argumento.",
+      limite:
+        "O tempo verbal não corresponde sempre ao tempo real: presente pode narrar passado, e futuro pode expressar incerteza. O uso é que define.",
+      levar: "O modo carrega a atitude de quem fala.",
+      maos:
+        "Escreva a mesma frase no indicativo, no subjuntivo e no imperativo e descreva a atitude que cada modo transmite ao leitor. O indicativo compromete com o fato, o subjuntivo abre a hipótese e o imperativo move para a ação; trocar um por outro muda o argumento sem mudar o verbo, e o leitor percebe a diferença de compromisso e ajusta a confiança na informação; o texto jurídico usa o modo com cuidado por esse motivo, porque é ali que a obrigação é assumida ou apenas sugerida.",
+      pergunta: {
+        q: "O que o modo subjuntivo expressa?",
+        a: "Possibilidade, dúvida ou desejo, e não afirmação",
+        why: "O subjuntivo marca a atitude de hipótese ou desejo do falante, e por isso muda o compromisso com a verdade quando comparado ao indicativo.",
+      },
+    },
+    "Sintaxe": {
+      contexto:
+        "Onde isso aparece: na análise da oração, na revisão e na prova. A sintaxe estuda a função dos termos. Sujeito e predicado organizam a oração, e o verbo concorda com o sujeito.",
+      oQue:
+        "Sintaxe estuda os termos da oração e a relação entre eles. Sujeito e predicado são os essenciais, e o complemento verbal completa o sentido. O verbo concorda com o sujeito em número e pessoa.",
+      passos: [
+        "Ache o verbo e o sujeito.",
+        "Classifique o complemento.",
+        "Confira a concordância do verbo.",
+      ],
+      exemplo:
+        "Na frase em que o sujeito é composto, o verbo vai para o plural. Se o sujeito está depois do verbo, a concordância continua com ele. A análise identifica o sujeito antes de concordar.",
+      quebra:
+        "Concordar com o termo mais próximo e não com o sujeito. A armadilha aparece em sujeito distante ou composto, e o erro passa na leitura rápida. A análise resolve.",
+      limite:
+        "A classificação tradicional tem caso controverso, e a descrição moderna muda o rótulo. A função é o critério, e a nomenclatura varia com a gramática adotada.",
+      levar: "Concorde com o sujeito, não com o vizinho.",
+      maos:
+        "Reescreva cinco frases com sujeito composto e confira a concordância; depois mova o sujeito para o fim e veja se o verbo acompanha.",
+    },
+    "Concordância": {
+      contexto:
+        "Onde isso aparece: na revisão, na prova e no texto profissional. A concordância alinha o verbo com o sujeito e o adjetivo com o substantivo. O erro aparece quando o sujeito está longe.",
+      oQue:
+        "Concordância verbal faz o verbo acompanhar número e pessoa do sujeito, e a nominal faz adjetivo e artigo acompanharem o substantivo. Caso particular existe, e a regra geral orienta a maioria. A revisão precisa achar o sujeito antes de decidir.",
+      passos: [
+        "Localize o sujeito da oração.",
+        "Veja número e pessoa.",
+        "Confira o caso particular, se houver.",
+      ],
+      exemplo:
+        "Sujeito composto pede plural, e sujeito coletivo pode pedir singular. A regra não é decoreba: ela segue o núcleo do sujeito. O erro de concordância costuma vir de sujeito longo.",
+      quebra:
+        "Concordar com o termo mais próximo. A frase longa esconde o sujeito, e o verbo acompanha o vizinho errado. A leitura por partes resolve.",
+      limite:
+        "A norma tem caso facultativo e variação aceita. O texto formal prefere a forma padrão, e o falante pode usar outra na fala. A escolha depende do registro.",
+      levar: "Ache o sujeito antes de concordar.",
+      maos:
+        "Procure cinco erros de concordância em texto real, identifique o sujeito de cada um e reescreva a frase; classifique o erro como verbal ou nominal. O exercício treina a achar o núcleo do sujeito antes de decidir a forma, e essa ordem evita a maior parte dos erros de concordância em texto longo. A releitura em voz alta também revela o sujeito que a vista cansada pulou, e a leitura pausada acha o sujeito que a leitura rápida perdeu, e o treino de revisão passa a incluir a checagem do núcleo.",
+      pergunta: {
+        q: "O que a concordância verbal faz?",
+        a: "O verbo acompanha número e pessoa do sujeito",
+        why: "A regra alinha o verbo ao núcleo do sujeito; o erro comum vem de concordar com o termo mais próximo quando o sujeito está distante ou é composto.",
+      },
+    },
+    "Regência e Colocação": {
+      contexto:
+        "Onde isso aparece: no texto formal, na prova e na revisão. A regência define a preposição que o termo exige. A colocação organiza o pronome na frase.",
+      oQue:
+        "Regência verbal estuda a preposição que o verbo exige no complemento, e a nominal faz o mesmo com o nome. A colocação trata a posição do pronome. O uso varia, e a norma formal fixa uma escolha.",
+      passos: [
+        "Verifique a preposição que o verbo pede.",
+        "Confira a regência do nome.",
+        "Veja a colocação do pronome no registro.",
+      ],
+      exemplo:
+        "Verbo que exige preposição muda de sentido quando ela falta, e o complemento fica errado. A regência é parte do significado. A consulta ao dicionário resolve o caso duvidoso.",
+      quebra:
+        "Suprimir a preposição porque a frase fica mais curta. O sentido muda ou o complemento fica incompleto, e o leitor tropeça. A economia não vale a clareza.",
+      limite:
+        "A regência varia com o uso e com a época, e a norma registra uma escolha. Em registro formal, a forma padrão é a esperada; na fala, a variação é normal.",
+      levar: "A preposição faz parte do verbo.",
+      maos:
+        "Escolha cinco verbos de regência duvidosa, consulte a norma e reescreva uma frase com cada; marque a preposição exigida. O dicionário de regência resolve o caso duvidoso, e a comparação com o uso real mostra onde a norma e a fala divergem. O texto formal segue a norma, e a conversa segue o uso; a escolha é de registro, e o desvio sem motivo aparente chama a atenção do leitor. O dicionário de regência lista o uso consagrado, e a consulta economiza discussão. A regência norteia também a colocação do pronome, e as duas regras costumam aparecer juntas na revisão do texto.",
+      pergunta: {
+        q: "O que a regência verbal estuda?",
+        a: "A preposição que o verbo exige no complemento",
+        why: "O verbo determina se o complemento precisa de preposição e qual; trocar ou omitir a preposição muda o sentido ou deixa a frase incompleta.",
+      },
+    },
+    "Pontuação": {
+      contexto:
+        "Onde isso aparece: no texto, no e-mail e na prova. A pontuação organiza a estrutura e o ritmo. A vírgula separa termo e marca a estrutura da frase.",
+      oQue:
+        "Pontuação organiza a frase e marca a estrutura. A vírgula separa termo deslocado, explicação e lista, e não separa sujeito de verbo. Ponto e vírgula separa item longo, e dois-pontos anuncia.",
+      passos: [
+        "Identifique a estrutura da frase.",
+        "Veja se o termo está deslocado ou explicativo.",
+        "Confira a regra do sinal escolhido.",
+      ],
+      exemplo:
+        "Mudar a vírgula de lugar muda o sentido: em uma versão o termo explica, em outra restringe. A pontuação é parte do significado, não enfeite. A leitura em voz alta revela a diferença.",
+      quebra:
+        "Usar vírgula para marcar pausa da fala. A fala pausa em lugar que a norma não aceita, e o texto fica com vírgula entre sujeito e verbo. A estrutura manda, não o fôlego.",
+      limite:
+        "A pontuação tem variação de estilo e de editora. O texto literário usa com liberdade, e o técnico segue a norma. O contexto define o rigor.",
+      levar: "A pontuação marca a estrutura, não o fôlego.",
+      maos:
+        "Pegue um parágrafo sem pontuação e pontue de duas formas, uma explicativa e outra restritiva; compare o sentido que cada versão produz. A versão com vírgula explica, e a sem vírgula restringe; o leitor entende coisas diferentes, e a escolha é do autor, não do acaso, e a revisão de pontuação muda o sentido do texto sem trocar palavra, o que faz da pontuação uma etapa de revisão e não de estilo; a norma do texto técnico agradece a etapa separada.",
+      pergunta: {
+        q: "O que a vírgula marca na frase?",
+        a: "A separação de termo deslocado ou explicativo, conforme a estrutura",
+        why: "A vírgula não marca pausa de fala: ela separa termo deslocado, explicação e lista, e a posição muda o sentido entre explicar e restringir.",
+      },
+    },
+    "Norma-padrão e Gramática Normativa": {
+      contexto:
+        "Onde isso aparece: no texto formal, no concurso e na escola. A norma-padrão é referência da escrita formal. Ela não é a única variedade, e a adequação depende do contexto.",
+      oQue:
+        "Norma-padrão é a convenção da escrita formal, descrita pela gramática normativa. Ela serve de referência comum e não é superioridade natural de uma variedade. A adequação ao contexto decide o registro a usar.",
+      passos: [
+        "Identifique o contexto e o registro exigido.",
+        "Aplique a norma quando o registro for formal.",
+        "Reconheça a variedade do falante sem julgamento.",
+      ],
+      exemplo:
+        "A mesma pessoa escreve de um jeito no relatório e de outro na mensagem, e as duas formas são adequadas ao contexto. A norma não é a única língua, é a referência do registro formal. A escolha é situacional.",
+      quebra:
+        "Tratar a norma como a única forma correta de falar. A variedade do falante tem regra própria, e o julgamento vira preconceito. A norma é ferramenta de acesso.",
+      limite:
+        "A norma muda com o tempo e com o acordo. O que era erro ontem pode ser padrão hoje, e a consulta ao manual atualizado resolve. A regra é histórica.",
+      levar: "Norma é referência do registro formal, não a língua inteira.",
+      maos:
+        "Reescreva uma mensagem informal em registro formal e marque o que mudou; depois explique por que a versão original era adequada ao contexto dela. O exercício separa domínio da norma de preconceito linguístico, e a distinção é o que permite ensinar a variedade formal sem desqualificar a de casa. A consciência da adequação é o objetivo do ensino de norma, e não a vergonha da variedade.",
+      pergunta: {
+        q: "Para que serve a norma-padrão?",
+        a: "Para dar referência comum à escrita formal",
+        why: "A norma fixa uma convenção de registro formal e facilita a comunicação escrita; ela não é a única variedade nem superioridade natural, e a adequação depende do contexto.",
+      },
+    },
+  },
 };
 
 // o nome da estação chega em caixa baixa do banco ("Grafos moleculares") e em
