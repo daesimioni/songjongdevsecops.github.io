@@ -17,7 +17,11 @@
   --scroll-thumb-hover: rgba(196, 170, 255, 0.62);
   --surface: #0a0f21;
   --surface-2: #0d1228;
-  --pixel: "Press Start 2P", "Courier New", monospace;
+  /* Silkscreen no lugar do Press Start 2P: no tamanho pequeno da interface
+     o B do Press Start fechava a barriga de baixo e virava D. O Press
+     Start fica só no logo, onde o corpo é grande. */
+  --pixel: "Silkscreen", "Courier New", monospace;
+  --pixel-display: "Press Start 2P", "Silkscreen", monospace;
   --mono: ui-monospace, "Cascadia Code", "SFMono-Regular", Menlo, Consolas, monospace;
   --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
@@ -588,7 +592,7 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--mint);
-  margin: 0 0 18px;
+  margin: 0 0 14px;
 }
 #intro-title {
   font-family: var(--pixel);
@@ -2987,7 +2991,7 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
   inset: 0;
   z-index: 90;
   display: grid;
-  place-items: center;
+  place-items: stretch;
   overflow: hidden;
   background: #05070f;
 }
@@ -3011,8 +3015,15 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
 .splash-card {
   position: relative;
   z-index: 1;
-  max-width: min(780px, 92vw);
-  padding: 24px;
+  width: 100%;
+  max-width: min(920px, 94vw);
+  margin: 0 auto;
+  /* o meio da tela é do grimório: o título fica em cima, o botão embaixo */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100%;
+  padding: clamp(16px, 4.5vh, 44px) 24px clamp(14px, 3.5vh, 34px);
   text-align: center;
   animation: splash-rise 900ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
@@ -3026,13 +3037,13 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
   letter-spacing: 0.3em;
   text-transform: uppercase;
   color: var(--mint);
-  margin: 0 0 26px;
+  margin: 0 0 18px;
   text-shadow: 0 0 18px rgba(97, 244, 192, 0.5);
 }
 .splash-logo {
-  font-family: var(--pixel);
-  font-size: clamp(22px, 5.4vw, 58px);
-  line-height: 1.4;
+  font-family: var(--pixel-display);
+  font-size: clamp(18px, 3.8vw, 38px);
+  line-height: 1.3;
   letter-spacing: 0.03em;
   color: #fff3d1;
   margin: 0 0 24px;
@@ -3048,14 +3059,16 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
 }
 .splash-tag {
   font-family: var(--mono);
-  font-size: clamp(12px, 1.4vw, 15px);
-  line-height: 1.75;
+  font-size: clamp(11px, 1.15vw, 13px);
+  line-height: 1.65;
   color: #d8d2ea;
-  max-width: 54ch;
-  margin: 0 auto 32px;
+  max-width: 64ch;
+  margin: 0 auto 16px;
   text-shadow: 0 1px 8px rgba(0, 0, 0, 0.8);
 }
 .splash-enter {
+  /* empurra o botão para o pé da tela e libera o centro para a arte */
+  margin-top: auto;
   font-family: var(--pixel);
   font-size: 10px;
   letter-spacing: 0.08em;
@@ -3070,7 +3083,15 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
 }
 .splash-enter:hover { transform: translateY(-2px); box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.45), 0 20px 54px rgba(255, 200, 87, 0.36), inset 0 1px 0 rgba(255, 255, 255, 0.8); }
 .splash-enter:focus-visible { outline: 2px solid var(--mint); outline-offset: 5px; }
-.splash-enter kbd { font-size: 7px; margin-left: 8px; opacity: 0.7; }
+.splash-enter kbd {
+  font-size: 7px;
+  margin-left: 8px;
+  opacity: 0.85;
+  /* dentro do botão claro, o kbd não pode usar a cor clara do jogo */
+  color: #0a0c18;
+  background: rgba(10, 12, 24, 0.14);
+  border-color: rgba(10, 12, 24, 0.4);
+}
 .splash-foot {
   font-family: var(--mono);
   font-size: 10.5px;

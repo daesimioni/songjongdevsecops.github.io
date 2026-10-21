@@ -300,11 +300,39 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 - [ ] em sessão longa a mochila aberta voltou a medir 12 a 17 fps, sem o mundo
       sendo redesenhado: falta trace de composição para achar o que repinta
 
+### Z. Título, letra B e botão
+
+- [x] a tela de título ganhou o centro que faltava: alto de pedra no meio da
+      relva, círculo de runas em perspectiva que gira devagar, pentagrama,
+      púlpito de pedra, grimório aberto com páginas, lombada escura, runa acesa
+      em cada página e fita marcadora
+- [x] magia saindo do livro: três feixes de luz que balançam, brasas subindo em
+      espiral, sinais de 3x5 px girando em duas órbitas e velas com chama que
+      tremula
+- [x] roda de figuras encapuzadas em volta do círculo: as de trás ficam atrás do
+      altar, as da frente ficam na frente e maiores, com olhos acesos pela luz
+      do livro
+- [x] o resto do vale também ganhou detalhe: árvore com tronco, raiz, galho e
+      copa em três camadas, pinheiro de quatro andares, casa com chaminé e
+      fumaça, estrela que pisca em cruz e reflexo que corre no rio
+- [x] layout do título: o cartão deixou de ser uma coluna no meio da tela e
+      virou topo (marca e frase) mais pé (botão e assinatura), com `margin-top:
+      auto` empurrando o botão. O meio ficou livre para o grimório
+- [x] a letra B parecia D: no tamanho pequeno da interface o Press Start 2P
+      fechava a barriga de baixo do B. A interface passou a usar Silkscreen, e o
+      Press Start ficou só no logo, onde o corpo é grande
+- [x] o "Enter" do botão sumia: o `kbd` do jogo é claro (`--ink`) e herdava a
+      cor dentro do botão âmbar. Agora o `kbd` da entrada usa tinta escura,
+      fundo escuro translúcido e borda escura
+
 ## 3. Regras de desenho
 
 - A tela de título é a primeira impressão: vale com camadas, céu em degradê,
-  estrelas, lua, rio refletindo e vagalumes. Nada de imagem pesada: tudo
-  desenhado em canvas, como o resto do jogo.
+  estrelas, aurora, lua com halo, rio refletindo, casas com fumaça, árvores de
+  copa redonda e pinheiros, e no meio do vale um grimório aberto num púlpito de
+  pedra, dentro de um círculo de runas, com uma roda de figuras encapuzadas,
+  brasas subindo e sinais girando. O título fica em cima e o botão no pé, para
+  o meio da tela ser da arte. Nada de imagem pesada: tudo desenhado em canvas.
 - O inventário usa a mesma paleta do jogo: slots escuros, borda âmbar no item
   selecionado, ícone desenhado no mesmo pixel do mapa.
 - Arrastar e soltar no desktop; no celular, tocar no item e tocar no destino.
@@ -329,6 +357,7 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 
 | data | fase | o que entrou | prova |
 |---|---|---|---|
+| 2026-10-21 | Z | tela de título com grimório no centro e a letra B legível: vale redesenhado (árvore com copa em camadas, pinheiro, casa com fumaça, aurora, lua com halo), alto de pedra com círculo de runas que gira, pentagrama, púlpito, grimório aberto, feixes de luz, brasas e roda de encapuzados; cartão dividido em topo e pé; interface em Silkscreen (Press Start só no logo); `kbd` do botão de entrada com tinta escura | navegador: título em 1280x717 e em 390x844 sem estouro horizontal, recorte 3x do centro mostrando livro, runas, encapuzados e brasas; HUD e bestiário com 464 fichas legíveis na fonte nova, zero transbordo em 1280 e em 390 px; botão com texto `rgb(10,12,24)` sobre âmbar e `kbd` na mesma tinta |
 | 2026-10-21 | Y | regressão de navegador e custo do modal: 12 verificações num passeio só (HUD, mochila, bestiário, diário, viagem, arrastar, névoa r2, caverna, Esc, 390 px e console) e o mundo deixou de ser redesenhado atrás do modal | navegador: 12/12 PASS, arrasto moveu o boneco de 91,61 para 96,63, névoa `r2:` de 165 caracteres, caverna com 10 salas e minimapa em 0,305, sem erro de console; fps com a mochila aberta de 8,2 para 56,9 em sessão curta |
 | 2026-10-21 | X | contraste medido em todos os estados, com medidor que compõe o fundo transparente e se autotesta | navegador: 10 estados (mundo, mochila, bestiário, diário, ficha, ajuda, menu, viagem, caverna e 390 px), 544 textos, zero abaixo de 4,5:1 (3:1 para texto grande), autoteste acusando par ruim |
 | 2026-10-21 | J/H | nave e minimapa da caverna: Espaço liga e desliga na superfície e no subsolo, sem auto-repeat, e o mapa continua desenhado andando com a nave; o minimapa passou a mostrar a planta inteira apagada desde a entrada | navegador: superfície e caverna com sprint ligado, desligado no segundo Espaço, 6 amostras do canvas por trecho (superfície 1,000 de mapa vivo, caverna 0,28 de área iluminada) e minimapa da caverna de 0,015 a 0,306 de pixel vivo; console limpo |
