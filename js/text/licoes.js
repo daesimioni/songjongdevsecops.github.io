@@ -5922,6 +5922,218 @@ export const LICOES = {
         "Pegue um texto seu de dez linhas e faça duas passadas, uma de estrutura e uma de língua; anote o que cada uma pegou e o que sobrou para a terceira. A leitura em voz alta pega frase longa e repetição que o olho pula, e o corte de uma frase melhora o ritmo mais que a troca de uma palavra.",
     },
   },
+  "lingua-linguistica": {
+    "Linguística Teórica": {
+      contexto:
+        "Onde isso aparece: na descrição gramatical, no dicionário e no ensino. A teoria organiza a observação da língua. Forma e significado se relacionam, e os universais comparam línguas diferentes.",
+      oQue:
+        "Linguística teórica estuda a estrutura da linguagem em níveis: som, forma, sintaxe, sentido. A relação entre forma e significado é o objeto central, e os universais buscam o que aparece em muitas línguas. A teoria não prescreve: descreve o sistema.",
+      passos: [
+        "Escolha o nível de análise: som, morfema, sintaxe ou sentido.",
+        "Descreva o padrão com dado real da língua.",
+        "Compare com outra língua para separar universal de particular.",
+      ],
+      exemplo:
+        "A ordem das palavras varia entre línguas, e o sujeito nem sempre vem primeiro. Descrever o português com dado real evita impor um modelo de outra língua. A comparação mostra o que é universal e o que é escolha.",
+      quebra:
+        "Confundir descrição com prescrição. A gramática teórica descreve como a língua funciona, e a norma diz como se deve escrever. Misturar as duas transforma dado em julgamento.",
+      limite:
+        "A teoria depende do recorte: som, sintaxe e sentido pedem modelos diferentes. A integração entre eles ainda é problema aberto, e a explicação completa não existe.",
+      levar: "Teoria descreve o sistema; norma escolhe uma variedade.",
+      maos:
+        "Descreva a ordem de três tipos de frase do português e compare com outra língua; aponte o que parece universal e o que parece escolha. Repita com uma língua de família diferente e veja se o padrão se mantém: o universal sobrevive à troca, e o particular revela a escolha de cada sistema. A descrição ganha quando o dado vem de fala espontânea, porque a intuição do pesquisador filtra o que ele espera ouvir, e o corpus de fala espontânea corrige esse filtro.",
+      pergunta: {
+        q: "Qual é a diferença entre descrever e prescrever uma língua?",
+        a: "Descrever mostra como a língua funciona; prescrever diz como se deve usar",
+        why: "A linguística teórica descreve o sistema com dado real, e a norma escolhe uma variedade como modelo; confundir as duas transforma observação em julgamento.",
+      },
+    },
+    "Sociolinguística": {
+      contexto:
+        "Onde isso aparece: no sotaque, na gíria e no preconceito. A língua varia com região, grupo e situação. O preconceito linguístico desqualifica a pessoa pela variedade que ela fala.",
+      oQue:
+        "Sociolinguística estuda a relação entre língua e sociedade. A variação é regional, social e estilística, e a escolha da variedade depende do contexto. O preconceito linguístico desqualifica a pessoa pela variedade que ela fala, e não pelo que ela diz.",
+      passos: [
+        "Identifique a variável: som, léxico ou construção.",
+        "Veja o fator social e regional que a acompanha.",
+        "Separe variação de erro.",
+      ],
+      exemplo:
+        "A concordância variável aparece em muitas comunidades e em situações distintas. Chamar de erro o que é variação social é julgamento, não análise. A mesma pessoa muda de variedade na entrevista e na conversa.",
+      quebra:
+        "Tratar a norma como a única forma correta. A variedade do falante tem regra própria, e o preconceito nasce de confundir norma com língua. A análise mostra a regra que a escola ignora.",
+      limite:
+        "A variação não é infinita: há contexto de uso e de prestígio. A descrição precisa considerar o mercado linguístico, sem transformar prestígio em mérito.",
+      levar: "Variação é regra, não defeito.",
+      maos:
+        "Escolha uma variante e descreva quem a usa, onde e em que situação; verifique se a mesma pessoa muda de forma em outro contexto. A mudança de estilo mostra que o falante domina mais de uma variedade, e a norma única não descreve esse repertório.",
+    },
+    "Dialetologia": {
+      contexto:
+        "Onde isso aparece: no mapa de sotaque, no atlas e no vocabulário regional. A variação tem geografia, e o atlas a desenha. Diferença lexical e fonética separa regiões.",
+      oQue:
+        "Dialetologia estuda a distribuição geográfica das variantes. O atlas linguístico registra a forma de cada ponto, e a isoglossa delimita a área de um traço. A diferença lexical e fonética revela história de povoamento.",
+      passos: [
+        "Escolha o traço a investigar.",
+        "Registre a forma em pontos diferentes da região.",
+        "Desenhe a área e compare com a história do lugar.",
+      ],
+      exemplo:
+        "Palavras diferentes para o mesmo objeto marcam áreas de colonização distinta. O atlas mostra a fronteira, e a história explica o motivo. A língua guarda o caminho de quem chegou.",
+      quebra:
+        "Confundir dialeto com língua inferior. Dialeto é variedade regional com regra própria, e o rótulo carrega preconceito. A ciência descreve, não hierarquiza.",
+      limite:
+        "A fronteira dialetal é aproximada: os traços se sobrepõem e a mobilidade mistura. O atlas é recorte, e o mapa de hoje envelhece rápido.",
+      levar: "O mapa da fala conta a história do povoamento.",
+      maos:
+        "Pergunte a três pessoas de regiões diferentes como chamam um mesmo objeto e desenhe as três respostas num mapa simples. Repita com duas gerações da mesma família e anote a diferença: a variação regional convive com a mudança em curso, e o mapa de hoje já não é o de ontem. A coleta com mais pontos e mais falantes reduz o risco de atribuir à região o que é da faixa etária ou da escolaridade, e a amostra precisa declarar esses recortes. O atlas honesto mostra a data da coleta e o perfil de quem respondeu.",
+      pergunta: {
+        q: "O que um atlas linguístico registra?",
+        a: "A forma de cada variante nos pontos pesquisados no território",
+        why: "O atlas reúne a resposta de cada localidade e mostra a área de cada traço; a isoglosso desenha a fronteira, e a comparação com a história explica a distribuição.",
+      },
+    },
+    "Linguística Histórica": {
+      contexto:
+        "Onde isso aparece: na etimologia, no dicionário e na comparação entre línguas. A língua muda com o tempo, e a mudança segue padrão. O português vem do latim, e a comparação revela o parentesco.",
+      oQue:
+        "Linguística histórica estuda a mudança da língua no tempo. O português se origina do latim, e a comparação entre línguas românicas revela a raiz comum. Mudança fonética, morfológica e semântica têm padrão e data aproximada.",
+      passos: [
+        "Compare a forma antiga com a atual.",
+        "Procure o padrão na série de palavra.",
+        "Datar a mudança pelo documento mais antigo.",
+      ],
+      exemplo:
+        "A forma latina e a portuguesa mostram a mudança de som regular; a comparação com o espanhol confirma a raiz. Já a mudança de sentido não aparece no som e precisa de texto datado. O método combina as duas evidências.",
+      quebra:
+        "Achar que a forma antiga é a correta e a nova é corrupção. A mudança é processo normal, e a norma registra um momento. A atitude valorativa impede a análise.",
+      limite:
+        "Antes do registro escrito, a reconstrução é por comparação e fica hipótese. A data exata da mudança depende do documento disponível, e a lacuna é real.",
+      levar: "A mudança tem padrão; a norma fotografa um momento.",
+      maos:
+        "Compare uma palavra em três línguas românicas e aponte a mudança de som comum; depois verifique se a forma escrita mais antiga que você encontra confirma a data. A comparação com a forma latina e com a espanhola fecha o argumento, e o padrão de mudança fica visível na série.",
+    },
+    "Psicolinguística": {
+      contexto:
+        "Onde isso aparece: na aquisição da fala, na leitura e no processamento de frase. A psicolinguística investiga como o cérebro processa a linguagem. O erro do aprendiz revela a regra que ele construiu.",
+      oQue:
+        "Psicolinguística investiga como o cérebro processa a linguagem: aquisição, compreensão de frase e produção. A criança generaliza a regra e erra de forma previsível, e o adulto processa rápido com pista de contexto. O tempo de leitura revela o custo de processamento.",
+      passos: [
+        "Observe o erro e a regra que ele revela.",
+        "Meça o tempo de resposta ou de leitura.",
+        "Compare com o modelo de processamento.",
+      ],
+      exemplo:
+        "Criança que diz fazido aplica a regra regular do particípio e erra o irregular. O erro prova que a regra foi aprendida, e não decorada. A observação do erro é dado, não falha a corrigir.",
+      quebra:
+        "Achar que o erro da criança é falta de regra. O erro regular mostra que a regra existe e está sendo generalizada. Corrigir sem entender o processo perde o dado.",
+      limite:
+        "O tempo de resposta é medida indireta do processamento. A tarefa influencia o resultado, e a conclusão precisa considerar o desenho do experimento.",
+      levar: "O erro do aprendiz revela a regra que ele construiu.",
+      maos:
+        "Anote três erros de uma criança e a regra que cada um revela; verifique se a regra é regular no português. Se for, o erro é generalização da regra e a correção precisa de exemplo, não de repetição; se não for, a criança está copiando uma forma ouvida, e a explicação muda.",
+    },
+    "Neurolinguística": {
+      contexto:
+        "Onde isso aparece: no exame de imagem, na reabilitação e no estudo da afasia. A linguagem tem base neural distribuída. A lesão revela a função, e o caso clínico ensina a teoria.",
+      oQue:
+        "Neurolinguística estuda as bases neurais da linguagem. Áreas diferentes participam da produção e da compreensão, e a afasia mostra o que a lesão interrompe. O cérebro processa som, palavra e frase em rede, e não num ponto só.",
+      passos: [
+        "Identifique o déficit e a tarefa que o revela.",
+        "Localize a lesão e compare com o modelo.",
+        "Teste a dissociação entre compreensão e produção.",
+      ],
+      exemplo:
+        "Pessoa que fala com esforço e compreende bem tem déficit de produção, e o contrário também acontece. A dissociação mostra que as funções são separáveis. A lesão vira experimento natural.",
+      quebra:
+        "Localizar a linguagem num único ponto do cérebro. A rede é distribuída, e a mesma tarefa envolve áreas diferentes. O mapa simples não explica o caso clínico.",
+      limite:
+        "A lesão não é experimento controlado: o tamanho e o histórico variam. A conclusão sobre função é inferência, e a plasticidade do cérebro complica a leitura.",
+      levar: "A lesão mostra a função pela falta.",
+      maos:
+        "Descreva um caso de afasia com déficit de produção e outro de compreensão, e compare o que cada um revela sobre a rede. Anote também o que a pessoa consegue fazer e o que evita: a tarefa que ela evita costuma revelar o déficit melhor que o teste padronizado, e o desenho do exame precisa cobrir o uso. O caso clínico isolado sugere hipótese, e a conclusão sobre a rede exige grupo de comparação e tarefa controlada, com medida antes e depois da reabilitação.",
+      pergunta: {
+        q: "O que a afasia revela sobre a linguagem no cérebro?",
+        a: "Que produção e compreensão são funções separáveis em rede distribuída",
+        why: "Casos de lesão mostram déficit em uma função com a outra preservada, e a dissociação é a evidência de que a linguagem não está num ponto único.",
+      },
+    },
+    "Linguística Aplicada": {
+      contexto:
+        "Onde isso aparece: na aula, no material didático e na alfabetização. A aplicação leva a teoria para o ensino. O método precisa caber no aprendiz e no contexto.",
+      oQue:
+        "Linguística aplicada leva a teoria ao ensino de língua, à leitura e à produção textual. O método se escolhe pelo aprendiz e pelo objetivo, e o contexto autêntico acelera o aprendizado. A avaliação precisa medir o uso, não só a regra.",
+      passos: [
+        "Defina o objetivo do aprendiz.",
+        "Escolha a abordagem e o material adequados.",
+        "Avalie pelo uso em tarefa real.",
+      ],
+      exemplo:
+        "Aula que só conjuga verbo em tabela não ensina a pedir informação. A tarefa de pedir e responder usa a forma em contexto e fixa o uso. A avaliação por tarefa mostra o que a prova de regra esconde.",
+      quebra:
+        "Ensinar regra e não dar oportunidade de uso. O aluno sabe a tabela e trava na conversa. A prática em contexto é parte do método, não atividade extra.",
+      limite:
+        "A abordagem que funciona num contexto pode não funcionar em outro. Turma, tempo e objetivo mudam a escolha, e a receita única não existe.",
+      levar: "Aprender língua é usar língua em tarefa real.",
+      maos:
+        "Transforme uma aula de regra em uma tarefa de uso e compare o que o aluno consegue fazer no fim. A diferença entre saber a regra e usar a língua é o que a avaliação por tarefa mede, e o professor ganha informação para a próxima aula. A tarefa precisa de objetivo claro e de retorno específico, senão o aluno pratica sem saber o que melhorar, e a repetição não corrige o erro.",
+      pergunta: {
+        q: "Por que avaliar pelo uso e não só pela regra?",
+        a: "Porque o uso mostra se o aluno consegue fazer a tarefa real",
+        why: "Saber a tabela não garante pedir informação ou escrever o texto; a avaliação por tarefa mede o que o aprendiz faz com a língua, e é isso que o ensino quer.",
+      },
+    },
+    "Linguística de Corpus": {
+      contexto:
+        "Onde isso aparece: no dicionário, no tradutor e no material didático. O corpus é coleção organizada de texto real. A frequência e a concordância mostram o uso, não a intuição.",
+      oQue:
+        "Linguística de corpus estuda a língua por coleção de texto real. A frequência lexical mostra o que é comum, e a concordância mostra a palavra em contexto. A análise de uso corrige a intuição do falante.",
+      passos: [
+        "Monte ou escolha o corpus representativo.",
+        "Extraia frequência e concordância.",
+        "Interprete o uso com o contexto da amostra.",
+      ],
+      exemplo:
+        "A palavra que parece rara pode ser frequente numa área técnica. A concordância mostra a combinação típica, e o dicionário feito com corpus reflete o uso. A intuição sozinha erra a frequência.",
+      quebra:
+        "Concluir sobre a língua com corpus pequeno e enviesado. A amostra define o resultado, e o texto de uma fonte só não representa a língua. O desenho do corpus é parte do método.",
+      limite:
+        "Corpus mostra o que foi escrito ou falado na amostra, não o que é possível na língua. A ausência de uma forma não prova que ela não existe.",
+      levar: "Corpus troca intuição por frequência observada.",
+      maos:
+        "Extraia a concordância de uma palavra num corpus pequeno e veja a combinação que você não esperava; anote o tamanho da amostra junto com o achado. A conclusão sobre frequência precisa do tamanho e da composição do corpus, senão o número não significa nada. A comparação entre dois corpora também precisa controlar o gênero dos textos, porque artigo científico e conversa têm frequência muito diferente, e a comparação só vale entre textos do mesmo gênero. O corpus equilibrado é parte do resultado, e não detalhe do método.",
+      pergunta: {
+        q: "Para que serve a concordância num corpus?",
+        a: "Para mostrar a palavra em contexto e revelar a combinação típica",
+        why: "A lista de ocorrências com o entorno mostra como a palavra é usada de fato, e a frequência junto com o contexto corrige a intuição do falante.",
+      },
+    },
+    "Linguística Computacional": {
+      contexto:
+        "Onde isso aparece: no corretor, no tradutor e no assistente. O modelo computacional da língua aprende padrão do dado. A análise morfológica, sintática e semântica se automatiza em etapas.",
+      oQue:
+        "Linguística computacional modela a linguagem por computador. A análise morfológica separa radical e flexão, e a sintática monta a árvore. A semântica atribui sentido, e o modelo estatístico aprende do corpus.",
+      passos: [
+        "Defina a tarefa e a saída esperada.",
+        "Escolha o modelo e o dado de treino.",
+        "Avalie com métrica ligada à tarefa.",
+      ],
+      exemplo:
+        "O corretor ortográfico usa modelo de língua e contexto para sugerir a palavra; a sugestão errada aparece quando o contexto é ambíguo. A métrica da tarefa mede acerto e não elegância do modelo. A avaliação segue o uso.",
+      quebra:
+        "Avaliar o modelo só com exemplo escolhido a dedo. O desempenho no caso fácil não representa o uso, e o erro aparece no texto real. O conjunto de teste precisa ser representativo.",
+      limite:
+        "O modelo aprende o viés do corpus. A língua do corpus vira norma, e a variedade ausente fica mal atendida. A escolha do dado é decisão ética, não só técnica.",
+      levar: "O modelo aprende o corpus; o corpus escolhe o que o modelo sabe.",
+      maos:
+        "Rode um corretor em três frases ambíguas e anote onde a sugestão erra; verifique se o erro vem do contexto ou do vocabulário do modelo. Anote também o tipo de tarefa: corretor, tradução e busca falham de formas diferentes, e a métrica de uma não serve para a outra. Compare o resultado com a etapa anterior: a análise morfológica errada contamina a sintaxe, e o erro aparece longe da causa, o que torna a depuração do sistema mais lenta.",
+      pergunta: {
+        q: "O que a análise morfológica automática faz?",
+        a: "Separa a palavra em radical e flexão para identificar a forma",
+        why: "O analisador devolve o lema e os traços da palavra, e essa saída alimenta a análise sintática e a busca; sem ela, a etapa seguinte herda o erro.",
+      },
+    },
+  },
 };
 
 // o nome da estação chega em caixa baixa do banco ("Grafos moleculares") e em
