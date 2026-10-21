@@ -725,28 +725,44 @@ assert.equal(reachable(dmap, center(entrance), center(city)), true, "entrada che
 for (const room of dg.rooms) {
   assert.equal(reachable(dmap, center(entrance), center(room)), true, `sala ${room.id} alcançável`);
 }
-// as cavernas espelhadas usam a mesma planta com as salas laterais trocadas
-const mirrorDef = DUNGEONS.find((d) => d.continent === "math");
-const mmap = buildDungeonMap(mirrorDef);
-for (const room of mirrorDef.rooms) {
-  assert.equal(dungeonSolid(mmap, center(room).x, center(room).y), false, `sala espelhada ${room.id} tem chão`);
+// as 93 cavernas não compartilham mais a mesma planta: cada id semeia o seu
+// desenho, e a regra de progressão se mantém (fraco perto da entrada, chefe no
+// fundo), com toda sala alcançável desde a entrada
+const desenhos = new Set();
+for (const def of DUNGEONS) {
+  const mapa = buildDungeonMap(def);
+  const entradaDele = def.rooms.find((r) => r.kind === "entrance");
+  const cidadeDele = def.rooms.find((r) => r.kind === "city");
+  for (const room of def.rooms) {
+    assert.equal(dungeonSolid(mapa, center(room).x, center(room).y), false, `${def.id}: sala ${room.id} tem chão`);
+    assert.equal(
+      reachable(mapa, center(entradaDele), center(room)),
+      true,
+      `${def.id}: sala ${room.id} alcançável desde a entrada`,
+    );
+  }
+  assert.equal(reachable(mapa, center(entradaDele), center(cidadeDele)), true, `${def.id}: entrada chega à cidade`);
+  const salaDoChefe = def.rooms.find((r) => r.id === (def.layout || {}).bossRoom);
+  assert.ok(salaDoChefe && salaDoChefe.tier === 3, `${def.id}: chefe na sala do fundo`);
+  desenhos.add(def.rooms.map((r) => `${r.id}:${r.x},${r.y},${r.w},${r.h}`).join("|"));
 }
-const mirrorEntrance = center(mirrorDef.rooms.find((r) => r.kind === "entrance"));
-assert.equal(
-  reachable(mmap, mirrorEntrance, center(mirrorDef.rooms.find((r) => r.kind === "city"))),
-  true,
-  "caverna espelhada também liga entrada e cidade",
-);
-for (const room of mirrorDef.rooms) {
-  assert.equal(reachable(mmap, mirrorEntrance, center(room)), true, `sala espelhada ${room.id} alcançável`);
-}
-assert.equal(dungeonLineOfSight(dmap, 3, 24, 13, 24), false, "parede corta a linha de visão");
+assert.equal(desenhos.size, DUNGEONS.length, "uma planta por caverna");
+
 const roomA = dg.rooms.find((r) => r.id === "a");
 assert.equal(
   dungeonLineOfSight(dmap, roomA.x + 2.5, roomA.y + 3.5, roomA.x + 5.5, roomA.y + 3.5),
   true,
   "sala aberta deixa ver",
 );
+// parede corta a vista: existe par de salas que não se enxergam
+const algumaParedeNoMeio = dg.rooms.some((salaX) =>
+  dg.rooms.some(
+    (salaY) =>
+      salaX !== salaY &&
+      !dungeonLineOfSight(dmap, center(salaX).x, center(salaX).y, center(salaY).x, center(salaY).y),
+  ),
+);
+assert.equal(algumaParedeNoMeio, true, "pedra corta a linha de visão entre salas");
 
 // o chefe da caverna não depende de alavanca, e a forja consome e devolve
 assert.equal(rpg.bossAlive({ id: "dungeon-teste", dungeon: true }), true, "chefe de caverna sem alavanca");

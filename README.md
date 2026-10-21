@@ -314,6 +314,15 @@ desenhada em linhas de 1 px, com sombra, tronco e galho. O piso da caverna é
 pintado uma vez por descida num canvas do mapa inteiro, então o xadrez de 16 px
 saiu e entrou rachadura, cascalho, cogumelo e parede com borda serrada.
 
+A caverna também deixou de ser sempre a mesma. A pedra da área decide a
+fachada: ruína de pedra lavrada no giz, ardósia e papel; boca de mina com
+barrote e trilho no ferro, cobre, latão e silício; fenda de cristal no vidro,
+cristal, obsidiana e âmbar; toca de raiz no barro, na fibra e no ébano. A boca
+de entrada tem placa e luz; a do fundo é a saída esquecida, sem placa e com
+entulho na frente, e fica do outro lado da ilha. Lá dentro, o id da área semeia
+a planta das dez salas, então cada uma das 93 cavernas tem desenho próprio, com
+o bicho fraco perto da entrada e o chefe no fundo.
+
 ## Colisão
 
 A colisão acompanha o desenho, não um ponto no centro. A caverna bloqueia o

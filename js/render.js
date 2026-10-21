@@ -11,6 +11,7 @@ import { ITEMS } from "./rpg-data.js";
 import { drawPetSprite } from "./pet-art.js";
 import { BIOMES, TILE_STYLE } from "./identity.js";
 import { drawSkiff } from "./skiff.js";
+import { drawCaveFacade } from "./cave-art.js";
 
 const BODY_W = 12;
 const BODY_H = 17;
@@ -1424,36 +1425,19 @@ export function createRenderer(canvas, world) {
   }
 
   function drawCave(c, time) {
-    const px = c.x * TILE;
-    const py = c.y * TILE;
-    ctx.fillStyle = "rgba(2,4,10,0.4)";
-    ctx.beginPath();
-    ctx.ellipse(px, py + 2, 20, 6, 0, 0, Math.PI * 2);
-    ctx.fill();
-    // o morro de pedra, claro o bastante para se ver de longe
-    ctx.fillStyle = "#3b3d55";
-    ctx.fillRect(px - 20, py - 16, 40, 16);
-    ctx.fillRect(px - 16, py - 24, 32, 10);
-    ctx.fillRect(px - 9, py - 31, 18, 8);
-    ctx.fillStyle = "#50536f";
-    ctx.fillRect(px - 20, py - 16, 40, 3);
-    ctx.fillRect(px - 16, py - 24, 32, 2);
-    ctx.fillRect(px - 9, py - 31, 18, 2);
-    // a boca
-    ctx.fillStyle = "#05060c";
-    ctx.fillRect(px - 8, py - 18, 16, 18);
-    ctx.fillRect(px - 6, py - 21, 12, 4);
-    const glow = 0.45 + Math.sin(time * 0.003) * 0.18;
-    ctx.fillStyle = hexA(c.accent, glow);
-    ctx.fillRect(px - 5, py - 17, 10, 2);
-    // pedras soltas e a placa do lugar
-    ctx.fillStyle = "#35364c";
-    ctx.fillRect(px - 22, py - 3, 4, 3);
-    ctx.fillRect(px + 18, py - 4, 3, 4);
-    ctx.fillStyle = "#141827";
-    ctx.fillRect(px + 14, py - 28, 2, 14);
-    ctx.fillStyle = hexA(c.accent, 0.9);
-    ctx.fillRect(px + 16, py - 27, 7, 5);
+    const bioma = BIOMES[c.areaId] || BIOMES[c.groundId] || null;
+    drawCaveFacade(ctx, {
+      px: c.x * TILE,
+      py: c.y * TILE,
+      entrada: c.mouth !== "far",
+      material: bioma?.material || "",
+      pedra: bioma?.path || "#50536f",
+      meio: bioma?.floor || "#3b3d55",
+      fundo: bioma?.base || "#22243a",
+      acento: bioma?.accent || c.accent || "#ffc857",
+      seed: hash2(Math.round(c.x) * 7 + 3, Math.round(c.y) * 5 + 1),
+      time,
+    });
   }
 
   function drawPathLine(points) {

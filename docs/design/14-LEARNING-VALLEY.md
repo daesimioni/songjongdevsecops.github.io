@@ -228,6 +228,23 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 - [x] placar de descobertas, vencidos e chefes, com a caverna atual já aberta
 - [x] sprite em canvas por espécie, com a cor que a área deu ao bicho
 
+### V. Caverna com cara de lugar
+
+- [x] planta própria por caverna: o id da área semeia posição, tamanho e
+      ligação das dez salas; 93 desenhos distintos, sem duas iguais
+- [x] a progressão continua valendo: o id vem da profundidade, então "a" é a
+      sala mais perto da entrada e o chefe fica na sala de tier 3 do fundo
+- [x] fachada pela pedra do lugar: ruína (giz, ardósia, papel, pergaminho,
+      tinta), mina (ferro, cobre, latão, silício), fenda (vidro, cristal,
+      obsidiana, âmbar), toca (cerâmica, fibra, ébano) e morro no resto
+- [x] a fachada sai da pedra da área, não da cor do chão: corpo no `path`,
+      crista clareada, sombra no `base`, acento na luz
+- [x] boca de entrada tem placa, luz interna e degrau gasto; a boca do fundo é
+      a saída esquecida: vão mais estreito, entulho, mato e nenhuma placa
+- [x] a segunda boca fica no lado oposto da área, o mais longe que couber:
+      desce de um lado da ilha e volta pelo outro (antes as duas ficavam a
+      menos de nove tiles uma da outra em 24 dos 93 pares)
+
 ## 3. Regras de desenho
 
 - A tela de título é a primeira impressão: vale com camadas, céu em degradê,
@@ -257,6 +274,7 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 
 | data | fase | o que entrou | prova |
 |---|---|---|---|
+| 2026-10-21 | V | caverna com cara de lugar: planta semeada pelo id (93 desenhos distintos, progressão por profundidade e chefe no fundo) e fachada pela pedra da área, com a boca do fundo diferente da entrada; a segunda boca foi para o lado oposto da ilha | node: 93 plantas distintas, todas as salas com chão e alcançáveis desde a entrada, chefe em tier 3; navegador: galeria das cinco famílias com a paleta real de cada área e as duas bocas, mina e fenda no mundo com placa e sem placa, console limpo; pares de boca: min 9,2 e mediana 17,0 tiles (antes 7,1 e 12,0, com 24 pares abaixo de 9), zero saída obstruída |
 | 2026-10-20 | U | colisão do tamanho do desenho: morro da caverna, estação, pedra, enfeites e altar/forja/pedra da cidade; boca e saída livres; caminho mira a frente; NPC sai de prop novo | navegador: 13 caminhos de caverna, topo do morro sólido, saída livre, boneco parado, altar/forja/pedra sólidos, console limpo; node verde |
 | 2026-10-20 | T | paleta e rolagem: barra única escura/violeta na vertical e horizontal; acento por área no fio, kicker, epígrafe, viagem e Diário; texto de acento com contraste 8,95:1; placas nos cartões flutuantes | navegador: dois painéis com cores próprias, 94 destinos e 32 acentos, 86 grupos do Diário com acento, barra horizontal de teste, 390 px sem estouro, console limpo |
 | 2026-10-20 | S | voz do vale: abertura, ajuda, diário, menus, NPCs, missões, itens e mensagens reescritos sem "blog/catálogo/página"; cada pedra ganha epígrafe e a lição técnica continua precisa; metas e README na mesma voz | navegador: abertura e boas-vindas sem texto de bastidor, página gerada com epígrafe e lição, console limpo; node verde |

@@ -646,6 +646,14 @@ export function createWorld() {
       !boxCollides(cx, cy + 0.9, PLAYER_W, PLAYER_H) &&
       !boxCollides(cx, cy + 1.5, PLAYER_W, PLAYER_H) &&
       !boxCollides(cx, cy + 1.7, PLAYER_W, PLAYER_H);
+    // um ponto serve para boca se o morro cabe, a saída abaixo dele cabe, e
+    // ele não briga com o farol, com a pedra da área nem com outra caverna
+    const okSpot = (cx, cy) =>
+      cx >= 2 && cy >= 2 && cx <= MAP_W - 2 && cy <= MAP_H - 2 &&
+      freeSpot(cx, cy) &&
+      Math.hypot(cx - h.banner.x, cy - h.banner.y) >= 2.5 &&
+      !caves.some((c) => Math.hypot(c.x - cx, c.y - cy) < 7) &&
+      !(pedraDaArea && Math.hypot(pedraDaArea.x - cx, pedraDaArea.y - cy) < 5);
     const pick = (from, to, minFromCenter, avoid = null) => {
       for (let r = from; r <= to; r++) {
         for (let dy = -r; dy <= r; dy++) {
@@ -653,21 +661,47 @@ export function createWorld() {
             if (Math.max(Math.abs(dx), Math.abs(dy)) !== r) continue;
             const cx = Math.round(h.center.x + dx);
             const cy = Math.round(h.center.y + dy);
-            if (cx < 2 || cy < 2 || cx > MAP_W - 2 || cy > MAP_H - 2) continue;
-            if (!freeSpot(cx, cy)) continue;
             if (Math.hypot(cx - h.center.x, cy - h.center.y) < minFromCenter) continue;
-            if (Math.hypot(cx - h.banner.x, cy - h.banner.y) < 2.5) continue;
-            if (caves.some((c) => Math.hypot(c.x - cx, c.y - cy) < 7)) continue;
             if (avoid && Math.hypot(avoid.x - cx, avoid.y - cy) < 7) continue;
-            if (pedraDaArea && Math.hypot(pedraDaArea.x - cx, pedraDaArea.y - cy) < 5) continue;
+            if (!okSpot(cx, cy)) continue;
             return { x: cx, y: cy };
           }
         }
       }
       return null;
     };
+    // A segunda boca é a saída do fundo, não uma vizinha da primeira: fica no
+    // lado oposto da área, o mais longe que couber, para descer de um lado da
+    // ilha e voltar pelo outro. É o que dá sentido ao par de bocas.
+    const farMouth = (first) => {
+      const vx = first.x - h.center.x;
+      const vy = first.y - h.center.y;
+      const len = Math.hypot(vx, vy) || 1;
+      const areaDaIlha = areaAtTile(Math.round(first.x), Math.round(first.y)) || null;
+      let best = null;
+      let bestDist = 0;
+      for (let r = 5; r <= 15; r++) {
+        for (let dy = -r; dy <= r; dy++) {
+          for (let dx = -r; dx <= r; dx++) {
+            if (Math.max(Math.abs(dx), Math.abs(dy)) !== r) continue;
+            // só o lado oposto ao da entrada
+            if ((dx * vx + dy * vy) / (len * (Math.hypot(dx, dy) || 1)) > -0.2) continue;
+            const cx = Math.round(h.center.x + dx);
+            const cy = Math.round(h.center.y + dy);
+            if (areaDaIlha && areaAtTile(cx, cy) !== areaDaIlha) continue;
+            if (!okSpot(cx, cy)) continue;
+            const d = Math.hypot(cx - first.x, cy - first.y);
+            if (d > bestDist) {
+              bestDist = d;
+              best = { x: cx, y: cy };
+            }
+          }
+        }
+      }
+      return best;
+    };
     const first = pick(4, 9, 3.2) || { x: h.center.x + 3, y: h.center.y + 3 };
-    const second = pick(8, 14, 7.5, first) || { x: first.x + 7, y: first.y };
+    const second = farMouth(first) || pick(8, 14, 7.5, first) || { x: first.x + 7, y: first.y };
     const pair = [
       { mouth: "entrance", spot: first, name: base },
       { mouth: "far", spot: second, name: `${base} · outra boca` },
@@ -686,6 +720,9 @@ export function createWorld() {
         y: p.spot.y,
         accent: h.accent,
         groundId: h.id,
+        // a paleta da fachada sai da área onde a boca realmente está: a boca
+        // que caiu na divisa não herda a cor da área vizinha por engano
+        areaId: areaAtTile(Math.round(p.spot.x), Math.round(p.spot.y))?.id || h.id,
         // onde o corpo reaparece quando sobe de volta
         exit: { x: p.spot.x, y: p.spot.y + 1.5 },
       });

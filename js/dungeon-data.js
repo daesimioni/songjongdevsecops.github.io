@@ -1,10 +1,6 @@
-// As cavernas: um mapa subterrâneo por continente, com salas temáticas,
-// túneis que se cruzam, cidade no fundo e monstros que sobem de nível conforme
-// a gente se afasta da entrada.
-//
-// ponytail: uma planta só serve às seis cavernas, variando tema, paleta,
-// bichos e chefe. Planta própria por continente quando o mapa começar a
-// parecer repetido.
+// As cavernas: cada área tem a sua descida, semeada pelo id do lugar, com o
+// chefe, a fauna, a pedra e a paleta daquele ponto do vale. As sete capitais
+// (uma por disciplina) são as cidades do fundo, alcançadas pela conurbação.
 
 import { CATALOG_CONTENT } from "./catalog-gen.js";
 import { AREA_ITEMS, BIOMES, FAUNA } from "./identity.js";
@@ -599,25 +595,27 @@ const COMMON = {
 Object.assign(COMMON, CATALOG_CONTENT.dungeons);
 
 export const DUNGEONS = Object.entries(COMMON).map(([key, d]) => {
-  // metade das cavernas espelha as salas laterais: mesmo desenho de túneis,
-  // geografia diferente, sem duplicar a planta inteira.
-  const mirror = d.mirror ?? ["math", "music", "ai"].includes(key);
   const continent = d.continent || key;
+  // a planta vem do id da caverna: mesma regra de progressão, desenho diferente
+  const planta = plantaDaCaverna(key);
+  const nomes = d.rooms || [];
+  const rooms = planta.rooms.map((room, i) => ({
+    ...room,
+    name: nomes[i]?.[0] || room.id,
+    theme: nomes[i]?.[1] || room.id,
+  }));
   return {
     id: `dungeon-${key}`,
     continent,
     ...d,
-    rooms: DUNGEON_LAYOUT.rooms.map((room, i) => {
-      const [dx, dy] = d.shift?.[room.id] || [0, 0];
-      const x = room.x + dx;
-      return {
-        ...room,
-        x: mirror ? DUNGEON_LAYOUT.width - x - room.w : x,
-        y: room.y + dy,
-        name: d.rooms[i][0],
-        theme: d.rooms[i][1],
-      };
-    }),
+    rooms,
+    layout: {
+      width: planta.W,
+      height: planta.H,
+      rooms,
+      corridors: planta.corridors,
+      bossRoom: planta.bossRoom,
+    },
     tunnel: d.tunnel || "elbow",
   };
 });
@@ -792,7 +790,88 @@ export function dungeonCreatures(def) {
   return bichos;
 }
 
+// ------------------------------------------------- planta da caverna
+// As 93 cavernas já têm nome, tema, bichos, chefe e paleta próprios. O que
+// faltava era o desenho do mapa: todas usavam a mesma planta de dez salas com
+// pequenos deslocamentos. Agora a planta é semeada pelo id da caverna, então
+// cada uma tem salas em lugares diferentes, com a mesma regra de progressão:
+// perto da entrada o bicho é fraco, no fundo fica o chefe.
+function sementeDe(texto) {
+  let h = 2166136261;
+  for (let i = 0; i < texto.length; i++) {
+    h ^= texto.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+
+function sorteador(semente) {
+  let a = semente >>> 0;
+  return () => {
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function plantaDaCaverna(chave) {
+  const rnd = sorteador(sementeDe(chave));
+  const W = 64;
+  const H = 48;
+  const centro = (r) => ({ x: r.x + Math.floor(r.w / 2), y: r.y + Math.floor(r.h / 2) });
+
+  // entrada embaixo, em posição e largura sorteadas
+  const entW = 10 + Math.floor(rnd() * 3);
+  const entX = Math.max(2, Math.min(W - entW - 2, Math.round(W / 2 - entW / 2 + (rnd() * 12 - 6))));
+  const entrada = { id: "entrada", kind: "entrance", x: entX, y: 38 + Math.floor(rnd() * 2), w: entW, h: 6, tier: 0 };
+
+  // a cidade do fundo, no alto
+  const cidW = 16 + Math.floor(rnd() * 5);
+  const cidX = Math.max(2, Math.min(W - cidW - 2, Math.round(W / 2 - cidW / 2 + (rnd() * 8 - 4))));
+  const cidade = { id: "cidade", kind: "city", x: cidX, y: 2, w: cidW, h: 10, tier: 3 };
+
+  // seis salas em duas faixas de três colunas, tamanho e deslocamento sorteados
+  const colunas = [15, 28, 41];
+  const soltos = [];
+  for (let banda = 0; banda < 2; banda++) {
+    for (let c = 0; c < 3; c++) {
+      soltos.push({
+        x: colunas[c] + Math.floor(rnd() * 3),
+        y: (banda === 0 ? 13 : 26) + Math.floor(rnd() * 4),
+        w: 7 + Math.floor(rnd() * 4),
+        h: 5 + Math.floor(rnd() * 3),
+      });
+    }
+  }
+  // o id vem da profundidade: "a" é a sala mais perto da entrada, "f" o fundo.
+  // A tabela de tom por id mantém a progressão de dificuldade de antes.
+  const distancia = (r) => Math.hypot(centro(r).x - centro(entrada).x, centro(r).y - centro(entrada).y);
+  const ordem = [...soltos].sort((x, y) => distancia(x) - distancia(y));
+  const TOM = { a: 1, b: 1, c: 2, d: 2, e: 3, f: 3 };
+  const salas = ordem.map((s, i) => {
+    const id = "abcdef"[i];
+    return { id, x: s.x, y: s.y, w: s.w, h: s.h, tier: TOM[id] };
+  });
+
+  // braços laterais: um curto e barato, outro fundo e caro
+  const g = { id: "g", x: 2, y: 20 + Math.floor(rnd() * 5), w: 8, h: 6, tier: 2 };
+  const h = { id: "h", x: 54, y: 20 + Math.floor(rnd() * 5), w: 8, h: 6, tier: 3 };
+
+  const rooms = [entrada, ...salas, cidade, g, h];
+  const corridors = [
+    ["entrada", "a"],
+    ["a", "b"], ["b", "c"], ["c", "d"], ["d", "e"], ["e", "f"],
+    ["f", "cidade"],
+    ["b", "e"],
+    ["a", "g"], ["c", "g"],
+    ["e", "h"], ["f", "h"],
+  ];
+  return { W, H, rooms, corridors, bossRoom: "f" };
+}
+
 export function dungeonById(id) {
+  if (!id) return null;
   return DUNGEONS.find((d) => d.id === id) || (id === CONURBATION.id ? CONURBATION : null);
 }
 
