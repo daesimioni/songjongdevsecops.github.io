@@ -563,8 +563,8 @@ check(GROUNDS.length === 93, `caçadas: ${GROUNDS.length}, esperado 93`);
 check(SITES.length === totalEstacoes, `catações: ${SITES.length}, esperado ${totalEstacoes}`);
 check(QUESTS.length === 284, `missões: ${QUESTS.length}, esperado 284`);
 check(WAYSTONES.length === 94, `faróis: ${WAYSTONES.length}, esperado 94`);
-// 826 do banco mais as 7 perguntas do fundo que o módulo do duelo injeta
-check(totalQuestions === 1603, `perguntas: ${totalQuestions}, esperado 1603`);
+// as 770 perguntas de posição no catálogo saíram; sobrou conceito das áreas
+check(totalQuestions === 887, `perguntas: ${totalQuestions}, esperado 887`);
 // cada área nova tem uma pergunta própria em cada dificuldade
 let semPergunta = [];
 for (const item of CATALOG) {

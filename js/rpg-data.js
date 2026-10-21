@@ -3,6 +3,8 @@
 // objetivo é ensinar, não só vencer.
 
 import { CATALOG_CONTENT } from "./catalog-gen.js";
+import { PERGUNTAS_LEGADO } from "./text/perguntas-legado.js";
+import { CATALOG, DISCIPLINES } from "./catalog.js";
 import { AREA_ITEMS, BIOMES, FAUNA } from "./identity.js";
 import { LEGACY_CONTENT } from "./config.js";
 
@@ -2055,6 +2057,20 @@ export const EXTRA_QUESTIONS_18 = {
 
 for (const [continent, tiers] of Object.entries(EXTRA_QUESTIONS_18)) {
   for (const [tier, list] of Object.entries(tiers)) QUESTIONS[continent][tier].push(...list);
+}
+
+// as áreas antigas ganham pergunta de conceito própria: antes elas só tinham
+// pergunta de posição no catálogo, que saiu
+const CONTINENTE_DA_AREA = {};
+for (const item of CATALOG) {
+  if (item.existing) CONTINENTE_DA_AREA[item.existing] = DISCIPLINES[item.discipline]?.continent || "math";
+}
+for (const [areaId, lista] of Object.entries(PERGUNTAS_LEGADO)) {
+  const continente = CONTINENTE_DA_AREA[areaId] || "math";
+  lista.forEach((pergunta, i) => {
+    const bucket = QUESTIONS[continente]?.[i + 1];
+    if (bucket) bucket.push({ q: pergunta.q, options: pergunta.o, a: pergunta.a, why: pergunta.why, area: areaId });
+  });
 }
 
 // perguntas do catálogo: uma por tópico de estação, na dificuldade do tópico

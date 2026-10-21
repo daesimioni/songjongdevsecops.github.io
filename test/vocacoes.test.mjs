@@ -126,6 +126,8 @@ function dueloDe(vocation, sub) {
   r.setVocation(vocation);
   if (sub) r.setSub(sub);
   r.startTraining("math", 2);
+  // slime não desvia: o teste mede dano de subcategoria, não sorte de esquiva
+  r.duel.monster.kind = "slime";
   return r;
 }
 const sombra = dueloDe("assassino", "sombra");

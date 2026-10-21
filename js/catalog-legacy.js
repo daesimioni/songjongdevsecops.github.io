@@ -4,12 +4,43 @@
 
 import { CATALOG, DISCIPLINES } from "./catalog.js";
 import { SECTION_TOPICS } from "./catalog-topics.js";
-import { ICONS, articleOf, labFor, subareaBody, subareaQuiz, titleCase, topicLabel, trilhaQuiz, trilhas } from "./catalog-text.js";
+import { ICONS, articleOf, labFor, subareaBody, titleCase, topicLabel, trilhas } from "./catalog-text.js";
 import { placeStations } from "./catalog-place.js";
 import { SECAO_TEXT } from "./text/secoes.js";
 
 const dentroDoRetangulo = (rect, p) =>
   p.x >= rect.x - 1 && p.x <= rect.x + rect.w + 1 && p.y >= rect.y - 1 && p.y <= rect.y + rect.h + 1;
+
+// Pergunta de seção: a página mostra a prática e a armadilha do caminho, e a
+// pergunta cobra exatamente esse texto. As alternativas vêm de outras seções,
+// então dá para conferir lendo a página.
+const SECAO_KEYS = Object.keys(SECAO_TEXT);
+function quizDeSecao(num, secaoNome, pagina, campo, salt) {
+  const texto = SECAO_TEXT[num];
+  if (!texto?.[campo]) return null;
+  const certa = texto[campo];
+  // distratores do mesmo tamanho: alternativa curta ao lado de uma longa
+  // entrega a resposta pelo tamanho
+  const outras = SECAO_KEYS
+    .filter((k) => k !== String(num) && SECAO_TEXT[k][campo])
+    .map((k) => SECAO_TEXT[k][campo])
+    .sort((a, b) => Math.abs(a.length - certa.length) - Math.abs(b.length - certa.length));
+  const opcoes = [certa];
+  for (const alt of outras) {
+    if (opcoes.length >= 4) break;
+    if (!opcoes.includes(alt)) opcoes.push(alt);
+  }
+  if (opcoes.length < 4) return null;
+  const pos = (salt * 7) % opcoes.length;
+  [opcoes[0], opcoes[pos]] = [opcoes[pos], opcoes[0]];
+  const pratica = campo === "pratica";
+  return {
+    q: `${pratica ? "Prática" : "Armadilha"} em ${pagina} (${secaoNome}): segundo a página, qual é a ${pratica ? "prática recomendada" : "armadilha apontada"}?`,
+    options: opcoes,
+    a: opcoes.indexOf(certa),
+    why: `A página ${pratica ? "recomenda" : "aponta"}: ${certa}`,
+  };
+}
 
 export function buildLegacyContent({ areas, sites, waystones, npcSpawns }) {
   const posts = {};
@@ -33,6 +64,7 @@ export function buildLegacyContent({ areas, sites, waystones, npcSpawns }) {
 
     const lista = [];
     let gruposTrilha = null;
+    let tierDaArea = 0;
     if (secao.subareas?.length) {
       const posicoes = placeStations(area.land, secao.subareas.length, reservados);
       secao.subareas.forEach(([nome, topicos], i) => lista.push({
@@ -65,7 +97,7 @@ export function buildLegacyContent({ areas, sites, waystones, npcSpawns }) {
         catalog: true,
         legacy: true,
       });
-      const trilhaTexto = item.trilha ? SECAO_TEXT[secaoArea.num] : null;
+      const trilhaTexto = SECAO_TEXT[secaoArea.num];
       const corpo = item.trilha
         ? `${trilhaTexto ? `<p>${trilhaTexto.abre}</p>` : ""}<p><strong>Trilha ${i + 1} de ${lista.length}.</strong> Esta parte da seção <strong>${secao.name}</strong> reúne os tópicos abaixo.</p><ul>${item.topicos.map((t) => `<li>${t}</li>`).join("")}</ul>${trilhaTexto ? `<p><strong>Prática:</strong> ${trilhaTexto.pratica}</p><p><strong>Erro comum:</strong> ${trilhaTexto.erro}</p>` : ""}`
         : subareaBody({
@@ -76,7 +108,7 @@ export function buildLegacyContent({ areas, sites, waystones, npcSpawns }) {
             topics: item.topicos,
             siblings: lista.map((x) => x.nome),
             catalogId: secaoArea.id,
-          });
+          }) + (trilhaTexto ? `<p><strong>Com as mãos.</strong> ${trilhaTexto.pratica}</p><p><strong>O passo em falso.</strong> ${trilhaTexto.erro}</p>` : "");
       posts[id] = {
         kicker: `${discipline.name.toLowerCase()} · ${noun.toLowerCase()}`,
         title: nome,
@@ -87,19 +119,11 @@ export function buildLegacyContent({ areas, sites, waystones, npcSpawns }) {
         lab: labFor(`${item.nome} ${item.topicos.join(" ")}`, secaoArea.discipline, i),
         body: corpo,
       };
-      if (item.trilha) {
-        const quizzes = trilhaQuiz({ sectionName: secao.name, groups: gruposTrilha || [], index: i, salt: i * 5 + 1 });
-        for (const q of quizzes) questions.push({ continent: area.continent, area: area.id, tier: (i % 3) + 1, q });
-      } else {
-        const quizzes = subareaQuiz({
-          sectionNum: secaoArea.num,
-          sectionName: secao.name,
-          discipline: secaoArea.discipline,
-          subarea: { name: item.nome, topics: item.topicos },
-          siblings: lista.map((x) => x.nome),
-          salt: i * 5 + 3,
-        });
-        for (const q of quizzes) questions.push({ continent: area.continent, area: area.id, tier: (i % 3) + 1, q });
+      // a página de seção cobra a prática e a armadilha que ela mesma mostra
+      for (const [campo, salto] of [["pratica", i * 3 + 1], ["erro", i * 5 + 2]]) {
+        const q = quizDeSecao(secaoArea.num, secao.name, nome, campo, salto);
+        if (!q) continue;
+        questions.push({ continent: area.continent, area: area.id, tier: (tierDaArea++) % 3 + 1, q });
       }
     });
   }

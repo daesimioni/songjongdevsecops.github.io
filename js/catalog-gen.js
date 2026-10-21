@@ -6,7 +6,7 @@ import { CATALOG, DISCIPLINES } from "./catalog.js";
 import { CATALOG_AREAS } from "./catalog-layout.js";
 import { BANK } from "./catalog-bank.js";
 import { SECTION_TOPICS } from "./catalog-topics.js";
-import { ICONS, articleOf, epigrafe, labFor, subareaBody, subareaQuiz, titleCase, trilhaQuiz, trilhas } from "./catalog-text.js";
+import { ICONS, articleOf, epigrafe, labFor, subareaBody, titleCase, trilhas } from "./catalog-text.js";
 import { placeStations } from "./catalog-place.js";
 import { AREA_ITEMS, BIOMES, FAUNA, dungeonIdentity } from "./identity.js";
 import { INTER_TEXT } from "./text/inter.js";
@@ -251,20 +251,9 @@ export function buildCatalogContent() {
           : labFor(`${item.nome} ${item.topicos.join(" ")}`, spot.discipline, i),
         body: corpo,
       };
-      if (item.bankTopic) {
-        const quizzes = trilhaQuiz({ sectionName: secao.name, groups: gruposTrilha || [], index: i, salt: order * 11 + i });
-        for (const q of quizzes) questions.push({ continent, area: area.id, tier: (i % 3) + 1, q });
-      } else {
-        const quizzes = subareaQuiz({
-          sectionNum: area.num,
-          sectionName: secao.name,
-          discipline: spot.discipline,
-          subarea: { name: item.nome, topics: item.topicos },
-          siblings: lista.map((x) => x.nome),
-          salt: order * 7 + i,
-        });
-        for (const q of quizzes) questions.push({ continent, area: area.id, tier: (i % 3) + 1, q });
-      }
+      // Pergunta de "em qual parte do catálogo isto aparece" não ensina o
+      // assunto: saiu. A página responde pelo texto e pelas três perguntas do
+      // banco da área, que são conceito de verdade.
     });
 
     // as três perguntas do banco continuam no baralho da área, mesmo quando as
