@@ -4653,6 +4653,193 @@ export const LICOES = {
       },
     },
   },
+  "cs-ia": {
+    "Fundamentos de IA": {
+      contexto:
+        "Onde isso aparece: no planejador de rota, no jogo e no assistente. A IA clássica representa conhecimento e busca solução. A heurística guia a busca e troca garantia por velocidade.",
+      oQue:
+        "Fundamentos de IA tratam representação de conhecimento, raciocínio, busca e planejamento. A busca explora estado até o objetivo, e a heurística estima a distância para guiar a exploração. O planejamento encadeia ação para atingir meta, e a representação decide o que o sistema consegue raciocinar.",
+      passos: [
+        "Modele o estado e a ação disponível.",
+        "Escolha a busca: cega ou guiada por heurística.",
+        "Verifique se o plano é válido no modelo.",
+      ],
+      exemplo:
+        "No mapa, a busca em largura acha o caminho mais curto e explora muita rua. A busca A estrela usa a distância em linha reta como heurística e chega ao destino com menos exploração. A heurística não garante sozinha, mas guia bem quando é admissível.",
+      quebra:
+        "Usar heurística que superestima a distância e alegar caminho ótimo. A busca pode descartar o caminho melhor, e o resultado fica pior que o prometido. A heurística precisa ser admissível para a garantia. Já o planejamento para vários passo troca a busca no espaço de estado por busca no espaço de plano, e o custo de ramificação muda. A representação enxuta é o que torna o planejamento viável em espaço de estado grande.",
+      limite:
+        "A abordagem clássica exige modelo explícito. Em ambiente que ninguém modelou, o aprendizado entra, e a garantia de ótimo desaparece.",
+      levar: "Busca explora; heurística guia; garantia depende da hipótese.",
+      maos:
+        "Resolva o mesmo labirinto com busca cega e com heurística e conte os nós visitados.",
+      pergunta: {
+        q: "O que a busca heurística faz?",
+        a: "Guia a exploração com uma estimativa, sem garantir o ótimo por si",
+        why: "A heurística ordena os nós pela estimativa de distância e reduz a exploração; a garantia de caminho ótimo depende de a heurística ser admissível.",
+      },
+    },
+    "Aprendizado de Máquina": {
+      contexto:
+        "Onde isso aparece: no filtro de spam, na recomendação e no crédito. O modelo aprende padrão a partir de exemplo. Separar treino e teste é o que mede generalização.",
+      oQue:
+        "Aprendizado de máquina ajusta modelo a partir de dado. O supervisionado usa rótulo, o não supervisionado busca estrutura, e o reforço aprende por recompensa. Separar treino e teste mede generalização em dado não visto, e a validação escolhe hiperparâmetro.",
+      passos: [
+        "Separe treino, validação e teste antes de treinar.",
+        "Ajuste o modelo no treino e escolha na validação.",
+        "Reporte o resultado no teste, uma vez.",
+      ],
+      exemplo:
+        "Modelo que acerta 99% no treino e 60% no teste decorou o dado. A diferença entre os dois números é o sinal de sobreajuste. A separação feita antes do treino é o que impede a contaminação.",
+      quebra:
+        "Testar no mesmo dado do treino. O resultado parece ótimo e não representa o uso. A separação precisa acontecer antes de qualquer ajuste. Vazamento de dado entre treino e teste é o erro que infla o número e não aparece no código. O teste cego, feito por quem não participou do ajuste, é o que dá confiança.",
+      limite:
+        "O teste mede o passado parecido com o treino. Quando a distribuição muda, o desempenho cai, e a monitoração em produção é parte do sistema.",
+      levar: "O teste é o juiz; o treino é o estudo.",
+      maos:
+        "Separe os dados, treine e compare o acerto no treino e no teste.",
+    },
+    "Aprendizado Profundo": {
+      contexto:
+        "Onde isso aparece: no tradutor, no reconhecedor de imagem e no gerador de texto. A rede empilha camada e aprende representação. A atenção pondera a relação entre posição da sequência.",
+      oQue:
+        "Aprendizado profundo usa rede neural com muitas camada. A convolucional explora vizinhança na imagem, a recorrente trata sequência, e o transformer usa atenção para ponderar a relação entre posições. O modelo generativo aprende a distribuição do dado.",
+      passos: [
+        "Escolha a arquitetura pela estrutura do dado.",
+        "Treine com dado representativo e validação.",
+        "Avalie com métrica ligada ao uso.",
+      ],
+      exemplo:
+        "Na tradução, a atenção permite que a palavra certa do original pese mais na hora de gerar cada palavra. Sem atenção, a informação distante se perde no caminho. A arquitetura resolve o alcance da dependência.",
+      quebra:
+        "Escolher arquitetura pela moda e não pela estrutura do dado. Imagem pede vizinhança, sequência pede ordem, e a escolha errada custa dado e tempo. A profundidade da rede pesa no custo e no dado necessário, e o modelo menor costuma bastar quando o dado é pouco. A regularização e o aumento de dado são a defesa contra decorar, e a validação cruzada ajuda a escolher o ponto de parada.",
+      limite:
+        "Rede profunda exige dado e poder de computação. Em dado pequeno, modelo simples pode vencer, e a escolha se mede no teste.",
+      levar: "A arquitetura segue a estrutura do dado.",
+      maos:
+        "Compare uma rede simples e uma convolucional numa tarefa de imagem pequena.",
+    },
+    "Modelos de Linguagem e IA Generativa": {
+      contexto:
+        "Onde isso aparece: no assistente, na busca e no gerador de código. O texto vira token, e o modelo aprende distribuição de sequência. O embedding representa sentido por vetor.",
+      oQue:
+        "Modelo de linguagem trata texto como sequência de token e aprende a distribuir probabilidade. A tokenização divide o texto em unidade que o modelo processa, e o embedding dá vetor com sentido. O ajuste fino especializa o modelo para tarefa, e o grande modelo generaliza com contexto longo.",
+      passos: [
+        "Tokenize o texto com o vocabulário do modelo.",
+        "Escolha entre uso direto e ajuste fino.",
+        "Avalie a saída na tarefa real, não só na perplexidade.",
+      ],
+      exemplo:
+        "Texto dividido em pedaço de palavra reduz vocabulário e cobre palavra nova. O embedding aproxima palavra de sentido parecido, e a busca por vetor acha relação que a palavra exata não acha. A representação é a base de tudo. O tamanho do contexto limita o que o modelo consegue relacionar, e a escolha entre modelo local e serviço muda custo e privacidade. O ajuste fino precisa de dado rotulado da tarefa, e o dado escasso limita o ganho.",
+      quebra:
+        "Avaliar modelo só por perplexidade. O número mede previsão de texto, não utilidade na tarefa, e a diferença aparece no uso real.",
+      limite:
+        "O modelo aprende o que os dados mostram, inclusive o viés, e não tem noção de verdade. A saída precisa de verificação quando o assunto importa.",
+      levar: "Token é a unidade, embedding é o sentido, contexto é o alcance.",
+      maos:
+        "Compare a busca por palavra exata e por vetor no mesmo conjunto de frase.",
+      pergunta: {
+        q: "O que a tokenização faz?",
+        a: "Divide o texto em unidade que o modelo consegue processar",
+        why: "O token é a unidade de entrada do modelo; a escolha do vocabulário afeta custo, cobertura e como palavra nova é representada.",
+      },
+    },
+    "Visão Computacional": {
+      contexto:
+        "Onde isso aparece: na câmera de segurança, no carro e no laudo de exame. A imagem vira tensor, e a rede extrai padrão. Detectar é achar o objeto e onde ele está.",
+      oQue:
+        "Visão computacional processa imagem, detecta objeto, segmenta e reconhece padrão. A detecção entrega classe e caixa que localiza o objeto, e a segmentação separa pixel por classe. A reconstrução tridimensional monta estrutura a partir de várias vista.",
+      passos: [
+        "Normalize a imagem e a iluminação.",
+        "Escolha a tarefa: classificar, detectar ou segmentar.",
+        "Avalie com métrica de localização, além da classe.",
+      ],
+      exemplo:
+        "Classificar diz que há carro na cena; detectar diz que há carro e onde. A caixa é a diferença, e o uso de trânsito precisa da localização. A métrica tem de cobrir a posição, não só a classe.",
+      quebra:
+        "Avaliar detecção só pela classe. A caixa pode estar errada e o modelo continuar parecendo bom. A métrica de interseção entra para medir a localização.",
+      limite:
+        "O modelo treinado num ambiente não se garante em outro. Luz, ângulo e clima mudam a imagem, e o teste precisa cobrir a condição de uso. O sensor de câmera e a compressão também alteram a imagem, e a avaliação precisa incluir o caminho real de captura. A detecção também precisa de limiar escolhido com o custo do erro em mente: falso positivo e falso negativo custam diferente, e o limiar traduz essa decisão em número operável no sistema em produção.",
+      levar: "Classificar é dizer o quê; detectar é dizer onde.",
+      maos:
+        "Anote classe e caixa de três objetos numa imagem e compare com a previsão.",
+      pergunta: {
+        q: "O que a detecção de objeto entrega além da classe?",
+        a: "A caixa que localiza o objeto na imagem",
+        why: "A detecção responde o quê e onde; a caixa é a coordenada do objeto, e a métrica precisa medir a sobreposição para avaliar a localização.",
+      },
+    },
+    "Áudio e Fala": {
+      contexto:
+        "Onde isso aparece: no ditado, na legenda automática e no assistente de voz. O som vira espectro e depois texto. A fala tem ruído, sotaque e pausa, e o modelo precisa lidar com isso.",
+      oQue:
+        "Áudio e fala cobrem reconhecimento de fala, síntese de voz, processamento de áudio e separação de fonte. O reconhecimento converte áudio em texto, e a síntese faz o contrário. O espectrograma é a representação que a rede processa.",
+      passos: [
+        "Converta o áudio em representação de frequência.",
+        "Ajuste o modelo ao ruído e ao sotaque do uso.",
+        "Meça a taxa de erro por palavra e por tipo de fala.",
+      ],
+      exemplo:
+        "Um reconhecedor com 5% de erro em áudio limpo pode passar de 30% com ruído de rua. O número médio esconde o caso real, e a avaliação precisa separar condição. A taxa por cenário orienta a melhoria.",
+      quebra:
+        "Avaliar só com áudio de estúdio. O uso é no carro e na rua, e o desempenho despenca sem que o teste mostre. A condição real entra na avaliação.",
+      limite:
+        "A transcrição não é entendimento. O modelo pode transcrever bem e falhar em interpretar a intenção, e a tarefa seguinte precisa de outro componente. A separação de fonte ajuda quando há duas pessoa falando, e o modelo de fala treinado em uma voz sofre na outra. A latência do reconhecimento entra na experiência de quem usa o assistente.",
+      levar: "Fala é áudio com estrutura; ruído é parte do problema.",
+      maos:
+        "Compare a transcrição de um áudio limpo e do mesmo áudio com ruído.",
+      pergunta: {
+        q: "O que o reconhecimento automático de fala converte?",
+        a: "O áudio em texto",
+        why: "O modelo mapeia a representação acústica para sequência de palavra; a taxa de erro depende da condição de gravação, do sotaque e do vocabulário.",
+      },
+    },
+    "Planejamento e Sistemas Autônomos": {
+      contexto:
+        "Onde isso aparece: no robô, no carro e no agente de software. O sistema decide ação em sequência e recebe recompensa. O plano pode ser calculado ou aprendido.",
+      oQue:
+        "Planejamento e sistema autônomo combinam busca de plano, aprendizado por reforço e decisão sequencial. O reforço otimiza a recompensa acumulada ao longo da ação, e não a recompensa imediata. O agente multiagente precisa considerar a ação do outro. O planejamento tolerante a falha replaneja quando o ambiente muda, e a política precisa de verificação contínua. O simulador permite repetir milhão de episódio sem risco, e é por isso que o treino começa nele. O agente também precisa saber quando não sabe e pedir ajuda, e essa política é parte do desenho, com sinal de confiança calibrado, limite de atuação e registro para auditoria.",
+      passos: [
+        "Defina estado, ação e recompensa.",
+        "Escolha entre planejamento e aprendizado por reforço.",
+        "Avalie em ambiente com variação, não só no cenário fixo.",
+      ],
+      exemplo:
+        "Recompensa que premia só velocidade ensina o agente a correr e bater. A recompensa precisa incluir segurança e conforto, senão o comportamento aprendido é indesejado. O desenho da recompensa é a parte difícil.",
+      quebra:
+        "Desenhar recompensa que premia atalho indesejado. O agente aprende exatamente o que foi premiado, e o efeito colateral aparece na implantação. A recompensa precisa cobrir o que não se quer.",
+      limite:
+        "A simulação nunca cobre o mundo inteiro. O agente treinado no simulador pode falhar no real, e a transferência precisa de teste e de margem de segurança.",
+      levar: "O agente aprende a recompensa que você deu, não a que você quis.",
+      maos:
+        "Desenhe a recompensa de um agente simples e liste o atalho que ela poderia premiar.",
+      pergunta: {
+        q: "O que o aprendizado por reforço otimiza?",
+        a: "A recompensa acumulada ao longo da ação",
+        why: "O agente escolhe ação para maximizar retorno futuro, e o desenho da recompensa define o comportamento; recompensa estreita ensina atalho indesejado.",
+      },
+    },
+    "IA Confiável": {
+      contexto:
+        "Onde isso aparece: no crédito, no diagnóstico e no filtro de currículo. O modelo pode reproduzir desigualdade do dado. Confiabilidade pede explicação, robustez e privacidade.",
+      oQue:
+        "IA confiável cobre explicabilidade, interpretabilidade, robustez, fairness e privacidade. Medir viés é necessário porque o modelo reproduz desigualdade dos dados, e a explicação ajuda quem decide. Robustez testa o comportamento fora da faixa do treino.",
+      passos: [
+        "Defina a métrica de erro por grupo relevante.",
+        "Teste o modelo em subgrupo e em entrada adversária.",
+        "Documente o limite e o uso previsto.",
+      ],
+      exemplo:
+        "Modelo de crédito com acerto médio alto pode errar muito mais num grupo, e a média esconde. A métrica por grupo revela a diferença. Sem essa quebra, a decisão automatizada vira desigualdade com aparência de número.",
+      quebra:
+        "Avaliar só a métrica média. O desempenho ruim num grupo pequeno desaparece no número geral. A avaliação por subgrupo é o mínimo para fairness.",
+      limite:
+        "Explicação de modelo complexo é aproximação. O mapa de atribuição ajuda e não prova causalidade, e a decisão de alto risco precisa de revisão humana. A privacidade entra no mesmo pacote: o modelo treinado com dado pessoal exposto repete o dado, e a minimização na coleta é a primeira defesa. A robustez, por fim, se testa com entrada adversária, não só com dado limpo.",
+      levar: "Média alta não é confiabilidade: o grupo importa.",
+      maos:
+        "Quebre a métrica de acerto por grupo e compare com a média.",
+    },
+  },
 };
 
 // o nome da estação chega em caixa baixa do banco ("Grafos moleculares") e em
