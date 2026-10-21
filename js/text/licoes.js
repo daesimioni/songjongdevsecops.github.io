@@ -277,6 +277,174 @@ export const LICOES = {
         "Compare o raio do horizonte para 1, 10 e 100 massas solares e veja como ele cresce com a massa.",
     },
   },
+  "physics-eletronica": {
+    "Semicondutores": {
+      contexto:
+        "Onde isso aparece: no diodo da fonte, no transistor do celular e no painel solar. A mesma junção que retifica corrente também converte luz em tensão, e o projeto muda pela dopagem e pela geometria, não pela troca do material. Quem entende a banda e o portador entende os três usos de uma vez, e reconhece o limite de cada um.",
+      oQue:
+        "Semicondutor é o material que fica no meio do caminho: conduz pouco quando puro e passa a conduzir bem quando recebe impureza controlada ou energia. A banda proibida do silício é pequena, então o elétron salta com pouco empurrão. Dopagem é a escolha do tipo de portador: elétron sobrando ou buraco sobrando, e é isso que dá ao componente o comportamento de diodo ou de transistor.",
+      passos: [
+        "Escolha o material e olhe a largura da banda proibida.",
+        "Decida o tipo de dopante para o portador que você quer.",
+        "Meça a condutividade em função da temperatura e da dopagem.",
+      ],
+      exemplo:
+        "Silício puro tem cerca de dez bilhões de portadores por centímetro cúbico à temperatura ambiente, o que dá condução fraca. Dopar com fósforo, que tem um elétron a mais, sobe a contagem para cerca de dez quatrilhões e o material vira tipo n. Dopar com boro cria lacunas e vira tipo p. A mesma base, dois comportamentos, e o controle é a concentração do dopante.",
+      quebra:
+        "Tratar semicondutor como condutor comum. A condução depende de dopagem e de temperatura; aquecer aumenta a condutividade, ao contrário do metal, cuja resistência sobe. Confundir os dois leva a circuito que não funciona na temperatura real, e o erro só aparece no protótipo.",
+      levar: "Semicondutor não é condutor pela metade: é condutor que se controla.",
+      maos:
+        "Compare a curva de condutividade contra temperatura de um metal e de um semicondutor.",
+    },
+    "Junções e Transistores": {
+      contexto:
+        "Onde isso aparece: em todo amplificador de áudio, no regulador de tensão e na chave que liga a tela. A diferença entre amplificar e chavear está na polarização, e o mesmo componente serve aos dois usos. Reconhecer a região de operação é o que separa o circuito que funciona do que aquece e queima.",
+      oQue:
+        "A junção p-n junta os dois tipos de semicondutor e cria uma porta de mão única: conduz num sentido e bloqueia no outro. O transistor põe duas junções juntas e usa essa porta para controlar corrente grande com sinal pequeno. Ele não cria energia; ele abre e fecha a passagem de uma fonte que já existe, e é por isso que o ganho vem acompanhado de fonte.",
+      passos: [
+        "Identifique as regiões p e n e a polarização aplicada.",
+        "Ache o terminal de controle do transistor.",
+        "Veja se ele está em corte, em saturação ou na região ativa.",
+      ],
+      exemplo:
+        "Num transistor de junção, uma corrente de base de 1 mA pode controlar 100 mA de coletor, com ganho de 100. O sinal pequeno da base não vira potência: ele libera a corrente que a fonte de alimentação entrega. Se a fonte não tiver corrente suficiente, o ganho não aparece e o circuito distorce o sinal.",
+      quebra:
+        "Achar que o transistor amplifica energia. Energia não nasce no componente; o que ele faz é controlar um suprimento externo. Projetar amplificador sem dimensionar a fonte é o erro que queima o transistor ou entrega som cortado.",
+      levar: "Transistor é torneira: a água vem da fonte, a mão só abre.",
+      maos:
+        "Varie a corrente de base e meça a de coletor; veja onde o ganho deixa de ser linear.",
+    },
+    "Supercondutividade": {
+      contexto:
+        "Onde isso aparece: em ímãs de ressonância magnética, em trens de levitação e nos qubits de alguns computadores. O custo do resfriamento é o que decide se a aplicação fecha a conta, e é por isso que material de temperatura crítica alta vale tanto. O fenômeno é o mesmo; o que muda é o preço de manter o frio, e esse preço entra na decisão de engenharia.",
+      oQue:
+        "Abaixo de uma temperatura crítica, alguns materiais perdem a resistência por completo e expulsam campo magnético do interior. Não é resistência pequena: é zero, e a corrente pode rodar em circuito fechado por muito tempo sem fonte. O efeito Meissner é a outra metade do fenômeno, e ele não se explica só por resistência nula.",
+      passos: [
+        "Resfrie o material abaixo da temperatura crítica.",
+        "Confirme resistência nula e expulsão de campo magnético.",
+        "Verifique se o campo aplicado não destrói o estado supercondutor.",
+      ],
+      exemplo:
+        "O nióbio vira supercondutor perto de 9 K; o YBCO, perto de 92 K, o que permite resfriar com nitrogênio líquido em vez de hélio. Num ímã de ressonância, a corrente circula por anos sem fonte. Se o campo passar do limite crítico, o material volta ao estado normal na hora, e o ímã perde o campo.",
+      quebra:
+        "Esperar supercondutividade em temperatura ambiente nos materiais comuns. A maioria precisa de hélio ou nitrogênio líquido; prometer aplicação em temperatura ambiente sem material que sustente isso é o erro. O estado também tem limite de campo e de corrente.",
+      levar: "Abaixo da crítica, a resistência não é pequena: é zero, e o campo sai do interior.",
+      maos:
+        "Diminua a temperatura e veja o ponto em que a resistência cai de uma vez; anote a temperatura e o campo crítico.",
+    },
+  },
+  "chem-outras": {
+    "Fotoquímica": {
+      contexto:
+        "Onde isso aparece: na fotossíntese, na cura de resina por luz ultravioleta, no protetor solar e na degradação de tintas. O mesmo fóton que cura também envelhece, e o controle é a dose e o comprimento de onda. Quem projeta com luz precisa saber qual faixa a molécula absorve, não só quanta energia chega.",
+      oQue:
+        "Fotoquímica estuda reação disparada por luz. O fóton entrega energia e muda a estrutura eletrônica da molécula, que passa a reagir por caminhos que o calor não abre. Luz e calor não são sinônimos: a luz pode excitar um estado específico e escolher o produto, e a cor do que se aplica importa tanto quanto a quantidade.",
+      passos: [
+        "Veja se a molécula absorve o comprimento de onda disponível.",
+        "Relacione a energia do fóton com a transição que ela provoca.",
+        "Acompanhe o produto que se forma e a fotodegradação que sobra.",
+      ],
+      exemplo:
+        "A fotossíntese fixa carbono usando luz: o fóton excita a clorofila e a energia vira ligação química. A fotodegradação de um corante segue o mesmo princípio ao contrário: a luz quebra a molécula e a cor some. Em ambos, o comprimento de onda importa, e a reação só acontece se a molécula absorver aquela energia.",
+      quebra:
+        "Achar que calor e luz fazem sempre a mesma coisa. O calor distribui energia por muitos modos; o fóton pode excitar um estado específico e abrir caminho que o aquecimento não abre. Tratar os dois como equivalentes erra o produto e a velocidade.",
+      levar: "Luz não é calor: é energia com endereço.",
+      maos:
+        "Mude a cor da luz e veja se a reação acontece; só o comprimento absorvido deve funcionar.",
+    },
+    "Química Forense": {
+      contexto:
+        "Onde isso aparece: em resíduo de disparo, em droga apreendida, em tinta de atropelamento e em incêndio. Em todos, o vestígio é pequeno e a documentação é o que separa prova de opinião. A técnica mais sensível do mundo não salva a análise se o caminho da amostra não puder ser contado em voz alta.",
+      oQue:
+        "Química forense identifica substância em vestígio e reconstrói fato com método. O vestígio é pequeno, então a técnica precisa ser sensível, e o resultado só vale se a amostra não foi alterada desde a coleta. É por isso que a cadeia de custódia é parte da análise, e não burocracia que se resolve depois do laudo.",
+      passos: [
+        "Documente a coleta com local, hora e responsável.",
+        "Guarde a amostra de forma que ela não mude até a análise.",
+        "Use amostra de referência para comparar e registre cada passo do caminho.",
+      ],
+      exemplo:
+        "Um resíduo de pólvora na mão desaparece com lavagem. Se a coleta não for registrada e a amostra não for guardada em recipiente fechado, a defesa derruba o laudo: não há como provar que o material é o mesmo do local. A contraprova com amostra de referência é o que dá sentido ao número.",
+      quebra:
+        "Achar que resultado analítico vale sem documentação da coleta. O número pode estar certo e a prova ser inútil se a origem não se sustenta. Cadeia de custódia quebrada transforma análise correta em laudo descartado.",
+      levar: "Prova boa é a que se pode reconstruir do vestígio ao laudo.",
+      maos:
+        "Simule duas amostras, uma documentada e outra não, e veja qual sobrevive a uma pergunta sobre a origem.",
+    },
+    "Química Verde": {
+      contexto:
+        "Onde isso aparece: na troca de solvente clorado por água, no catalisador que reduz etapa e no reaproveitamento de subproduto. A métrica entra na planilha antes da compra do insumo, e é ela que sustenta a escolha diante da diretoria. Quem compara rotas pelo rendimento sozinho escolhe a que gera mais resíduo.",
+      oQue:
+        "Química verde projeta o processo para gerar menos resíduo desde o começo, e não para tratar o resíduo no fim. A escolha do solvente, do catalisador e da rota muda quanto do reagente vira produto e quanto vira descarte. Economia de átomos mede exatamente essa fração, antes de qualquer tratamento, com a estequiometria na mão.",
+      passos: [
+        "Calcule a massa de produto esperada sobre a massa de reagentes.",
+        "Troque solvente e catalisador por opções de menor risco.",
+        "Evite etapa que só serve para purificar o que não deveria ter sobrado.",
+      ],
+      exemplo:
+        "Numa reação com economia de átomos de 30%, 70% da massa dos reagentes vira resíduo por definição. Se a rota alternativa chega a 80%, o ganho aparece na conta de descarte e no custo, mesmo que o rendimento percentual seja parecido. A conta é feita antes de ligar o reator, e é ela que compara rotas.",
+      quebra:
+        "Chamar de verde todo processo que só troca o solvente e mantém o resto igual. Troca de solvente ajuda, mas não é projeto verde se a rota continua gerando o mesmo resíduo. Verde é métrica, não etiqueta.",
+      levar: "Resíduo que não nasce não precisa ser tratado.",
+      maos:
+        "Calcule a economia de átomos de duas rotas e compare com o rendimento que cada uma promete.",
+    },
+  },
+  "cs-emergente": {
+    "Computação Quântica": {
+      contexto:
+        "Onde isso aparece: na migração de RSA para criptografia pós-quântica, na simulação de molécula e em sensores. A parte prática hoje é a defesa, não o ataque, e a agenda de migração não espera o hardware maduro. Quem guarda segredo por vinte anos precisa decidir a criptografia antes disso, e a migração leva mais tempo do que se imagina.",
+      oQue:
+        "Computador quântico usa qubits e portas unitárias: o estado pode ser superposição de caminhos, e a medida devolve um resultado com probabilidade. Para alguns problemas isso vira atalho real, como fatorar número grande; para a maioria, não. A vantagem depende do algoritmo, não do hardware sozinho, e a correção de erro é parte da conta.",
+      passos: [
+        "Descreva o problema como circuito de portas.",
+        "Veja se existe atalho quântico conhecido para essa classe de problema.",
+        "Conte com correção de erro e com o número de qubits físicos necessários.",
+      ],
+      exemplo:
+        "O algoritmo de Shor fatora em tempo polinomial no número de qubits, e é isso que ameaça RSA. Um número de 2048 bits exigiria milhões de qubits físicos com correção de erro; o protótipo atual tem dezenas ou centenas. A ameaça é real no longo prazo, e a resposta prática é migrar a criptografia antes que ela chegue.",
+      quebra:
+        "Achar que computador quântico resolve qualquer problema mais rápido. Ele acelera classes específicas; para muitas tarefas, a máquina clássica continua melhor e mais barata. Prometer ganho universal é o erro de quem lê só o título.",
+      levar: "Quântico é atalho para alguns problemas, não para todos.",
+      maos:
+        "Compare o custo de fatorar um número por força bruta e pelo algoritmo de Shor em qubits.",
+    },
+    "Computação Neuromórfica": {
+      contexto:
+        "Onde isso aparece: em câmera de eventos, em prótese que lê sinal e em sensor de borda com bateria pequena. O ganho some quando o dado chega denso e contínuo, porque a economia vem da esparsidade. Comparar pela carga real, e não pelo anúncio do chip, é o que evita trocar GPU por hardware que não serve, e o teste precisa ser no dado de produção.",
+      oQue:
+        "Arquitetura neuromórfica imita neurônio e sinapse: o processamento acontece em eventos esparsos, e o gasto acompanha o que se move, não o relógio. Em tarefa sensorial, como visão e áudio, isso rende consumo baixo. Em tarefa geral, ainda não substitui a GPU, e a comparação honesta é por carga de trabalho, não por moda.",
+      passos: [
+        "Codifique a entrada como eventos, no lugar de quadros fixos.",
+        "Meça a densidade de disparos da rede.",
+        "Compare consumo e latência com a solução clássica na mesma tarefa.",
+      ],
+      exemplo:
+        "Uma câmera de eventos só reporta pixel que muda: cena parada gera quase nada, e o consumo cai junto. Numa tarefa de reconhecer gesto, um chip neuromórfico gasta miliwatts onde a GPU gasta watts. Na mesma tarefa de treinar um modelo grande, a GPU ganha com folga, e insistir no chip é desperdício de energia, de tempo e de dinheiro de projeto.",
+      quebra:
+        "Achar que neuromórfico é sempre melhor que GPU. Depende da tarefa e do dado: event-driven brilha com entrada esparsa e sofre quando o dado é denso. Escolher pela moda, e não pela carga, desperdiça dinheiro e atrasa o projeto.",
+      levar: "Neuromórfico economiza quando o mundo chega em eventos.",
+      maos:
+        "Compare a taxa de eventos de uma cena parada e de uma cena com movimento.",
+    },
+    "Ética e Impacto": {
+      contexto:
+        "Onde isso aparece: no termo de uso que ninguém lê, no modelo que decide crédito e na automação que muda posto de trabalho. A decisão fica no código e no contrato, e é difícil desfazer depois que o sistema está no ar. Por isso a discussão de ética precisa acontecer na mesma mesa em que se escolhe a arquitetura.",
+      oQue:
+        "Computação afeta trabalho, privacidade e poder, e decisão técnica também é decisão social. Quem escolhe o que coletar, por quanto tempo e para qual fim está definindo o que pode acontecer com a vida das pessoas depois. Por isso privacidade entra no projeto desde o começo, e não como revisão final quando o sistema já está de pé.",
+      passos: [
+        "Declare a finalidade de cada dado coletado.",
+        "Minimize o que é guardado e defina prazo e acesso.",
+        "Escreva o que o sistema faz quando erra e quem responde.",
+      ],
+      exemplo:
+        "Um aplicativo que pede localização para entregar comida precisa dela por minutos. Guardar o histórico por dois anos muda o risco sem melhorar o serviço. A decisão de guardar é técnica na aparência e política no efeito, e a pergunta certa é qual o menor dado que resolve o problema.",
+      quebra:
+        "Tratar ética como etapa final, depois do sistema pronto. Nessa altura, o dado já foi coletado e o modelo já aprendeu o viés; corrigir custa caro ou não acontece. A decisão de projeto é a que fica, e é ela que o usuário sente.",
+      levar: "Dado que não existe não vaza: minimizar é a primeira defesa.",
+      maos:
+        "Liste os dados que o sistema pede e marque, para cada um, qual problema ele resolve e por quanto tempo precisa ficar.",
+    },
+  },
 };
 
 // o nome da estação chega em caixa baixa do banco ("Grafos moleculares") e em
