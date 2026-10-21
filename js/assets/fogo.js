@@ -28,14 +28,22 @@ function brilho(g, x, y, r, cor) {
   g.fillRect(x - r, y - r, r * 2, r * 2);
 }
 
-function fogueira(g, p, _v, quadro) {
+function fogueira(g, p, v, quadro) {
   const w = 24, h = 20;
-  brilho(g, w / 2, h - 8, 16, "rgba(255,140,70,0.16)");
+  brilho(g, w / 2, h - 8, v === 2 ? 18 : 16, "rgba(255,140,70,0.16)");
   // pedras em volta
-  for (let i = 0; i < 6; i++) {
-    const a = (i / 6) * Math.PI * 2;
+  const pedras = v === 2 ? 8 : 6;
+  for (let i = 0; i < pedras; i++) {
+    const a = (i / pedras) * Math.PI * 2;
     g.fillStyle = i % 2 ? p.pedra : p.pedraEscura;
-    g.fillRect(Math.round(w / 2 + Math.cos(a) * 8) - 1, Math.round(h - 4 + Math.sin(a) * 2), 3, 2);
+    g.fillRect(Math.round(w / 2 + Math.cos(a) * (v === 2 ? 9 : 8)) - 1, Math.round(h - 4 + Math.sin(a) * 2), 3, 2);
+  }
+  if (v === 2) {
+    // cova funda: a brasa fica no buraco, a chama sobe mais
+    g.fillStyle = "rgba(10,8,14,0.6)";
+    g.beginPath();
+    g.ellipse(w / 2, h - 5, 7, 2.4, 0, 0, Math.PI * 2);
+    g.fill();
   }
   // lenha cruzada
   g.strokeStyle = p.tronco;
@@ -46,7 +54,7 @@ function fogueira(g, p, _v, quadro) {
   g.stroke();
   g.fillStyle = p.brasa;
   g.fillRect(10, h - 7, 4, 2);
-  chama(g, w / 2, h - 16, 5, 12, quadro, p);
+  chama(g, w / 2, h - (v === 2 ? 17 : 16), v === 2 ? 4.4 : 5, v === 2 ? 14 : 12, quadro, p);
   // faíscas
   if (quadro % 2 === 0) {
     g.fillStyle = p.luz;
@@ -55,17 +63,27 @@ function fogueira(g, p, _v, quadro) {
   }
 }
 
-function braseiro(g, p, _v, quadro) {
+function braseiro(g, p, v, quadro) {
   const w = 16, h = 22;
   brilho(g, w / 2, h - 12, 13, "rgba(255,140,70,0.14)");
-  // tripé
-  g.strokeStyle = p.contorno;
-  g.lineWidth = 1;
-  g.beginPath();
-  g.moveTo(3, h - 2); g.lineTo(w / 2, h - 10);
-  g.moveTo(w - 3, h - 2); g.lineTo(w / 2, h - 10);
-  g.moveTo(w / 2, h - 2); g.lineTo(w / 2, h - 9);
-  g.stroke();
+  if (v === 2) {
+    // pendurado: argola no teto e corrente de elos claros, sem tripé
+    g.fillStyle = p.metal;
+    g.fillRect(w / 2 - 2, 0, 4, 2);
+    for (let i = 0; i < 4; i++) {
+      g.fillStyle = i % 2 ? p.metalClaro : p.metal;
+      g.fillRect(w / 2 - 1, 3 + i * 3, 2, 2);
+    }
+  } else {
+    // tripé
+    g.strokeStyle = p.contorno;
+    g.lineWidth = 1;
+    g.beginPath();
+    g.moveTo(3, h - 2); g.lineTo(w / 2, h - 10);
+    g.moveTo(w - 3, h - 2); g.lineTo(w / 2, h - 10);
+    g.moveTo(w / 2, h - 2); g.lineTo(w / 2, h - 9);
+    g.stroke();
+  }
   // bacia
   g.fillStyle = p.contorno;
   g.fillRect(3, h - 12, 10, 3);
@@ -79,21 +97,50 @@ function braseiro(g, p, _v, quadro) {
   chama(g, w / 2, h - 20, 3.4, 8, quadro, p);
 }
 
-function tocha(g, p, _v, quadro) {
+function tocha(g, p, v, quadro) {
   const w = 10, h = 24;
   brilho(g, w / 2, 6, 9, "rgba(255,140,70,0.14)");
   g.fillStyle = p.contorno;
   g.fillRect(w / 2 - 1, 8, 3, 15);
   g.fillStyle = p.tronco;
   g.fillRect(w / 2, 9, 1, 13);
+  if (v === 2) {
+    // arandela: braço de metal saindo da parede
+    g.fillStyle = p.metal;
+    g.fillRect(w / 2 - 3, 12, 3, 1);
+    g.fillRect(w / 2 - 4, 12, 1, 4);
+    g.fillStyle = p.metalClaro;
+    g.fillRect(w / 2 - 3, 12, 2, 1);
+  }
   g.fillStyle = p.metal;
   g.fillRect(w / 2 - 2, 7, 5, 2);
   chama(g, w / 2, 0, 2.6, 8, quadro, p);
 }
 
-function lanterna(g, p, _v, quadro) {
+function lanterna(g, p, v, quadro) {
   const w = 14, h = 24;
   brilho(g, w / 2, h - 12, 11, "rgba(255,200,120,0.16)");
+  if (v === 2) {
+    // poste alto: a lanterna fica no topo, acima da cabeça
+    g.fillStyle = p.contorno;
+    g.fillRect(w / 2 - 1, 10, 2, h - 2);
+    g.fillStyle = p.tronco;
+    g.fillRect(w / 2, 11, 1, h - 3);
+    g.fillStyle = p.metal;
+    g.fillRect(w / 2 - 3, 9, 6, 1);
+    g.fillRect(w / 2 - 1, 9, 2, 2);
+    g.fillStyle = p.contorno;
+    g.fillRect(3, 1, 8, 8);
+    g.fillStyle = p.metal;
+    g.fillRect(4, 2, 6, 6);
+    g.globalAlpha = 0.85 + ((quadro % 4) * 0.04);
+    g.fillStyle = p.luz;
+    g.fillRect(5, 3, 4, 4);
+    g.globalAlpha = 1;
+    g.fillStyle = "rgba(255,255,255,0.5)";
+    g.fillRect(6, 4, 1, 1);
+    return;
+  }
   g.fillStyle = p.contorno;
   g.fillRect(w / 2 - 1, h - 10, 2, 9);
   g.fillRect(w / 2 - 3, h - 3, 6, 2);
@@ -116,14 +163,15 @@ function lanterna(g, p, _v, quadro) {
   g.fillRect(2, 2, 10, 2);
 }
 
-function fumaca(g, p, _v, quadro) {
+function fumaca(g, p, v, quadro) {
   const w = 16, h = 30;
-  for (let i = 0; i < 5; i++) {
+  const passos = v === 2 ? 7 : 5;
+  for (let i = 0; i < passos; i++) {
     const fase = (quadro + i) % 6;
-    const y = h - 6 - i * 6 - fase;
-    const x = w / 2 + Math.sin((quadro + i) * 1.1) * (2 + i * 0.6);
-    const r = 1.4 + i * 0.75;
-    g.globalAlpha = 0.26 - i * 0.04;
+    const y = h - 6 - i * (v === 2 ? 4 : 6) - fase;
+    const x = w / 2 + Math.sin((quadro + i) * 1.1) * (v === 2 ? 1.4 + i * 0.4 : 2 + i * 0.6);
+    const r = v === 2 ? 1 + i * 0.5 : 1.4 + i * 0.75;
+    g.globalAlpha = (v === 2 ? 0.22 : 0.26) - i * 0.03;
     g.fillStyle = i % 2 ? p.tecido : "#c8c4d8";
     g.beginPath();
     g.ellipse(x, y, r, r, 0, 0, Math.PI * 2);
@@ -133,9 +181,9 @@ function fumaca(g, p, _v, quadro) {
 }
 
 export const FOGOS = {
-  fogueira: { w: 24, h: 20, variantes: 1, quadros: 8, ms: 95, desenhar: fogueira },
-  braseiro: { w: 16, h: 22, variantes: 1, quadros: 8, ms: 95, desenhar: braseiro },
-  tocha: { w: 10, h: 24, variantes: 1, quadros: 6, ms: 85, desenhar: tocha },
-  lanterna: { w: 14, h: 24, variantes: 1, quadros: 4, ms: 300, desenhar: lanterna },
-  fumaca: { w: 16, h: 30, variantes: 1, quadros: 6, ms: 200, desenhar: fumaca },
+  fogueira: { w: 24, h: 20, variantes: 2, quadros: 8, ms: 95, desenhar: fogueira },
+  braseiro: { w: 16, h: 22, variantes: 2, quadros: 8, ms: 95, desenhar: braseiro },
+  tocha: { w: 10, h: 24, variantes: 2, quadros: 6, ms: 85, desenhar: tocha },
+  lanterna: { w: 14, h: 24, variantes: 2, quadros: 4, ms: 300, desenhar: lanterna },
+  fumaca: { w: 16, h: 30, variantes: 2, quadros: 6, ms: 200, desenhar: fumaca },
 };

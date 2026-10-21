@@ -161,7 +161,7 @@ function palmeira(g, p, v) {
   }
   const tx = Math.round(x + 4), ty = h - (v === 2 ? 19 : 25);
   const frondes = v === 2
-    ? [[-13, 2], [13, 2], [-9, 7], [9, 7], [-4, 10], [4, 10], [-1, 12], [6, 12]]
+    ? [[-12, -1], [12, -1], [-9, 4], [9, 4], [-5, 8], [5, 8]]
     : [[-11, 1], [11, 1], [-8, 6], [8, 6], [-4, 9], [4, 9]];
   for (const [dx, dy] of frondes) {
     g.strokeStyle = p.folha;

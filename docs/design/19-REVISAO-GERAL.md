@@ -35,14 +35,16 @@ andamento e o que falta.
 | grupo | etapa 1 | etapa 2 | etapa 3 |
 |---|---|---|---|
 | vegetação | **feito**: 3 variantes por peça (24 silhuetas) | pendente | pendente |
-| solo | pendente | pendente | pendente |
-| construção | pendente | pendente | pendente |
-| fogo | 5 peças animadas; auditar quadros | pendente | pendente |
-| água | 7 variantes; auditar ondulação | pendente | pendente |
-| props | 9 variantes; auditar gaivota e barril | pendente | pendente |
+| solo | **feito**: 3 variantes por peça (24) | pendente | pendente |
+| construção | **feito**: 3 variantes por peça (24), com oca redonda, casa com ala, torre com balcão, ruína em arco, galpão com alpendre, poço com balde, cerca com portão e doca em T | pendente | pendente |
+| fogo | **feito**: 2 variantes por peça, cova de brasa, braseiro pendurado, tocha de arandela, lanterna de poste e fumaça fina | pendente | pendente |
+| água | **feito**: 3 variantes nas três peças quietas e a espuma com 6 quadros | pendente | pendente |
+| props | **feito**: 3 variantes nas quatro peças quietas, com barril deitado, saco aberto, caixote aberto e fardo redondo | pendente | pendente |
+
+Silhuetas do grupo: 24 + 24 + 24 + 10 + 10 + 13 = **105** (antes 69).
 
 ## Registro
 
 | data | onda | o que mudou | prova |
 |---|---|---|---|
-| 2026-10-21 | assets, vegetação, etapa 1 | terceira variante em árvore, conífera, palmeira, seca, arbusto, junco, florada e trepadeira: 16 para 24 silhuetas | folha de contato com as 24, teste de assets e 24/24 suítes |
+| 2026-10-21 | assets, etapa 1 | vegetação, solo, construção, água, props e fogo com 2 ou 3 variantes: 69 para 105 silhuetas; três variantes fracas foram refeitas depois da auditoria da folha de contato (doca em T, braseiro pendurado e palmeira curta) | folha de contato das 105, 24/24 suítes, 19/19 no navegador, 60,6 fps |

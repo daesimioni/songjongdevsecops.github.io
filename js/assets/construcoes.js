@@ -58,6 +58,45 @@ function telhado(g, p, x, y, w, h, cor, corClara) {
 function cabana(g, p, v) {
   const w = 36, h = 30;
   sombra(g, p, w, h);
+  if (v === 2) {
+    // oca redonda: parede curva e telhado cônico, silhueta de longe diferente
+    g.fillStyle = p.contorno;
+    g.beginPath();
+    g.ellipse(w / 2, h - 9, 13, 10, 0, 0, Math.PI * 2);
+    g.fill();
+    g.fillStyle = p.madeira;
+    g.beginPath();
+    g.ellipse(w / 2, h - 9, 12, 9, 0, 0, Math.PI * 2);
+    g.fill();
+    g.fillStyle = p.pedraEscura;
+    for (let i = 0; i < 5; i++) g.fillRect(9 + i * 5, h - 5 + (i % 2), 3, 1);
+    g.fillStyle = p.contorno;
+    g.beginPath();
+    g.moveTo(w / 2 - 15, h - 15);
+    g.lineTo(w / 2, 1);
+    g.lineTo(w / 2 + 15, h - 15);
+    g.closePath();
+    g.fill();
+    g.fillStyle = p.telha;
+    g.beginPath();
+    g.moveTo(w / 2 - 13, h - 16);
+    g.lineTo(w / 2, 3);
+    g.lineTo(w / 2 + 13, h - 16);
+    g.closePath();
+    g.fill();
+    for (let i = 0; i < 4; i++) {
+      g.fillStyle = i % 2 ? p.telhaClara : "rgba(255,255,255,0.10)";
+      const yy = 7 + i * 5;
+      g.fillRect(w / 2 - (yy - 3) * 0.75, yy, (yy - 3) * 1.5, 1);
+    }
+    g.fillStyle = p.contorno;
+    g.fillRect(w / 2 - 4, h - 12, 8, 11);
+    g.fillStyle = p.luz;
+    g.fillRect(w / 2 - 3, h - 11, 6, 10);
+    g.fillStyle = p.tronco;
+    g.fillRect(w / 2 - 3, h - 6, 6, 1);
+    return;
+  }
   tabuas(g, p, 6, h - 14, 24, 13, p.madeira);
   g.fillStyle = p.contorno;
   g.fillRect(4, h - 2, 28, 2);
@@ -157,6 +196,30 @@ function casa(g, p, v) {
   g.fillRect(23, h - 8, 1, 1);
   janela(g, p, 9, h - 15, 4, 4);
   janela(g, p, 31, h - 15, 4, 4, v === 1);
+  if (v === 2) {
+    // ala baixa encostada na esquerda, com telhado de uma água e janela
+    g.fillStyle = p.contorno;
+    g.fillRect(0, h - 15, 9, 14);
+    g.fillStyle = p.pedra;
+    g.fillRect(1, h - 14, 7, 13);
+    g.fillStyle = p.pedraClara;
+    g.fillRect(1, h - 14, 7, 1);
+    g.fillStyle = p.contorno;
+    g.beginPath();
+    g.moveTo(-1, h - 15);
+    g.lineTo(4, h - 22);
+    g.lineTo(10, h - 15);
+    g.closePath();
+    g.fill();
+    g.fillStyle = p.telha;
+    g.beginPath();
+    g.moveTo(0, h - 15);
+    g.lineTo(4, h - 20);
+    g.lineTo(9, h - 15);
+    g.closePath();
+    g.fill();
+    janela(g, p, 2, h - 9, 3, 3, true);
+  }
   // chaminé
   g.fillStyle = p.contorno;
   g.fillRect(31, 8, 5, 10);
@@ -201,11 +264,66 @@ function torre(g, p, v) {
   g.fillRect(11, h - 12, 6, 11);
   g.fillStyle = p.tronco;
   g.fillRect(12, h - 11, 4, 10);
+  if (v === 2) {
+    // balcão de madeira e bandeira: torre de vigia, não de pedra lisa
+    g.fillStyle = p.contorno;
+    g.fillRect(2, 24, 24, 3);
+    g.fillStyle = p.madeira;
+    g.fillRect(3, 25, 22, 1);
+    for (let i = 0; i < 5; i++) {
+      g.fillStyle = p.tronco;
+      g.fillRect(4 + i * 5, 27, 1, 4);
+    }
+    g.fillStyle = p.tecido;
+    g.fillRect(22, 3, 7, 4);
+    g.fillStyle = p.luz;
+    g.fillRect(22, 4, 3, 1);
+  }
 }
 
 function ruina(g, p, v) {
   const w = 42, h = 28;
   sombra(g, p, w, h, 0.4);
+  if (v === 2) {
+    // arco em pé: duas colunas altas e a volta inteira
+    g.fillStyle = p.contorno;
+    g.fillRect(8, 4, 8, h - 4);
+    g.fillRect(26, 4, 8, h - 4);
+    g.fillRect(8, 2, 26, 4);
+    g.fillStyle = p.pedra;
+    g.fillRect(9, 5, 6, h - 5);
+    g.fillRect(27, 5, 6, h - 5);
+    g.fillRect(9, 3, 24, 3);
+    g.fillStyle = p.pedraClara;
+    g.fillRect(9, 3, 24, 1);
+    g.fillStyle = p.pedraEscura;
+    for (let i = 0; i < 4; i++) {
+      g.fillRect(10, 9 + i * 5, 4, 1);
+      g.fillRect(28, 11 + i * 5, 4, 1);
+    }
+    g.fillStyle = p.contorno;
+    g.beginPath();
+    g.arc(21, 20, 7, Math.PI, Math.PI * 2);
+    g.lineTo(28, 24);
+    g.lineTo(14, 24);
+    g.closePath();
+    g.fill();
+    g.fillStyle = p.tecido;
+    g.beginPath();
+    g.arc(21, 20, 5, Math.PI, Math.PI * 2);
+    g.lineTo(26, 24);
+    g.lineTo(16, 24);
+    g.closePath();
+    g.fill();
+    for (let i = 0; i < 5; i++) {
+      g.fillStyle = i % 2 ? p.pedra : p.pedraEscura;
+      g.fillRect(6 + i * 7, h - 3 + (i % 2), 3, 2);
+    }
+    g.fillStyle = p.folha;
+    g.fillRect(8, h - 9, 2, 1);
+    g.fillRect(33, h - 6, 2, 1);
+    return;
+  }
   // parede quebrada com arco
   g.fillStyle = p.contorno;
   g.fillRect(4, h - 20, 10, 19);
@@ -261,6 +379,19 @@ function galpao(g, p, v) {
   g.fillRect(26, h - 8, 1, 2);
   janela(g, p, 7, h - 12, 5, 4, v === 1);
   janela(g, p, 33, h - 12, 5, 4, true);
+  if (v === 2) {
+    // alpendre: telhado mais largo e dois mourões, o galpão cresce para o lado
+    g.fillStyle = p.contorno;
+    g.fillRect(38, 10, 6, 16);
+    g.fillStyle = p.tronco;
+    g.fillRect(39, 11, 4, 14);
+    g.fillStyle = p.madeira;
+    g.fillRect(36, 9, 10, 2);
+    g.fillStyle = p.telhaClara;
+    g.fillRect(36, 9, 10, 1);
+    g.fillStyle = p.contorno;
+    g.fillRect(40, h - 10, 2, 9);
+  }
   // tabuleta do ofício
   g.fillStyle = p.contorno;
   g.fillRect(31, 20, 11, 5);
@@ -311,6 +442,20 @@ function poco(g, p, v) {
     g.fillStyle = p.folha;
     g.fillRect(2, h - 6, 2, 1);
   }
+  if (v === 2) {
+    // corda com balde descendo e lampião na coluna
+    g.strokeStyle = p.tecido;
+    g.beginPath();
+    g.moveTo(w / 2, h - 18);
+    g.lineTo(w / 2 + 1, h - 12);
+    g.stroke();
+    g.fillStyle = p.metal;
+    g.fillRect(w / 2 - 2, h - 12, 4, 3);
+    g.fillStyle = p.contorno;
+    g.fillRect(w / 2 - 2, h - 9, 4, 1);
+    g.fillStyle = p.luz;
+    g.fillRect(3, h - 17, 2, 2);
+  }
 }
 
 function cerca(g, p, v) {
@@ -329,6 +474,18 @@ function cerca(g, p, v) {
   if (v === 1) {
     g.fillStyle = p.folha;
     g.fillRect(6, 6, 2, 1);
+  }
+  if (v === 2) {
+    // portão: travessa diagonal e dobradiça de metal
+    g.strokeStyle = p.madeiraClara;
+    g.lineWidth = 1;
+    g.beginPath();
+    g.moveTo(3, 10);
+    g.lineTo(16, 4);
+    g.stroke();
+    g.fillStyle = p.metal;
+    g.fillRect(5, 6, 1, 1);
+    g.fillRect(13, 8, 1, 1);
   }
 }
 
@@ -366,15 +523,29 @@ function doca(g, p, v) {
     g.fillStyle = p.sombra;
     g.fillRect(8, h - 9, 4, 2);
   }
+  if (v === 2) {
+    // dedo em T: prancha que sai do tabuleiro e entra na água, com duas estacas
+    g.fillStyle = p.contorno;
+    g.fillRect(24, h - 4, 14, 9);
+    g.fillStyle = p.madeira;
+    g.fillRect(25, h - 3, 12, 7);
+    g.fillStyle = p.madeiraClara;
+    g.fillRect(25, h - 3, 12, 1);
+    g.fillStyle = p.tronco;
+    g.fillRect(26, h + 2, 1, 4);
+    g.fillRect(35, h + 3, 1, 4);
+    g.fillStyle = "rgba(220,245,255,0.35)";
+    g.fillRect(22, h + 4, 16, 1);
+  }
 }
 
 export const CONSTRUCOES = {
-  cabana: { w: 36, h: 30, variantes: 2, desenhar: cabana },
-  casa: { w: 44, h: 38, variantes: 2, desenhar: casa },
-  torre: { w: 28, h: 52, variantes: 2, desenhar: torre },
-  ruina: { w: 42, h: 28, variantes: 2, desenhar: ruina },
-  galpao: { w: 46, h: 32, variantes: 2, desenhar: galpao },
-  poco: { w: 22, h: 22, variantes: 2, desenhar: poco },
-  cerca: { w: 20, h: 14, variantes: 2, desenhar: cerca },
-  doca: { w: 42, h: 20, variantes: 2, desenhar: doca },
+  cabana: { w: 36, h: 30, variantes: 3, desenhar: cabana },
+  casa: { w: 44, h: 38, variantes: 3, desenhar: casa },
+  torre: { w: 28, h: 52, variantes: 3, desenhar: torre },
+  ruina: { w: 42, h: 28, variantes: 3, desenhar: ruina },
+  galpao: { w: 46, h: 32, variantes: 3, desenhar: galpao },
+  poco: { w: 22, h: 22, variantes: 3, desenhar: poco },
+  cerca: { w: 20, h: 14, variantes: 3, desenhar: cerca },
+  doca: { w: 42, h: 20, variantes: 3, desenhar: doca },
 };

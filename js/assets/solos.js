@@ -14,7 +14,11 @@ function mancha(g, p, w, h, cor, alpha = 1) {
 function pedra(g, p, v) {
   const w = 20, h = 12;
   mancha(g, p, w, h, p.sombra, 0.5);
-  const pontos = v === 1 ? [[6, 7, 5], [14, 8, 4]] : [[6, 7, 5], [12, 6, 4], [16, 8, 3]];
+  const pontos = v === 2
+    ? [[9, 7, 6], [17, 9, 2]]
+    : v === 1
+    ? [[6, 7, 5], [14, 8, 4]]
+    : [[6, 7, 5], [12, 6, 4], [16, 8, 3]];
   for (const [x, y, r] of pontos) {
     g.fillStyle = p.contorno;
     g.beginPath();
@@ -46,6 +50,13 @@ function rachadura(g, p, v) {
   if (v === 1) {
     g.moveTo(9, h / 2 - 1);
     g.lineTo(11, h / 2 - 4);
+  } else if (v === 2) {
+    g.moveTo(6, h / 2 - 1);
+    g.lineTo(4, h / 2 - 4);
+    g.moveTo(14, h / 2);
+    g.lineTo(17, h / 2 + 3);
+    g.moveTo(11, h / 2 + 1);
+    g.lineTo(12, h / 2 + 3);
   }
   g.stroke();
   g.globalAlpha = 1;
@@ -59,7 +70,11 @@ function raiz(g, p, v) {
   const w = 22, h = 12;
   g.strokeStyle = p.tronco;
   g.lineWidth = 1;
-  const raizes = v === 1 ? [[1, 9, 18, 4], [3, 10, 14, 10]] : [[2, 10, 20, 5], [4, 8, 12, 11], [6, 9, 18, 8]];
+  const raizes = v === 2
+    ? [[9, 11, 2, 6], [11, 11, 19, 7], [10, 11, 10, 3], [8, 10, 15, 10]]
+    : v === 1
+    ? [[1, 9, 18, 4], [3, 10, 14, 10]]
+    : [[2, 10, 20, 5], [4, 8, 12, 11], [6, 9, 18, 8]];
   for (const [x0, y0, x1, y1] of raizes) {
     g.beginPath();
     g.moveTo(x0, y0);
@@ -83,39 +98,61 @@ function poca(g, p, v) {
   g.fillStyle = "rgba(255,255,255,0.65)";
   g.fillRect(7, h / 2 - 2, 2, 1);
   if (v === 1) g.fillRect(12, h / 2 + 1, 1, 1);
+  if (v === 2) {
+    g.fillStyle = "rgba(46,110,160,0.5)";
+    g.beginPath();
+    g.ellipse(w / 2 + 4, h / 2 + 1, 4, 1.6, 0, 0, Math.PI * 2);
+    g.fill();
+    g.fillStyle = "rgba(140,225,255,0.35)";
+    g.fillRect(13, h / 2, 2, 1);
+  }
 }
 
 function tufo(g, p, v) {
   const w = 16, h = 11;
-  const hastes = v === 1 ? [3, 6, 10, 13] : [4, 7, 9, 12, 14];
+  const hastes = v === 2
+    ? [2, 4, 6, 8, 11, 13, 15]
+    : v === 1
+    ? [3, 6, 10, 13]
+    : [4, 7, 9, 12, 14];
   for (let i = 0; i < hastes.length; i++) {
     const x = hastes[i];
     g.strokeStyle = i % 2 ? p.folha : p.folhaEscura;
     g.beginPath();
     g.moveTo(x, h - 1);
-    g.lineTo(x + (i % 2 ? 1 : -1), h - 4 - ((i * 3) % 4));
+    g.lineTo(x + (i % 2 ? 1 : -1), h - (v === 2 ? 5 : 4) - ((i * 3) % 4));
     g.stroke();
   }
   g.fillStyle = p.folhaClara;
   g.fillRect(6, h - 6, 2, 1);
   g.fillRect(11, h - 8, 1, 1);
+  if (v === 2) {
+    g.fillStyle = p.luz;
+    g.fillRect(4, h - 9, 1, 1);
+    g.fillRect(13, h - 10, 1, 1);
+  }
 }
 
 function folhada(g, p, v) {
   const w = 20, h = 10;
-  for (let i = 0; i < 6; i++) {
-    const x = 2 + ((i * 7 + (v === 1 ? 3 : 0)) % 16);
+  for (let i = 0; i < (v === 2 ? 9 : 6); i++) {
+    const x = 1 + ((i * 7 + (v === 1 ? 3 : v === 2 ? 5 : 0)) % 18);
     const y = 2 + ((i * 3 + 1) % 6);
     g.fillStyle = i % 3 === 0 ? p.folhaClara : i % 3 === 1 ? p.folha : p.troncoClaro;
     g.fillRect(x, y, 2, 2);
     if (i % 2 === 0) g.fillRect(x + 1, y - 1, 1, 1);
+    if (v === 2) g.fillRect(x + (i % 3), y + 2, 1, 1);
   }
 }
 
 function cogumelo(g, p, v) {
   const w = 18, h = 12;
   const cor = v === 1 ? p.luz : p.folhaClara;
-  const copas = v === 1 ? [[6, 5, 3], [12, 7, 2]] : [[5, 6, 3], [10, 4, 2], [14, 7, 2]];
+  const copas = v === 2
+    ? [[4, 7, 2], [8, 4, 3], [13, 6, 2], [16, 8, 1]]
+    : v === 1
+    ? [[6, 5, 3], [12, 7, 2]]
+    : [[5, 6, 3], [10, 4, 2], [14, 7, 2]];
   for (const [x, y, r] of copas) {
     g.fillStyle = "rgba(255,227,161,0.12)";
     g.beginPath();
@@ -139,11 +176,16 @@ function musgo(g, p, v) {
   g.globalAlpha = 0.72;
   g.fillStyle = p.folhaEscura;
   g.beginPath();
-  g.ellipse(w / 2, h / 2, 8, 3, 0, 0, Math.PI * 2);
+  g.ellipse(w / 2, h / 2, v === 2 ? 9.5 : 8, v === 2 ? 3.6 : 3, 0, 0, Math.PI * 2);
   g.fill();
+  if (v === 2) {
+    g.beginPath();
+    g.ellipse(w / 2 - 5, h / 2 + 1, 3, 1.6, 0, 0, Math.PI * 2);
+    g.fill();
+  }
   g.globalAlpha = 1;
   for (let i = 0; i < 7; i++) {
-    const x = 3 + ((i * 5 + (v === 1 ? 2 : 0)) % 14);
+    const x = 2 + ((i * 5 + (v === 1 ? 2 : v === 2 ? 4 : 0)) % 16);
     const y = 2 + ((i * 3) % 5);
     g.fillStyle = i % 2 ? p.folha : p.folhaClara;
     g.fillRect(x, y, 1, 1);
@@ -151,12 +193,12 @@ function musgo(g, p, v) {
 }
 
 export const SOLOS = {
-  pedra: { w: 20, h: 12, variantes: 2, desenhar: pedra },
-  rachadura: { w: 22, h: 12, variantes: 2, desenhar: rachadura },
-  raiz: { w: 22, h: 12, variantes: 2, desenhar: raiz },
-  poca: { w: 20, h: 12, variantes: 2, desenhar: poca },
-  tufo: { w: 16, h: 11, variantes: 2, desenhar: tufo },
-  folhada: { w: 20, h: 10, variantes: 2, desenhar: folhada },
-  cogumelo: { w: 18, h: 12, variantes: 2, desenhar: cogumelo },
-  musgo: { w: 20, h: 10, variantes: 2, desenhar: musgo },
+  pedra: { w: 20, h: 12, variantes: 3, desenhar: pedra },
+  rachadura: { w: 22, h: 12, variantes: 3, desenhar: rachadura },
+  raiz: { w: 22, h: 12, variantes: 3, desenhar: raiz },
+  poca: { w: 20, h: 12, variantes: 3, desenhar: poca },
+  tufo: { w: 16, h: 11, variantes: 3, desenhar: tufo },
+  folhada: { w: 20, h: 10, variantes: 3, desenhar: folhada },
+  cogumelo: { w: 18, h: 12, variantes: 3, desenhar: cogumelo },
+  musgo: { w: 20, h: 10, variantes: 3, desenhar: musgo },
 };
