@@ -82,8 +82,18 @@ export function createWorld() {
       for (let x = Math.max(1, r.x); x < Math.min(MAP_W - 1, r.x + r.w); x++) {
         const nx = (x + 0.5 - cx) / rx;
         const ny = (y + 0.5 - cy) / ry;
-        const d = Math.pow(Math.abs(nx), 4) + Math.pow(Math.abs(ny), 4);
-        const edge = 1 + (hash2(x * 3 + 11, y * 5 + 7) - 0.5) * 0.22;
+        // Elipse (grau 2), não superelipse (grau 4): o grau 4 desenhava um
+        // retângulo de cantos arredondados, e era isso que deixava a ilha
+        // quadrada. A costa come para dentro com duas oitavas de ruído, então
+        // aparecem enseadas e pontas sem estourar a caixa da área.
+        // o grau e a força da enseada mudam por ilha: duas áreas vizinhas não
+        // têm a mesma silhueta
+        const grau = 2 + hash2(Math.round(cx), Math.round(cy)) * 0.8;
+        const forca = 0.09 + hash2(Math.round(cx) + 3, Math.round(cy) + 7) * 0.1;
+        const d = Math.pow(Math.abs(nx), grau) + Math.pow(Math.abs(ny), grau);
+        const costa = hash2(x * 3 + 11, y * 5 + 7);
+        const enseada = hash2(Math.floor(x / 4) * 7 + 3, Math.floor(y / 4) * 5 + 1);
+        const edge = 1 - (costa * forca + enseada * forca * 1.6);
         if (d < edge) set(x, y, c.base);
       }
     }

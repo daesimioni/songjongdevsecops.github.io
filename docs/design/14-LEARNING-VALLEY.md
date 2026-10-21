@@ -424,7 +424,15 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
       desde o spawn, 27/186 cavernas (era 28) e 34/194 NPCs (era 37). A rota
       mudou e três pontos ficaram para trás: é o item 2 que fecha isso de
       verdade, com ponte e passagem
-- [ ] falta a área por polígono (hoje a área ainda é retângulo) e o mapa maior
+- [x] **silhueta de ilha variada**: o contorno era uma superelipse de grau 4,
+      que é um retângulo de cantos arredondados. Virou elipse de grau 2 com duas
+      oitavas de enseada para dentro, e o grau e a força da enseada mudam por
+      ilha, então duas áreas vizinhas não têm o mesmo desenho
+- [ ] **decisão registrada**: área por polígono fica de fora; hoje a área ainda é
+      um retângulo lógico (o desenho serrilha, a caixa não). Trocar isso é refazer
+      o layout das 70 ilhas, 56 pontes e 70 túneis
+- [ ] **decisão registrada**: o mapa não cresce de tamanho; o espaço na tela
+      cresceu com o tile menor (de 24-32 px para 21-26 px, ~40% mais chão visível)
 
 ## 3. Regras de desenho
 
