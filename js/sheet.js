@@ -286,7 +286,7 @@ export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onOu
     body.appendChild(enchants);
 
     const note = el("p", "sheet-note");
-    note.textContent = "Responder certo nas caçadas sobe a perícia do continente, que aumenta o dano. A caverna dá ferro, erva, cristal e madeira; a forja faz ferramentas, comida, tocha, chave e bomba. Os veios de cristal pedem picareta, a horta pede semente e o bicho da cidade pede ração. Encantamentos ficam para sempre.";
+    note.textContent = "Responder certo nas caçadas sobe a perícia da região, e a perícia aumenta o dano. A caverna dá ferro, erva, cristal e madeira. A forja transforma; a horta devolve; o bicho da cidade aprende a confiar. Encantamentos ficam.";
     body.appendChild(note);
   }
 

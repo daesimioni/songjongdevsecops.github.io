@@ -2,13 +2,11 @@
 
 No ar em <https://songjongdevsecops.github.io/>.
 
-Um blog pessoal que se atravessa a pé, agora chamado The Learning Valley. O site é um arquipélago em pixel art:
-você entra com um boneco, cruza pontes e encontra 454 estações. Cada estação é
-uma página com um texto curto e um instrumento interativo: as seções são áreas
-e as subáreas do catálogo são estações, com os tópicos de cada uma listados na
-página. Ao todo, 86 áreas: as 16 originais mais uma para cada seção do catálogo
-de Matemática, Física, Química, Computação, Língua Portuguesa e das 11
-interseções entre elas.
+The Learning Valley é um vale em pixel art que se atravessa a pé. Você entra
+com um boneco, cruza pontes, acende faróis e encontra 454 pedras. Cada pedra
+guarda um texto curto e um instrumento para mexer. São 86 lugares: os 16
+originais mais um para cada seção de Matemática, Física, Química, Computação,
+Língua Portuguesa e das 11 interseções entre elas.
 
 ## Como chegar às áreas
 

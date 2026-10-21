@@ -699,7 +699,7 @@ function openTraining(npc) {
   const name = NPCS[npc.id]?.name || "o instrutor";
   const continent = CONTINENTS[npc.continent]?.name || "o continente";
   $("training-title").textContent = `Treino com ${name}`;
-  $("training-sub").textContent = `Aqui você erra sem perder vida. O bicho de verdade espera na caverna de ${continent}.`;
+  $("training-sub").textContent = `Aqui o erro não tira sangue. O bicho de verdade espera na caverna de ${continent}.`;
   openModal("training");
   audio.open();
 }
@@ -1066,7 +1066,7 @@ function buildGod() {
     toast("mapa revelado.", 2600);
   }));
 
-  body.appendChild(godPower("abrir todas as estações", "todas as páginas do diário de uma vez", () => {
+  body.appendChild(godPower("abrir todas as estações", "todas as pedras do diário de uma vez", () => {
     for (const site of SITES) state.cards.add(site.id);
     saveCards();
     updateProgress();
@@ -1172,13 +1172,13 @@ function gainXp(n) {
 }
 
 const FIRST_STEPS = [
-  { id: "walk", label: "ande pelo mapa (WASD ou clique no chão)" },
-  { id: "expedition", label: "viaje de farol para um arquipélago do saber" },
-  { id: "station", label: "abra uma estação de estudo" },
-  { id: "npc", label: "converse com um NPC" },
-  { id: "quest", label: "aceite uma missão" },
-  { id: "cave", label: "desça numa caverna" },
-  { id: "duel", label: "vença um duelo de perguntas" },
+  { id: "walk", label: "ande pelo vale (WASD ou clique no chão)" },
+  { id: "expedition", label: "acenda um farol e atravesse para outra região" },
+  { id: "station", label: "abra uma pedra no caminho" },
+  { id: "npc", label: "fale com quem mora aqui" },
+  { id: "quest", label: "aceite um pedido" },
+  { id: "cave", label: "desça a uma caverna" },
+  { id: "duel", label: "vença um guardião de pergunta" },
 ];
 
 function markStep(id) {
@@ -1189,7 +1189,7 @@ function markStep(id) {
   audio.blip();
   const done = FIRST_STEPS.filter((s2) => state.steps[s2.id]).length;
   if (done === FIRST_STEPS.length) {
-    toast("Primeiros passos completos. O arquipélago é seu.", 4200);
+    toast("Os primeiros passos estão dados. O vale é seu.", 4200);
   } else {
     const next = FIRST_STEPS.find((s2) => !state.steps[s2.id]);
     toast(`Primeiro passo ${done}/${FIRST_STEPS.length}. Próximo: ${next.label}.`, 2600);
@@ -1442,7 +1442,7 @@ function buildJournal() {
   list.textContent = "";
   const found = openedCount();
   $("journal-progress").textContent =
-    `${found} de ${TOTAL} fragmentos · Nível ${level()} · ${state.xp} XP${quests.title ? ` · título ${quests.title}` : ""}. Cada estação do arquipélago esconde uma página.`;
+    `${found} de ${TOTAL} fragmentos · Nível ${level()} · ${state.xp} XP${quests.title ? ` · título ${quests.title}` : ""}. Cada pedra esconde um fragmento do que o vale sabe.`;
   for (const cid of CONTINENT_ORDER) {
     const continent = CONTINENTS[cid];
     const sites = sitesOf(cid);
@@ -1787,7 +1787,7 @@ async function openPost(id, site) {
   stopSprint();
   const post = POSTS[id];
   if (!post) {
-    toast("Esta página ainda está sendo escrita.");
+    toast("Esta pedra ainda está em silêncio.");
     return;
   }
   let opener = document.activeElement;
@@ -1805,7 +1805,7 @@ async function openPost(id, site) {
   $("panel-kicker").textContent = post.kicker || CONTINENTS[post.continent]?.name || "";
   $("panel-title").textContent = post.title;
   $("panel-meta").textContent =
-    `${post.date.split("-").reverse().join("/")} · ${post.read} · ${(post.tags || []).map((t) => `#${t}`).join(" ")}`;
+    `${post.date.split("-").reverse().join("/")} · ${(post.tags || []).map((t) => `#${t}`).join(" ")}`;
   $("panel-body").innerHTML = post.body || "";
   const live = $("panel-live");
   live.textContent = "";
@@ -2652,7 +2652,7 @@ function abrirMenu(e, wx, wy) {
     const d = Math.hypot(alvo.obj.x - player.x, alvo.obj.y - player.y);
     const perto = d <= INTERACT_RADIUS + 0.7;
     if (perto && alvo.kind === "station") {
-      ctxMenu.appendChild(acaoMenu("▸", "abrir a página", "F", () => openPost(alvo.obj.post, alvo.obj)));
+      ctxMenu.appendChild(acaoMenu("▸", "abrir a pedra", "F", () => openPost(alvo.obj.post, alvo.obj)));
     } else if (perto && alvo.kind === "npc") {
       ctxMenu.appendChild(acaoMenu("…", "falar", "F", () => interactTarget(alvo)));
       if (alvo.obj.trainer) ctxMenu.appendChild(acaoMenu("⚔", "atacar (treino)", "", () => openTraining(alvo.obj)));
@@ -3095,7 +3095,7 @@ window.addEventListener("beforeunload", () => {
   const coarse = window.matchMedia("(pointer: coarse)").matches;
   if (coarse) {
     const lead = document.querySelector(".intro-lead");
-    if (lead) lead.innerHTML = "Cada continente é uma página. Ande com o direcional, toque no chão para ir até ali, toque em <strong>Turbo</strong> para ligar a nave e toque em <kbd>A</kbd> perto de estações, NPCs e cavernas. Os botões do topo abrem a conversa, a Rede, o Diário e a Ficha.";
+    if (lead) lead.innerHTML = "Cada região é um caminho. Ande com o direcional, toque no chão para ir até ali, toque em <strong>Turbo</strong> para ligar a nave e toque em <kbd>A</kbd> perto de pedras, NPCs e cavernas. Os botões do topo abrem a conversa, a Rede, o Diário e a Ficha.";
     const controls = document.querySelector(".intro-controls");
     if (controls) controls.innerHTML = "toque no chão para andar · <strong>Turbo</strong> acelera · <kbd>A</kbd> interage · topo: Falar, Rede, Diário, Ficha";
     const canvas = $("world");

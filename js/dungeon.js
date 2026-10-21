@@ -1409,7 +1409,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     }
     if (obj.kind === "vein") {
       if (obj.charges <= 0) {
-        say("O veio está vazio. Outra caverna, outra veia.");
+        say("O veio está vazio. A pedra não devolve duas vezes.");
         return;
       }
       if (rpg.itemCount("picareta") <= 0) {
@@ -1438,7 +1438,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
       const petId = obj.petId || "gato";
       const pet = PETS[petId];
       if (rpg.petTamed(petId)) {
-        say(`${pet?.name || "O bicho"} já anda com você. Agora é companhia, não fome.`);
+        say(`${pet?.name || "O bicho"} já caminha ao seu lado. Não é mais fome; é companhia.`);
         return;
       }
       const res = rpg.feedPet(petId);
@@ -2214,8 +2214,8 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
       const bossClose = state.boss?.alive
         && Math.hypot(state.boss.x - p.x, state.boss.y - p.y) <= 3
         && dungeonLineOfSight(state.map, p.x, p.y, state.boss.x, state.boss.y);
-      if (bossClose) say("O chefe nem sentiu. A bomba só o irritou.", 3000);
-      else if (hit) say(`Bum. ${hit} bicho(s) viraram fumaça. Sem XP, sem saque.`, 3400);
+      if (bossClose) say("O chefe mal sentiu. A bomba só o acordou.", 3000);
+      else if (hit) say(`A bomba apagou ${hit} bicho(s). Nenhuma experiência, nenhum saque.`, 3400);
       else say("A bomba estourou no vazio.", 2400);
       audio.error?.();
       updateHud();

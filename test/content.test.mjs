@@ -721,8 +721,10 @@ check(secoesSemSub === 23, `seções sem subárea: ${secoesSemSub}, esperado 23`
 check(secaoSemTexto.length === 0, `seções sem subárea e sem texto: ${secaoSemTexto.join(", ")}`);
 
 // F19: toda página de subárea aponta as áreas vizinhas
-const comConexoes = Object.values(POSTS).filter((p) => p.body.includes("<strong>Conexões:</strong>")).length;
+const comConexoes = Object.values(POSTS).filter((p) => p.body.includes("Os caminhos daqui seguem para")).length;
 check(comConexoes >= 283, `páginas com conexões: ${comConexoes}, esperado ao menos 283`);
+const comMeta = Object.values(POSTS).filter((p) => /Estação da subárea|blog jogável|O catálogo reúne|O catálogo lista/i.test(p.body)).length;
+check(comMeta === 0, `páginas ainda com texto de bastidor: ${comMeta}`);
 
 // F10: identidade de cada área, sem repetir bioma, bicho, item, guardião ou caverna
 check(IDENTITY_AREAS.length === 86, `identidade: ${IDENTITY_AREAS.length} áreas, esperado 86`);

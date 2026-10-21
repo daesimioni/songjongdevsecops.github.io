@@ -7,22 +7,21 @@ import { LEGACY_CONTENT } from "./config.js";
 export const POSTS = {
   welcome: {
     kicker: "porto do início",
-    title: "Um arquipélago que se atravessa a pé",
+    title: "O vale não tem índice",
     date: "2026-10-19",
     read: "4 min",
-    tags: ["meta", "começo", "rede", "missões"],
+    tags: ["começo", "vale", "pedras", "caminho"],
     continent: "hub",
     lab: null,
     body: `
-      <p>Este blog não tem índice. Tem <strong>mapa</strong>. Você entra com um boneco, atravessa pontes e escolhe por qual continente começar. Cada estação que encontra é uma página: um texto curto e um instrumento para mexer com as mãos.</p>
-      <p>O mapa cresceu para o <strong>catálogo inteiro</strong>: cada seção de Matemática, Física, Química, Computação e Língua Portuguesa ganhou a sua área, com estação, clareira de caçada, caverna e missão próprias, e as interseções entre as disciplinas ficaram entre as duas mães, ligadas pelo túnel. Ao todo são <strong>86 áreas</strong> e <strong>454 fragmentos</strong>, ligados por ponte quando são vizinhos.</p>
-      <p>São sete continentes. A <em>Computação</em> mostra como saímos de interruptores e areia até processadores. <em>Matemática</em> visita o infinito, as formas, a mudança e o acaso. <em>Física</em> testa pêndulos, ondas, calor, luz e órbitas. <em>Química</em> abre a tabela periódica, as ligações, as reações e o equilíbrio. <em>Música</em> mostra a matemática escondida no som. <em>Inteligência Artificial</em> abre os dados, as redes, a linguagem e os limites. O <em>Vale da Língua</em> desce ao português do Brasil: o som, a palavra, a frase e o texto. Ao todo, 454 fragmentos para descobrir: cada seção virou uma área e cada subárea do catálogo virou uma estação.</p>
-      <p>Cada estação abre uma página e soma experiência. O <strong>Diário</strong> guarda o que você já encontrou. As <strong>Pedras do Porto</strong>, os monólitos brilhantes nas docas, levam você de volta a qualquer continente já visitado. A névoa do minimapa só some onde você anda.</p>
-      <blockquote>Não tem pressa. O mapa é grande, mas o caminho é seu.</blockquote>
-      <p>Os <strong>NPCs</strong> têm missões. Aperte F perto deles: tem caminhada, pergunta e conversa. Cada missão paga experiência e um título, e o Diário mostra quanto falta para a próxima.</p>
-      <p>Clique no chão e o boneco vai até ali sozinho. Nas clareiras com bandeira fica um instrutor: com ele você treina o tema da caverna sem perder vida e sem levar item. O bicho de verdade mora na caverna ao lado, e é lá que a prova paga experiência, item e perícia. Fugir também custa: a chance de levar um golpe cresce com o monstro, e café reduz o risco por um tempo. A <strong>Ficha</strong>, na tecla C, mostra tudo.</p>
-      <p>Na <strong>Rede</strong> você desafia outro jogador: escolhe uma pergunta de muito fácil a muito difícil e ele responde para se defender. O convite leva uma prova assinada pela sua chave, e o painel mostra quando a identidade do outro lado confere. Na aba <strong>Pessoas</strong> dá para montar uma party de até oito jogadores. Quem erra perde compostura, não vida, e quem zera fica dez segundos desativado.</p>
-      <p>A <strong>Rede</strong>, na tecla E, liga você aos outros jogadores: canais por continente, DMs privadas e a lista de quem está no mundo agora. Sua conta é uma chave criada no seu navegador, sem cadastro. Se encontrar outra pessoa na praça, acene.</p>
+      <p>No começo há uma pedra no porto. Ela não explica o vale. Apenas aquece a mão de quem chega.</p>
+      <p>O vale foi erguido de fragmentos. Cada pedra no caminho guarda um: uma ideia que alguém deixou aqui para ser encontrada de novo. Aproxime-se e ela se abre. O instrumento ao lado espera as mãos, e nenhum dos dois cobra pressa.</p>
+      <p>Cada pedra encontrada deixa uma marca no Diário e soma experiência. As missões dos viajantes pagam experiência e um título, e o Diário mostra quanto falta para o próximo. Não há ordem certa: o vale aceita quem chega por qualquer caminho.</p>
+      <p>Há quem more entre as pedras. Instrutores ensinam sem tirar vida. Viajantes pedem pequenos favores. Guardiões de caverna só devolvem o que sabem depois de uma pergunta, e cobram caro por erro. O Diário anota o que você já viu; a névoa cobre o que ainda não andou.</p>
+      <p>As regiões não se ligam todas por terra. Nas docas, as Pedras do Porto acendem para quem já chegou longe; o mar continua sendo mar. Pontes levam aos vizinhos. Abaixo do chão, o túnel da conurbação passa por baixo das fronteiras e desce ao Porto Submerso.</p>
+      <p>Nas clareiras, o instrutor ensina o mesmo tema da caverna sem cobrar vida. A caverna cobra: cada bicho é uma pergunta, cada erro é sangue. Entre os dois, você escolhe o quanto quer arriscar.</p>
+      <p>O vale também é habitado por outros viajantes. A Rede é a conversa deles: canais por região, mensagens privadas, uma praça onde os bonecos se veem. A chave que abre essa conversa é sua, feita neste navegador, sem cadastro. Quem não quer falar pode atravessar em silêncio; o vale não cobra companhia.</p>
+      <blockquote>Não há mapa do vale inteiro. Há o que você já andou, e o próximo passo.</blockquote>
     `,
   },
   echo: {
@@ -1104,13 +1103,13 @@ export const NPCS = {
     name: "Dona Zefa",
     lines: [
       "Bem-vindo ao Porto. Sete continentes, mais terra do que os olhos acreditam.",
-      "Cada seção do catálogo virou uma área: estação, caverna e caçada. Área vizinha se liga por ponte; interseção desce pelo túnel. Vale a caminhada.",
-      "Cada farol da doca acende uma Pedra do Porto. Aperte F nas pedras para voltar rápido.",
-      "O diário guarda o que você já viu. Não precisa decorar nada.",
+      "Cada seção do conhecimento virou um lugar: pedra, caverna e caçada. Lugar vizinho se liga por ponte; a interseção desce pelo túnel. Vale a caminhada.",
+      "As pedras da doca guardam o caminho de volta. Encoste a mão e elas lembram.",
+      "O diário guarda o que você já viu. O resto o vale guarda por você.",
       "Ao lado de cada acampamento de caça tem uma boca de caverna. Lá embaixo o bicho não espera você apertar F: ele vê primeiro.",
       "Na cidade do fundo tem forja, horta, mesa de encanto e um bicho. Nada é de graça: tudo cobra material.",
       "Cada continente tem duas bocas de caverna. A escada do fundo sai na outra. É o túnel que liga as duas.",
-      "Complete as cinco estações de um continente e o traje dele abre na Ficha. Roupa é escolha, não prêmio de força.",
+      "Complete as cinco pedras de uma região e o traje dela abre na Ficha. Roupa é escolha, não prêmio de força.",
     ],
   },
   ada: {

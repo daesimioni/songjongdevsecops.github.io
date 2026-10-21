@@ -285,11 +285,11 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
   function renderEnd(body, d) {
     const win = d.phase === "victory";
     const box = el("div", `duel-end ${win ? "win" : "lose"}`);
-    box.appendChild(el("h3", "", d.training ? (win ? "Treino concluído" : "Treino encerrado") : (win ? "Monstro derrotado" : "Você caiu")));
+    box.appendChild(el("h3", "", d.training ? (win ? "Treino concluído" : "Treino encerrado") : (win ? "O guardião caiu" : "O vale o devolveu")));
     if (d.training) {
       box.appendChild(el("p", "", win
-        ? "Sem dano, sem loot. A perícia do continente subiu e a pergunta volta no caderno."
-        : "Sem dano. O treino é para errar aqui, não na caverna."));
+        ? "Sem sangue, sem saque. A perícia da região subiu; a pergunta volta quando você quiser."
+        : "Sem sangue. O treino existe para o erro não acontecer lá embaixo."));
     } else if (win && d.result) {
       box.appendChild(el("p", "", `+${d.result.xp} XP · perícia de ${CONTINENTS[d.ground.continent]?.name || "continente"} subiu.`));
       const loot = el("div", "duel-loot");
@@ -298,7 +298,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
       }
       box.appendChild(loot);
     } else {
-      box.appendChild(el("p", "", "Você acordou no Porto do Início com a vida cheia. Nada foi perdido."));
+      box.appendChild(el("p", "", "Você acordou no Porto do Início, com a vida cheia. O vale não guardou o que aconteceu."));
     }
     body.appendChild(box);
     const b = el("button", "duel-next", win ? "voltar ao mapa" : "levantar");

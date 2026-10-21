@@ -203,7 +203,7 @@ export function createPvp({ rpg, toast, audio, player, getNet, isBusy, openPanel
       body.appendChild(bars());
       body.appendChild(el("p", "pvp-text", won
         ? "Sem item perdido, sem vida perdida. A vitória é só a resposta certa na hora certa."
-        : "Você fica 10 segundos desativado. Nada foi perdido; a próxima pergunta continua no caderno."));
+        : "Você fica 10 segundos desativado. Nada foi perdido; a próxima pergunta continua esperando."));
       const back = el("button", "pvp-action", "voltar ao mundo");
       back.type = "button";
       back.addEventListener("click", close);

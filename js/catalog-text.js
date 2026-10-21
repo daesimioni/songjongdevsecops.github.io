@@ -88,26 +88,47 @@ const hashText = (text) => {
   return h >>> 0;
 };
 
-// Corpo da página: a subárea, o que o catálogo lista nela e as vizinhas.
+// Uma linha de respiro antes da lição. Muda com o nome da pedra, então duas
+// páginas vizinhas não abrem com a mesma frase.
+const EPIGRAFES = [
+  "Há pedras que só se abrem quando alguém para.",
+  "O vale não explica. Mostra.",
+  "Quem passou antes deixou uma marca. Quem passa agora deixa outra.",
+  "Toda pergunta volta com outra roupa.",
+  "O caminho entre saber e ver é mais curto do que parece.",
+  "A pedra está fria. O que ela guarda, não.",
+  "Nada aqui pede pressa.",
+  "O que se aprende aqui já estava no chão, esperando um nome.",
+  "O silêncio também ensina; ele só não avisa.",
+  "Há mais de um jeito de chegar à mesma resposta.",
+];
+
+export function epigrafe(name) {
+  return EPIGRAFES[hashText(String(name || "")) % EPIGRAFES.length];
+}
+
+// Corpo da pedra: a abertura curada, as marcas da subárea e os caminhos
+// vizinhos, sem falar de catálogo ou de página para quem está lendo.
 export function subareaBody({ sectionNum, sectionName, discipline, name, topics, siblings = [], catalogId = null }) {
-  const disc = DISCIPLINES[discipline]?.name || DISCIPLINES.math.name;
   const lista = topics.map((t) => `<li>${html(t)}</li>`).join("");
   const vizinhas = siblings.filter((s) => s !== name);
-  const linha = vizinhas.length
-    ? `<p>Na mesma área: ${vizinhas.map((s) => `<em>${html(s)}</em>`).join(", ")}.</p>`
-    : "";
   const curado = CURADO[discipline]?.[`${sectionNum}|${name}`] || CURADO[discipline]?.[name];
-  const abertura = curado ? `<p>${curado.abre}</p>` : "";
-  const pratica = curado ? `<p><strong>Prática:</strong> ${curado.pratica}</p>` : "";
-  const erro = curado ? `<p><strong>Erro comum:</strong> ${curado.erro}</p>` : "";
+  const abertura = curado
+    ? `<p>${curado.abre}</p>`
+    : `<p>Uma pedra baixa, coberta de marcas. ${html(name)}, no caminho de ${html(sectionName)}.</p>`;
+  const pratica = curado ? `<p><strong>Com as mãos.</strong> ${curado.pratica}</p>` : "";
+  const erro = curado ? `<p><strong>O passo em falso.</strong> ${curado.erro}</p>` : "";
   // as conexões são as áreas ligadas por ponte ou túnel no mapa
   const areasVizinhas = catalogId
     ? catalogNeighbors(catalogId).slice(0, 4).map((id) => CATALOG_BY_ID.get(id)?.short).filter(Boolean)
     : [];
   const conexoes = areasVizinhas.length
-    ? `<p><strong>Conexões:</strong> ${areasVizinhas.map((v) => `<em>${html(v)}</em>`).join(", ")}.</p>`
+    ? `<p>Os caminhos daqui seguem para ${areasVizinhas.map((v) => `<em>${html(v)}</em>`).join(", ")}.</p>`
     : "";
-  return `<p>Estação da subárea <strong>${html(name)}</strong>, na seção <strong>${html(sectionName)}</strong> de ${html(disc)}. O catálogo reúne aqui ${topics.length} ${topics.length === 1 ? "tópico" : "tópicos"}.</p>${abertura}<ul>${lista}</ul>${pratica}${erro}${conexoes}${linha}`;
+  const linha = vizinhas.length
+    ? `<p>Na mesma área, outras pedras: ${vizinhas.map((s) => `<em>${html(s)}</em>`).join(", ")}.</p>`
+    : "";
+  return `<p class="page-epigrafe">${epigrafe(name)}</p>${abertura}<p><strong>${html(name)}</strong> é o nome desta pedra, no caminho de ${html(sectionName)}. Ela guarda ${topics.length} ${topics.length === 1 ? "marca" : "marcas"}.</p><ul>${lista}</ul>${pratica}${erro}${conexoes}${linha}`;
 }
 
 // Todas as subáreas de uma disciplina, para tirar alternativas quando a seção

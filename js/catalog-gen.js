@@ -6,7 +6,7 @@ import { CATALOG, DISCIPLINES } from "./catalog.js";
 import { CATALOG_AREAS } from "./catalog-layout.js";
 import { BANK } from "./catalog-bank.js";
 import { SECTION_TOPICS } from "./catalog-topics.js";
-import { ICONS, articleOf, labFor, subareaBody, subareaQuiz, titleCase, trilhaQuiz, trilhas } from "./catalog-text.js";
+import { ICONS, articleOf, epigrafe, labFor, subareaBody, subareaQuiz, titleCase, trilhaQuiz, trilhas } from "./catalog-text.js";
 import { placeStations } from "./catalog-place.js";
 import { AREA_ITEMS, BIOMES, FAUNA, dungeonIdentity } from "./identity.js";
 import { INTER_TEXT } from "./text/inter.js";
@@ -162,7 +162,7 @@ export function buildCatalogContent() {
       });
       const inter = item.bankTopic ? (SECAO_TEXT[area.num] || INTER_TEXT[area.num]) : null;
       const corpo = item.bankTopic
-        ? `${inter ? `<p>${inter.abre}</p>` : ""}<p>${item.bankTopic.def}</p><ul>${item.bankTopic.keys.map((k) => `<li>${k}</li>`).join("")}</ul><blockquote>${item.bankTopic.mistake}</blockquote><p><strong>Trilha ${i + 1} de ${lista.length}.</strong> O catálogo lista estes tópicos nesta parte da seção:</p><ul>${item.topicos.map((t) => `<li>${t}</li>`).join("")}</ul>${inter ? `<p><strong>Prática:</strong> ${inter.pratica}</p><p><strong>Erro comum:</strong> ${inter.erro}</p>` : ""}`
+        ? `<p class="page-epigrafe">${epigrafe(item.nome)}</p>${inter ? `<p>${inter.abre}</p>` : ""}<p>${item.bankTopic.def}</p><ul>${item.bankTopic.keys.map((k) => `<li>${k}</li>`).join("")}</ul><blockquote>${item.bankTopic.mistake}</blockquote><p><strong>Parte ${i + 1} de ${lista.length}.</strong> O caminho desta trilha passa por estas marcas:</p><ul>${item.topicos.map((t) => `<li>${t}</li>`).join("")}</ul>${inter ? `<p><strong>Com as mãos.</strong> ${inter.pratica}</p><p><strong>O passo em falso.</strong> ${inter.erro}</p>` : ""}`
         : subareaBody({
             sectionNum: area.num,
             sectionName: secao.name,
@@ -225,27 +225,27 @@ export function buildCatalogContent() {
     npcs[keeperId] = {
       name: keeperName,
       lines: [
-        `${area.name}. ${area.sub}. Bem-vindo a ${bioma.name}.`,
-        `Estude por aqui: ${shortWords.join(", ")}. Cada estação tem o que ler e o que mexer.`,
-        `Cuidado com ${fauna[0].name} e ${fauna[1].name}; os dois moram nesta ilha.`,
-        `Cuidado com o engano clássico: ${bank[0].mistake}`,
-        `A caverna daqui embaixo guarda o que ainda não foi respondido. Volte com vida.`,
+        `${bioma.name}. Poucos chegam até aqui, e menos ainda param.`,
+        `Os nomes desta ilha: ${shortWords.join(", ")}. Não são enfeites; são o que se pode aprender.`,
+        `${fauna[0].name} e ${fauna[1].name} rondam por perto. Não os provoque sem resposta.`,
+        `O engano que volta sempre: ${bank[0].mistake}`,
+        `A caverna abaixo guarda o resto. Desça quando tiver pergunta demais.`,
       ],
     };
     npcs[`trainer-${area.id}`] = {
       name: `Mestre ${keeperName}`,
       lines: [
-        `Treino da ${area.short}, sem caverna e sem susto.`,
-        `Comece por ${shortWords[0]}; a pergunta da clareira cobra o mesmo.`,
-        `Se errar aqui, não dói. Lá embaixo dói.`,
+        `A clareira é lugar de errar sem sangue.`,
+        `Comece por ${shortWords[0]}. O que a clareira cobra, a caverna também cobra.`,
+        `Aqui o erro não dói. Lá embaixo, dói.`,
       ],
     };
     quests.push({
       id: `missao-${area.id}`,
       npc: keeperId,
       giver: keeperName,
-      title: area.name.replace("Área", "Missão"),
-      brief: `${area.sub}. ${bank[1].mistake}`,
+      title: `A pergunta de ${keeperName}`,
+      brief: `${area.sub}. ${keeperName} espera uma resposta, não uma visita.`,
       goal: { type: "quiz" },
       quiz: quizFor(bank[1].q, order),
       reward: { xp: 38, title: `Aprendiz de ${keeperName}` },
