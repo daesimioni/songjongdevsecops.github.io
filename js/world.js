@@ -1,6 +1,6 @@
 import {
   MAP_W, MAP_H, TILE, TILE_KIND as K, SOLID, CONTINENTS, AREAS, SITES,
-  WAYSTONES, NPC_SPAWNS, CAT_SPAWN, REVEAL_RADIUS, PLAYER_W, PLAYER_H,
+  WAYSTONES, NPC_SPAWNS, CAT_SPAWN, REVEAL_RADIUS, PLAYER_W, PLAYER_H, SPAWN,
 } from "./config.js";
 import { GROUNDS } from "./rpg-data.js";
 import { dungeonById } from "./dungeon-data.js";
@@ -845,6 +845,74 @@ export function createWorld() {
     const i = groundItems.findIndex((g) => g.id === id);
     if (i < 0) return null;
     return groundItems.splice(i, 1)[0];
+  }
+
+  // 9. liga tudo: todo ponto de interesse tem caminho a pé desde o spawn.
+  // Custa 0 andar, 1 atravessar água (vira ponte) e 2 abrir picada no mato
+  // (vira caminho); parede, magma e ácido ficam de fora. Depois de achar o
+  // custo, cada ponto pinta o próprio trajeto, então nenhuma estação, pedra,
+  // caverna, NPC ou item fica órfã.
+  // magma e ácido são chão andável no jogo (SOLID é água, árvore e parede)
+  const SEM_PASSO = new Set([K.WALL]);
+  const custo = new Int32Array(MAP_W * MAP_H).fill(-1);
+  const pai = new Int32Array(MAP_W * MAP_H).fill(-1);
+  {
+    const inicio = Math.round(SPAWN.y) * MAP_W + Math.round(SPAWN.x);
+    const fila = [[inicio, 0]];
+    custo[inicio] = 0;
+    let cabeca = 0;
+    while (cabeca < fila.length) {
+      const [p, c] = fila[cabeca++];
+      const px = p % MAP_W;
+      const py = (p - px) / MAP_W;
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+        const nx = px + dx;
+        const ny = py + dy;
+        if (nx < 1 || ny < 1 || nx >= MAP_W - 1 || ny >= MAP_H - 1) continue;
+        const np = ny * MAP_W + nx;
+        const t = tiles[np];
+        if (SEM_PASSO.has(t)) continue;
+        const passo = t === WATER ? 1 : t === TREE ? 2 : 0;
+        const nc = c + passo;
+        if (custo[np] !== -1 && custo[np] <= nc) continue;
+        custo[np] = nc;
+        pai[np] = p;
+        // 0-1-2: entra na frente quando é de graça, no fim quando custa
+        if (passo === 0) fila.splice(cabeca, 0, [np, nc]);
+        else fila.push([np, nc]);
+      }
+    }
+  }
+  const interessantes = [
+    ...stations.map((o) => ({ x: o.x, y: o.y })),
+    ...waystones.map((o) => ({ x: o.x, y: o.y })),
+    ...caves.map((o) => ({ x: o.x, y: o.y })),
+    ...npcs.map((o) => ({ x: o.x, y: o.y })),
+    ...groundItems.map((o) => ({ x: o.x, y: o.y })),
+  ];
+  const pintados = new Set();
+  for (const alvo of interessantes) {
+    let p = Math.round(alvo.y) * MAP_W + Math.round(alvo.x);
+    if (custo[p] === -1 || custo[p] === 0) continue;
+    for (let salto = 0; salto < 400 && p >= 0 && custo[p] > 0; salto++) {
+      if (!pintados.has(p)) {
+        const t = tiles[p];
+        const px = p % MAP_W;
+        const py = Math.floor(p / MAP_W);
+        // ponte e picada têm dois tiles de largura: um fio de um tile só
+        // atravessando o mar parecia linha de circuito
+        for (const [dx, dy] of [[0, 0], [1, 0], [0, 1], [1, 1]]) {
+          const nx = px + dx;
+          const ny = py + dy;
+          if (nx < 1 || ny < 1 || nx >= MAP_W - 1 || ny >= MAP_H - 1) continue;
+          const nt = tiles[ny * MAP_W + nx];
+          if (nt === WATER) set(nx, ny, BRIDGE);
+          else if (nt === TREE) set(nx, ny, PATH);
+        }
+        pintados.add(p);
+      }
+      p = pai[p];
+    }
   }
 
   return {

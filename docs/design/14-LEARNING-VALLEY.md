@@ -434,6 +434,24 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 - [ ] **decisão registrada**: o mapa não cresce de tamanho; o espaço na tela
       cresceu com o tile menor (de 24-32 px para 21-26 px, ~40% mais chão visível)
 
+### AD. Zero ponto órfão
+
+- [x] **uma passada que liga tudo**: depois de pintar terreno, caminhos, pontes e
+      mato, um 0-1-2 BFS parte do spawn cobrando 0 para andar, 1 para atravessar
+      água (vira ponte) e 2 para abrir picada no mato (vira caminho). Parede fica
+      de fora. Cada ponto de interesse então pinta o próprio trajeto até a terra
+      já alcançável
+- [x] **resultado medido**: 454/454 estações, 94/94 pedras de viagem, 186/186
+      bocas de caverna, 194/194 NPCs e 172/172 itens no chão alcançáveis a pé
+      desde o spawn (antes: 82, 15, 27, 34 e 20)
+- [x] ponte e picada saem com dois tiles de largura: um fio de um tile só
+      atravessando o mar parecia linha de circuito
+- [x] magma e ácido contam como chão: `SOLID` no jogo é água, árvore e parede, e
+      a primeira versão da passada errou nisso (tratava magma como parede e
+      deixava 50 pontos de fora)
+- [ ] a grade de ilhas do catálogo continua regular: as áreas ainda nascem numa
+      malha de 24x16 tiles, o que dá o aspecto de tabuleiro
+
 ## 3. Regras de desenho
 
 - A tela de título é a primeira impressão: vale com camadas, céu em degradê,
@@ -466,6 +484,7 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 
 | data | fase | o que entrou | prova |
 |---|---|---|---|
+| 2026-10-21 | AD | zero ponto órfão: passada 0-1-2 do spawn abrindo ponte sobre água e picada no mato, e cada ponto de interesse liga o próprio trajeto | medido: 454/454 estações, 94/94 pedras, 186/186 cavernas, 194/194 NPCs e 172/172 itens alcançáveis a pé desde o spawn (antes 82, 15, 27, 34 e 20); todo o chão caminhável subiu de 11.830 para 33.246 tiles |
 | 2026-10-21 | AC | mapa orgânico (fatia 1): caminho com passo torto, largura variável e ponte sobre água; divisa de bioma serrilhada; tile de 21 a 26 px na tela | navegador: captura do caminho torto e da divisa, desempenho nos três perfis mantido com o tile menor; node verde; alcance a pé 82/454 estações, 27/186 cavernas e 34/194 NPCs contra 82, 28 e 37 antes |
 | 2026-10-21 | AB | desempenho nos três perfis: teto de 2,2 MP no canvas (antes crescia com a densidade da tela) e qualidade pelo p95 do quadro com piso 0,7 e aquecimento de 90 quadros | navegador: computador 48,3 → 58,5 fps, tablet 41,5 → 57,1, celular 60,3 → 60,2; p95 de 23,7 e 27,3 para 20,5 e 20,3; canvas de 1,68 e 2,55 MP para 1,02 e 1,54; memória de 20,8 para 14,2 MB no tablet |
 | 2026-10-21 | AA | oito direções em tudo: passo diagonal com pose própria (cabeça deslocada, arma do lado, escudo atrás), bicho espelhando, NPC, gato, pet, casco e viajante; e o conserto do `skiffRear` que faltava importar e apagava o boneco com a nave ligada | navegador: quatro diagonais andando no mundo (dir 4, 5, 6, 7) com recorte do boneco, bichos da caverna em dir 4 e 7, boneco de costas na caverna visível depois do conserto, zero exceção; node: oito direções no gearView, direcaoBase e ladoDaDiagonal |
