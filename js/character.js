@@ -28,7 +28,7 @@ function swatchRow(label, list, value, onPick) {
   return row;
 }
 
-export function renderCharacterEditor(mount, { look, colors, outfits = [], outfit = "", isHairLocked = () => false, isOutfitLocked = () => false, lockHint = () => "", onChange, onOutfit }) {
+export function renderCharacterEditor(mount, { look, colors, outfits = [], outfit = "", isHairLocked = () => false, isOutfitLocked = () => false, lockHint = () => "", onlyUnlocked = false, onChange, onOutfit }) {
   const current = normalizeAvatar(look);
   mount.textContent = "";
 
@@ -61,6 +61,9 @@ export function renderCharacterEditor(mount, { look, colors, outfits = [], outfi
   const hairGrid = el("div", "look-hairs");
   for (const hair of HAIRS) {
     const locked = isHairLocked(hair);
+    // na criação só entra o que já está aberto: cadeado na tela de entrada é
+    // convite a nada, e a lista completa aparece no ponto de trajes do jogo
+    if (onlyUnlocked && locked) continue;
     const button = el("button", `look-hair${current.hair === hair.id ? " on" : ""}${locked ? " locked" : ""}`, hair.name);
     button.type = "button";
     button.disabled = locked;
@@ -77,6 +80,7 @@ export function renderCharacterEditor(mount, { look, colors, outfits = [], outfi
     const outfitChips = el("div", "look-chips");
     for (const item of outfits) {
       const locked = isOutfitLocked(item);
+      if (onlyUnlocked && locked) continue;
       const button = el("button", `look-chip${outfit === item.id ? " on" : ""}${locked ? " locked" : ""}`, item.name);
       button.type = "button";
       button.disabled = locked;
@@ -89,7 +93,7 @@ export function renderCharacterEditor(mount, { look, colors, outfits = [], outfi
   }
 
   controls.appendChild(swatchRow("pele", SKINS, current.skin, (skin) => onChange({ skin })));
-  controls.appendChild(swatchRow("cabelo", HAIR_TONES, current.hairColor, (hairColor) => onChange({ hairColor })));
+  controls.appendChild(swatchRow("tom", HAIR_TONES, current.hairColor, (hairColor) => onChange({ hairColor })));
   controls.appendChild(swatchRow("olhos", EYES, current.eyes, (eyes) => onChange({ eyes })));
   wrap.appendChild(controls);
   mount.appendChild(wrap);

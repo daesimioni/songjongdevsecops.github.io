@@ -302,6 +302,14 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 
 ### Z. Título, letra B e botão
 
+- [x] traje só se escolhe uma vez: na criação a lista mostra apenas o que já
+      está aberto (6 trajes e 4 cabelos no começo, zero cadeado na tela). Quem
+      já tem personagem entra com o que escolheu, sem ver o editor de novo. A
+      lista completa, com os 102 trajes e os cadeados, fica no ponto de trajes
+      dentro do jogo
+- [x] o rótulo de cor de cabelo virou "tom", para não ter dois "cabelo" na
+      mesma coluna
+
 - [x] a abertura deixou de ser catálogo: saíram os números ("sete regiões,
       oitenta e seis lugares, quatrocentas e cinquenta e quatro pedras") e
       entrou a promessa do vale. A régua é a de Monument Valley: frase curta,

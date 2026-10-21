@@ -93,7 +93,10 @@ const saved = {
 };
 
 const savedOutfit = outfitById(readJSON(STORAGE.outfit, "viajante"));
-const savedAvatar = normalizeAvatar(readJSON(STORAGE.avatar, null), AVATAR_DEFAULT);
+// guardado é diferente de padrão: quem já criou personagem não escolhe traje de
+// novo na entrada, só no ponto de trajes dentro do jogo
+const avatarGuardado = readJSON(STORAGE.avatar, null);
+const savedAvatar = normalizeAvatar(avatarGuardado, AVATAR_DEFAULT);
 const player = {
   x: SPAWN.x,
   y: SPAWN.y,
@@ -2980,11 +2983,21 @@ function showIntroStep(step) {
 function renderIntroLook() {
   const mount = $("intro-look");
   if (!mount) return;
+  const primeiraVez = !avatarGuardado && !state.personagemCriado;
+  const dica = $("intro-look-hint");
+  // quem já tem personagem entra com o que escolheu: nada de traje na entrada
+  mount.hidden = !primeiraVez;
+  if (dica) dica.hidden = !primeiraVez;
+  if (!primeiraVez) return;
+  // só o que já está aberto: a lista completa, com os cadeados, fica no ponto
+  // de trajes dentro do jogo
+  const liberados = OUTFITS.filter((item) => outfitUnlocked(item) || item.id === player.outfitId);
   const draw = () => renderCharacterEditor(mount, {
     look: player.look,
     colors: player.colors,
-    outfits: OUTFITS,
+    outfits: liberados,
     outfit: player.outfitId,
+    onlyUnlocked: true,
     isHairLocked: (item) => !hairOpen(item),
     isOutfitLocked: (item) => !outfitUnlocked(item),
     lockHint,
@@ -3092,6 +3105,7 @@ $("intro-form").addEventListener("submit", (e) => {
   writeJSON(STORAGE.name, name);
   writeJSON(STORAGE.room, state.room);
   writeJSON(STORAGE.avatar, player.look);
+  state.personagemCriado = true;
   $("intro-room").value = state.room;
   // a passagem para o vale: uma tela curta com o logo antes de acordar no porto
   if (new URLSearchParams(location.search).has("debug")) {
