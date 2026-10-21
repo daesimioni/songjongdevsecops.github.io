@@ -2224,6 +2224,269 @@ export const LICOES = {
         "Desenhe quatro pontos e trace o diagrama de Voronoi deles à mão.",
     },
   },
+  "math-algebra": {
+    "Álgebra Elementar": {
+      contexto:
+        "Onde isso aparece: na fórmula de juros, na área do terreno e no ajuste de escala. A expressão é a receita da conta, e fatorar é desmontar a receita. Produto notável resume padrão que aparece toda hora.",
+      oQue:
+        "Álgebra elementar manipula expressão com incógnita mantendo a igualdade. Produto notável é atalho de multiplicação, fatoração é o caminho de volta, e polinômio é a expressão de grau definido. Resolver equação é isolar o valor que torna a sentença verdadeira.",
+      passos: [
+        "Identifique o padrão antes de expandir a expressão.",
+        "Fatore quando a conta for de ida e volta.",
+        "Confira a solução substituindo na equação original.",
+      ],
+      exemplo:
+        "x ao quadrado menos nove fatora em x menos três vezes x mais três; a forma fatorada mostra as raízes três e menos três de imediato, e a expandida não mostra. Já x mais dois ao quadrado é x ao quadrado mais quatro x mais quatro, não x ao quadrado mais quatro. Esquecer o termo do meio é o erro clássico do produto notável.",
+      quebra:
+        "Cancelar termo que está somado, não multiplicado. Em x mais três sobre três, o três não cancela o três: o correto é x sobre três mais um. Cancelar soma muda o valor e a resposta.",
+      limite:
+        "Fatoração simples existe para polinômio de grau baixo; em grau alto a raiz pode não ter fórmula por radicais, e a solução vem por método numérico ou por estrutura de corpo.",
+      levar: "Fatorar é trocar conta por leitura.",
+      maos:
+        "Fatore x ao quadrado menos cinco x mais seis e veja as raízes na forma fatorada.",
+      pergunta: {
+        q: "Por que fatorar ajuda a resolver uma equação polinomial?",
+        a: "Porque cada fator igual a zero dá uma raiz de imediato",
+        why: "O produto é zero quando um dos fatores é zero, então a forma fatorada transforma a equação de grau alto em equações simples.",
+      },
+    },
+    "Álgebra Linear": {
+      contexto:
+        "Onde isso aparece: na rotação de imagem, no sistema de equações e no modelo de aprendizado. Matriz é transformação, e o sistema linear é a pergunta de qual vetor cai onde. Autovalor e autovetor revelam a direção que a transformação não gira.",
+      oQue:
+        "Álgebra linear estuda vetor, matriz e transformação linear. O sistema linear pergunta qual vetor satisfaz a equação, e a matriz descreve como o espaço se deforma. O autovetor é a direção que a transformação mantém, e o autovalor é quanto ela estica nessa direção.",
+      passos: [
+        "Escreva o sistema em forma de matriz.",
+        "Verifique se existe solução e se ela é única pelo determinante.",
+        "Ache autovalor e autovetor quando a pergunta for sobre direção.",
+      ],
+      exemplo:
+        "Numa transformação que estica o eixo x em dobro e mantém o y, o vetor (1,0) é autovetor com autovalor dois, e (0,1) é autovetor com autovalor um. A matriz é diagonal, e a leitura é direta. Se o determinante fosse zero, a transformação amassaria o plano numa reta.",
+      quebra:
+        "Achar que o determinante nulo só significa conta errada. Determinante zero quer dizer que a transformação perde dimensão e o sistema pode não ter solução única. Confundir os dois leva a insistir num sistema impossível.",
+      limite:
+        "A diagonalização exige autovetor suficiente; matriz com autovalor repetido pode não diagonalizar. Nesse caso a forma de Jordan descreve o que sobra, e a leitura fica mais fina.",
+      levar: "Autovetor é a direção que a transformação não gira.",
+      maos:
+        "Ache os autovetores de uma matriz diagonal e de uma matriz de rotação, e compare.",
+    },
+    "Álgebra Abstrata": {
+      contexto:
+        "Onde isso aparece: na simetria do cristal, na aritmética modular e no código corretor. A estrutura é o que importa, não o objeto: número, matriz e permutação podem seguir a mesma regra. Grupo captura a ideia de operação com inverso.",
+      oQue:
+        "Álgebra abstrata estuda estrutura algébrica: conjunto com operação e axiomas. Grupo exige fechamento, associatividade, neutro e inverso; anel junta duas operações, como soma e multiplicação, e ideal é subconjunto que absorve produto. A mesma prova vale para objetos diferentes com a mesma estrutura.",
+      passos: [
+        "Liste o conjunto e a operação.",
+        "Confira fechamento, associatividade, neutro e inverso.",
+        "Veja qual estrutura mais fraca já garante o resultado que se quer.",
+      ],
+      exemplo:
+        "Os inteiros com soma formam grupo; com multiplicação, não, porque a maioria não tem inverso inteiro. Já os inteiros módulo n com soma formam grupo finito, e o relógio é o modelo. A mesma regra vale para os dois, e o que muda é o conjunto.",
+      quebra:
+        "Supor que toda estrutura com operação tem inverso. Sem inverso, não há grupo, e a divisão deixa de valer. A hipótese precisa ser verificada, não presumida.",
+      limite:
+        "A estrutura abstrata garante o que os axiomas dizem e nada além. Propriedade que depende de ordem ou de topologia exige estrutura extra, e o teorema abstrato não alcança.",
+      levar: "Álgebra abstrata pergunta a regra, não o objeto.",
+      maos:
+        "Verifique se os inteiros com multiplicação formam grupo e aponte o axioma que falha.",
+    },
+    "Teoria de Grupos": {
+      contexto:
+        "Onde isso aparece: na simetria do poliedro, na resolução do cubo mágico e na física de partícula. Grupo de simetria descreve o que se pode fazer sem mudar a figura. Grupos finitos, abelianos e de Lie cobrem casos diferentes.",
+      oQue:
+        "Teoria de grupos estuda simetria e operação. Grupo de permutação organiza embaralhamento, grupo abeliano tem operação comutativa, e grupo de Lie é contínuo, com estrutura de variedade. A classificação de grupo finito simples organiza os blocos de que todo grupo é feito. O grupo também aparece na simetria do cristal, e a lista de simples é uma das maiores conquistas da área.",
+      passos: [
+        "Identifique o conjunto de simetrias e a composição como operação.",
+        "Veja se o grupo é abeliano, finito ou contínuo.",
+        "Decomponha em subgrupo normal e quociente para simplificar.",
+      ],
+      exemplo:
+        "O triângulo equilátero tem seis simetrias: três rotações e três reflexões. Compor duas reflexões dá rotação, e por isso o grupo não é abeliano. O cubo mágico tem grupo enorme, e a solução é uma sequência de elemento que leva ao neutro.",
+      quebra:
+        "Compor simetrias na ordem errada. Em grupo não abeliano, a ordem importa: girar e depois refletir não é o mesmo que refletir e depois girar. Escrever a composição ao contrário inverte o resultado.",
+      limite:
+        "A classificação completa vale para grupo finito. Grupo contínuo e grupo infinito têm estrutura mais rica, e a lista de simples não resolve o caso.",
+      levar: "Grupo é a álgebra da simetria.",
+      maos:
+        "Liste as seis simetrias do triângulo e componha duas reflexões para ver a rotação.",
+      pergunta: {
+        q: "Como a composição de duas reflexões aparece num grupo de simetria?",
+        a: "Como uma rotação, e não como outra reflexão",
+        why: "Refletir duas vezes equivale a girar; é essa regra de composição que faz o grupo do triângulo ter seis elementos.",
+      },
+    },
+    "Álgebra Comutativa": {
+      contexto:
+        "Onde isso aparece: na geometria algébrica, na fatoração de polinômio e no código. Anel comutativo é a base, e ideal é o que permite quociente. A fatoração única que falha no anel de inteiros algébricos é recuperada no nível do ideal.",
+      oQue:
+        "Álgebra comutativa estuda anel comutativo, ideal e módulo. Ideal primo e maximal organizam o quociente, e localização concentra a informação num ponto. O teorema da base de Hilbert garante que anel de polinômio sobre corpo é noetheriano. A noetherianidade é o que permite falar em variedade algébrica sem processo infinito, e ela é hipótese em quase todo teorema da área.",
+      passos: [
+        "Identifique o anel e o ideal de interesse.",
+        "Veja se o ideal é primo ou maximal pelo quociente.",
+        "Use localização quando só a vizinhança do ponto importa.",
+      ],
+      exemplo:
+        "No anel dos inteiros, os ideais primos são os gerados por primo, e o quociente por eles é corpo. O ideal gerado por 6 não é primo, porque o quociente tem divisor de zero. A estrutura do quociente revela a natureza do ideal.",
+      quebra:
+        "Tratar ideal como subanel qualquer. Ideal absorve produto por elemento do anel, e essa propriedade é o que faz o quociente funcionar. Sem ela, a construção não fecha.",
+      limite:
+        "A teoria clássica supõe anel noetheriano e comutativo. Fora disso, a estrutura de ideal muda, e a conclusão sobre fatoração não se transporta.",
+      levar: "O quociente revela o ideal.",
+      maos:
+        "Veja o quociente dos inteiros pelo ideal gerado por 6 e encontre os divisores de zero.",
+      pergunta: {
+        q: "O que o teorema da base de Hilbert garante?",
+        a: "Que o anel de polinômios sobre corpo é noetheriano",
+        why: "Todo ideal do anel de polinômios é gerado por conjunto finito, o que sustenta a teoria de variedade algébrica.",
+      },
+    },
+    "Álgebra Não Comutativa": {
+      contexto:
+        "Onde isso aparece: na matriz de rotação, no quaternion da computação gráfica e na mecânica quântica. A ordem da conta importa, e a estrutura muda. Anel de matriz e álgebra de Lie são os exemplos centrais.",
+      oQue:
+        "Álgebra não comutativa estuda anel e álgebra em que a ordem do produto importa. Matriz é o exemplo mais comum, e quaternion estende o complexo sem comutar. Álgebra de Lie captura a estrutura do comutador e aparece na física. A mecânica quântica usa a não comutatividade de posição e momento, e o comutador vira a relação de incerteza; a ordem do produto deixa de ser detalhe e passa a ser princípio físico.",
+      passos: [
+        "Verifique se o produto comuta em exemplo pequeno.",
+        "Identifique o comutador e a estrutura que ele gera.",
+        "Use representação matricial para tornar a conta concreta.",
+      ],
+      exemplo:
+        "Duas rotações no espaço tridimensional não comutam: girar em torno de x e depois de y dá resultado diferente da ordem inversa. O comutador de duas matrizes de rotação é outra matriz, ligada à álgebra de Lie. A conta gráfica sente a diferença.",
+      quebra:
+        "Aplicar regra de anel comutativo em anel não comutativo. O binômio quadrado e a fatoração mudam, e a conta que ignorar a ordem erra. A regra precisa ser reescrita com comutador.",
+      limite:
+        "A teoria não comutativa é mais difícil e menos unificada. Teorema clássico de anel comutativo não se transporta, e cada classe exige ferramenta própria.",
+      levar: "Onde a ordem importa, o produto não é número: é transformação.",
+      maos:
+        "Componha duas rotações de 90 graus em ordens diferentes e compare o resultado.",
+      pergunta: {
+        q: "Por que a ordem importa na álgebra não comutativa?",
+        a: "Porque o produto de duas transformações pode depender da ordem em que são aplicadas",
+        why: "Rotações e matrizes em geral não comutam; o resultado de a depois b é diferente de b depois a, e o comutador mede essa diferença.",
+      },
+    },
+
+    "Álgebra Homológica": {
+      contexto:
+        "Onde isso aparece: no cálculo de buraco de espaço, na prova de existência em geometria e na teoria de feixe. A ideia é medir o defeito de uma sequência exata. Complexo de cadeias organiza a conta.",
+      oQue:
+        "Álgebra homológica estuda complexo de cadeias e a homologia que mede a falha da exatidão. Functor derivado estende functor que não preserva exatidão, e cohomologia captura o obstáculo. Categoria derivada organiza os objetos para que a conta fique natural.",
+      passos: [
+        "Monte o complexo de cadeias com os operadores de borda.",
+        "Calcule o núcleo e a imagem para achar a homologia.",
+        "Interprete o grupo de homologia como obstáculo ou buraco. Os grupos de dimensões diferentes dão os números de Betti, e a sequência exata liga espaço, subespaço e quociente, o que permite calcular o grupo de um a partir dos outros dois.",
+      ],
+      exemplo:
+        "No complexo de um espaço, o primeiro grupo de homologia conta buraco em anel: o ciclo que não é borda representa o buraco. Se o grupo é trivial, todo ciclo é borda e o buraco não existe. A conta transforma pergunta geométrica em álgebra.",
+      quebra:
+        "Achar que homologia e cohomologia dão sempre a mesma informação. Elas se relacionam, mas a construção é diferente e a dualidade depende do coeficiente. Trocar uma pela outra sem motivo muda o resultado.",
+      limite:
+        "A conta descreve a estrutura do complexo, não do espaço original. Escolher o complexo errado, ou coeficiente inadequado, produz homologia que não responde à pergunta geométrica.",
+      levar: "Homologia mede o que sobra quando o ciclo não é borda.",
+      maos:
+        "Desenhe um anel e um disco e compare o primeiro grupo de homologia dos dois.",
+      pergunta: {
+        q: "O que o primeiro grupo de homologia mede?",
+        a: "Os buracos em anel que não são preenchidos por uma borda",
+        why: "O grupo é o núcleo do operador de borda sobre a imagem do operador seguinte; o ciclo que não é borda representa o buraco.",
+      },
+    },
+    "Teoria de Representações": {
+      contexto:
+        "Onde isso aparece: na espectroscopia, na simetria de molécula e na classificação de partícula. Representar é trocar elemento abstrato por matriz, e o caráter resume a matriz por traço. A conta fica concreta sem perder a estrutura.",
+      oQue:
+        "Teoria de representações estuda como grupo ou álgebra age em espaço vetorial. Representação irredutível é o bloco que não se decompõe, e o caráter é o traço da matriz, que identifica a representação. Simetria de sistema físico vira decomposição em bloco. A tabela de caráter de grupo finito é quadrada e ortogonal, e a decomposição de qualquer representação sai de projeção com a tabela, e o número de irredutíveis fica determinado pelo grupo, sem precisar construir cada espaço de representação.",
+      passos: [
+        "Escolha o grupo e o espaço em que ele age.",
+        "Decomponha em representações irredutíveis.",
+        "Use o caráter para identificar e somar os blocos.",
+      ],
+      exemplo:
+        "No grupo de rotação do plano, a representação de dimensão dois é irredutível sobre os reais, porque não existe reta invariante. Sobre os complexos, ela se decompõe em duas de dimensão um. O corpo muda a decomposição, e a escolha do corpo é parte do problema.",
+      quebra:
+        "Somar caráter de representações sem verificar se são do mesmo grupo e do mesmo corpo. O número perde sentido, e a conclusão de decomposição sai errada.",
+      limite:
+        "A teoria clássica de caráter vale para grupo finito e corpo adequado. Grupo infinito e representação de dimensão infinita exigem análise funcional, e a tabela de caráter não basta.",
+      levar: "Representar é trocar simetria abstrata por matriz concreta.",
+      maos:
+        "Escreva as matrizes de duas simetrias do triângulo e calcule os traços.",
+      pergunta: {
+        q: "O que o caráter de uma representação guarda?",
+        a: "O traço das matrizes, que identifica a representação",
+        why: "O traço é invariante por mudança de base e distingue as representações irredutíveis, permitindo decompor sem escrever cada matriz.",
+      },
+    },
+    "Álgebra Universal": {
+      contexto:
+        "Onde isso aparece: na definição de estrutura comum entre grupo, anel e reticulado, e na verificação de propriedade por identidade. A pergunta é o que vale para toda álgebra com a mesma assinatura. A prova vale em muitos casos de uma vez.",
+      oQue:
+        "Álgebra universal estuda estrutura definida por operação e identidade. Variedade algébrica, no sentido universal, é a classe que satisfaz conjunto de identidade; reticulado algébrico ordena com encontro e junção. A generalidade permite uma prova para muitos objetos. A mesma assinatura pode ter identidades diferentes, e a classe muda com elas.",
+      passos: [
+        "Liste as operações e a aridade de cada uma.",
+        "Escreva as identidades que definem a classe.",
+        "Verifique se o resultado usa só essas identidades.",
+      ],
+      exemplo:
+        "Grupo e anel têm operações diferentes, mas a lei de De Morgan vale em qualquer reticulado distributivo, e a prova usa só encontro e junção. Por isso o mesmo teorema serve para conjunto com união e interseção e para lógica proposicional. A estrutura abstrata economiza prova.",
+      quebra:
+        "Aplicar teorema de álgebra universal em estrutura que não cumpre a assinatura. Se a operação não existe ou a identidade falha, a prova não vale. A generalidade tem pré-requisito.",
+      limite:
+        "Identidade não captura toda propriedade: ordem total, continuidade e finitude exigem estrutura extra. O que a álgebra universal prova é exatamente o que a identidade determina.",
+      levar: "Uma prova de identidade vale em toda álgebra que a cumpre.",
+      maos:
+        "Verifique a lei de De Morgan num reticulado de conjuntos e na lógica proposicional.",
+      pergunta: {
+        q: "O que define uma variedade na álgebra universal?",
+        a: "Uma classe de álgebras que satisfaz um conjunto de identidades",
+        why: "A assinatura fixa as operações e as identidades fixam a classe; teorema provado por identidade vale em toda álgebra da classe.",
+      },
+    },
+    "Teoria de Corpos e Polinômios": {
+      contexto:
+        "Onde isso aparece: na solução de equação, no código de Reed-Solomon e no problema clássico da trissecção do ângulo. O corpo é o lugar onde o polinômio tem raiz. A simetria das raízes decide se existe fórmula por radicais.",
+      oQue:
+        "Teoria de corpos estuda extensão de corpo e polinômio irredutível. A extensão é o menor corpo que contém as raízes, e o grupo de Galois mede a simetria delas. A solubilidade por radicais depende de o grupo ser solúvel.",
+      passos: [
+        "Verifique a irreducibilidade do polinômio sobre o corpo base.",
+        "Construa o corpo de raízes e o grupo de Galois.",
+        "Veja se o grupo é solúvel para decidir sobre fórmula por radicais.",
+      ],
+      exemplo:
+        "A equação de grau dois resolve por radicais porque o grupo de Galois é pequeno e solúvel. A quíntica geral não resolve, porque o grupo de simetria das raízes não é solúvel. O critério é de estrutura, não de esforço de conta.",
+      quebra:
+        "Achar que toda equação polinomial tem fórmula por radicais. Acima do grau quatro, a geral não tem, e a razão é o grupo de simetria. Tentar a fórmula é perder tempo com o que já foi provado impossível.",
+      limite:
+        "A não solubilidade vale para a equação geral; equação particular de grau cinco pode resolver por radicais. O critério é o grupo daquela equação, não o grau sozinho.",
+      levar: "A simetria das raízes decide se a fórmula existe.",
+      maos:
+        "Compare o grupo de Galois de uma equação de grau dois com o da quíntica geral.",
+    },
+    "Teoria das Categorias": {
+      contexto:
+        "Onde isso aparece: na tradução entre estruturas, no tipo de linguagem de programação e na construção de banco de dados. Categoria organiza objeto e seta, e functor traduz uma categoria na outra. A conta fica independente do objeto concreto.",
+      oQue:
+        "Teoria das categorias estuda objeto, morfismo e composição. Functor leva objeto e morfismo de uma categoria para outra preservando composição, e transformação natural compara dois funtores. Limite e colimite generalizam construção universal como produto e soma.",
+      passos: [
+        "Identifique os objetos e os morfismos da situação.",
+        "Veja se a construção é limite ou colimite de um diagrama.",
+        "Use a propriedade universal em vez de construir o objeto à mão.",
+      ],
+      exemplo:
+        "O produto cartesiano de dois conjuntos é o limite do diagrama de dois objetos: para qualquer conjunto que projeta nos dois, existe uma única seta para o produto. A mesma definição vale para grupo, espaço e tipo, e por isso o teorema vale em todos. A generalidade vem da propriedade, não do objeto.",
+      quebra:
+        "Confundir o objeto com a propriedade universal que ele cumpre. Dois objetos não iguais podem cumprir a mesma propriedade e ser isomorfos; tratar como diferentes é perder a abstração.",
+      limite:
+        "A abstração não decide existência: o limite pode não existir na categoria. A prova categórica vale condicionalmente, e a construção concreta ainda precisa mostrar que o objeto existe.",
+      levar: "Categoria troca o objeto pela relação entre objetos.",
+      maos:
+        "Descreva o produto de dois conjuntos pela propriedade universal e confira no produto cartesiano.",
+      pergunta: {
+        q: "O que um functor preserva entre duas categorias?",
+        a: "Objetos, morfismos e a composição deles",
+        why: "O functor leva cada objeto e cada seta de forma que compor antes ou depois dá o mesmo resultado, o que permite transportar construção de uma categoria para outra.",
+      },
+    },
+  },
 };
 
 // o nome da estação chega em caixa baixa do banco ("Grafos moleculares") e em
