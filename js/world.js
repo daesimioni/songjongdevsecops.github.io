@@ -674,7 +674,13 @@ export function createWorld() {
   };
   for (const d of decor) {
     const size = decorSize[d.type];
-    if (size) addProp(d.x, d.y, size[0], size[1]);
+    if (!size) continue;
+    // O enfeite nasceu antes da picada, então uma lâmpada podia ficar em cima
+    // do único caminho da ilha. Quem está no chão do caminho ou da ponte sai:
+    // enfeite não fecha passagem.
+    const chao = get(Math.floor(d.x), Math.floor(d.y));
+    if (chao === PATH || chao === BRIDGE) continue;
+    addProp(d.x, d.y, size[0], size[1]);
   }
 
   // Duas bocas por continente, ligadas pelo túnel do subsolo: descer numa e
