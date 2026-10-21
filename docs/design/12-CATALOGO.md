@@ -137,7 +137,7 @@ Sem banco preenchido, a área não entra no jogo: o teste cobra cobertura.
 | concordância errada nas etiquetas | artigo derivado do nome da área ("Cripta dos Fundamentos", "Farol dos Fundamentos") | teste de concordância nas 70 áreas |
 | estação nova sem instrumento | cada tópico ganha um instrumento vivo por palavra-chave e, na falta, por disciplina | teste de instrumento e navegador abrindo a bancada |
 | missão com resposta sempre em A | alternativas giradas por área | teste de variação do gabarito |
-| 70 cavernas com a mesma planta | espelho e três deslocamentos alternados | teste exige ao menos 3 plantas |
+| 70 cavernas com a mesma planta | seis plantas (grade, espinha, anel, alas, espiral, cruz), quatro acabamentos de piso, arena de chefe e marca de tesouro; ver `18-MASMORRAS.md` | teste exige 93 plantas, sem sobreposição, chefe longe da boca e tudo alcançável |
 | mundo levava 2 s para montar | máscara de espaço usado e índice de área por tile | 42 ms medidos no node |
 | névoa de 269 KB a cada 1,5 s | RLE e salvamento a cada 4 s | 391 caracteres medidos no navegador |
 | 86 áreas numa lista corrida | diário com blocos recolhíveis e túneis com filtro e cabeçalho | teste de navegador e celular |

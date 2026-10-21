@@ -868,6 +868,13 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
       for (let x = room.x + 2; x < room.x + room.w - 1; x += 4) {
         props.push({ kind: "torch", x: x + 0.5, y: room.y - 0.22 });
       }
+      // a arena do chefe ganha tochas nos dois cantos de baixo: o círculo de
+      // runas no chão precisa de luz dos dois lados para aparecer inteiro
+      if (room.id === def.layout.bossRoom) {
+        for (const dx of [1.2, room.w - 1.2]) {
+          props.push({ kind: "torch", x: room.x + dx, y: room.y + room.h - 0.22 });
+        }
+      }
       // a mesa de vocação mora na praça da capital subterrânea
       if (room.kind === "city" || room.theme === "cidade") {
         props.push({
@@ -985,7 +992,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     state.map = buildDungeonMap(def);
     // chão e parede são estáticos: pinta uma vez por descida e cada quadro só
     // copia o pedaço visível (o detalhe fino não custa por frame)
-    state.terrain = buildTerrain(state.map, def.palette);
+    state.terrain = buildTerrain(state.map, def.palette, def.layout);
     state.seen = new Uint8Array(state.map.W * state.map.H);
     state.minimapAt = 0;
     state.ground = groundFor(def);
@@ -1875,7 +1882,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
   // tamanho do mapa e cada quadro só copia o pedaço visível. Antes, cada tile
   // era um quadrado chapado do xadrez; agora o piso tem grão, rachadura e
   // parede serrada sem custo por frame.
-  function buildTerrain(map, palette) {
+  function buildTerrain(map, palette, layout) {
     const cv = document.createElement("canvas");
     cv.width = map.W * TILE;
     cv.height = map.H * TILE;
@@ -1883,6 +1890,9 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     if (!g) return cv;
     g.imageSmoothingEnabled = false;
     const cityIndex = map.rooms.findIndex((r) => r.kind === "city");
+    // quatro acabamentos de piso, escolhidos na planta: duas cavernas da mesma
+    // disciplina não têm mais o mesmo desenho de chão
+    const acabamento = layout?.acabamento ?? 0;
     const solid = (x, y) => dungeonSolid(map, x, y);
     // mancha larga de 3 em 3 tiles: o piso muda de tom como terreno, não
     // como xadrez de 16 px
@@ -1919,6 +1929,49 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
             g.fillStyle = "rgba(255, 200, 87, 0.24)";
             g.fillRect(px + 5 + Math.floor(h * 5), py + 9, 2, 1);
           }
+        } else if (acabamento === 1) {
+          // laje: blocos de 8 px em fiadas alternadas, junta escura
+          g.fillStyle = patch(tx, ty) > 0.5 ? palette.floor : palette.floor2;
+          g.fillRect(px, py, TILE, TILE);
+          g.fillStyle = "rgba(0,0,0,0.32)";
+          for (let yy = 0; yy < TILE; yy += 8) {
+            g.fillRect(px, py + yy + 7, TILE, 1);
+            const off = ((yy / 8) + tx) % 2 ? 4 : 0;
+            for (let xx = off; xx < TILE; xx += 8) g.fillRect(px + xx, py + yy, 1, 7);
+            g.fillStyle = "rgba(255,255,255,0.06)";
+            g.fillRect(px + off + 2, py + yy + 1, 5, 1);
+            g.fillStyle = "rgba(0,0,0,0.32)";
+          }
+        } else if (acabamento === 2) {
+          // tijolo: fiadas de 4 px com junta e grão
+          g.fillStyle = palette.floor;
+          g.fillRect(px, py, TILE, TILE);
+          for (let yy = 0; yy < TILE; yy += 5) {
+            const off = ((yy / 5) % 2) * 4;
+            g.fillStyle = "rgba(0,0,0,0.3)";
+            g.fillRect(px, py + yy + 4, TILE, 1);
+            g.fillStyle = off ? "rgba(0,0,0,0.24)" : "rgba(0,0,0,0.18)";
+            g.fillRect(px + off + 3, py + yy, 1, 4);
+            g.fillStyle = "rgba(255,255,255,0.05)";
+            g.fillRect(px + off, py + yy, 3, 1);
+          }
+          g.fillStyle = "rgba(0,0,0,0.12)";
+          g.fillRect(px + Math.floor(h * 12), py + 2, 2, 1);
+        } else if (acabamento === 3) {
+          // veio: piso de terra com filamentos do acento correndo
+          g.fillStyle = patch(tx, ty) > 0.5 ? palette.floor : palette.floor2;
+          g.fillRect(px, py, TILE, TILE);
+          g.globalAlpha = 0.12;
+          g.strokeStyle = palette.accent;
+          g.lineWidth = 1;
+          g.beginPath();
+          g.moveTo(px, py + 3 + Math.floor(h * 9));
+          g.lineTo(px + 6, py + 6 + Math.floor(h * 4));
+          g.lineTo(px + TILE, py + 4 + Math.floor(h * 8));
+          g.stroke();
+          g.globalAlpha = 1;
+          g.fillStyle = "rgba(255,255,255,0.05)";
+          g.fillRect(px + 2 + Math.floor(h * 9), py + 11, 2, 1);
         } else {
           // um piso só, com véu e grão: o xadrez de 16 px sumiu
           g.fillStyle = palette.floor;
@@ -1957,6 +2010,69 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
             g.fillRect(px + 5, py + 5, 2, 1);
           }
         }
+      }
+    }
+
+    // Marca de cada sala: a arena do chefe tem círculo de runas, o braço
+    // fundo tem ouro no chão e a boca de entrada tem setas apontando para
+    // dentro. Sem isso, sala e corredor tinham o mesmo chão e a caverna não
+    // contava a própria história.
+    for (const room of map.rooms) {
+      const rx0 = room.x * TILE;
+      const ry0 = room.y * TILE;
+      const rw = room.w * TILE;
+      const rh = room.h * TILE;
+      const cx = Math.round(rx0 + rw / 2);
+      const cy = Math.round(ry0 + rh / 2);
+      if (room.id === layout?.bossRoom) {
+        const raio = Math.round(Math.min(rw, rh) * 0.34);
+        g.globalAlpha = 0.3;
+        g.strokeStyle = palette.accent;
+        g.lineWidth = 2;
+        g.beginPath();
+        g.arc(cx, cy, raio, 0, Math.PI * 2);
+        g.stroke();
+        g.globalAlpha = 0.18;
+        g.lineWidth = 1;
+        g.beginPath();
+        g.arc(cx, cy, raio - 4, 0, Math.PI * 2);
+        g.stroke();
+        g.globalAlpha = 0.45;
+        for (let i = 0; i < 4; i++) {
+          const a = (i / 4) * Math.PI * 2 + Math.PI / 4;
+          const dx = Math.round(cx + Math.cos(a) * raio);
+          const dy = Math.round(cy + Math.sin(a) * raio);
+          g.fillRect(dx - 1, dy - 2, 2, 4);
+          g.fillRect(dx - 2, dy - 1, 4, 2);
+        }
+        g.globalAlpha = 1;
+      } else if ((room.tier || 0) >= 3) {
+        // ouro espalhado: sala de tesouro se reconhece pelo chão
+        for (let i = 0; i < 16; i++) {
+          const hx = hash2(room.x * 13 + i, room.y * 7 - i);
+          const hy = hash2(room.x * 5 - i, room.y * 11 + i);
+          const gx = Math.round(rx0 + 6 + hx * (rw - 12));
+          const gy = Math.round(ry0 + 6 + hy * (rh - 12));
+          g.globalAlpha = 0.55;
+          g.fillStyle = i % 3 ? "#e8c07a" : palette.accent;
+          g.fillRect(gx, gy, 2, 1);
+          g.globalAlpha = 0.2;
+          g.fillRect(gx - 1, gy + 1, 4, 1);
+          g.globalAlpha = 1;
+        }
+      } else if (room.kind === "entrance") {
+        g.globalAlpha = 0.28;
+        g.strokeStyle = palette.accent;
+        g.lineWidth = 1;
+        for (let i = 0; i < 3; i++) {
+          const yy = Math.round(cy + 10 - i * 5);
+          g.beginPath();
+          g.moveTo(cx - 4, yy + 2);
+          g.lineTo(cx, yy - 1);
+          g.lineTo(cx + 4, yy + 2);
+          g.stroke();
+        }
+        g.globalAlpha = 1;
       }
     }
 
@@ -2141,11 +2257,13 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     const sy = (state.player.y * TILE - camY) * scale;
     const inCity = cityIndex >= 0 && state.roomIndex === cityIndex;
     const lightBonus = rpg.lightBonus();
-    const radius = ((inCity ? CITY_LIGHT : state.torchUntil > clock() ? 11 : 7.2) + lightBonus) * TILE * scale;
+    const radius = ((inCity ? CITY_LIGHT : state.torchUntil > clock() ? 11 : 8.4) + lightBonus) * TILE * scale;
     const grad = ctx.createRadialGradient(sx, sy, 0, sx, sy, radius);
     grad.addColorStop(0, "rgba(3,5,12,0)");
-    grad.addColorStop(0.55, "rgba(3,5,12,0.14)");
-    grad.addColorStop(1, inCity ? "rgba(3,5,12,0.56)" : "rgba(3,5,12,0.86)");
+    grad.addColorStop(0.55, "rgba(3,5,12,0.12)");
+    // o breu fecha em 0,74: a sala fora da lanterna fica escura, mas o contorno
+    // da parede e o vulto de uma tocha ainda aparecem
+    grad.addColorStop(1, inCity ? "rgba(3,5,12,0.52)" : "rgba(3,5,12,0.74)");
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, vw, vh);
 
@@ -2159,7 +2277,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
       const ty = (prop.y * TILE - camY) * scale;
       if (tx < -140 || tx > vw + 140 || ty < -140 || ty > vh + 140) continue;
       // a tocha tremula: o halo respira com a chama
-      const r = (4.45 + Math.sin(t * 0.012 + prop.x * 7) * 0.18 + Math.sin(t * 0.0031 + prop.y) * 0.08) * TILE * scale;
+      const r = (5.1 + Math.sin(t * 0.012 + prop.x * 7) * 0.2 + Math.sin(t * 0.0031 + prop.y) * 0.1) * TILE * scale;
       ctx.drawImage(glowSprite, tx - r, ty - r, r * 2, r * 2);
     }
     ctx.restore();

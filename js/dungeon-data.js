@@ -5,6 +5,21 @@
 import { CATALOG_CONTENT } from "./catalog-gen.js";
 import { AREA_ITEMS, BIOMES, FAUNA } from "./identity.js";
 
+const MODELOS = {
+  // grade: três colunas por duas faixas
+  grade: [[0, 0], [2, 0], [4, 0], [0, 1], [2, 1], [4, 1]],
+  // espinha: corredor central com salas dos dois lados
+  espinha: [[0, 0], [5, 0], [0, 1], [5, 1], [0, 2], [5, 2]],
+  // anel: salas em volta de um miolo aberto
+  anel: [[1, 0], [4, 0], [5, 1], [4, 2], [1, 2], [0, 1]],
+  // alas: dois blocos, um de cada lado, ligados no meio
+  alas: [[0, 0], [0, 1], [0, 2], [5, 0], [5, 1], [5, 2]],
+  // espiral: a trilha sobe em volta do centro
+  espiral: [[1, 2], [0, 1], [1, 0], [3, 0], [5, 1], [4, 2]],
+  // cruz: salão central com quatro braços
+  cruz: [[2, 0], [2, 2], [0, 1], [5, 1], [1, 0], [4, 0]],
+};
+
 const COMMON = {
   cs: {
     name: "Catacumbas do Silício",
@@ -554,6 +569,8 @@ export const DUNGEONS = Object.entries(COMMON).map(([key, d]) => {
       rooms,
       corridors: planta.corridors,
       bossRoom: planta.bossRoom,
+      modelo: planta.modelo,
+      acabamento: planta.acabamento,
     },
     tunnel: d.tunnel || "elbow",
   };
@@ -754,59 +771,122 @@ function sorteador(semente) {
   };
 }
 
+// Seis arquiteturas de caverna. Cada uma ocupa as mesmas dez salas (entrada,
+// seis salas de trilha, cidade do fundo e dois braços laterais), mas o desenho
+// muda de verdade: antes todas eram a mesma grade de 3x2 com dois braços fixos,
+// e o jogador reconhecia a planta ao entrar. A semente do id escolhe o modelo.
+
+
 function plantaDaCaverna(chave) {
   const rnd = sorteador(sementeDe(chave));
   const W = 64;
   const H = 48;
   const centro = (r) => ({ x: r.x + Math.floor(r.w / 2), y: r.y + Math.floor(r.h / 2) });
+  const entre = (a, b) => Math.hypot(centro(a).x - centro(b).x, centro(a).y - centro(b).y);
 
   // entrada embaixo, em posição e largura sorteadas
   const entW = 10 + Math.floor(rnd() * 3);
-  const entX = Math.max(2, Math.min(W - entW - 2, Math.round(W / 2 - entW / 2 + (rnd() * 12 - 6))));
-  const entrada = { id: "entrada", kind: "entrance", x: entX, y: 38 + Math.floor(rnd() * 2), w: entW, h: 6, tier: 0 };
+  const entX = Math.max(3, Math.min(W - entW - 3, Math.round(W / 2 - entW / 2 + (rnd() * 12 - 6))));
+  const entrada = { id: "entrada", kind: "entrance", x: entX, y: 41, w: entW, h: 5, tier: 0 };
 
-  // a cidade do fundo, no alto
-  const cidW = 16 + Math.floor(rnd() * 5);
-  const cidX = Math.max(2, Math.min(W - cidW - 2, Math.round(W / 2 - cidW / 2 + (rnd() * 8 - 4))));
-  const cidade = { id: "cidade", kind: "city", x: cidX, y: 2, w: cidW, h: 10, tier: 3 };
+  // a cidade do fundo, no alto, com largura de praça
+  const cidW = 16 + Math.floor(rnd() * 4);
+  const cidX = Math.max(10, Math.min(W - cidW - 10, Math.round(W / 2 - cidW / 2 + (rnd() * 8 - 4))));
+  const cidade = { id: "cidade", kind: "city", x: cidX, y: 2, w: cidW, h: 9, tier: 3 };
 
-  // seis salas em duas faixas de três colunas, tamanho e deslocamento sorteados
-  const colunas = [15, 28, 41];
-  const soltos = [];
-  for (let banda = 0; banda < 2; banda++) {
-    for (let c = 0; c < 3; c++) {
-      soltos.push({
-        x: colunas[c] + Math.floor(rnd() * 3),
-        y: (banda === 0 ? 13 : 26) + Math.floor(rnd() * 4),
-        w: 7 + Math.floor(rnd() * 4),
-        h: 5 + Math.floor(rnd() * 3),
-      });
-    }
-  }
+  // salas em uma malha de 9 x 8 tiles: a planta escolhe quais casas usar
+  const colunas = [4, 13, 22, 31, 40, 49];
+  const faixas = [13, 23, 33];
+  const nomes = Object.keys(MODELOS);
+  const modelo = nomes[Math.floor(rnd() * nomes.length)];
+  const usados = new Set();
+  const soltos = MODELOS[modelo].map(([col, lin]) => {
+    usados.add(`${col},${lin}`);
+    const w = 7 + (rnd() < 0.45 ? 1 : 0);
+    const h = 5 + (rnd() < 0.5 ? 1 : 0);
+    return {
+      x: colunas[col] + (rnd() < 0.5 ? 0 : 1),
+      y: faixas[lin] + (rnd() < 0.5 ? 0 : 1),
+      w,
+      h,
+    };
+  });
+
   // o id vem da profundidade: "a" é a sala mais perto da entrada, "f" o fundo.
   // A tabela de tom por id mantém a progressão de dificuldade de antes.
-  const distancia = (r) => Math.hypot(centro(r).x - centro(entrada).x, centro(r).y - centro(entrada).y);
-  const ordem = [...soltos].sort((x, y) => distancia(x) - distancia(y));
+  const ordem = [...soltos].sort((x, y) => entre(x, entrada) - entre(y, entrada));
   const TOM = { a: 1, b: 1, c: 2, d: 2, e: 3, f: 3 };
   const salas = ordem.map((s, i) => {
     const id = "abcdef"[i];
     return { id, x: s.x, y: s.y, w: s.w, h: s.h, tier: TOM[id] };
   });
+  const doChefe = salas[salas.length - 1];
 
-  // braços laterais: um curto e barato, outro fundo e caro
-  const g = { id: "g", x: 2, y: 20 + Math.floor(rnd() * 5), w: 8, h: 6, tier: 2 };
-  const h = { id: "h", x: 54, y: 20 + Math.floor(rnd() * 5), w: 8, h: 6, tier: 3 };
+  // braços laterais: um em cada lado, nas casas que sobraram mais longe da boca
+  const livres = [];
+  for (let col = 0; col < colunas.length; col++) {
+    for (let lin = 0; lin < faixas.length; lin++) {
+      if (usados.has(`${col},${lin}`)) continue;
+      livres.push({ col, lin });
+    }
+  }
+  const escolher = (lado) => {
+    const doLado = livres
+      .filter((c) => (lado === "esq" ? c.col <= 1 : c.col >= 4))
+      .sort((a, b) => Math.hypot(colunas[b.col] - centro(entrada).x, faixas[b.lin] - centro(entrada).y) - Math.hypot(colunas[a.col] - centro(entrada).x, faixas[a.lin] - centro(entrada).y))[0];
+    return doLado || livres[0];
+  };
+  const casaDe = (c) => ({
+    x: colunas[c.col] + 1, y: faixas[c.lin] + 1, w: 7, h: 5,
+  });
+  const g = { id: "g", ...casaDe(escolher("esq")), tier: 2 };
+  const h = { id: "h", ...casaDe(escolher("dir")), tier: 3 };
+  for (const r of [g, h]) { if (usados.has(`${r.x},${r.y}`)) continue; }
+  livres.push();
 
   const rooms = [entrada, ...salas, cidade, g, h];
-  const corridors = [
-    ["entrada", "a"],
-    ["a", "b"], ["b", "c"], ["c", "d"], ["d", "e"], ["e", "f"],
-    ["f", "cidade"],
-    ["b", "e"],
-    ["a", "g"], ["c", "g"],
-    ["e", "h"], ["f", "h"],
-  ];
-  return { W, H, rooms, corridors, bossRoom: "f" };
+
+  // corredores: árvore de menor caminho entre todas as salas (nada fica
+  // isolado), mais três atalhos para a caverna ter volta e não só um fio
+  const ligados = [entrada];
+  const restantes = rooms.filter((r) => r !== entrada);
+  const arestas = [];
+  const temAresta = (a, b) => arestas.some(([x, y]) => (x === a && y === b) || (x === b && y === a));
+  while (restantes.length) {
+    let melhor = null;
+    for (const a of ligados) {
+      for (const b of restantes) {
+        const d = entre(a, b) + (b.tier || 1) * 0.4;
+        if (!melhor || d < melhor.d) melhor = { a: a.id, b: b.id, d, sala: b };
+      }
+    }
+    arestas.push([melhor.a, melhor.b]);
+    ligados.push(melhor.sala);
+    restantes.splice(restantes.indexOf(melhor.sala), 1);
+  }
+  // atalhos: os pares mais próximos que ainda não têm corredor
+  const atalhos = [];
+  for (let i = 0; i < rooms.length; i++) {
+    for (let j = i + 1; j < rooms.length; j++) {
+      const a = rooms[i], b = rooms[j];
+      if (temAresta(a.id, b.id)) continue;
+      if (a.kind === "entrance" || b.kind === "entrance") continue;
+      atalhos.push({ par: [a.id, b.id], d: entre(a, b) });
+    }
+  }
+  atalhos.sort((x, y) => x.d - y.d);
+  for (const { par } of atalhos.slice(0, 3)) arestas.push(par);
+
+  // acabamento do piso e da parede: quatro desenhos, escolhidos pelo id
+  const acabamento = Math.floor(hashDaCaverna(chave) % 4);
+
+  return { W, H, rooms, corridors: arestas, bossRoom: doChefe.id, modelo, acabamento };
+}
+
+function hashDaCaverna(chave) {
+  let h = 2166136261;
+  for (const ch of String(chave)) h = Math.imul(h ^ ch.charCodeAt(0), 16777619);
+  return h >>> 0;
 }
 
 export function dungeonById(id) {
