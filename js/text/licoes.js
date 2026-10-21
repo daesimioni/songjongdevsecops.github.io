@@ -155,6 +155,128 @@ export const LICOES = {
         "Gere um anel de pontos e um quadrado cheio, rode a persistência e compare o buraco que sobra em cada um.",
     },
   },
+  "chem-ambiental": {
+    "Química Ambiental": {
+      oQue:
+        "Química ambiental estuda o que a substância faz depois que sai do frasco: para onde vai, quanto tempo fica e que dano causa. Poluente é o que causa dano no ambiente, e remediação é o conjunto de técnicas que remove, transforma ou imobiliza o contaminante. A diferença entre degradar e imobilizar decide o prazo do problema: o que se degrada pode resolver em anos, o que apenas se imobiliza exige vigilância por décadas.",
+      passos: [
+        "Identifique a substância e a forma química em que ela chega ao ambiente.",
+        "Siga o caminho no solo, na água, no ar e na cadeia alimentar.",
+        "Escolha entre remover, transformar ou imobilizar conforme a persistência do contaminante.",
+      ],
+      exemplo:
+        "Chumbo em solo de oficina não evapora nem se degrada: muda de forma e fica. A remediação pode lavar o solo com ácido e recuperar o metal, ou imobilizar com fosfato que forma mineral estável. Já um solvente orgânico pode ser degradado por microrganismos em meses, se houver oxigênio e nutriente. O mesmo esforço de limpeza tem prazos diferentes porque a persistência é diferente, e o monitoramento acompanha esse prazo.",
+      quebra:
+        "Achar que todo poluente se degrada com o tempo. Metal pesado permanece, muda de forma e sobe na cadeia alimentar: o cuidado é de longo prazo, com medição periódica, não com uma limpeza única. Quando a substância não se degrada, o problema não acaba, só muda de lugar.",
+      levar: "O que não se degrada não desaparece; só muda de lugar.",
+      maos:
+        "Compare um contaminante orgânico e um metal na mesma amostra e veja qual some com o tempo e qual só muda de forma.",
+    },
+    "Química Atmosférica": {
+      oQue:
+        "A atmosfera é um reator aberto: luz solar, oxigênio, água e partículas transformam gases continuamente. Ozônio, smog e chuva ácida nascem dessas reações, e o mesmo composto pode proteger numa camada e prejudicar na outra. Entender a atmosfera é separar o gás, a altitude e a reação que ele sofre, porque o nome do gás sozinho não diz o efeito.",
+      passos: [
+        "Identifique o gás e a altitude em que ele está.",
+        "Veja se há luz e água disponíveis para a reação acontecer.",
+        "Acompanhe o produto que se forma e o efeito dele sobre a saúde e o material.",
+      ],
+      exemplo:
+        "O ozônio na estratosfera filtra radiação ultravioleta e é protetor. Perto do solo, ele é oxidante e irrita o pulmão: mesmo gás, camada diferente, efeito contrário. Já a chuva ácida vem de óxidos de enxofre e de nitrogênio que reagem com água e voltam como ácido sulfúrico e nítrico, corroendo pedra, solo e metal. A conta começa no gás e termina no material que sofre. Por isso o mesmo poluente pode ser tratado em duas frentes: cortar a emissão que o produz e proteger o que ele ataca.",
+      quebra:
+        "Confundir ozônio de superfície com buraco na camada de ozônio. São problemas diferentes, com gases e reações diferentes; misturar os dois leva a política ambiental errada. O buraco é perda de ozônio na estratosfera; o ozônio de superfície é excesso produzido por trânsito e indústria.",
+      levar: "Mesmo gás pode proteger em cima e envenenar embaixo.",
+      maos:
+        "Olhe a curva de ozônio por altitude e marque onde ele protege e onde ele irrita.",
+    },
+    "Geoquímica": {
+      oQue:
+        "Geoquímica segue os elementos pela crosta, pelos rios e pelos oceanos: de onde vêm, onde se concentram e com o que reagem. Minerais e rochas guardam a memória do processo, e o ciclo do carbonato liga a água, o ar e a vida. É a ponte entre a química de bancada e a escala do planeta, onde o tempo se mede em milhares de anos.",
+      passos: [
+        "Identifique o mineral ou a fase que contém o elemento.",
+        "Siga o ciclo entre rocha, água, atmosfera e seres vivos.",
+        "Meça a razão entre isótopos quando precisar saber a origem do material.",
+      ],
+      exemplo:
+        "A calcita das conchas se forma com cálcio e carbonato dissolvidos na água. Quando o oceano absorve mais gás carbônico, o pH cai e o carbonato fica mais escasso: a concha custa mais energia para se formar. O mesmo átomo de carbono que estava no ar entra na água, vira bicarbonato e termina na rocha, num ciclo que leva milhares de anos e passa por todos os reservatórios.",
+      quebra:
+        "Achar que acidificação e aquecimento são a mesma coisa. São efeitos ligados, com causa comum, mas mecanismos distintos: um mexe com o pH, o outro com a temperatura. Tratar como sinônimo esconde o que cada um exige de resposta, e a resposta não é a mesma. Reduzir emissão de gás carbônico mexe nos dois, mas o efeito sobre o pH já está em curso e continua por séculos.",
+      levar: "O carbono não some: muda de reservatório, e cada mudança tem preço.",
+      maos:
+        "Siga um átomo de carbono do ar até a concha e anote em que reservatório ele para em cada etapa.",
+    },
+    "Química Oceânica": {
+      oQue:
+        "A água do mar é uma solução com sais, gases e matéria orgânica em equilíbrio delicado. O sistema carbonato funciona como tampão: segura o pH dentro de uma faixa enquanto recebe ácido ou base. Nutrientes, por outro lado, são o limite da vida: faltando ferro ou nitrogênio, o fitoplâncton não cresce, mesmo com luz e carbono de sobra. A química da superfície não é a do fundo, e a do sedimento não é a da coluna de água.",
+      passos: [
+        "Meça salinidade e alcalinidade antes de olhar o pH.",
+        "Calcule a saturação do carbonato na temperatura local.",
+        "Descubra qual nutriente limita a produção naquele ponto.",
+        "Separe as amostras por profundidade: superfície, fundo e sedimento contam histórias diferentes.",
+      ],
+      exemplo:
+        "Numa região com bastante nitrogênio e pouco ferro, adicionar nitrogênio não muda a produção: o ferro é o limite. A alcalinidade total diz quanto o oceano ainda consegue neutralizar ácido sem cair de pH. Sedimento e água trocam íons o tempo todo, e a química de fundo não é a da superfície; a média dos dois esconde o lugar onde a vida acontece. Um perfil vertical de alcalinidade mostra a água antiga e fria do fundo guardando carbono por séculos, enquanto a superfície troca gás com a atmosfera todo dia.",
+      quebra:
+        "Tratar o oceano como um tanque homogêneo. Superfície, fundo e sedimento têm química diferente, e a média esconde exatamente o ponto de interesse. Amostrar só a superfície e concluir sobre o oceano inteiro é o erro que a conta não perdoa. O sedimento, por sua vez, funciona como arquivo: guarda o que a água depositou e devolve devagar, e é lá que se lê o histórico de poluição de uma baía.",
+      levar: "O oceano é tampão, não esponja: tem limite de neutralização.",
+      maos:
+        "Compare a saturação de carbonato na superfície e no fundo e veja em qual das duas a concha se forma mais fácil.",
+      pergunta: {
+        q: "O que acontece com o carbonato dissolvido quando o pH do mar cai?",
+        a: "Ele fica mais escasso e a concha custa mais energia",
+        why: "Com menos carbonato disponível, a precipitação de calcita fica mais difícil e o organismo gasta mais para formar a concha.",
+      },
+    },
+  },
+  "physics-relatividade": {
+    "Relatividade Especial": {
+      oQue:
+        "A relatividade especial começa com um fato medido: a luz tem a mesma velocidade para todos os observadores, não importa a velocidade de quem mede. Para que isso valha, espaço e tempo precisam ceder. Tempo dilata, comprimento contrai e a simultaneidade deixa de ser absoluta. O preço aparece perto da velocidade da luz; longe dela, a conta clássica continua valendo.",
+      passos: [
+        "Escolha dois referenciais e diga quem mede o quê.",
+        "Calcule o fator de Lorentz a partir da velocidade relativa.",
+        "Aplique a dilatação no tempo próprio de quem se move.",
+      ],
+      exemplo:
+        "Um múon criado na alta atmosfera vive 2,2 microssegundos no próprio relógio. Mesmo assim chega ao chão: a 0,99 da velocidade da luz, o fator de Lorentz é cerca de 7, e o tempo medido na Terra estica o suficiente. Para o múon, é a distância que encurta. Os dois descrevem o mesmo encontro com números diferentes, e ambos acertam.",
+      quebra:
+        "Somar velocidades de forma simples perto da velocidade da luz. 0,9c mais 0,9c não dá 1,8c: a composição relativística se aproxima de c e nunca passa. A soma de Galileu é o caso lento da fórmula certa, não uma regra geral. O mesmo vale para energia: a massa de repouso é energia, e por isso um grama guarda uma quantidade que ninguém consegue queimar de uma vez.",
+      levar: "A luz é a mesma para todos; quem cede é o espaço-tempo.",
+      maos:
+        "Calcule o fator de Lorentz para 0,5c e para 0,99c e veja como a conta cresce perto da luz.",
+    },
+    "Relatividade Geral": {
+      oQue:
+        "Relatividade geral troca a força pela geometria: massa e energia curvam o espaço-tempo, e os corpos seguem as geodésicas dessa geometria. Não há corda puxando; há caminho mais reto num espaço que não é plano. A luz também segue a curvatura, e o tempo passa mais devagar onde o campo é mais forte.",
+      passos: [
+        "Descreva a distribuição de massa e energia do sistema.",
+        "Resolva a geometria que ela produz.",
+        "Siga a geodésica do corpo ou da luz nessa geometria.",
+      ],
+      exemplo:
+        "A luz de uma estrela que passa raspando o Sol chega desviada, e o desvio foi medido num eclipse: a previsão da geometria bateu com o céu. O mesmo campo atrasa o relógio, e o GPS corrige o tempo dos satélites todo dia, senão o erro de posição cresce quilômetros por dia. A gravidade não puxa o relógio; ela muda o ritmo do tempo.",
+      quebra:
+        "Pensar que gravidade é só força puxando. A descrição de Newton funciona no dia a dia, mas não explica o desvio da luz nem o ritmo do tempo. Trocar força por geometria não é enfeite: é o que faz a conta acertar perto de massa grande. No sistema solar, a diferença entre as duas descrições é pequena, mas aparece em relógio, órbita e luz curvada, e é medível com relógio atômico em laboratório.",
+      levar: "Massa diz ao espaço como curvar; espaço diz à massa como andar.",
+      maos:
+        "Veja a curvatura em volta de uma massa e siga duas geodésicas que começam paralelas e se aproximam.",
+    },
+    "Gravitação Teórica": {
+      oQue:
+        "Buraco negro é o que sobra quando a curvatura fica tão forte que nem a luz escapa de dentro de uma fronteira. Essa fronteira é o horizonte de eventos: não é superfície sólida, é o ponto sem volta. Massa, carga e rotação descrevem o buraco; o resto do que caiu fica atrás do horizonte.",
+      passos: [
+        "Calcule o raio do horizonte a partir da massa.",
+        "Separe o que orbita longe do que cai de vez.",
+        "Acompanhe a radiação Hawking como evaporação lenta da massa.",
+      ],
+      exemplo:
+        "Um buraco negro de dez massas solares tem horizonte de cerca de 30 km. Longe dele, a órbita de uma estrela é normal, como a de qualquer massa daquele tamanho; é só perto do horizonte que o caminho deixa de ter volta. A radiação Hawking existe, mas a temperatura é tão baixa que a evaporação leva mais tempo do que a idade do universo.",
+      quebra:
+        "Achar que buraco negro suga tudo como aspirador. Longe dele, a órbita é a de sempre; o que muda é a região interna ao horizonte. A imagem de sucção vem do desenho, não da conta, e leva a conclusão errada sobre órbitas estáveis. Uma estrela pode girar em volta do buraco por muito tempo sem cair, do mesmo jeito que orbita outra estrela.",
+      levar: "O horizonte não é parede: é a linha onde todas as saídas deixam de existir.",
+      maos:
+        "Compare o raio do horizonte para 1, 10 e 100 massas solares e veja como ele cresce com a massa.",
+    },
+  },
 };
 
 // o nome da estação chega em caixa baixa do banco ("Grafos moleculares") e em

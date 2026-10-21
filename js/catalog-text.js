@@ -141,7 +141,8 @@ export function subareaBody({ sectionNum, sectionName, discipline, name, topics,
     return `<p class="page-epigrafe">${epigrafe(name)}</p>${abertura}<p><strong>${html(name)}</strong> é o nome desta pedra, no caminho de ${html(sectionName)}. Ela guarda ${topics.length} ${topics.length === 1 ? "marca" : "marcas"}.</p><ul>${lista}</ul>${pratica}${erro}${conexoes}${linha}`;
   }
   const marcas = Array.isArray(bankTopic?.keys) ? bankTopic.keys : [];
-  const perguntam = perguntas
+  const listaPerguntas = [...perguntas, licao.pergunta].filter((q) => q && q.q);
+  const perguntam = listaPerguntas
     .filter((q) => q && q.q)
     .map((q) => {
       const certa = Array.isArray(q.o) ? q.o[q.a] : q.answer;
