@@ -4429,6 +4429,230 @@ export const LICOES = {
       },
     },
   },
+  "cs-interfaces": {
+    "Desenvolvimento Web": {
+      contexto:
+        "Onde isso aparece: na página do produto, no painel e no formulário. HTML dá estrutura, CSS dá estilo, e JavaScript dá comportamento. O navegador é o ambiente, e a rede é o limite.",
+      oQue:
+        "Desenvolvimento web separa estrutura, estilo e comportamento. HTML descreve o conteúdo, CSS cuida da apresentação, e o JavaScript dá comportamento e interação no navegador. Frontend roda no cliente, backend no servidor, e a página única carrega uma vez e troca conteúdo.",
+      passos: [
+        "Estruture o conteúdo em HTML semântica.",
+        "Estilize com CSS e cuide do estado de foco e contraste.",
+        "Adicione comportamento em JavaScript e trate o erro de rede.",
+      ],
+      exemplo:
+        "Um formulário precisa de rótulo ligado ao campo, mensagem de erro legível e foco visível. O JavaScript valida e envia, e a rede pode falhar: o aviso precisa aparecer. A página que só funciona na rede perfeita quebra no celular. O carregamento também é experiência: a página que demora a mostrar conteúdo perde a pessoa antes do primeiro clique.",
+      quebra:
+        "Colocar comportamento no HTML solto e depender de clique em div. O teclado e o leitor de tela não alcançam o elemento, e a interação falha para parte do público. A semântica resolve na origem.",
+      limite:
+        "A página única facilita a interação e complica o carregamento inicial e a busca. Renderização no servidor equilibra, e a escolha depende do conteúdo e do público.",
+      levar: "HTML estrutura, CSS apresenta, JavaScript comporta.",
+      maos:
+        "Pegue um formulário e verifique se ele funciona só com teclado.",
+    },
+    "Aplicações Móveis": {
+      contexto:
+        "Onde isso aparece: no aplicativo do banco, no entregador e no jogo. O aparelho tem tela pequena, bateria e rede instável. O desenvolvimento nativo usa o recurso da plataforma, e o multiplataforma troca acesso por alcance.",
+      oQue:
+        "Aplicação móvel pode ser nativa, multiplataforma ou web. O nativo usa o kit da plataforma e alcança recurso e desempenho, e o multiplataforma compartilha código ao custo de camada intermediária. A experiência muda com o ciclo de vida do aplicativo, que o sistema suspende.",
+      passos: [
+        "Defina o recurso nativo que o aplicativo precisa.",
+        "Escolha nativo ou multiplataforma pelo alcance e pelo acesso.",
+        "Teste em aparelho real, com rede ruim e bateria baixa.",
+      ],
+      exemplo:
+        "Câmera, bluetooth e notificação exigem integração com a plataforma; o multiplataforma cobre com plugin, e o plugin pode atrasar ou faltar. Já formulário e conteúdo cabem bem na abordagem compartilhada. O recurso decide a escolha. A loja de aplicativo impõe revisão e política própria, e o prazo de publicação entra no planejamento. O teste em aparelho real precisa cobrir versão antiga do sistema, porque parte do público não atualiza o sistema e a versão antiga continua em uso e o defeito corrigido volta a aparecer.",
+      quebra:
+        "Testar só no emulador com rede boa. O aparelho real tem menos memória, bateria e sinal, e o defeito aparece só na mão do usuário. O teste de campo é parte da entrega.",
+      limite:
+        "O multiplataforma melhora com o tempo, mas o recurso novo da plataforma continua chegando primeiro no nativo. O projeto precisa decidir o quanto isso importa.",
+      levar: "Móvel é aparelho com bateria: o recurso manda na escolha.",
+      maos:
+        "Liste os recursos nativos do aplicativo e veja quais o multiplataforma cobre bem.",
+      pergunta: {
+        q: "O que o desenvolvimento multiplataforma troca?",
+        a: "Um código para várias plataformas, ao custo de acesso ao recurso nativo",
+        why: "A camada compartilhada reduz trabalho e alcance, mas o recurso novo da plataforma chega primeiro no nativo e pode exigir plugin ou código específico.",
+      },
+    },
+    "Interação Humano-computador": {
+      contexto:
+        "Onde isso aparece: no teste de usabilidade, na tela confusa e no suporte. A pessoa tem modelo mental, e a interface precisa casar com ele. Testar com usuário real revela o que a equipe não vê.",
+      oQue:
+        "Interação humano-computador estuda usabilidade, ergonomia cognitiva, design de interação e arquitetura da informação. A prototipagem testa a ideia antes do código, e o teste com usuário real revela dificuldade que a equipe não percebe. A heurística orienta a revisão.",
+      passos: [
+        "Defina a tarefa que a pessoa precisa concluir.",
+        "Protótipo a tela e teste com alguém de fora.",
+        "Corrija o ponto de travamento e repita.",
+      ],
+      exemplo:
+        "Botão com rótulo ambíguo faz o usuário parar e perguntar. No teste, a pessoa hesita, e a hesitação é o dado. Trocar o rótulo por verbo específico resolve antes de qualquer código. O teste pequeno custa pouco e evita retrabalho. A mensagem de erro também é interface: ela precisa dizer o que fazer, não só que algo falhou.",
+      quebra:
+        "Testar com a própria equipe e concluir que está claro. Quem fez conhece o caminho e não vê a dúvida. A pessoa de fora revela o que o time já não consegue enxergar.",
+      limite:
+        "Teste com pouca pessoa orienta e não prova. O achado precisa de repetição para virar conclusão, e o perfil testado tem de representar quem usa.",
+      levar: "Quem fez não consegue ver a dúvida de quem chega.",
+      maos:
+        "Peça a alguém de fora para completar uma tarefa e anote onde hesitou.",
+    },
+    "Computação Gráfica e Multimídia": {
+      contexto:
+        "Onde isso aparece: no jogo, no filme e no visualizador 3D. A cena vira triângulo, textura e luz, e a placa desenha. Tempo de quadro e qualidade disputam o mesmo orçamento.",
+      oQue:
+        "Computação gráfica cobre renderização, modelagem, animação e realidade virtual. A renderização em tempo real equilibra qualidade da imagem e tempo de quadro, e o orçamento é fixo por segundo. A modelagem 3D e a animação alimentam a cena, e a simulação visual aproxima o comportamento.",
+      passos: [
+        "Defina o orçamento de tempo por quadro.",
+        "Reduza o que não aparece: geometria, textura e luz.",
+        "Meça o quadro no aparelho de destino.",
+      ],
+      exemplo:
+        "Uma cena com mil objetos pode desenhar só o que está na tela e reduzir detalhe no que está longe. O corte economiza quadro sem mudar a percepção. A conta é de orçamento, e cada efeito tem preço. A textura e a luz pesam tanto quanto a geometria, e o perfil mostra qual parte do orçamento está estourando. A qualidade percebida nem sempre acompanha o número: o efeito caro pode ser o que quase não se nota, e o ajuste fino vale mais que o efeito novo.",
+      quebra:
+        "Otimizar sem medir o quadro no aparelho real. A placa de desenvolvimento é mais forte, e o jogo trava no aparelho do usuário. A medição no destino é obrigatória.",
+      limite:
+        "O tempo real corta qualidade; o offline pode gastar horas por quadro. A técnica muda com o alvo, e o mesmo projeto não serve aos dois sem adaptação.",
+      levar: "Em tempo real, cada efeito paga com tempo de quadro.",
+      maos:
+        "Meça o tempo de quadro de uma cena e desligue um efeito para comparar.",
+      pergunta: {
+        q: "O que a renderização em tempo real precisa equilibrar?",
+        a: "Qualidade da imagem e tempo de quadro",
+        why: "O orçamento de tempo por quadro é fixo, e cada efeito consome parte dele; a escolha define o que aparece e o que é cortado para manter a fluidez.",
+      },
+    },
+    "Jogos e Ambientes Interativos": {
+      contexto:
+        "Onde isso aparece: no jogo, na simulação e no treinamento. O motor organiza cena, física e entrada. A rede introduz atraso, e a interpolação suaviza o que chega.",
+      oQue:
+        "Jogo e ambiente interativo combinam motor, física, IA, gráfico em tempo real e simulação. O motor fecha o laço de entrada, atualização e desenho, e a física computacional dá coerência ao movimento. Em rede, a interpolação suaviza a posição entre pacotes recebidos.",
+      passos: [
+        "Fixe o passo da simulação e separe do desenho.",
+        "Trate o atraso de rede com previsão e interpolação.",
+        "Meça o quadro e a resposta de entrada no aparelho real.",
+      ],
+      exemplo:
+        "Sem interpolação, o personagem remoto pula de posição a cada pacote e parece teletransportar. Com interpolação, a posição é suavizada entre os pacotes, e o movimento parece contínuo ao custo de pequeno atraso. A troca é perceptível e precisa.",
+      quebra:
+        "Misturar passo de simulação com taxa de quadro. Em máquina lenta, a física acelera ou desacelera junto, e o jogo fica injusto. O passo fixo separa as duas coisas.",
+      limite:
+        "A interpolação atrasa a posição mostrada. Em jogo competitivo, o atraso pode ser decisivo, e a previsão do cliente entra para compensar, com risco de correção visível.",
+      levar: "Jogo é laço fechado: entrada, simulação e desenho no tempo.",
+      maos:
+        "Simule pacote atrasado com e sem interpolação e compare o movimento.",
+    },
+  },
+  "cs-hardware": {
+    "Engenharia de Hardware": {
+      contexto:
+        "Onde isso aparece: na placa, no chip e no processador. O circuito digital é a base, e a escolha entre FPGA e ASIC decide custo e flexibilidade. Projetar processador é decidir caminho de dado e controle.",
+      oQue:
+        "Engenharia de hardware cobre circuito digital, integrado, FPGA, ASIC e projeto de processador. A FPGA permite reconfigurar o circuito depois de fabricado, e o ASIC fixa o circuito no silício com custo inicial alto e desempenho maior. A escolha depende do volume e da necessidade de mudança.",
+      passos: [
+        "Descreva a função em lógica e simule.",
+        "Compare FPGA e ASIC por volume e flexibilidade.",
+        "Valide o protótipo antes da fabricação.",
+      ],
+      exemplo:
+        "Protótipo de rede pode usar FPGA e ser reprogramado durante o desenvolvimento. Na produção em volume grande, o ASIC reduz custo por unidade e consome menos energia. A decisão é econômica além de técnica. A ferramenta de descrição e simulação é a mesma nos dois caminhos, e o protótipo em FPGA reduz o risco antes da máscara. A verificação formal e a simulação pegam erro de lógica antes de qualquer silício, e o custo do erro cai junto com a fase em que ele é descoberto.",
+      quebra:
+        "Ir para ASIC antes de o projeto estabilizar. A máscara custa caro e não aceita correção; o erro descoberto depois inviabiliza o lote. A FPGA existe para essa fase.",
+      limite:
+        "A FPGA consome mais energia e tem frequência menor que o ASIC equivalente. Em dispositivo a bateria, a diferença pesa, e a escolha muda.",
+      levar: "FPGA é circuito que aprende; ASIC é circuito que nasce pronto.",
+      maos:
+        "Compare o custo de um protótipo em FPGA e de um lote em ASIC.",
+      pergunta: {
+        q: "O que a FPGA permite que o ASIC não permite?",
+        a: "Reconfigurar o circuito depois de fabricado",
+        why: "A FPGA é programável em campo, o que serve a protótipo e a função que muda; o ASIC fixa a lógica no silício, com custo inicial alto e sem correção depois da máscara.",
+      },
+    },
+    "Sistemas Embarcados": {
+      contexto:
+        "Onde isso aparece: no freio do carro, no marca-passo e no controlador. O firmware roda no microcontrolador, e o prazo importa. Sistema de tempo real responde dentro do prazo definido, não na média.",
+      oQue:
+        "Sistema embarcado tem microcontrolador, firmware, driver e tempo real. O RTOS organiza tarefa com prioridade e prazo, e o sistema de tempo real garante a resposta dentro do prazo. A média não serve de garantia; a análise é de pior caso.",
+      passos: [
+        "Defina o prazo de cada tarefa.",
+        "Escolha o RTOS e a prioridade.",
+        "Meça o pior caso, não a média.",
+      ],
+      exemplo:
+        "O freio precisa responder em milissegundo em qualquer condição. Um sistema que responde em dois milissegundos na média e cem no pior caso não serve. A garantia é de pior caso, e o orçamento de tempo se reserva para ele.",
+      quebra:
+        "Validar tempo real pela média do teste. A carga de teste é leve, e o pior caso aparece em produção com interrupção concorrente. A análise de pior caso é o critério.",
+      limite:
+        "Garantia de pior caso custa recurso: processador mais rápido, memória reservada e código mais simples. O projeto paga esse custo para ter previsibilidade. A interrupção também precisa de tempo limitado, e a prioridade das tarefas entra na análise. A memória também precisa de previsibilidade, e a alocação dinâmica é fonte clássica de atraso imprevisível, e a reserva prévia resolve.",
+      levar: "Tempo real é prazo garantido, não rapidez média.",
+      maos:
+        "Meça o pior caso de uma tarefa com carga concorrente.",
+    },
+    "Internet das Coisas": {
+      contexto:
+        "Onde isso aparece: no medidor, na fechadura e no sensor de fábrica. O aparelho mede, envia e recebe comando. A atualização remota é o que mantém a frota corrigível.",
+      oQue:
+        "IoT combina sensor, atuador, protocolo, borda e telemetria. O sensor mede, o atuador age, e o protocolo leve carrega o dado. A atualização remota corrige falha em aparelho já instalado, e sem ela a frota fica presa na versão com defeito.",
+      passos: [
+        "Defina o dado medido e a frequência.",
+        "Escolha o protocolo pelo consumo e pelo alcance.",
+        "Planeje atualização e identidade do dispositivo.",
+      ],
+      exemplo:
+        "Mil fechaduras instaladas recebem falha de segurança. Sem atualização remota, alguém precisa ir a cada porta. Com canal assinado e atualização em lote, a correção chega em horas. A capacidade de atualizar é requisito de segurança. A identidade do dispositivo impede que aparelho falsificado entre na frota, e o certificado por unidade é o caminho. O protocolo leve troca alcance por consumo, e a escolha se mede na bateria do aparelho.",
+      quebra:
+        "Deixar a atualização para depois. O aparelho barato sem canal de atualização vira passivo, e a correção custa visita. O canal precisa existir no primeiro lote.",
+      limite:
+        "Atualização remota também é risco: canal comprometido vira ataque em massa. A assinatura, o rollback e a identidade do dispositivo são parte do desenho, não enfeite.",
+      levar: "Dispositivo sem atualização remota é dívida física.",
+      maos:
+        "Desenhe o fluxo de atualização de uma frota e marque onde entra a assinatura.",
+    },
+    "Robótica": {
+      contexto:
+        "Onde isso aparece: no braço industrial, no robô de entrega e no drone. O robô percebe, planeja e age. A localização simultânea ao mapeamento é o problema central do robô móvel.",
+      oQue:
+        "Robótica cobre cinemática, dinâmica, planejamento de trajetória, controle e percepção. O SLAM resolve mapear o ambiente e se localizar ao mesmo tempo, e o controle corrige o erro do plano. A percepção transforma sensor em modelo do mundo.",
+      passos: [
+        "Modele a cinemática do robô.",
+        "Planeje a trajetória no mapa.",
+        "Corrija pelo controle usando a percepção.",
+      ],
+      exemplo:
+        "Sem mapa prévio, o robô móvel usa o sensor para mapear e se localizar no mesmo instante; é o SLAM. Se ele se perde, o mapa desalinha e o plano falha. A percepção e a localização são o mesmo laço.",
+      quebra:
+        "Confiar no mapa sem verificar a localização. O robô deriva, e o plano leva ao lugar errado. A correção contínua é parte do sistema, não etapa inicial. A cinemática define o que o robô pode fazer, e o controle fecha o laço com a medida real. O planejamento de trajetória precisa considerar o corpo do robô, senão o caminho passa onde ele não cabe.",
+      limite:
+        "SLAM depende de sensor e de ambiente com feição. Corredor liso e repetitivo confunde, e o sistema precisa de outra referência, como roda ou marcador.",
+      levar: "Robô móvel precisa saber onde está e como o mundo é, ao mesmo tempo.",
+      maos:
+        "Descreva o laço de percepção, localização e controle de um robô simples.",
+    },
+    "Sistemas Ciberfísicos": {
+      contexto:
+        "Onde isso aparece: na linha de montagem, no carro autônomo e no gêmeo digital da fábrica. Software e mundo físico se acoplam, e o atraso tem consequência real. O gêmeo digital só vale com dado real e calibração.",
+      oQue:
+        "Sistema ciberfísico integra software e mundo físico com controle em tempo real. A automação industrial sincroniza máquina e sistema, e o gêmeo digital replica o equipamento para simular e prever. O modelo precisa de dado real e calibração contínua para valer.",
+      passos: [
+        "Defina o laço de controle e o prazo.",
+        "Instrumente o equipamento com sensor confiável.",
+        "Calibre o gêmeo digital com dado real e revise.",
+      ],
+      exemplo:
+        "Gêmeo digital de motor sem calibração prevê temperatura errada, e a manutenção é chamada no momento errado. Com dado do sensor e calibração, a previsão orienta a parada planejada. O modelo é ferramenta e não oráculo.",
+      quebra:
+        "Tratar o gêmeo digital como desenho bonito. Sem dado e sem calibração, a simulação não corresponde ao equipamento e a decisão sai errada. O modelo envelhece junto com a máquina.",
+      limite:
+        "O acoplamento com o físico introduz falha de sensor e de comunicação. Sistema autônomo precisa detectar que o dado está errado e entrar em estado seguro, senão a falha vira acidente.",
+      levar: "Ciberfísico é software com consequência no mundo.",
+      maos:
+        "Monte um laço de controle simples e meça o atraso entre sensor e atuador.",
+      pergunta: {
+        q: "O que um gêmeo digital exige para valer?",
+        a: "Dado real e calibração contínua",
+        why: "Sem medida do equipamento e ajuste do modelo, a réplica digital diverge da máquina e a previsão deixa de orientar manutenção ou operação. O acoplamento exige ainda estado seguro: quando a comunicação cai, o equipamento precisa parar de forma previsível. A automação industrial também exige registro de evento para auditar o que aconteceu na linha, e o registro com horário é o que permite reconstruir a falha depois e atribuir a causa ao passo certo da linha.",
+      },
+    },
+  },
 };
 
 // o nome da estação chega em caixa baixa do banco ("Grafos moleculares") e em
