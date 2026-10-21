@@ -35,6 +35,13 @@ tiles. A planta escolhe o acabamento entre quatro:
 3. **tijolo**: fiadas de 4 px com junta e grão;
 4. **veio**: filamentos do acento correndo pelo piso.
 
+A praça da capital subterrânea cresceu: 20 a 24 tiles de largura por 11 de
+altura, com os serviços em três faixas (pedra, mesa de encantamento e túnel no
+alto; bicho, mesa de vocação e banco no meio; altar, horta, mestra e forja
+embaixo). Nenhuma peça fica a menos de 2,2 tiles da vizinha, contra 0,76 de
+antes, quando a horta nascia debaixo da mesa. A função `pracaDaCaverna` é pura e
+o teste `espaco.test.mjs` mede o vão em três larguras.
+
 Cada sala ganha uma marca no chão: a arena do chefe tem círculo de runas e
 quatro losangos, a sala de tesouro tem ouro espalhado, e a boca de entrada tem
 três setas apontando para dentro. A arena do chefe ganha tochas nos dois cantos
