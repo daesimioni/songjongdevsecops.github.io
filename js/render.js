@@ -11,6 +11,7 @@ import { ITEMS } from "./rpg-data.js";
 import { drawPetSprite } from "./pet-art.js";
 import { BIOMES, TILE_STYLE } from "./identity.js";
 import { drawSkiff, skiffRear } from "./skiff.js";
+import { drawNpcKit } from "./npc-art.js";
 import { drawCaveFacade } from "./cave-art.js";
 import { gustAt, ondaAt, espumaAt, swayAt, windMood } from "./wind.js";
 
@@ -1584,7 +1585,8 @@ export function createRenderer(canvas, world) {
     const px = npc.x * TILE, py = npc.y * TILE;
     const bob = Math.sin(time * 0.002 + npc.bob) * 1.2;
     const colors = npc.colors || { skin: "#d9b08c", hair: "#4a3a55", shirt: npc.accent, pants: "#2f2c45" };
-    drawHuman(ctx, px, py + bob, npc.facing || 0, !!npc.moving, time, colors, 0.9, npc.look || null);
+    drawHuman(ctx, px, py + bob, npc.facing || 0, !!npc.moving, time, colors, npc.scale || 0.9, npc.look || null);
+    drawNpcKit(ctx, npc, px, py, bob, time, colors);
     if (npc.questMark) {
       const ready = npc.questMark === "ready";
       const color = ready ? "#61f4c0" : "#ffc857";

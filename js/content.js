@@ -1279,7 +1279,7 @@ export const NPCS = {
     ],
   },
   "trainer-cs-arch": {
-    name: "Técnica Lovelace",
+    name: "Técnica Helena",
     lines: [
       "Treino de arquitetura é aqui, no claro. A galeria cobra caro por erro de cache.",
       "Comece pelo ciclo de instrução: buscar, decodificar, executar. O resto encaixa.",
@@ -1315,7 +1315,7 @@ export const NPCS = {
     ],
   },
   "trainer-chem-organic": {
-    name: "Mestra Wöhler",
+    name: "Mestre Vidal",
     lines: [
       "Treino de orgânica é aqui, no claro e de jaleco. O bosque é que cobra.",
       "Comece pela tetravalência: sabendo que o carbono faz quatro ligações, a metade das perguntas se resolve.",
@@ -1369,7 +1369,7 @@ export const NPCS = {
     ],
   },
   "trainer-lingua-literature": {
-    name: "Mestra Cecília",
+    name: "Mestra Cora",
     lines: [
       "Treino de literatura aqui, no claro e sem rima forçada. A biblioteca é que cobra.",
       "Comece pelo narrador: quem conta, de onde conta e o que sabe. Metade das perguntas sai daí.",

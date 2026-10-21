@@ -92,6 +92,29 @@ const KEEPERS = {
   inter: [["descartes", "Descartes"], ["nash", "Nash"], ["mandelbrot", "Mandelbrot"], ["wiener", "Wiener"], ["mcluhan", "McLuhan"], ["sapir", "Sapir"], ["whorf", "Whorf"], ["vonbertalanffy", "Bertalanffy"], ["kolmogorov", "Kolmogorov"], ["godel", "Gödel"], ["hofstadter", "Hofstadter"]],
 };
 
+// Quem treina na clareira é outra pessoa, não o guardião da ilha. Antes o
+// instrutor repetia o nome do guardião ("Mestre Hooke" morando com "Hooke"),
+// a mesma figura em dois papéis, em 70 ilhas. Nome de gente comum, sem figura
+// histórica, um por área: 70 nomes em 70 ilhas.
+const MONITORES = {
+  math: [["Bento", "m"], ["Iara", "f"], ["Nilo", "m"], ["Zara", "f"], ["Damião", "m"], ["Cíntia", "f"], ["Omar", "m"], ["Neide", "f"], ["Jonas", "m"]],
+  physics: [["Ciro", "m"], ["Lia", "f"], ["Hugo", "m"], ["Vera", "f"], ["Tadeu", "m"], ["Rosa", "f"], ["Otávio", "m"], ["Bruna", "f"], ["Sérgio", "m"], ["Alice", "f"], ["Murilo", "m"], ["Tânia", "f"]],
+  chem: [["Rui", "m"], ["Jandira", "f"], ["Caio", "m"], ["Esmeralda", "f"], ["Ítalo", "m"], ["Márcia", "f"], ["Elias", "m"], ["Dulce", "f"], ["Vítor", "m"], ["Sônia", "f"], ["Amauri", "m"]],
+  cs: [["Beto", "m"], ["Dora", "f"], ["Fábio", "m"], ["Gilda", "f"], ["Heitor", "m"], ["Ísis", "f"], ["Juca", "m"], ["Kátia", "f"], ["Lino", "m"], ["Mara", "f"], ["Nando", "m"], ["Olívia", "f"], ["Paulo", "m"], ["Rita", "f"]],
+  lingua: [["Afonso", "m"], ["Beatriz", "f"], ["Célio", "m"], ["Dalva", "f"], ["Ester", "f"], ["Firmino", "m"], ["Gentil", "m"], ["Heloísa", "f"], ["Inácio", "m"], ["Joana", "f"], ["Kléber", "m"], ["Lídia", "f"], ["Mauro", "m"]],
+  inter: [["Ari", "m"], ["Bia", "f"], ["Cássio", "m"], ["Débora", "f"], ["Éder", "m"], ["Fátima", "f"], ["Gil", "m"], ["Hilda", "f"], ["Ivo", "m"], ["Laura", "f"], ["Nélson", "m"]],
+};
+
+// o título do instrutor muda com a disciplina, para não haver 70 "Mestre"
+const TITULO_TREINO = {
+  math: ["Monitor", "Monitora"],
+  physics: ["Instrutor", "Instrutora"],
+  chem: ["Técnico", "Técnica"],
+  cs: ["Monitor", "Monitora"],
+  lingua: ["Preceptor", "Preceptora"],
+  inter: ["Guia", "Guia"],
+};
+
 const WORDS = {
   math: ["Prova", "Teorema", "Lema", "Axioma", "Corolário", "Conjectura", "Inferência", "Demonstração", "Silogismo", "Estrutura", "Invariante"],
   physics: ["Campo", "Órbita", "Quanta", "Entropia", "Fóton", "Gradiente", "Tensor", "Plasma", "Núcleo", "Onda", "Simetria"],
@@ -131,6 +154,10 @@ export function buildCatalogContent() {
     const tintList = TINTS[spot.discipline] || TINTS.math;
     const accent = tintList[order % tintList.length];
     const [keeperId, keeperName] = (KEEPERS[spot.discipline] || KEEPERS.inter)[order % (KEEPERS[spot.discipline] || KEEPERS.inter).length];
+    const monitores = MONITORES[spot.discipline] || MONITORES.inter;
+    const [monitorNome, monitorGenero] = monitores[order % monitores.length];
+    const tituloTreino = TITULO_TREINO[spot.discipline] || TITULO_TREINO.inter;
+    const monitorTitulo = monitorGenero === "f" ? tituloTreino[1] : tituloTreino[0];
     const bioma = BIOMES[area.id];
     const conjunto = AREA_ITEMS[area.id];
     const fauna = FAUNA[area.id];
@@ -273,7 +300,7 @@ export function buildCatalogContent() {
       ],
     };
     npcs[`trainer-${area.id}`] = {
-      name: `Mestre ${keeperName}`,
+      name: `${monitorTitulo} ${monitorNome}`,
       lines: [
         `A clareira é lugar de errar sem sangue.`,
         `Comece por ${shortWords[0]}. O que a clareira cobra, a caverna também cobra.`,
@@ -311,6 +338,7 @@ export function buildCatalogContent() {
       id: area.id,
       continent,
       accent: bioma.accent,
+      trainerGender: monitorGenero,
       dungeon: `dungeon-${area.id}`,
       name: `Caçada ${article} ${noun}`,
       center: { x: spot.hunt.x, y: spot.hunt.y },

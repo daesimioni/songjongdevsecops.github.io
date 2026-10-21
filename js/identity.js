@@ -373,17 +373,49 @@ for (const area of AREAS) {
 const PELES = ["#f0c9a8", "#d9a273", "#c68a5e", "#f4d6b8", "#e8b98c", "#a8744e"];
 const CABELOS = ["#3a2a55", "#6b3a2a", "#1f3a5c", "#5c1f3a", "#1f5c4a", "#2b2b33", "#7a5a3a", "#b8b0d8"];
 
-export function npcStyle(id, accent) {
+// Quem é mulher e quem não é: antes o gênero saía do hash e metade das figuras
+// históricas aparecia com barba. A lista é de id, não de nome, porque o id é o
+// que não muda.
+const MULHERES = new Set([
+  "guia", "ada", "hypatia", "marie", "grace", "alzira",
+  "noether", "lovelace", "hopper", "cecilia", "clarice",
+  "trainer-physics-em", "trainer-cs-arch", "trainer-lingua-literature", "trainer-cs",
+  "trainer-physics", "trainer-ai", "trainer-physics-thermo", "trainer-music-form",
+]);
+
+// O papel decide a silhueta, o assunto decide o objeto que a pessoa carrega.
+// Sem isso eram 194 bonecos de camisa trocada, e nada dizia o que a pessoa
+// ensinava.
+const ASSUNTO = {
+  math: "matemática", physics: "física", chem: "química", cs: "computação",
+  lingua: "língua", music: "música", ai: "inteligência artificial",
+  inter: "interseção", hub: "porto",
+};
+
+export function npcStyle(id, accent, continent = "hub", genderHint = null) {
   const h = hash(String(id));
   const hair = HAIRS[h % HAIRS.length];
-  const gender = h % 2 ? "f" : "m";
+  const gender = genderHint || (MULHERES.has(String(id)) ? "f" : "m");
   const skin = PELES[(h >>> 3) % PELES.length];
   const hairColor = CABELOS[(h >>> 5) % CABELOS.length];
   const shirt = accent || hsl(h % 360, 50, 55);
   const pants = hsl((h % 360) + 180, 28, 20);
+  const trainer = String(id).startsWith("trainer-");
+  const role = trainer ? "monitor" : (id === "guia" || id === "teo" ? "guia" : "mestre");
+  const subject = ASSUNTO[continent] ? continent : "inter";
+  const roleName = role === "monitor"
+    ? (gender === "f" ? "Monitora" : "Monitor")
+    : role === "guia"
+      ? "Guia"
+      : (gender === "f" ? "Mestra" : "Mestre");
   return {
     look: { gender, hair: hair.id },
     colors: { skin, hair: hairColor, shirt, pants, accent: hsl((h >>> 7) % 360, 60, 65) },
+    role,
+    subject,
+    // a altura muda a silhueta e nada mais: cada um tem seu tamanho
+    scale: 0.86 + (h % 4) * 0.02,
+    label: `${roleName} de ${ASSUNTO[subject]}`,
   };
 }
 

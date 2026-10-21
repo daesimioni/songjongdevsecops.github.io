@@ -935,6 +935,8 @@ function buildNpc(npc) {
   $("npc-title").textContent = data?.name || "Alguém do mundo";
   const body = $("npc-body");
   body.textContent = "";
+  // o cartão diz o papel e o assunto: a pessoa não é só um nome
+  if (npc.label) body.appendChild(el("p", "npc-line npc-context", npc.label));
   const lines = data?.lines || [];
   const visits = state.npcMemory?.[npc.id] || 0;
   const done = quests.done().length;
