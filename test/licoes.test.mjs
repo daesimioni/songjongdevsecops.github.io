@@ -8,6 +8,8 @@ globalThis.localStorage = { getItem: () => null, setItem: () => {}, removeItem: 
 const { CATALOG_CONTENT } = await import("../js/catalog-gen.js");
 const { QUESTIONS } = await import("../js/rpg-data.js");
 const { LICOES } = await import("../js/text/licoes.js");
+const { LICOES_POST } = await import("../js/text/licoes-post.js");
+const { POSTS } = await import("../js/content.js");
 
 const problemas = [];
 const check = (ok, msg) => { if (!ok) problemas.push(msg); };
@@ -46,5 +48,22 @@ for (const areaId of areas) {
   }
 }
 
+// as 69 páginas escritas à mão (as estações antigas) recebem o fecho de curso:
+// limite, pergunta, para levar e com as mãos, sem perder o corpo original
+const POSTS_ESCRITOS = 69;
+check(Object.keys(LICOES_POST).length === POSTS_ESCRITOS, `páginas antigas com lição: ${Object.keys(LICOES_POST).length}, esperado ${POSTS_ESCRITOS}`);
+let antigas = 0;
+for (const [id, licao] of Object.entries(LICOES_POST)) {
+  const post = POSTS[id];
+  check(!!post, `${id}: página antiga sem post`);
+  check(!!licao.levar && !!licao.maos && !!licao.pergunta?.q && !!licao.limite, `${id}: lição antiga incompleta`);
+  if (!post) continue;
+  antigas++;
+  for (const parte of ["O limite", "O que perguntam", "Para levar", "Com as mãos"]) {
+    check(post.body.includes(parte), `${id}: página antiga sem "${parte}"`);
+  }
+  check(!post.body.includes("undefined"), `${id}: página antiga com undefined`);
+}
+
 assert.equal(problemas.length, 0, `lições com ${problemas.length} problema(s):\n- ${problemas.slice(0, 12).join("\n- ")}`);
-console.log(`ok lições: ${areas.length} áreas, ${paginas} páginas com seis partes, ${paginas >= 1 ? "nenhuma abaixo de 500 palavras" : ""}, pergunta com casa`);
+console.log(`ok lições: ${areas.length} áreas, ${paginas} páginas com seis partes, ${paginas >= 1 ? "nenhuma abaixo de 500 palavras" : ""}, pergunta com casa; ${antigas} páginas antigas com fecho de curso`);

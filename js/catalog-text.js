@@ -291,3 +291,19 @@ export function trilhaQuiz({ sectionName, groups, index, salt = 0 }) {
     why: `"${topicLabel(certo)}" aparece na parte ${index + 1} da seção, junto com os outros tópicos daquela trilha.`,
   }];
 }
+
+// Bloco de estudo das páginas antigas: o corpo escrito à mão continua sendo a
+// explicação, e aqui entram as partes que faltavam para a pedra ensinar como
+// as do catálogo.
+export function blocoDeEstudo(licao) {
+  const p = licao?.pergunta;
+  if (!licao || !p) return "";
+  const certa = Array.isArray(p.o) ? p.o[p.a] : p.a;
+  return [
+    licao.limite ? `<p><strong>O limite.</strong> ${frase(licao.limite)}</p>` : "",
+    "<p><strong>O que perguntam.</strong> O bicho da área cobra a ideia, não a decoreba.</p>",
+    `<p><em>Se perguntarem</em> ${html(p.q)} <em>a resposta é</em> <strong>${html(certa || "")}</strong>. ${frase(p.why)}</p>`,
+    `<blockquote><strong>Para levar.</strong> ${frase(licao.levar)}</blockquote>`,
+    `<p><strong>Com as mãos.</strong> ${frase(licao.maos)}</p>`,
+  ].filter(Boolean).join("");
+}
