@@ -33,7 +33,11 @@ function tabuas(g, p, x, y, w, h, cor) {
   g.fillStyle = p.madeiraClara;
   g.fillRect(x, y, w, 1);
   g.fillStyle = "rgba(0,0,0,0.12)";
-  for (let i = 0; i < w; i += 6) g.fillRect(x + i, y + 1.5, 3, 0.5);
+  for (let i = 0; i < w; i += 6) {
+    g.fillRect(x+i,y+1.5,3,.5);
+    g.fillStyle=p.contorno;g.fillRect(x+i+1,y+2,.5,.5);
+    g.fillStyle='rgba(255,236,204,.22)';g.fillRect(x+i+2,y+2,.5,.5);
+  }
 }
 
 function telhado(g, p, x, y, w, h, cor, corClara) {
@@ -41,6 +45,9 @@ function telhado(g, p, x, y, w, h, cor, corClara) {
   g.fillRect(x - 1, y - 1, w + 2, h + 1);
   g.fillStyle = cor;
   g.fillRect(x, y, w, h);
+  // Juntas verticais desencontradas e musgo discreto no beiral.
+  g.fillStyle=p.contorno;
+  for(let row=0;row<h;row+=3)for(let col=(row%2)*2+3;col<w-1;col+=6)g.fillRect(x+col,y+row,.5,2);
   // telha em fileira: uma linha clara em cima e escura embaixo de cada fiada
   for (let i = 0; i < h; i += 3) {
     g.fillStyle = corClara;

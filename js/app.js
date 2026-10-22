@@ -1,3 +1,4 @@
+import { setArtMotion } from "./art-style.js";
 import { houseTargets, nextResidentLine } from "./house-interactions.js";
 import { readSavedJSON as readJSON } from "./storage.js";
 import { filterGroupedList } from "./search-ui.js";
@@ -90,6 +91,8 @@ const chaoPego = new Set();
 const renderer = createRenderer($("world"), world);
 const audio = createAudio();
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+setArtMotion(!reducedMotion);
+window.matchMedia("(prefers-reduced-motion: reduce)").addEventListener?.("change", e => setArtMotion(!e.matches));
 
 const SITE_BY_POST = new Map(SITES.map((s) => [s.post, s]));
 const TOTAL = SITES.length;

@@ -1,3 +1,4 @@
+import { artTime } from "./art-style.js";
 import { hairById } from "./avatar.js";
 
 // O lado e a camada de cada peça de equipamento mudam com a visão. De frente
@@ -37,6 +38,7 @@ export function ladoDaDiagonal(dir) {
 // O mesmo boneco na superfície e no subsolo: cabelo, gênero e cores vêm do
 // personagem salvo. Quem chama decide o chão, a sombra e o que fica por cima.
 export function drawHuman(ctx, px, py, dir, moving, time, colors, scale = 1, look = null, gear = null) {
+  time = artTime(time);
   const s = scale;
   const step = moving ? Math.sin(time * 0.016) : 0;
   // parado, o corpo respira: meio pixel para cima e para baixo, sem trocar a
@@ -355,6 +357,11 @@ export function drawHuman(ctx, px, py, dir, moving, time, colors, scale = 1, loo
   ctx.fillStyle = colors.accent || "#fff3d1";
   ctx.fillRect(-1, -11, 2, 2);
 
+  // Costuras, botões, cinto e luz no ombro: mesmo vocabulário dos itens.
+  ctx.fillStyle='rgba(255,236,204,.4)';ctx.fillRect(-shoulder+1,-12,2,.5);
+  ctx.fillRect(-3,-8,.5,3);ctx.fillStyle='rgba(8,18,32,.38)';ctx.fillRect(-3,-4,6,1);
+  ctx.fillStyle=colors.accent||'#e5c792';ctx.fillRect(-.5,-4,1,1);
+  if(base!==3){ctx.fillStyle='rgba(255,240,205,.5)';ctx.fillRect(.5,-9,.5,.5);ctx.fillRect(.5,-7,.5,.5);}
   if (!armaAtras) desenharArma();
   if (!escudoAtras) desenharEscudo();
 

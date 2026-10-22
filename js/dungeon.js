@@ -1,3 +1,6 @@
+import { spritePose } from "./sprite-cache.js";
+import { artTick } from "./art-style.js";
+import { artTime } from "./art-style.js";
 import { isTextEntry, nativeActivation } from "./input.js";
 import { moveWithCollision, advancePath, directionVector, directionAngle } from "./movement.js";
 // A caverna: um mapa próprio, em tela cheia, com salas e túneis que se cruzam.
@@ -200,7 +203,7 @@ export function dungeonCanSeePlayer(map, monster, player) {
 }
 
 // ---------- desenho ----------
-function drawAdventurer(ctx, x, y, dir, moving, t, avatar = {}, look = null, gear = null) {
+function drawAdventurerRaw(ctx, x, y, dir, moving, t, avatar = {}, look = null, gear = null) {
   // O mesmo boneco da superfície, com capa e lanterna por cima. A nave é
   // desenhada por drawSkiff, em skiff.js, para o casco ser o mesmo nos dois
   // lugares.
@@ -229,7 +232,7 @@ function drawAdventurer(ctx, x, y, dir, moving, t, avatar = {}, look = null, gea
   ctx.restore();
 }
 
-function drawChest(ctx, x, y, opened, accent) {
+function drawChestRaw(ctx, x, y, opened, accent) {
   ctx.save();
   ctx.translate(x, y);
   ctx.fillStyle = "rgba(0,0,0,0.35)";
@@ -240,6 +243,9 @@ function drawChest(ctx, x, y, opened, accent) {
   ctx.fillRect(-7, -9, 14, 9);
   ctx.fillStyle = "#6b4a2c";
   ctx.fillRect(-7, -9, 14, 3);
+  ctx.fillStyle='#b18b58';ctx.fillRect(-6,-8,12,.5);
+  ctx.fillStyle='#291c1c';for(const xx of [-4,0,4])ctx.fillRect(xx,-5,.5,4);
+  ctx.fillStyle='#aea3ac';ctx.fillRect(-6,-7,1,.5);ctx.fillRect(5,-7,1,.5);
   if (opened) {
     ctx.fillStyle = "#1a120c";
     ctx.fillRect(-6, -9, 12, 4);
@@ -254,7 +260,7 @@ function drawChest(ctx, x, y, opened, accent) {
   ctx.restore();
 }
 
-function drawStairs(ctx, x, y, accent, t = 0) {
+function drawStairsRaw(ctx, x, y, accent, t = 0) {
   const glow = 0.5 + Math.sin(t * 0.004) * 0.16;
   ctx.save();
   ctx.translate(x, y);
@@ -304,7 +310,7 @@ function drawStairs(ctx, x, y, accent, t = 0) {
   ctx.restore();
 }
 
-function drawTorch(ctx, x, y, t, accent) {
+function drawTorchRaw(ctx, x, y, t, accent) {
   const flick = Math.sin(t * 0.013 + x * 0.7) * 0.5 + Math.sin(t * 0.031 + y) * 0.3;
   ctx.save();
   ctx.translate(x, y);
@@ -322,7 +328,7 @@ function drawTorch(ctx, x, y, t, accent) {
   ctx.restore();
 }
 
-function drawAltar(ctx, x, y, t, accent) {
+function drawAltarRaw(ctx, x, y, t, accent) {
   const glow = 0.16 + Math.sin(t * 0.004) * 0.06;
   ctx.save();
   ctx.translate(x, y);
@@ -346,7 +352,7 @@ function drawAltar(ctx, x, y, t, accent) {
 
 // Mesa de vocação: estante baixa com o livro das cinco cartas aberto e duas
 // velas. O brilho muda de cor com o tempo, como se a página virasse sozinha.
-function drawMesa(ctx, x, y, t, accent) {
+function drawMesaRaw(ctx, x, y, t, accent) {
   ctx.save();
   ctx.translate(x, y);
   ctx.fillStyle = "rgba(0,0,0,0.35)";
@@ -374,7 +380,7 @@ function drawMesa(ctx, x, y, t, accent) {
   ctx.restore();
 }
 
-function drawForge(ctx, x, y, t, accent) {
+function drawForgeRaw(ctx, x, y, t, accent) {
   ctx.save();
   ctx.translate(x, y);
   ctx.fillStyle = "rgba(0,0,0,0.35)";
@@ -387,7 +393,9 @@ function drawForge(ctx, x, y, t, accent) {
   ctx.fillRect(-8, -15, 16, 6);
   ctx.fillStyle = "#1b1626";
   ctx.fillRect(-5, -13, 10, 4);
-  const f = Math.sin(t * 0.017) * 1.4;
+  const f = Math.sin(artTime(t) * 0.017) * 1.4;
+  ctx.fillStyle='#786680';for(const xx of [-8,-3,2,7])ctx.fillRect(xx,-4,3,.5);
+  ctx.fillStyle='#171423';ctx.fillRect(-8,-9,.5,6);ctx.fillRect(7,-9,.5,6);
   ctx.fillStyle = "#ff7a3d";
   ctx.fillRect(-4, -12 + f, 8, 2);
   ctx.fillStyle = "#ffd166";
@@ -398,7 +406,7 @@ function drawForge(ctx, x, y, t, accent) {
 }
 
 // ---- sala temática: cada disciplina tem um cômodo com a sua cara ----
-function drawOficina(ctx, x, y, t, accent) {
+function drawOficinaRaw(ctx, x, y, t, accent) {
   ctx.save();
   ctx.translate(x, y);
   ctx.fillStyle = "rgba(0,0,0,0.35)";
@@ -427,7 +435,7 @@ function drawOficina(ctx, x, y, t, accent) {
   ctx.restore();
 }
 
-function drawBiblioteca(ctx, x, y, t, accent) {
+function drawBibliotecaRaw(ctx, x, y, t, accent) {
   ctx.save();
   ctx.translate(x, y);
   ctx.fillStyle = "rgba(0,0,0,0.35)";
@@ -457,7 +465,7 @@ function drawBiblioteca(ctx, x, y, t, accent) {
   ctx.restore();
 }
 
-function drawObservatorio(ctx, x, y, t, accent) {
+function drawObservatorioRaw(ctx, x, y, t, accent) {
   ctx.save();
   ctx.translate(x, y);
   ctx.fillStyle = "rgba(0,0,0,0.35)";
@@ -494,7 +502,7 @@ function drawObservatorio(ctx, x, y, t, accent) {
   ctx.restore();
 }
 
-function drawWaystone(ctx, x, y, t, accent) {
+function drawWaystoneRaw(ctx, x, y, t, accent) {
   ctx.save();
   ctx.translate(x, y);
   ctx.fillStyle = "rgba(0,0,0,0.35)";
@@ -512,7 +520,7 @@ function drawWaystone(ctx, x, y, t, accent) {
   ctx.restore();
 }
 
-function drawPortal(ctx, x, y, t, accent) {
+function drawPortalRaw(ctx, x, y, t, accent) {
   ctx.save();
   ctx.translate(x, y);
   ctx.fillStyle = "rgba(0,0,0,0.4)";
@@ -546,7 +554,7 @@ function drawPortal(ctx, x, y, t, accent) {
   ctx.restore();
 }
 
-function drawTunnel(ctx, x, y, t, accent) {
+function drawTunnelRaw(ctx, x, y, t, accent) {
   ctx.save();
   ctx.translate(x, y);
   ctx.fillStyle = "rgba(0,0,0,0.4)";
@@ -570,7 +578,7 @@ function drawTunnel(ctx, x, y, t, accent) {
   ctx.restore();
 }
 
-function drawKeeper(ctx, x, y, t, accent) {
+function drawKeeperRaw(ctx, x, y, t, accent) {
   ctx.save();
   ctx.translate(x, y);
   ctx.fillStyle = "rgba(0,0,0,0.4)";
@@ -594,7 +602,7 @@ function drawKeeper(ctx, x, y, t, accent) {
   ctx.restore();
 }
 
-function drawPlot(ctx, x, y, t, accent, planted, ready) {
+function drawPlotRaw(ctx, x, y, t, accent, planted, ready) {
   ctx.save();
   ctx.translate(x, y);
   ctx.fillStyle = "#2a2116";
@@ -618,7 +626,7 @@ function drawPlot(ctx, x, y, t, accent, planted, ready) {
   ctx.restore();
 }
 
-function drawVein(ctx, x, y, t, accent, charges) {
+function drawVeinRaw(ctx, x, y, t, accent, charges) {
   ctx.save();
   ctx.translate(x, y);
   ctx.fillStyle = "rgba(0,0,0,0.35)";
@@ -658,7 +666,7 @@ function drawPet(ctx, x, y, t, accent, kind, tamed) {
   ctx.restore();
 }
 
-function drawEnchanter(ctx, x, y, t, accent) {
+function drawEnchanterRaw(ctx, x, y, t, accent) {
   const glow = 0.35 + Math.sin(t * 0.004) * 0.18;
   ctx.save();
   ctx.translate(x, y);
@@ -745,6 +753,32 @@ export function pracaDaCaverna(def, city) {
   });
   return props;
 }
+
+// Objetos do subsolo compartilham material, contorno e poses com o mundo.
+function drawDungeonSprite(name,paint,timeIndex,ctx,x,y,...args) {
+  const values=args.slice();
+  if(timeIndex!==null)values[timeIndex]=artTick(values[timeIndex]+x*17+y*23,120)*120;
+  const key=JSON.stringify(['dungeon',name,...values]);
+  const pose=spritePose(key,112,112,g=>{g.translate(56,86);paint(g,0,0,...values);},'stone');
+  ctx.save();ctx.imageSmoothingEnabled=false;ctx.drawImage(pose,x-56,y-86);ctx.restore();
+}
+function drawAdventurer(ctx,x,y,...args) { drawDungeonSprite("drawAdventurer",drawAdventurerRaw,2,ctx,x,y,...args); }
+function drawChest(ctx,x,y,...args) { drawDungeonSprite("drawChest",drawChestRaw,null,ctx,x,y,...args); }
+function drawStairs(ctx,x,y,...args) { drawDungeonSprite("drawStairs",drawStairsRaw,1,ctx,x,y,...args); }
+function drawTorch(ctx,x,y,...args) { drawDungeonSprite("drawTorch",drawTorchRaw,0,ctx,x,y,...args); }
+function drawAltar(ctx,x,y,...args) { drawDungeonSprite("drawAltar",drawAltarRaw,0,ctx,x,y,...args); }
+function drawMesa(ctx,x,y,...args) { drawDungeonSprite("drawMesa",drawMesaRaw,0,ctx,x,y,...args); }
+function drawForge(ctx,x,y,...args) { drawDungeonSprite("drawForge",drawForgeRaw,0,ctx,x,y,...args); }
+function drawOficina(ctx,x,y,...args) { drawDungeonSprite("drawOficina",drawOficinaRaw,0,ctx,x,y,...args); }
+function drawBiblioteca(ctx,x,y,...args) { drawDungeonSprite("drawBiblioteca",drawBibliotecaRaw,0,ctx,x,y,...args); }
+function drawObservatorio(ctx,x,y,...args) { drawDungeonSprite("drawObservatorio",drawObservatorioRaw,0,ctx,x,y,...args); }
+function drawWaystone(ctx,x,y,...args) { drawDungeonSprite("drawWaystone",drawWaystoneRaw,0,ctx,x,y,...args); }
+function drawPortal(ctx,x,y,...args) { drawDungeonSprite("drawPortal",drawPortalRaw,0,ctx,x,y,...args); }
+function drawTunnel(ctx,x,y,...args) { drawDungeonSprite("drawTunnel",drawTunnelRaw,0,ctx,x,y,...args); }
+function drawKeeper(ctx,x,y,...args) { drawDungeonSprite("drawKeeper",drawKeeperRaw,0,ctx,x,y,...args); }
+function drawPlot(ctx,x,y,...args) { drawDungeonSprite("drawPlot",drawPlotRaw,0,ctx,x,y,...args); }
+function drawVein(ctx,x,y,...args) { drawDungeonSprite("drawVein",drawVeinRaw,0,ctx,x,y,...args); }
+function drawEnchanter(ctx,x,y,...args) { drawDungeonSprite("drawEnchanter",drawEnchanterRaw,0,ctx,x,y,...args); }
 
 export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, onWiki, onGather, onExit, onKeeper, onConurbation, onPortal, onVocacao, isBlocked, vitais = null, avatar = {}, look = null, gear = null }) {
   const canvas = $("dungeon-canvas");
@@ -2196,6 +2230,8 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
         const h = hash2(tx + 11, ty + 7);
         g.fillStyle = palette.wall;
         g.fillRect(px, py, TILE, TILE);
+        g.fillStyle='rgba(222,229,242,.08)';g.fillRect(px+2,py+3,8,.5);
+        g.fillStyle='rgba(7,15,30,.24)';g.fillRect(px+7+(ty%2)*2,py+4,.5,5);
         g.fillStyle = "rgba(255,255,255,0.035)";
         g.fillRect(px + 2 + Math.floor(h * 10), py + 3 + Math.floor(h * 9), 1, 1);
         g.fillStyle = "rgba(0,0,0,0.2)";

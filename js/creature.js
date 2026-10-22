@@ -1,3 +1,6 @@
+import { spritePose } from "./sprite-cache.js";
+import { artTime, artTick } from "./art-style.js";
+import { creatureDetail } from "./creature-detail.js";
 // Bichos das caçadas desenhados na unha, em blocos, para o mapa e para a
 // janela de duelo usarem o mesmo desenho.
 // ruído 1D determinístico: a respiração do bicho não é um seno de período fixo
@@ -53,6 +56,7 @@ export const COSTAS = {
 };
 
 export function drawCreature(ctx, kind, accent, time = 0, scale = 1, dir = 0, semSombra = false) {
+  time = artTime(time);
   const boss = kind === "boss";
   const s = sementeDe(String(kind));
   const bob = (ruido(time * 0.0011 + s) - 0.5) * (boss ? 3.2 : 2.2);
@@ -62,6 +66,10 @@ export function drawCreature(ctx, kind, accent, time = 0, scale = 1, dir = 0, se
   ctx.save();
   ctx.scale(scale * (deLado ? vira : 1), scale);
   ctx.translate(0, bob);
+  // Massa elástica nos gelatinosos; membros conservam o próprio passo.
+  if(['slime','jelly','wisp'].includes(kind)){
+    const breath=Math.sin(time*.005+s)*.035;ctx.scale(1+breath,1-breath);
+  }
 
   // sombra (fora do sprite: o contorno não copia a sombra do chão)
   if (!semSombra) {
@@ -137,7 +145,7 @@ export function drawCreature(ctx, kind, accent, time = 0, scale = 1, dir = 0, se
     for (const [x, y, w, h] of [
       [-12, -9, 5, 2], [7, -9, 5, 2], [-13, -6, 6, 2], [7, -6, 6, 2],
       [-12, -3, 5, 2], [7, -3, 5, 2], [-10, -1, 4, 2], [6, -1, 4, 2],
-    ]) ctx.fillRect(x, y, w, h);
+    ]) ctx.fillRect(x, y + Math.sin(time*.009+x)*.65, w, h);
     ctx.fillStyle = accent;
     ctx.fillRect(-7, -12, 14, 9);
     ctx.fillStyle = "#1a1730";
@@ -603,6 +611,7 @@ export function drawCreature(ctx, kind, accent, time = 0, scale = 1, dir = 0, se
     ctx.fillRect(-4, -20, 8, 2);
     ctx.fillRect(-2, -23, 4, 8);
   }
+  creatureDetail(ctx, kind, accent, time);
   if (dir === 3) {
     const m = COSTAS[kind] || COSTAS.boss;
     ctx.fillStyle = m[4] === "accent" ? accent : m[4];
@@ -620,68 +629,14 @@ export function drawCreature(ctx, kind, accent, time = 0, scale = 1, dir = 0, se
 // O mesmo bicho com acabamento: sombra no chão, contorno escuro de um pixel e
 // um gradiente de luz em cima do corpo. O desenho de cada espécie continua
 // igual; o carinho é o que envolve ele, e vale para as 26 formas de uma vez.
-let arteA = null;
-let arteB = null;
-function arteCanvas() {
-  if (arteA && arteB) return { A: arteA, B: arteB };
-  arteA = document.createElement("canvas");
-  arteB = document.createElement("canvas");
-  for (const cv of [arteA, arteB]) { cv.width = 112; cv.height = 112; }
-  return { A: arteA, B: arteB };
-}
-
 export function drawCreatureArt(ctx, kind, accent, time = 0, scale = 1, dir = 0) {
-  if (typeof document === "undefined") {
-    drawCreature(ctx, kind, accent, time, scale, dir);
-    return;
-  }
-  const { A, B } = arteCanvas();
+  if (typeof document === "undefined") { drawCreature(ctx,kind,accent,time,scale,dir); return; }
   const S = 112, OX = 56, OY = 92;
-  const a = A.getContext("2d");
-  const b = B.getContext("2d");
-  a.setTransform(1, 0, 0, 1, 0, 0);
-  a.clearRect(0, 0, S, S);
-  a.save();
-  a.translate(OX, OY);
-  drawCreature(a, kind, accent, time, 1, dir, true);
-  a.restore();
-  // luz em cima e sombra embaixo, presas ao corpo pelo source-atop
-  a.save();
-  a.globalCompositeOperation = "source-atop";
-  const grad = a.createLinearGradient(0, OY - 56, 0, OY + 2);
-  grad.addColorStop(0, "rgba(255,255,255,0.17)");
-  grad.addColorStop(0.45, "rgba(255,255,255,0)");
-  grad.addColorStop(1, "rgba(0,0,0,0.30)");
-  a.fillStyle = grad;
-  a.fillRect(0, 0, S, S);
-  a.globalCompositeOperation = "source-over";
-  a.restore();
-  // silhueta escura: o contorno é o próprio corpo pintado de breu
-  b.setTransform(1, 0, 0, 1, 0, 0);
-  b.clearRect(0, 0, S, S);
-  b.globalCompositeOperation = "source-over";
-  b.drawImage(A, 0, 0);
-  b.globalCompositeOperation = "source-in";
-  b.fillStyle = "rgba(5,7,16,0.92)";
-  b.fillRect(0, 0, S, S);
-  b.globalCompositeOperation = "source-over";
-
-  const boss = kind === "boss";
-  ctx.save();
-  ctx.fillStyle = "rgba(2, 4, 10, 0.32)";
-  ctx.beginPath();
-  ctx.ellipse(0, 0, (boss ? 22 : 13) * scale, (boss ? 5 : 3.4) * scale, 0, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
-
-  ctx.save();
-  // o contorno é desenhado em canvas: sem suavização, o pixel continua pixel
-  ctx.imageSmoothingEnabled = false;
-  ctx.scale(scale, scale);
-  const t = Math.max(0.6, 1 / scale);
-  for (const [dx, dy] of [[-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [1, -1], [-1, 1], [1, 1]]) {
-    ctx.drawImage(B, -OX + dx * t, -OY + dy * t);
-  }
-  ctx.drawImage(A, -OX, -OY);
-  ctx.restore();
+  const tick=artTick(time,90), poseTime=tick*90;
+  const sprite=spritePose(`creature:${kind}:${accent}:${dir}:${tick}`,S,S,a=>{
+    a.translate(OX,OY);drawCreature(a,kind,accent,poseTime,1,dir,true);
+  },'stone');
+  ctx.save();ctx.fillStyle='rgba(2,4,10,0.32)';ctx.beginPath();
+  ctx.ellipse(0,0,(kind==='boss'?22:13)*scale,(kind==='boss'?5:3.4)*scale,0,0,Math.PI*2);ctx.fill();
+  ctx.imageSmoothingEnabled=false;ctx.scale(scale,scale);ctx.drawImage(sprite,-OX,-OY);ctx.restore();
 }

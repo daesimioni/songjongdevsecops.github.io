@@ -13,6 +13,7 @@ function desenhar(kind, dir) {
     save() {}, restore() {}, translate() {}, scale() {}, beginPath() {}, closePath() {},
     moveTo(x, y) { ops.push(["m", x, y]); },
     lineTo(x, y) { ops.push(["l", x, y]); },
+    quadraticCurveTo(...a) { ops.push(["q", ...a]); },
     bezierCurveTo(...a) { ops.push(["b", ...a]); },
     arc(...a) { ops.push(["a", ...a]); },
     ellipse(...a) { ops.push(["e", ...a]); },

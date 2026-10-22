@@ -1,3 +1,4 @@
+import { artTime } from "./art-style.js";
 // A nave: o mesmo casco na superfície e na caverna. Fica num módulo só para o
 // desenho de um lugar não divergir do outro.
 
@@ -16,6 +17,7 @@ export function skiffRear(dir) {
 
 export function drawSkiff(ctx, px, py, dir, time, boost = 1, moving = false) {
   if (boost <= 0.01) return;
+  time = artTime(time);
   const bob = Math.sin(time * 0.007) * 1.1;
   const by = py - 2 + bob;
   const rear = skiffRear(dir);
@@ -63,6 +65,11 @@ export function drawSkiff(ctx, px, py, dir, time, boost = 1, moving = false) {
   ctx.fillStyle = "#fff3d1";
   ctx.fillRect(px + rear.x * 9 - 1, by + rear.y * 6, 2, 1);
 
+  // Nervuras do casco, escotilha e luzes de navegação.
+  ctx.fillStyle='#0a1b32';for(const x of [-7,-3,3,7])ctx.fillRect(px+x,by+1,.5,2);
+  ctx.fillStyle='#d4f2ed';ctx.fillRect(px-6,by-2,2,.5);ctx.fillRect(px+4,by-2,2,.5);
+  ctx.fillStyle='#ffb092';ctx.fillRect(px-12,by+1,1,.5);
+  ctx.fillStyle='#88eac3';ctx.fillRect(px+11,by+1,1,.5);
   if (moving) {
     ctx.strokeStyle = "rgba(223, 245, 255, 0.42)";
     ctx.lineWidth = 1;

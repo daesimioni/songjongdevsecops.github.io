@@ -1,3 +1,4 @@
+import { finishMaterial } from "./art-style.js";
 // Ícones dos itens desenhados em canvas, no mesmo pixel do mapa. A forma vem
 // da PALAVRA do nome (família) e de parâmetros sorteados pelo id: comprimento,
 // largura, guarda, ponta, pedra e brilho. Antes vinha só do slot, então 94
@@ -527,7 +528,7 @@ function desenhar(ctx, item) {
 export const FAMILIAS = Object.keys(DESENHOS);
 
 export function itemIconCanvas(item) {
-  const chave = item?.id || "item";
+  const chave = JSON.stringify([item?.id || "item",item?.name,item?.accent,item?.continent,item?.material,item?.slot]);
   if (cache.has(chave)) return cache.get(chave);
   const canvas = document.createElement("canvas");
   canvas.width = 32;
@@ -537,6 +538,10 @@ export function itemIconCanvas(item) {
   if (ctx) {
     ctx.imageSmoothingEnabled = false;
     desenhar(ctx, item || {});
+    const family=familiaDe(item);
+    const material=['manto','casaca','colete','avental','capa','capuz','perneiras'].includes(family)?'cloth'
+      : ['bastao','cajado','batuta','livro'].includes(family)?'wood':'metal';
+    finishMaterial(ctx,32,32,material,semente(chave));
     // Acabamento: o ícone cru ganha contorno escuro de um pixel e um véu de
     // luz em cima. É feito uma vez por item, no cache, e vale para os 538.
     const S = 40;

@@ -5,13 +5,14 @@
 
 function chama(g, x, y, largura, altura, quadro, p) {
   const oscila = [0, 1, -1, 0][quadro % 4];
-  for (let row = 0; row < altura; row++) {
-    const t = row / altura;
-    const meia = Math.max(0, Math.round(largura * (1 - t) * (0.55 + 0.45 * Math.sin(quadro + t * 3))));
-    if (meia < 1) continue;
-    const dx = Math.round(Math.sin(quadro * 1.7 + row * 0.4) * (1 - t) * 1.6) + (row < altura * 0.4 ? oscila : 0);
-    g.fillStyle = t < 0.25 ? p.luz : t < 0.55 ? p.fogo : p.brasa;
-    g.fillRect(x + dx - meia, y + row, meia * 2, 1);
+  // A chama afina no topo e abre sobre a brasa; núcleo quente embaixo.
+  for (let row=0;row<altura;row++) {
+    const t=row/altura;
+    const meia=Math.max(.5,Math.round(largura*Math.sqrt(t)*(0.72+Math.sin(quadro*.9+row*.6)*.16)*2)/2);
+    const dx=Math.sin(quadro*1.4+row*.4)*(1-t)*1.4;
+    g.fillStyle=t>.72?p.luz:t>.35?p.fogo:p.brasa;
+    g.fillRect(x+dx-meia,y+row,meia*2,1);
+    if(t>.45){g.fillStyle=p.luz;g.fillRect(x+dx-meia*.3,y+row,Math.max(.5,meia*.6),1);}
   }
   g.fillStyle = p.luz;
   g.fillRect(x - 1 + oscila, y + altura - 3, 2, 2);
@@ -123,9 +124,9 @@ function lanterna(g, p, v, quadro) {
   if (v === 2) {
     // poste alto: a lanterna fica no topo, acima da cabeça
     g.fillStyle = p.contorno;
-    g.fillRect(w / 2 - 1, 10, 2, h - 2);
+    g.fillRect(w / 2 - 1, 10, 2, h - 12);
     g.fillStyle = p.tronco;
-    g.fillRect(w / 2, 11, 1, h - 3);
+    g.fillRect(w / 2, 11, 1, h - 13);
     g.fillStyle = p.metal;
     g.fillRect(w / 2 - 3, 9, 6, 1);
     g.fillRect(w / 2 - 1, 9, 2, 2);

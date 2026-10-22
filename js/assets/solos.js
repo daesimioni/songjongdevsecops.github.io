@@ -85,7 +85,7 @@ function raiz(g, p, v) {
   g.fillRect(9, 8, 2, 1);
 }
 
-function poca(g, p, v) {
+function poca(g, p, v, q = 0) {
   const w = 20, h = 12;
   g.fillStyle = "rgba(46,110,160,0.8)";
   g.beginPath();
@@ -106,6 +106,9 @@ function poca(g, p, v) {
     g.fillStyle = "rgba(140,225,255,0.35)";
     g.fillRect(13, h / 2, 2, 1);
   }
+  // Anéis pequenos na poça, não uma translação do chão inteiro.
+  g.strokeStyle='rgba(205,237,249,0.35)';g.lineWidth=.5;g.beginPath();
+  g.ellipse(w/2,h/2,2+q*.8,1+q*.25,0,0,Math.PI*2);g.stroke();
 }
 
 function tufo(g, p, v, q = 0) {
@@ -197,7 +200,7 @@ export const SOLOS = {
   pedra: { w: 20, h: 12, variantes: 3, desenhar: pedra },
   rachadura: { w: 22, h: 12, variantes: 3, desenhar: rachadura },
   raiz: { w: 22, h: 12, variantes: 3, desenhar: raiz },
-  poca: { w: 20, h: 12, variantes: 3, desenhar: poca },
+  poca: { w: 20, h: 12, variantes: 3, quadros: 4, ms: 240, desenhar: poca },
   tufo: { w: 16, h: 11, variantes: 3, quadros: 2, ms: 420, desenhar: tufo },
   folhada: { w: 20, h: 10, variantes: 3, desenhar: folhada },
   cogumelo: { w: 18, h: 12, variantes: 3, desenhar: cogumelo },

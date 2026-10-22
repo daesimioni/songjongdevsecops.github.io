@@ -1,3 +1,4 @@
+import { artTime } from "./art-style.js";
 // A fachada da caverna. A pedra da área decide a arquitetura: ruína de pedra
 // lavrada onde o chão é giz, ardósia ou papel; boca de mina onde é ferro,
 // cobre, latão ou silício; fenda de cristal onde é vidro, cristal, obsidiana
@@ -47,7 +48,7 @@ export function drawCaveFacade(ctx, c) {
   const { px, py, pedra, meio, fundo, acento, seed, time } = c;
   const entrada = c.entrada;
   const familia = caveFamily(c.material);
-  const pulso = 0.5 + Math.sin(time * 0.0028 + seed * 6.28) * 0.5;
+  const pulso = 0.5 + Math.sin(artTime(time) * 0.0028 + seed * 6.28) * 0.5;
   // a fachada é mineral: sai da pedra da área (mais clara), não do chão
   const claro = clarear(pedra, 0.24);
   const terra = misturar(pedra, "#5a4632", 0.5);
@@ -227,5 +228,10 @@ export function drawCaveFacade(ctx, c) {
     ctx.fillStyle = hexA(acento, 0.35);
     ctx.fillRect(px - vao / 2 - 1, py - 19, 2, 2);
     ctx.fillRect(px + vao / 2 - 1, py - 19, 2, 2);
-  }
+  }  // Lascas, veios de minério e degrau gasto, dentro do maciço existente.
+  ctx.fillStyle=clarear(pedra,.35);
+  for(let i=0;i<5;i++)ctx.fillRect(px-16+i*7,py-13-(i%2)*4,1.5,.5);
+  ctx.fillStyle=hexA(acento,.6+pulso*.2);ctx.fillRect(px-15,py-8,1,.5);ctx.fillRect(px+14,py-12,.5,1);
+  ctx.fillStyle=hexA(claro,.5);ctx.fillRect(px-6,py,.5,.5);ctx.fillRect(px+2,py,3,.5);
+
 }

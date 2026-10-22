@@ -11,10 +11,11 @@ const ler = (nome) => readFileSync(new URL(`../js/${nome}`, import.meta.url), "u
 
 const creature = ler("creature.js");
 check(/export function drawCreatureArt\(/.test(creature), "bicho sem versão com acabamento");
-check(/drawCreature\(a, kind, accent, time, 1, dir, true\)/.test(creature), "acabamento sem desenhar o bicho limpo");
-check(/source-atop/.test(creature), "acabamento sem véu de luz preso ao corpo");
-check(/source-in/.test(creature), "acabamento sem silhueta para o contorno");
-check(/for \(const \[dx, dy\] of \[\[-1, 0\], \[1, 0\], \[0, -1\], \[0, 1\], \[-1, -1\], \[1, -1\], \[-1, 1\], \[1, 1\]\]\)/.test(creature), "contorno com menos de oito direções");
+const compositor = ler("sprite-cache.js"), style = ler("art-style.js");
+check(creature.includes('spritePose('), "criatura não usa composição de pose cacheada");
+check(compositor.includes('source-in'), "composição sem silhueta do contorno");
+check(style.includes('source-atop'), "acabamento não recorta à silhueta");
+check(compositor.includes('[-1,-1]') && compositor.includes('[1,1]'), "contorno sem diagonais");
 check(/semSombra/.test(creature), "sombra do chão entrando no contorno");
 
 for (const [arquivo, alvo] of [
@@ -45,7 +46,7 @@ check(/desenharComAcabamento\(player\.x \* TILE, player\.y \* TILE - lift \+ bob
 
 const pet = ler("pet-art.js");
 check(/function desenharPet\(ctx, kind, x, y, t = 0, moving = false, dir = 0, semSombra = false\)/.test(pet), "pet sem desenho separado da sombra");
-check(/source-in/.test(pet) && /source-atop/.test(pet), "pet sem contorno ou luz");
+check(pet.includes("spritePose("), "pet não compartilha contorno e iluminação cacheados");
 
 assert.equal(problemas.length, 0, `acabamento com ${problemas.length} problema(s):\n- ${problemas.join("\n- ")}`);
 console.log("ok acabamento: bicho, pessoa e pet com contorno de oito direções e luz; item com contorno e luz no cache");

@@ -1,3 +1,6 @@
+import { spritePose } from "../sprite-cache.js";
+import { artTick } from "../art-style.js";
+import { artTime } from "../art-style.js";
 // Grupo ícones: os enfeites de conceito que já existiam (livro, frasco,
 // terminal, compasso, guindaste, sino, gaivota...). O desenho é o mesmo de
 // antes, agora morando na biblioteca de assets junto dos grupos ambientais.
@@ -21,8 +24,13 @@ import { hexA } from "./nucleo.js";
     return lampSprite;
   }
 
-export function desenharIcone(g, d, time) {
+function desenharIconeBase(g, d, time) {
+    time = artTime(time);
     const px = d.x * TILE, py = d.y * TILE;
+    // Reflexo de contato comum aos instrumentos de bancada, sem animar paredes.
+    if(['bench','crate','terminal','rack','pillar'].includes(d.type)){
+      g.fillStyle='rgba(5,12,25,.32)';g.beginPath();g.ellipse(px,py+9,7,2,0,0,Math.PI*2);g.fill();
+    }
     if (d.type === "lamp") {
       g.fillStyle = "rgba(2, 6, 10, 0.4)";
       g.beginPath(); g.ellipse(px, py + 12, 6, 2.4, 0, 0, Math.PI * 2); g.fill();
@@ -371,6 +379,16 @@ export function desenharIcone(g, d, time) {
     }
   }
 
+
+export function desenharIcone(g,d,time=0) {
+  if(typeof document==='undefined')return desenharIconeBase(g,d,time);
+  const tick=artTick(time+(d.x||0)*23,120);
+  const key=`concept:${d.type}:${d.accent}:${d.hue}:${tick}`;
+  const pose=spritePose(key,112,128,ctx=>{
+    ctx.translate(56,92);desenharIconeBase(ctx,{...d,x:0,y:0},tick*120);
+  },'metal');
+  g.save();g.imageSmoothingEnabled=false;g.drawImage(pose,d.x*TILE-56,d.y*TILE-92);g.restore();
+}
 
 export const ICONES = new Set([
   "antenna", "bell", "bench", "book", "bubble", "coil", "compass", "crane", "crate", "crystal", "die", "flask", "gauge", "gull", "lamp", "lens", "lock", "mask", "mast", "metronome", "molecule", "mushroom", "node", "note", "orb", "petal", "pillar", "quill", "rack", "shard", "sign", "speaker", "star", "synapse", "terminal", "wave",

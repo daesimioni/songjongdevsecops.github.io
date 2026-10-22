@@ -30,7 +30,7 @@ export function paletaDaArea(bioma) {
   const pedra = misturar(base, "#8b90ad", 0.55);
   const madeira = misturar("#8a5f3a", caminho, 0.2);
   return {
-    chave: bioma?.id || "generico",
+    chave: [bioma?.id || "generico", acento, base, caminho].join("|"),
     contorno: escuro(misturar(base, "#05070d", 0.5), 0.45),
     tronco: escuro(madeira, 0.25),
     troncoClaro: claro(madeira, 0.12),
@@ -55,33 +55,38 @@ export function paletaDaArea(bioma) {
 }
 
 // Cache LRU de sprite. `fabrica` existe para o teste rodar sem navegador.
-export function criarCache(limite = 240, fabrica = () => document.createElement("canvas")) {
+export function criarCache(limite = 240, fabrica = () => document.createElement("canvas"), maxBytes = 8 * 1024 * 1024) {
   const mapa = new Map();
+  let bytes = 0, acertos = 0, faltas = 0, descartes = 0;
+  const remover = () => {
+    const chave = mapa.keys().next().value;
+    if (chave === undefined) return;
+    const tela = mapa.get(chave);
+    bytes -= tela.width * tela.height * 4;
+    mapa.delete(chave); descartes++;
+  };
   return {
     pegar(chave, largura, altura, desenhar) {
       const achado = mapa.get(chave);
-      if (achado) {
-        mapa.delete(chave);
-        mapa.set(chave, achado);
-        return achado;
+      if (achado && achado.width === largura && achado.height === altura) {
+        acertos++; mapa.delete(chave); mapa.set(chave, achado); return achado;
       }
-      const tela = fabrica();
-      tela.width = largura;
-      tela.height = altura;
+      if (achado) { bytes -= achado.width * achado.height * 4; mapa.delete(chave); }
+      faltas++;
+      const tela = fabrica(); tela.width = largura; tela.height = altura;
       const g = tela.getContext("2d");
-      g.imageSmoothingEnabled = false;
-      desenhar(g);
-      while (mapa.size >= limite) {
-        const velho = mapa.keys().next().value;
-        if (velho === undefined) break;
-        mapa.delete(velho);
-      }
-      mapa.set(chave, tela);
+      if (!g) return tela;
+      g.imageSmoothingEnabled = false; desenhar(g);
+      const custo = largura * altura * 4;
+      if (limite <= 0 || custo > maxBytes) return tela;
+      while (mapa.size && (mapa.size >= limite || bytes + custo > maxBytes)) remover();
+      mapa.set(chave, tela); bytes += custo;
       return tela;
     },
     tem(chave) { return mapa.has(chave); },
     get tamanho() { return mapa.size; },
-    limpar() { mapa.clear(); },
+    get stats() { return { acertos, faltas, descartes, bytes, maxBytes, tamanho: mapa.size }; },
+    limpar() { mapa.clear(); bytes = 0; acertos = 0; faltas = 0; descartes = 0; },
   };
 }
 
