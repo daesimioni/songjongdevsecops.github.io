@@ -6,8 +6,9 @@
 //
 // A ordem importa: a construção e a ruína entram primeiro e ocupam o miolo da
 // coroa da ilha; a vegetação entra depois e respeita o espaço delas.
-import { TILE_KIND as K } from "../config.js";
+import { TILE, TILE_KIND as K } from "../config.js";
 import { BIOMES } from "../identity.js";
+import { CONSTRUCOES } from "./construcoes.js";
 
 const MACIOS = new Set([K.GRASS, K.MOSS, K.FLOWER, K.SAND]);
 const DUREZA = {
@@ -30,7 +31,7 @@ const DECAL = {
   hub: ["folhada", "tufo", "pedra", "musgo"],
 };
 
-export function espalharAmbiente({ areas, get, hash2, waystones, hunts = [], gente = [], livre = () => true }) {
+export function espalharAmbiente({ areas, get, hash2, waystones, hunts = [], gente = [], sites = [], livre = () => true }) {
   const ambiente = [];
   const ocupado = new Set();
   const emPe = new Set();
@@ -81,21 +82,44 @@ export function espalharAmbiente({ areas, get, hash2, waystones, hunts = [], gen
     const pode = (x, y, raio = 1) => x >= 1 && y >= 1 && naIlha(x, y) && macio(x, y) && !trilha(x, y, raio) && livre(x, y);
 
     // ---- construção: uma por ilha, na coroa, entrando antes da vegetação ----
-    const pertoDeGente = (x, y) => gente.some((n) => Math.abs(n.x - (x + 0.5)) < 2.8 && Math.abs(n.y - (y + 0.5)) < 2.8);
-    const pertoDeFarol = (x, y) => waystones.some((p) => Math.hypot(p.x - (x + 0.5), p.y - (y + 0.5)) < 3.2);
-    const pertoDaCacada = (x, y) => hunts.some((h) => Math.abs(h.x - (x + 0.5)) < 3 && Math.abs(h.y - (y + 0.5)) < 3);
+    // A casa cresceu 2x para caber gente na porta; a folga também cresce, senão
+    // a parede nova come o caminho que passava a um tile do centro.
+    let tipoCasa = DUREZA[disc] || "casa";
+    if (["papel", "pergaminho", "ébano", "tinta", "fibra"].includes(bio.material)) tipoCasa = "cabana";
+    if (["vidro", "cristal", "obsidiana"].includes(bio.material)) tipoCasa = "torre";
+    const defCasa = CONSTRUCOES[tipoCasa];
+    const largCasa = ((defCasa?.w || 36) * (defCasa?.escala || 1)) / TILE;
+    const meiaLarg = Math.ceil(largCasa / 2);
+    const altCasa = ((defCasa?.h || 30) * (defCasa?.escala || 1)) / TILE;
+    const norteCasa = Math.max(1, Math.min(5, Math.ceil(altCasa) - 2));
+    const extra = Math.max(0, largCasa / 2 - 1.5);
+    const casaCabe = (x, y) => {
+      for (let dy = -norteCasa; dy <= 1; dy++) {
+        for (let dx = -meiaLarg; dx <= meiaLarg; dx++) {
+          if (!naIlha(x + dx, y + dy) || !macio(x + dx, y + dy)) return false;
+        }
+      }
+      return true;
+    };
+    const pertoDeGente = (x, y) => gente.some((n) => Math.abs(n.x - (x + 0.5)) < 2.8 + extra && Math.abs(n.y - (y + 0.5)) < 2.8 + extra);
+    const pertoDeFarol = (x, y) => waystones.some((p) => Math.hypot(p.x - (x + 0.5), p.y - (y + 0.5)) < 3.2 + extra);
+    // a casa cobre a vista do totem mesmo quando a base não o alcança: o vão é
+    // contado do centro, com a metade da largura da fachada
+    const pertoDeTotem = (x, y) => (sites || []).some((s) => Math.hypot(s.x - (x + 0.5), s.y - (y + 0.5)) < largCasa / 2 + 1.3);
+    const pertoDaCacada = (x, y) => hunts.some((h) => Math.abs(h.x - (x + 0.5)) < 3 + extra && Math.abs(h.y - (y + 0.5)) < 3 + extra);
     const angulo = hash2(ai * 13 + 5, ai * 7 + 2) * Math.PI * 2;
+    const RAIOS = [0.64, 0.58, 0.7, 0.52, 0.76];
     let bx = 0, by = 0, achou = false;
-    for (let i = 0; i < 8 && !achou; i++) {
-      const a = angulo + i * (Math.PI / 4);
-      bx = Math.round(cx + Math.cos(a) * rx * 0.64);
-      by = Math.round(cy + Math.sin(a) * ry * 0.64);
-      achou = pode(bx, by, 2) && !pertoDeGente(bx, by) && !pertoDeFarol(bx, by) && !pertoDaCacada(bx, by);
+    for (let r = 0; r < RAIOS.length && !achou; r++) {
+      for (let i = 0; i < 16 && !achou; i++) {
+        const a = angulo + i * (Math.PI / 8);
+        bx = Math.round(cx + Math.cos(a) * rx * RAIOS[r]);
+        by = Math.round(cy + Math.sin(a) * ry * RAIOS[r]);
+        achou = casaCabe(bx, by) && !pertoDeGente(bx, by) && !pertoDeFarol(bx, by) && !pertoDeTotem(bx, by) && !pertoDaCacada(bx, by);
+      }
     }
     if (achou) {
-      let tipo = DUREZA[disc] || "casa";
-      if (["papel", "pergaminho", "ébano", "tinta", "fibra"].includes(bio.material)) tipo = "cabana";
-      if (["vidro", "cristal", "obsidiana"].includes(bio.material)) tipo = "torre";
+      const tipo = tipoCasa;
       por(bx + 0.5, by + 0.5, tipo, { bioma: area.id }, 3);
       if (tipo !== "torre") por(bx + 0.7, by - 2.2, "fumaca", { bioma: area.id });
       const props = ["barril", "saco", "caixote", "fardo"];
@@ -175,9 +199,9 @@ export function espalharAmbiente({ areas, get, hash2, waystones, hunts = [], gen
           if (Math.hypot(nx, ny) < 0.5) continue;
         } else {
           const bosque = hash2(Math.floor(x / 7) + ai * 13, Math.floor(y / 7) - ai * 7);
-          if (bosque < 0.32) continue;
+          if (bosque < 0.24) continue;
         }
-        if (hash2(x * 7 + ai * 5, y * 11 - ai) > (metropole ? 0.06 : 0.18)) continue;
+        if (hash2(x * 7 + ai * 5, y * 11 - ai) > (metropole ? 0.06 : 0.24)) continue;
         if (!pode(x, y, 1)) continue;
         if (pertoDaCacada(x, y) || pertoDeGente(x, y)) continue;
         const px = x + 0.5, py = y + 0.5;

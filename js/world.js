@@ -6,6 +6,7 @@ import { GROUNDS } from "./rpg-data.js";
 import { dungeonById } from "./dungeon-data.js";
 import { CATALOG_CONTENT } from "./catalog-gen.js";
 import { espalharAmbiente } from "./assets/povoado.js";
+import { tamanhoDoAsset } from "./assets/index.js";
 import { CATALOG_BRIDGES, CATALOG_AREAS } from "./catalog-layout.js";
 import { AREA_ITEMS, BIOMES, npcStyle } from "./identity.js";
 
@@ -687,6 +688,7 @@ export function createWorld() {
     // a clareira de caçada não pode nascer debaixo de copa
     hunts: GROUNDS.map((g) => g.center),
     gente: NPC_SPAWNS,
+    sites: SITES,
     livre: (x, y) => !nearUsed(x, y),
   });
   // a passagem de terra ganha vida própria: pedra e capim nas beiradas
@@ -719,6 +721,91 @@ export function createWorld() {
         }
         ambiente.push({ tipo, x, y, bioma: p.bioma });
       }
+    });
+  }
+
+  // ---- casas por dentro: a fachada é a porta ----
+  // Cada tipo tem uma sala própria num bolsão de mar, longe das ilhas. A sala
+  // é um recorte iluminado: ao entrar, a câmera salta para o bolsão e o
+  // renderer escurece o mar em volta. A mobília muda com a semente da casa,
+  // então duas cabanas não têm a mesma cara por dentro.
+  const INTERIORES = {
+    casa: { x: 492, y: 330, w: 16, h: 12, piso: BRIDGE },
+    cabana: { x: 492, y: 4, w: 14, h: 11, piso: BRIDGE },
+    torre: { x: 276, y: 4, w: 12, h: 13, piso: K.MARBLE },
+    galpao: { x: 520, y: 180, w: 18, h: 11, piso: K.STONE },
+  };
+  for (const sala of Object.values(INTERIORES)) {
+    for (let y = sala.y; y < sala.y + sala.h; y++) {
+      for (let x = sala.x; x < sala.x + sala.w; x++) {
+        const borda = x === sala.x || y === sala.y || x === sala.x + sala.w - 1 || y === sala.y + sala.h - 1;
+        set(x, y, borda ? K.WALL : sala.piso);
+      }
+    }
+    const px = sala.x + Math.floor(sala.w / 2);
+    set(px, sala.y + sala.h - 1, sala.piso);
+    sala.door = { x: px + 0.5, y: sala.y + sala.h - 0.5 };
+    sala.spawn = { x: px + 0.5, y: sala.y + sala.h - 2.2 };
+    sala.mesa = { x: sala.x + 2.6, y: sala.y + 2.1 };
+    sala.lareira = { x: sala.x + sala.w - 2.8, y: sala.y + 2.1 };
+    sala.cama = { x: sala.x + 2.6, y: sala.y + 5.1 };
+  }
+  const interiorProps = [];
+  const assentosDaSala = (sala) => {
+    const out = [];
+    const perto = (x, y) => Math.hypot(x - sala.mesa.x, y - sala.mesa.y) < 1.9 ||
+      Math.hypot(x - sala.lareira.x, y - sala.lareira.y) < 1.9 ||
+      Math.hypot(x - sala.cama.x, y - sala.cama.y) < 2.1;
+    for (let x = sala.x + 1.7; x <= sala.x + sala.w - 1.5; x += 2.4) {
+      for (const y of [sala.y + 1.7, sala.y + sala.h - 2.5]) if (!perto(x, y)) out.push({ x, y });
+    }
+    for (let y = sala.y + 4; y <= sala.y + sala.h - 3; y += 2.2) {
+      for (const x of [sala.x + 1.6, sala.x + sala.w - 1.6]) if (!perto(x, y)) out.push({ x, y });
+    }
+    return out;
+  };
+  const MOVEIS = {
+    casa: ["barril", "caixote", "saco", "fardo", "estante", "florada", "seca"],
+    cabana: ["barril", "saco", "fardo", "estante", "caixote", "seca"],
+    torre: ["estante", "estante", "barril", "caixote", "tocha", "saco"],
+    galpao: ["barril", "caixote", "saco", "fardo", "fardo", "braseiro", "caixote"],
+  };
+  function prepararInterior(house) {
+    const sala = INTERIORES[house.tipo];
+    if (!sala) return null;
+    interiorProps.length = 0;
+    const lista = MOVEIS[house.tipo] || MOVEIS.casa;
+    const assentos = assentosDaSala(sala);
+    const rnd = mulberry32(Math.floor(house.x * 977 + house.y * 331 + 13));
+    for (let i = assentos.length - 1; i > 0; i--) {
+      const j = Math.floor(rnd() * (i + 1));
+      const tmp = assentos[i];
+      assentos[i] = assentos[j];
+      assentos[j] = tmp;
+    }
+    const quantos = Math.min(assentos.length, 8 + Math.floor(rnd() * 3));
+    for (let i = 0; i < quantos; i++) {
+      interiorProps.push({ tipo: lista[Math.floor(rnd() * lista.length)], ...assentos[i], bioma: house.bioma });
+    }
+    interiorProps.push({ tipo: "mesa", x: sala.mesa.x, y: sala.mesa.y, bioma: house.bioma });
+    interiorProps.push({ tipo: "fogueira", x: sala.lareira.x, y: sala.lareira.y, bioma: house.bioma });
+    if (house.tipo !== "galpao") interiorProps.push({ tipo: "cama", x: sala.cama.x, y: sala.cama.y, bioma: house.bioma });
+    return sala;
+  }
+  const casas = [];
+  for (const a of ambiente) {
+    if (!["casa", "cabana", "torre", "galpao"].includes(a.tipo)) continue;
+    const t = tamanhoDoAsset(a.tipo);
+    if (!t) continue;
+    casas.push({
+      id: `casa-${a.tipo}-${Math.round(a.x * 10)}-${Math.round(a.y * 10)}`,
+      tipo: a.tipo,
+      bioma: a.bioma,
+      x: a.x,
+      y: a.y,
+      w: t.w / TILE,
+      h: t.h / TILE,
+      door: { x: a.x, y: a.y + 0.55 },
     });
   }
 
@@ -1066,6 +1153,34 @@ export function createWorld() {
   // miolo, e deixa a boca e a saída em c.y + 1,5 livres para chegar e descer.
   for (const c of caves) addProp(c.x, c.y - 1.2, 0.95, 0.7);
 
+  // a boca nasceu antes da casa: se as duas caíram no mesmo canto, a casa sai.
+  // A conta é de caixa contra caixa (a mesma da colisão), não de raio: o morro
+  // é fundo e a fachada é larga, e um raio grande derrubava casa demais.
+  const cruzaCaixa = (ax, ahw, ay, ahh, bx, bhw, by, bhh) =>
+    Math.abs(ax - bx) < ahw + bhw && Math.abs(ay - by) < ahh + bhh;
+  for (let i = casas.length - 1; i >= 0; i--) {
+    const casa = casas[i];
+    const perto = caves.some((c) =>
+      cruzaCaixa(casa.x, casa.w / 2, casa.y - 0.7, 0.6, c.x, 0.95, c.y - 1.2, 0.7) ||
+      cruzaCaixa(casa.x, casa.w / 2, casa.y - 0.7, 0.6, c.exit.x, 0.6, c.exit.y, 0.5));
+    if (!perto) continue;
+    casas.splice(i, 1);
+    const j = ambiente.findIndex((a) => Math.abs(a.x - casa.x) < 0.01 && Math.abs(a.y - casa.y) < 0.01);
+    if (j >= 0) ambiente.splice(j, 1);
+  }
+
+  // a fachada da casa ocupa o chão: o corpo não atravessa mais a parede. A
+  // caixa é a base (2 tiles de fundo), não o telhado, e a porta fica de fora.
+  // Vai em colunas de no máximo 2 tiles: uma caixa larga demais vira parede
+  // invisível, e a regra do mundo é que a colisão caiba no desenho.
+  for (const casa of casas) {
+    const colunas = Math.max(1, Math.ceil(casa.w / 2));
+    const meia = casa.w / (2 * colunas);
+    for (let i = 0; i < colunas; i++) {
+      addProp(casa.x - casa.w / 2 + meia + i * 2 * meia, casa.y - 0.7, meia, 0.6);
+    }
+  }
+
   // nenhum NPC nasce dentro de pedra: se o posto caiu na área nova de uma
   // estação, caverna ou enfeite, ele anda para o ponto livre mais próximo.
   for (const n of npcs) {
@@ -1205,7 +1320,8 @@ export function createWorld() {
   }
 
   return {
-    tiles, decor, ambiente, props, stations, waystones, npcs, hunters, monsters, caves, groundItems, takeGroundItem,
+    tiles, decor, ambiente, interiorProps, props, stations, waystones, npcs, hunters, monsters, caves, groundItems, takeGroundItem,
+    casas, interiores: INTERIORES, prepararInterior,
     cat: { ...CAT_SPAWN, facing: 1, t: 0, moving: false },
     get, set, isSolidTile, boxCollides, updateNpcs, setClima,
     continentAt, continentAtTile, areaAt, areaAtTile,

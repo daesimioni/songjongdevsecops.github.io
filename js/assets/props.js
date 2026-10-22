@@ -227,10 +227,126 @@ function gaivota(g, p, _v, quadro) {
   g.fillRect(w / 2 - 1, h / 2 - 1, 1, 1);
 }
 
+// mesa de estudo: a casa tem onde sentar, ler e deixar a vela acesa
+function mesa(g, p, v) {
+  const w = 26, h = 18;
+  g.fillStyle = p.sombra;
+  g.beginPath(); g.ellipse(w / 2, h - 1, 11, 2.4, 0, 0, Math.PI * 2); g.fill();
+  // pernas
+  g.fillStyle = p.contorno;
+  g.fillRect(5, h - 10, 3, 9);
+  g.fillRect(w - 8, h - 10, 3, 9);
+  g.fillStyle = p.tronco;
+  g.fillRect(6, h - 9, 1, 8);
+  g.fillRect(w - 7, h - 9, 1, 8);
+  // tampo
+  g.fillStyle = p.contorno;
+  g.fillRect(1, h - 14, w - 2, 6);
+  g.fillStyle = p.madeira;
+  g.fillRect(2, h - 13, w - 4, 4);
+  g.fillStyle = p.madeiraClara;
+  g.fillRect(2, h - 13, w - 4, 1);
+  // livro aberto e vela
+  g.fillStyle = p.contorno;
+  g.fillRect(8, h - 17, 10, 5);
+  g.fillStyle = p.luz;
+  g.fillRect(9, h - 16, 4, 3);
+  g.fillRect(13, h - 16, 4, 3);
+  g.fillStyle = p.tronco;
+  g.fillRect(12, h - 17, 1, 4);
+  g.fillStyle = p.contorno;
+  g.fillRect(20, h - 19, 2, 6);
+  g.fillStyle = p.luz;
+  g.fillRect(20, h - 21, 2, 2);
+  if (v === 1) {
+    // caneca e papéis: a mesa de quem estuda de verdade
+    g.fillStyle = p.metal;
+    g.fillRect(4, h - 17, 3, 4);
+    g.fillStyle = p.metalClaro;
+    g.fillRect(4, h - 17, 3, 1);
+    g.fillStyle = p.luz;
+    g.fillRect(4, h - 18, 3, 1);
+    g.fillStyle = "rgba(240,232,208,0.85)";
+    g.fillRect(17, h - 15, 5, 2);
+  }
+}
+
+// estante: livros, potes e o que a casa guarda
+function estante(g, p, v) {
+  const w = 20, h = 34;
+  g.fillStyle = p.sombra;
+  g.beginPath(); g.ellipse(w / 2, h - 1, 8, 2.2, 0, 0, Math.PI * 2); g.fill();
+  g.fillStyle = p.contorno;
+  g.fillRect(1, 2, w - 2, h - 3);
+  g.fillStyle = p.tronco;
+  g.fillRect(2, 3, w - 4, h - 5);
+  g.fillStyle = p.madeira;
+  for (const y of [8, 16, 24]) g.fillRect(3, y, w - 6, 2);
+  // livros por prateleira, com cor variando pela semente
+  const cores = [p.tecido, p.luz, p.folha, p.metal, p.telha];
+  for (let s = 0; s < 3; s++) {
+    const base = 6 + s * 8;
+    for (let i = 0; i < 5; i++) {
+      const cor = cores[(i + s + (v || 0)) % cores.length];
+      g.fillStyle = cor;
+      g.fillRect(4 + i * 2.6, base - 4, 2, 4);
+    }
+  }
+  if (v === 1) {
+    // potes e ervas: a estante da cabana vira armário de preparos
+    g.fillStyle = p.luz;
+    g.fillRect(4, 26, 3, 3);
+    g.fillStyle = p.folha;
+    g.fillRect(10, 25, 2, 4);
+    g.fillStyle = p.tecido;
+    g.fillRect(14, 26, 3, 3);
+  }
+  g.fillStyle = p.madeiraClara;
+  g.fillRect(1, 2, w - 2, 1);
+}
+
+// cama: o móvel que faz a casa ser casa, com colchão, travesseiro e manta
+function cama(g, p, v) {
+  const w = 28, h = 20;
+  g.fillStyle = p.sombra;
+  g.beginPath(); g.ellipse(w / 2, h - 1, 11, 2.6, 0, 0, Math.PI * 2); g.fill();
+  // pés e armação
+  g.fillStyle = p.contorno;
+  g.fillRect(1, h - 10, w - 2, 9);
+  g.fillStyle = p.tronco;
+  g.fillRect(2, h - 9, w - 4, 7);
+  g.fillStyle = p.madeiraClara;
+  g.fillRect(2, h - 9, w - 4, 1);
+  // colchão e travesseiro
+  g.fillStyle = p.contorno;
+  g.fillRect(3, h - 14, w - 6, 5);
+  g.fillStyle = "rgba(235,230,214,0.92)";
+  g.fillRect(4, h - 13, w - 8, 3);
+  g.fillStyle = "rgba(245,242,230,0.95)";
+  g.fillRect(5, h - 12, 6, 2);
+  g.fillStyle = "rgba(0,0,0,0.10)";
+  g.fillRect(4, h - 10, w - 8, 1);
+  // manta na metade do pé
+  g.fillStyle = v === 1 ? p.tecido : p.telha;
+  g.fillRect(w - 15, h - 13, 11, 3);
+  g.fillStyle = "rgba(255,255,255,0.16)";
+  g.fillRect(w - 15, h - 13, 11, 1);
+  g.fillStyle = p.contorno;
+  g.fillRect(w - 4, h - 14, 1, 5);
+  // cabeceira
+  g.fillStyle = p.contorno;
+  g.fillRect(1, h - 18, 3, 8);
+  g.fillStyle = p.madeira;
+  g.fillRect(2, h - 17, 1, 7);
+}
+
 export const PROPS = {
   barril: { w: 16, h: 20, variantes: 3, desenhar: barril },
   saco: { w: 16, h: 16, variantes: 3, desenhar: saco },
   caixote: { w: 18, h: 18, variantes: 3, desenhar: caixote },
   fardo: { w: 20, h: 15, variantes: 3, desenhar: fardo },
+  mesa: { w: 26, h: 18, variantes: 2, desenhar: mesa },
+  cama: { w: 28, h: 20, variantes: 2, desenhar: cama },
+  estante: { w: 20, h: 34, variantes: 2, desenhar: estante },
   gaivota: { w: 18, h: 12, variantes: 1, quadros: 4, ms: 210, desenhar: gaivota },
 };

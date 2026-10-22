@@ -53,6 +53,10 @@ const ESPELHA = new Set(["vegetacao", "props", "agua", "solo"]);
 export function desenharAsset(ctx, tipo, x, y, { tempo = 0, bioma = null, seed = 0, camada = "ser", inclinacao = 0 } = {}) {
   const def = POR_TIPO.get(tipo);
   if (!def) return false;
+  // construção tem porte próprio: o desenho continua nascendo em 2x, mas ocupa
+  // o tamanho de mundo que a casa precisa para caber uma pessoa na porta
+  const e = def.escala || 1;
+  const dw = def.w * e, dh = def.h * e;
   const p = paletaDoBioma(bioma);
   const v = variante(seed, def.variantes || 1);
   // espelho por instância: três variantes viram seis caras na mesma ilha
@@ -66,10 +70,10 @@ export function desenharAsset(ctx, tipo, x, y, { tempo = 0, bioma = null, seed =
     g.scale(2, 2);
     def.desenhar(g, p, v, q);
   });
-  const dx = Math.round(x - def.w / 2);
+  const dx = Math.round(x - dw / 2);
   const dy = camada === "chao"
-    ? Math.round(y - def.h / 2)
-    : Math.round(y - def.h);
+    ? Math.round(y - dh / 2)
+    : Math.round(y - dh);
   // vegetação verga com a rajada: um cisalhamento no pé, sem redesenhar o
   // sprite nem gastar um quadro de cache por posição de vento
   if (inclinacao && camada !== "chao") {
@@ -77,7 +81,7 @@ export function desenharAsset(ctx, tipo, x, y, { tempo = 0, bioma = null, seed =
     ctx.translate(x, y);
     ctx.transform(1, 0, inclinacao, 1, 0, 0);
     if (espelha) ctx.scale(-1, 1);
-    ctx.drawImage(sprite, -def.w / 2, -def.h, def.w, def.h);
+    ctx.drawImage(sprite, -dw / 2, -dh, dw, dh);
     ctx.restore();
     return true;
   }
@@ -85,12 +89,21 @@ export function desenharAsset(ctx, tipo, x, y, { tempo = 0, bioma = null, seed =
     ctx.save();
     ctx.translate(Math.round(x), camada === "chao" ? 0 : Math.round(y));
     ctx.scale(-1, 1);
-    ctx.drawImage(sprite, -def.w / 2, camada === "chao" ? dy : -def.h, def.w, def.h);
+    ctx.drawImage(sprite, -dw / 2, camada === "chao" ? dy : -dh, dw, dh);
     ctx.restore();
     return true;
   }
-  ctx.drawImage(sprite, dx, dy, def.w, def.h);
+  ctx.drawImage(sprite, dx, dy, dw, dh);
   return true;
+}
+
+// tamanho de mundo de uma peça, já com a escala de construção; quem coloca a
+// peça usa isto para reservar folga em vez de adivinhar pelo desenho
+export function tamanhoDoAsset(tipo) {
+  const def = POR_TIPO.get(tipo);
+  if (!def) return null;
+  const e = def.escala || 1;
+  return { w: def.w * e, h: def.h * e };
 }
 
 export function cacheDeAssets() { return cache; }

@@ -40,6 +40,29 @@ export function createRenderer(canvas, world) {
   let dpr = 1, vw = 0, vh = 0, zoom = 3;
   let camX = 0, camY = 0, shake = 0;
   let rendererReady = false;
+  // o que existe fora da sala: tábua escura em vez de preto chapado, para o
+  // recorte da casa parecer um cômodo e não um buraco no mapa
+  let padraoCasa = null;
+  function padraoDaCasa() {
+    if (padraoCasa) return padraoCasa;
+    if (typeof document === "undefined") return null;
+    const c = document.createElement("canvas");
+    c.width = 48; c.height = 48;
+    const g = c.getContext("2d");
+    g.fillStyle = "#070a14";
+    g.fillRect(0, 0, 48, 48);
+    for (let y = 0; y < 48; y += 6) {
+      g.fillStyle = y % 12 ? "#0a0e1b" : "#090c18";
+      g.fillRect(0, y, 48, 5);
+      g.fillStyle = "rgba(130,150,200,0.05)";
+      g.fillRect(0, y, 48, 1);
+      const off = ((y / 6) % 2) * 12;
+      g.fillStyle = "rgba(2,3,8,0.55)";
+      for (let x = -12; x < 48; x += 24) g.fillRect(x + off + 22, y, 1, 5);
+    }
+    padraoCasa = ctx.createPattern(c, "repeat");
+    return padraoCasa;
+  }
   let trail = [];
   // o vento do lugar onde o jogador está: troca de bioma, troca a força do ar
   let moodAtual = windMood(null);
@@ -1744,7 +1767,7 @@ export function createRenderer(canvas, world) {
     ctx.fillRect(px + ((fase + 0.45) % 1) * 13, py + 9.5, 1.5, 0.5);
   }
 
-  function draw(now, player, peers, npcs, cat, moving, rastreador = false, vitais = null) {
+  function draw(now, player, peers, npcs, cat, moving, rastreador = false, vitais = null, cena = null) {
     const frameStart = performance.now();
     const time = now;
     const areaJogador = world.areaAt(player.x, player.y);
@@ -1896,6 +1919,28 @@ export function createRenderer(canvas, world) {
       });
     }
     stats.assets = 0;
+    // mobília da casa: entra na mesma fila por y do ambiente, mas sem balanço
+    // de vento e com o brilho do fogo, porque aqui dentro não venta
+    for (const a of world.interiorProps || []) {
+      if (a.x * TILE < camX - 80 || a.x * TILE > camX + viewW + 80 ||
+          a.y * TILE < camY - 80 || a.y * TILE > camY + viewH + 80) continue;
+      drawables.push({
+        y: (a.y + 0.5) * TILE,
+        fn: () => {
+          const px = a.x * TILE;
+          const py = a.y * TILE + TILE / 2;
+          if (a.tipo === "fogueira" || a.tipo === "braseiro") {
+            ctx.save();
+            ctx.globalAlpha = 0.5 + Math.sin(time * 0.005 + a.x * 3) * 0.12;
+            ctx.drawImage(glowSprite("#ff9a55"), px - 36, py - 44);
+            ctx.restore();
+          }
+          if (desenharAsset(ctx, a.tipo, px, py, {
+            tempo: time, bioma: BIOMES[a.bioma], seed: hash2(a.x * 3, a.y * 7),
+          })) assetsVisiveis++;
+        },
+      });
+    }
     const onScreen = (wx, wy, pad = 48) => {
       const px = wx * TILE;
       const py = wy * TILE;
@@ -1989,7 +2034,26 @@ export function createRenderer(canvas, world) {
       ctx.fillRect(m.x, m.y, m.r, m.r);
     }
 
-    if (!modoLeve) drawAmbient(areaJogador, time, camX, camY, viewW, viewH);
+    if (!modoLeve) drawAmbient(areaJogador, time, camX, camY, viewW, viewH, cena);
+    // casa por dentro: o mar em volta não aparece, a sala fica como um recorte
+    // iluminado no escuro, com a parede comendo a luz nas bordas
+    if (cena?.interior) {
+      const sala = cena.interior;
+      const rx = sala.x * TILE, ry = sala.y * TILE;
+      const rw = sala.w * TILE, rh = sala.h * TILE;
+      ctx.fillStyle = padraoDaCasa() || "#03050c";
+      ctx.beginPath();
+      ctx.rect(camX - 8, camY - 8, viewW + 16, viewH + 16);
+      ctx.rect(rx, ry, rw, rh);
+      ctx.fill("evenodd");
+      const luz = ctx.createLinearGradient(0, ry, 0, ry + rh);
+      luz.addColorStop(0, "rgba(3,5,12,0.62)");
+      luz.addColorStop(0.16, "rgba(3,5,12,0)");
+      luz.addColorStop(0.84, "rgba(3,5,12,0)");
+      luz.addColorStop(1, "rgba(3,5,12,0.44)");
+      ctx.fillStyle = luz;
+      ctx.fillRect(rx, ry, rw, rh);
+    }
     drawNpcLabels(npcs, scale, camX, camY);
     drawMinimap(player, peers, rastreador);
     const frameEnd = performance.now();
@@ -2073,7 +2137,7 @@ export function createRenderer(canvas, world) {
     return x - Math.floor(x);
   }
   // no máximo 8 partículas por elemento: o teto do desenho é 12
-  function drawAmbient(area, time, camX, camY, viewW, viewH) {
+  function drawAmbient(area, time, camX, camY, viewW, viewH, cena = null) {
     const kit = kitDaArea(area);
     if (!kit) return;
     const ev = relogioAmbiente.tick(time);
@@ -2233,8 +2297,9 @@ export function createRenderer(canvas, world) {
       }
     }
     ctx.globalAlpha = 1;
-    // clima: chuva cai na tela inteira, neblina lava a cor, revoada sobe
-    if (chuva > 0.05) {
+    // clima: chuva cai na tela inteira, neblina lava a cor, revoada sobe.
+    // Dentro de casa o teto segura a chuva e a neblina.
+    if (chuva > 0.05 && !cena?.interior) {
       ctx.strokeStyle = `rgba(180,210,240,${0.18 * chuva})`;
       ctx.lineWidth = 1;
       ctx.beginPath();
@@ -2246,7 +2311,7 @@ export function createRenderer(canvas, world) {
       }
       ctx.stroke();
     }
-    if (neblina > 0.05) {
+    if (neblina > 0.05 && !cena?.interior) {
       ctx.fillStyle = `rgba(190,200,220,${0.10 * neblina})`;
       ctx.fillRect(camX, camY, viewW, viewH);
     }
@@ -2384,11 +2449,14 @@ export function createRenderer(canvas, world) {
   }
 
   function kick(n = 1) { shake = n; }
+  // troca de cena (casa, caverna, viagem): o próximo quadro centra a câmera de
+  // uma vez em vez de deslizar o mapa inteiro
+  function snap() { rendererReady = false; }
 
   resize();
   window.addEventListener("resize", resize);
   return {
-    draw, resize, kick, stats, ambiente: relogioAmbiente, setModoLeve, get modoLeve() { return modoLeve; },
+    draw, resize, kick, snap, stats, ambiente: relogioAmbiente, setModoLeve, get modoLeve() { return modoLeve; },
     get zoom() { return zoom; },
     get camX() { return camX; },
     get camY() { return camY; },

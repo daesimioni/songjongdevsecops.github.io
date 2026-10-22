@@ -90,11 +90,11 @@ function cabana(g, p, v) {
       g.fillRect(w / 2 - (yy - 3) * 0.75, yy, (yy - 3) * 1.5, 1);
     }
     g.fillStyle = p.contorno;
-    g.fillRect(w / 2 - 4, h - 12, 8, 11);
+    g.fillRect(w / 2 - 5, h - 14, 10, 13);
     g.fillStyle = p.luz;
-    g.fillRect(w / 2 - 3, h - 11, 6, 10);
+    g.fillRect(w / 2 - 4, h - 13, 8, 12);
     g.fillStyle = p.tronco;
-    g.fillRect(w / 2 - 3, h - 6, 6, 1);
+    g.fillRect(w / 2 - 4, h - 6, 8, 1);
     return;
   }
   tabuas(g, p, 6, h - 14, 24, 13, p.madeira);
@@ -132,11 +132,11 @@ function cabana(g, p, v) {
     g.fillRect(18 - (y - 4) * 0.55 + 1, y + 0.5, (y - 4) * 0.5, 0.5);
   }
   g.fillStyle = p.contorno;
-  g.fillRect(15, h - 10, 7, 9);
+  g.fillRect(14, h - 12, 10, 11);
   g.fillStyle = p.luz;
-  g.fillRect(16, h - 9, 5, 8);
+  g.fillRect(15, h - 11, 8, 10);
   g.fillStyle = p.tronco;
-  g.fillRect(16, h - 4, 5, 1);
+  g.fillRect(15, h - 4, 8, 1);
   janela(g, p, 7, h - 10, 3, 3, v === 1);
   if (v === 1) {
     g.fillStyle = p.pedra;
@@ -187,13 +187,13 @@ function casa(g, p, v) {
   }
   // porta e janelas
   g.fillStyle = p.contorno;
-  g.fillRect(18, h - 12, 9, 11);
+  g.fillRect(17, h - 15, 11, 14);
   g.fillStyle = p.madeiraClara;
-  g.fillRect(19, h - 11, 7, 10);
+  g.fillRect(18, h - 14, 9, 13);
   g.fillStyle = p.tronco;
-  g.fillRect(19, h - 7, 7, 1);
+  g.fillRect(18, h - 7, 9, 1);
   g.fillStyle = p.luz;
-  g.fillRect(23, h - 8, 1, 1);
+  g.fillRect(24, h - 9, 1, 2);
   janela(g, p, 9, h - 15, 4, 4);
   janela(g, p, 31, h - 15, 4, 4, v === 1);
   if (v === 2) {
@@ -261,9 +261,9 @@ function torre(g, p, v) {
   janela(g, p, 12, 18, 3, 6, true);
   janela(g, p, 12, 34, 3, 4, v === 1);
   g.fillStyle = p.contorno;
-  g.fillRect(11, h - 12, 6, 11);
+  g.fillRect(11, h - 14, 7, 13);
   g.fillStyle = p.tronco;
-  g.fillRect(12, h - 11, 4, 10);
+  g.fillRect(12, h - 13, 5, 12);
   if (v === 2) {
     // balcão de madeira e bandeira: torre de vigia, não de pedra lisa
     g.fillStyle = p.contorno;
@@ -540,12 +540,12 @@ function doca(g, p, v) {
 }
 
 export const CONSTRUCOES = {
-  cabana: { w: 36, h: 30, variantes: 3, desenhar: cabana },
-  casa: { w: 44, h: 38, variantes: 3, desenhar: casa },
-  torre: { w: 28, h: 52, variantes: 3, desenhar: torre },
-  ruina: { w: 42, h: 28, variantes: 3, desenhar: ruina },
-  galpao: { w: 46, h: 32, variantes: 3, desenhar: galpao },
-  poco: { w: 22, h: 22, variantes: 3, desenhar: poco },
-  cerca: { w: 20, h: 14, variantes: 3, desenhar: cerca },
-  doca: { w: 42, h: 20, variantes: 3, desenhar: doca },
+  cabana: { w: 36, h: 30, variantes: 3, escala: 2, desenhar: cabana },
+  casa: { w: 44, h: 38, variantes: 3, escala: 2, desenhar: casa },
+  torre: { w: 28, h: 52, variantes: 3, escala: 2, desenhar: torre },
+  ruina: { w: 42, h: 28, variantes: 3, escala: 1.5, desenhar: ruina },
+  galpao: { w: 46, h: 32, variantes: 3, escala: 2, desenhar: galpao },
+  poco: { w: 22, h: 22, variantes: 3, escala: 1.5, desenhar: poco },
+  cerca: { w: 20, h: 14, variantes: 3, escala: 1.5, desenhar: cerca },
+  doca: { w: 42, h: 20, variantes: 3, escala: 1.5, desenhar: doca },
 };

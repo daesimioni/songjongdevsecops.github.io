@@ -841,6 +841,8 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
   background: rgba(7, 10, 24, 0.9);
   backdrop-filter: blur(8px);
 }
+/* dentro de casa não há mapa de ilha para mostrar */
+body.na-casa .minimap { display: none; }
 .mini-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .mini-coord {
   font-family: var(--mono);

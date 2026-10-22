@@ -28,7 +28,7 @@ check(semArg.vida === 0 && semArg.mana === 0, "sem argumento devia dar 0/0");
 const render = fs.readFileSync(new URL("../js/render.js", import.meta.url), "utf8");
 const app = fs.readFileSync(new URL("../js/app.js", import.meta.url), "utf8");
 check(/from "\.\/vitais\.js"/.test(render), "render.js não importa a conta dos vitais");
-check(/function draw\(now, player, peers, npcs, cat, moving, rastreador = false, vitais = null\)/.test(render), "draw() sem o parâmetro de vitais");
+check(/function draw\(now, player, peers, npcs, cat, moving, rastreador = false, vitais = null/.test(render), "draw() sem o parâmetro de vitais");
 check(/drawNameTag\(player\.name[^)]*vitais\)/.test(render), "o nome do jogador não recebe os vitais");
 check(/player\.y \* TILE - 36 - lift/.test(render), "placa de nome e barras coladas na cabeça");
 check(/fracoesDeVida\(vitais\)/.test(render), "as barras não usam a conta de fração");

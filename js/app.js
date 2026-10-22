@@ -160,7 +160,13 @@ const state = {
   stepY: SPAWN.y,
   walked: 0,
   lastFocus: null,
+  casa: null,
+  casaVolta: null,
+  casaCooldownUntil: 0,
 };
+
+const NOME_CASA = { casa: "casa", cabana: "cabana", torre: "torre", galpao: "galpão" };
+const nomeDaArea = (id) => AREAS.find((a) => a.id === id)?.name || "ilha";
 
 for (const cid of CONTINENT_ORDER) {
   if (continentComplete(cid)) state.completed.add(cid);
@@ -268,7 +274,8 @@ const AVISO_CLIMA = {
 };
 for (const [id, aviso] of Object.entries(AVISO_CLIMA)) {
   renderer.ambiente.on(`${id}:comeca`, () => {
-    if (state.started) toast(aviso, 3400);
+    // dentro de casa o céu não chega: o aviso fica para quando sair
+    if (state.started && !state.casa) toast(aviso, 3400);
   });
   // o morador recolhe na chuva e volta a passear quando ela passa
   if (id === "chuva") {
@@ -908,9 +915,68 @@ function openGather(kind, extra = {}) {
   audio.open();
 }
 
+// ---- casas: a fachada é a porta ----
+function entrarNaCasa(house) {
+  if (!house || state.casa || performance.now() < state.casaCooldownUntil) return;
+  const cena = world.prepararInterior(house);
+  if (!cena) return;
+  state.casaVolta = { x: player.x, y: player.y, dir: player.dir };
+  state.casa = { ...house, cena };
+  player.x = cena.spawn.x;
+  player.y = cena.spawn.y;
+  player.dir = 0;
+  player.hx = player.x;
+  player.hy = player.y;
+  player.moving = false;
+  clearPath();
+  renderer.snap();
+  document.body.classList.add("na-casa");
+  state.casaCooldownUntil = performance.now() + 900;
+  toast(`${NOME_CASA[house.tipo] || "casa"} de ${nomeDaArea(house.bioma)}. A mesa estuda, o fogo descansa.`, 4200);
+}
+
+function sairCasa() {
+  if (!state.casa) return;
+  const volta = state.casaVolta;
+  state.casa = null;
+  state.casaVolta = null;
+  if (volta) {
+    player.x = volta.x;
+    player.y = volta.y;
+    player.dir = volta.dir;
+  }
+  player.hx = player.x;
+  player.hy = player.y;
+  player.moving = false;
+  clearPath();
+  renderer.snap();
+  document.body.classList.remove("na-casa");
+  state.casaCooldownUntil = performance.now() + 900;
+  toast("De volta à rua.", 2200);
+}
+
+function estudarNaCasa() {
+  if (!state.casa) return;
+  const station = world.stations.find((s) => world.areaAt(s.x, s.y)?.id === state.casa.bioma);
+  if (station) openPost(station.post, station);
+  else toast("A mesa está vazia nesta casa.", 2400);
+}
+
+function descansarNaCasa() {
+  if (!state.casa) return;
+  const curado = rpg.heal(9999);
+  rpg.addMana(9999);
+  audio.chime();
+  toast(curado > 0 ? `O fogo da casa devolveu ${curado} de vida.` : "A vida já estava cheia. O fogo aquece.", 3200);
+}
+
 function interactTarget(target) {
   if (!target) return;
-  if (target.kind === "station") openPost(target.obj.post, target.obj);
+  if (target.kind === "casa") entrarNaCasa(target.obj.casa);
+  else if (target.kind === "porta") sairCasa();
+  else if (target.kind === "mesa") estudarNaCasa();
+  else if (target.kind === "lareira") descansarNaCasa();
+  else if (target.kind === "station") openPost(target.obj.post, target.obj);
   else if (target.kind === "waystone") openTravel();
   else if (target.kind === "npc") {
     markStep("npc");
@@ -2151,6 +2217,14 @@ function findNearest() {
       best = { kind, obj, ground };
     }
   };
+  // dentro de casa só existem a mesa, o fogo e a porta
+  if (state.casa) {
+    const cena = state.casa.cena;
+    near("porta", { x: cena.door.x, y: cena.door.y }, null, 1.5);
+    near("mesa", { x: cena.mesa.x, y: cena.mesa.y }, null, 1.7);
+    near("lareira", { x: cena.lareira.x, y: cena.lareira.y }, null, 1.7);
+    return best;
+  }
   // a boca da caverna é medida pelo degrau de saída, não pelo centro do
   // desenho: NPC que passeia na frente não pode esconder a descida.
   for (const c of world.caves) {
@@ -2161,6 +2235,8 @@ function findNearest() {
   for (const w of world.waystones) near("waystone", w);
   for (const n of world.npcs) near("npc", n);
   for (const g of world.groundItems) near("item", g, null, 1.4);
+  // a porta da casa é medida na frente da fachada, não no meio da parede
+  for (const casa of world.casas) near("casa", { x: casa.door.x, y: casa.door.y, casa }, null, 1.8);
   // 2.2 cobre o tile vizinho inteiro: o corpo pode estar na quina do tile
   // quando a árvore ou a água está do lado
   const g = gatherNearby();
@@ -2177,7 +2253,11 @@ function updatePrompt() {
   state.nearest = near;
   if (!near) { $("prompt").hidden = true; return; }
   let label;
-  if (near.kind === "station") label = `abrir ${near.obj.label}`;
+  if (near.kind === "casa") label = `entrar na ${NOME_CASA[near.obj.casa.tipo] || "casa"}`;
+  else if (near.kind === "porta") label = "sair da casa";
+  else if (near.kind === "mesa") label = "estudar na mesa";
+  else if (near.kind === "lareira") label = "descansar no fogo";
+  else if (near.kind === "station") label = `abrir ${near.obj.label}`;
   else if (near.kind === "waystone") label = `viajar de ${near.obj.name}`;
   else if (near.kind === "npc") {
     label = near.obj.trainer
@@ -2402,15 +2482,22 @@ function loop(now) {
     if (active) {
       if (state.path) updateAutoWalk(dt);
       else updateMovement(dt);
-      updateZone();
+      if (!state.casa) updateZone();
       updateQuestTrack(now);
       if (now % 2000 < 20) syncAdmin();
       world.updateNpcs(dt, now);
+      // pisar no vão da porta sai da casa, como atravessar o batente
+      if (state.casa && now > state.casaCooldownUntil) {
+        const cena = state.casa.cena;
+        if (Math.hypot(player.x - cena.door.x, player.y - cena.door.y) < 0.62) sairCasa();
+      }
     } else {
       player.moving = false;
     }
     updateCat(dt);
-    if (world.markExplored(player.x, player.y)) state.fogDirty = true;
+    // o bolsão da casa fica fora do mapa explorado: entrar não revela um cômodo
+    // perdido no meio do mar no minimapa
+    if (!state.casa && world.markExplored(player.x, player.y)) state.fogDirty = true;
     if (state.fogDirty && now - state.fogSavedAt > 4000) {
       state.fogSavedAt = now;
       saveFog();
@@ -2472,7 +2559,7 @@ function loop(now) {
     // desfoque do modal, e a mochila aberta derrubava o quadro para 8 fps.
     const coberto = !!(state.panelOpen || state.modal || state.chatOpen || now < state.pvpDownUntil);
     if (!coberto || coberto !== cobertoAntes) {
-      renderer.draw(now, player, state.peers, world.npcs, world.cat, player.moving, rpg.data.sub === "rastreador", { hp: rpg.hp(), hpMax: rpg.hpMax(), mana: rpg.mana(), manaMax: rpg.manaMax() });
+      renderer.draw(now, player, state.peers, world.npcs, world.cat, player.moving, rpg.data.sub === "rastreador", { hp: rpg.hp(), hpMax: rpg.hpMax(), mana: rpg.mana(), manaMax: rpg.manaMax() }, state.casa ? { interior: state.casa.cena } : null);
     }
     cobertoAntes = coberto;
     updatePrompt();
@@ -2720,11 +2807,20 @@ function entityAt(wx, wy) {
       best = { kind, obj, ground };
     }
   };
+  // dentro de casa o toque mira a mesa, o fogo e a porta
+  if (state.casa) {
+    const cena = state.casa.cena;
+    hit("porta", { x: cena.door.x, y: cena.door.y }, null, 1.1);
+    hit("mesa", { x: cena.mesa.x, y: cena.mesa.y }, null, 1.2);
+    hit("lareira", { x: cena.lareira.x, y: cena.lareira.y }, null, 1.2);
+    return best;
+  }
   for (const s of world.stations) hit("station", s);
   for (const w of world.waystones) hit("waystone", w);
   for (const n of world.npcs) hit("npc", n, null, 1.4);
   for (const c of world.caves) hit("cave", c, null, 1.4);
   for (const g of world.groundItems) hit("item", g, null, 1.2);
+  for (const casa of world.casas) hit("casa", { x: casa.door.x, y: casa.door.y, casa }, null, 1.1);
   const tile = world.get(Math.floor(wx), Math.floor(wy));
   if (tile === K.TREE || tile === K.WATER) {
     hit("gather", {
