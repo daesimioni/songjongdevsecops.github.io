@@ -1883,18 +1883,18 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
       const f = fracoesDeVida(vitais());
       const vx = (state.player.x * TILE - camX) * scale;
       const vy = (state.player.y * TILE - camY) * scale - 46;
-      const larg = 30, alto = 2, folga = 1;
+      const larg = 30, alto = 2, vao = 3;
       ctx.fillStyle = "rgba(8,10,20,0.82)";
-      ctx.fillRect(vx - larg / 2, vy, larg, alto * 2 + folga * 3 + 2);
+      ctx.fillRect(vx - larg / 2, vy, larg, alto * 2 + vao + 2);
       const x0 = vx - larg / 2 + 1;
       ctx.fillStyle = "#3a1f2c";
       ctx.fillRect(x0, vy + 1, larg - 2, alto);
       ctx.fillStyle = "#ff5a86";
       ctx.fillRect(x0, vy + 1, Math.round((larg - 2) * f.vida), alto);
       ctx.fillStyle = "#16283a";
-      ctx.fillRect(x0, vy + 1 + alto + folga, larg - 2, alto);
+      ctx.fillRect(x0, vy + 1 + alto + vao, larg - 2, alto);
       ctx.fillStyle = "#6bd5ff";
-      ctx.fillRect(x0, vy + 1 + alto + folga, Math.round((larg - 2) * f.mana), alto);
+      ctx.fillRect(x0, vy + 1 + alto + vao, Math.round((larg - 2) * f.mana), alto);
     }
   }
 

@@ -100,6 +100,7 @@ A árvore já vergava com a rajada e o fogo já tinha 4 a 8 quadros.
 | 2026-10-22 | Fio da Iara | sete capítulos com missão-marco, lore e fala do guia; o diário mostra lido, aberto e bloqueado, a leitura grava no save e a wiki ganhou a ficha (2.309 entradas) | `test/arcos-historia.test.mjs`, `cdp-arco-capitulo.mjs` (13/13), 105/105 suítes, 19/19 no navegador |
 | 2026-10-22 | Facções e reputação | Concílio, União e Porto de -3 a +3; missão e desfecho movem os atos, o save guarda, o título de aliado sai no +2, o Porto muda o preço da loja e o Concílio abre a estante reservada | `test/faccoes.test.mjs`, `cdp-faccao.mjs` (14/14), 106/106 suítes, 19/19 no navegador |
 | 2026-10-22 | Guilda e party | a sede local com nome e brasão, quadro de oito membros e cargos, recrutamento pela party, quatro missões que leem o save, diário e o título de Guardião da Sede | `test/guilda.test.mjs`, `cdp-guilda.mjs` (15/15), 107/107 suítes, 19/19 no navegador |
+| 2026-10-22 | Placa do herói | a vida e a mana ficaram acima do nome, com folga entre as duas barras e entre elas e a placa; a caverna ganhou a mesma folga | `test/vitais.test.mjs`, `cdp-vitais-layout.mjs` (7/7), 108/108 suítes, 19/19 no navegador |
 
 ## Fecho da revisão (2026-10-22)
 
@@ -115,7 +116,7 @@ o que os testes e sondas desta data mostram, não o que o diário prometeu.
 | masmorras e batalha | 93 cavernas em 6 modelos e 4 pisos | sala temática por disciplina com 279 peças sólidas; 93 chefes | ritmo +1/+2, leitura de turno, fases 2 e 3, habilidade própria por chefe, turnos de PvP | `test/masmorras.test.mjs`, `test/salas.test.mjs`, `test/duelo-ritmo.test.mjs`, `test/chefe-habilidades.test.mjs`, `test/pvp-turnos.test.mjs`, `cdp-chefe-habilidade.mjs`, `cdp-sala-tema.mjs` |
 | pedidos já feitos | auditoria dos 38 pedidos na fonte viva | correção de resposta vazia, frase repetida, seis alternativas e páginas curtas | 69 páginas com curso completo, revisão das PRs externas e documentos alinhados | `docs/design/20-AUDITORIA-PEDIDOS.md`, `docs/design/33-REVISAO-EXTERNA.md`, `test/licoes.test.mjs`, `cdp-pagina.mjs` |
 
-Prova de conjunto desta data: `npm test` com **107 testes em 110 arquivos, 107 passaram**;
+Prova de conjunto desta data: `npm test` com **108 testes em 111 arquivos, 108 passaram**;
 matriz de navegador **19/19** remedida em 2026-10-22 depois de clima, sono, famílias,
 texto maior, marcas do duelo, variantes, bilhetes, arcos, patrulha e perseguição e do desacoplamento
 mundo→rendering (`cdp-regressao.mjs`: HUD, mochila 40, bestiário

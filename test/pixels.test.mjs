@@ -66,7 +66,7 @@ check(/miniPan\.y -= dy \* k/.test(renderFonte), "arrasto vertical do mapa no se
 
 // ---- a resolução forçada não voltou: dpr segue o aparelho ----
 check(/dpr = Math\.min\(2, window\.devicePixelRatio \|\| 1\) \* quality/.test(render), "dpr com piso forçado (perde fps em tela comum)");
-check(/Math\.round\(\(larg - 2\) \* f\.vida\)/.test(render), "barra de vida do nome não usa a fração");
+check(/Math\.round\(largura \* f\.vida\)/.test(render), "barra de vida do nome não usa a fração");
 
 assert.equal(problemas.length, 0, `pixels com ${problemas.length} problema(s):\n- ${problemas.join("\n- ")}`);
 console.log("ok pixels: sprite 2x, chão em meio pixel, árvores em passo fino, fogo/fumaça/espuma/gaivota com mais quadros e boneco com respiração, piscada e quique");

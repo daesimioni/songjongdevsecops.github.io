@@ -23,7 +23,7 @@ import { escalaDaCamera, tilesNaVista } from "../core/camera.js";
 import { desenharAsset, assetDe } from "./assets/index.js";
 import { desenharIcone } from "./assets/icones.js";
 import { hexA } from "./assets/nucleo.js";
-import { fracoesDeVida } from "../core/vitais.js";
+import { fracoesDeVida, layoutDaPlacaDoNome } from "../core/vitais.js";
 import { createAmbientRenderer } from "./ambient-renderer.js";
 
 
@@ -1514,29 +1514,30 @@ export function createRenderer(canvas, world, {collisionDebug=false} = {}) {
     ctx.font = "5px ui-monospace, monospace";
     ctx.textAlign = "center";
     const w = ctx.measureText(name).width + 7;
+    const placa = layoutDaPlacaDoNome(py);
+    // as barrinhas vêm primeiro, acima; o nome fica embaixo delas
+    if (vitais) {
+      const f = fracoesDeVida(vitais);
+      const larg = w;
+      ctx.fillStyle = "rgba(8,10,20,0.78)";
+      roundRect(ctx, px - larg / 2, placa.topoBarras, larg, placa.alturaBarras, 2);
+      ctx.fill();
+      const x0 = px - larg / 2 + 1, largura = larg - 2;
+      ctx.fillStyle = "#3a1f2c";
+      ctx.fillRect(x0, placa.topoVida, largura, placa.alto);
+      ctx.fillStyle = "#ff5a86";
+      ctx.fillRect(x0, placa.topoVida, Math.round(largura * f.vida), placa.alto);
+      ctx.fillStyle = "#16283a";
+      ctx.fillRect(x0, placa.topoMana, largura, placa.alto);
+      ctx.fillStyle = "#6bd5ff";
+      ctx.fillRect(x0, placa.topoMana, Math.round(largura * f.mana), placa.alto);
+    }
     ctx.fillStyle = "rgba(8,10,20,0.7)";
-    roundRect(ctx, px - w / 2, py - 11, w, 9, 2);
+    roundRect(ctx, px - w / 2, placa.topoNome, w, placa.alturaNome, 2);
     ctx.fill();
     ctx.fillStyle = color || "#eae4ff";
     ctx.fillText(name, px, py - 4);
     ctx.textAlign = "left";
-    // barrinhas de vida e mana logo abaixo do nome, do tamanho da placa
-    if (vitais) {
-      const f = fracoesDeVida(vitais);
-      const larg = w, alto = 2, folga = 1;
-      const topo = py + 1;
-      ctx.fillStyle = "rgba(8,10,20,0.78)";
-      roundRect(ctx, px - larg / 2, topo, larg, alto * 2 + folga * 3, 2);
-      ctx.fill();
-      ctx.fillStyle = "#3a1f2c";
-      ctx.fillRect(px - larg / 2 + 1, topo + folga, larg - 2, alto);
-      ctx.fillStyle = "#ff5a86";
-      ctx.fillRect(px - larg / 2 + 1, topo + folga, Math.round((larg - 2) * f.vida), alto);
-      ctx.fillStyle = "#16283a";
-      ctx.fillRect(px - larg / 2 + 1, topo + folga * 2 + alto, larg - 2, alto);
-      ctx.fillStyle = "#6bd5ff";
-      ctx.fillRect(px - larg / 2 + 1, topo + folga * 2 + alto, Math.round((larg - 2) * f.mana), alto);
-    }
   }
 
   const { drawAmbient, relogioAmbiente } = createAmbientRenderer(ctx);
