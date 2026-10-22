@@ -14,7 +14,7 @@ mudou, a regra de espaço e o que continua em aberto.
 
 ## 2. Porte e colisão
 
-Cada tipo de construção ganhou `escala` em `js/assets/construcoes.js`:
+Cada tipo de construção ganhou `escala` em `src/rendering/assets/construcoes.js`:
 
 | peça | desenho (px) | escala | tamanho no mundo | porta (desenho → mundo) |
 |---|---|---|---|---|
@@ -25,7 +25,7 @@ Cada tipo de construção ganhou `escala` em `js/assets/construcoes.js`:
 | ruína, doca, poço, cerca | como estão | 1,5 | não entram | não entram |
 
 O desenho continua nascendo em 2x e é copiado com `dw = def.w * escala`
-(`js/assets/index.js`). A porta foi ampliada no próprio traço da casa, cabana
+(`src/rendering/assets/index.js`). A porta foi ampliada no próprio traço da casa, cabana
 e torre para caber uma pessoa.
 
 A fachada agora ocupa o chão: a base entra como caixas de colisão de no
@@ -34,7 +34,7 @@ porta fica fora da caixa, então dá para encostar e apertar F.
 
 ## 3. Onde a casa pode nascer
 
-Com o dobro do tamanho, a folga cresceu junto (`js/assets/povoado.js`):
+Com o dobro do tamanho, a folga cresceu junto (`src/rendering/assets/povoado.js`):
 
 - o candidato precisa do retângulo da fachada inteiro em tile macio da ilha;
 - a casa não nasce a menos de `largura/2 + 1,3` de um totem;
@@ -49,7 +49,7 @@ Resultado: **72 casas** em 86 áreas (30 torres, 17 galpões, 21 cabanas,
 ## 4. Interiores
 
 Cada tipo tem uma sala própria num bolsão de mar, longe das ilhas
-(`INTERIORES` em `js/world.js`):
+(`INTERIORES` em `src/world/world.js`):
 
 | sala | posição | tamanho | piso |
 |---|---|---|---|

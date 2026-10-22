@@ -11,7 +11,7 @@ parte do tempo.
 
 ### NPC e jogador parados
 
-`js/human.js` ganhou dois movimentos de cabeça, ligados só quando `moving` é
+`src/rendering/human.js` ganhou dois movimentos de cabeça, ligados só quando `moving` é
 falso:
 
 - **olhar em volta**: a cabeça desliza 1 px para um lado e para o outro, com
@@ -25,7 +25,7 @@ se mexe além da respiração, então o efeito não vira dança.
 
 ### Gato de companhia
 
-`js/pet-art.js`:
+`src/rendering/pet-art.js`:
 
 - **piscada**: a cada ~19 s o olho vira uma linha da cor do corpo por um
   instante;

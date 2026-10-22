@@ -171,7 +171,7 @@ duelo a runa volta para a mochila em vez de desaparecer.
 A nave fica 4,4 vezes mais rápida que o passo na superfície e 3,6 na
 caverna: aperte `Espaço` (ou toque em **turbo** no topo da caverna) para ligar e
 aperte de novo para desligar, sem precisar segurar. O mesmo casco desenhado em
-`js/skiff.js` aparece nos dois lugares, com halo, motor e linha de velocidade. O
+`src/rendering/skiff.js` aparece nos dois lugares, com halo, motor e linha de velocidade. O
 boneco vai parado em cima dele, e o passo é dividido em pedaços para não
 atravessar parede na velocidade nova.
 
@@ -236,7 +236,7 @@ costa leste: Sala do Pipeline, Oficina dos Registradores, Von Neumann com
 missão, Caçada das Instruções e a Galeria das Instruções.
 
 A ideia é que cada área cresça até ter o tamanho de um continente de hoje. A
-estrutura já é a mesma: a área é declarada em `AREAS` (em `js/config.js`), as
+estrutura já é a mesma: a área é declarada em `AREAS` (em `src/content/config.js`), as
 estações entram em `SITES`, a caçada em `GROUNDS` com o campo `dungeon`, e a
 caverna em `dungeon-data.js`. O resto (instrutor, bocas, caminho, viagem) o
 mundo monta sozinho, e a pedra da área aparece na lista de viagem.
@@ -490,8 +490,9 @@ conferida dos dois lados.
 
 ## Conferir
 
-A parte que não depende do navegador roda os arquivos de teste em sequência sem
-instalar nada (`npm test`). Para uma verificação isolada:
+Use Node.js 22.13 ou superior. `npm ci` instala somente ferramentas de desenvolvimento;
+o jogo não depende de pacotes em runtime. `npm run validate` verifica lint,
+imports, arquitetura, testes e distribuição. Para verificações isoladas:
 
 ```bash
 npm test
@@ -541,13 +542,18 @@ forma órfã de arte, nome de leitura ou fraqueza.
 
 ## Rodar na mão
 
-Não tem build. Basta servir a pasta como arquivo estático:
-
 ```bash
-python3 -m http.server 8000
+npm ci
+npm run dev
 ```
 
-Depois abra `http://localhost:8000`.
+Abra `http://127.0.0.1:4173`. Para gerar uma distribuição estática limpa, execute
+`npm run build`; o resultado fica em `dist/`, com os mesmos caminhos relativos
+usados pelo GitHub Pages. O código fonte também continua servível como site estático.
+
+O [guia de contribuição](CONTRIBUTING.md) descreve o fluxo de trabalho e a
+[arquitetura](docs/architecture.md) explica as responsabilidades e dependências.
+A CI valida Node 22 e 24 e anexa a distribuição ao PR, sem publicar automaticamente.
 
 ## Estrutura
 
@@ -555,32 +561,32 @@ Depois abra `http://localhost:8000`.
 |---|---|
 | `index.html` | casca da página: mapa, HUD, painéis, modais, viagem, Rede e missões |
 | `css/style.css` | o visual, do mundo aos widgets |
-| `js/app.js` | laço do jogo, entrada, diário, XP, viagem e estado |
-| `js/world.js` | geração do arquipélago, caminhos, pontes, colisão e névoa |
-| `js/render.js` | desenho do mundo, das estações, dos bonecos e do minimapa |
-| `js/skiff.js` | o casco da nave, o mesmo na superfície e na caverna |
-| `js/net.js` | sala compartilhada por MQTT sobre WebSocket |
-| `js/interp.js` | buffer e interpolação da posição dos outros jogadores |
-| `js/nostr.js` | conta, canais, DMs NIP-17, perfis e presença Nostr |
-| `js/backup.js` | estado inteiro na própria DM: base64, gzip e restauração |
-| `js/quests.js` | missões, progresso, XP e títulos |
-| `js/path.js` | caminho A* do clique até o destino |
-| `js/rpg.js` | vida, perícias, itens, forja, encantos, buffs, bicho, monstros, treino, fuga e duelo |
-| `js/rpg-data.js` | monstros, itens, receitas, encantos, perguntas e a ficha de cada espécie |
-| `js/dungeon.js` | a caverna em tela cheia: mapa, minimapa, visão, veios, horta, bicho e desenho |
-| `js/dungeon-data.js` | as 93 cavernas: salas, temas, monstros, chefes e quem vive em cada uma |
-| `js/creature.js` | desenho dos monstros no mapa e no duelo |
-| `js/bestiary.js` | o bestiário: cavernas por continente, silhuetas, descoberta e filtros |
-| `js/sheet.js` | a ficha de aventureiro |
-| `js/duel.js` | a janela de prova contra cada monstro e o treino do instrutor |
-| `js/gather.js` | a coleta com pergunta: sorteio do achado, dificuldade por raridade e a janela de mineração, pesca e madeira |
-| `js/pvp.js` | o duelo de perguntas entre jogadores |
-| `js/social.js` | janela da Rede: canais, DMs, pessoas e conta |
-| `js/audio.js` | síntese, ambiente e sequenciador |
-| `js/content.js` | os 41 textos e as falas dos NPCs |
-| `js/config.js` | mapa, continentes, estações, pedras e cores |
-| `js/data/elements.js` | os 36 elementos da tabela periódica |
-| `js/zones/` | os instrumentos interativos de cada região |
+| `src/app/app.js` | laço do jogo, entrada, diário, XP, viagem e estado |
+| `src/world/world.js` | geração do arquipélago, caminhos, pontes, colisão e névoa |
+| `src/rendering/render.js` | desenho do mundo, das estações, dos bonecos e do minimapa |
+| `src/rendering/skiff.js` | o casco da nave, o mesmo na superfície e na caverna |
+| `src/platform/net.js` | sala compartilhada por MQTT sobre WebSocket |
+| `src/platform/interp.js` | buffer e interpolação da posição dos outros jogadores |
+| `src/platform/nostr.js` | conta, canais, DMs NIP-17, perfis e presença Nostr |
+| `src/platform/backup.js` | estado inteiro na própria DM: base64, gzip e restauração |
+| `src/gameplay/quests.js` | missões, progresso, XP e títulos |
+| `src/core/path.js` | caminho A* do clique até o destino |
+| `src/gameplay/rpg.js` | vida, perícias, itens, forja, encantos, buffs, bicho, monstros, treino, fuga e duelo |
+| `src/content/rpg-data.js` | monstros, itens, receitas, encantos, perguntas e a ficha de cada espécie |
+| `src/app/dungeon.js` | a caverna em tela cheia: mapa, minimapa, visão, veios, horta, bicho e desenho |
+| `src/content/dungeon-data.js` | as 93 cavernas: salas, temas, monstros, chefes e quem vive em cada uma |
+| `src/rendering/creature.js` | desenho dos monstros no mapa e no duelo |
+| `src/ui/bestiary.js` | o bestiário: cavernas por continente, silhuetas, descoberta e filtros |
+| `src/ui/sheet.js` | a ficha de aventureiro |
+| `src/ui/duel.js` | a janela de prova contra cada monstro e o treino do instrutor |
+| `src/ui/gather.js` | a coleta com pergunta: sorteio do achado, dificuldade por raridade e a janela de mineração, pesca e madeira |
+| `src/ui/pvp.js` | o duelo de perguntas entre jogadores |
+| `src/ui/social.js` | janela da Rede: canais, DMs, pessoas e conta |
+| `src/platform/audio.js` | síntese, ambiente e sequenciador |
+| `src/content/content.js` | os 41 textos e as falas dos NPCs |
+| `src/content/config.js` | mapa, continentes, estações, pedras e cores |
+| `src/content/data/elements.js` | os 36 elementos da tabela periódica |
+| `src/learning/zones/` | os instrumentos interativos de cada região |
 | `wasm/julia.wat` | fonte do módulo WebAssembly do conjunto de Julia |
 | `wasm/julia.wasm` | o módulo compilado, de 296 bytes |
 | `test/core.test.mjs` | conferência de missões, RPG, treino, fuga, duelo PvP e caverna |
@@ -598,13 +604,13 @@ wat2wasm wasm/julia.wat -o wasm/julia.wasm
 
 ## Editar conteúdo
 
-- Textos e falas: `js/content.js`.
-- Posição e nome das estações: `js/config.js`, no array `SITES`.
-- Cavernas (salas, temas, monstros, chefes): `js/dungeon-data.js`. É de lá que
-  `js/bestiary.js` lê quem vive em cada sala, para a ficha não divergir do bicho.
-- Receitas, itens e perguntas: `js/rpg-data.js`.
-- Elementos da tabela: `js/data/elements.js`.
-- Instrumentos: `js/zones/`. Computação, matemática, física e química ficam em
+- Textos e falas: `src/content/content.js`.
+- Posição e nome das estações: `src/content/config.js`, no array `SITES`.
+- Cavernas (salas, temas, monstros, chefes): `src/content/dungeon-data.js`. É de lá que
+  `src/ui/bestiary.js` lê quem vive em cada sala, para a ficha não divergir do bicho.
+- Receitas, itens e perguntas: `src/content/rpg-data.js`.
+- Elementos da tabela: `src/content/data/elements.js`.
+- Instrumentos: `src/learning/zones/`. Computação, matemática, física e química ficam em
   `cs.js`, `math.js`, `physics.js` e `chem.js`; música em `music.js`; IA em
   `ai.js`; as moléculas em 3D em `molecule.js`.
 

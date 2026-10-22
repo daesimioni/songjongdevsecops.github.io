@@ -3,6 +3,21 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test --test-concurrency=1 test/*.test.mjs"
+    "dev": "node tools/serve.mjs",
+    "lint": "eslint src tools test eslint.config.js",
+    "check:modules": "node --experimental-vm-modules tools/check-project.mjs",
+    "check": "npm run lint && npm run check:modules",
+    "test": "node --test --test-concurrency=1 test/*.test.mjs",
+    "build": "npm run check && node tools/build.mjs",
+    "validate": "npm run check && npm test && node tools/build.mjs",
+    "art:check": "node tools/check-art.mjs",
+    "art:render": "node tools/render-art.mjs"
+  },
+  "devDependencies": {
+    "eslint": "10.13.0"
+  },
+  "description": "RPG educacional em pixel art para navegadores, publicado no GitHub Pages",
+  "engines": {
+    "node": "^22.13.0 || >=24.0.0"
   }
 }

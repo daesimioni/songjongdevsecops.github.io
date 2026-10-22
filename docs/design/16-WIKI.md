@@ -43,13 +43,13 @@ toda página tem atalho válido e que nenhuma outra categoria tem atalho.
 
 ## Busca
 
-Sem acento e sem caixa (`normalizar()` em `js/wiki.js`): "logica" acha "Lógica".
+Sem acento e sem caixa (`normalizar()` em `src/ui/wiki.js`): "logica" acha "Lógica".
 Todas as palavras digitadas precisam aparecer; resultado com nome que começa pelo
 termo vem primeiro. As categorias filtram a busca e mostram o total.
 
 ## Interface
 
-`js/wiki.js` monta as abas, a lista em cartões e o detalhe com os campos. A lista
+`src/ui/wiki.js` monta as abas, a lista em cartões e o detalhe com os campos. A lista
 mostra no máximo 80 entradas por vez (o total aparece no resumo), então abrir a
 wiki não cria 2.005 nós no DOM. O modal reusa `.modal`, `.hud-btn` e o foco
 trapeado do jogo; `Esc` fecha, `H` abre e fecha. O índice não é construído no

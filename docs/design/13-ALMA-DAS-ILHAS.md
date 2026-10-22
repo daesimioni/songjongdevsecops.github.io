@@ -11,13 +11,13 @@ Os 86 cantos do mapa deixam de ser "uma ilha de Matemática com outra cor". Cada
 
 | peça | o que muda por área | onde mora |
 |---|---|---|
-| bioma | nome, dois tons de piso, cor de caminho, padrão de chão, material da caverna | `js/identity.js` e `js/render.js` |
-| fauna | 3 monstros com nome, espécie e cor próprios; chefe da área | `js/identity.js` e `js/rpg-data.js` |
-| itens | arma, armadura e elmo com nome, história e números próprios | `js/identity.js` e `js/rpg-data.js` |
-| guardião | nome, título, aparência (gênero, cabelo, pele, roupa) e falas | `js/identity.js`, `js/world.js` e `js/content.js` |
-| missões | trilha da área (ler estações) e chefe da área | `js/identity.js` e `js/quests.js` |
-| traje | um traje por área, aberto pela trilha | `js/identity.js` e `js/outfits.js` |
-| caverna | paleta, material, nomes de sala, bichos e chefe da área | `js/catalog-gen.js`, `js/dungeon-data.js` e `js/dungeon.js` |
+| bioma | nome, dois tons de piso, cor de caminho, padrão de chão, material da caverna | `src/content/identity.js` e `src/rendering/render.js` |
+| fauna | 3 monstros com nome, espécie e cor próprios; chefe da área | `src/content/identity.js` e `src/content/rpg-data.js` |
+| itens | arma, armadura e elmo com nome, história e números próprios | `src/content/identity.js` e `src/content/rpg-data.js` |
+| guardião | nome, título, aparência (gênero, cabelo, pele, roupa) e falas | `src/content/identity.js`, `src/world/world.js` e `src/content/content.js` |
+| missões | trilha da área (ler estações) e chefe da área | `src/content/identity.js` e `src/gameplay/quests.js` |
+| traje | um traje por área, aberto pela trilha | `src/content/identity.js` e `src/content/outfits.js` |
+| caverna | paleta, material, nomes de sala, bichos e chefe da área | `src/content/catalog-gen.js`, `src/content/dungeon-data.js` e `src/app/dungeon.js` |
 | página de subárea | texto curado, tópicos, prática e conexões | `js/text/*.js` |
 
 Regra de ouro: **nenhuma área usa o piso, o bicho, o item, o NPC, a missão ou a
@@ -28,7 +28,7 @@ Linguagem) entram na conta como qualquer outra.
 
 ### A. Estrutura (esta rodada)
 
-- [x] `js/identity.js`: registro de identidade para as 86 áreas, com cores,
+- [x] `src/content/identity.js`: registro de identidade para as 86 áreas, com cores,
       padrões, fauna, itens, trajes e estilo de NPC derivados do id (sem repetir
       o tom da disciplina).
 - [x] Pisos próprios: cada área ganha dois tipos de tile próprios e um padrão

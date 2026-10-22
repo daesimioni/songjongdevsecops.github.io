@@ -18,7 +18,7 @@ com a linha do diário dizendo que foi feito.
 | oito direções em tudo | `test/costas.test.mjs` | feito |
 | equipamento acompanha mão e passo | `test/gear.test.mjs` | feito |
 | masmorras com seis plantas e quatro pisos | `test/masmorras.test.mjs` | feito |
-| névoa versionada `r2` | leitura e gravação em `js/app.js`, save antigo migra | feito |
+| névoa versionada `r2` | leitura e gravação em `src/app/app.js`, save antigo migra | feito |
 | mapa não some com a nave | `skiffRear` importado em `render.js` e `skiff.js` | feito |
 | arrasto do minimapa de agarrar e puxar | sinal em `render.js` e `test/pixels.test.mjs` | feito em 2026-10-21 20:09 |
 | floresta organizada, sem mata na metrópole | `test/floresta.test.mjs` e captura | feito em 2026-10-21 20:06 |

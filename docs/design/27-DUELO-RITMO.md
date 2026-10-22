@@ -9,7 +9,7 @@ sonda achou no caminho.
 
 ## 1. Ritmo
 
-`js/duelo-ritmo.js`:
+`src/gameplay/duelo-ritmo.js`:
 
 | acertos seguidos | bônus no dano | aviso |
 |---|---|---|

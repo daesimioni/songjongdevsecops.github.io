@@ -30,7 +30,7 @@ têm área antiga não são duplicadas; 71 seções + 11 interseções = 82 seç
 ### 1.1 A lista de subáreas é o conteúdo
 
 A lista que o dono passou em 2026-10-20 foi copiada inteira para
-`js/catalog-topics.js`: 82 seções, 283 subáreas e 2.659 tópicos. O gerador lê
+`src/content/catalog-topics.js`: 82 seções, 283 subáreas e 2.659 tópicos. O gerador lê
 essa lista, e não uma amostra de três tópicos por seção. Cada estação de
 subárea abre a página com os tópicos daquela subárea, e o teste
 `content.test.mjs` cobra que toda subárea tenha estação e que todo tópico
@@ -88,11 +88,11 @@ cidades.
 ## 3. De onde vem o conteúdo
 
 Para não escrever 164 páginas à mão de uma vez e não inventar texto vazio, o
-conteúdo de cada área vem de um **banco por disciplina** (`js/catalog-bank.js`):
+conteúdo de cada área vem de um **banco por disciplina** (`src/content/catalog-bank.js`):
 para cada tópico, uma definição curta, três pontos-chave, um erro comum e uma
 pergunta por dificuldade (fácil, média, difícil) com gabarito e explicação.
 
-O gerador (`js/catalog-gen.js`) transforma o banco em:
+O gerador (`src/content/catalog-gen.js`) transforma o banco em:
 
 - post de estação (definição + pontos + erro comum),
 - pergunta dos monstros e do treino,

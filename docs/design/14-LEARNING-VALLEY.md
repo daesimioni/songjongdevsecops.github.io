@@ -144,7 +144,7 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 
 ### O. Desenho granular
 
-- [x] a câmera é uma só: `js/camera.js` dá a mesma escala ao vale e à caverna
+- [x] a câmera é uma só: `src/core/camera.js` dá a mesma escala ao vale e à caverna
       (1,3 a 1,6 conforme a janela, tile de 21 a 26 px); antes a caverna usava
       escala própria de 1,15 a 3,4 e chegava a 42 px por tile
 - [x] o quadro visita só o retângulo que a câmera cobre: na caverna medida,
@@ -495,7 +495,7 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 - A forma do bicho vem do nome. Se o nome é "Ácido", a arte tem que ser um
   frasco; se é "Acorde", uma nota. Nome abstrato cai na forma da disciplina,
   nunca num sorteio.
-- A nave é um desenho só, em `js/skiff.js`: superfície e caverna não podem
+- A nave é um desenho só, em `src/rendering/skiff.js`: superfície e caverna não podem
   mostrar cascos diferentes.
 - Bicho de caverna tem casa e passeio curto. Dois círculos de visão que se
   tocam deixam o jogador ser visto por dois ao mesmo tempo; a casa é escolhida
@@ -533,7 +533,7 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 | 2026-10-20 | M | mochila no HUD da caverna e tecla I dentro da caverna; o modal abre por cima, Esc fecha só a mochila e a caverna continua; no celular os quatro botões cabem sem cortar sair | navegador: botão visível, clique abriu a mochila com 40 espaços e a caverna atrás, Esc voltou, I abriu, 390 px com turbo/mochila/ficha/sair dentro da tela, console limpo |
 | 2026-10-20 | L | perguntas padronizadas em cinco alternativas A-E no duelo e no PvP; a certa embaralha entre as cinco; questão com 6 escritas usa 5; distratores próximos por troca de oposto, semelhança com a resposta e mesma área; as 632 perguntas geradas do catálogo passaram a nascer com 5 opções escritas | node: 1603 perguntas e 35 cartas de PvP com 5, respostas espalhadas, distratores conferidos (Cantor, autovalor, grandes números, integração por partes), PvP 5; navegador: cinco botões A-E, tecla E responde, quinta marcada, console limpo |
 | 2026-10-20 | K | a forma do bicho passou a vir do nome: 10 formas novas (livro, símbolo, nota, átomo, cristal, engrenagem, nó, prisma, vetor, frasco), classificador por palavra com disciplina de desempate, e arte, ficha, fraqueza e duelo para todas; 356 nomes cobertos | node: 25 formas com arte/nome/fraqueza, 17 casos de congruência (ácido->frasco, acorde->nota, instrução->engrenagem, autovalores->vetor), sem forma órfã; navegador: bestiário mostra as fichas novas e a separação das 93 cavernas continua com 651 bichos e nenhum ponto visto por dois |
-| 2026-10-20 | J | Espaço e Turbo alternam a nave na superfície e na caverna; o casco passou para js/skiff.js e a caverna usa o mesmo desenho, com boost suave e lift do boneco; soltar a tecla não desliga | navegador: espaço liga e continua ligado, espaço de novo desliga, auto-repeat não pisca, Turbo do celular alterna com aria-pressed, caverna liga/desliga e o casco aparece andando, console limpo; node verde |
+| 2026-10-20 | J | Espaço e Turbo alternam a nave na superfície e na caverna; o casco passou para src/rendering/skiff.js e a caverna usa o mesmo desenho, com boost suave e lift do boneco; soltar a tecla não desliga | navegador: espaço liga e continua ligado, espaço de novo desliga, auto-repeat não pisca, Turbo do celular alterna com aria-pressed, caverna liga/desliga e o casco aparece andando, console limpo; node verde |
 | 2026-10-20 | I | bichos postados no miolo da sala com passeio de 0,8 tile; posição escolhida para a soma das visões mais os passeios caber entre as casas, com margem de 0,4 tile; sala do chefe sem bicho comum; bestiário passa a listar 464 criaturas | navegador: 93 cavernas, 651 bichos comuns, 7 por caverna, chefe sozinho, folga mínima 0,49 tile, 1.142.784 pontos testados e nenhum visto por dois bichos, console limpo; node verde |
 | 2026-10-20 | H | minimapa 232x155 com coordenada x y z, piso, zoom 1× a 6× pela roda e botões, botão mapa inteiro e marcador em seta; caverna ganhou coordenada, profundidade e minimapa de 200x150; o mapa base de 560x360 não é mais cortado no canto | navegador: coordenada x 91 y 61 z 0, zoom 1× a 6×, roda, clique andou 5 tiles, viagem para a Álgebra acompanhou, caverna z -1 com marcador, console limpo |
 | 2026-10-20 | G | bestiário com tecla B e botão no menu, 487 fichas de 93 cavernas agrupadas por continente, silhueta até o encontro, busca sem acento, filtros e placar; id de bicho passou a carregar a caverna (antes o mesmo id se repetia entre cavernas do mesmo continente) | node: 93 cavernas, 487 fichas, ids únicos, encontro e vitória sobrevivem ao recarregar; navegador: 487 sprites, 93 grupos, busca "algebra" acha a Cripta da Álgebra, filtros 486/0/487, Diário abre o bestiário, 390 px sem estouro e menu em duas linhas, sem erro de console |
