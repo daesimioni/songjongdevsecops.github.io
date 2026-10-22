@@ -185,6 +185,31 @@
     </div>
   </div>
 
+  <div id="biblioteca" class="modal" role="dialog" aria-modal="true" aria-labelledby="biblioteca-title" hidden>
+    <div class="modal-card">
+      <div class="modal-head">
+        <div>
+          <p class="inv-kicker">a corrente das sete missões abriu a porta</p>
+          <h2 id="biblioteca-title">Acervo da Biblioteca Afogada</h2>
+        </div>
+        <button type="button" class="hud-btn" data-close="biblioteca">fechar <kbd>Esc</kbd></button>
+      </div>
+      <p class="travel-lead" id="biblioteca-lead">As alas guardam o que o vale aprendeu. Escolha uma e o que ler nela.</p>
+      <div id="biblioteca-alas" class="wiki-tabs" role="tablist" aria-label="alas do acervo">
+        <button type="button" class="wiki-tab" data-biblioteca-ala="conceitos" role="tab" aria-selected="true" aria-controls="biblioteca-list">Conceitos</button>
+        <button type="button" class="wiki-tab" data-biblioteca-ala="lore" role="tab" aria-selected="false" aria-controls="biblioteca-list">Lore</button>
+        <button type="button" class="wiki-tab" data-biblioteca-ala="pratica" role="tab" aria-selected="false" aria-controls="biblioteca-list">Prática</button>
+      </div>
+      <div class="search-row">
+        <input id="biblioteca-filter" class="travel-filter" type="search" placeholder="filtrar por nome ou continente" autocomplete="off" aria-label="filtrar o acervo">
+        <button type="button" id="biblioteca-clear" class="hud-btn" disabled>limpar busca</button>
+      </div>
+      <p id="biblioteca-status" class="search-status" role="status"></p>
+      <p id="biblioteca-empty" class="search-empty" hidden>Nenhuma entrada encontrada. Tente outro nome ou limpe a busca.</p>
+      <div id="biblioteca-list" class="travel-list" role="tabpanel"></div>
+    </div>
+  </div>
+
   <div id="npc" class="modal" role="dialog" aria-modal="true" aria-labelledby="npc-title" hidden>
     <div class="modal-card npc-card">
       <div class="modal-head">

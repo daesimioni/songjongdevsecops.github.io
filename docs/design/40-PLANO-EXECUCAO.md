@@ -20,8 +20,8 @@ O endgame e a lore entram no próximo ciclo, nesta ordem.
 ## 2. O ciclo atual está fechado
 
 - 0 linhas ausente e 0 parciais no 39; o que resta são decisões respondidas.
-- 102 testes em 105 arquivos, 19/19 na matriz de navegador a 60,2 fps, 137
-  módulos, build de 145 arquivos.
+- 103 testes em 106 arquivos, 19/19 na matriz de navegador a 60,2 fps, 138
+  módulos, build de 146 arquivos.
 - Site publicado com o 39 e o 40; o revisor de conteúdo roda no `check` e no CI.
 - A mochila medida em 60,2 fps após 75 s e 18 a 19 MB; acompanhar em hardware
   real.
@@ -33,10 +33,12 @@ O endgame e a lore entram no próximo ciclo, nesta ordem.
 A primeira entrega do endgame é o lugar: uma corrente de 7 missões que abre a
 biblioteca, a tela de escolha e o acervo navegável.
 
-**Andamento (rodada 1)**: a corrente de 7 missões está no guia, encadeada e com
-save (`test/biblioteca.test.mjs`); a sonda achou e corrigiu um defeito real no
-`progress` de docas, que usava `.size` num array e travava a missão "Sete
-faróis". Faltam a tela de escolha e o acervo.
+**Fechada (rodadas 1 e 2)**: a corrente de 7 missões está no guia, encadeada e
+com save (`test/biblioteca.test.mjs`); a sonda achou e corrigiu um defeito real
+no `progress` de docas, que usava `.size` num array e travava a missão "Sete
+faróis". O acervo abriu com as três alas: 454 conceitos, 179 de lore e 7
+treinos, busca sem acento, página, wiki e treino medidos em
+`test/acervo.test.mjs` e `cdp-acervo.mjs`; 19/19 na matriz de navegador.
 
 - **Entregáveis**: 7 missões encadeadas (`biblioteca-1` a `biblioteca-7`), cada
   uma com pré-requisito na anterior; a tela de escolha do que estudar; o acervo

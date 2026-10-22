@@ -38,6 +38,7 @@ import { RPG } from "../gameplay/rpg.js";
 import { resumoConceitos, vencido } from "../gameplay/conceitos.js";
 import { FERRY, precoDoFerry, podePagarFerry, cobrarFerry, faltaDoFerry, nomeDoMaterial, falaDoBarqueiro } from "../gameplay/ferry.js";
 import { pontosFracos } from "../gameplay/grafo.js";
+import { ALAS, itensDaAla, filtrarAcervo } from "../gameplay/acervo.js";
 import { VOCACOES } from "../content/vocations.js";
 import { ITEMS, QUESTIONS } from "../content/rpg-data.js";
 import { createSheet } from "../ui/sheet.js";
@@ -1223,6 +1224,14 @@ function buildNpc(npc) {
       body.appendChild(deep);
     }
   }
+  // a corrente das sete missões abre o acervo: o guia mostra a porta
+  if (npc.id === "guia" && quests.isDone("biblioteca-7")) {
+    body.appendChild(el("p", "npc-line npc-context", "A Biblioteca Afogada está aberta. As três alas esperam."));
+    const abrir = el("button", "quest-btn", "entrar no acervo");
+    abrir.type = "button";
+    abrir.addEventListener("click", () => { closeModal("npc"); openBiblioteca(); });
+    body.appendChild(abrir);
+  }
   const offers = quests.offersFor(npc.id);
   const trancadas = quests.lockedFor(npc.id);
   if (!offers.length) {
@@ -1897,6 +1906,72 @@ function wireTravelFilter() {
   clear.onclick = () => { input.value = ""; apply(); input.focus(); };
   apply();
 }
+
+// Acervo da Biblioteca Afogada: a tela de escolha das três alas e a lista
+// navegável. Conceitos abre a página, Lore abre a wiki e Prática abre o treino.
+let acervoAla = "conceitos";
+function buildBiblioteca() {
+  const lista = $("biblioteca-list");
+  if (!lista) return;
+  const todas = itensDaAla(acervoAla);
+  const filtro = $("biblioteca-filter")?.value || "";
+  const itens = filtrarAcervo(todas, filtro);
+  const ala = ALAS.find((a) => a.id === acervoAla);
+  $("biblioteca-lead").textContent = ala ? `${ala.nome}: ${ala.desc}.` : "";
+  for (const botao of document.querySelectorAll("#biblioteca-alas [data-biblioteca-ala]")) {
+    botao.setAttribute("aria-selected", String(botao.dataset.bibliotecaAla === acervoAla));
+  }
+  lista.textContent = "";
+  for (const item of itens) {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "travel-item";
+    btn.prepend(travelDot(CONTINENTS[item.continente]?.accent || "#b48cff"));
+    const left = document.createElement("span");
+    const b = document.createElement("b");
+    b.textContent = item.nome;
+    const sub = document.createElement("span");
+    sub.textContent = item.sub;
+    left.append(b, sub);
+    const right = document.createElement("em");
+    right.textContent = item.tipo === "post" ? "ler" : item.tipo === "treino" ? "treinar" : "abrir";
+    btn.append(left, right);
+    btn.addEventListener("click", () => {
+      closeModal("biblioteca");
+      if (item.tipo === "post") openPost(item.post);
+      else if (item.tipo === "treino") openTraining({ id: `acervo-${item.continente}`, continent: item.continente, trainer: true });
+      else openWiki({ consulta: `${item.categoria}:${item.nome}` });
+    });
+    lista.appendChild(btn);
+  }
+  $("biblioteca-status").textContent = `${itens.length} ${itens.length === 1 ? "entrada" : "entradas"} em ${ala?.nome || "acervo"}`;
+  $("biblioteca-empty").hidden = itens.length !== 0;
+  $("biblioteca-clear").disabled = !filtro;
+}
+function openBiblioteca() {
+  stopSprint();
+  closeChat();
+  if (state.panelOpen) closePanel();
+  if ($("biblioteca-filter")) $("biblioteca-filter").value = "";
+  acervoAla = "conceitos";
+  buildBiblioteca();
+  openModal("biblioteca");
+  audio.open();
+}
+$("biblioteca-alas")?.addEventListener("click", (e) => {
+  const botao = e.target.closest?.("[data-biblioteca-ala]");
+  if (!botao) return;
+  acervoAla = botao.dataset.bibliotecaAla;
+  if ($("biblioteca-filter")) $("biblioteca-filter").value = "";
+  buildBiblioteca();
+  audio.blip();
+});
+$("biblioteca-filter")?.addEventListener("input", buildBiblioteca);
+$("biblioteca-clear")?.addEventListener("click", () => {
+  if ($("biblioteca-filter")) $("biblioteca-filter").value = "";
+  buildBiblioteca();
+  $("biblioteca-filter")?.focus();
+});
 
 function travelDot(color) {
   const dot = document.createElement("i");
@@ -3559,7 +3634,7 @@ window.addEventListener("beforeunload", () => {
   }, { capture: true });
 
   if (new URLSearchParams(location.search).has("debug")) {
-    window.__mundo = { player, state, world, renderer, audio, quests, rede, backup, rpg, sheetUi, duelUi, dungeon, pvpUi, knockDown, findPath, assets: { cache: cacheDeAssets, total: totalDeAssets }, openPost: (id) => openPost(id), openTravel: (mode) => openTravel(mode), openShop: () => openShop(), openDuel: (mon, ground, boss, partner) => openDuel(mon, ground, boss, partner), openVocacoes: () => openVocacoes(), openWiki: (opcoes) => openWiki(opcoes), catalog: CATALOG_CONTENT, catalogStones: [...CATALOG_STONES], waystones: WAYSTONES, get social() { return social; } };
+    window.__mundo = { player, state, world, renderer, audio, quests, rede, backup, rpg, sheetUi, duelUi, dungeon, pvpUi, knockDown, findPath, assets: { cache: cacheDeAssets, total: totalDeAssets }, openPost: (id) => openPost(id), openTravel: (mode) => openTravel(mode), openShop: () => openShop(), openDuel: (mon, ground, boss, partner) => openDuel(mon, ground, boss, partner), openVocacoes: () => openVocacoes(), openWiki: (opcoes) => openWiki(opcoes), openBiblioteca: () => openBiblioteca(), catalog: CATALOG_CONTENT, catalogStones: [...CATALOG_STONES], waystones: WAYSTONES, get social() { return social; } };
   }
 
   uiScope.sync();
