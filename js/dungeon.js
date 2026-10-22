@@ -13,6 +13,7 @@ import { drawPetSprite } from "./pet-art.js";
 import { drawSkiff } from "./skiff.js";
 import { escalaDaCamera, tilesNaVista, dentroDaVista, caixaNaVista } from "./camera.js";
 import { fracoesDeVida } from "./vitais.js";
+import { propsDaSala } from "./salas-tematicas.js";
 
 const $ = (id) => document.getElementById(id);
 const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
@@ -379,6 +380,103 @@ function drawForge(ctx, x, y, t, accent) {
   ctx.fillRect(-2, -12 + f, 4, 1);
   ctx.fillStyle = accent;
   ctx.fillRect(-6, -8, 12, 1);
+  ctx.restore();
+}
+
+// ---- sala temática: cada disciplina tem um cômodo com a sua cara ----
+function drawOficina(ctx, x, y, t, accent) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.fillStyle = "rgba(0,0,0,0.35)";
+  ctx.beginPath(); ctx.ellipse(0, 0, 15, 4, 0, 0, Math.PI * 2); ctx.fill();
+  // bancada de pedra e bigorna
+  ctx.fillStyle = "#2a2438";
+  ctx.fillRect(-13, -9, 26, 9);
+  ctx.fillStyle = "#3a3350";
+  ctx.fillRect(-13, -11, 26, 3);
+  ctx.fillStyle = "#16131f";
+  ctx.fillRect(-7, -18, 14, 6);
+  ctx.fillRect(-4, -22, 8, 4);
+  ctx.fillStyle = "#4a4560";
+  ctx.fillRect(-6, -17, 12, 1);
+  ctx.fillStyle = accent;
+  ctx.fillRect(-8, -9, 16, 1);
+  // martelo e faísca
+  ctx.fillStyle = "#6b4b2a";
+  ctx.fillRect(8, -25, 2, 10);
+  ctx.fillStyle = "#9aa3b8";
+  ctx.fillRect(6, -27, 6, 3);
+  const f = Math.sin(t * 0.02);
+  ctx.fillStyle = "#ffd166";
+  ctx.fillRect(-3 + f * 4, -21 - Math.abs(f) * 3, 1, 1);
+  ctx.fillRect(2 - f * 3, -24, 1, 1);
+  ctx.restore();
+}
+
+function drawBiblioteca(ctx, x, y, t, accent) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.fillStyle = "rgba(0,0,0,0.35)";
+  ctx.beginPath(); ctx.ellipse(0, 0, 12, 4, 0, 0, Math.PI * 2); ctx.fill();
+  // estante alta, com três prateleiras de livros
+  ctx.fillStyle = "#1b1626";
+  ctx.fillRect(-10, -32, 20, 32);
+  ctx.fillStyle = "#382a44";
+  ctx.fillRect(-9, -31, 18, 30);
+  const cores = ["#b48cff", "#61f4c0", "#ffd166", "#ff7a7a", "#8ab6ff"];
+  for (let s = 0; s < 3; s++) {
+    const base = -27 + s * 9;
+    ctx.fillStyle = "#241d33";
+    ctx.fillRect(-8, base + 6, 16, 2);
+    for (let i = 0; i < 5; i++) {
+      ctx.fillStyle = cores[(i + s) % cores.length];
+      ctx.fillRect(-7 + i * 3, base, 2, 6);
+    }
+  }
+  // vela acesa e brilho do conhecimento
+  ctx.fillStyle = "#ffd166";
+  ctx.fillRect(11, -18, 2, 3);
+  ctx.fillStyle = accent;
+  ctx.globalAlpha = 0.25 + Math.sin(t * 0.005) * 0.1;
+  ctx.fillRect(-9, -31, 18, 24);
+  ctx.globalAlpha = 1;
+  ctx.restore();
+}
+
+function drawObservatorio(ctx, x, y, t, accent) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.fillStyle = "rgba(0,0,0,0.35)";
+  ctx.beginPath(); ctx.ellipse(0, 0, 12, 4, 0, 0, Math.PI * 2); ctx.fill();
+  // tripé
+  ctx.strokeStyle = "#4a4560";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(0, -14); ctx.lineTo(-8, 0);
+  ctx.moveTo(0, -14); ctx.lineTo(8, 0);
+  ctx.moveTo(0, -14); ctx.lineTo(0, -2);
+  ctx.stroke();
+  // tubo apontado para o céu
+  ctx.save();
+  ctx.translate(0, -16);
+  ctx.rotate(-0.55);
+  ctx.fillStyle = "#1b1626";
+  ctx.fillRect(-14, -4, 28, 8);
+  ctx.fillStyle = "#3a3350";
+  ctx.fillRect(-13, -3, 26, 6);
+  ctx.fillStyle = "#8ab6ff";
+  ctx.fillRect(-14, -2, 3, 4);
+  ctx.fillStyle = accent;
+  ctx.globalAlpha = 0.6 + Math.sin(t * 0.004) * 0.2;
+  ctx.fillRect(-14, -2, 2, 4);
+  ctx.globalAlpha = 1;
+  ctx.restore();
+  // estrelas piscando na parede
+  for (let i = 0; i < 4; i++) {
+    const a = 0.35 + Math.sin(t * 0.003 + i * 2.1) * 0.3;
+    ctx.fillStyle = `rgba(180,220,255,${a.toFixed(2)})`;
+    ctx.fillRect(-8 + i * 6, -30 + (i % 2) * 4, 1, 1);
+  }
   ctx.restore();
 }
 
@@ -948,6 +1046,14 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     }
     const city = def.rooms.find((r) => r.kind === "city");
     if (city) for (const p of pracaDaCaverna(def, city)) props.push(p);
+    // a sala da disciplina ganha a peça de assinatura (oficina, biblioteca ou
+    // observatório) encostada nas paredes; baú e outra peça no meio mandam a
+    // peça para outro canto em vez de empilhar
+    for (const p of propsDaSala(def)) {
+      const colide = props.some((q) => Math.hypot(q.x - p.x, q.y - p.y) < 1.4) ||
+        state.chests.some((c) => Math.hypot(c.x - p.x, c.y - p.y) < 1.4);
+      if (!colide) props.push(p);
+    }
     if (def.hub) {
       for (const portal of def.portals || []) {
         props.push({
@@ -1066,6 +1172,10 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
       }
       if (p.kind === "forge") {
         state.solids.push({ x: p.x, y: p.y, hw: 0.7, hh: 0.45 });
+        continue;
+      }
+      if (p.kind === "oficina" || p.kind === "biblioteca" || p.kind === "observatorio") {
+        state.solids.push({ x: p.x, y: p.y - 0.25, hw: 0.6, hh: 0.35 });
         continue;
       }
       if (p.kind === "vocacao") {
@@ -2198,8 +2308,9 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
         draw: () => drawChest(ctx, chest.x * TILE, chest.y * TILE, chest.opened, palette.accent),
       });
     }
+    const CENARIO = new Set(["stairs", "building", "oficina", "biblioteca", "observatorio"]);
     for (const prop of state.props) {
-      if (!prop.interact && prop.kind !== "stairs" && prop.kind !== "building") continue;
+      if (!prop.interact && !CENARIO.has(prop.kind)) continue;
       // construção ocupa mais de um tile: a caixa inteira decide, não o canto
       const naVista = prop.kind === "building"
         ? caixaNaVista(prop.x, prop.y, (prop.w || TILE) / TILE, (prop.h || TILE) / TILE, vista)
@@ -2221,6 +2332,9 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
             drawPlot(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent, prop.planted, prop.planted && t >= prop.readyAt);
           }
           else if (prop.kind === "vein") drawVein(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent, prop.charges);
+          else if (prop.kind === "oficina") drawOficina(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent);
+          else if (prop.kind === "biblioteca") drawBiblioteca(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent);
+          else if (prop.kind === "observatorio") drawObservatorio(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent);
           else if (prop.kind === "building") {
             drawBuilding(ctx, prop.x * TILE, prop.y * TILE, prop.w, prop.h, palette, palette.accent);
           }

@@ -28,6 +28,7 @@ com a linha do diário dizendo que foi feito.
 | cabanas ridículas, desproporcionais e sem entrada | `test/casas.test.mjs`: escala 2 em casa, cabana, torre e galpão, 72 fachadas com porta livre e parede sólida, 4 salas fechadas com mesa, fogo e cama; sonda entra, estuda, descansa e sai | feito em 2026-10-21 21:02 |
 | colisão de fantasma no mundo | `test/fantasmas.test.mjs`: 1.040 caixas de cenário em 12 tipos (árvore, pedra, barril, caixote, saco, fardo, cerca, fogo); sonda `cdp-fantasma.mjs` anda contra barril e árvore e para; caverna auditada no código (altar, forja, pedra, horta, veio, encantador e baú sólidos) | feito em 2026-10-21 21:10 |
 | contraste vivo em todos os estados | sonda `cdp-contraste.mjs` corrigida (gradiente mais próximo e elemento coberto/fora da tela): 218 textos únicos em 10 estados mais 390 px, **0 falha**; autoteste confirma que o medidor acha um par ruim | feito em 2026-10-21 21:20 |
+| sala temática por disciplina nas masmorras | `test/salas.test.mjs`: 93 cavernas com sala própria (oficina 35, biblioteca 36, observatório 22), 279 peças de cenário encostadas nas paredes, com caixa sólida; sonda `cdp-sala-tema.mjs` abre uma de cada e fotografa | feito em 2026-10-21 21:29 |
 
 ## O que a auditoria pegou de errado
 
@@ -43,11 +44,9 @@ com a linha do diário dizendo que foi feito.
    de companhia andando com o dono.
 2. **69 páginas escritas à mão** do vale e das áreas antigas: continuam com
    quatro partes e 255 a 469 palavras; falta o curso de seis partes do catálogo.
-3. **Tema de sala por disciplina** nas masmorras: piso e marca já variam, mas
-   forja, biblioteca e observatório ainda não têm sala própria.
-4. **Sistema de batalha**: falta ritmo, habilidade de chefe e leitura de turno;
+3. **Sistema de batalha**: falta ritmo, habilidade de chefe e leitura de turno;
    hoje o duelo é pergunta com vida.
-5. **Passada de interfaces**: HUD, diário, ficha, mochila e loja ainda não
+4. **Passada de interfaces**: HUD, diário, ficha, mochila e loja ainda não
    passaram pela auditoria de densidade e leitura.
-6. **Etapa 2 e 3 dos assets**: vegetação, solo, construção, água, props e fogo
+5. **Etapa 2 e 3 dos assets**: vegetação, solo, construção, água, props e fogo
    já têm variantes; falta fechar animação própria de cada grupo.

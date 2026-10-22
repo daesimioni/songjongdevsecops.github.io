@@ -29,7 +29,8 @@ andamento e o que falta.
   93 cavernas e clareiras, 3.854 peças de ambiente, 72 casas com porta e
   interior.
 - **Masmorras**: 93 plantas diferentes em 6 modelos, 4 acabamentos de piso,
-  entrada embaixo, cidade no alto, chefe longe da boca.
+  entrada embaixo, cidade no alto, chefe longe da boca e uma sala temática por
+  disciplina (oficina, biblioteca ou observatório).
 
 ## Onda 1 — assets ambientais
 
@@ -61,6 +62,7 @@ A árvore já vergava com a rajada e o fogo já tinha 4 a 8 quadros.
 
 | data | onda | o que mudou | prova |
 |---|---|---|---|
+| 2026-10-21 | salas temáticas | 93 cavernas com sala de assinatura: oficina (35), biblioteca (36) e observatório (22), três peças de cenário encostadas na parede e sólidas; miolo livre para o combate | `test/salas.test.mjs`, 30/30 suítes, 19/19 no navegador, sonda `cdp-sala-tema.mjs` |
 | 2026-10-21 | contraste | sonda de contraste corrigida para fundo em gradiente e elemento coberto/fora da tela; 218 textos únicos em 10 estados e no 390 px, zero falha | `cdp-contraste.mjs`, autoteste do medidor, 0 falha |
 | 2026-10-21 | colisão de cenário | 1.040 caixas novas em 12 tipos (árvore, pedra, barril, caixote, saco, fardo, cerca, poço, ruína, fogo); NPC usa a mesma colisão; caverna auditada no caminho de `state.solids` | `test/fantasmas.test.mjs`, 29/29 suítes, 19/19 no navegador, sonda andando contra barril e árvore |
 | 2026-10-21 | construções e interiores | casa, cabana, torre e galpão com escala 2 e porta ampliada; fachada sólida; 72 casas entram em 4 salas fechadas com mobília por casa, mesa de estudo e fogo que descansa; fundo escuro e sem clima lá dentro | `test/casas.test.mjs`, 28/28 suítes, 19/19 no navegador, sonda ao vivo em 60 fps |
