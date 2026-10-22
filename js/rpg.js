@@ -185,6 +185,11 @@ function readData() {
         name: String(entry.name || "").replace(/[<>\u0000-\u001f]/g, "").slice(0, 24) || kind,
         tier: clamp(Number(entry.tier) || 1, 1, 4),
       };
+      const saved = data.seen[kind];
+      if (SKILLS[entry.continent]) saved.continent = entry.continent;
+      for (const [field, max] of [["theme", 20], ["sample", 90]]) {
+        if (typeof entry[field] === "string") saved[field] = entry[field].replace(/[<>\u0000-\u001f]/g, "").slice(0, max);
+      }
     }
     for (const [key, plot] of Object.entries(obj.plots || {})) {
       if (typeof key !== "string" || key.length > 40 || !plot || typeof plot !== "object") continue;
@@ -1658,7 +1663,7 @@ export class RPG {
     } else {
       this.data.monsters[monster.id] = now();
     }
-    return { xp, loot, item: ITEMS[itemId], boss: d.boss };
+    return { xp, loot, item: ITEMS[itemId], boss: d.boss, defeated: 1 + (d.partners || []).filter((p) => p.done).length };
   }
 
   next() {

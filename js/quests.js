@@ -687,9 +687,10 @@ function emptyData() {
 }
 
 export class Quests {
-  constructor({ getCards, getDocks, gainXp, onReady, onChange, toast } = {}) {
+  constructor({ getCards, getDocks, getBosses, gainXp, onReady, onChange, toast } = {}) {
     this.getCards = getCards || (() => new Set());
     this.getDocks = getDocks || (() => new Set());
+    this.getBosses = getBosses || (() => this.data.bosses || {});
     this.gainXp = gainXp || (() => {});
     this.onReady = onReady || (() => {});
     this.onChange = onChange || (() => {});
@@ -740,7 +741,7 @@ export class Quests {
           : cartas.size;
     } else if (goal.type === "bosses") {
       need = goal.count || 1;
-      const mortos = Object.keys(this.data.bosses || {});
+      const mortos = [...new Set(Object.keys(this.getBosses() || {}).map((id) => id.replace(/^dungeon-/, "")))];
       have = goal.area ? mortos.filter((id) => id === goal.area).length : mortos.length;
     } else if (goal.type === "docks") {
       need = goal.count;
@@ -816,7 +817,9 @@ export class Quests {
         changed = true;
       }
     } else {
-      this.data.stats[kind] = Number(this.data.stats[kind] || 0) + 1;
+      const count = kind === "hunts" && value !== undefined ? value : 1;
+      if (!Number.isSafeInteger(count) || count <= 0) return;
+      this.data.stats[kind] = Number(this.data.stats[kind] || 0) + count;
       changed = true;
     }
     if (!changed) return;
