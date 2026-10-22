@@ -45,7 +45,7 @@ for (const file of jsFiles) {
   for (const m of source.matchAll(/export\s+(?:const|let|var|class)\s+([A-Za-z_$][\w$]*)/g)) names.add(m[1]);
   for (const m of source.matchAll(/export\s*\{([^}]+)\}/g)) {
     for (const raw of m[1].split(",")) {
-      const name = raw.trim().split(/\s+as\s+/)[0];
+      const name = raw.trim().split(/\s+as\s+/).at(-1);
       if (name) names.add(name);
     }
   }

@@ -1,3 +1,4 @@
+import { ASSET_META } from "../../content/asset-meta.js";
 // Grupo água: o que fica na beira, não a água em si (essa é tile animado).
 // Pedra molhada, junco, espuma e lírio usam o azul da água e o tom da pedra do
 // bioma; a espuma anima em três quadros e quebra a linha reta da costa.
@@ -93,8 +94,8 @@ function lirio(g, p, v, q = 0) {
 }
 
 export const AGUAS = {
-  pedraAgua: { w: 20, h: 14, variantes: 3, quadros: 4, ms: 280, desenhar: pedraAgua },
-  juncoAgua: { w: 22, h: 26, variantes: 3, quadros: 2, ms: 460, desenhar: juncoAgua },
-  espuma: { w: 22, h: 9, variantes: 1, quadros: 6, ms: 200, desenhar: espuma },
-  lirio: { w: 18, h: 12, variantes: 3, quadros: 2, ms: 620, desenhar: lirio },
+  pedraAgua: { ...ASSET_META.pedraAgua, quadros: 4, ms: 280, desenhar: pedraAgua },
+  juncoAgua: { ...ASSET_META.juncoAgua, quadros: 2, ms: 460, desenhar: juncoAgua },
+  espuma: { ...ASSET_META.espuma, quadros: 6, ms: 200, desenhar: espuma },
+  lirio: { ...ASSET_META.lirio, quadros: 2, ms: 620, desenhar: lirio },
 };

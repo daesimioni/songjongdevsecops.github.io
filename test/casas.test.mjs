@@ -91,14 +91,12 @@ for (const [tipo, conjunto] of Object.entries(usadas)) {
 
 // mesa, fogo e cama ficam parados na sala e barram o corpo; a mobília
 // sorteada também virou sólida (ver test/interior-collision.test.mjs)
-const moveisFixos = world.props.filter((p) => String(p.tipo || "").startsWith("movel:"));
-check(moveisFixos.length === 22, `móveis fixos com caixa: ${moveisFixos.length}, esperado 22`);
-for (const sala of salas) {
-  check(world.boxCollides(sala.mesa.x, sala.mesa.y - 0.3, PLAYER_W, PLAYER_H), "mesa atravessável");
-  check(world.boxCollides(sala.lareira.x, sala.lareira.y - 0.3, PLAYER_W, PLAYER_H), "fogo atravessável");
+for(const casa of world.casas){
+  const sala=world.prepararInterior(casa);
+  check(world.boxCollides(sala.mesa.x,sala.mesa.y,PLAYER_W,PLAYER_H),"mesa atravessável");
+  check(world.boxCollides(sala.lareira.x,sala.lareira.y+.2,PLAYER_W,PLAYER_H),"fogo atravessável");
 }
 
-// ---- mobília: determinística por casa, dentro da sala, com mesa/fogo/cama ----
 const casaA = world.casas.find((c) => c.tipo === "casa");
 const casaB = world.casas.filter((c) => c.tipo === "casa")[1];
 const guardar = () => world.interiorProps.map((m) => `${m.tipo}@${m.x.toFixed(2)},${m.y.toFixed(2)}`).join("|");

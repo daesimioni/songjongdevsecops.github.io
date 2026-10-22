@@ -1,3 +1,4 @@
+import { segmentFree } from "../core/collision.js";
 import { moveWithCollision, advancePath, directionVector, facingDirection } from "../core/movement.js";
 import { PLAYER_SPEED, SPRINT_MULT, PLAYER_W, PLAYER_H, MAP_W, MAP_H, INTERACT_RADIUS } from "../core/runtime-config.js";
 import { findInteractionPath, findPath, tileWalkable } from "../core/path.js";
@@ -67,7 +68,7 @@ function setPathTo(x, y, pending = null, silencioso = false) {
   const target = pending?.kind === "cave" ? pending.obj.exit : pending?.obj;
   const path = target
     ? findInteractionPath(MAP_W, MAP_H, (tx, ty, pad) => tileWalkable(world, tx, ty, pad), player, target,
-      { radius: interactionRadius(pending.kind) })
+      { radius: interactionRadius(pending.kind), canTraverse:(a,b)=>segmentFree(a,b,(x,y)=>!world.boxCollides(x,y,PLAYER_W,PLAYER_H)) })
     : findPath(world, { x: player.x, y: player.y }, { x, y });
   if (!path || !path.length) {
     if (!silencioso) toast("Não achei um caminho até aí.", 2800);
@@ -110,23 +111,8 @@ function catFree(x, y) {
   return !world.boxCollides(x, y, 0.42, 0.32);
 }
 
-function moveCat(dx, dy) {
-  const cat = world.cat;
-  if (catFree(cat.x + dx, cat.y + dy)) {
-    cat.x += dx;
-    cat.y += dy;
-    return true;
-  }
-  // desliza pelo eixo livre em vez de atravessar a água
-  if (Math.abs(dx) > 0.001 && catFree(cat.x + dx, cat.y)) {
-    cat.x += dx;
-    return true;
-  }
-  if (Math.abs(dy) > 0.001 && catFree(cat.x, cat.y + dy)) {
-    cat.y += dy;
-    return true;
-  }
-  return false;
+function moveCat(dx,dy){
+  return moveWithCollision(world.cat,dx,dy,catFree);
 }
 
 function updateCat(dt) {

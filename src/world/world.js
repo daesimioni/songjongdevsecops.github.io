@@ -1,3 +1,7 @@
+import { assetColliders, stationColliders } from "../content/collision-bodies.js";
+import { boxesOverlap, touchesSolidTiles } from "../core/collision.js";
+import { CAVE_COLLISION } from "../content/collision-profiles.js";
+import { projectCollisionBoxes } from "../core/collision.js";
 import { hash2, mulberry32 } from "../core/random.js";
 import { facingDirection } from "../core/movement.js";
 import { MAP_W, MAP_H, TILE, TILE_KIND as K, SOLID, REVEAL_RADIUS, PLAYER_W, PLAYER_H } from "../core/runtime-config.js";
@@ -829,11 +833,8 @@ export function createWorld() {
       interiorProps.push({ tipo: "morador", ...canto, bioma: house.bioma, dir: 0, ...estilo });
     }
     for (const item of interiorProps) {
-      const box = CAIXA_CENARIO[item.tipo] || (item.tipo === "estante" ? [0.5, 0.3, 0.3] : null);
-      // Os móveis fixos já têm caixas permanentes; só a mobília da casa
-      // atual entra aqui, sem deixar colisões invisíveis na próxima casa.
-      if (!box || item.tipo === "fogueira") continue;
-      interiorSolids.push({ x: item.x, y: item.y - box[2], hw: box[0], hh: box[1] });
+      if(item.tipo==='morador')continue;
+      interiorSolids.push(...assetColliders(item.tipo,item.x,item.y+.5,hash2(item.x*3,item.y*7)));
     }
     return sala;
   }
@@ -850,7 +851,7 @@ export function createWorld() {
       y: a.y,
       w: t.w / TILE,
       h: t.h / TILE,
-      door: { x: a.x, y: a.y + 0.55 },
+      door: { x: a.x, y: a.y + 0.8 },
     });
   }
 
@@ -1023,19 +1024,11 @@ export function createWorld() {
     }
   }
   function boxCollides(x, y, w, h) {
-    const x0 = Math.floor(x - w / 2);
-    const x1 = Math.floor(x + w / 2 - 0.001);
-    const y0 = Math.floor(y - h / 2);
-    const y1 = Math.floor(y + h / 2 - 0.001);
-    for (let ty = y0; ty <= y1; ty++) {
-      for (let tx = x0; tx <= x1; tx++) {
-        if (isSolidTile(tx, ty)) return true;
-      }
-    }
+    if(touchesSolidTiles(x,y,w,h,isSolidTile))return true;
     const hw = w / 2;
     const hh = h / 2;
     for (const p of interiorSolids) {
-      if (Math.abs(x - p.x) < hw + p.hw && Math.abs(y - p.y) < hh + p.hh) return true;
+      if (boxesOverlap({x,y,hw,hh},p)) return true;
     }
     const bx0 = Math.floor((x - hw) / PROP_CELL);
     const bx1 = Math.floor((x + hw) / PROP_CELL);
@@ -1047,7 +1040,7 @@ export function createWorld() {
         if (!lista) continue;
         for (const p of lista) {
           if (p.active && !p.active()) continue;
-          if (Math.abs(x - p.x) < hw + p.hw && Math.abs(y - p.y) < hh + p.hh) return true;
+          if (boxesOverlap({x,y,hw,hh},p)) return true;
         }
       }
     }
@@ -1065,13 +1058,12 @@ export function createWorld() {
 
   // coisas que ocupam espaço no chão. Monstros e chefes são dinâmicos: a
   // colisão some quando eles caem e volta quando renascem.
-  for (const s of stations) {
-    const fountain = s.icon === "fountain";
-    // a base desenhada tem 26 px (32 no chafariz); a colisão acompanha o
-    // desenho, senão o boneco atravessa metade do pedestal
-    addProp(s.x, s.y, fountain ? 1 : 0.82, fountain ? 0.55 : 0.5);
+  for(const s of stations)for(const box of stationColliders(s)){
+    const p=addProp(box.x,box.y,box.hw,box.hh);Object.assign(p,{tipo:'estacao',source:s});
   }
-  for (const w of waystones) addProp(w.x, w.y, 0.55, 0.4);
+  for(const w of waystones)for(const box of projectCollisionBoxes([[-10,-4,10,6]],w.x,w.y,1/TILE)){
+    const p=addProp(box.x,box.y,box.hw,box.hh);Object.assign(p,{tipo:'farol',source:w});
+  }
   const decorSize = {
     lamp: [0.18, 0.15], sign: [0.4, 0.2], bench: [0.6, 0.22],
     terminal: [0.4, 0.3], pillar: [0.45, 0.35], book: [0.35, 0.2],
@@ -1080,15 +1072,25 @@ export function createWorld() {
     // peças do cais: caixote e mastro barram, gaivota não pisa no chão
     crate: [0.4, 0.3], crane: [0.45, 0.35], bell: [0.3, 0.25], mast: [0.2, 0.3],
   };
-  for (const d of decor) {
+  for (let i=decor.length-1;i>=0;i--) {
+    const d=decor[i];
     const size = decorSize[d.type];
     if (!size || d.fino) continue;
     // O enfeite nasceu antes da picada, então uma lâmpada podia ficar em cima
     // do único caminho da ilha. Quem está no chão do caminho ou da ponte sai:
     // enfeite não fecha passagem.
-    const chao = get(Math.floor(d.x), Math.floor(d.y));
-    if (chao === PATH || chao === BRIDGE) continue;
-    addProp(d.x, d.y, size[0], size[1]);
+    const corridor=(x,y)=>touchesSolidTiles(x,y,size[0]*2,size[1]*2,(tx,ty)=>
+      [PATH,BRIDGE,WATER,K.WALL,TREE].includes(get(tx,ty)));
+    if(corridor(d.x,d.y)){
+      let spot=null;
+      for(let r=.75;r<=4&&!spot;r+=.5)for(let j=0;j<16&&!spot;j++){
+        const x=d.x+Math.cos(j*Math.PI/8)*r,y=d.y+Math.sin(j*Math.PI/8)*r;
+        if(!corridor(x,y)&&!boxCollides(x,y,size[0]*2,size[1]*2))spot={x,y};
+      }
+      if(!spot){decor.splice(i,1);continue;}
+      d.x=spot.x;d.y=spot.y;
+    }
+    const p=addProp(d.x,d.y,size[0],size[1]);Object.assign(p,{tipo:`decor:${d.type}`,source:d});
   }
 
   // Duas bocas por continente, ligadas pelo túnel do subsolo: descer numa e
@@ -1103,7 +1105,7 @@ export function createWorld() {
     const pedraDaArea = WAYSTONES.find((s) => s.id === h.id);
     const base = def?.rooms?.[0]?.name || `Caverna de ${CONTINENTS[h.continent]?.name || ""}`;
     const freeSpot = (cx, cy) =>
-      !boxCollides(cx, cy, 1.9, 1.0) &&
+      !boxCollides(cx,cy,1.9,1.0) &&
       !boxCollides(cx, cy + 0.9, PLAYER_W, PLAYER_H) &&
       !boxCollides(cx, cy + 1.5, PLAYER_W, PLAYER_H) &&
       !boxCollides(cx, cy + 1.7, PLAYER_W, PLAYER_H);
@@ -1193,10 +1195,29 @@ export function createWorld() {
       });
     });
   }
-  // O morro da caverna tem 40x31 px (2,5 x 2 tiles). A caixa antiga cobria só
-  // a boca; o corpo do morro era atravessável. A caixa agora cobre o teto e o
-  // miolo, e deixa a boca e a saída em c.y + 1,5 livres para chegar e descer.
-  for (const c of caves) addProp(c.x, c.y - 1.2, 0.95, 0.7);
+  // Uma fachada sobre um trecho de ponte não pode represar a única rota.
+  // Mantém a estrutura sólida e desenha um contorno caminhável, em vez de
+  // encolher sua caixa ou abrir uma passagem invisível sobre a água.
+  for(const c of caves){
+    const onBridge=projectCollisionBoxes(CAVE_COLLISION,c.x,c.y,1/TILE).some(box=>
+      touchesSolidTiles(box.x,box.y,box.hw*2,box.hh*2,(x,y)=>get(x,y)===BRIDGE));
+    const onShore=touchesSolidTiles(c.x,c.y-.5,4,3.2,(x,y)=>get(x,y)===WATER);
+    if(!onBridge&&!onShore)continue;
+    const left=Math.floor(c.x)-3,right=Math.ceil(c.x)+2;
+    const top=Math.floor(c.y)-3,bottom=Math.ceil(c.y)+2;
+    c.walkway={left,right,top,bottom};
+    for(let y=top;y<=bottom;y++)for(let x=left;x<=right;x++){
+      if(x!==left&&x!==right&&y!==top&&y!==bottom)continue;
+      if(get(x,y)===WATER)set(x,y,BRIDGE);
+      else if(get(x,y)===TREE)set(x,y,PATH);
+    }
+  }
+
+  // A fachada compartilha quatro partes: paredes laterais e massa rochosa
+  // atrás da abertura, mantendo o vão e a saída caminháveis.
+  for(const c of caves)for(const box of projectCollisionBoxes(CAVE_COLLISION,c.x,c.y,1/TILE)){
+    const p=addProp(box.x,box.y,box.hw,box.hh);Object.assign(p,{tipo:'caverna',source:c});
+  }
 
   // a boca nasceu antes da casa: se as duas caíram no mesmo canto, a casa sai.
   // A conta é de caixa contra caixa (a mesma da colisão), não de raio: o morro
@@ -1214,82 +1235,37 @@ export function createWorld() {
     if (j >= 0) ambiente.splice(j, 1);
   }
 
-  // a fachada da casa ocupa o chão: o corpo não atravessa mais a parede. A
-  // caixa é a base (2 tiles de fundo), não o telhado, e a porta fica de fora.
-  // Vai em colunas de no máximo 2 tiles: uma caixa larga demais vira parede
-  // invisível, e a regra do mundo é que a colisão caiba no desenho.
-  for (const casa of casas) {
-    const colunas = Math.max(1, Math.ceil(casa.w / 2));
-    const meia = casa.w / (2 * colunas);
-    for (let i = 0; i < colunas; i++) {
-      const p = addProp(casa.x - casa.w / 2 + meia + i * 2 * meia, casa.y - 0.7, meia, 0.6);
-      if (p) p.tipo = `casa:${casa.tipo}`;
+  // Todas as peças usam o mesmo pé (+0,5), escala e variante do renderer.
+  // Se uma peça decorativa sólida invade entrada/porta, remova a peça inteira.
+  // Nunca mantenha a imagem e dispense apenas a colisão.
+  const assetBoxes=(a)=>assetColliders(a.tipo,a.x,a.y+.5,hash2(a.x*5,a.y*11));
+  const entranceClear=(box)=>caves.some(c=>boxesOverlap(box,{x:c.exit.x,y:c.exit.y,hw:.65,hh:.55}));
+  const doorClear=(box)=>casas.some(c=>boxesOverlap(box,{x:c.door.x,y:c.door.y,hw:.45,hh:.3}));
+  for(let i=ambiente.length-1;i>=0;i--){
+    const a=ambiente[i];
+    if(casas.some(c=>c.x===a.x&&c.y===a.y))continue;
+    const boxes=assetBoxes(a);
+    if(boxes.some(box=>entranceClear(box)||doorClear(box)))ambiente.splice(i,1);
+  }
+  for(const a of ambiente){
+    const house=casas.find(c=>c.x===a.x&&c.y===a.y);
+    for(const box of assetBoxes(a)){
+      const p=addProp(box.x,box.y,box.hw,box.hh);
+      Object.assign(p,{tipo:house?`casa:${a.tipo}`:a.tipo,part:box.part,source:a});
     }
-  }
-
-  // os três móveis fixos da sala (mesa, fogo e cama) também barram o corpo.
-  // A mobília sorteada tem caixas trocadas em prepararInterior; estas
-  // caixas fixas ficam no bolsão da casa, longe das ilhas, e valem para as 4 salas.
-  for (const sala of TODAS_AS_SALAS) {
-    const tipo = sala.tipo;
-    const mesa = addProp(sala.mesa.x, sala.mesa.y - 0.3, 0.7, 0.3);
-    if (mesa) mesa.tipo = `movel:mesa:${tipo}`;
-    const fogo = addProp(sala.lareira.x, sala.lareira.y - 0.3, 0.6, 0.3);
-    if (fogo) fogo.tipo = `movel:lareira:${tipo}`;
-    if (tipo !== "galpao") {
-      const cama = addProp(sala.cama.x, sala.cama.y - 0.3, 0.8, 0.3);
-      if (cama) cama.tipo = `movel:cama:${tipo}`;
-    }
-  }
-
-  // árvore em cima da boca fecha a descida quando o tronco passa a barrar:
-  // tira a peça, porque a pedra da caverna e o degrau valem mais que a copa
-  for (let i = ambiente.length - 1; i >= 0; i--) {
-    const a = ambiente[i];
-    if (a.tipo !== "arvore" && a.tipo !== "conifera" && a.tipo !== "palmeira" && a.tipo !== "seca") continue;
-    const perto = caves.some((c) =>
-      Math.hypot(c.x - a.x, c.y - a.y) < 1.5 || Math.hypot(c.exit.x - a.x, c.exit.y - a.y) < 0.9);
-    if (perto) ambiente.splice(i, 1);
-  }
-
-  // ---- colisão do cenário: o que tem volume barra o corpo ----
-  // Antes só estação, pedra, boca e doca barravam; barril, caixote, árvore e
-  // fogueira eram desenho puro e o boneco atravessava tudo. A caixa acompanha
-  // o desenho e fica presa ao chão. Árvore não nasce perto de casa (a folga é
-  // feita no povoado), então a porta não fica trancada.
-  const CAIXA_CENARIO = {
-    arvore: [0.28, 0.22, 0.34], conifera: [0.26, 0.22, 0.34],
-    palmeira: [0.24, 0.2, 0.34], seca: [0.24, 0.2, 0.34],
-    pedra: [0.36, 0.24, 0.3],
-    barril: [0.34, 0.28, 0.3], caixote: [0.4, 0.32, 0.34],
-    saco: [0.32, 0.26, 0.28], fardo: [0.44, 0.28, 0.3],
-    cerca: [0.68, 0.3, 0.35], poco: [0.8, 0.5, 0.42],
-    ruina: [0.95, 0.55, 0.5],
-    fogueira: [0.48, 0.28, 0.3], braseiro: [0.3, 0.26, 0.3],
-  };
-  const pertoDeBoca = (x, y) => caves.some((c) =>
-    Math.hypot(c.x - x, c.y - y) < 2.0 || Math.hypot(c.exit.x - x, c.exit.y - y) < 1.4);
-  const pertoDePorta = (x, y) => casas.some((c) =>
-    Math.hypot(c.door.x - x, c.door.y - y) < 1.5);
-  for (const a of ambiente) {
-    const caixa = CAIXA_CENARIO[a.tipo];
-    if (!caixa) continue;
-    if (pertoDeBoca(a.x, a.y) || pertoDePorta(a.x, a.y)) continue;
-    const p = addProp(a.x, a.y - caixa[2], caixa[0], caixa[1]);
-    if (p) p.tipo = a.tipo;
   }
 
   // nenhum NPC nasce dentro de pedra: se o posto caiu na área nova de uma
   // estação, caverna ou enfeite, ele anda para o ponto livre mais próximo.
   for (const n of npcs) {
-    if (!boxCollides(n.x, n.y, 0.3, 0.24)) continue;
+    if (!boxCollides(n.x, n.y, PLAYER_W, PLAYER_H)) continue;
     let achou = null;
     for (let r = 0.5; r <= 3 && !achou; r += 0.5) {
       for (let i = 0; i < 12 && !achou; i++) {
         const a = (i / 12) * Math.PI * 2;
         const x = n.hx + Math.cos(a) * r;
         const y = n.hy + Math.sin(a) * r;
-        if (!boxCollides(x, y, 0.3, 0.24)) achou = { x, y };
+        if (!boxCollides(x, y, PLAYER_W, PLAYER_H)) achou = { x, y };
       }
     }
     if (!achou) continue;
@@ -1422,6 +1398,8 @@ export function createWorld() {
     casas, interiores: INTERIORES, salas: TODAS_AS_SALAS, prepararInterior,
     cat: { ...CAT_SPAWN, facing: 1, t: 0, moving: false },
     get, set, isSolidTile, boxCollides, updateNpcs, setClima,
+    collisionBoxes:()=>[...props,...interiorSolids],
+    limparInterior(){interiorProps.length=0;interiorSolids.length=0;},
     continentAt, continentAtTile, areaAt, areaAtTile,
     markExplored, isExplored, setExplored,
     get exploredVersion() { return exploredVersion; },

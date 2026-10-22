@@ -1,3 +1,4 @@
+import { drawCollisionOverlay } from "./collision-overlay.js";
 import { createTerrainRenderer } from "./terrain-renderer.js";
 import { spritePose } from "./sprite-cache.js";
 import { artTick, artTime } from "./art-style.js";
@@ -38,7 +39,7 @@ function roundRect(ctx, x, y, w, h, r) {
   ctx.closePath();
 }
 
-export function createRenderer(canvas, world) {
+export function createRenderer(canvas, world, {collisionDebug=false} = {}) {
   const ctx = canvas.getContext("2d", { alpha: false });
   if (ctx) ctx.imageSmoothingEnabled = false;
   let dpr = 1, vw = 0, vh = 0, zoom = 3;
@@ -1393,6 +1394,7 @@ export function createRenderer(canvas, world) {
     });
     jogadorAtual = player;
     drawables.sort((a, b) => a.y - b.y).forEach((d) => d.fn());
+    if(collisionDebug)drawCollisionOverlay(ctx,world.collisionBoxes(),player,{x:camX,y:camY,w:viewW,h:viewH},world.isSolidTile);
     stats.assets = assetsVisiveis;
 
     // partículas

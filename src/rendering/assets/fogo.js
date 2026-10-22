@@ -1,3 +1,4 @@
+import { ASSET_META } from "../../content/asset-meta.js";
 // Grupo fogo: fogueira, braseiro, tocha, lanterna e fumaça. Todos animam por
 // quadro cacheado, então o custo por quadro continua sendo um drawImage. A
 // chama muda de forma e de altura, com núcleo claro e brasa embaixo; a fumaça
@@ -182,9 +183,9 @@ function fumaca(g, p, v, quadro) {
 }
 
 export const FOGOS = {
-  fogueira: { w: 24, h: 20, variantes: 2, quadros: 8, ms: 95, desenhar: fogueira },
-  braseiro: { w: 16, h: 22, variantes: 2, quadros: 8, ms: 95, desenhar: braseiro },
-  tocha: { w: 10, h: 24, variantes: 2, quadros: 6, ms: 85, desenhar: tocha },
-  lanterna: { w: 14, h: 24, variantes: 2, quadros: 4, ms: 300, desenhar: lanterna },
-  fumaca: { w: 16, h: 30, variantes: 2, quadros: 6, ms: 200, desenhar: fumaca },
+  fogueira: { ...ASSET_META.fogueira, quadros: 8, ms: 95, desenhar: fogueira },
+  braseiro: { ...ASSET_META.braseiro, quadros: 8, ms: 95, desenhar: braseiro },
+  tocha: { ...ASSET_META.tocha, quadros: 6, ms: 85, desenhar: tocha },
+  lanterna: { ...ASSET_META.lanterna, quadros: 4, ms: 300, desenhar: lanterna },
+  fumaca: { ...ASSET_META.fumaca, quadros: 6, ms: 200, desenhar: fumaca },
 };
