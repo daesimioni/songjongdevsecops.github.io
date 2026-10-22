@@ -8,8 +8,8 @@ import assert from "node:assert/strict";
 
 globalThis.localStorage = { getItem: () => null, setItem: () => {}, removeItem: () => {}, clear: () => {} };
 
-const { createWorld } = await import("../js/world.js");
-const { MAP_W, MAP_H, SPAWN, PLAYER_W, PLAYER_H, INTERACT_RADIUS } = await import("../js/config.js");
+const { createWorld } = await import("../src/world/world.js");
+const { MAP_W, MAP_H, SPAWN, PLAYER_W, PLAYER_H, INTERACT_RADIUS } = await import("../src/content/config.js");
 
 const w = createWorld();
 

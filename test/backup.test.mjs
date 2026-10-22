@@ -11,8 +11,8 @@ globalThis.localStorage = {
   clear: () => store.clear(),
 };
 
-const { STORAGE, BACKUP } = await import("../js/config.js");
-const backup = await import("../js/backup.js");
+const { STORAGE, BACKUP } = await import("../src/content/config.js");
+const backup = await import("../src/platform/backup.js");
 
 // estado de uma conta com progresso
 store.set(STORAGE.name, JSON.stringify("Ada"));

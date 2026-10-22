@@ -3,7 +3,7 @@
 // Roda sem navegador.
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { bonusDeRitmo, leituraDeRitmo } from "../js/duelo-ritmo.js";
+import { bonusDeRitmo, leituraDeRitmo } from "../src/gameplay/duelo-ritmo.js";
 
 const problemas = [];
 const check = (ok, msg) => { if (!ok) problemas.push(msg); };
@@ -19,12 +19,12 @@ check(/\+1 de dano/.test(leituraDeRitmo(3)), "leitura de +1");
 check(/\+2 de dano/.test(leituraDeRitmo(5)), "leitura de +2");
 
 // ---- integração na fonte ----
-const rpg = fs.readFileSync(new URL("../js/rpg.js", import.meta.url), "utf8");
-const duel = fs.readFileSync(new URL("../js/duel.js", import.meta.url), "utf8");
-const ritmo = fs.readFileSync(new URL("../js/duelo-ritmo.js", import.meta.url), "utf8");
+const rpg = fs.readFileSync(new URL("../src/gameplay/rpg.js", import.meta.url), "utf8");
+const duel = fs.readFileSync(new URL("../src/ui/duel.js", import.meta.url), "utf8");
+const ritmo = fs.readFileSync(new URL("../src/gameplay/duelo-ritmo.js", import.meta.url), "utf8");
 check(/import \{ bonusDeRitmo \} from "\.\/duelo-ritmo\.js"/.test(rpg), "rpg não importa o ritmo");
 check(/bonusDeRitmo\(d\.seguidos\)/.test(rpg), "acerto não soma ritmo");
-check(/import \{ leituraDeRitmo \} from "\.\/duelo-ritmo\.js"/.test(duel), "duelo não importa a leitura");
+check(/import \{ leituraDeRitmo \} from "\.\.\/gameplay\/duelo-ritmo\.js"/.test(duel), "duelo não importa a leitura");
 check(/rpg\.erroPrevisto\(\)/.test(duel), "previsão deve usar a conta real do RPG");
 check(/erroPrevisto\(/.test(rpg), "RPG deve ter a conta única do erro");
 check(!/danoPrevisto/.test(ritmo), "fórmula de dano duplicada não pode voltar ao módulo de ritmo");

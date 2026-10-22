@@ -1,3 +1,5 @@
+import { QUESTION_INDEX } from "../src/gameplay/question-bank.js";
+const QUESTIONS = Object.fromEntries(QUESTION_INDEX);
 // Conferência mínima do que não depende do navegador: progresso das missões e
 // o filtro que impede conteúdo de fora do jogo de entrar nos canais.
 import assert from "node:assert/strict";
@@ -10,17 +12,17 @@ globalThis.localStorage = {
   clear: () => store.clear(),
 };
 
-const { Quests, QUESTS } = await import("../js/quests.js");
-const { Rede } = await import("../js/nostr.js");
-const { NOSTR } = await import("../js/config.js");
-const { RPG } = await import("../js/rpg.js");
-const { GROUNDS, QUESTIONS } = await import("../js/rpg-data.js");
-const { DUNGEONS } = await import("../js/dungeon-data.js");
-const { buildDungeonMap, dungeonSolid, dungeonLineOfSight } = await import("../js/dungeon.js");
-const { addPeerSample, feedPeer, peerRenderPosition } = await import("../js/interp.js");
-const { createWorld } = await import("../js/world.js");
-const { findPath } = await import("../js/path.js");
-const { PLAYER_W, PLAYER_H, SPAWN, STORAGE } = await import("../js/config.js");
+const { Quests, QUESTS } = await import("../src/gameplay/quests.js");
+const { Rede } = await import("../src/platform/nostr.js");
+const { NOSTR } = await import("../src/content/config.js");
+const { RPG } = await import("../src/gameplay/rpg.js");
+const { GROUNDS } = await import("../src/content/rpg-data.js");
+const { DUNGEONS } = await import("../src/content/dungeon-data.js");
+const { buildDungeonMap, dungeonSolid, dungeonLineOfSight } = await import("../src/gameplay/dungeon-map.js");
+const { addPeerSample, feedPeer, peerRenderPosition } = await import("../src/platform/interp.js");
+const { createWorld } = await import("../src/world/world.js");
+const { findPath } = await import("../src/core/path.js");
+const { PLAYER_W, PLAYER_H, SPAWN, STORAGE } = await import("../src/content/config.js");
 
 const quest = (id) => QUESTS.find((q) => q.id === id);
 const cards = new Set();
@@ -486,7 +488,7 @@ assert.equal(fora.ok, false, "runa nao funciona fora do duelo");
 assert.equal(spellRpg.itemCount("runa-gelo"), 1, "runa fora do duelo nao e consumida");
 
 // companhia: mana, bichos com habilidades e montarias
-const { MANA_MS } = await import("../js/pets.js");
+const { MANA_MS } = await import("../src/content/pets.js");
 store.set(STORAGE.rpg, JSON.stringify({
   hp: 30,
   pets: { gato: { bond: 3 } },

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
-import {criarCache,paletaDaArea} from '../js/assets/nucleo.js';
-import {artFrame,setArtMotion} from '../js/art-style.js';
-import {spritePose,clearSpriteCache,spriteCacheStats} from '../js/sprite-cache.js';
+import {criarCache,paletaDaArea} from '../src/rendering/assets/nucleo.js';
+import {artFrame,setArtMotion} from '../src/rendering/art-style.js';
+import {spritePose,clearSpriteCache,spriteCacheStats} from '../src/rendering/sprite-cache.js';
 let created=0,outputDraws=0;
 const context=()=>new Proxy({imageSmoothingEnabled:false,drawImage(){outputDraws++;},createLinearGradient(){return {addColorStop(){}};}},{get:(o,k)=>k in o?o[k]:()=>{},set:(o,k,v)=>(o[k]=v,true)});
 const factory=()=>{created++;return {width:0,height:0,getContext:()=>context()};};
@@ -25,7 +25,7 @@ assert.ok(spriteCacheStats().bytes<=spriteCacheStats().maxBytes);
 setArtMotion(false);assert.equal(artFrame(9000,8,100,3),0);assert.equal(artFrame(250,8,100,3),0);
 setArtMotion(true);assert.notEqual(artFrame(0,8,100,0),artFrame(0,8,100,1),'instâncias têm fase própria');
 
-const {desenharAsset,assetDe,tamanhoDoAsset}=await import('../js/assets/index.js');
+const {desenharAsset,assetDe,tamanhoDoAsset}=await import('../src/rendering/assets/index.js');
 const calls=[],dest=context();dest.drawImage=(...args)=>calls.push(args);
 desenharAsset(dest,'casa',300,200,{bioma:{id:'ancora',accent:'#61f4c0'},seed:3});
 const house=assetDe('casa'),e=house.escala||1,pad=8*e,last=calls.at(-1);

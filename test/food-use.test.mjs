@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
-import {RPG} from '../js/rpg.js';
-import {ITEMS} from '../js/rpg-data.js';
+import {RPG} from '../src/gameplay/rpg.js';
+import {ITEMS} from '../src/content/rpg-data.js';
 globalThis.localStorage={getItem:()=>null,setItem(){}};
 for(const [id,item] of Object.entries(ITEMS).filter(([,item])=>item.heal||item.mana||item.buff)) {
   const rpg=new RPG();rpg.data.hp=1;rpg.data.mana=0;rpg.data.manaAt=Date.now();rpg.addItem(id,1);

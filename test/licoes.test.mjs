@@ -5,12 +5,12 @@ import assert from "node:assert/strict";
 
 globalThis.localStorage = { getItem: () => null, setItem: () => {}, removeItem: () => {}, clear: () => {} };
 
-const { CATALOG_CONTENT } = await import("../js/catalog-gen.js");
-const { QUESTIONS } = await import("../js/rpg-data.js");
-const { LICOES } = await import("../js/text/licoes.js");
-const { LICOES_POST } = await import("../js/text/licoes-post.js");
-const { POSTS } = await import("../js/content.js");
-const { LEGACY_CONTENT } = await import("../js/config.js");
+const { CATALOG_CONTENT } = await import("../src/content/catalog-gen.js");
+const { QUESTIONS } = await import("../src/content/rpg-data.js");
+const { LICOES } = await import("../src/content/text/licoes.js");
+const { LICOES_POST } = await import("../src/content/text/licoes-post.js");
+const { POSTS } = await import("../src/content/content.js");
+const { LEGACY_CONTENT } = await import("../src/content/config.js");
 
 const problemas = [];
 const check = (ok, msg) => { if (!ok) problemas.push(msg); };

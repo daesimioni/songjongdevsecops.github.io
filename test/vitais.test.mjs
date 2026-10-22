@@ -3,7 +3,7 @@
 // navegador: node test/vitais.test.mjs
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { fracoesDeVida } from "../js/vitais.js";
+import { fracoesDeVida } from "../src/core/vitais.js";
 
 const problemas = [];
 const check = (ok, msg) => { if (!ok) problemas.push(msg); };
@@ -25,17 +25,17 @@ const semArg = fracoesDeVida();
 check(semArg.vida === 0 && semArg.mana === 0, "sem argumento devia dar 0/0");
 
 // ---- o renderer usa a conta e o app entrega os vitais ----
-const render = fs.readFileSync(new URL("../js/render.js", import.meta.url), "utf8");
-const app = fs.readFileSync(new URL("../js/app.js", import.meta.url), "utf8");
-check(/from "\.\/vitais\.js"/.test(render), "render.js não importa a conta dos vitais");
+const render = fs.readFileSync(new URL("../src/rendering/render.js", import.meta.url), "utf8");
+const app = fs.readFileSync(new URL("../src/app/app.js", import.meta.url), "utf8");
+check(/from "\.\.\/core\/vitais\.js"/.test(render), "render.js não importa a conta dos vitais");
 check(/function draw\(now, player, peers, npcs, cat, moving, rastreador = false, vitais = null/.test(render), "draw() sem o parâmetro de vitais");
 check(/drawNameTag\(player\.name[^)]*vitais\)/.test(render), "o nome do jogador não recebe os vitais");
 check(/player\.y \* TILE - 36 - lift/.test(render), "placa de nome e barras coladas na cabeça");
 check(/fracoesDeVida\(vitais\)/.test(render), "as barras não usam a conta de fração");
 check(/#ff5a86/.test(render) && /#6bd5ff/.test(render), "cores de vida e mana diferentes do HUD");
 check(/hp: rpg\.hp\(\), hpMax: rpg\.hpMax\(\), mana: rpg\.mana\(\), manaMax: rpg\.manaMax\(\)/.test(app), "app.js não entrega os vitais ao renderer");
-const dungeon = fs.readFileSync(new URL("../js/dungeon.js", import.meta.url), "utf8");
-check(/from "\.\/vitais\.js"/.test(dungeon), "caverna não usa a conta dos vitais");
+const dungeon = fs.readFileSync(new URL("../src/app/dungeon.js", import.meta.url), "utf8");
+check(/from "\.\.\/core\/vitais\.js"/.test(dungeon), "caverna não usa a conta dos vitais");
 check(/fracoesDeVida\(vitais\(\)\)/.test(dungeon), "caverna não desenha as barras");
 check(/vitais: \(\) => \(\{ hp: rpg\.hp\(\)/.test(app), "app.js não passa os vitais para a caverna");
 

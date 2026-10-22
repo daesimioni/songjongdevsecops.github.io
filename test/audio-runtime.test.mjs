@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
-import {createAudio} from '../js/audio.js';
+import {createAudio} from '../src/platform/audio.js';
 import {makeDocument} from './ui-dom.mjs';
-import {mount} from '../js/zones/music.js';
+import {mount} from '../src/learning/zones/music.js';
 globalThis.window = {};
 let audio = createAudio();
 assert.equal(audio.setEnabled(true),false);

@@ -3,7 +3,7 @@
 // punho até a mão e se o punho muda de altura quando o passo muda.
 import assert from "node:assert/strict";
 
-const { drawHuman, gearView, direcaoBase, ladoDaDiagonal } = await import("../js/human.js");
+const { drawHuman, gearView, direcaoBase, ladoDaDiagonal } = await import("../src/rendering/human.js");
 
 const colors = { shirt: "#2f6f86", pants: "#1b1c2c", shoes: "#101426", skin: "#f0c9a8", hair: "#3a2a55", eyes: "#14121f", accent: "#fff3d1" };
 const look = { gender: "f", hair: "longo" };

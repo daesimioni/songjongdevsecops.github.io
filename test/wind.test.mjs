@@ -2,7 +2,7 @@
 // faixa, anda com o tempo e muda de força conforme a pedra da área.
 import assert from "node:assert/strict";
 
-const { gustAt, swayAt, ondaAt, espumaAt, windMood } = await import("../js/wind.js");
+const { gustAt, swayAt, ondaAt, espumaAt, windMood } = await import("../src/rendering/wind.js");
 
 const fibra = windMood("fibra");
 const cristal = windMood("cristal");

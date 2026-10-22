@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
-import {houseTargets,nextResidentLine} from '../js/house-interactions.js';
-import {createWorld} from '../js/world.js';
-import {findInteractionPath,tileWalkable} from '../js/path.js';
-import {advancePath} from '../js/movement.js';
-import {PLAYER_W,PLAYER_H,MAP_W,MAP_H} from '../js/config.js';
+import {houseTargets,nextResidentLine} from '../src/gameplay/house-interactions.js';
+import {createWorld} from '../src/world/world.js';
+import {findInteractionPath,tileWalkable} from '../src/core/path.js';
+import {advancePath} from '../src/core/movement.js';
+import {PLAYER_W,PLAYER_H,MAP_W,MAP_H} from '../src/content/config.js';
 globalThis.localStorage={getItem:()=>null,setItem(){}};
 const world=createWorld(),used=new Set();let visits=0;
 for(const house of world.casas) {

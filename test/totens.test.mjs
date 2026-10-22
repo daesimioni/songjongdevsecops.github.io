@@ -6,15 +6,15 @@ import { readFileSync } from "node:fs";
 
 globalThis.localStorage = { getItem: () => null, setItem: () => {}, removeItem: () => {}, clear: () => {} };
 
-const { POSTS } = await import("../js/content.js");
-const { BIOMES } = await import("../js/identity.js");
-const { CATALOG_CONTENT } = await import("../js/catalog-gen.js");
+const { POSTS } = await import("../src/content/content.js");
+const { BIOMES } = await import("../src/content/identity.js");
+const { CATALOG_CONTENT } = await import("../src/content/catalog-gen.js");
 
 const problemas = [];
 const check = (ok, msg) => { if (!ok) problemas.push(msg); };
 
 // ---- arte: o totem é um monumento de pedra, com adro, fuste e capitel ----
-const render = readFileSync(new URL("../js/render.js", import.meta.url), "utf8");
+const render = readFileSync(new URL("../src/rendering/render.js", import.meta.url), "utf8");
 check(/function drawTotem\(s, px, py, k, time\)/.test(render), "totem sem desenho próprio");
 check(/drawTotem\(s, px, py, k, time\)/.test(render), "estação não chama o totem");
 for (const parte of ["lajotas do adro", "degraus"]) {

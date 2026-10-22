@@ -5,10 +5,10 @@ import assert from "node:assert/strict";
 
 globalThis.localStorage = { getItem: () => null, setItem: () => {}, removeItem: () => {}, clear: () => {} };
 
-const { NPCS } = await import("../js/content.js");
-const { NPC_SPAWNS } = await import("../js/config.js");
-const { GROUNDS } = await import("../js/rpg-data.js");
-const { npcStyle } = await import("../js/identity.js");
+const { NPCS } = await import("../src/content/content.js");
+const { NPC_SPAWNS } = await import("../src/content/config.js");
+const { GROUNDS } = await import("../src/content/rpg-data.js");
+const { npcStyle } = await import("../src/content/identity.js");
 
 const TITULOS = ["Mestre", "Mestra", "Técnica", "Técnico", "Instrutor", "Instrutora", "Monitor", "Monitora", "Operadora", "Maestro", "Preceptor", "Preceptora", "Guia", "Professora", "Professor", "Dona", "Velho", "Alquimista"];
 const ASSUNTOS = ["math", "physics", "chem", "cs", "lingua", "music", "ai", "inter", "hub"];

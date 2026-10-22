@@ -1,3 +1,5 @@
+import { QUESTION_INDEX } from "../src/gameplay/question-bank.js";
+const QUESTIONS = Object.fromEntries(QUESTION_INDEX);
 // Conferência do conteúdo: estações x textos, NPCs x missões, itens, receitas,
 // perguntas por continente, baralhos do duelo, cavernas e o mundo montado.
 // Roda sem navegador: node test/content.test.mjs
@@ -12,33 +14,33 @@ globalThis.localStorage = {
   clear: () => store.clear(),
 };
 
-const { CONTINENTS, SITES, WAYSTONES, NPC_SPAWNS, CONTINENT_ORDER, AREAS, MAP_W, MAP_H, LEGACY_CONTENT } = await import("../js/config.js");
-const { QUESTIONS, DEEP_QUESTIONS, GROUNDS, ITEMS, RECIPES, ENCHANTS, MONSTER_TRAITS, MONSTER_LABELS, MONSTER_WEAKNESS, CREATURE_FORMS } = await import("../js/rpg-data.js");
-const { DUNGEONS } = await import("../js/dungeon-data.js");
-const { POSTS, NPCS } = await import("../js/content.js");
-const { QUESTS } = await import("../js/quests.js");
-const { RPG } = await import("../js/rpg.js");
-const { isAdminKey, ADMIN_PUBKEYS, ADMIN_LABEL } = await import("../js/admin.js");
-const { HAIRS, AVATAR_DEFAULT, normalizeAvatar, avatarColors, avatarCode, avatarFromCode, hairUnlock, hairQuest } = await import("../js/avatar.js");
-const { OUTFITS } = await import("../js/outfits.js");
-const { createWorld } = await import("../js/world.js");
-const { CATALOG, CATALOG_BY_ID, DISCIPLINES, CATALOG_EXISTING } = await import("../js/catalog.js");
-const { CATALOG_CONTENT } = await import("../js/catalog-gen.js");
-const { SECTION_TOPICS } = await import("../js/catalog-topics.js");
-const { insideLand } = await import("../js/catalog-place.js");
-const { articleOf } = await import("../js/catalog-text.js");
-const { AREA_ITEMS, AREA_OUTFITS, BIOMES, FAUNA, IDENTITY_AREAS, TILE_STYLE, dungeonIdentity, npcStyle } = await import("../js/identity.js");
-const { MATH_TEXT } = await import("../js/text/math.js");
-const { PHYSICS_TEXT } = await import("../js/text/physics.js");
-const { CHEM_TEXT } = await import("../js/text/chem.js");
-const { CS_A_TEXT } = await import("../js/text/cs-a.js");
-const { CS_B_TEXT } = await import("../js/text/cs-b.js");
-const { LINGUA_TEXT } = await import("../js/text/lingua.js");
-const { INTER_TEXT } = await import("../js/text/inter.js");
-const { SECAO_TEXT } = await import("../js/text/secoes.js");
+const { CONTINENTS, SITES, WAYSTONES, NPC_SPAWNS, CONTINENT_ORDER, AREAS, MAP_W, MAP_H, LEGACY_CONTENT } = await import("../src/content/config.js");
+const { DEEP_QUESTIONS, GROUNDS, ITEMS, RECIPES, ENCHANTS, MONSTER_TRAITS, MONSTER_LABELS, MONSTER_WEAKNESS, CREATURE_FORMS } = await import("../src/content/rpg-data.js");
+const { DUNGEONS } = await import("../src/content/dungeon-data.js");
+const { POSTS, NPCS } = await import("../src/content/content.js");
+const { QUESTS } = await import("../src/gameplay/quests.js");
+const { RPG } = await import("../src/gameplay/rpg.js");
+const { isAdminKey, ADMIN_PUBKEYS, ADMIN_LABEL } = await import("../src/platform/admin.js");
+const { HAIRS, AVATAR_DEFAULT, normalizeAvatar, avatarColors, avatarCode, avatarFromCode, hairUnlock, hairQuest } = await import("../src/content/avatar.js");
+const { OUTFITS } = await import("../src/content/outfits.js");
+const { createWorld } = await import("../src/world/world.js");
+const { CATALOG, CATALOG_BY_ID, DISCIPLINES, CATALOG_EXISTING } = await import("../src/content/catalog.js");
+const { CATALOG_CONTENT } = await import("../src/content/catalog-gen.js");
+const { SECTION_TOPICS } = await import("../src/content/catalog-topics.js");
+const { insideLand } = await import("../src/content/catalog-place.js");
+const { articleOf } = await import("../src/content/catalog-text.js");
+const { AREA_ITEMS, AREA_OUTFITS, BIOMES, FAUNA, IDENTITY_AREAS, TILE_STYLE, dungeonIdentity, npcStyle } = await import("../src/content/identity.js");
+const { MATH_TEXT } = await import("../src/content/text/math.js");
+const { PHYSICS_TEXT } = await import("../src/content/text/physics.js");
+const { CHEM_TEXT } = await import("../src/content/text/chem.js");
+const { CS_A_TEXT } = await import("../src/content/text/cs-a.js");
+const { CS_B_TEXT } = await import("../src/content/text/cs-b.js");
+const { LINGUA_TEXT } = await import("../src/content/text/lingua.js");
+const { INTER_TEXT } = await import("../src/content/text/inter.js");
+const { SECAO_TEXT } = await import("../src/content/text/secoes.js");
 const textosCurados = { math: MATH_TEXT, physics: PHYSICS_TEXT, chem: CHEM_TEXT, cs: { ...CS_A_TEXT, ...CS_B_TEXT }, lingua: LINGUA_TEXT };
 const ready = CATALOG_CONTENT.areas.length;
-const { CATALOG_AREAS, CATALOG_BRIDGES, CATALOG_TUNNELS } = await import("../js/catalog-layout.js");
+const { CATALOG_AREAS, CATALOG_BRIDGES, CATALOG_TUNNELS } = await import("../src/content/catalog-layout.js");
 
 const source = (rel) => readFileSync(new URL(rel, import.meta.url), "utf8");
 const faults = [];
@@ -150,7 +152,7 @@ for (const c of continents) {
     }
   }
   check(!!DEEP_QUESTIONS[c]?.q, `sem pergunta do fundo para ${c}`);
-  // O módulo de dados já enfia a pergunta do fundo no baralho difícil.
+  // O índice do jogo inclui a pergunta do fundo sem alterar o módulo de dados.
   const texts = Object.values(byTier || {}).flat().map((q) => q.q);
   check(texts.includes(DEEP_QUESTIONS[c]?.q), `${c}: pergunta do fundo fora do baralho`);
   check(new Set(texts).size === texts.length, `${c}: pergunta repetida no continente`);
@@ -217,7 +219,7 @@ check(OUTFITS.length === 102, `trajes: ${OUTFITS.length}, esperado 102`);
 check(OUTFITS.filter((o) => o.continent === "hub").length === 4, "trajes básicos livres mudaram de tamanho");
 
 // cada bicho desenhado tem um jeito de atrapalhar o duelo, e o chefe morre por fase
-const creatureKinds = [...source("../js/creature.js").matchAll(/kind === "([a-z]+)"/g)].map((m) => m[1]);
+const creatureKinds = [...source("../src/rendering/creature.js").matchAll(/kind === "([a-z]+)"/g)].map((m) => m[1]);
 for (const kind of creatureKinds) {
   if (kind === "boss") continue;
   check(!!MONSTER_TRAITS[kind], `espécie ${kind} sem jeito de atrapalhar no duelo`);
@@ -663,7 +665,7 @@ for (const dungeon of DUNGEONS.filter((d) => CATALOG_CONTENT.areas.some((a) => `
 
 // toda forma que o jogo usa precisa de desenho, nome de leitura e fraqueza;
 // o chefe cai no desenho final, então fica de fora dessa cobrança
-const creatureSrc = source("../js/creature.js");
+const creatureSrc = source("../src/rendering/creature.js");
 for (const kind of CREATURE_FORMS) {
   if (kind === "boss") continue;
   check(creatureSrc.includes(`kind === "${kind}"`), `sem desenho para ${kind}`);
@@ -835,7 +837,7 @@ for (const npc of world.npcs) check(!!npc.look && !!npc.colors?.skin && !!npc.co
 
 // coleta: o sorteio é puro e sempre devolve item que existe, com pergunta de
 // tier 1 a 3. Raro pede pergunta difícil e o lendário pede duas seguidas.
-const { rollGather } = await import("../js/gather.js");
+const { rollGather } = await import("../src/ui/gather.js");
 const roleta = (...vals) => { let i = 0; return () => vals[i++ % vals.length]; };
 const veioComum = rollGather("vein", roleta(0.10, 0.40), {});
 check(veioComum.resource === "veio" && veioComum.qty === 2 && veioComum.tier === 1 && veioComum.grade === "comum", "veio comum fora do esperado");
@@ -876,7 +878,7 @@ check(peixes.every((p, i) => i === 0 || p.heal > peixes[i - 1].heal), "peixes se
 
 // equipamento visível acompanha a direção: frente, perfil esquerdo, perfil
 // direito e costas não podem desenhar arma e escudo do mesmo jeito
-const { gearView } = await import("../js/human.js");
+const { gearView } = await import("../src/rendering/human.js");
 const olhares = [0, 1, 2, 3].map((d) => gearView(d));
 check(olhares[0].armaLado === 1 && olhares[0].escudoLado === -1 && !olhares[0].armaAtras && !olhares[0].escudoAtras, "frente: arma e escudo fora do lado");
 check(olhares[1].armaLado === -1 && olhares[1].escudoLado === 1 && !olhares[1].armaAtras && olhares[1].escudoAtras, "perfil esquerdo: arma e escudo fora do lado");

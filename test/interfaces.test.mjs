@@ -1,3 +1,4 @@
+import { readStyles } from "./styles.mjs";
 // Interface pass: alvo de toque mínimo, wiki de uma coluna no celular e loja
 // sem estouro. A sonda de navegador (`cdp-ui-audit.mjs`) mede os 9 painéis; aqui
 // ficam as travas de CSS e a lista de painéis que precisam existir.
@@ -5,9 +6,9 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 
-const css = fs.readFileSync(new URL("../css/style.css", import.meta.url), "utf8");
+const css = readStyles();
 const html = fs.readFileSync(new URL("../index.html", import.meta.url), "utf8");
-const app = fs.readFileSync(new URL("../js/app.js", import.meta.url), "utf8");
+const app = fs.readFileSync(new URL("../src/app/app.js", import.meta.url), "utf8");
 
 const problemas = [];
 const check = (ok, msg) => { if (!ok) problemas.push(msg); };

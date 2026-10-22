@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {readSavedJSON} from '../js/storage.js';
+import {readSavedJSON} from '../src/platform/storage.js';
 let raw;
 globalThis.localStorage = {getItem:()=>raw};
 for (const value of [null, [], true, 4, 'texto']) {
@@ -16,8 +16,8 @@ raw = '123'; assert.equal(readSavedJSON('name',''),'');
 raw = 'null'; assert.deepEqual(readSavedJSON('cards',[]),[]);
 raw = '{quebrado'; assert.equal(readSavedJSON('name',''),'');
 
-const {STORAGE} = await import('../js/config.js');
-const {Quests,QUESTS} = await import('../js/quests.js');
+const {STORAGE} = await import('../src/content/config.js');
+const {Quests,QUESTS} = await import('../src/gameplay/quests.js');
 raw = '{"accepted":[],"done":[],"quiz":[],"stats":[]}';
 let saved;
 globalThis.localStorage = {getItem:k=>k===STORAGE.quests?raw:null,setItem:(k,v)=>{saved=v;}};

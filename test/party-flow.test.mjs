@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {makeDocument} from './ui-dom.mjs';
-import {createSocial} from '../js/social.js';
+import {createSocial} from '../src/ui/social.js';
 const {document}=makeDocument(['rede-body']);document.querySelectorAll=()=>[];globalThis.document=document;
 const people=new Map(),queue=[];
 const make=id=>{

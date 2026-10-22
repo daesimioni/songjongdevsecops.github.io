@@ -1,0 +1,145 @@
+// A tela de personagem: gênero, cabelo, pele e olhos, com prévia desenhada.
+// Serve para a primeira entrada e para a Ficha depois; quem chama decide onde
+// ela mora e o que fazer quando algo muda.
+import { GENDERS, HAIRS, SKINS, HAIR_TONES, EYES, normalizeAvatar } from "../content/avatar.js";
+import { drawHuman } from "../rendering/human.js";
+
+const el = (tag, cls, text) => {
+  const node = document.createElement(tag);
+  if (cls) node.className = cls;
+  if (text != null) node.textContent = text;
+  return node;
+};
+
+function swatchRow(label, list, value, onPick) {
+  const row = el("div", "look-row");
+  row.appendChild(el("span", "look-label", label));
+  const swatches = el("div", "look-swatches");
+  list.forEach((color, index) => {
+    const button = el("button", `look-swatch${index === value ? " on" : ""}`);
+    button.type = "button";
+    button.dataset.lookKey = `${label}:${index}`;
+    button.style.background = color;
+    button.setAttribute("aria-label", `${label} ${index + 1}`);
+    button.setAttribute("aria-pressed", index === value ? "true" : "false");
+    button.addEventListener("click", () => onPick(index));
+    swatches.appendChild(button);
+  });
+  row.appendChild(swatches);
+  return row;
+}
+
+export function renderCharacterEditor(mount, { look, colors, outfits = [], outfit = "", vocations = [], vocation = "", onVocation = null, isHairLocked = () => false, isOutfitLocked = () => false, lockHint = () => "", onlyUnlocked = false, onChange, onOutfit }) {
+  const current = normalizeAvatar(look);
+  const focusedKey = mount.contains(document.activeElement) ? document.activeElement?.dataset?.lookKey : null;
+  mount.textContent = "";
+
+  const wrap = el("div", "look-editor");
+  const previewBox = el("div", "look-preview");
+  const canvas = document.createElement("canvas");
+  canvas.width = 132;
+  canvas.height = 148;
+  canvas.setAttribute("aria-label", "prévia do personagem");
+  canvas.setAttribute("role", "img");
+  previewBox.appendChild(canvas);
+  wrap.appendChild(previewBox);
+
+  const controls = el("div", "look-controls");
+
+  const genderRow = el("div", "look-row");
+  genderRow.appendChild(el("span", "look-label", "corpo"));
+  const genderButtons = el("div", "look-chips");
+  for (const gender of GENDERS) {
+    const button = el("button", `look-chip${current.gender === gender.id ? " on" : ""}`, gender.name);
+    button.type = "button";
+    button.dataset.lookKey = `gender:${gender.id}`;
+    button.setAttribute("aria-pressed", String(current.gender === gender.id));
+    button.addEventListener("click", () => onChange({ gender: gender.id }));
+    genderButtons.appendChild(button);
+  }
+  genderRow.appendChild(genderButtons);
+  controls.appendChild(genderRow);
+
+  const hairRow = el("div", "look-row");
+  hairRow.appendChild(el("span", "look-label", "cabelo"));
+  const hairGrid = el("div", "look-hairs");
+  for (const hair of HAIRS) {
+    const locked = isHairLocked(hair);
+    // na criação só entra o que já está aberto: cadeado na tela de entrada é
+    // convite a nada, e a lista completa aparece no ponto de trajes do jogo
+    if (onlyUnlocked && locked) continue;
+    const button = el("button", `look-hair${current.hair === hair.id ? " on" : ""}${locked ? " locked" : ""}`, hair.name);
+    button.type = "button";
+    button.disabled = locked;
+    button.dataset.lookKey = `hair:${hair.id}`;
+    button.setAttribute("aria-pressed", String(current.hair === hair.id));
+    if (locked) button.title = lockHint(hair);
+    button.addEventListener("click", () => onChange({ hair: hair.id }));
+    hairGrid.appendChild(button);
+  }
+  hairRow.appendChild(hairGrid);
+  controls.appendChild(hairRow);
+
+  if (vocations.length && onVocation) {
+    const vocRow = el("div", "look-row");
+    vocRow.appendChild(el("span", "look-label", "vocação"));
+    const grid = el("div", "look-vocations");
+    for (const v of vocations) {
+      const card = el("button", `look-vocation${vocation === v.id ? " on" : ""}`);
+      card.type = "button";
+      card.dataset.lookKey = `vocation:${v.id}`;
+      card.setAttribute("aria-pressed", vocation === v.id ? "true" : "false");
+      card.setAttribute("aria-label", `${v.name}: ${v.forca}; fraqueza: ${v.fraqueza}`);
+      card.append(
+        el("b", "look-vocation-name", v.name),
+        el("span", "look-vocation-force", v.forca),
+        el("span", "look-vocation-weak", `fraqueza: ${v.fraqueza}`),
+      );
+      card.addEventListener("click", () => onVocation(v.id));
+      grid.appendChild(card);
+    }
+    vocRow.appendChild(grid);
+    controls.appendChild(vocRow);
+  }
+
+  if (outfits.length && onOutfit) {
+    const outfitRow = el("div", "look-row");
+    outfitRow.appendChild(el("span", "look-label", "traje"));
+    const outfitChips = el("div", "look-chips");
+    for (const item of outfits) {
+      const locked = isOutfitLocked(item);
+      if (onlyUnlocked && locked) continue;
+      const button = el("button", `look-chip${outfit === item.id ? " on" : ""}${locked ? " locked" : ""}`, item.name);
+      button.type = "button";
+      button.disabled = locked;
+      button.dataset.lookKey = `outfit:${item.id}`;
+      button.setAttribute("aria-pressed", String(outfit === item.id));
+      if (locked) button.title = lockHint(item);
+      button.addEventListener("click", () => onOutfit(item.id));
+      outfitChips.appendChild(button);
+    }
+    outfitRow.appendChild(outfitChips);
+    controls.appendChild(outfitRow);
+  }
+
+  controls.appendChild(swatchRow("pele", SKINS, current.skin, (skin) => onChange({ skin })));
+  controls.appendChild(swatchRow("tom", HAIR_TONES, current.hairColor, (hairColor) => onChange({ hairColor })));
+  controls.appendChild(swatchRow("olhos", EYES, current.eyes, (eyes) => onChange({ eyes })));
+  wrap.appendChild(controls);
+  mount.appendChild(wrap);
+
+  // prévia: o mesmo desenho do mapa, com a roupa do traje escolhido
+  const ctx = canvas.getContext("2d");
+  ctx.imageSmoothingEnabled = false;
+  ctx.fillStyle = "#0b1024";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "rgba(97, 244, 192, 0.06)";
+  ctx.beginPath();
+  ctx.ellipse(canvas.width / 2, canvas.height - 22, 52, 16, 0, 0, Math.PI * 2);
+  ctx.fill();
+  drawHuman(ctx, canvas.width / 2, canvas.height - 20, 0, false, 0, { ...colors, hair: HAIR_TONES[current.hairColor], skin: SKINS[current.skin], eyes: EYES[current.eyes] }, 4.2, current);
+
+  if (focusedKey) [...mount.querySelectorAll("[data-look-key]")]
+    .find(node => node.dataset.lookKey === focusedKey)?.focus({ preventScroll: true });
+  return current;
+}

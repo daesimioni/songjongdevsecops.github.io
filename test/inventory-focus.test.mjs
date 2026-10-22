@@ -17,7 +17,7 @@ class Element {
 const ids=new Map(['inv-detail','inv-equip','inv-grid','inv-count'].map(k=>[k,new Element()]));
 globalThis.document={activeElement:null,getElementById:id=>ids.get(id),createElement:tag=>new Element(tag)};
 const store=new Map();globalThis.localStorage={getItem:k=>store.get(k)??null,setItem:(k,v)=>store.set(k,String(v))};
-const {RPG}=await import('../js/rpg.js');const {createInventoryUI}=await import('../js/inventory-ui.js');
+const {RPG}=await import('../src/gameplay/rpg.js');const {createInventoryUI}=await import('../src/ui/inventory-ui.js');
 const rpg=new RPG();rpg.addItem('pocao',2);rpg.data.hp=1;
 const ui=createInventoryUI({rpg,toast(){},audio:{blip(){}}});ui.open();
 let slot=ids.get('inv-grid').querySelectorAll('[data-inv-focus]').find(n=>n.dataset.invFocus==='item:pocao');

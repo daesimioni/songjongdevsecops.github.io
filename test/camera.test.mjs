@@ -6,7 +6,7 @@ import fs from "node:fs";
 import {
   ESCALA_MIN, ESCALA_MAX, MARGEM_PADRAO, escalaDaCamera,
   tilesNaVista, dentroDaVista, caixaNaVista, larguraDaVista, alturaDaVista,
-} from "../js/camera.js";
+} from "../src/core/camera.js";
 
 const problemas = [];
 const check = (ok, msg) => { if (!ok) problemas.push(msg); };
@@ -52,11 +52,11 @@ check(!dentroDaVista(9, 15, r) && !dentroDaVista(15, 21, r), "dentroDaVista acei
 check(caixaNaVista(19, 19, 3, 3, r), "caixaNaVista recusou caixa que encosta");
 check(!caixaNaVista(21, 21, 2, 2, r), "caixaNaVista aceitou caixa fora");
 
-// ---- a cena não tem escala própria: as duas usam js/camera.js ----
-const render = fs.readFileSync(new URL("../js/render.js", import.meta.url), "utf8");
-const dungeon = fs.readFileSync(new URL("../js/dungeon.js", import.meta.url), "utf8");
-check(/from "\.\/camera\.js"/.test(render), "render.js não importa a câmera");
-check(/from "\.\/camera\.js"/.test(dungeon), "dungeon.js não importa a câmera");
+// ---- a cena não tem escala própria: as duas usam src/core/camera.js ----
+const render = fs.readFileSync(new URL("../src/rendering/render.js", import.meta.url), "utf8");
+const dungeon = fs.readFileSync(new URL("../src/app/dungeon.js", import.meta.url), "utf8");
+check(/from "\.\.\/core\/camera\.js"/.test(render), "render.js não importa a câmera");
+check(/from "\.\.\/core\/camera\.js"/.test(dungeon), "dungeon.js não importa a câmera");
 check(!/vw \/ \(27 \* TILE\)/.test(dungeon), "dungeon.js ainda tem a escala própria antiga");
 check((dungeon.match(/escalaDaCamera\(vw, vh\)/g) || []).length === 1, "dungeon.js não usa escalaDaCamera(vw, vh)");
 check((render.match(/escalaDaCamera\(vw, vh\)/g) || []).length === 1, "render.js não usa escalaDaCamera(vw, vh)");

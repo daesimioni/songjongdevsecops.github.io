@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {makeDocument} from './ui-dom.mjs';
-import {createUiScope,availableFocusTargets} from '../js/ui-scope.js';
+import {createUiScope,availableFocusTargets} from '../src/ui/ui-scope.js';
 const {document,Node}=makeDocument();
 const root=new Node(), hud=new Node(), splash=new Node(), intro=new Node(), modal=new Node(), toast=new Node();
 const behind=new Node('button'),first=new Node('button'),last=new Node('button');

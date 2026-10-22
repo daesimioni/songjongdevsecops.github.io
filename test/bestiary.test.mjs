@@ -11,10 +11,10 @@ globalThis.localStorage = {
   clear: () => store.clear(),
 };
 
-const { bestiaryModel, createBestiary } = await import("../js/bestiary.js");
-const { MONSTER_LABELS, MONSTER_WEAKNESS } = await import("../js/rpg-data.js");
-const { DUNGEONS } = await import("../js/dungeon-data.js");
-const { RPG } = await import("../js/rpg.js");
+const { bestiaryModel, createBestiary } = await import("../src/ui/bestiary.js");
+const { MONSTER_LABELS, MONSTER_WEAKNESS } = await import("../src/content/rpg-data.js");
+const { DUNGEONS } = await import("../src/content/dungeon-data.js");
+const { RPG } = await import("../src/gameplay/rpg.js");
 
 const modelo = bestiaryModel();
 assert.equal(modelo.continentes.length, 7, "continentes com caverna");

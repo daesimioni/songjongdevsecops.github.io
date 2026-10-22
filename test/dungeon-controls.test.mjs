@@ -3,9 +3,9 @@ const events=new Map();
 globalThis.document={getElementById:()=>null,querySelectorAll:()=>[]};
 globalThis.window={addEventListener:(type,handler)=>events.set(type,handler)};
 globalThis.localStorage={getItem:()=>null,setItem(){}};
-const {RPG}=await import('../js/rpg.js');
-const {createDungeon}=await import('../js/dungeon.js');
-const {isTextEntry,nativeActivation}=await import('../js/input.js');
+const {RPG}=await import('../src/gameplay/rpg.js');
+const { createDungeon } = await import("../src/app/dungeon.js");
+const {isTextEntry,nativeActivation}=await import('../src/platform/input.js');
 const rpg=new RPG();
 const dg=createDungeon({rpg,audio:{chime(){},blip(){}}});
 Object.assign(dg.state,{open:true,map:{W:20,H:20,grid:new Uint8Array(400).fill(1),rooms:[]},

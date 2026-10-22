@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
-import {RPG} from '../js/rpg.js';
-import {GROUNDS} from '../js/rpg-data.js';
-import {HABILIDADES,danoDoJogador} from '../js/chefe-habilidades.js';
+import {RPG} from '../src/gameplay/rpg.js';
+import {GROUNDS} from '../src/content/rpg-data.js';
+import {HABILIDADES,danoDoJogador} from '../src/gameplay/chefe-habilidades.js';
 globalThis.localStorage={getItem:()=>null,setItem(){}};
 const ground=GROUNDS.find(g=>g.id==='cs');
 const make=id=>{const r=new RPG();r.data.levers[ground.id]=true;r.startDuel(ground.boss,ground,true);r.duel.habilidade=HABILIDADES.find(h=>h.id===id);r.duel.bossPhase=2;r.duel.monsterHp=8;r.duel.monsterHpMax=20;return r;};

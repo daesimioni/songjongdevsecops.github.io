@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {makeDocument} from './ui-dom.mjs';
-import {createPvp} from '../js/pvp.js';
+import {createPvp} from '../src/ui/pvp.js';
 const {document}=makeDocument(['pvp-title','pvp-sub','pvp-body']);globalThis.document=document;
 const sent=[],pending=[];
 const peer={id:'outro',pubkey:'key'};

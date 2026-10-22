@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 const store=new Map();
 globalThis.localStorage={getItem:k=>store.get(k)??null,setItem:(k,v)=>store.set(k,String(v))};
-const {RPG}=await import('../js/rpg.js');
-const {Quests,QUESTS}=await import('../js/quests.js');
+const {RPG}=await import('../src/gameplay/rpg.js');
+const {Quests,QUESTS}=await import('../src/gameplay/quests.js');
 const rpg=new RPG();
 const make=()=>new Quests({getBosses:()=>rpg.data.bosses});
 let q=make();

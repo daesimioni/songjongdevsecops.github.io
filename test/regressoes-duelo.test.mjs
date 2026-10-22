@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 const store = new Map();
 globalThis.localStorage = { getItem: k => store.get(k) ?? null, setItem: (k,v) => store.set(k,String(v)) };
-const { RPG } = await import('../js/rpg.js');
-const { GROUNDS, MONSTER_TRAITS } = await import('../js/rpg-data.js');
+const { RPG } = await import('../src/gameplay/rpg.js');
+const { GROUNDS, MONSTER_TRAITS } = await import('../src/content/rpg-data.js');
 const fresh = () => { store.clear(); return new RPG(); };
 const ground = GROUNDS.find(g => g.id === 'cs');
 let rpg = fresh();

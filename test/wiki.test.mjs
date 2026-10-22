@@ -7,16 +7,16 @@ import fs from "node:fs";
 
 globalThis.localStorage = { getItem: () => null, setItem: () => {}, removeItem: () => {}, clear: () => {} };
 
-const wiki = await import("../js/wiki.js");
-const { AREAS } = await import("../js/config.js");
-const { DUNGEONS } = await import("../js/dungeon-data.js");
-const { ITEMS, RELICS, RECIPES, ENCHANTS, SKILLS, TIERS } = await import("../js/rpg-data.js");
-const { PETS, MOUNTS } = await import("../js/pets.js");
-const { OUTFITS } = await import("../js/outfits.js");
-const { QUESTS } = await import("../js/quests.js");
-const { NPCS, POSTS } = await import("../js/content.js");
-const { FAUNA } = await import("../js/identity.js");
-const { VOCACOES } = await import("../js/vocations.js");
+const wiki = await import("../src/ui/wiki.js");
+const { AREAS } = await import("../src/content/config.js");
+const { DUNGEONS } = await import("../src/content/dungeon-data.js");
+const { ITEMS, RELICS, RECIPES, ENCHANTS, SKILLS, TIERS } = await import("../src/content/rpg-data.js");
+const { PETS, MOUNTS } = await import("../src/content/pets.js");
+const { OUTFITS } = await import("../src/content/outfits.js");
+const { QUESTS } = await import("../src/gameplay/quests.js");
+const { NPCS, POSTS } = await import("../src/content/content.js");
+const { FAUNA } = await import("../src/content/identity.js");
+const { VOCACOES } = await import("../src/content/vocations.js");
 
 const problemas = [];
 const check = (ok, msg) => { if (!ok) problemas.push(msg); };
@@ -111,18 +111,18 @@ check(linkInvalido.categoria === "tudo" && linkInvalido.termo === "naoexiste:alg
 
 // ---- a interface está ligada nos dois lugares ----
 const html = fs.readFileSync(new URL("../index.html", import.meta.url), "utf8");
-const app = fs.readFileSync(new URL("../js/app.js", import.meta.url), "utf8");
-const dungeon = fs.readFileSync(new URL("../js/dungeon.js", import.meta.url), "utf8");
+const app = fs.readFileSync(new URL("../src/app/app.js", import.meta.url), "utf8");
+const dungeon = fs.readFileSync(new URL("../src/app/dungeon.js", import.meta.url), "utf8");
 check(/id="wiki"/.test(html) && /id="wiki-search"/.test(html) && /id="wiki-list"/.test(html), "modal da wiki ausente no HTML");
 check(/id="btn-wiki"/.test(html) && /id="dg-wiki"/.test(html), "wiki sem botão no HUD do vale ou da caverna");
-check(/from "\.\/wiki\.js"/.test(app), "app.js não importa a wiki");
+check(/from "\.\.\/ui\/wiki\.js"/.test(app), "app.js não importa a wiki");
 check(/function openWiki\(/.test(app), "app.js não define openWiki");
 check(/btn-wiki"\)\.addEventListener\("click", \(\) => openWiki\(\)\)/.test(app), "botão da wiki sem ligação");
 check(/onWiki: \(\) => openWiki\(\)/.test(app), "caverna não recebe onWiki");
 check(/onWiki/.test(dungeon) && /k === "h"/.test(dungeon), "caverna não abre a wiki com H");
 check(/id="intro-wiki"/.test(html) && /intro-wiki/.test(app), "wiki não abre antes de criar personagem");
 check(/get\("wiki"\)/.test(app), "link ?wiki= não abre a wiki");
-check(/separarConsulta/.test(fs.readFileSync(new URL("../js/wiki.js", import.meta.url), "utf8")), "wiki sem parser de link");
+check(/separarConsulta/.test(fs.readFileSync(new URL("../src/ui/wiki.js", import.meta.url), "utf8")), "wiki sem parser de link");
 check(/onWiki: \(\) => openWiki\(\)/.test(app), "caverna sem callback da wiki");
 
 assert.equal(problemas.length, 0, `wiki com ${problemas.length} problema(s):\n- ${problemas.slice(0, 12).join("\n- ")}`);

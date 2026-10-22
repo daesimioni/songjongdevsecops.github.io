@@ -3,8 +3,8 @@
 import assert from "node:assert/strict";
 globalThis.localStorage = { getItem: () => null, setItem: () => {}, removeItem: () => {}, clear: () => {} };
 
-const { drawCreature, COSTAS } = await import("../js/creature.js");
-const { DUNGEONS, creatureKind } = await import("../js/dungeon-data.js");
+const { drawCreature, COSTAS } = await import("../src/rendering/creature.js");
+const { DUNGEONS, creatureKind } = await import("../src/content/dungeon-data.js");
 
 function desenhar(kind, dir) {
   const ops = [];

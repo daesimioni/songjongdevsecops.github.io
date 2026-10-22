@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import {makeDocument} from './ui-dom.mjs';
 const {document,Node}=makeDocument([], {canvas:true});globalThis.document=document;
-const {renderCharacterEditor}=await import('../js/character.js');
-const {AVATAR_DEFAULT}=await import('../js/avatar.js');
+const {renderCharacterEditor}=await import('../src/ui/character.js');
+const {AVATAR_DEFAULT}=await import('../src/content/avatar.js');
 const mount=new Node();let look={...AVATAR_DEFAULT},outfit='viajante',vocation='guerreiro';
 const draw=()=>renderCharacterEditor(mount,{look,colors:{},outfit,vocation,
  outfits:[{id:'viajante',name:'Viajante'},{id:'camiseta',name:'Camiseta'}],

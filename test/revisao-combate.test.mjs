@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
 const store = new Map();
 globalThis.localStorage = { getItem: k => store.get(k) ?? null, setItem: (k,v) => store.set(k,String(v)) };
-const { RPG } = await import('../js/rpg.js');
-const { GROUNDS } = await import('../js/rpg-data.js');
-const { MANA_MS } = await import('../js/pets.js');
+const { RPG } = await import('../src/gameplay/rpg.js');
+const { GROUNDS } = await import('../src/content/rpg-data.js');
+const { MANA_MS } = await import('../src/content/pets.js');
 const originalNow = Date.now;
 let clock = 1000000000;
 Date.now = () => clock;

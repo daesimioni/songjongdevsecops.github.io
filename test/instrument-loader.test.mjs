@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {createInstrumentLoader} from '../js/instrument-loader.js';
+import {createInstrumentLoader} from '../src/learning/instrument-loader.js';
 class Element {
  constructor(){this.children=[];this.text='';}
  set textContent(s){this.children=[];this.text=s;}
