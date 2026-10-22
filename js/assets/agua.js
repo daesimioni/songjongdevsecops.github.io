@@ -2,7 +2,7 @@
 // Pedra molhada, junco, espuma e lírio usam o azul da água e o tom da pedra do
 // bioma; a espuma anima em três quadros e quebra a linha reta da costa.
 
-function pedraAgua(g, p, v) {
+function pedraAgua(g, p, v, q = 0) {
   const w = 20, h = 14;
   g.fillStyle = "rgba(18,55,84,0.55)";
   g.fillRect(1, h - 5, w - 2, 4);
@@ -20,7 +20,7 @@ function pedraAgua(g, p, v) {
     g.fillRect(Math.round(x - r * 0.4), Math.round(y - r * 0.5), 2, 1);
   }
   g.fillStyle = "rgba(255,255,255,0.34)";
-  g.fillRect(2, h - 4, 3, 1);
+  g.fillRect(2 + q*.5, h - 4, 3, .5);
   g.fillRect(13, h - 3, 2, 1);
   if (v === 2) {
     g.fillStyle = p.folhaEscura;
@@ -93,7 +93,7 @@ function lirio(g, p, v, q = 0) {
 }
 
 export const AGUAS = {
-  pedraAgua: { w: 20, h: 14, variantes: 3, desenhar: pedraAgua },
+  pedraAgua: { w: 20, h: 14, variantes: 3, quadros: 4, ms: 280, desenhar: pedraAgua },
   juncoAgua: { w: 22, h: 26, variantes: 3, quadros: 2, ms: 460, desenhar: juncoAgua },
   espuma: { w: 22, h: 9, variantes: 1, quadros: 6, ms: 200, desenhar: espuma },
   lirio: { w: 18, h: 12, variantes: 3, quadros: 2, ms: 620, desenhar: lirio },

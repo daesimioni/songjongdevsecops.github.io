@@ -320,12 +320,12 @@ function trepadeira(g, p, v) {
 }
 
 export const VEGETACAO = {
-  arvore: { w: 36, h: 46, variantes: 3, desenhar: folhuda },
-  conifera: { w: 26, h: 48, variantes: 3, desenhar: conifera },
-  palmeira: { w: 34, h: 48, variantes: 3, desenhar: palmeira },
-  seca: { w: 26, h: 36, variantes: 3, desenhar: seca },
-  arbusto: { w: 22, h: 18, variantes: 3, desenhar: arbusto },
-  junco: { w: 18, h: 24, variantes: 3, desenhar: junco },
-  florada: { w: 22, h: 15, variantes: 3, desenhar: florada },
-  trepadeira: { w: 14, h: 34, variantes: 3, desenhar: trepadeira },
+  arvore: { w: 36, h: 46, variantes: 3, quadros: 4, ms: 340, desenhar: folhuda },
+  conifera: { w: 26, h: 48, variantes: 3, quadros: 4, ms: 340, desenhar: conifera },
+  palmeira: { w: 34, h: 48, variantes: 3, quadros: 4, ms: 340, desenhar: palmeira },
+  seca: { w: 26, h: 36, variantes: 3, quadros: 4, ms: 340, desenhar: seca },
+  arbusto: { w: 22, h: 18, variantes: 3, quadros: 4, ms: 340, desenhar: arbusto },
+  junco: { w: 18, h: 24, variantes: 3, quadros: 4, ms: 340, desenhar: junco },
+  florada: { w: 22, h: 15, variantes: 3, quadros: 4, ms: 340, desenhar: florada },
+  trepadeira: { w: 14, h: 34, variantes: 3, quadros: 4, ms: 340, desenhar: trepadeira },
 };

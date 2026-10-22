@@ -20,11 +20,11 @@ const creature = ler("creature.js");
 const dungeon = ler("dungeon.js");
 
 // ---- sprite de asset em 2x ----
-check(/def\.w \* 2, def\.h \* 2/.test(assets), "sprite de asset não nasce em 2x");
+check(/\(def\.w \+ pad \* 2\) \* 2, \(def\.h \+ pad \* 2\) \* 2/.test(assets), "sprite de asset não nasce em 2x");
 check(/g\.scale\(2, 2\)/.test(assets), "desenho do asset não é escalado para 2x");
 check(/const e = def\.escala \|\| 1;/.test(assets) && /const dw = def\.w \* e, dh = def\.h \* e;/.test(assets), "asset não lê a escala da construção");
-check(/ctx\.drawImage\(sprite, dx, dy, dw, dh\)/.test(assets), "sprite 2x não é copiado no tamanho de mundo");
-check(/ctx\.drawImage\(sprite, -dw \/ 2, -dh, dw, dh\)/.test(assets), "balanço não copia o sprite 2x no tamanho certo");
+check(/ctx\.drawImage\(sprite, dx - margin, dy - margin, sw, sh\)/.test(assets), "sprite 2x não é copiado no tamanho de mundo");
+check(/ctx\.drawImage\(sprite, -dw \/ 2 - margin, -dh - margin, sw, sh\)/.test(assets), "balanço não copia o sprite 2x no tamanho certo");
 
 // ---- chão com detalhe de meio pixel ao vivo ----
 check(/const detalhe = \(cor, semente, tamanho\) =>/.test(render), "sem passada de detalhe do chão");

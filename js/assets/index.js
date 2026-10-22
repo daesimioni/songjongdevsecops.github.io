@@ -1,9 +1,11 @@
+import { detailAsset } from "./detail.js";
+import { artFrame } from "../art-style.js";
 // Biblioteca de assets ambientais, organizada por grupo. Cada grupo mora no
 // próprio arquivo e exporta um mapa tipo → { w, h, variantes, quadros?, ms?,
 // desenhar }. O desenho nunca acontece direto no quadro: o sprite é pintado
 // uma vez por variante e paleta, guardado no cache com teto, e o quadro só
 // faz drawImage. É o que permite detalhe sem custo de quadro.
-import { criarCache, paletaDaArea, variante, quadroAnimado } from "./nucleo.js";
+import { criarCache, paletaDaArea, variante } from "./nucleo.js";
 import { SOLOS } from "./solos.js";
 import { VEGETACAO } from "./vegetacao.js";
 import { CONSTRUCOES } from "./construcoes.js";
@@ -22,7 +24,15 @@ export const GRUPOS = {
 
 const POR_TIPO = new Map();
 for (const [grupo, itens] of Object.entries(GRUPOS)) {
-  for (const [tipo, def] of Object.entries(itens)) POR_TIPO.set(tipo, { grupo, ...def });
+  for (const [tipo, def] of Object.entries(itens)) POR_TIPO.set(tipo, { grupo, ...def,
+    desenhar(g,p,v,q) {
+      g.save();
+      if(grupo==='vegetacao'){
+        g.translate(def.w/2,def.h);g.transform(1,0,[0,.012,0,-.012][q%4]||0,1,0,0);g.translate(-def.w/2,-def.h);
+      }
+      def.desenhar(g,p,v,q);detailAsset(g,p,v,q,tipo,grupo,def.w,def.h);g.restore();
+    },
+  });
 }
 
 export function assetDe(tipo) { return POR_TIPO.get(tipo) || null; }
@@ -30,17 +40,17 @@ export function temAsset(tipo) { return POR_TIPO.has(tipo); }
 export function tiposDoGrupo(grupo) { return Object.keys(GRUPOS[grupo] || {}); }
 export function totalDeAssets() { return POR_TIPO.size; }
 
-// Teto do cache: 240 sprites cobrem com folga o que cabe numa tela e mantêm a
-// memória presa mesmo depois de visitar as 86 ilhas.
+// LRU com teto de 240 sprites e 8 MiB, inclusive ao visitar as 86 ilhas.
 const cache = criarCache(240);
 // a paleta do bioma é calculada uma vez e reaproveitada; sem isso cada asset
 // refazia a mistura de cor a cada quadro
 const paletas = new Map();
 function paletaDoBioma(bioma) {
-  const k = bioma?.id || "generico";
+  const k = [bioma?.id || "generico",bioma?.accent,bioma?.accent2,bioma?.floor,bioma?.path].join("|");
   let p = paletas.get(k);
   if (!p) {
     p = paletaDaArea(bioma);
+    if (paletas.size >= 96) paletas.delete(paletas.keys().next().value);
     paletas.set(k, p);
   }
   return p;
@@ -57,17 +67,20 @@ export function desenharAsset(ctx, tipo, x, y, { tempo = 0, bioma = null, seed =
   // o tamanho de mundo que a casa precisa para caber uma pessoa na porta
   const e = def.escala || 1;
   const dw = def.w * e, dh = def.h * e;
+  const pad = 8, margin = pad * e;
+  const sw = dw + margin * 2, sh = dh + margin * 2;
   const p = paletaDoBioma(bioma);
   const v = variante(seed, def.variantes || 1);
   // espelho por instância: três variantes viram seis caras na mesma ilha
   const grupo = POR_TIPO.get(tipo)?.grupo;
   const espelha = ESPELHA.has(grupo) && variante(seed + 17.3, 2) === 1;
-  const q = def.quadros ? quadroAnimado(tempo, def.quadros, def.ms || 160) : 0;
+  const q = def.quadros ? artFrame(tempo, def.quadros, def.ms || 160, variante(seed + 5.7, def.quadros)) : 0;
   const chave = `${tipo}:${v}:${p.chave}:${q}`;
   // o sprite nasce em 2x: cada pixel antigo vira quatro pixels de desenho, e o
   // quadro copia no mesmo tamanho de mundo. O detalhe de meio pixel aparece.
-  const sprite = cache.pegar(chave, def.w * 2, def.h * 2, (g) => {
+  const sprite = cache.pegar(chave, (def.w + pad * 2) * 2, (def.h + pad * 2) * 2, (g) => {
     g.scale(2, 2);
+    g.translate(pad, pad);
     def.desenhar(g, p, v, q);
   });
   const dx = Math.round(x - dw / 2);
@@ -81,7 +94,7 @@ export function desenharAsset(ctx, tipo, x, y, { tempo = 0, bioma = null, seed =
     ctx.translate(x, y);
     ctx.transform(1, 0, inclinacao, 1, 0, 0);
     if (espelha) ctx.scale(-1, 1);
-    ctx.drawImage(sprite, -dw / 2, -dh, dw, dh);
+    ctx.drawImage(sprite, -dw / 2 - margin, -dh - margin, sw, sh);
     ctx.restore();
     return true;
   }
@@ -89,11 +102,11 @@ export function desenharAsset(ctx, tipo, x, y, { tempo = 0, bioma = null, seed =
     ctx.save();
     ctx.translate(Math.round(x), camada === "chao" ? 0 : Math.round(y));
     ctx.scale(-1, 1);
-    ctx.drawImage(sprite, -dw / 2, camada === "chao" ? dy : -dh, dw, dh);
+    ctx.drawImage(sprite, -dw / 2 - margin, (camada === "chao" ? dy : -dh) - margin, sw, sh);
     ctx.restore();
     return true;
   }
-  ctx.drawImage(sprite, dx, dy, dw, dh);
+  ctx.drawImage(sprite, dx - margin, dy - margin, sw, sh);
   return true;
 }
 

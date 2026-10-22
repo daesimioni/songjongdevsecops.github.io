@@ -47,7 +47,7 @@ check(animados("agua").length >= 3, `água: só ${animados("agua").length} tipos
 check(animados("solo").includes("tufo"), "solo: tufo sem quadro");
 check(animados("props").includes("gaivota"), "props: gaivota sem quadro");
 check(animados("construcao").length === 0, "construção não pode animar por quadro");
-check(animados("vegetacao").length === 0, "vegetação anima pelo vento, não por quadro");
+check(animados("vegetacao").length === assets.tiposDoGrupo("vegetacao").length, "vegetação sem ciclo de reflexos nas folhas");
 
 // ---- paleta: muda com o bioma e é estável ----
 const p1 = nucleo.paletaDaArea(BIOMES["math-fundamentos"]);
