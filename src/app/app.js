@@ -350,6 +350,7 @@ dungeon = createDungeon({
   onGather: (ctx) => openGather(ctx.kind, ctx),
   onKeeper: () => openShop(),
   onConurbation: () => openTravel("caves"),
+  onElevador: () => dungeon?.close("elevador"),
   onPortal: (defId) => portalToCity(defId),
   onVocacao: () => openVocacoes(),
   avatar: player.colors,
@@ -359,6 +360,24 @@ dungeon = createDungeon({
   onExit: ({ kind, dungeon: def, target }) => {
     rpg.setCave(false);
     if (kind === "death") return;
+    // o elevador do Porto Submerso sobe ao porto, não à boca de uma caverna
+    if (kind === "elevador") {
+      const stone = WAYSTONES.find((w) => w.id === "hub");
+      if (stone) {
+        player.x = stone.x;
+        player.y = stone.y;
+        player.dir = 0;
+        player.moving = false;
+        player.continentId = "hub";
+        clearPath();
+        state.lastContinent = "hub";
+        showZoneCard(CONTINENTS.hub, false);
+        renderer.kick(0.45);
+      }
+      audio.chime();
+      toast("O elevador subiu ao Porto do Início.", 3400);
+      return;
+    }
     const cave = target || world.caves.find((c) => c.continent === def?.continent);
     if (cave) {
       player.x = cave.exit.x;

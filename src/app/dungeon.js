@@ -1,4 +1,4 @@
-import { drawPet, drawBuilding, drawAdventurer, drawChest, drawStairs, drawTorch, drawAltar, drawMesa, drawForge, drawOficina, drawBiblioteca, drawObservatorio, drawWaystone, drawKeeper, drawPlot, drawVein, drawEnchanter, drawBilhete, drawIsca, varianteDaPeca } from "../rendering/dungeon-art.js";
+import { drawPet, drawBuilding, drawAdventurer, drawChest, drawStairs, drawTorch, drawAltar, drawElevador, drawMesa, drawForge, drawOficina, drawBiblioteca, drawObservatorio, drawWaystone, drawKeeper, drawPlot, drawVein, drawEnchanter, drawBilhete, drawIsca, varianteDaPeca } from "../rendering/dungeon-art.js";
 import { buildDungeonMap, dungeonSolid, roomIndexAt, boxFree, dungeonLineOfSight, dungeonCanSeePlayer } from "../gameplay/dungeon-map.js";
 import { lootDoBau } from "../gameplay/dungeon-loot.js";
 import { pracaDaCaverna } from "../gameplay/dungeon-plaza.js";
@@ -54,7 +54,7 @@ function torchGlowSprite() {
 
 // ---------- a caverna em si ----------
 
-export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, onWiki, onGather, onExit, onKeeper, onConurbation, onPortal, onVocacao, isBlocked, vitais = null, avatar = {}, look = null, gear = null, getClima = null }) {
+export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, onWiki, onGather, onExit, onKeeper, onConurbation, onElevador, onPortal, onVocacao, isBlocked, vitais = null, avatar = {}, look = null, gear = null, getClima = null }) {
   const canvas = $("dungeon-canvas");
   const ctx = canvas?.getContext("2d", { alpha: false }) || null;
 
@@ -934,6 +934,10 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
       onConurbation?.(state.def?.id);
       return;
     }
+    if (obj.kind === "elevador") {
+      onElevador?.();
+      return;
+    }
     if (obj.kind === "portal") {
       onPortal?.(obj.portalDef);
       return;
@@ -1808,6 +1812,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
         draw: () => {
           if (prop.kind === "stairs") drawStairs(ctx, prop.x * TILE, prop.y * TILE, palette.accent, t);
           else if (prop.kind === "altar") drawAltar(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent);
+          else if (prop.kind === "elevador") drawElevador(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent);
           else if (prop.kind === "forge") drawForge(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent);
           else if (prop.kind === "vocacao") drawMesa(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent);
           else if (prop.kind === "waystone") drawWaystone(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent);

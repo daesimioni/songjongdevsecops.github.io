@@ -11,6 +11,9 @@ export function pracaDaCaverna(def, city) {
   props.push({ kind: "forge", x: city.x + city.w * 0.87, y: baixa, label: "forja do subsolo", interact: true });
   props.push({ kind: "waystone", x: city.x + city.w * 0.25, y: alta, label: "pedra de retorno", interact: true });
   if (!def.hub) props.push({ kind: "conurbation", x: city.x + city.w * 0.75, y: alta, label: "túnel da conurbação", interact: true });
+  // o Porto Submerso sobe ao porto pelo elevador desenhado; as cidades de
+  // continente já têm a conurbação e a escada do túnel
+  if (def.hub) props.push({ kind: "elevador", x: city.x + city.w * 0.75, y: alta, label: "elevador para o porto", interact: true });
   props.push({ kind: "keeper", x: city.x + city.w * 0.63, y: baixa, label: "conversar com a mestra", interact: true });
   props.push({ kind: "enchanter", x: city.x + city.w * 0.5, y: alta, label: "mesa de encantamento", interact: true });
   const petId = PET_BY_CONTINENT[def.continent] || "gato";

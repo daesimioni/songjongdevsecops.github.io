@@ -88,6 +88,7 @@ A árvore já vergava com a rajada e o fogo já tinha 4 a 8 quadros.
 | 2026-10-22 | mapa grande | o minimapa ganhou modo tela cheia sem segundo desenho: canvas 600x400 para 1200x800, 1.256x733 da tela 1.280x757, botão com aria-pressed, Esc devolve ao canto e o estado recolhido volta | `test/mapa-grande.test.mjs`, `cdp-mapa-tela.mjs`, 95/95 suítes |
 | 2026-10-22 | ferry do porto | a lista de pedras no hub ganha a travessia paga ao Porto Submerso por 2 de madeira petrificada; sem material o botão fica desabilitado e diz o que falta, com material cobra e desce à camada -2, com fala do barqueiro na chegada | `test/ferry.test.mjs`, `cdp-ferry.mjs`, 96/96 suítes, viagem 96 -> 97 |
 | 2026-10-22 | grafo de pré-requisitos | 78 arestas entre as 86 áreas, derivadas da numeração do catálogo (1.1 -> 1.2), com uma raiz por grupo; o caderno mostra "Antes de avançar" quando a área está em 2+ e o pré-requisito em 0/1, com nomes e domínios | `test/grafo.test.mjs`, `cdp-grafo.mjs`, 97/97 suítes |
+| 2026-10-22 | elevador do Porto Submerso | a praça da camada -2 ganha o elevador desenhado (plataforma, cordas e alavanca) que sobe à pedra do Porto do Início, sem passar pela boca de uma caverna; arte nova e saída própria no `onExit` | `test/elevador.test.mjs`, `cdp-elevador.mjs`, 98/98 suítes |
 
 ## Fecho da revisão (2026-10-22)
 
@@ -103,7 +104,7 @@ o que os testes e sondas desta data mostram, não o que o diário prometeu.
 | masmorras e batalha | 93 cavernas em 6 modelos e 4 pisos | sala temática por disciplina com 279 peças sólidas; 93 chefes | ritmo +1/+2, leitura de turno, fases 2 e 3, habilidade própria por chefe, turnos de PvP | `test/masmorras.test.mjs`, `test/salas.test.mjs`, `test/duelo-ritmo.test.mjs`, `test/chefe-habilidades.test.mjs`, `test/pvp-turnos.test.mjs`, `cdp-chefe-habilidade.mjs`, `cdp-sala-tema.mjs` |
 | pedidos já feitos | auditoria dos 38 pedidos na fonte viva | correção de resposta vazia, frase repetida, seis alternativas e páginas curtas | 69 páginas com curso completo, revisão das PRs externas e documentos alinhados | `docs/design/20-AUDITORIA-PEDIDOS.md`, `docs/design/33-REVISAO-EXTERNA.md`, `test/licoes.test.mjs`, `cdp-pagina.mjs` |
 
-Prova de conjunto desta data: `npm test` com **97 testes em 100 arquivos, 97 passaram**;
+Prova de conjunto desta data: `npm test` com **98 testes em 101 arquivos, 98 passaram**;
 matriz de navegador **19/19** remedida em 2026-10-22 depois de clima, sono, famílias,
 texto maior, marcas do duelo, variantes, bilhetes, arcos, patrulha e perseguição e do desacoplamento
 mundo→rendering (`cdp-regressao.mjs`: HUD, mochila 40, bestiário

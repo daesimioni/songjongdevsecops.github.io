@@ -150,6 +150,38 @@ function drawAltarRaw(ctx, x, y, t, accent) {
   ctx.restore();
 }
 
+// Elevador do Porto Submerso: plataforma de madeira presa por duas cordas, com
+// a alavanca e a luz de chamada. A subida é uma saída desenhada, não um corte.
+function drawElevadorRaw(ctx, x, y, t, accent) {
+  const brilho = 0.45 + Math.sin(t * 0.004) * 0.2;
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.fillStyle = "rgba(0,0,0,0.35)";
+  ctx.beginPath();
+  ctx.ellipse(0, 1, 15, 4, 0, 0, Math.PI * 2);
+  ctx.fill();
+  // cordas e viga
+  ctx.fillStyle = "#4a3a2c";
+  ctx.fillRect(-12, -34, 2, 32);
+  ctx.fillRect(10, -34, 2, 32);
+  ctx.fillStyle = "#5a4532";
+  ctx.fillRect(-15, -36, 30, 4);
+  // plataforma
+  ctx.fillStyle = "#6b4f36";
+  ctx.fillRect(-14, -6, 28, 6);
+  ctx.fillStyle = "#8a6a49";
+  ctx.fillRect(-14, -7, 28, 2);
+  // alavanca e luz de chamada
+  ctx.fillStyle = accent;
+  ctx.globalAlpha = brilho;
+  ctx.fillRect(-4, -14, 8, 3);
+  ctx.beginPath();
+  ctx.arc(0, -26, 3, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.globalAlpha = 1;
+  ctx.restore();
+}
+
 // Mesa de vocação: estante baixa com o livro das cinco cartas aberto e duas
 // velas. O brilho muda de cor com o tempo, como se a página virasse sozinha.
 function drawMesaRaw(ctx, x, y, t, accent) {
@@ -635,6 +667,7 @@ export function drawChest(ctx,x,y,...args) { drawDungeonSprite("drawChest",drawC
 export function drawStairs(ctx,x,y,...args) { drawDungeonSprite("drawStairs",drawStairsRaw,1,ctx,x,y,...args); }
 export function drawTorch(ctx,x,y,...args) { drawDungeonSprite("drawTorch",drawTorchRaw,0,ctx,x,y,...args); }
 export function drawAltar(ctx,x,y,...args) { drawDungeonSprite("drawAltar",drawAltarRaw,0,ctx,x,y,...args); }
+export function drawElevador(ctx,x,y,...args) { drawDungeonSprite("drawElevador",drawElevadorRaw,0,ctx,x,y,...args); }
 export function drawMesa(ctx,x,y,...args) { drawDungeonSprite("drawMesa",drawMesaRaw,0,ctx,x,y,...args); }
 export function drawForge(ctx,x,y,...args) { drawDungeonSprite("drawForge",drawForgeRaw,0,ctx,x,y,...args); }
 export function drawOficina(ctx,x,y,...args) { drawDungeonSprite("drawOficina",drawOficinaRaw,0,ctx,x,y,...args); }
