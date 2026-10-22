@@ -32,6 +32,7 @@ com a linha do diário dizendo que foi feito.
 | animação de NPC e pet | `test/animacao-idle.test.mjs` e sonda `cdp-anim-idle.mjs`: cabeça parada mexe 46 px e o corpo 0 (olhar/cabeceio), cauda do gato 60 px e olho 13 px (piscada); o passo do NPC já existia e a sonda confirma | feito em 2026-10-21 21:33 |
 | passada de interfaces | sonda `cdp-ui-audit.mjs` mede 9 painéis em 1280 e 390: 0 estouro horizontal, 0 alvo abaixo de 28 px, foco dentro do painel; abas da wiki e botões de ação cresceram, wiki virou 1 coluna no celular e a loja perdeu o estouro de 3 px | feito em 2026-10-21 21:45 |
 | ritmo e leitura de turno no duelo | `test/duelo-ritmo.test.mjs`: +1 dano com 3 acertos e +2 com 5 (teto), "se errar: X" com fase/haste/espelho; sonda `cdp-duelo-ritmo.mjs` mostrou rodada, previsão e "ritmo 3: +1 de dano" depois de três acertos; vida do bicho deixou de mostrar decimal | feito em 2026-10-21 21:51 |
+| páginas antigas, leva 1 de 8 | `blocoDeEstudo` ganhou O que é / Como se usa / Onde quebra; generative, harmony, ethics, scales, motion, rhythm, state e learning passaram de 460 palavras e seis partes; sonda `cdp-pagina.mjs` mediu 464 e 466 palavras e as seis seções | feito em 2026-10-21 22:00 |
 
 ## O que a auditoria pegou de errado
 
@@ -43,8 +44,9 @@ com a linha do diário dizendo que foi feito.
 
 ## O que continua em aberto (nada disso vai ser marcado como feito antes da prova)
 
-1. **69 páginas escritas à mão** do vale e das áreas antigas: continuam com
-   quatro partes e 255 a 469 palavras; falta o curso de seis partes do catálogo.
+1. **61 páginas escritas à mão** (de 69) do vale e das áreas antigas: continuam
+   com quatro partes e 255 a 469 palavras. As oito primeiras fecharam curso de
+   seis partes e 460+ palavras em 2026-10-21 22:00.
 2. **Habilidade única de chefe**: fase, dano extra e baralho difícil já
    existem, mas o golpe próprio de cada chefe (curar uma vez, trocar o
    baralho) ainda é genérico; ritmo e leitura de turno foram fechados em

@@ -52,6 +52,16 @@ export const LICOES_POST = {
       "Some na mão 1011 mais 0110, uma coluna por vez, e marque cada transporte. Depois confira o resultado em decimal para ver se os dois batem.",
   },
   state: {
+    oque:
+      "Um circuito sequencial guarda estado: a saída depende não só das entradas de agora, mas do que ele guardou antes. O flip-flop é a célula mínima dessa memória, e o relógio decide o instante em que o novo valor entra. A saída só muda na borda do relógio; entre duas bordas ela permanece estável, mesmo que a entrada mude.",
+    como: [
+      "Liste as entradas, a saída e o estado que o circuito precisa lembrar.",
+      "Monte a tabela de transição: para cada estado e entrada, qual é o próximo estado.",
+      "Aplique os pulsos de relógio e leia a saída só depois que cada pulso terminar.",
+      "Repita a tabela com o relógio parado e confirme que a saída não se mexe enquanto a entrada muda.",
+    ],
+    quebra:
+      "Ler a saída durante a troca e tratar o valor instável como resposta. O outro erro é confundir circuito combinacional com memória: sem realimentação, não há passado. E relógio com atrasos diferentes nos caminhos cria corrida. Por isso a leitura confiável vem depois do pulso, nunca no meio dele. Um registrador é uma fila de flip-flops com o mesmo relógio; um contador é a mesma fila com lógica de incremento.",
     limite:
       "O flip-flop guarda um bit, e a memória inteira é a repetição dele. O cuidado é o tempo: o valor só é confiável depois que o pulso de relógio terminou, e ler no meio da troca devolve lixo.",
     pergunta: {
@@ -148,6 +158,17 @@ export const LICOES_POST = {
       "Meça o contorno de uma folha com régua de dez e de um centímetro e compare. A diferença é o que mostra que a medida depende da escala.",
   },
   motion: {
+    oque:
+      "O pêndulo simples é uma massa presa a um fio, oscilando sob a gravidade. Para ângulos pequenos o movimento é aproximadamente harmônico, e o período depende do comprimento e da gravidade, não da massa. A aproximação vale porque, para deslocamentos pequenos, a força restauradora cresce quase proporcional ao afastamento.",
+    como: [
+      "Meça o comprimento do fio até o centro do peso.",
+      "Solte de um ângulo pequeno e cronometre dez oscilações completas.",
+      "Divida o tempo por dez, repita com outra massa e compare os períodos.",
+      "Repita com amplitude maior e anote quanto o período medido se afasta da fórmula.",
+      "Meça o mesmo pêndulo com dois pesos diferentes e confirme que o período não muda. O comprimento é a variável que realmente importa.",
+    ],
+    quebra:
+      "Usar a fórmula de ângulo pequeno com amplitude grande, o que faz o período previsto ficar curto demais. Cronometrar uma oscilação só também aumenta o erro humano. Medir até a ponta do peso, em vez do centro, desloca o comprimento. Se o pêndulo não for simples, com o peso distribuído, o comprimento efetivo muda. O comprimento efetivo é medido até o centro de massa.",
     limite:
       "O pêndulo de Galileu mostrou que o período não depende da massa, e a aproximação só vale para ângulo pequeno. Em ângulo grande, o período cresce e a fórmula simples erra. O experimento é o que sustenta a lei.",
     pergunta: {
@@ -268,6 +289,17 @@ export const LICOES_POST = {
       "Balanceie uma combustão e calcule quantos mols de gás carbônico saem de um mol de combustível. Depois diga por que o valor real pode ser menor.",
   },
   rhythm: {
+    oque:
+      "Ritmo é a divisão do tempo em pulsos e subdivisões. Polirritmia acontece quando duas divisões diferentes do mesmo pulso soam juntas, como três contra quatro, e o ciclo só se fecha no mínimo múltiplo comum. O ciclo não precisa ser longo para ser sentido: três contra dois já cria tensão e resolução.",
+    como: [
+      "Escolha um pulso comum e conte até doze.",
+      "Sobreponha um ciclo de três e um de quatro, marcando o início juntos.",
+      "Pare no pulso em que os dois ciclos coincidem e recomece a contagem.",
+      "Troque as vozes e repita: o ciclo é o mesmo, mas a sensação de quem conduz muda.",
+      "Conte o ciclo em voz alta enquanto bate as palmas e não pare na primeira coincidência.",
+    ],
+    quebra:
+      "Achar que o ciclo fecha na primeira coincidência de palmas, quando ele só fecha no mínimo múltiplo comum. Acelerar uma voz para caber na outra também não é polirritmia. Em tempo muito rápido, o ouvido ouve textura e não divisão. A contagem em voz alta ajuda, mas o corpo precisa manter o pulso. O mesmo princípio aparece no compasso composto.",
     limite:
       "Polirritmia é sobreposição de divisões, e o limite é a percepção: o ouvido agrupa o que consegue contar. Acima de certa velocidade, a mistura deixa de ser ritmo e vira textura, e a notação continua correta sem descrever o que se ouve.",
     pergunta: {
@@ -280,6 +312,17 @@ export const LICOES_POST = {
       "Bata três palmas num ciclo e quatro no mesmo ciclo, contando até doze. Depois marque onde as duas vozes se encontram e ouça o ciclo fechar.",
   },
   harmony: {
+    oque:
+      "Consonância é a sensação de estabilidade quando duas frequências soam juntas. Ela nasce da coincidência de harmônicos: razões simples, como 2 para 1 na oitava e 3 para 2 na quinta, alinham os ciclos com mais frequência. A oitava é o caso mais forte porque todos os harmônicos coincidem.",
+    como: [
+      "Toque as duas notas separadas e depois juntas.",
+      "Anote a razão entre as frequências e o desvio em cents.",
+      "Aproxime ou afaste até o batimento sumir e guarde o ponto de conforto.",
+      "Repita na região grave e na aguda e compare onde o batimento incomoda mais.",
+      "Compare o mesmo intervalo tocado por dois instrumentos e veja se a razão explica toda a diferença. O que sobra é timbre e cultura.",
+    ],
+    quebra:
+      "Tomar razão simples como garantia de beleza: o timbre e a região mudam a conta. O temperamento igual estica a quinta de propósito, então a razão pura existe no papel e não exatamente no instrumento. E o que uma época chama de áspero, outra chama de expressivo. Duas notas distantes podem ter razão simples e ainda soar ásperas pelo timbre. O contexto da escala muda o repouso.",
     limite:
       "Intervalo consonante é razão simples de frequência, e o ouvido tolera desafinação dentro de uma faixa. O limite está na cultura: o que soa áspero numa época soa doce em outra, e a razão matemática não decide gosto sozinha.",
     pergunta: {
@@ -292,6 +335,17 @@ export const LICOES_POST = {
       "Toque uma oitava, uma quinta e uma segunda e anote a razão de cada uma. Depois diga qual soa mais estável e relacione com a coincidência de harmônicos.",
   },
   scales: {
+    oque:
+      "Uma escala é um recorte da oitava em passos. O temperamento igual divide a oitava em doze semitons iguais, espalhando o erro de afinação para que todas as tonalidades funcionem no mesmo instrumento. Cada semitom é a mesma razão, e por isso o erro se distribui em vez de se concentrar.",
+    como: [
+      "Construa o semitom como a raiz décima segunda de dois.",
+      "Multiplique doze vezes e volte à oitava; compare a quinta com a razão 3 para 2.",
+      "Ouça a escala temperada e a de razões simples e meça a diferença em cents.",
+      "Some doze semitons e verifique que o produto volta exatamente a dois.",
+      "Afine um acorde em quintas puras e depois em temperamento igual, e ouça o que muda. A diferença é pequena, mas acumula ao longo do ciclo.",
+    ],
+    quebra:
+      "Chamar o temperamento igual de correto e os anteriores de errados: cada sistema resolve um problema. Instrumento de teclado fixo não volta atrás, mas cordas ajustam durante a execução. A escolha também foi histórica e prática, não só matemática. A comma pitagórica é o resto que aparece quando as quintas puras não fecham a oitava.",
     limite:
       "O temperamento igual divide a oitava em doze partes iguais e desafina cada intervalo de propósito, para poder modular. O limite é histórico: antes dele, instrumentos eram afinados em uma tonalidade e soavam mal em outras, e a escolha nunca foi só matemática.",
     pergunta: {
@@ -316,6 +370,17 @@ export const LICOES_POST = {
       "Toque a mesma nota em dois instrumentos e compare o espectro. Depois imite o ataque de um com o outro e veja se a diferença diminui.",
   },
   generative: {
+    oque:
+      "Música generativa é música feita por uma regra que produz muitas peças possíveis. A regra pode ser uma tabela de transição, uma gramática ou uma simetria, e cada execução escolhe um caminho dentro do espaço que ela permite. A peça não existe antes da execução: o que existe é o conjunto de peças que a regra autoriza.",
+    como: [
+      "Escolha a unidade que a regra combina: nota, acorde ou célula rítmica.",
+      "Defina as transições permitidas e o peso de cada uma.",
+      "Fixe a semente, gere, mude um peso e compare as duas execuções.",
+      "Anote duas decisões que você tomou e que a máquina não tomou: a regra e o corte.",
+      "Escute a peça inteira antes de mudar a regra, para separar o efeito da semente do efeito da tabela.",
+    ],
+    quebra:
+      "Chamar o resultado de aleatório e esquecer a regra que o gerou. A semente muda a execução, não o espaço. O erro oposto é achar que a regra garante qualidade: ela garante coerência, e o corte ainda é decisão de alguém. Sem esse corte, o gerador pode continuar para sempre. A autoria está no desenho do espaço, não em cada nota. A regra sem escuta vira catálogo de possibilidades; a seleção é parte da composição.",
     limite:
       "Música generativa usa regra e aleatoriedade, e o limite é autoria: a regra foi escolhida por alguém, e o resultado é o espaço que ela permite. Chamar de aleatório esconde a decisão que está no código.",
     pergunta: {
@@ -328,6 +393,17 @@ export const LICOES_POST = {
       "Escreva três regras simples de geração, rode duas vezes e compare. Depois mude uma regra e diga o que mudou no resultado.",
   },
   learning: {
+    oque:
+      "Aprendizado de máquina ajusta parâmetros para reduzir o erro em exemplos. Na regressão linear, a hipótese é uma reta e a perda é a soma dos erros ao quadrado; aprender é escolher a reta que minimiza essa soma. A perda quadrática pune erro grande mais que erro pequeno, e é isso que dá a reta de melhor ajuste.",
+    como: [
+      "Marque os pontos no plano e desenhe uma reta candidata.",
+      "Calcule o erro de cada ponto, eleve ao quadrado e some.",
+      "Mude inclinação e intercepto na direção que reduz a perda; separe um ponto para testar.",
+      "Guarde um ponto fora do treino e use-o para medir generalização, não memorização.",
+      "Compare a reta de treino com a reta que inclui o ponto guardado. Se a segunda errar muito, o ajuste decorou em vez de aprender.",
+    ],
+    quebra:
+      "Decorar os pontos de treino e chamar isso de aprender: o erro cai na amostra e sobe no dado novo. Extrapolar fora da faixa observada também engana. E correlação alta não prova causa. A taxa de aprendizado também é escolha: passo grande diverge, passo pequeno demora. Separar treino e teste é o que revela a diferença.",
     limite:
       "A regressão linear ajusta reta a dado e só vale dentro da faixa observada. O limite é a extrapolação: fora da faixa, a reta continua e a realidade não. Correlação alta também não prova causa.",
     pergunta: {
@@ -376,6 +452,17 @@ export const LICOES_POST = {
       "Aplique um filtro de borda numa foto e veja o que sobra. Depois diga o que o filtro perdeu que ainda seria necessário para reconhecer o objeto.",
   },
   ethics: {
+    oque:
+      "Ética de IA é o estudo de quem responde pelas escolhas de um sistema: o dado que ele aprende, o objetivo que otimiza, a métrica que o avalia e o uso que se faz da saída. O modelo não tem intenção nem dever. A pergunta ética começa antes do modelo e continua depois da resposta.",
+    como: [
+      "Separe o caso em dado, objetivo, métrica e uso.",
+      "Pergunte quem escolheu cada peça, quem é afetado e quem responde pelo erro.",
+      "Se uma dessas respostas ficar vazia, trate o vazio como parte do problema.",
+      "Escreva o caso em uma frase e sublinhe quem sai perdendo se a saída errar.",
+      "Leve o caso a alguém que discorde e registre onde a discordância começa; o desacordo também é dado.",
+    ],
+    quebra:
+      "Dizer que o modelo é neutro porque não tem intenção. A neutralidade está no desenho, não no código. Culpar só a máquina também deixa intactas as pessoas que escolhem o dado e aprovam o uso. Trabalho humano invisível faz parte da conta. Uma métrica que só mede acerto não vê o custo de um falso positivo. Auditoria e recurso de revisão fazem parte do sistema.",
     limite:
       "Ética de IA não se resolve com fórmula, e o limite é a decisão: quem escolhe o dado, quem avalia o viés e quem responde pelo erro são pessoas e instituições. Modelo não tem responsabilidade; quem opera tem.",
     pergunta: {

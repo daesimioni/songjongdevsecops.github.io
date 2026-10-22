@@ -333,6 +333,9 @@ export function blocoDeEstudo(licao) {
   if (!licao || !p) return "";
   const certa = Array.isArray(p.o) ? p.o[p.a] : p.a;
   return [
+    licao.oque ? `<p><strong>O que é.</strong> ${frase(licao.oque)}</p>` : "",
+    licao.como?.length ? `<p><strong>Como se usa.</strong></p><ol>${licao.como.map((passo) => `<li>${frase(passo)}</li>`).join("")}</ol>` : "",
+    licao.quebra ? `<p><strong>Onde quebra.</strong> ${frase(licao.quebra)}</p>` : "",
     licao.limite ? `<p><strong>O limite.</strong> ${frase(licao.limite)}</p>` : "",
     "<p><strong>O que perguntam.</strong> O bicho da área cobra a ideia, não a decoreba.</p>",
     `<p><em>Se perguntarem</em> ${html(p.q)} <em>a resposta é</em> <strong>${html(certa || "")}</strong>. ${frase(p.why)}</p>`,
