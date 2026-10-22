@@ -4,6 +4,11 @@ Revisão de 22/10/2026, integrada às mudanças da `main` até `ccfcf14`
 (capítulos da Iara, acervo, desfecho, facções e guilda local). O [catálogo completo](catalogo.json)
 é gerado dos módulos de produção: inclui cada ID de item e cada tipo de cenário.
 
+## Biblioteca modular ampliada
+
+Mais 515 entradas em quinze categorias, com galeria pesquisável, estados, quatro
+vistas de objetos, criaturas e ataques em oito direções, clima, colisões e exportação de atlas. Veja o [guia e as pranchas](biblioteca-modular/README.md).
+
 ## Direção visual
 
 Pixel art de volumes vistos de cima, luz quente à esquerda, sombras frias,

@@ -1,3 +1,5 @@
+import { kitAsset, kitBounds, searchKit, SPRITE_KIT } from "../../content/sprite-kit/catalog.js";
+import { drawKit } from "../sprite-kit/index.js";
 import { paintFoliage } from "./foliage-motion.js";
 import { detailAsset } from "./detail.js";
 import { artFrame } from "../art-style.js";
@@ -35,10 +37,10 @@ for (const [grupo, itens] of Object.entries(GRUPOS)) {
   });
 }
 
-export function assetDe(tipo) { return POR_TIPO.get(tipo) || null; }
-export function temAsset(tipo) { return POR_TIPO.has(tipo); }
-export function tiposDoGrupo(grupo) { return Object.keys(GRUPOS[grupo] || {}); }
-export function totalDeAssets() { return POR_TIPO.size; }
+export function assetDe(tipo) { return POR_TIPO.get(tipo) || kitAsset(tipo); }
+export function temAsset(tipo) { return POR_TIPO.has(tipo) || !!kitAsset(tipo); }
+export function tiposDoGrupo(grupo) { if (!grupo) return []; return GRUPOS[grupo] ? Object.keys(GRUPOS[grupo]) : searchKit({category:grupo}).map(a=>a.id); }
+export function totalDeAssets({ incluirKit = false } = {}) { return POR_TIPO.size + (incluirKit ? SPRITE_KIT.length : 0); }
 
 // LRU com teto de 240 sprites e 8 MiB, inclusive ao visitar as 86 ilhas.
 const cache = criarCache(240);
@@ -60,9 +62,9 @@ function paletaDoBioma(bioma) {
 // ficam bem de qualquer lado; casa com porta e placa de doca não.
 const ESPELHA = new Set(["vegetacao", "props", "agua", "solo"]);
 
-export function desenharAsset(ctx, tipo, x, y, { tempo = 0, bioma = null, seed = 0, camada = "ser", inclinacao = 0 } = {}) {
+export function desenharAsset(ctx, tipo, x, y, { tempo = 0, bioma = null, seed = 0, camada = "ser", inclinacao = 0, direction = 0, state } = {}) {
   const def = POR_TIPO.get(tipo);
-  if (!def) return false;
+  if (!def) return drawKit(ctx, tipo, x, y, {tempo, direction, state});
   // construção tem porte próprio: o desenho continua nascendo em 2x, mas ocupa
   // o tamanho de mundo que a casa precisa para caber uma pessoa na porta
   const e = def.escala || 1;
@@ -112,9 +114,9 @@ export function desenharAsset(ctx, tipo, x, y, { tempo = 0, bioma = null, seed =
 
 // tamanho de mundo de uma peça, já com a escala de construção; quem coloca a
 // peça usa isto para reservar folga em vez de adivinhar pelo desenho
-export function tamanhoDoAsset(tipo) {
+export function tamanhoDoAsset(tipo, options = {}) {
   const def = POR_TIPO.get(tipo);
-  if (!def) return null;
+  if (!def) { if (!kitAsset(tipo)) return null; const b = kitBounds(tipo, options); return {w:b.w-2*(b.padding??3),h:b.h-2*(b.padding??3)}; }
   const e = def.escala || 1;
   return { w: def.w * e, h: def.h * e };
 }

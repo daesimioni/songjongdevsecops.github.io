@@ -15,7 +15,8 @@
     "art:render": "node tools/render-art.mjs",
     "art:catalog": "node tools/art-catalog.mjs",
     "art:scenes": "node tools/render-art-scene.mjs",
-    "art:og": "node tools/render-og.mjs"
+    "art:og": "node tools/render-og.mjs",
+    "art:library": "node tools/export-sprite-kit.mjs"
   },
   "devDependencies": {
     "@napi-rs/canvas": "1.0.13",

@@ -1,3 +1,4 @@
+import { SPRITE_KIT, KIT_CATEGORIES, kitBounds } from "../src/content/sprite-kit/catalog.js";
 import {TILE_KIND} from "../src/core/runtime-config.js";
 import { writeFile } from "node:fs/promises";
 import { GRUPOS } from "../src/rendering/assets/index.js";
@@ -13,6 +14,7 @@ import { OUTFITS } from "../src/content/outfits.js";
 import { ELEMENTOS } from "../src/rendering/ambient.js";
 import { TILE_STYLE } from "../src/content/identity.js";
 const report = {
+  modularKit: {count: SPRITE_KIT.length, categories: Object.fromEntries(Object.entries(KIT_CATEGORIES).map(([k,v])=>[k,v.length])), assets: SPRITE_KIT.map(a=>({...a,bounds:kitBounds(a.id)}))},
   directions: [
     "sul",
     "oeste",
