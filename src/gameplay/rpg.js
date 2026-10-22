@@ -330,19 +330,21 @@ export class RPG {
   }
 
   equipmentBonus() {
-    let hp = 0, damage = 0;
+    let hp = 0, damage = 0, shield = 0;
     const porContinente = new Map();
     for (const [slot, id] of Object.entries(this.data.equipped || {})) {
       const item = ITEMS[id];
       if (!item || item.slot !== slot || this.itemCount(id) <= 0) continue;
       hp += Number(item.hp) || 0;
       damage += Number(item.damage) || 0;
+      // escudo equipado segura o primeiro erro do duelo, uma vez por duelo
+      if (slot === "shield") shield = 1;
       if (item.continent) porContinente.set(item.continent, (porContinente.get(item.continent) || 0) + 1);
     }
     // três peças do mesmo continente formam conjunto: +2 de vida e +1 de dano
     const conjunto = [...porContinente.values()].some((n) => n >= 3);
     if (conjunto) { hp += 2; damage += 1; }
-    return { hp, damage, conjunto };
+    return { hp, damage, conjunto, shield };
   }
 
   priceFor(id) {
@@ -847,7 +849,7 @@ export class RPG {
 
   erroPrevisto(monster = this.duel?.monster, tier = this.duel?.tier, bossPhase = this.duel?.boss ? this.duel.bossPhase : 1) {
     const d = this.duel;
-    if (d?.shield || (this.data.sub === "domador" && this.activePet() && !d?.petUsado)) return 0;
+    if (d?.shield || d?.escudo || (this.data.sub === "domador" && this.activePet() && !d?.petUsado)) return 0;
     if (monster === d?.monster && espelhoDoChefe(d?.habilidade?.id, bossPhase, d?.espelhoUsado)) return 0;
     const base = TIERS[tier]?.damage || 0;
     const extra = monster === d?.monster ? extraDoErro(d?.habilidade?.id, bossPhase) : 0;
@@ -1375,6 +1377,8 @@ export class RPG {
       habilidade: boss ? habilidadeDoChefe(monster) : null,
       espelhoUsado: false,
       shield: false,
+      // carga do escudo equipado: segura um erro por duelo e some ao gastar
+      escudo: this.equipmentBonus().shield > 0,
       partners: [],
       get partner() { return this.partners[0] || null; },
       phase: "question",
@@ -1494,6 +1498,8 @@ export class RPG {
       monsterHpMax: hp,
       bossPhase: 1,
       shield: false,
+      // carga do escudo equipado: segura um erro por duelo e some ao gastar
+      escudo: this.equipmentBonus().shield > 0,
       partners: [],
       get partner() { return this.partners[0] || null; },
       phase: "question",
@@ -1599,10 +1605,12 @@ export class RPG {
       d.seguidos = 0;
       const previsto = this.erroPrevisto();
       const espelho = espelhoDoChefe(d.habilidade?.id, d.bossPhase, d.espelhoUsado);
-      const petSegura = !espelho && !d.shield && this.data.sub === "domador" && this.activePet() && !d.petUsado;
+      const petSegura = !espelho && !d.shield && !d.escudo && this.data.sub === "domador" && this.activePet() && !d.petUsado;
       if (petSegura) d.petUsado = true;
       if (espelho) d.espelhoUsado = true;
-      const blocked = !!d.shield || petSegura || espelho;
+      const escudoSegura = !espelho && !d.shield && !petSegura && !!d.escudo;
+      if (escudoSegura) d.escudo = false;
+      const blocked = !!d.shield || petSegura || espelho || escudoSegura;
       if (!espelho && d.shield) d.shield = false;
       let damage = previsto;
       let note = "";
@@ -1617,8 +1625,9 @@ export class RPG {
       }
       if (blocked) damage = 0;
       if (espelho) note = `${note ? note + " " : ""}O espelho partido engoliu o golpe.`;
+      if (escudoSegura) note = `${note ? note + " " : ""}O escudo segurou o golpe inteiro.`;
       if (d.training) {
-        d.feedback = { correct: false, why: d.question.why, damage, blocked, note, training: true };
+        d.feedback = { correct: false, why: d.question.why, damage, blocked, escudo: escudoSegura, note, training: true };
         d.phase = "feedback";
         return { ok: true, correct, phase: d.phase, feedback: d.feedback, duel: d };
       }
@@ -1627,7 +1636,7 @@ export class RPG {
       const antesDaSeiva = d.monsterHp;
       d.monsterHp = curaDoChefe(d.habilidade?.id, d.bossPhase, d.monsterHp, d.monsterHpMax);
       if (d.monsterHp > antesDaSeiva) note = `${note ? note + " " : ""}A seiva amarga devolveu ${d.monsterHp - antesDaSeiva} de vida.`;
-      d.feedback = { correct: false, why: d.question.why, damage, blocked, note };
+      d.feedback = { correct: false, why: d.question.why, damage, blocked, escudo: escudoSegura, note };
       if (this.data.hp <= 0) {
         this.data.hp = this.hpMax();
         d.phase = "defeat";

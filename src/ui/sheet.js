@@ -223,9 +223,10 @@ export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onOu
       gear.appendChild(row);
     }
     body.appendChild(gear);
-    body.appendChild(el("p", "company-hint", rpg.equipmentBonus().conjunto
+    const bonusGear = rpg.equipmentBonus();
+    body.appendChild(el("p", "company-hint", `${bonusGear.conjunto
       ? "Conjunto fechado: três peças do mesmo continente dão +2 de vida e +1 de dano."
-      : "Três peças do mesmo continente fecham conjunto: +2 de vida e +1 de dano."));
+      : "Três peças do mesmo continente fecham conjunto: +2 de vida e +1 de dano."}${bonusGear.shield ? " Escudo equipado segura o primeiro erro de cada duelo." : ""}`));
 
     body.appendChild(el("h3", "sheet-sec", "Builds"));
     const builds = el("div", "sheet-builds");

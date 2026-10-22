@@ -71,3 +71,10 @@ vida aparece como 1 e não como 0 vivo.
    viva. Prova: `test/duelo-dica.test.mjs` e sonda `cdp-dica.mjs` (mana 10 → 7,
    2 e 3 alternativas riscadas, correta destacada só no terceiro passo, 0 erro
    de console).
+
+5. **Escudo equipado: fechado em 2026-10-22.** O escudo do slot agora segura o
+   primeiro erro de cada duelo: a leitura mostra "Se errar: 0 de dano (o escudo
+   segura uma vez)", o gasto sai do save e o feedback diz "O escudo segurou o
+   golpe.". A runa do espelho continua tendo precedência e não gastando a carga,
+   e o duelo seguinte recarrega. Prova: `test/escudo-equip.test.mjs` e sonda
+   `cdp-escudo.mjs` (vida 28 no primeiro erro, 25 no segundo).

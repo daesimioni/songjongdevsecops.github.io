@@ -203,10 +203,11 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
     // o número que o erro vai custar, antes da escolha: fase de chefe e caráter
     // do bicho entram na conta, e o espelho aparece como zero
     const previsao = rpg.erroPrevisto();
+    const protecao = d.shield ? " (o espelho segura uma vez)" : d.escudo ? " (o escudo segura uma vez)" : "";
     main.appendChild(el("p", "duel-read",
       d.training
-        ? `Na caverna, esse erro tiraria ${previsao} de vida.`
-        : `Se errar: ${previsao} de dano${d.shield ? " (o espelho segura uma vez)" : ""}.`));
+        ? `Na caverna, esse erro tiraria ${previsao} de vida.${protecao}`
+        : `Se errar: ${previsao} de dano${protecao}.`));
     // o próximo acerto também tem número, aproximado: desvio e subcategoria mudam
     main.appendChild(el("p", "duel-read",
       `Se acertar: ~${rpg.acertoPrevisto()} de dano.`));
@@ -243,7 +244,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
       const wrong = fb.training
         ? `Errou. Na caverna isso tiraria ${fb.damage} de vida.`
         : `Errou. Você levou ${fb.damage} de dano.`;
-      const label = fb.spell || (fb.blocked ? "A proteção segurou o golpe." : fb.correct ? "Acertou." : wrong);
+      const label = fb.spell || (fb.escudo ? "O escudo segurou o golpe." : fb.blocked ? "A proteção segurou o golpe." : fb.correct ? "Acertou." : wrong);
       box.appendChild(el("b", "", label));
       box.appendChild(el("span", "", fb.why));
       if (fb.note) box.appendChild(el("em", "duel-note", fb.note));
