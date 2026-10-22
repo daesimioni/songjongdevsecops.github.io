@@ -63,6 +63,15 @@ function normalizar(texto) {
 // propósito: a wiki aponta o comando e a regra, não escreve um manual.
 export const COMO_JOGAR = [
   {
+    nome: "A Grande Prova",
+    resumo: "o evento de três fases que abre o acervo; a escolha fica no save",
+    campos: [
+      ["Abertura", "a corrente das sete missões da Biblioteca Afogada"],
+      ["Fases", "três; a fase 2 revela a habilidade e a 3 aperta a pergunta"],
+      ["Desfecho", "guardar, devolver ou abrir; a escolha não pode ser refeita"],
+    ],
+  },
+  {
     nome: "Começando",
     resumo: "criar a chave, escolher a vocação e acordar no porto",
     campos: [

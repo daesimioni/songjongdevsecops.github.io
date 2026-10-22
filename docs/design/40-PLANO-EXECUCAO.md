@@ -20,8 +20,8 @@ O endgame e a lore entram no próximo ciclo, nesta ordem.
 ## 2. O ciclo atual está fechado
 
 - 0 linhas ausente e 0 parciais no 39; o que resta são decisões respondidas.
-- 103 testes em 106 arquivos, 19/19 na matriz de navegador a 60,2 fps, 138
-  módulos, build de 146 arquivos.
+- 104 testes em 107 arquivos, 19/19 na matriz de navegador a 60,2 fps, 139
+  módulos, build de 147 arquivos.
 - Site publicado com o 39 e o 40; o revisor de conteúdo roda no `check` e no CI.
 - A mochila medida em 60,2 fps após 75 s e 18 a 19 MB; acompanhar em hardware
   real.
@@ -60,6 +60,9 @@ de escolha e um desfecho. A decisão 1 do dono (sem prova final) continua valend
 - **Prova**: `test/grande-prova.test.mjs` (as três fases, a escolha, o save, a
   ausência de nota/reprovação); `cdp-grande-prova.mjs` (chegar, escolher, ver o
   desfecho); site.
+- **Fechada (rodada 3)**: o guardião de 18 de vida com as fases 1-3, a vitória,
+  os três desfechos, o save e a marca no acervo; o teste node e a sonda medem
+  tudo, e a matriz de navegador deu 19/19.
 - **Depende de**: F1 (a biblioteca é o lugar).
 
 ### F3. Arco principal em capítulos e lore da Iara (G)

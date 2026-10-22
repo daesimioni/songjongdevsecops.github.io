@@ -39,6 +39,7 @@ import { resumoConceitos, vencido } from "../gameplay/conceitos.js";
 import { FERRY, precoDoFerry, podePagarFerry, cobrarFerry, faltaDoFerry, nomeDoMaterial, falaDoBarqueiro } from "../gameplay/ferry.js";
 import { pontosFracos } from "../gameplay/grafo.js";
 import { ALAS, itensDaAla, filtrarAcervo } from "../gameplay/acervo.js";
+import { DESFECHOS, GUARDIAO, GROUND_ACERVO, registrarDesfecho, estadoDaProva, desfechoPorId } from "../gameplay/grande-prova.js";
 import { VOCACOES } from "../content/vocations.js";
 import { ITEMS, QUESTIONS } from "../content/rpg-data.js";
 import { createSheet } from "../ui/sheet.js";
@@ -312,8 +313,19 @@ duelUi = createDuel({
   rpg,
   toast,
   audio,
-  onClose: () => closeModal("duel"),
-  onVictory: (result) => { quests.report("hunts", result?.defeated || 1); markStep("duel"); },
+  onClose: () => {
+    closeModal("duel");
+    if (state.desfechoPendente) {
+      state.desfechoPendente = false;
+      state.duelEvento = null;
+      abrirDesfecho();
+    }
+  },
+  onVictory: (result) => {
+    if (state.duelEvento === "grande-prova") { state.desfechoPendente = true; return; }
+    quests.report("hunts", result?.defeated || 1);
+    markStep("duel");
+  },
 });
 
 const gatherUi = createGather({
@@ -1947,6 +1959,7 @@ function buildBiblioteca() {
   $("biblioteca-status").textContent = `${itens.length} ${itens.length === 1 ? "entrada" : "entradas"} em ${ala?.nome || "acervo"}`;
   $("biblioteca-empty").hidden = itens.length !== 0;
   $("biblioteca-clear").disabled = !filtro;
+  buildBibliotecaProva();
 }
 function openBiblioteca() {
   stopSprint();
@@ -1972,6 +1985,63 @@ $("biblioteca-clear")?.addEventListener("click", () => {
   buildBiblioteca();
   $("biblioteca-filter")?.focus();
 });
+
+function buildBibliotecaProva() {
+  const prova = estadoDaProva(rpg.data);
+  const status = $("biblioteca-prova-status");
+  const botao = $("biblioteca-prova-btn");
+  if (!status || !botao) return;
+  status.textContent = prova
+    ? `A Grande Prova: ${desfechoPorId(prova.escolha)?.nome || "concluída"}. O desfecho está no save.`
+    : "A Grande Prova está aberta: três fases e um desfecho, sem exame nem reprovação.";
+  botao.disabled = !!prova;
+  botao.textContent = prova ? "concluída" : "começar a Grande Prova";
+}
+function iniciarGrandeProva() {
+  if (estadoDaProva(rpg.data)) return;
+  closeModal("biblioteca");
+  state.duelEvento = "grande-prova";
+  state.desfechoPendente = false;
+  openDuel(GUARDIAO, GROUND_ACERVO, true);
+  if (!rpg.duel) {
+    state.duelEvento = null;
+    toast("O guardião do acervo não atende agora.", 3200);
+  }
+}
+function abrirDesfecho() {
+  const body = $("desfecho-body");
+  if (!body) return;
+  body.textContent = "";
+  const estado = estadoDaProva(rpg.data);
+  if (estado) {
+    body.appendChild(el("p", "npc-line", `Desfecho registrado: ${desfechoPorId(estado.escolha)?.nome}.`));
+    openModal("desfecho");
+    return;
+  }
+  const grid = el("div", "training-grid");
+  for (const d of DESFECHOS) {
+    const btn = el("button", "training-card");
+    btn.type = "button";
+    btn.append(el("b", "", d.nome), el("span", "", d.texto));
+    btn.addEventListener("click", () => {
+      const feito = registrarDesfecho(rpg.data, d.id);
+      if (!feito) return;
+      rpg.save();
+      if (!quests.data.titles.includes(feito.titulo)) quests.data.titles.push(feito.titulo);
+      quests.data.title = feito.titulo;
+      quests.save();
+      quests.changed?.();
+      rpg.addItem("pergaminho", 2);
+      closeModal("desfecho");
+      toast(`A Grande Prova: ${feito.nome}. ${feito.texto}`, 5600);
+      audio.chime();
+    });
+    grid.appendChild(btn);
+  }
+  body.appendChild(grid);
+  openModal("desfecho");
+}
+$("biblioteca-prova-btn")?.addEventListener("click", iniciarGrandeProva);
 
 function travelDot(color) {
   const dot = document.createElement("i");
