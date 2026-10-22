@@ -123,6 +123,12 @@ check(/onWiki/.test(dungeon) && /k === "h"/.test(dungeon), "caverna não abre a 
 check(/id="intro-wiki"/.test(html) && /intro-wiki/.test(app), "wiki não abre antes de criar personagem");
 check(/get\("wiki"\)/.test(app), "link ?wiki= não abre a wiki");
 check(/separarConsulta/.test(fs.readFileSync(new URL("../src/ui/wiki.js", import.meta.url), "utf8")), "wiki sem parser de link");
+// a ajuda do jogo cita os números da wiki: número velho ali é documento que mente
+const ajudaWiki = (html.match(/A <strong>Wiki<\/strong>[\s\S]*?<\/p>/) || [""])[0];
+check(ajudaWiki.includes(`${indice.length.toLocaleString("pt-BR")} fichas`), "ajuda com contagem de fichas velha");
+check(ajudaWiki.includes(`${contagem.itens} itens`), "ajuda com contagem de itens velha");
+check(ajudaWiki.includes(`${contagem.receitas} receitas`), "ajuda com contagem de receitas velha");
+check(ajudaWiki.includes(`${contagem.criaturas} bichos`), "ajuda com contagem de bichos velha");
 check(/onWiki: \(\) => openWiki\(\)/.test(app), "caverna sem callback da wiki");
 
 assert.equal(problemas.length, 0, `wiki com ${problemas.length} problema(s):\n- ${problemas.slice(0, 12).join("\n- ")}`);
