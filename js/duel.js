@@ -69,8 +69,8 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
 
   const SPELL_LABELS = {
     "runa-faisca": "faísca · risca uma alternativa",
-    "runa-trovao": "trovão · 2 de dano no da frente",
-    "runa-fogo": "fogo · 1 de dano em todos",
+    "runa-trovao": "trovão · atinge o monstro da frente",
+    "runa-fogo": "fogo · atinge todos os bichos",
     "runa-gelo": "gelo · passa a pergunta",
     "runa-cura": "cura · recupera 12",
     "runa-espelho": "espelho · o próximo erro não dói",
