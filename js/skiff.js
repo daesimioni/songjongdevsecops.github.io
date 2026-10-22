@@ -1,26 +1,19 @@
+import { directionVector, directionAngle } from "./movement.js";
 import { artTime } from "./art-style.js";
 // A nave: o mesmo casco na superfície e na caverna. Fica num módulo só para o
 // desenho de um lugar não divergir do outro.
 
 export function skiffRear(dir) {
-  // a popa fica atrás da direção: nas diagonais ela é meia torta, para o rastro
-  // e o brilho acompanharem a curva
-  if (dir === 4) return { x: 0.7, y: 0.7 };
-  if (dir === 5) return { x: -0.7, y: 0.7 };
-  if (dir === 6) return { x: 0.7, y: -0.7 };
-  if (dir === 7) return { x: -0.7, y: -0.7 };
-  return {
-    x: dir === 1 ? -1 : dir === 2 ? 1 : 0,
-    y: dir === 3 ? -1 : dir === 0 ? 1 : 0,
-  };
+  const { x, y } = directionVector(dir);
+  return { x: -x, y: -y };
 }
 
 export function drawSkiff(ctx, px, py, dir, time, boost = 1, moving = false) {
   if (boost <= 0.01) return;
   time = artTime(time);
   const bob = Math.sin(time * 0.007) * 1.1;
-  const by = py - 2 + bob;
-  const rear = skiffRear(dir);
+  let by = py - 2 + bob;
+  const rear = { x: -1, y: 0 };
   const vx = -rear.x;
   const vy = -rear.y;
   ctx.save();
@@ -31,6 +24,9 @@ export function drawSkiff(ctx, px, py, dir, time, boost = 1, moving = false) {
   ctx.beginPath();
   ctx.ellipse(px, py + 4, 12, 3.2, 0, 0, Math.PI * 2);
   ctx.fill();
+  ctx.translate(px, by);
+  ctx.rotate(directionAngle(dir));
+  px = 0; by = 0;
   const pulse = 0.5 + Math.sin(time * 0.018) * 0.5;
   const gx = px + rear.x * 9;
   const gy = by + rear.y * 5;
@@ -40,25 +36,15 @@ export function drawSkiff(ctx, px, py, dir, time, boost = 1, moving = false) {
   ctx.fillStyle = glow;
   ctx.fillRect(px - 26, by - 20, 52, 40);
 
-  // casco em degraus
+  // Proa afilada e popa larga: a silhueta revela o rumo mesmo sem rastro.
   ctx.fillStyle = "#0b2438";
-  ctx.fillRect(px - 11, by - 1, 22, 4);
-  ctx.fillRect(px - 8, by - 3, 16, 2);
-  ctx.fillRect(px - 8, by + 3, 16, 2);
-  ctx.fillStyle = "#1d6280";
-  ctx.fillRect(px - 10, by, 20, 2);
-  ctx.fillRect(px - 7, by - 2, 14, 2);
-  ctx.fillStyle = "#61f4c0";
-  ctx.fillRect(px - 9, by, 18, 1);
-  // convés
-  ctx.fillStyle = "#122a4a";
-  ctx.fillRect(px - 6, by - 2, 12, 2);
-  ctx.fillStyle = "#ffc857";
-  ctx.fillRect(px - 2, by - 2, 4, 2);
-  // aletas
-  ctx.fillStyle = "#2f8fae";
-  ctx.fillRect(px - 13, by, 3, 3);
-  ctx.fillRect(px + 10, by, 3, 3);
+  ctx.beginPath();ctx.moveTo(13,0);ctx.lineTo(6,-6);ctx.lineTo(-10,-6);
+  ctx.lineTo(-12,-3);ctx.lineTo(-12,3);ctx.lineTo(-10,6);ctx.lineTo(6,6);ctx.closePath();ctx.fill();
+  ctx.fillStyle = "#1d6280";ctx.fillRect(-9,-4,14,8);
+  ctx.fillStyle = "#61f4c0";ctx.fillRect(-8,-5,13,1);ctx.fillRect(-8,4,13,1);
+  ctx.fillStyle = "#122a4a";ctx.fillRect(-6,-3,9,6);
+  ctx.fillStyle = "#ffc857";ctx.fillRect(4,-2,3,4);
+  ctx.fillStyle = "#2f8fae";ctx.fillRect(-9,-8,5,3);ctx.fillRect(-9,5,5,3);
   // motor
   ctx.fillStyle = "#ffb26b";
   ctx.fillRect(px + rear.x * 9 - 2, by + rear.y * 6 - 1, 4, 3);

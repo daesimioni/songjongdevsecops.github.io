@@ -1,3 +1,4 @@
+import { directionVector } from "./movement.js";
 import { spritePose } from "./sprite-cache.js";
 import { artTime, artTick } from "./art-style.js";
 // Desenho dos bichos companheiros, um por espécie. Usado na superfície, na
@@ -37,6 +38,8 @@ function desenharPet(ctx, kind, x, y, t = 0, moving = false, dir = 0, semSombra 
   // o bicho vira junto com quem ele segue; o espelho é em volta do próprio
   // ponto de desenho, então a sombra e o corpo vão juntos
   if (dir === 1 || dir === 4 || dir === 6) ctx.scale(-1, 1);
+  if (dir === 1 || dir === 2) ctx.scale(.72,1);
+  else if (dir >= 4) ctx.transform(.88,0,dir >= 6 ? -.12 : .12,1,0,0);
   if (!semSombra) {
     ctx.fillStyle = "rgba(2,4,10,0.3)";
     ctx.beginPath();
@@ -161,6 +164,42 @@ function desenharPet(ctx, kind, x, y, t = 0, moving = false, dir = 0, semSombra 
     ctx.moveTo(5, -4 - bob);
     ctx.quadraticCurveTo(9 + cauda, -6 - bob, 8 + cauda * 0.5, -10 - bob);
     ctx.stroke();
+  }
+  // A face ocupa outro plano no perfil; a nuca oculta olhos e bico atrás.
+  if (dir !== 0 && kind !== "wisp") {
+    ctx.fillStyle = colors.body;
+    const top = kind === 'owl' ? -12 : kind === 'cricket' ? -8 : -10;
+    ctx.fillRect(-4,top-bob,8,5);
+    if (dir === 1 || dir === 2 || dir === 4 || dir === 5) {
+      ctx.fillStyle = blink ? colors.body : colors.eye;
+      ctx.fillRect(2,top+2-bob,1,1);
+      if (dir >= 4) ctx.fillRect(-1,top+2-bob,1,1);
+      if(kind === 'parrot' || kind === 'owl') {
+        ctx.fillStyle='#e8b04a';ctx.fillRect(4,top+3-bob,2,1);
+      }
+    } else {
+      ctx.fillStyle=colors.light;ctx.fillRect(-1,top+1-bob,2,4);
+    }
+  }
+  // Passo alternado no plano do chão, asas para os companheiros voadores.
+  if (moving && kind !== 'wisp' && kind !== 'shade') {
+    const stride = Math.sin(t*.02)*1.5;
+    ctx.fillStyle=colors.body;
+    if(kind === 'owl' || kind === 'parrot') {
+      ctx.fillRect(-7,-7-bob-stride,2,4);ctx.fillRect(5,-7-bob+stride,2,4);
+    } else {
+      ctx.fillRect(-4,-2+stride,2,2);ctx.fillRect(2,-2-stride,2,2);
+    }
+  }
+  if(kind === 'wisp') {
+    const v=directionVector(dir);
+    ctx.fillStyle=colors.light;
+    ctx.fillRect(v.x*3,-8+v.y*2,1,1);
+    if(moving){
+      ctx.fillStyle=colors.body;
+      for(let i=1;i<=3;i++){ctx.globalAlpha=1-i*.2;ctx.fillRect(-v.x*i*3,-8-v.y*i*2,2,2);}
+      ctx.globalAlpha=1;
+    }
   }
   // Textura própria no flanco, preservando a leitura dos olhos e do bico.
   ctx.fillStyle=colors.light;

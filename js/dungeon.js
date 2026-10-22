@@ -2,7 +2,7 @@ import { spritePose } from "./sprite-cache.js";
 import { artTick } from "./art-style.js";
 import { artTime } from "./art-style.js";
 import { isTextEntry, nativeActivation } from "./input.js";
-import { moveWithCollision, advancePath, directionVector, directionAngle } from "./movement.js";
+import { moveWithCollision, advancePath, directionVector, directionAngle, facingDirection } from "./movement.js";
 // A caverna: um mapa próprio, em tela cheia, com salas e túneis que se cruzam.
 // O bicho que vê você começa a batalha sozinho, como nos jogos de bolso: anda
 // pelo corredor, entra no campo de visão, exclama e chama o duelo de perguntas.
@@ -1478,9 +1478,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     p.y = clamp(p.y, 0.6, state.map.H - 0.6);
     const moved = p.x !== ox || p.y !== oy;
     p.moving = moved;
-    if (dx !== 0 && dy !== 0) p.dir = dy > 0 ? (dx < 0 ? 4 : 5) : (dx < 0 ? 6 : 7);
-    else if (dx !== 0) p.dir = dx > 0 ? 2 : 1;
-    else p.dir = dy > 0 ? 0 : 3;
+    p.dir = facingDirection(p.x-ox,p.y-oy,p.dir);
     return moved;
   }
 
@@ -1832,9 +1830,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
               m.x = nx;
               m.y = ny;
               m.moving = true;
-              if (Math.abs(dx) > 0.2 && Math.abs(dy) > 0.2) m.dir = dy > 0 ? (dx < 0 ? 4 : 5) : (dx < 0 ? 6 : 7);
-              else if (Math.abs(dx) > Math.abs(dy)) m.dir = dx > 0 ? 2 : 1;
-              else m.dir = dy > 0 ? 0 : 3;
+              m.dir = facingDirection(dx,dy,m.dir);
             } else {
               m.waitUntil = t + 400;
               pickWander(m);
@@ -1844,7 +1840,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
         // parado, ele ainda vira a cabeça de vez em quando: bicho vivo não
         // fica olhando para o mesmo pixel
         if (!m.moving && m.olharEm && t >= m.olharEm) {
-          m.dir = (m.dir + 1 + Math.floor(Math.random() * 3)) % 4;
+          m.dir = (m.dir + 1 + Math.floor(Math.random() * 7)) % 8;
           m.olharEm = t + 380 + Math.random() * 900;
         }
       }
@@ -1968,7 +1964,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     if (!state.paused && !blocked()) {
       if (state.path) updateAutoWalk(dt);
       else updateMovement(dt);
-      state.history.push({ x: p.x, y: p.y, t });
+      state.history.push({ x: p.x, y: p.y, dir: p.dir, moving: p.moving, t });
       while (state.history.length > 40) state.history.shift();
       if (p.moving && Math.hypot(p.x - beforeX, p.y - beforeY) > 0.001) {
         if (!state.footAt || t - state.footAt > 340) {
@@ -2384,7 +2380,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
       if (Math.hypot(trail.x - state.player.x, trail.y - state.player.y) < 5) {
         drawables.push({
           y: trail.y,
-          draw: () => drawPetSprite(ctx, companion.kind, trail.x * TILE, trail.y * TILE, t, state.player.moving, state.player.dir),
+          draw: () => drawPetSprite(ctx, companion.kind, trail.x * TILE, trail.y * TILE, t, trail.moving, trail.dir ?? state.player.dir),
         });
       }
     }

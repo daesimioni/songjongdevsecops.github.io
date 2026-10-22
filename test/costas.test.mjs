@@ -10,7 +10,7 @@ function desenhar(kind, dir) {
   const ops = [];
   let cor = "#000";
   const ctx = {
-    save() {}, restore() {}, translate() {}, scale() {}, beginPath() {}, closePath() {},
+    save() {}, restore() {}, translate() {}, scale() {}, transform() {}, beginPath() {}, closePath() {},
     moveTo(x, y) { ops.push(["m", x, y]); },
     lineTo(x, y) { ops.push(["l", x, y]); },
     quadraticCurveTo(...a) { ops.push(["q", ...a]); },

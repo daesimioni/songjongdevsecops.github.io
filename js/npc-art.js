@@ -10,6 +10,10 @@ export function drawNpcKit(ctx, npc, px, py, bob, time, colors) {
   ctx.save();
   ctx.translate(px, py + bob);
   ctx.scale(s, s);
+  const dir=npc.facing ?? 0;
+  if(dir===1||dir===4||dir===6)ctx.scale(-1,1);
+  if(dir===1||dir===2)ctx.scale(.78,1);
+  else if(dir>=4)ctx.transform(.9,0,(dir>=6?-.08:.08),1,0,0);
   if (npc.role === "mestre") {
     // casaco comprido e manto nos ombros: a silhueta do guardião do saber
     ctx.fillStyle = colors.shirt;

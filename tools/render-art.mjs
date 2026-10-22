@@ -32,3 +32,14 @@ for(let i=0;i<8;i++){
  Object.keys(PET_COLORS).forEach((id,k)=>drawPetSprite(g,id,80+k*110,283,i*120,true,k%8));
  await writeFile(`${out}/scene-${i}.png`,cv.toBuffer('image/png'));
 }
+// Cada linha mostra as oito vistas da mesma entidade no mesmo instante.
+const actors=[...Object.keys(COSTAS),...Object.keys(PET_COLORS).map(k=>'pet:'+k),'human','skiff'];
+const views=actors.flatMap(kind=>Array.from({length:8},(_,dir)=>({id:`${kind} ${dir}`,kind,dir})));
+const directional=sheet(views,(g,{kind,dir},t)=>{
+ g.scale(2,2);
+ if(kind.startsWith('pet:'))drawPetSprite(g,kind.slice(4),0,0,t,true,dir);
+ else if(kind==='human')drawHuman(g,0,0,dir,true,t,{skin:'#d9b08c',hair:'#584252',shirt:'#4e9b89',pants:'#403d5c',eyes:'#14121f',accent:'#e7c385'});
+ else if(kind==='skiff')drawSkiff(g,0,0,dir,t,1,true);
+ else drawCreatureArt(g,kind,'#61d5b2',t,1,dir);
+},8,115,125);
+await writeFile(`${out}/oito-direcoes.png`,directional.toBuffer('image/png'));

@@ -40,3 +40,12 @@ const old=hash(one);
 for(let i=0;i<300;i++)spritePose(`reuse-${i}`,32,32,g=>{g.fillStyle='#00f';g.fillRect(i%12,2,3,4);});
 assert.equal(hash(one),old,'reuso de buffers não altera sprite já emitido');
 console.log(JSON.stringify({entities,allRenders:renders+entities}));
+// A direção deve mudar pixels mesmo no mesmo quadro, sem depender do tempo.
+const {drawHuman}=await import('../js/human.js');
+const {drawSkiff}=await import('../js/skiff.js');
+const directional=[...Object.keys(COSTAS).map(k=>[k,(g,d)=>drawCreatureArt(g,k,'#61d5b2',720,1,d)]),...Object.keys(PET_COLORS).map(k=>['pet:'+k,(g,d)=>drawPetSprite(g,k,0,0,720,true,d)]),['human',(g,d)=>drawHuman(g,0,0,d,true,720,{skin:'#d9b08c',hair:'#584252',shirt:'#4e9b89',pants:'#403d5c'})],['skiff',(g,d)=>drawSkiff(g,0,0,d,720,1,true)]];
+for(const [id,paint]of directional){
+ const views=Array.from({length:8},(_,d)=>{const cv=createCanvas(180,180),g=cv.getContext('2d');g.translate(90,120);paint(g,d);return hash(cv);});
+ assert.equal(new Set(views).size,8,`${id}: vistas duplicadas`);
+}
+console.log(JSON.stringify({directionalFamilies:directional.length,directionalViews:directional.length*8}));

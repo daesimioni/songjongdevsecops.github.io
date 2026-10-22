@@ -55,6 +55,9 @@ export function drawHuman(ctx, px, py, dir, moving, time, colors, scale = 1, loo
   ctx.save();
   ctx.translate(px, py + respira + quique);
   ctx.scale(s, s);
+  // Ombros e profundidade acompanham o plano de visão do rosto.
+  if(dir === 1 || dir === 2) ctx.scale(.78,1);
+  else if(dir >= 4) ctx.transform(.9,0,(dir === 4 || dir === 6 ? -1 : 1)*.08,1,0,0);
 
   ctx.fillStyle = "rgba(2,4,10,0.38)";
   ctx.beginPath();
@@ -355,7 +358,7 @@ export function drawHuman(ctx, px, py, dir, moving, time, colors, scale = 1, loo
   ctx.restore();
   // detalhe no peito
   ctx.fillStyle = colors.accent || "#fff3d1";
-  ctx.fillRect(-1, -11, 2, 2);
+  if(base !== 3) ctx.fillRect(-1, -11, 2, 2);
 
   // Costuras, botões, cinto e luz no ombro: mesmo vocabulário dos itens.
   ctx.fillStyle='rgba(255,236,204,.4)';ctx.fillRect(-shoulder+1,-12,2,.5);

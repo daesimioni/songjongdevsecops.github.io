@@ -22,7 +22,7 @@ function desenhar(dir, moving, time) {
     save() {},
     restore() {},
     translate() {},
-    scale() {},
+    scale() {}, transform() {},
     beginPath() {},
     ellipse() {},
     fill() {},
