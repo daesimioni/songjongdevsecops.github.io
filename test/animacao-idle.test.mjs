@@ -6,7 +6,7 @@ import {setArtMotion} from '../src/rendering/art-style.js';
 const human=fs.readFileSync(new URL('../src/rendering/human.js',import.meta.url),'utf8');
 assert.match(human,/const olhar = moving \? 0 : Math\.round\(Math\.sin/,'NPC deve olhar parado');
 assert.match(human,/const cabeceio = !moving/,'NPC deve cabecear parado');
-assert.match(human,/ctx\.translate\(ladoDiag \+ olhar, cabeceio\)/,'gesto deve chegar à cabeça');
+assert.match(human,/ctx\.translate\(\(diag \? ladoDiag \* 2 : ladoDiag\) \+ olhar, cabeceio\)/,'gesto deve chegar à cabeça');
 function draw(kind,t,moving=false,dir=0){
   const ops=[];let color;
   const ctx={save(){},restore(){},translate(){},scale(){},beginPath(){},

@@ -77,6 +77,9 @@ export function drawHuman(ctx, px, py, dir, moving, time, colors, scale = 1, loo
   const hair = hairById(look?.hair);
   const base = direcaoBase(dir);
   const ladoDiag = ladoDaDiagonal(dir);
+  // diagonal é 3/4: tronco inclinado para o lado do passo, ombro de trás
+  // escondido e cabeça deslocada dois pixels, senão parece andar de lado
+  const diag = ladoDiag !== 0;
   // feminino tem ombro mais estreito e quadril mais largo; masculino o contrário
   const fem = look?.gender !== "m";
   const shoulder = fem ? 4 : 5;
@@ -85,9 +88,10 @@ export function drawHuman(ctx, px, py, dir, moving, time, colors, scale = 1, loo
   // cabelo que cai nas costas fica atrás do corpo
   if (hair.back) {
     ctx.fillStyle = colors.hair;
-    ctx.fillRect(-4, -21, 8, 8 + hair.back);
-    ctx.fillRect(-5, -19, 1, Math.max(0, hair.back - 2));
-    ctx.fillRect(4, -19, 1, Math.max(0, hair.back - 2));
+    const cabeloX = diag ? ladoDiag : 0;
+    ctx.fillRect(-4 + cabeloX, -21, 8, 8 + hair.back);
+    ctx.fillRect(-5 + cabeloX, -19, 1, Math.max(0, hair.back - 2));
+    ctx.fillRect(4 + cabeloX, -19, 1, Math.max(0, hair.back - 2));
   }
 
   // A capa fica atrás na frente e cobre o dorso nas vistas de costas.
@@ -225,9 +229,10 @@ export function drawHuman(ctx, px, py, dir, moving, time, colors, scale = 1, loo
   if (escudoAtras) desenharEscudo();
 
   // Pés no plano do chão, com apoio alternado e avanço no rumo real.
+  const passoLateral = diag ? 3.4 : 2.5;
   const feet=[-1,1].map(side=>{
-    const stride=step*side*2,ground=view.project(side*2.5,stride,0);
-    return {side,ground,lift:Math.max(0,step*side)*lift,depth:view.depth(side*2.5,stride)};
+    const stride=step*side*2,ground=view.project(side*passoLateral,stride,0);
+    return {side,ground,lift:Math.max(0,step*side)*lift,depth:view.depth(side*passoLateral,stride)};
   }).sort((a,b)=>a.depth-b.depth);
   for(const foot of feet){
     const x=foot.ground.x,y=foot.ground.y-foot.lift;
@@ -238,21 +243,25 @@ export function drawHuman(ctx, px, py, dir, moving, time, colors, scale = 1, loo
 
   // Frente, flanco e costas têm planos próprios. Luz fica à esquerda da
   // câmera: espelhar a direção não espelha a iluminação do mundo.
-  const turn=view.forward.x,frontWidth=view.profile?shoulder*.55:shoulder;
+  const turn=view.forward.x,frontWidth=view.profile?shoulder*.55:shoulder*(diag?0.82:1);
+  // na diagonal o ombro de cima vai para o lado do passo e o quadril acompanha
+  // menos: é a inclinação que faz a leitura de quem caminha torto
+  const turnTopo = diag ? ladoDiag * 2.2 : turn;
+  const turnBase = diag ? ladoDiag * 0.6 : 0;
   ctx.fillStyle=shirt;
-  ctx.beginPath();ctx.moveTo(-frontWidth+turn,-13);ctx.lineTo(frontWidth+turn,-13);
-  ctx.lineTo(frontWidth,-4);ctx.lineTo(-frontWidth,-4);ctx.closePath();ctx.fill();
-  ctx.fillStyle='rgba(255,236,204,.22)';ctx.fillRect(-frontWidth+1,-12,1,7);
-  ctx.fillStyle='rgba(8,18,32,.3)';ctx.fillRect(frontWidth-1,-12,1,8);
+  ctx.beginPath();ctx.moveTo(-frontWidth+turnTopo,-13);ctx.lineTo(frontWidth+turnTopo,-13);
+  ctx.lineTo(frontWidth+turnBase,-4);ctx.lineTo(-frontWidth+turnBase,-4);ctx.closePath();ctx.fill();
+  ctx.fillStyle='rgba(255,236,204,.22)';ctx.fillRect(-frontWidth+turnTopo+1,-12,1,7);
+  ctx.fillStyle='rgba(8,18,32,.3)';ctx.fillRect(frontWidth+turnTopo-1,-12,1,8);
   ctx.fillStyle=pants;ctx.fillRect(-frontWidth,-5,frontWidth*2,2);
   if(base===3){
-    ctx.fillStyle='rgba(8,18,32,.3)';ctx.fillRect(turn,-12,.5,7);
-    ctx.fillStyle=colors.accent||'#e5c792';ctx.fillRect(-2+turn,-12,4,.5);
+    ctx.fillStyle='rgba(8,18,32,.3)';ctx.fillRect(turnTopo,-12,.5,7);
+    ctx.fillStyle=colors.accent||'#e5c792';ctx.fillRect(-2+turnTopo,-12,4,.5);
   }else{
-    ctx.fillStyle='rgba(255,236,204,.35)';ctx.fillRect(-2+turn,-13,1,2);ctx.fillRect(1+turn,-13,1,2);
+    ctx.fillStyle='rgba(255,236,204,.35)';ctx.fillRect(-2+turnTopo,-13,1,2);ctx.fillRect(1+turnTopo,-13,1,2);
   }
 
-  detailGarment(ctx,equip.armor,base,turn,frontWidth);
+  detailGarment(ctx,equip.armor,base,turnTopo,frontWidth);
   if(base===3)desenharCapa();
 
   // braços. Parado, o papel do NPC troca o braço do lado do gesto: guia aponta
@@ -263,8 +272,17 @@ export function drawHuman(ctx, px, py, dir, moving, time, colors, scale = 1, loo
     : Math.sin(time * 0.0009 + px * 0.05 + py * 0.04);
   const gestoForca = gestoCiclo > 0.3 ? (gestoCiclo - 0.3) / 0.7 : 0;
   const ladoGesto = base === 1 ? -1 : 1;
+  const bracoLonge = diag ? -ladoDiag : 0; // +1: braço direito longe; -1: esquerdo
+  // o ombro de trás fica com um pixel só, colado na borda do tronco inclinado;
+  // a mão continua aparecendo
+  const largEsq = bracoLonge === -1 ? 1 : 2;
+  const largDir = bracoLonge === 1 ? 1 : 2;
+  const bordaEsq = -frontWidth + turnBase;
+  const bordaDir = frontWidth + turnBase;
+  const xEsq = bracoLonge === -1 ? bordaEsq - 0.5 : -armX;
+  const xDir = bracoLonge === 1 ? bordaDir - 0.5 : armX - 1;
   ctx.fillStyle = shirt;
-  ctx.fillRect(-armX, -12 + Math.max(0, legOff), 2, 6);
+  ctx.fillRect(xEsq, -12 + Math.max(0, legOff), largEsq, 6);
   if (gestoForca > 0) {
     ctx.save();
     ctx.scale(ladoGesto, 1);
@@ -293,22 +311,30 @@ export function drawHuman(ctx, px, py, dir, moving, time, colors, scale = 1, loo
     }
     ctx.restore();
   } else {
-    ctx.fillRect(armX - 1, -12 - Math.max(0, legOff), 2, 6);
+    ctx.fillRect(xDir, -12 - Math.max(0, legOff), largDir, 6);
   }
   ctx.fillStyle = colors.skin;
-  ctx.fillRect(-armX, -6 + Math.max(0, legOff), 2, 2);
-  if (!gestoForca) ctx.fillRect(armX - 1, -6 - Math.max(0, legOff), 2, 2);
+  ctx.fillRect(xEsq, -6 + Math.max(0, legOff), 2, 2);
+  if (!gestoForca) ctx.fillRect(xDir, -6 - Math.max(0, legOff), 2, 2);
 
   // cabeça: na diagonal ela desliza um pixel para o lado da caminhada e, parada,
   // olha em volta (1 px) e cabeceia de vez em quando
   ctx.save();
-  if (ladoDiag || olhar || cabeceio) ctx.translate(ladoDiag + olhar, cabeceio);
+  if (ladoDiag || olhar || cabeceio) ctx.translate((diag ? ladoDiag * 2 : ladoDiag) + olhar, cabeceio);
   ctx.fillStyle = colors.skin;
   // Têmporas, bochechas e queixo recortam o quadrado da cabeça.
   ctx.beginPath();ctx.moveTo(-3,-20);ctx.lineTo(3,-20);ctx.lineTo(4,-18);
   ctx.lineTo(4,-15);ctx.lineTo(2,-12);ctx.lineTo(-2,-12);ctx.lineTo(-4,-15);ctx.lineTo(-4,-18);ctx.closePath();ctx.fill();
   ctx.fillStyle='rgba(108,65,64,.24)';ctx.fillRect(3,-18,1,3);ctx.fillRect(-2,-13,4,.5);
   ctx.fillStyle='rgba(255,231,190,.26)';ctx.fillRect(-3,-18,.5,3);ctx.fillRect(-2,-19,3,.5);
+  // de costas a nuca é cabelo: sem isso a face aparece atrás da cabeça
+  if (base === 3) {
+    ctx.fillStyle = colors.hair;
+    ctx.beginPath();
+    ctx.moveTo(-4,-21);ctx.lineTo(4,-21);ctx.lineTo(4,-14);
+    ctx.lineTo(2,-12);ctx.lineTo(-2,-12);ctx.lineTo(-4,-14);
+    ctx.closePath();ctx.fill();
+  }
   // cabelo: topo, costeleta e nuca, sempre deixando o rosto de fora
   ctx.fillStyle = colors.hair;
   const crown = -20 - hair.cap;

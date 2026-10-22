@@ -9,7 +9,7 @@ de ele existir, com números que o código já superou.
 Auditoria read-only de 2026-10-22 cruzou os documentos 00 a 38 com `src/`,
 `test/` e `tools/`. Números do código: 86 áreas, 454 estações, 93 cavernas, 561
 itens, 464 fichas, 291 missões, 194 NPCs, 2.311 entradas de wiki, 887 perguntas
-de duelo, 151 módulos e 110 testes node. `npm run validate` passa (lint,
+de duelo, 151 módulos e 111 testes node. `npm run validate` passa (lint,
 contrato de módulos, testes e build) e a matriz de navegador dá 19/19.
 
 Esforço: **P** até um dia, **M** de dois a cinco dias, **G** mais de uma semana.
