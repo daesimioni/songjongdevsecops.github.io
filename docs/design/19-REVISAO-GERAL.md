@@ -102,6 +102,7 @@ A árvore já vergava com a rajada e o fogo já tinha 4 a 8 quadros.
 | 2026-10-22 | Guilda e party | a sede local com nome e brasão, quadro de oito membros e cargos, recrutamento pela party, quatro missões que leem o save, diário e o título de Guardião da Sede | `test/guilda.test.mjs`, `cdp-guilda.mjs` (15/15), 107/107 suítes, 19/19 no navegador |
 | 2026-10-22 | Placa do herói | a vida e a mana ficaram acima do nome, com a mesma folga entre as duas barras, delas para o nome e do nome para a cabeça; a placa é de tela, tamanho fixo e desenhada por último, por cima da noite e da vinheta da casa; a mesma no vale e na caverna, com nome e barras de folgas iguais e barra fixa na metade do nome máximo | `test/vitais.test.mjs`, `cdp-vitais-layout.mjs` (10/10), `cdp-placa-caverna.mjs` (7/7), 108/108 suítes, 19/19 no navegador |
 | 2026-10-22 | Atualização sem relogar | o site publica `versao.json` a cada push; o cliente confere a cada minuto e no foco, mostra o aviso com botão, baixa os arquivos com `cache: reload` e recarrega voltando ao mundo na mesma posição, sem título e sem formulário | `test/atualizacao.test.mjs`, `cdp-atualizacao.mjs` (15/15), 109/109 suítes, 19/19 no navegador |
+| 2026-10-22 | Fontes locais | as woff2 de Press Start 2P e Silkscreen saíram do Google e moram no repo, com preload; a preferência de texto maior é aplicada antes do primeiro desenho, então a fonte não troca no load | `test/fontes.test.mjs`, `cdp-fontes.mjs` (12/12), 110/110 suítes, 19/19 no navegador |
 
 ## Fecho da revisão (2026-10-22)
 
@@ -117,7 +118,7 @@ o que os testes e sondas desta data mostram, não o que o diário prometeu.
 | masmorras e batalha | 93 cavernas em 6 modelos e 4 pisos | sala temática por disciplina com 279 peças sólidas; 93 chefes | ritmo +1/+2, leitura de turno, fases 2 e 3, habilidade própria por chefe, turnos de PvP | `test/masmorras.test.mjs`, `test/salas.test.mjs`, `test/duelo-ritmo.test.mjs`, `test/chefe-habilidades.test.mjs`, `test/pvp-turnos.test.mjs`, `cdp-chefe-habilidade.mjs`, `cdp-sala-tema.mjs` |
 | pedidos já feitos | auditoria dos 38 pedidos na fonte viva | correção de resposta vazia, frase repetida, seis alternativas e páginas curtas | 69 páginas com curso completo, revisão das PRs externas e documentos alinhados | `docs/design/20-AUDITORIA-PEDIDOS.md`, `docs/design/33-REVISAO-EXTERNA.md`, `test/licoes.test.mjs`, `cdp-pagina.mjs` |
 
-Prova de conjunto desta data: `npm test` com **109 testes em 112 arquivos, 109 passaram**;
+Prova de conjunto desta data: `npm test` com **110 testes em 113 arquivos, 110 passaram**;
 matriz de navegador **19/19** remedida em 2026-10-22 depois de clima, sono, famílias,
 texto maior, marcas do duelo, variantes, bilhetes, arcos, patrulha e perseguição e do desacoplamento
 mundo→rendering (`cdp-regressao.mjs`: HUD, mochila 40, bestiário

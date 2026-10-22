@@ -20,9 +20,17 @@
 <meta name="twitter:image" content="https://songjongdevsecops.github.io/assets/og.png">
 <link rel="canonical" href="https://songjongdevsecops.github.io/">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Silkscreen:wght@400;700&display=swap">
+<link rel="preload" href="assets/fonts/press-start-2p-400-latino.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/silkscreen-400-latino.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/silkscreen-700-latino.woff2" as="font" type="font/woff2" crossorigin>
+<script>
+  // a preferência de texto vale antes do primeiro desenho, sem trocar de tamanho no load
+  try {
+    if (JSON.parse(localStorage.getItem("mundo-song:fonte:v1") || '"normal"') === "grande") {
+      document.documentElement.dataset.fonte = "grande";
+    }
+  } catch { /* sem storage */ }
+</script>
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>

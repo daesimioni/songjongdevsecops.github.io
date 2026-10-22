@@ -20,8 +20,8 @@ O endgame e a lore entram no próximo ciclo, nesta ordem.
 ## 2. O estado do ciclo, depois das cinco fases
 
 - 0 linhas ausente e 0 parciais no 39; o que resta são decisões respondidas.
-- 109 testes em 112 arquivos, 19/19 na matriz de navegador a 60,2 fps, 151
-  módulos, 343 dependências, build de 159 arquivos.
+- 110 testes em 113 arquivos, 19/19 na matriz de navegador a 60,2 fps, 151
+  módulos, 343 dependências, build de 165 arquivos.
 - Site publicado com o 39 e o 40; o revisor de conteúdo roda no `check` e no CI.
 - A mochila medida em 60 fps após 75 s e 21 MB, sem tarefa longa; acompanhar
   em hardware real.
