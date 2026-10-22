@@ -7,8 +7,8 @@ de ele existir, com números que o código já superou.
 ## Método e estado atual
 
 Auditoria read-only de 2026-10-22 cruzou os documentos 00 a 38 com `src/`,
-`test/` e `tools/`. Números do código: 86 áreas, 454 estações, 93 cavernas, 539
-itens, 464 fichas, 284 missões, 194 NPCs, 2.247 entradas de wiki, 887 perguntas
+`test/` e `tools/`. Números do código: 86 áreas, 454 estações, 93 cavernas, 541
+itens, 464 fichas, 284 missões, 194 NPCs, 2.251 entradas de wiki, 887 perguntas
 de duelo, 119 módulos e 66 testes node. `npm run validate` passa (lint,
 contrato de módulos, testes e build) e a matriz de navegador dá 19/19.
 
@@ -22,11 +22,11 @@ Estado: **feito**, **parcial**, **ausente**, **decisão** (produto, não código
 | ritmo no parceiro + dano do próximo acerto | **feito** | previsão `~X` no duelo e no parceiro, sequência própria, erro zera | P |
 | atalho da busca para a lista | **feito** | seta para baixo sai da busca e foca o primeiro resultado (wiki e viagem) | P |
 | mochila em sessão longa | **medido** | 60,1 fps curta e 60,2 fps após 75 s, 18 a 19 MB, 0 tarefa longa; não reproduziu em headless, monitorar hardware real | P |
-| régua de densidade tipográfica | ausente | mínimo de 11 px em texto de painel (HUD isento), linha 1.4, teste varrendo o CSS | P |
+| régua de densidade tipográfica | parcial | piso de 11 px e linha 1.45 em `p, li, dd, dt, label` de painel, com teste; faltam os 131 rótulos menores fora do texto corrido | P |
 | índice de estações acessível | **feito** | diário com `role=list`, grupo rotulado por área, nome e estado em cada estação e progresso `aria-live`; wiki tem a categoria Páginas com as 454 estações | P |
 | estado vazio que ensina | **feito** | mochila, missões e bestiário dizem o próximo passo; diário mostra as estações por área | P |
 | telegrafia do tema pelo chefe | **feito** | baralho guarda a área; chefe mostra `◆ próximo tema: <área>` na cor do continente, testado e medido no navegador | P |
-| capa e conjuntos de 3 peças | ausente | slot `cloak`, duas capas, bônus de conjunto por continente, desenho na ficha e no boneco | P a M |
+| capa e conjuntos de 3 peças | **feito** | slot `cloak`, duas capas craftáveis, bônus de conjunto (+2 vida e +1 dano) em `equipmentBonus`, desenho atrás do corpo e aviso na ficha; `test/gear.test.mjs` e `cdp-capa.mjs` | P a M |
 | ponto fraco do chefe após 2 acertos | **feito** | terceiro acerto seguido soma +1, com nota no feedback e teste no duelo real | P |
 | recarga de runa no altar | **feito** | altar cura e devolve uma carga da runa aprendida mais vazia, com teste | P |
 | documentos que mentem | pendente | 03-ITENS (70 peças), 10-ESTACOES (32 páginas), 05-MUNDO §10, 06-ROADMAP e 14 §AB ainda se leem como backlog | P |
@@ -46,7 +46,7 @@ Estado: **feito**, **parcial**, **ausente**, **decisão** (produto, não código
 | audição, alerta, patrulha e perseguição | ausente | bicho só passeia; sem estados `?`/`!`, isca ou sono | M |
 | escudo que barra erro e resistência por tipo | parcial | `equipmentBonus` só soma vida e dano; escudo real vem de runa/pet | M |
 | party humana em combate | ausente | party social de 8 existe, duelo não junta humanos | G |
-| passo de pet, idle por espécie, gesto por papel | parcial | gato pisca e mexe a cauda; falta pata alternada, gesto por espécie e por papel de NPC | M |
+| passo de pet e idle por espécie | **feito** | gato e sapo alternam quatro patas, coruja/papagaio viram a cabeça, fada pulsa, grilo esfrega a pata, sombra ondula; `test/animacao-idle.test.mjs` [ao andar] alterna patas | M |
 | funções das peças temáticas | parcial | oficina/biblioteca/observatório são cenário sólido; dar reparo, página e revelar sala do chefe | M |
 | tema de sala por área | parcial | tema por continente, não por área | M |
 | teste de fluxo real de loja e duelo | parcial | duelo tem controlador com DOM mínimo; loja só teste estático | M |

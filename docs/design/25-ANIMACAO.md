@@ -61,9 +61,11 @@ em `idle-humano-0.png`, `idle-humano-2992.png`, `idle-gato-0.png` e
 Nada aqui é pendência: a animação existe e é medida; estes itens são desenhos
 de profundidade para ondas futuras.
 
-1. **Passo de pet**: o gato balança o corpo ao andar, mas não tem ciclo de
-   pernas; um bicho de quatro patas com passo alternado é o próximo desenho.
-2. **Idle por espécie**: coruja, sapo, fada, grilo, sombra e papagaio ainda não
-   piscam nem têm gesto próprio; a piscada e a cauda só valem para o gato.
-3. **Gesto de NPC**: olhar e cabeceio são genéricos; um ferreiro martelando ou
-   um mestre folheando livro exigiria desenho por papel.
+1. **Passo de pet: feito.** Gato e sapo alternam quatro patas, coruja, papagaio,
+   grilo e os demais têm duas; `test/animacao-idle.test.mjs` compara dois
+   instantes e prova a alternância.
+2. **Idle por espécie: feito.** Coruja vira a cabeça, sapo infla o papo, fada
+   pulsa o halo, grilo esfrega a pata, papagaio balança a cabeça e sombra
+   ondula; cada um tem sinal próprio no teste.
+3. **Gesto de NPC por papel** continua pendente: olhar e cabeceio são genéricos;
+   um ferreiro martelando ou um mestre folheando livro exige parâmetro novo.

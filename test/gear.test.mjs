@@ -12,6 +12,7 @@ const gear = {
   shield: { accent: "#ffc857" },
   helmet: { accent: "#b8b0d8" },
   armor: { accent: "#2f6f86" },
+  cloak: { accent: "#61f4c0" },
 };
 
 // canvas de mentira: só os retângulos importam
@@ -24,6 +25,7 @@ function desenhar(dir, moving, time) {
     translate() {},
     scale() {}, transform() {},
     beginPath() {},
+    moveTo() {}, lineTo() {}, closePath() {},
     ellipse() {},
     fill() {},
     set fillStyle(v) { estilo = v; },
@@ -35,6 +37,9 @@ function desenhar(dir, moving, time) {
 }
 
 const perto = (a, b, tol) => Math.abs(a - b) <= tol;
+for (const caps of [desenhar(0, false, 0), desenhar(0, true, 30)]) {
+  assert.ok(caps.some((r) => r.cor === "#61f4c0"), "capa não desenhou o tecido na cor");
+}
 
 for (const dir of [0, 1, 2, 3, 4, 5, 6, 7]) {
   for (const moving of [false, true]) {
@@ -89,4 +94,32 @@ for (const dir of [0, 1, 2, 3, 4, 5, 6, 7]) {
   assert.equal(gearView(dir).escudoAtras, dir !== 0, `dir ${dir}: escudo atrás menos de frente`);
 }
 
-console.log("ok equipamento sai da mão, cobre o braço e acompanha o passo");
+// ---- capa e conjunto de três peças ----
+globalThis.localStorage = { getItem: () => null, setItem: () => {}, removeItem: () => {}, clear: () => {} };
+const { RPG } = await import("../src/gameplay/rpg.js");
+const { ITEMS } = await import("../src/content/rpg-data.js");
+const rpg = new RPG();
+rpg.addItem("capa-vale");
+assert.equal(rpg.equip("capa-vale").ok, true, "capa deveria equipar");
+const capa = rpg.equippedView().find((s) => s.slot === "cloak");
+assert.equal(capa?.item?.id, "capa-vale", "capa não aparece na ficha");
+assert.equal(rpg.equipmentBonus().conjunto, false, "uma peça não forma conjunto");
+const escolhidos = [];
+const slots = new Set();
+for (const [id, item] of Object.entries(ITEMS)) {
+  if (item.continent !== "hub" || !item.slot || slots.has(item.slot)) continue;
+  slots.add(item.slot);
+  escolhidos.push([id, item]);
+  if (escolhidos.length === 3) break;
+}
+for (const [id] of escolhidos) { rpg.addItem(id); rpg.equip(id); }
+const bonus = rpg.equipmentBonus();
+const somaHp = escolhidos.reduce((n, [, item]) => n + (Number(item.hp) || 0), 0) + 2;
+const somaDano = escolhidos.reduce((n, [, item]) => n + (Number(item.damage) || 0), 0) + 1;
+assert.equal(bonus.conjunto, true, "três peças do mesmo continente deveriam formar conjunto");
+assert.equal(bonus.hp, somaHp, `conjunto somou vida errada: ${bonus.hp} vs ${somaHp}`);
+assert.equal(bonus.damage, somaDano, `conjunto somou dano errado: ${bonus.damage} vs ${somaDano}`);
+assert.equal(rpg.unequip(escolhidos[2][1].slot).ok, true, "não conseguiu tirar a peça");
+assert.equal(rpg.equipmentBonus().conjunto, false, "duas peças não podem manter o conjunto");
+
+console.log("ok equipamento sai da mão, cobre o braço, acompanha o passo, veste capa e fecha conjunto");

@@ -307,13 +307,18 @@ export class RPG {
 
   equipmentBonus() {
     let hp = 0, damage = 0;
+    const porContinente = new Map();
     for (const [slot, id] of Object.entries(this.data.equipped || {})) {
       const item = ITEMS[id];
       if (!item || item.slot !== slot || this.itemCount(id) <= 0) continue;
       hp += Number(item.hp) || 0;
       damage += Number(item.damage) || 0;
+      if (item.continent) porContinente.set(item.continent, (porContinente.get(item.continent) || 0) + 1);
     }
-    return { hp, damage };
+    // três peças do mesmo continente formam conjunto: +2 de vida e +1 de dano
+    const conjunto = [...porContinente.values()].some((n) => n >= 3);
+    if (conjunto) { hp += 2; damage += 1; }
+    return { hp, damage, conjunto };
   }
 
   priceFor(id) {
@@ -326,6 +331,7 @@ export class RPG {
       legs: { veio: 2, erva: 2 },
       boots: { madeira: 2, veio: 1 },
       shield: { ferro: 3, veio: 1 },
+      cloak: { erva: 2, veio: 2 },
       ring: { veio: 3, erva: 2 },
       necklace: { erva: 3, veio: 2 },
     };
@@ -366,7 +372,7 @@ export class RPG {
   }
 
   equippedView() {
-    const names = { weapon: "arma", helmet: "elmo", armor: "armadura", legs: "pernas", boots: "botas", shield: "escudo", ring: "anel", necklace: "colar" };
+    const names = { weapon: "arma", helmet: "elmo", armor: "armadura", legs: "pernas", boots: "botas", shield: "escudo", cloak: "capa", ring: "anel", necklace: "colar" };
     return Object.entries(names).map(([slot, name]) => {
       const id = this.data.equipped?.[slot];
       return { slot, name, item: id && this.itemCount(id) > 0 ? { id, ...ITEMS[id] } : null };

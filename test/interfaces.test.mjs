@@ -12,6 +12,7 @@ const app = fs.readFileSync(new URL("../src/app/app.js", import.meta.url), "utf8
 
 const problemas = [];
 const check = (ok, msg) => { if (!ok) problemas.push(msg); };
+check(/font-size: max\(11px, 1em\)/.test(css), "painel sem piso de 11px para texto corrido");
 
 // todo painel interno precisa de contêiner com id e ligação de abertura
 for (const [id, rotulo] of [

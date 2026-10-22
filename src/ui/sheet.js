@@ -223,6 +223,9 @@ export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onOu
       gear.appendChild(row);
     }
     body.appendChild(gear);
+    body.appendChild(el("p", "company-hint", rpg.equipmentBonus().conjunto
+      ? "Conjunto fechado: três peças do mesmo continente dão +2 de vida e +1 de dano."
+      : "Três peças do mesmo continente fecham conjunto: +2 de vida e +1 de dano."));
 
     body.appendChild(el("h3", "sheet-sec", "Perícias"));
     const grid = el("div", "sheet-skills");

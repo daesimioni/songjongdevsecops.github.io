@@ -982,3 +982,7 @@ body.na-casa .minimap { display: none; }
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
   .scanlines { display: none; }
 }
+
+/* régua de leitura: texto corrido de painel nunca fica abaixo de 11px; o HUD
+   fica de fora porque é etiqueta curta de estado, não leitura. */
+:is(.modal-card, .panel) :is(p, li, dd, dt, label) { font-size: max(11px, 1em); line-height: 1.45; }

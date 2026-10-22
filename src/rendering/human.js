@@ -87,6 +87,24 @@ export function drawHuman(ctx, px, py, dir, moving, time, colors, scale = 1, loo
     ctx.fillRect(4, -19, 1, Math.max(0, hair.back - 2));
   }
 
+  // capa: tecido atrás do corpo, balançando com o passo
+  if (equip.cloak) {
+    const cor = equip.cloak.accent || "#6b4a8f";
+    const bal = moving ? Math.sin(time * 0.01) * 1.2 : 0;
+    ctx.fillStyle = "#1a1428";
+    ctx.beginPath();
+    ctx.moveTo(-5, -20); ctx.lineTo(5, -20);
+    ctx.lineTo(6 + bal, -4); ctx.lineTo(-6 + bal, -4);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = cor;
+    ctx.beginPath();
+    ctx.moveTo(-4, -19); ctx.lineTo(4, -19);
+    ctx.lineTo(5 + bal, -5); ctx.lineTo(-5 + bal, -5);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = "rgba(255,255,255,0.18)";
+    ctx.fillRect(-4, -19, 8, 1);
+  }
+
   // Arma e escudo trocam de lado com a visão. De costas os dois ficam atrás
   // do corpo; de lado o escudo fica no braço de trás. O desenho é feito do
   // lado direito e espelhado, para não duplicar cada peça de arte.

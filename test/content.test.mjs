@@ -91,7 +91,7 @@ for (const [id, item] of Object.entries(ITEMS)) {
   if (item.heal) check(item.heal > 0 && item.heal <= 60, `item ${id} cura fora de faixa`);
   if (item.buff) check(["speed", "damage", "maxhp"].includes(item.buff.id), `item ${id} com buff desconhecido`);
 }
-const SLOTS = new Set(["weapon", "helmet", "armor", "legs", "boots", "shield", "ring", "necklace"]);
+const SLOTS = new Set(["weapon", "helmet", "armor", "legs", "boots", "shield", "cloak", "ring", "necklace"]);
 for (const [id, item] of Object.entries(ITEMS)) {
   if (!item.slot) continue;
   check(SLOTS.has(item.slot), `item ${id} com espaço desconhecido ${item.slot}`);

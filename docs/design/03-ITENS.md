@@ -15,8 +15,11 @@ hoje?".
   dano e +16 de vida por conjunto.
 - Runas: faísca, trovão, fogo, gelo, cura e espelho. O primeiro uso aprende a
   magia; depois ela sai por mana (2 a 4), sem gastar a carga.
-- O que falta do desenho abaixo: capa, conjuntos de 3 peças, ofícios por
-  continente e leilão. Nada disso está implementado.
+- **Capa e conjuntos: implementados em 2026-10-22.** Slot `cloak` com duas
+  capas craftáveis; três peças do mesmo continente fecham conjunto (+2 vida,
+  +1 dano), com desenho atrás do corpo e aviso na ficha.
+- O que falta do desenho abaixo: ofícios por continente e leilão (o leilão
+  contraria a decisão registrada; o caminho é mercador de troca local).
 
 ## 1. Slots
 
