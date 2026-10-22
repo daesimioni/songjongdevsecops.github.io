@@ -485,13 +485,13 @@ perdido: é um duelo de conversa, não de saque. O broker é público e as mensa
 não são assinadas, então o duelo vale entre gente que combinou; não é ranking.
 Fechar a janela no meio conta como desistência e também desativa. Os pacotes de
 pergunta são validados antes de
-entrar na tela; a pergunta trafega com as três alternativas e a resposta é
+entrar na tela; a pergunta trafega com as cinco alternativas e a resposta é
 conferida dos dois lados.
 
 ## Conferir
 
-A parte que não depende do navegador tem seis conferências, e elas rodam em
-sequência sem instalar nada:
+A parte que não depende do navegador roda as 53 conferências em sequência sem
+instalar nada (`npm test`). Para uma verificação isolada:
 
 ```bash
 npm test
@@ -514,7 +514,7 @@ pergunta que casa com o tema. O duelo entre jogadores entra pela mesma prova: as
 cinco cartas, a dificuldade que vira dano e a compostura.
 
 A segunda confere o conteúdo inteiro: as 454 estações e seus textos, falas de NPC,
-284 missões, 447 itens, equipamento, relíquias por continente, receitas, encantos, as
+284 missões, 538 itens, equipamento, relíquias por continente, receitas, encantos, as
 1603 perguntas (sem repetição e com resposta válida), as cinco cartas do PvP por
 continente, as 93 cavernas e o mundo montado (93 instrutores, 186 bocas, nenhum
 monstro na superfície). Confere também a cobertura das 82 seções do catálogo:
