@@ -22,6 +22,7 @@ const SPELL_MANA = {
   "runa-cura": 3,
   "runa-espelho": 2,
 };
+export const petAbilityNeedsDuel = (id) => ["faro", "tagarela", "sabedoria", "aviso"].includes(id);
 const PET_ABILITY_IDS = new Set(Object.values(PETS).map((pet) => pet.ability.id));
 
 // Palavras que aproximam a pergunta do tema da sala. O tema vem do mapa; a
@@ -667,7 +668,15 @@ export class RPG {
       return;
     }
     const max = this.manaMax();
-    const at = Number(this.data.manaAt) || now();
+    const current = now();
+    const savedAt = Number(this.data.manaAt);
+    // Saves antigos e relógios corrigidos precisam de uma origem válida.
+    if (!Number.isFinite(savedAt) || savedAt <= 0 || savedAt > current || this.data.mana >= max) {
+      this.data.mana = clamp(Number(this.data.mana), 0, max);
+      this.data.manaAt = current;
+      return;
+    }
+    const at = savedAt;
     const gain = Math.floor((now() - at) / MANA_MS);
     if (gain <= 0) return;
     this.data.mana = clamp(Number(this.data.mana) + gain, 0, max);
@@ -682,7 +691,7 @@ export class RPG {
     const left = this.petCdLeft(pet.id);
     if (left > 0) return { ok: false, cooldown: left, reason: `${pet.name} ainda está descansando (${Math.ceil(left / 1000)}s).` };
     const inDuel = duel && this.duel && this.duel.phase === "question";
-    if (["faro", "tagarela", "sabedoria", "aviso"].includes(ab.id) && !inDuel) {
+    if (petAbilityNeedsDuel(ab.id) && !inDuel) {
       return { ok: false, reason: "Essa habilidade só funciona na pergunta de um duelo." };
     }
     this.pulse();
@@ -866,6 +875,26 @@ export class RPG {
       + (MONSTER_TRAITS[monster?.kind]?.id === "haste" ? Math.ceil(base / 2) : 0);
   }
 
+  atualizarFaseChefe(d) {
+    // Toda fonte de dano deve atualizar a fase, inclusive runas.
+    if (!d.boss || d.monsterHp <= 0) return;
+    const ratio = d.monsterHp / d.monsterHpMax;
+    const phase = ratio <= 0.33 ? 3 : ratio <= 0.66 ? 2 : 1;
+    if (phase <= (d.bossPhase || 1)) return;
+    d.bossPhase = phase;
+    d.feedback.phase = phase;
+    d.feedback.phaseNote = phase === 3
+      ? "Fase 3: encurralado, ele só aceita pergunta difícil e o erro dói mais."
+      : "Fase 2: ferido, ele acelera. O próximo erro dói mais.";
+    if (phase === 3) {
+      const harder = this.duelDeck(d.ground.continent, 3, d.monster?.theme || d.ground.theme);
+      if (harder.length) {
+        d.deck = harder;
+        d.deckIndex = -1;
+      }
+    }
+  }
+
   concluirMatilha(d) {
     if (d.phase === "victory" || d.monsterHp > 0 || d.partners.some((p) => !p.done)) return false;
     d.phase = "victory";
@@ -921,6 +950,7 @@ export class RPG {
       damage: 0,
       why: id === "runa-fogo" ? "O fogo passou por todos os bichos da tela." : "O trovão bateu no monstro da frente.",
     };
+    this.atualizarFaseChefe(d);
     if (d.monsterHp <= 0) {
       if (!this.concluirMatilha(d)) d.phase = "question";
     } else {
@@ -1498,25 +1528,7 @@ export class RPG {
       }
       d.monsterHp = Math.max(0, d.monsterHp - damage);
       d.feedback = { correct: true, why: d.question.why, damage: 0, note };
-      // chefe endurece quando a vida cai: fase 2 dói mais, fase 3 só aceita difícil
-      if (d.boss && d.monsterHp > 0) {
-        const ratio = d.monsterHp / d.monsterHpMax;
-        const phase = ratio <= 0.33 ? 3 : ratio <= 0.66 ? 2 : 1;
-        if (phase > (d.bossPhase || 1)) {
-          d.bossPhase = phase;
-          d.feedback.phase = phase;
-          d.feedback.phaseNote = phase === 3
-            ? "Fase 3: encurralado, ele só aceita pergunta difícil e o erro dói mais."
-            : "Fase 2: ferido, ele acelera. O próximo erro dói mais.";
-          if (phase === 3) {
-            const harder = this.duelDeck(d.ground.continent, 3, d.monster?.theme || d.ground.theme);
-            if (harder.length) {
-              d.deck = harder;
-              d.deckIndex = -1;
-            }
-          }
-        }
-      }
+      this.atualizarFaseChefe(d);
       if (d.monsterHp <= 0) {
         if (!this.concluirMatilha(d)) d.phase = "question";
         this.save();

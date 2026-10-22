@@ -391,7 +391,9 @@ export function createPvp({ rpg, toast, audio, player, getNet, isBusy, openPanel
 
   function handleAttack(peer, msg) {
     if (!state.peer || state.peer.id !== peer.id) return;
-    if (state.phase !== "waiting") return;
+    // Só recebe um novo ataque depois de resolver o anterior.
+    if (state.phase !== "waiting" || state.current) return;
+    clearTimers();
     state.current = msg.question;
     state.damage = msg.damage;
     state.nonce = msg.nonce;
