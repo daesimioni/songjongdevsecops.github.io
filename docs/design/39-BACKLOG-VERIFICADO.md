@@ -9,7 +9,7 @@ de ele existir, com números que o código já superou.
 Auditoria read-only de 2026-10-22 cruzou os documentos 00 a 38 com `src/`,
 `test/` e `tools/`. Números do código: 86 áreas, 454 estações, 93 cavernas, 561
 itens, 464 fichas, 284 missões, 194 NPCs, 2.300 entradas de wiki, 887 perguntas
-de duelo, 128 módulos e 91 testes node. `npm run validate` passa (lint,
+de duelo, 130 módulos e 92 testes node. `npm run validate` passa (lint,
 contrato de módulos, testes e build) e a matriz de navegador dá 19/19.
 
 Esforço: **P** até um dia, **M** de dois a cinco dias, **G** mais de uma semana.
@@ -43,7 +43,7 @@ Estado: **feito**, **parcial**, **ausente**, **decisão** (produto, não código
 | magias, encantos e consumíveis no alvo do desenho | **feito** | 12 encantos (`test/encantos.test.mjs`), 12 runas (6 novas em `test/runas-novas.test.mjs`) e 9 poções + 15 comidas, com cura, mana e buff medidos (`test/consumiveis.test.mjs`); wiki 2.300 fichas, 561 itens, 39 receitas | M |
 | famílias, variantes e fraqueza numérica | **feito** | 25 formas em 5 famílias, faixa no bestiário e +50% contra a família completa (`test/familias.test.mjs`, previsão 1,1 → 1,7). **Variantes**: eco (10%), elite (5%) e antiga (3%) decididas por caverna e sala, trocando vida, dano, XP, material, cor e nome, com linha no duelo (`test/variantes.test.mjs`, `cdp-variantes-criatura.mjs`: "Sílaba Antiga" com vida 6) | M |
 | clima afetando spawn | **feito** | chuva, neblina e rajada trocam o elenco do subsolo pelo clima (`nomeDaCacada`), sem mexer em sala, posto ou tier; o relógio do clima passou a andar no laço (não só no desenho) e o `forcarEvento` emite os ganchos; `test/cacada-clima.test.mjs` e `cdp-cacada-clima.mjs` (6 de 6 bichos molhados na chuva, 7 no limpo) | M |
-| audição, alerta, patrulha e perseguição | parcial | **audição, sono e isca feitos**: correr perto vira o rosto para o som com `?`; um quinto nasce dormindo (`z`) e acorda com passo perto ou corrida; a **isca de peixe** atrai os bichos a menos de 8 tiles por 6 s, acorda os dormindo e eles não olham para você enquanto comem (depois voltam para casa); provas `test/audicao.test.mjs`, `test/isca.test.mjs`, `cdp-audicao.mjs`, `cdp-sono.mjs` e `cdp-isca.mjs`; faltam patrulha e perseguição | M |
+| audição, alerta, patrulha e perseguição | **feito** | **audição, sono, isca, patrulha e perseguição**: correr perto vira o rosto para o som com `?`; um quinto nasce dormindo (`z`) e acorda com passo perto ou corrida; a **isca** atrai os bichos a menos de 8 tiles por 6 s e quem come não ouve nem vê. A **patrulha** dá a cada bicho acordado uma rota fixa de até quatro pontos em volta do posto (raio 1,4), ida e volta pelo posto; só entra ponto com a reta livre até o posto, e o índice anda mesmo quando o caminho bloqueia. O passo corrido vira **perseguição**: ele caminha até o último ponto ouvido por 2,6 s, desiste se bater parede e volta para casa. O raio maior custou 14% dos bichos (201 → 172 em 31 cavernas), e o espaçamento entre postos acompanha para os campos de visão não se cruzarem. Provas: `test/audicao`, `test/isca`, `test/patrulha`, `cdp-audicao`, `cdp-sono`, `cdp-isca` e `cdp-patrulha` (109 rotas em 137 bichos acordados, 9,4 tiles andados em 20 s, 2 de 3 bichos tocando dois pontos, 0,4 a 1,4 tile de avanço na perseguição, volta a 0,1 a 0,8 do posto) | M |
 | escudo que barra erro e resistência por tipo | parcial | **escudo equipado feito**: segura o primeiro erro de cada duelo, gasta a carga, avisa na leitura e na ficha, não gasta com runa/espelho e recarrega no duelo seguinte (`test/escudo-equip.test.mjs`, `cdp-escudo.mjs`: vida 28 no primeiro erro, 25 no segundo); falta resistência por tipo (qual tipo: espécie, trait ou disciplina, decisão) | M |
 | party humana em combate | ausente | party social de 8 existe, duelo não junta humanos | G |
 | passo de pet e idle por espécie | **feito** | gato e sapo alternam quatro patas, coruja/papagaio viram a cabeça, fada pulsa, grilo esfrega a pata, sombra ondula; `test/animacao-idle.test.mjs` [ao andar] alterna patas | M |
@@ -63,7 +63,7 @@ Estado: **feito**, **parcial**, **ausente**, **decisão** (produto, não código
 | item | estado | o que falta | esforço |
 |---|---|---|---|
 | mundo sem rendering | **feito** | `world.js` não importa mais `rendering/`: a colocação do ambiente foi para `src/world/povoado.js` e o tamanho das construções para `src/content/asset-meta.js`, fonte única entre desenho e mapa; `test/arquitetura.test.mjs` cobra os quatro pontos e a matriz de navegador deu 19/19 com 60,1 fps depois | P |
-| arquivos grandes (app 3,4 mil, dungeon 2,1 mil, rpg 1,9 mil linhas) | decisão | cada um é coeso por domínio e o contrato de módulos está sem ciclos (128 módulos, 284 dependências). Separar agora é risco sem ganho medido; reavaliar quando uma mudança precisar tocar o mesmo trecho por três frentes | G |
+| arquivos grandes (app 3,4 mil, dungeon 2,2 mil, rpg 1,9 mil linhas) | decisão | cada um é coeso por domínio e o contrato de módulos está sem ciclos (130 módulos, 287 dependências). Separar agora é risco sem ganho medido; reavaliar quando uma mudança precisar tocar o mesmo trecho por três frentes | G |
 | sondas CDP fora do repositório | decisão | ver pergunta 10: trazer todas engorda o repositório público com dependência de Chrome | — |
 
 ## Onda 3: conteúdo grande e endgame

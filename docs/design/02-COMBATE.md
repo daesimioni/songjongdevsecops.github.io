@@ -271,7 +271,7 @@ bicho já viu (`!`) tem precedência.
 
 Prova: `test/audicao.test.mjs` (raio, barulho só na corrida, chefe fora, direção
 cardinal e o `?` no desenho) e sonda `cdp-audicao.mjs` (Bit a 3,2 tiles virou
-para leste, sem alerta nem duelo; parado, não reagiu).
+para o som e andou na direção dele, sem alerta nem duelo; parado, não reagiu).
 
 ## Sono: um quinto das criaturas começa dormindo (2026-10-22)
 
@@ -295,3 +295,35 @@ chefe ignora.
 Prova: `test/isca.test.mjs` e sonda `cdp-isca.mjs`: 1 bicho sentiu, 6 ficaram
 longe, o alvo parou a menos de 3 tiles do cheiro, não abriu duelo e a isca
 venceu no tempo.
+
+## Patrulha: rota fixa em volta do posto (2026-10-22)
+
+Cada bicho acordado ganha uma rota de até quatro pontos em volta do posto,
+decidida pelo id da criatura, dentro do raio de passeio. Só entra ponto cuja
+reta até o posto é livre: a mesa no caminho faria o bicho bater e desistir. Ele vai ao ponto, volta ao
+posto, vai ao seguinte: a ida e volta pelo centro evita a reta entre dois pontos
+que cruza mesa, e o índice anda mesmo quando o caminho está bloqueado, então
+ele desiste do ponto ruim e tenta o próximo. Quem nasce dormindo ganha a rota
+quando acorda, então o sono não vira isenção. O raio subiu de 0,6 para 1,4 e o
+espaçamento entre postos acompanha, mantendo a garantia de que dois campos de
+visão não se cruzam; o custo medido foi 14% dos bichos (201 → 172 em 31
+cavernas).
+
+Prova: `test/patrulha.test.mjs` (até quatro pontos no disco, determinismo,
+volta do índice, entrada inválida) e sonda `cdp-patrulha.mjs`: 109 de 137
+bichos acordados com rota, 9,4 tiles andados em 20 s, 2 de 3 bichos tocando
+dois pontos e nenhum ponto de casa violado (máximo 1,33 para raio 1,4).
+
+## Perseguição: o passo vira destino (2026-10-22)
+
+Quem ouve o passo corrido não só vira o rosto: caminha até o último ponto de
+onde veio o som. Cada passo novo renova o destino e o prazo de 2,6 s; sem passo
+novo, ele volta para casa, e se bate numa parede no caminho desiste da
+perseguição em vez de insistir no mesmo canto. Quem está comendo a isca não
+ouve. O duelo continua nascendo só da visão: a perseguição te leva até ele.
+
+Prova: `test/patrulha.test.mjs` (o destino guardado e a audição guardada por
+`!comendo`) e sonda `cdp-patrulha.mjs`: 0,4 a 1,4 tile de avanço em 1,4 s na
+direção do som, sem duelo durante a perseguição; parado o passo, a perseguição
+expira, ele volta para casa (0,1 a 0,8 do posto) e nenhum duelo nasce no
+caminho.

@@ -21,6 +21,7 @@ import { fracoesDeVida } from "../core/vitais.js";
 import { propsDaSala } from "../content/salas-tematicas.js";
 import { nomeDaCacada } from "../content/cacada-clima.js";
 import { ouveOPassoS, direcaoPara, acordaComOPasso } from "../world/audicao.js";
+import { rotaDePatrulha, pontoDaRota } from "../world/patrulha.js";
 import { varianteDe } from "../world/variantes.js";
 import { bilheteDaCaverna } from "../world/bilhetes.js";
 
@@ -125,11 +126,12 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     };
   }
 
-  // Separação entre bichos: cada um passeia até MONSTER_ROAM da sua casa. Se
+  // Separação entre bichos: cada um patrulha até MONSTER_ROAM da sua casa. Se
   // a distância entre duas casas for maior que a soma dos alcances de visão
   // mais os dois passeios, os círculos de visão não se tocam e nenhum ponto do
   // mapa pode ser visto pelos dois ao mesmo tempo. É a garantia contra matilha.
-  const MONSTER_ROAM = 0.6;
+  // A patrulha usa este mesmo raio, então a garantia continua valendo.
+  const MONSTER_ROAM = 1.4;
   const MONSTER_GAP = 0.25;
 
   function visionFor(kind, tier) {
@@ -277,6 +279,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
         m.lootMult = variante.lootMult;
         if (variante.accent) m.accent = variante.accent;
       }
+      if (!m.dorme) criarRota(m);
       out.push(m);
     }
     return out;
@@ -1165,6 +1168,38 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     return dungeonCanSeePlayer(state.map, m, state.player);
   }
 
+  // Rota de patrulha: até quatro pontos em volta do posto, só os que têm a
+  // reta livre (mesa no caminho faria o bicho bater e desistir). Criada no
+  // nascimento e também quando o bicho acorda, para dormir não ser isenção.
+  function criarRota(m) {
+    const rota = rotaDePatrulha({ x: m.hx, y: m.hy, seed: m.id, raio: m.roam })
+      .filter((p) => {
+        if (!boxFree(state.map, p.x, p.y, PATH_PAD, state.solids)) return false;
+        const d = Math.hypot(p.x - m.hx, p.y - m.hy);
+        for (let s = 0.3; s < d; s += 0.3) {
+          const x = m.hx + ((p.x - m.hx) / d) * s;
+          const y = m.hy + ((p.y - m.hy) / d) * s;
+          if (!boxFree(state.map, x, y, PATH_PAD, state.solids)) return false;
+        }
+        return true;
+      });
+    if (rota.length >= 2) m.rota = rota;
+  }
+
+  // Próximo destino da patrulha: ida e volta. O bicho vai ao ponto, volta ao
+  // posto, vai ao ponto seguinte e assim por diante. A volta pelo posto evita
+  // a reta entre dois pontos que cruza mesa, e o índice anda mesmo quando o
+  // caminho está bloqueado: ele desiste daquele ponto e tenta o seguinte.
+  function seguirRota(m) {
+    const i = m.rotaIdx ?? 0;
+    m.rotaIdx = (i + 1) % (m.rota.length * 2);
+    const ponto = i % 2 === 0 ? pontoDaRota({ rota: m.rota, indice: i / 2 }) : { x: m.hx, y: m.hy };
+    if (!ponto) return false;
+    m.tx = ponto.x;
+    m.ty = ponto.y;
+    return true;
+  }
+
   function updateMonsters(dt, t) {
     const list = state.boss ? [...state.monsters, state.boss] : state.monsters;
     for (const m of list) {
@@ -1189,6 +1224,26 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
             m.waitUntil = Math.min(m.waitUntil || 0, t);
           }
         }
+        // perseguição: o passo ouvido vira destino. Ele caminha até o último
+        // ponto de onde veio o som e, passados 2,6 s sem passo novo, volta para
+        // casa. Quem está comendo a isca não levanta a cabeça.
+        const comendo = Boolean(m.lure && t < m.lure.until);
+        if (!comendo && m.atras) {
+          if (t < m.atras.until) {
+            const da = Math.hypot(m.atras.x - m.x, m.atras.y - m.y);
+            if (da > 0.9) {
+              m.tx = m.atras.x;
+              m.ty = m.atras.y;
+              m.waitUntil = Math.min(m.waitUntil || 0, t);
+              m.passos = 0;
+            }
+          } else {
+            m.atras = null;
+            m.tx = m.hx;
+            m.ty = m.hy;
+            m.waitUntil = Math.min(m.waitUntil || 0, t);
+          }
+        }
         // audição: o passo corrido chega antes da vista. O bicho para, vira para
         // o som e marca "?"; o duelo continua nascendo só da visão. Quem dorme
         // não ouve nem vê: o passo perto ou a corrida acordam.
@@ -1196,12 +1251,14 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
         if (m.dorme) {
           if (!acordaComOPasso({ dist: distOuve, sprint: state.sprint })) continue;
           m.dorme = false;
+          criarRota(m);
         }
-        if (ouveOPassoS({ sprint: state.sprint, dist: distOuve, vendo: canSeePlayer(m), boss: m.boss })) {
+        if (!comendo && ouveOPassoS({ sprint: state.sprint, dist: distOuve, vendo: canSeePlayer(m), boss: m.boss })) {
           if (!m.ouvindo || t >= m.ouvindo - 1800) {
             m.ouvindo = t + 2200;
             m.dir = direcaoPara(m.x, m.y, state.player.x, state.player.y);
           }
+          m.atras = { x: state.player.x, y: state.player.y, until: t + 2600 };
         }
         if (t >= m.waitUntil) {
           const dx = m.tx - m.x;
@@ -1219,7 +1276,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
               // na pausa longa ele olha em volta, em vez de ficar congelado
               m.olharEm = t + 160 + Math.random() * 320;
             }
-            pickWander(m);
+            if (!m.rota || !seguirRota(m)) pickWander(m);
           } else {
             const step = Math.min(dist, m.speed * dt);
             const nx = m.x + (dx / dist) * step;
@@ -1231,7 +1288,10 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
               m.dir = facingDirection(dx,dy,m.dir);
             } else {
               m.waitUntil = t + 400;
-              pickWander(m);
+              // parede entre ele e o som: desiste da perseguição em vez de
+              // bater no mesmo canto para sempre
+              if (m.atras) m.atras = null;
+              if (!m.rota || !seguirRota(m)) pickWander(m);
             }
           }
         }
