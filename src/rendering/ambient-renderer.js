@@ -19,22 +19,23 @@ export function createAmbientRenderer(ctx) {
   // no máximo 8 partículas por elemento: o teto do desenho é 12
   function drawAmbient(area, time, camX, camY, viewW, viewH, cena = null) {
     const kit = kitDaArea(area);
-    if (!kit) return;
     // o relógio do clima anda no laço do jogo, não no desenho: no modo leve a
     // camada some, mas a chuva continua começando e terminando
     const evento = relogioAmbiente.eventoAtual?.evento || null;
     const id = evento?.id || "";
-    const intensidade = evento ? relogioAmbiente.intensidade(time) : 0;
-    const chuva = id === "chuva" ? intensidade : 0;
+    const intensidade = evento ? relogioAmbiente.intensidade() : 0;
+    const chuva = id === "chuva" || id === "tempestade" ? intensidade : 0;
     const vento = id === "rajada" ? intensidade : 0;
     const neblina = id === "neblina" ? intensidade : 0;
+    // diagnóstico da sonda: prova qual evento a camada desenhou neste quadro
+    relogioAmbiente.ultimoDesenho = { id, intensidade, temKit: !!kit, interior: !!cena?.interior };
     if (id === "silencio" && intensidade > 0.4) return;
-    const cor = kit.cor || "#ffc857";
+    const cor = kit?.cor || "#ffc857";
     const W = viewW + 80;
     const H = viewH + 80;
     ctx.save();
     ctx.globalAlpha = 1;
-    for (const tipo of kit.elementos) {
+    for (const tipo of kit?.elementos || []) {
       // chuva apaga o que é faísca, e neblina come metade do que sobe
       if (chuva > 0.25 && (tipo === "faisca" || tipo === "luzes")) continue;
       const folhagem = tipo === "folha" || tipo === "folha-escura" || tipo === "pagina";
@@ -209,6 +210,113 @@ export function createAmbientRenderer(ctx) {
     if (neblina > 0.05 && !cena?.interior) {
       ctx.fillStyle = `rgba(190,200,220,${0.10 * neblina})`;
       ctx.fillRect(camX, camY, viewW, viewH);
+    }
+    if (!cena?.interior) {
+      // ---- estação: cada uma tem cor e partícula própria no céu ----
+      const estacao = relogioAmbiente.estacao;
+      const corEstacao = estacao === "primavera" ? "255,190,225"
+        : estacao === "verao" ? "255,205,120"
+        : estacao === "outono" ? "255,150,70" : "170,205,255";
+      ctx.fillStyle = `rgba(${corEstacao},${estacao === "inverno" ? 0.07 : 0.05})`;
+      ctx.fillRect(camX, camY, viewW, viewH);
+      const quantas = estacao === "inverno" ? 42 : estacao === "primavera" ? 28 : 20;
+      for (let i = 0; i < quantas; i++) {
+        const s = i * 53 + 11;
+        const x = camX + ((ruido(s) * viewW + time * (estacao === "outono" ? 0.02 : 0.012) * (1 + ruido(s + 3))) % viewW);
+        const y = camY + ((ruido(s + 1) * viewH + time * (estacao === "inverno" ? 0.03 : 0.012)) % viewH);
+        if (estacao === "inverno") {
+          ctx.fillStyle = "rgba(240,247,255,0.92)";
+          ctx.fillRect(x, y, 2, 2);
+        } else if (estacao === "primavera") {
+          ctx.fillStyle = "rgba(255,190,225,0.85)";
+          ctx.fillRect(x, y + Math.sin(time / 700 + i) * 2, 2, 1);
+        } else if (estacao === "verao") {
+          ctx.fillStyle = "rgba(255,230,150,0.45)";
+          ctx.fillRect(x, y, 1, 1);
+        } else {
+          ctx.fillStyle = "rgba(224,140,70,0.85)";
+          ctx.fillRect(x, y + Math.sin(time / 600 + i) * 2, 2, 1);
+        }
+      }
+    }
+    // ---- eventos que tomam a tela inteira ----
+    if (id === "tempestade" && intensidade > 0.05) {
+      const fase = (time / 5200) % 1;
+      const relampago = fase > 0.9 ? Math.sin(((fase - 0.9) / 0.1) * Math.PI) : 0;
+      if (relampago > 0.02) {
+        ctx.fillStyle = `rgba(235,245,255,${0.5 * relampago * intensidade})`;
+        ctx.fillRect(camX, camY, viewW, viewH);
+      }
+      ctx.strokeStyle = `rgba(210,230,255,${0.45 * intensidade})`;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      for (let i = 0; i < 70; i++) {
+        const x = camX + ruido(i + 31) * viewW;
+        const y = camY + ((ruido(i + 17) * viewH + time * 0.5) % viewH);
+        ctx.moveTo(x, y);
+        ctx.lineTo(x - 3, y + 9);
+      }
+      ctx.stroke();
+    }
+    if (id === "tornado" && intensidade > 0.03) {
+      const cx = camX + viewW * (0.38 + 0.24 * ruido(Math.floor(time / 9000)));
+      const base = camY + viewH * 0.94;
+      const altura = viewH * 0.58 * intensidade;
+      // funil: faixas que alargam para cima, com a boca girando devagar
+      for (let k = 0; k < 26; k++) {
+        const f = k / 26;
+        const raio = (3 + f * 34) * intensidade;
+        const y = base - f * altura;
+        const x = cx + Math.sin(time / 140 + k * 0.8) * (raio * 0.4);
+        ctx.fillStyle = `rgba(168,178,200,${0.26 + f * 0.24 * intensidade})`;
+        ctx.fillRect(x - raio * 0.5, y, raio, 3);
+      }
+      // nuvem escura no topo do funil
+      ctx.fillStyle = `rgba(24,30,46,${0.55 * intensidade})`;
+      ctx.beginPath();
+      ctx.ellipse(cx, base - altura - 6, 46 * intensidade, 12 * intensidade, 0, 0, Math.PI * 2);
+      ctx.fill();
+      // detritos girando em volta
+      for (let i = 0; i < 34; i++) {
+        const f = ruido(i + 3);
+        const raio = (6 + f * 34) * intensidade;
+        const ang = time / 110 + i;
+        const x = cx + Math.cos(ang) * raio;
+        const y = base - f * altura + Math.sin(ang) * 6;
+        ctx.fillStyle = `rgba(238,226,198,${0.85 * intensidade})`;
+        ctx.fillRect(x, y, 2.5, 2);
+      }
+      // poeira levantada no chão
+      ctx.fillStyle = `rgba(196,178,150,${0.3 * intensidade})`;
+      ctx.beginPath();
+      ctx.ellipse(cx, base, 52 * intensidade, 10 * intensidade, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    if (id === "eclipse" && intensidade > 0.02) {
+      ctx.fillStyle = `rgba(2,4,12,${0.55 * intensidade})`;
+      ctx.fillRect(camX, camY, viewW, viewH);
+      const cx = camX + viewW * 0.5, cy = camY + viewH * 0.18;
+      const raio = Math.min(viewW, viewH) * 0.1 * intensidade;
+      const coroa = ctx.createRadialGradient(cx, cy, raio * 0.85, cx, cy, raio * 2.4);
+      coroa.addColorStop(0, `rgba(255, 224, 150, ${0.75 * intensidade})`);
+      coroa.addColorStop(0.35, `rgba(255, 200, 110, ${0.28 * intensidade})`);
+      coroa.addColorStop(1, "rgba(255, 200, 110, 0)");
+      ctx.fillStyle = coroa;
+      ctx.beginPath();
+      ctx.arc(cx, cy, raio * 2.4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "#05070f";
+      ctx.beginPath();
+      ctx.arc(cx, cy, raio, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    if (id === "neve" && intensidade > 0.03) {
+      for (let i = 0; i < 120; i++) {
+        const x = camX + ((ruido(i + 5) * viewW + time * 0.02 * (1 + ruido(i)) ) % viewW);
+        const y = camY + ((ruido(i + 7) * viewH + time * 0.06) % viewH);
+        ctx.fillStyle = `rgba(248,252,255,${0.9 * intensidade})`;
+        ctx.fillRect(x, y, 2, 2);
+      }
     }
     ctx.restore();
   }

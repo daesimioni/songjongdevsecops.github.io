@@ -26,6 +26,8 @@ O **minimapa** tem coordenada `x y z` (z 0 superfície, -1 subsolo, -2 Porto Sub
 
 Depois das missões do vale, a história fecha em cinco sistemas que leem o mesmo save. O jogo avisa quando o site muda e um botão aplica a versão nova sem sair da sessão: o save e a chave ficam, e você volta no mesmo lugar.
 
+O tempo do vale corre 60 vezes o da vida real: um minuto real é uma hora no jogo e o dia tem 24 minutos. O calendário é gregoriano como o nosso e conta desde 18 de janeiro de 1997; o HUD mostra data, hora, estação e dia/noite. As quatro estações têm cor e partículas próprias, e chuva, tempestade, tornado, eclipse e neve mudam o céu, a luz e o chão.
+
 A **Biblioteca Afogada** é uma corrente de sete missões que abre o acervo: 454 conceitos, as 179 páginas de lore e os 7 treinos, com busca sem acento e página de leitura. A **Grande Prova** é o evento final opcional: o guardião do acervo tem três fases, e a vitória abre três desfechos (guardar, devolver ou abrir a voz), sem exame e sem reprovação.
 
 O **fio da Iara** dá ordem à história em sete capítulos, do Porto às seis disciplinas; cada capítulo pede a missão maior do continente e a leitura do anterior, e o Diário mostra o lido, o aberto e o que falta. As **facções** são três forças com memória: Concílio do Silêncio, União das Minas e Porto Submerso vão de -3 a +3, mudam com as missões e com o desfecho da Grande Prova, alteram o preço da loja, e o Concílio abre a estante reservada do acervo. A **guilda** é local: nome, brasão, quadro de até oito membros com cargos, missões próprias e diário; quem entra é a party, que usa o convite assinado da Rede.

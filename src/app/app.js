@@ -34,6 +34,7 @@ const CATALOG_STONES = new Set(CATALOG.map((area) => area.existing || area.id));
 import { findPath, nearestWalkable, findLanding } from "../core/path.js";
 import { feedPeer, peerRenderPosition } from "../platform/interp.js";
 import { startTitle } from "../ui/title.js";
+import { dataDoJogo, formatarData, formatarHora, eDia } from "../core/calendario.js";
 import { ATUALIZACAO, lerManifesto, guardarRetomada, consumirRetomada, baixarArquivos } from "../platform/atualizacao.js";
 import { RPG } from "../gameplay/rpg.js";
 import { resumoConceitos, vencido } from "../gameplay/conceitos.js";
@@ -283,6 +284,10 @@ const AVISO_CLIMA = {
   meteoro: "Um meteoro cruzou o vale.",
   calmaria: "Calmaria: o mar alisou.",
   silencio: "O vale ficou em silêncio.",
+  tempestade: "Tempestade no vale: raios e trovões.",
+  tornado: "Tornado! O vento está arrastando tudo.",
+  eclipse: "Eclipse no vale: o sol sumiu por um instante.",
+  neve: "Neve no vale: o inverno cobriu as ilhas.",
 };
 for (const [id, aviso] of Object.entries(AVISO_CLIMA)) {
   renderer.ambiente.on(`${id}:comeca`, () => {
@@ -293,9 +298,13 @@ for (const [id, aviso] of Object.entries(AVISO_CLIMA)) {
   // a neblina muda o elenco do subsolo e a rajada traz o que voa
   renderer.ambiente.on(`${id}:comeca`, () => { state.clima = id; });
   renderer.ambiente.on(`${id}:termina`, () => { if (state.clima === id) state.clima = "limpo"; });
-  if (id === "chuva") {
-    renderer.ambiente.on("chuva:comeca", () => world.setClima("chuva"));
-    renderer.ambiente.on("chuva:termina", () => world.setClima("limpo"));
+  if (id === "chuva" || id === "tempestade") {
+    renderer.ambiente.on(`${id}:comeca`, () => world.setClima("chuva"));
+    renderer.ambiente.on(`${id}:termina`, () => world.setClima("limpo"));
+  }
+  if (id === "neve") {
+    renderer.ambiente.on("neve:comeca", () => world.setClima("neve"));
+    renderer.ambiente.on("neve:termina", () => world.setClima("limpo"));
   }
 }
 
@@ -2869,7 +2878,7 @@ function updatePrompt() {
   $("prompt").hidden = false;
 }
 
-const { updateBoost, updateMovement, clearPath, interactionRadius, setPathTo, updateAutoWalk, updateCat } = createSurfaceMovement({
+const { updateBoost, updateMovement, clearPath, interactionRadius, setPathTo, updateAutoWalk, updateCat, empurrar } = createSurfaceMovement({
   player, state, world, rpg, audio, toast, interactTarget, isDungeonOpen: () => !!dungeon?.isOpen(),
 });
 
@@ -2900,6 +2909,22 @@ function updateZone() {
   showZoneCard(CONTINENTS[cid], first);
 }
 
+let calendarioEm = 0;
+function atualizarCalendario(now) {
+  if (now - calendarioEm < 1000) return;
+  calendarioEm = now;
+  const el = $("calendario");
+  if (!el) return;
+  el.hidden = !state.started;
+  if (el.hidden) return;
+  const data = dataDoJogo();
+  $("calendario-data").textContent = formatarData(data);
+  $("calendario-hora").textContent = formatarHora(data);
+  $("calendario-estacao").textContent = data.estacaoNome;
+  $("calendario-fase").textContent = eDia(data) ? "dia" : "noite";
+  const barra = $("calendario-progresso");
+  if (barra) barra.style.width = `${(data.fracaoDoDia * 100).toFixed(1)}%`;
+}
 let cobertoAntes = false;
 
 function loop(now) {
@@ -2911,13 +2936,14 @@ function loop(now) {
     updateBoost(dt, active);
     rpg.tick();
     // o relógio do clima anda sempre, inclusive dentro da caverna e no modo leve
-    renderer.ambiente.tick(now);
+    renderer.ambiente.tick(Date.now());
     // troca de dia para noite avisa uma vez, sem repetir a cada quadro
-    const agoraNoite = eNoite(now);
+    const agoraNoite = eNoite();
     if (loop.noite !== undefined && loop.noite !== agoraNoite && state.started && !state.casa && !state.modal && !state.panelOpen) {
       toast(agoraNoite ? "A noite caiu no vale." : "O dia voltou ao vale.", 2600);
     }
     loop.noite = agoraNoite;
+    atualizarCalendario(now);
     if (!state.manaAt || now - state.manaAt > 1000) {
       state.manaAt = now;
       rpg.pulse();
@@ -2928,6 +2954,11 @@ function loop(now) {
       return;
     }
     if (active) {
+      if (renderer.ambiente.eventoAtual?.evento.id === "tornado") {
+        const giro = now / 260;
+        const forca = 0.55 * dt * (1 + renderer.ambiente.intensidade() * 0.8);
+        empurrar(Math.cos(giro) * forca, Math.sin(giro) * forca);
+      }
       if (state.path) updateAutoWalk(dt);
       else updateMovement(dt);
       if (!state.casa) updateZone();

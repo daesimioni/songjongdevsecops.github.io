@@ -147,5 +147,16 @@ function updateCat(dt) {
   }
 }
 
-  return { updateBoost, walkStep, updateMovement, clearPath, interactionRadius, setPathTo, updateAutoWalk, updateCat };
+  // empurrão de fora (tornado, vento forte): mesma colisão do passo, sem som
+  function empurrar(dx, dy) {
+    if (!Number.isFinite(dx) || !Number.isFinite(dy)) return;
+    const oldX = player.x, oldY = player.y;
+    moveWithCollision(player, dx, dy, (x, y) => !world.boxCollides(x, y, PLAYER_W, PLAYER_H));
+    player.x = Math.max(0.5, Math.min(MAP_W - 0.5, player.x));
+    player.y = Math.max(0.5, Math.min(MAP_H - 0.5, player.y));
+    player.dir = facingDirection(player.x - oldX, player.y - oldY, player.dir);
+    player.moving = Math.hypot(player.x - oldX, player.y - oldY) > 1e-8;
+  }
+
+  return { updateBoost, walkStep, updateMovement, clearPath, interactionRadius, setPathTo, updateAutoWalk, updateCat, empurrar };
 }

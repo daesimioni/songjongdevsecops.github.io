@@ -1,30 +1,29 @@
 // O relógio do vale: estação, evento e o kit de ambiente de cada ilha. O que é
 // físico e contínuo (chama, água, respiração) continua em loop; o que é
 // acontecimento vira evento com começo, pico e fim, sorteado por RNG semeado
-// para dois viajantes verem o mesmo e o teste poder prever.
+// pelo dia do calendário: dois viajantes veem o mesmo tempo no mesmo dia.
+import { dataDoJogo, estacaoDe, ESTACOES } from "../core/calendario.js";
 
-export const ESTACOES = ["primavera", "verao", "outono", "inverno"];
+export { ESTACOES, estacaoDe };
 
-// hemisfério sul: verão em dez-fev, outono em mar-mai, inverno em jun-ago
-export function estacaoDe(data = new Date()) {
-  const mes = data.getMonth();
-  if (mes >= 11 || mes <= 1) return "verao";
-  if (mes >= 2 && mes <= 4) return "outono";
-  if (mes >= 5 && mes <= 7) return "inverno";
-  return "primavera";
-}
+const H = 60 * 60 * 1000; // uma hora de jogo em milissegundos de jogo
 
-// Cada evento tem duração, peso, espera depois de terminar e estações em que
-// pode acontecer. "repete" falso impede que o sorteio devolva o mesmo evento.
+// Cada evento tem duração e espera em horas do jogo (uma hora = um minuto
+// real), peso e estações em que pode acontecer. "repete" falso impede que o
+// sorteio devolva o mesmo evento.
 export const EVENTOS = [
-  { id: "rajada", duracao: 9000, peso: 4, espera: 42000, estacoes: ["primavera", "outono", "inverno", "verao"] },
-  { id: "chuva", duracao: 26000, peso: 2, espera: 90000, estacoes: ["primavera", "verao", "outono"] },
-  { id: "neblina", duracao: 22000, peso: 2, espera: 80000, estacoes: ["outono", "inverno", "primavera"] },
-  { id: "revoada", duracao: 7000, peso: 2, espera: 60000, estacoes: ["primavera", "verao"] },
-  { id: "vagalumes", duracao: 20000, peso: 2, espera: 70000, estacoes: ["verao"] },
-  { id: "meteoro", duracao: 4000, peso: 1, espera: 140000, estacoes: ["verao", "inverno"] },
-  { id: "calmaria", duracao: 16000, peso: 2, espera: 55000, estacoes: ["verao", "primavera"] },
-  { id: "silencio", duracao: 12000, peso: 1, espera: 120000, estacoes: ["inverno", "outono"] },
+  { id: "rajada", duracao: 0.4 * H, peso: 4, espera: 2 * H, estacoes: ["primavera", "outono", "inverno", "verao"] },
+  { id: "chuva", duracao: 2 * H, peso: 3, espera: 3 * H, estacoes: ["primavera", "verao", "outono"] },
+  { id: "tempestade", duracao: 2.5 * H, peso: 2, espera: 6 * H, estacoes: ["primavera", "verao", "outono"] },
+  { id: "tornado", duracao: 0.5 * H, peso: 1, espera: 16 * H, estacoes: ["verao", "primavera", "outono"] },
+  { id: "eclipse", duracao: 0.8 * H, peso: 1, espera: 28 * H, estacoes: ["primavera", "outono", "inverno", "verao"] },
+  { id: "neve", duracao: 3 * H, peso: 3, espera: 4 * H, estacoes: ["inverno"] },
+  { id: "neblina", duracao: 1.5 * H, peso: 2, espera: 4 * H, estacoes: ["outono", "inverno", "primavera"] },
+  { id: "revoada", duracao: 0.6 * H, peso: 2, espera: 4 * H, estacoes: ["primavera", "verao"] },
+  { id: "vagalumes", duracao: 1.5 * H, peso: 2, espera: 5 * H, estacoes: ["verao"] },
+  { id: "meteoro", duracao: 0.25 * H, peso: 1, espera: 10 * H, estacoes: ["verao", "inverno"] },
+  { id: "calmaria", duracao: 1.2 * H, peso: 2, espera: 4 * H, estacoes: ["verao", "primavera"] },
+  { id: "silencio", duracao: 0.8 * H, peso: 1, espera: 8 * H, estacoes: ["inverno", "outono"] },
 ];
 
 const EVENTO_POR_ID = new Map(EVENTOS.map((e) => [e.id, e]));
@@ -49,15 +48,21 @@ function hash(txt) {
   return h >>> 0;
 }
 
-// O relógio: `tick(t)` decide quando o próximo evento começa e devolve o evento
-// atual com a intensidade em 0..1 (sobe, segura no pico, cai).
-export function criarAmbiente({ semente = 1, data = new Date(), estacao = null } = {}) {
-  const rnd = mulberry32(semente);
-  const hooks = new Map();
-  const estacaoAtual = estacao || estacaoDe(data);
+const chaveDoDia = (data) => `${data.ano}-${data.mes}-${data.dia}`;
+
+// O relógio: `tick(agoraReal)` acha o dia do calendário, semeia os eventos
+// daquele dia e devolve o evento atual com a intensidade em 0..1 (sobe, segura
+// no pico, cai).
+export function criarAmbiente({ semente = 1, agora = Date.now(), estacao = null } = {}) {
+  let hooks = new Map();
+  let estacaoAtual = estacao || "primavera";
+  const estacaoForcada = estacao;
+  let rnd = mulberry32(semente);
+  let dia = "";
   let atual = null;
   let proximoEm = 0;
   let ultimo = "";
+  let relogio = 0;
 
   const emitir = (nome, evento, intensidade) => {
     for (const fn of hooks.get(nome) || []) fn({ evento, intensidade, estacao: estacaoAtual });
@@ -75,9 +80,36 @@ export function criarAmbiente({ semente = 1, data = new Date(), estacao = null }
     return disponiveis[disponiveis.length - 1] || EVENTOS[0];
   }
 
+  function atualEspera(id) {
+    const e = EVENTO_POR_ID.get(id);
+    return (e?.espera || 4 * H) * (0.6 + rnd() * 0.8);
+  }
+
+  function virarDia(data) {
+    dia = chaveDoDia(data);
+    estacaoAtual = estacaoForcada || data.estacao;
+    rnd = mulberry32(hash(`${semente}:${dia}`));
+    if (atual) emitir(`${atual.evento.id}:termina`, atual.evento, 0);
+    atual = null;
+    ultimo = "";
+    // primeiro evento do dia em um horário estável para todo mundo
+    const inicioDoDia = data.ms - data.msNoDia;
+    proximoEm = inicioDoDia + (0.08 + rnd() * 0.5) * 24 * H;
+  }
+
+  function sincronizar(agoraReal) {
+    const data = dataDoJogo(agoraReal);
+    relogio = data.ms;
+    if (chaveDoDia(data) !== dia) virarDia(data);
+    return data;
+  }
+  sincronizar(agora);
+
   return {
-    estacao: estacaoAtual,
+    get estacao() { return estacaoAtual; },
+    get dia() { return dia; },
     get eventoAtual() { return atual; },
+    get relogio() { return relogio; },
     on(nome, fn) {
       if (!hooks.has(nome)) hooks.set(nome, []);
       hooks.get(nome).push(fn);
@@ -88,43 +120,47 @@ export function criarAmbiente({ semente = 1, data = new Date(), estacao = null }
       };
     },
     // devolve { evento, intensidade } e dispara os ganchos de começa/pico/fim
-    tick(t) {
-      if (atual && t >= atual.fim) {
+    tick(agoraReal = Date.now()) {
+      const data = sincronizar(agoraReal);
+      const agora = data.ms;
+      if (atual && agora >= atual.fim) {
         emitir(`${atual.evento.id}:termina`, atual.evento, 0);
         ultimo = atual.evento.id;
         atual = null;
-        proximoEm = t + atualEspera(ultimo);
+        proximoEm = agora + atualEspera(ultimo);
       }
-      if (!atual && t >= proximoEm) {
+      if (!atual && agora >= proximoEm) {
         const evento = sortear();
+        const restoDoDia = (data.msNoDia > 0 ? (24 * H - data.msNoDia) : 0);
+        const dur = Math.min(evento.duracao, Math.max(H * 0.2, restoDoDia));
         atual = {
-          evento,
-          inicio: t,
-          pico: t + evento.duracao * 0.3,
-          fim: t + evento.duracao,
+          evento: { ...evento, duracao: dur },
+          inicio: agora,
+          pico: agora + dur * 0.3,
+          fim: agora + dur,
+          picado: false,
         };
-        emitir(`${evento.id}:comeca`, evento, 0);
+        emitir(`${evento.id}:comeca`, atual.evento, 0);
       }
-      if (atual && !atual.picado && t >= atual.pico) {
+      if (atual && !atual.picado && agora >= atual.pico) {
         atual.picado = true;
         emitir(`${atual.evento.id}:pico`, atual.evento, 1);
       }
-      return { evento: atual?.evento || null, intensidade: this.intensidade(t) };
+      return { evento: atual?.evento || null, intensidade: this.intensidade(agora), data };
     },
     // usado pelo teste e pelo modo debug: força um evento a partir de agora
-    forcarEvento(id, duracao = null, agora = 0) {
+    forcarEvento(id, duracao = null, agora = Date.now()) {
       const evento = EVENTO_POR_ID.get(id);
       if (!evento) return false;
-      // evento forçado passa pelos mesmos ganchos do evento sorteado: quem escuta
-      // `:comeca` e `:termina` (HUD, caçada, morador) não pode ficar de fora
+      const data = sincronizar(agora);
       if (atual) emitir(`${atual.evento.id}:termina`, atual.evento, 0);
       const dur = duracao || evento.duracao;
-      atual = { evento: { ...evento, duracao: dur }, inicio: agora, pico: agora + dur * 0.3, fim: agora + dur, picado: false };
+      atual = { evento: { ...evento, duracao: dur }, inicio: data.ms, pico: data.ms + dur * 0.3, fim: data.ms + dur, picado: false };
       proximoEm = atual.fim + evento.espera;
       emitir(`${evento.id}:comeca`, atual.evento, 0);
       return true;
     },
-    intensidade(t) {
+    intensidade(t = relogio) {
       if (!atual) return 0;
       const { inicio, pico, fim } = atual;
       if (t <= inicio || t >= fim) return 0;
@@ -132,11 +168,6 @@ export function criarAmbiente({ semente = 1, data = new Date(), estacao = null }
       return 1 - (t - pico) / Math.max(1, fim - pico);
     },
   };
-
-  function atualEspera(id) {
-    const e = EVENTO_POR_ID.get(id);
-    return (e?.espera || 45000) * (0.6 + rnd() * 0.8);
-  }
 }
 
 // ---- kit por ilha --------------------------------------------------------

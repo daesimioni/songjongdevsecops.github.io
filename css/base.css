@@ -383,6 +383,36 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
   50% { transform: translate(-50%, -3px); }
 }
 
+.calendario {
+  position: absolute;
+  z-index: 6;
+  top: 66px;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 300px;
+  max-width: min(44vw, 380px);
+  padding: 7px 14px 9px;
+  border: 1px solid rgba(158, 203, 255, 0.3);
+  border-radius: 9px;
+  background: linear-gradient(180deg, rgba(8, 12, 26, 0.9), rgba(5, 8, 20, 0.82));
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  pointer-events: none;
+  text-shadow: 0 1px 0 #000;
+}
+.calendario[hidden] { display: none; }
+.calendario-linha { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+#calendario-data { font-family: var(--pixel); font-size: 8px; color: var(--amber); letter-spacing: 0.03em; }
+#calendario-hora { font-family: var(--pixel); font-size: 12px; color: #fff3d1; letter-spacing: 0.06em; }
+.calendario-baixo { margin-top: 5px; font-family: var(--mono); font-size: 10px; color: var(--muted); text-transform: lowercase; align-items: center; }
+#calendario-estacao { color: #b8d8ff; }
+#calendario-fase { font-style: normal; color: #9ecbff; }
+.calendario-barra { flex: 1; height: 3px; border-radius: 2px; background: rgba(255, 255, 255, 0.09); overflow: hidden; }
+.calendario-barra i { display: block; height: 100%; width: 0; border-radius: 2px; background: linear-gradient(90deg, #ffd479, #9ecbff); transition: width 0.6s linear; }
+@media (max-width: 980px) {
+  .calendario { top: 108px; min-width: 250px; max-width: 88vw; padding: 6px 10px 8px; }
+  #calendario-data { font-size: 7px; }
+}
+
 .update-banner {
   position: fixed;
   z-index: 70;

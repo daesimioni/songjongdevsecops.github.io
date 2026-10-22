@@ -90,6 +90,16 @@ export const COMO_JOGAR = [
     ],
   },
   {
+    nome: "Tempo e calendário",
+    resumo: "um minuto real é uma hora no jogo; o calendário conta desde 1997",
+    campos: [
+      ["Relógio", "1 minuto real = 1 hora do jogo; o dia tem 24 minutos reais e 24 horas"],
+      ["Calendário", "gregoriano como o nosso, contando os anos desde 18/01/1997; o HUD mostra data, hora e estação"],
+      ["Estações", "hemisfério sul, com cor e partículas próprias: primavera, verão, outono e inverno"],
+      ["Clima", "chuva, tempestade, tornado, eclipse, neve e neblina mudam o céu, a luz e o chão"],
+    ],
+  },
+  {
     nome: "Guilda e party",
     resumo: "uma sede local, o quadro de membros e a party de oito",
     campos: [

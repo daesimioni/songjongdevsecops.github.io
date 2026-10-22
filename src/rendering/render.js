@@ -1443,7 +1443,7 @@ export function createRenderer(canvas, world, {collisionDebug=false} = {}) {
 
     if (!modoLeve) drawAmbient(areaJogador, time, camX, camY, viewW, viewH, cena);
     // véu da noite: por cima do mundo, abaixo do HUD (que é DOM)
-    const faseDia = faseDoDia(time);
+    const faseDia = faseDoDia();
     if (faseDia.alpha > 0.02) {
       ctx.save();
       ctx.setTransform(1, 0, 0, 1, 0, 0);
