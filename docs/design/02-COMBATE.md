@@ -256,3 +256,14 @@ Chefes planejados (detalhe em `04-BESTIARIO.md`):
 - Morte: recomendo sem perda de item/XP; só tempo e o caderno.
 - PvP: recomendo opt-in, sem perda.
 - Tamanho do grupo: 3 bichos é o teto por legibilidade; 4 só em chefe/adds.
+
+## Audição: o passo corrido chega antes da vista (2026-10-22)
+
+Correr dentro de 6,5 tiles de um bicho que ainda **não** vê o jogador faz o
+bicho parar, virar o rosto para o som e mostrar `?` por 2,2 s. Andar não faz
+barulho, e ouvir não inicia duelo: o combate continua nascendo só da visão. O
+bicho já viu (`!`) tem precedência.
+
+Prova: `test/audicao.test.mjs` (raio, barulho só na corrida, chefe fora, direção
+cardinal e o `?` no desenho) e sonda `cdp-audicao.mjs` (Bit a 3,2 tiles virou
+para leste, sem alerta nem duelo; parado, não reagiu).

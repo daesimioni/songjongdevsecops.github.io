@@ -20,6 +20,7 @@ import { escalaDaCamera, tilesNaVista, dentroDaVista, caixaNaVista } from "../co
 import { fracoesDeVida } from "../core/vitais.js";
 import { propsDaSala } from "../content/salas-tematicas.js";
 import { nomeDaCacada } from "../content/cacada-clima.js";
+import { ouveOPassoS, direcaoPara } from "../world/audicao.js";
 
 const $ = (id) => document.getElementById(id);
 const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
@@ -1128,6 +1129,15 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     for (const m of list) {
       if (!m.alive) continue;
       {
+        // audição: o passo corrido chega antes da vista. O bicho para, vira para
+        // o som e marca "?"; o duelo continua nascendo só da visão.
+        const distOuve = Math.hypot(state.player.x - m.x, state.player.y - m.y);
+        if (ouveOPassoS({ sprint: state.sprint, dist: distOuve, vendo: canSeePlayer(m), boss: m.boss })) {
+          if (!m.ouvindo || t >= m.ouvindo - 1800) {
+            m.ouvindo = t + 2200;
+            m.dir = direcaoPara(m.x, m.y, state.player.x, state.player.y);
+          }
+        }
         if (t >= m.waitUntil) {
           const dx = m.tx - m.x;
           const dy = m.ty - m.y;
@@ -1827,6 +1837,14 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
       ctx.font = "bold 14px monospace";
       ctx.textAlign = "center";
       ctx.fillText("!", x, y - 42);
+      ctx.restore();
+    } else if (m.ouvindo > clock()) {
+      ctx.save();
+      ctx.fillStyle = "#b9cdf2";
+      ctx.font = "bold 12px monospace";
+      ctx.textAlign = "center";
+      ctx.globalAlpha = 0.85;
+      ctx.fillText("?", x, y - 42);
       ctx.restore();
     }
   }
