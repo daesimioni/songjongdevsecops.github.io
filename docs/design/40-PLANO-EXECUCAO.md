@@ -45,8 +45,9 @@ treinos, busca sem acento, página, wiki e treino medidos em
   com as páginas de lore e os conceitos avançados, com busca; a recompensa
   (relíquia e título); a entrada no diário e na wiki.
 - **Prova**: `test/biblioteca.test.mjs` (7 missões, a segunda trancada até a
-  primeira, o acervo com as páginas, o save); `cdp-biblioteca.mjs` (entrar,
-  escolher, ler, sair); `npm run validate`; site.
+  primeira, o save) e `test/acervo.test.mjs` (as três alas, a busca, a fiação);
+  `cdp-acervo.mjs` (cartão do guia, abas, busca, página, wiki e treino);
+  `npm run validate`; site.
 - **Depende de**: nada. O conteúdo das páginas usa o acervo existente.
 
 ### F2. Grande Prova como evento (M)
