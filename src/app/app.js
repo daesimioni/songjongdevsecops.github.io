@@ -118,6 +118,7 @@ const state = {
   chatOpen: false,
   chatLog: [],
   modal: null,
+  focoDePonteiro: false,
   peers: [],
   net: null,
   hasIdentity: false,
@@ -166,6 +167,19 @@ function activeUiLayer() {
   return null;
 }
 const uiScope = createUiScope({ root: $("app"), getActive: activeUiLayer, exceptions: [$("toast"), $("scrim")] });
+
+// Botão usado com o ponteiro não fica selecionado: depois do clique ele perde o
+// foco, então o próximo Espaço liga a nave em vez de repetir o botão. Quem
+// navega pelo teclado continua com o foco e com a ativação nativa.
+let ultimoGesto = "teclado";
+window.addEventListener("pointerdown", () => { ultimoGesto = "ponteiro"; }, { capture: true, passive: true });
+window.addEventListener("keydown", () => { ultimoGesto = "teclado"; }, { capture: true });
+window.addEventListener("click", (e) => {
+  if (ultimoGesto !== "ponteiro") return;
+  const botao = e.target?.closest?.("button");
+  if (!botao || botao.closest(".modal, [role='dialog']")) return;
+  setTimeout(() => { if (document.activeElement === botao) botao.blur(); }, 0);
+}, true);
 
 const NOME_CASA = { casa: "casa", cabana: "cabana", torre: "torre", galpao: "galpão" };
 const nomeDaArea = (id) => AREAS.find((a) => a.id === id)?.name || "ilha";
@@ -2592,6 +2606,14 @@ const MODAL_FOCUS_BACK = {
   wiki: "btn-wiki",
 };
 function restoreFocus(modalName) {
+  // fechado o que foi aberto pelo mouse, o foco volta ao jogo: nada de botão
+  // pré-selecionado para o Espaço ativar sem querer
+  if (state.focoDePonteiro) {
+    state.focoDePonteiro = false;
+    state.lastFocus = null;
+    document.activeElement?.blur?.();
+    return;
+  }
   const back = state.lastFocus;
   state.lastFocus = null;
   if (back?.isConnected && !back.disabled && !back.closest("[inert]") && back.getClientRects().length) {
@@ -2607,9 +2629,12 @@ function openModal(name) {
   stopSprint();
   pararSeguir();
   dungeon?.stopControls();
-  const opener = document.activeElement?.closest?.("button, a, input, [tabindex]") || document.activeElement;
+  const opener = ultimoGesto === "teclado"
+    ? (document.activeElement?.closest?.("button, a, input, [tabindex]") || document.activeElement)
+    : null;
   if (state.modal !== name) closeModal(state.modal);
   state.lastFocus = opener && opener !== document.body ? opener : null;
+  state.focoDePonteiro = ultimoGesto === "ponteiro";
   state.modal = name;
   $(name).hidden = false;
   $("scrim").hidden = false;

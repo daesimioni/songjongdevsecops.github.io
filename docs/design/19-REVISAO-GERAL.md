@@ -105,6 +105,7 @@ A árvore já vergava com a rajada e o fogo já tinha 4 a 8 quadros.
 | 2026-10-22 | Fontes locais | as woff2 de Press Start 2P e Silkscreen saíram do Google e moram no repo, com preload; a preferência de texto maior é aplicada antes do primeiro desenho, então a fonte não troca no load | `test/fontes.test.mjs`, `cdp-fontes.mjs` (12/12), 110/110 suítes, 19/19 no navegador |
 | 2026-10-22 | Andar na diagonal | o boneco ganhou pose 3/4 de verdade: tronco inclinado para o lado do passo, ombro de trás com um pixel e cabeça virada dois pixels; de costas a nuca é cabelo, não a face, e as oito direções diferem entre si | `test/diagonal.test.mjs`, `cdp-avatar-diag.mjs` (oito poses), 111/111 suítes, 19/19 no navegador |
 | 2026-10-22 | Tempo e calendário | o relógio do jogo corre 60x (1 minuto real = 1 hora), o dia tem 24 minutos reais, o calendário é gregoriano desde 18/01/1997 e o HUD mostra data, hora, estação e dia/noite; as quatro estações têm cor e partículas, e chuva, tempestade, tornado, eclipse e neve mexem no céu e no chão | `test/calendario.test.mjs`, `test/dia-noite.test.mjs`, `test/ambiente.test.mjs`, `cdp-calendario.mjs` (14/14), 112/112 suítes, 19/19 no navegador |
+| 2026-10-22 | Foco do botão | botão usado com o mouse perde o foco depois do clique e modal aberto no mouse devolve o foco ao jogo, então o Espaço liga a nave em vez de repetir o botão; a ativação por teclado continua igual | `test/interfaces.test.mjs`, `cdp-foco.mjs` (11/11), 112/112 suítes, 19/19 no navegador |
 
 ## Fecho da revisão (2026-10-22)
 
