@@ -20,8 +20,8 @@ O endgame e a lore entram no próximo ciclo, nesta ordem.
 ## 2. O ciclo atual está fechado
 
 - 0 linhas ausente e 0 parciais no 39; o que resta são decisões respondidas.
-- 104 testes em 107 arquivos, 19/19 na matriz de navegador a 60,2 fps, 139
-  módulos, build de 147 arquivos.
+- 105 testes em 108 arquivos, 19/19 na matriz de navegador a 60,2 fps, 140
+  módulos, 322 dependências, build de 148 arquivos.
 - Site publicado com o 39 e o 40; o revisor de conteúdo roda no `check` e no CI.
 - A mochila medida em 60,2 fps após 75 s e 18 a 19 MB; acompanhar em hardware
   real.
@@ -67,14 +67,19 @@ de escolha e um desfecho. A decisão 1 do dono (sem prova final) continua valend
 
 ### F3. Arco principal em capítulos e lore da Iara (G)
 
-As 284 missões geradas (mais as 7 da Biblioteca) não têm fio. O arco transforma o acervo em 7
-capítulos, do Silêncio à Iara, com marcos e diálogo.
+As 291 missões (284 geradas mais as 7 da Biblioteca) não tinham fio. O arco
+transforma o acervo em 7 capítulos, do Silêncio à Iara, com marcos e diálogo.
 
 - **Entregáveis**: `src/gameplay/arcos.js` com 7 capítulos (porto e seis
   disciplinas), cada um com um marco, uma missão de capítulo e uma entrada de
   lore; os NPCs de arco com falas próprias; a linha do tempo no diário e na wiki.
 - **Prova**: `test/arcos-historia.test.mjs` (7 capítulos, ordem, desbloqueio por
   marco, save); `cdp-arco-capitulo.mjs` (um capítulo inteiro); wiki.
+- **Fechada (rodada 4)**: o fio da Iara tem 7 capítulos com missão-marco, lore e
+  fala do guia; o diário mostra lido, aberto e bloqueado, a leitura grava no save
+  e reabre no capítulo anterior, e a wiki ganhou a ficha (2.309 entradas). O
+  teste node e a sonda de 13 conferências medem tudo; a matriz de navegador deu
+  19/19.
 - **Depende de**: F1 (o acervo) para as entradas de lore.
 
 ### F4. Facções e reputação (G)
@@ -125,7 +130,7 @@ Cada um tem o custo e o gatilho na tabela de escopo do 39.
 |---|---|---|---|
 | M1 | F1 | corrente de 7 missões, tela e acervo | teste, sonda e site |
 | M2 | F2 | evento de 3 fases e desfecho | teste, sonda e site |
-| M3 | F3 | 7 capítulos e entradas de lore | teste, sonda e wiki |
+| M3 | F3 | 7 capítulos e entradas de lore, **feito** | teste, sonda e wiki |
 | M4 | F4 | 3 facções com reputação | teste, sonda e site |
 | M5 | F5 | guilda e party | teste, sonda e site |
 

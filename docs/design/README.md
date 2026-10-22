@@ -42,7 +42,7 @@ Os números abaixo são os verificados no `39`, não promessas de conceito:
 
 - 86 áreas, 93 cavernas, 454 estações, 94 faróis e 54 travessias entre ilhas;
 - 887 perguntas de duelo, 561 itens, 40 receitas, 12 encantos e 12 runas;
-- 464 fichas de bestiário, 291 missões, 194 NPCs e 2.308 fichas de wiki;
+- 464 fichas de bestiário, 291 missões, 194 NPCs e 2.309 fichas de wiki;
 - domínio de 0 a 5, revisão espaçada, grafo de pré-requisitos, dicas em escada
   e erro por distrator no caderno;
 - morte suave, vocações com subcategorias, PvP opt-in e cronômetro desligado;
@@ -53,11 +53,11 @@ Os números abaixo são os verificados no `39`, não promessas de conceito:
 ## 4. Decisões do dono (respondidas em 2026-10-22)
 
 As 13 perguntas do `39` §"Decisões que dependem do dono" foram respondidas pelo
-dono em 2026-10-22; as respostas estão registradas lá e o ciclo atual não tem
-pendência de código. O plano do próximo ciclo está em
+dono em 2026-10-22; as respostas estão registradas lá e o ciclo atual não tinha
+pendência de código. O plano em execução está em
 [`40-PLANO-EXECUCAO.md`](40-PLANO-EXECUCAO.md): Biblioteca Afogada, Grande Prova
-como evento, arcos e lore, facções e guilda. Reabrir uma resposta é uma decisão
-nova, registrada no 39.
+e fio da Iara fechados; facções e guilda em curso. Reabrir uma resposta é uma
+decisão nova, registrada no 39.
 
 ## 5. Como uma ideia entra no jogo
 

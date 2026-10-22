@@ -81,6 +81,15 @@ export const COMO_JOGAR = [
     ],
   },
   {
+    nome: "O fio da Iara",
+    resumo: "sete capítulos que dão fio às missões do vale",
+    campos: [
+      ["Abertura", "o primeiro capítulo abre com Três pedras, no porto"],
+      ["Ordem", "cada capítulo pede a missão do continente e o anterior lido"],
+      ["Leitura", "o Diário (Z) mostra o lido, o aberto e o que falta"],
+    ],
+  },
+  {
     nome: "Andar e interagir",
     resumo: "WASD ou setas, clique no chão, arrastar para guiar",
     campos: [

@@ -40,6 +40,7 @@ import { FERRY, precoDoFerry, podePagarFerry, cobrarFerry, faltaDoFerry, nomeDoM
 import { pontosFracos } from "../gameplay/grafo.js";
 import { ALAS, itensDaAla, filtrarAcervo } from "../gameplay/acervo.js";
 import { DESFECHOS, GUARDIAO, GROUND_ACERVO, registrarDesfecho, estadoDaProva, desfechoPorId } from "../gameplay/grande-prova.js";
+import { estadoDosCapitulos, registrarLeitura, falaAtual, lidosDaHistoria } from "../gameplay/arcos.js";
 import { VOCACOES } from "../content/vocations.js";
 import { ITEMS, QUESTIONS } from "../content/rpg-data.js";
 import { createSheet } from "../ui/sheet.js";
@@ -1236,6 +1237,11 @@ function buildNpc(npc) {
       body.appendChild(deep);
     }
   }
+  // o guia fala o capítulo do fio da Iara que está aberto (ou o último lido)
+  if (npc.id === "guia") {
+    const fala = falaAtual(estadoDaHistoria());
+    if (fala) body.appendChild(el("p", "npc-line npc-context", fala.fala));
+  }
   // a corrente das sete missões abre o acervo: o guia mostra a porta
   if (npc.id === "guia" && quests.isDone("biblioteca-7")) {
     body.appendChild(el("p", "npc-line npc-context", "A Biblioteca Afogada está aberta. As três alas esperam."));
@@ -1810,6 +1816,35 @@ function buildJournal() {
     }
     list.appendChild(caderno);
   }
+  // o fio da Iara: sete capítulos, o lido, o aberto e o que falta
+  const capitulos = estadoDaHistoria();
+  const lidos = capitulos.filter((c) => c.lido).length;
+  const aberto = capitulos.find((c) => c.aberto);
+  const arco = document.createElement("details");
+  arco.className = "journal-area-group";
+  arco.open = true;
+  const somaArco = document.createElement("summary");
+  somaArco.textContent = `O fio da Iara · ${lidos} de ${capitulos.length} lidos${aberto ? ` · ${aberto.titulo}` : ""}`;
+  arco.appendChild(somaArco);
+  for (const capitulo of capitulos) {
+    const linha = document.createElement("div");
+    linha.className = "journal-conceito";
+    const falta = capitulo.lido || capitulo.aberto
+      ? ""
+      : ` · falta: ${QUESTS.find((q) => q.id === capitulo.missao)?.title || "a missão do continente"}`;
+    const estado = capitulo.lido ? "lido" : capitulo.aberto ? "aberto" : "bloqueado";
+    linha.textContent = `${capitulo.n}. ${capitulo.titulo} · ${estado}${falta}${capitulo.lido ? ` · ${capitulo.lore}` : ""}`;
+    arco.appendChild(linha);
+    if (capitulo.aberto) {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "quest-btn";
+      btn.textContent = "ler o capítulo";
+      btn.addEventListener("click", () => { registrarLeituraArco(capitulo.id); buildJournal(); });
+      arco.appendChild(btn);
+    }
+  }
+  list.appendChild(arco);
   for (const cid of CONTINENT_ORDER) {
     const continent = CONTINENTS[cid];
     const sites = sitesOf(cid);
@@ -2042,6 +2077,20 @@ function abrirDesfecho() {
   openModal("desfecho");
 }
 $("biblioteca-prova-btn")?.addEventListener("click", iniciarGrandeProva);
+
+function estadoDaHistoria() {
+  return estadoDosCapitulos({
+    lidos: lidosDaHistoria(rpg.data),
+    concluidas: new Set(quests.done().map((q) => q.id)),
+  });
+}
+function registrarLeituraArco(id) {
+  const capitulo = registrarLeitura(rpg.data, id, estadoDaHistoria());
+  if (!capitulo) return;
+  rpg.save();
+  toast(`Capítulo ${capitulo.n}: ${capitulo.titulo}.`, 4200);
+  audio.chime();
+}
 
 function travelDot(color) {
   const dot = document.createElement("i");

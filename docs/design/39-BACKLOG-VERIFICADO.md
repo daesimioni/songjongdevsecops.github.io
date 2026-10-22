@@ -8,8 +8,8 @@ de ele existir, com números que o código já superou.
 
 Auditoria read-only de 2026-10-22 cruzou os documentos 00 a 38 com `src/`,
 `test/` e `tools/`. Números do código: 86 áreas, 454 estações, 93 cavernas, 561
-itens, 464 fichas, 291 missões, 194 NPCs, 2.308 entradas de wiki, 887 perguntas
-de duelo, 139 módulos e 104 testes node. `npm run validate` passa (lint,
+itens, 464 fichas, 291 missões, 194 NPCs, 2.309 entradas de wiki, 887 perguntas
+de duelo, 140 módulos e 105 testes node. `npm run validate` passa (lint,
 contrato de módulos, testes e build) e a matriz de navegador dá 19/19.
 
 Esforço: **P** até um dia, **M** de dois a cinco dias, **G** mais de uma semana.
@@ -63,7 +63,7 @@ Estado: **feito**, **medido** e **decisão** (respondida em 2026-10-22). Não h�
 | item | estado | o que falta | esforço |
 |---|---|---|---|
 | mundo sem rendering | **feito** | `world.js` não importa mais `rendering/`: a colocação do ambiente foi para `src/world/povoado.js` e o tamanho das construções para `src/content/asset-meta.js`, fonte única entre desenho e mapa; `test/arquitetura.test.mjs` cobra os quatro pontos e a matriz de navegador deu 19/19 com 60,1 fps depois | P |
-| arquivos grandes (app 3,4 mil, dungeon 2,2 mil, rpg 1,9 mil linhas) | decisão | cada um é coeso por domínio e o contrato de módulos está sem ciclos (139 módulos, 320 dependências). Separar agora é risco sem ganho medido; reavaliar quando uma mudança precisar tocar o mesmo trecho por três frentes | G |
+| arquivos grandes (app 3,4 mil, dungeon 2,2 mil, rpg 1,9 mil linhas) | decisão | cada um é coeso por domínio e o contrato de módulos está sem ciclos (140 módulos, 322 dependências). Separar agora é risco sem ganho medido; reavaliar quando uma mudança precisar tocar o mesmo trecho por três frentes | G |
 | sondas CDP fora do repositório | decisão | ver pergunta 10: trazer todas engorda o repositório público com dependência de Chrome | — |
 
 ## Onda 3: conteúdo grande e endgame
@@ -71,7 +71,7 @@ Estado: **feito**, **medido** e **decisão** (respondida em 2026-10-22). Não h�
 | item | estado | o que falta | esforço |
 |---|---|---|---|
 | guilda | **decisão** | a Biblioteca Afogada (corrente de 7 missões e acervo) e a Grande Prova (guardião de 3 fases e desfecho) estão feitas, F1 e F2 do plano 40; a guilda depende da camada social e entra na F5 | G |
-| arco principal em capítulos e lore da Iara | **decisão** | as 284 missões geradas (mais as 7 da Biblioteca) não têm arco narrativo; escrever capítulos e lore é conteúdo de semanas e depende do dono | G |
+| arco principal em capítulos e lore da Iara | **feito** | o fio da Iara tem 7 capítulos (porto e seis disciplinas) com missão-marco, lore e fala do guia; o diário mostra lido, aberto e bloqueado, e o save guarda a leitura (`test/arcos-historia.test.mjs`, `cdp-arco-capitulo.mjs`, 13/13) | G |
 | facções e reputação | **decisão** | não há facção nem reputação; é sistema de conteúdo e economia, depende do dono | G |
 | planta de casa por disciplina/ilha | **decisão** | quatro tipos com duas plantas cada cobrem as 72 casas e a semente do tipo escolhe; uma planta por área seriam 86 desenhos sem ganho de jogo. Reavaliar se o dono quiser variedade visual nas casas | G |
 | moeda Selo | **decisão** | preço em material; uma moeda nova é decisão de economia e do dono, não de código | G |
