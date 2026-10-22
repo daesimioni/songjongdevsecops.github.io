@@ -1,3 +1,4 @@
+import { kitAsset, kitColliders } from "./sprite-kit/catalog.js";
 import { ASSET_META } from "./asset-meta.js";
 import { variantIndex } from "../core/random.js";
 import { projectCollisionBoxes } from '../core/collision.js';
@@ -22,7 +23,8 @@ export function stationColliders(station) {
 }
 
 // O renderer desenha os objetos de pé em a.y + 0,5; a cena fornece esse pé.
-export function assetColliders(tipo,x,y,seed=0){
+export function assetColliders(tipo,x,y,seed=0,options={}){
+  if(kitAsset(tipo)) return kitColliders(tipo,x,y,options);
   const def=ASSET_META[tipo];
   if(!def)throw new Error(`Asset desconhecido: ${tipo}`);
   const v=variantIndex(seed,def.variantes||1);
