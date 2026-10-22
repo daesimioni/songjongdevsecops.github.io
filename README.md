@@ -35,7 +35,7 @@ O **minimapa** tem coordenada `x y z` (z 0 superfície, -1 subsolo, -2 Porto Sub
 | **Inteligência Artificial** | regressão linear, rede neural que aprende um círculo, tokens e predição, convolução de imagem, ética e a área da visão (convolução, detecção, caçada e caverna próprias) |
 | **Vale da Língua** | etimologia, concordância, acentuação e hífen, gêneros textuais, crase e a área da literatura (narrador, poesia, caçada e caverna próprias) |
 
-O mapa tem 300 por 200 tiles, sete continentes e dezesseis áreas temáticas, ilhas, um anel de pontes entre
+O mapa tem 560 por 360 tiles, sete continentes e dezesseis áreas temáticas, ilhas, um anel de pontes entre
 elas e um porto
 central. No subsolo, o túnel da conurbação liga as 21 cidades descobertas, e o Porto Submerso, na camada -2, tem um portal para cada capital. O minimapa começa coberto por névoa e revela o que você anda. Cada
 estação descoberta vira um fragmento no diário e soma experiência. As Pedras do
@@ -104,13 +104,18 @@ alternativas da mesma área, escolhidas por semelhança com a resposta certa, e
 não um tópico aleatório de outro assunto. As perguntas geradas do catálogo já
 nascem com cinco opções escritas.
 
-- **fácil**: 3 acertos, errar tira 2 de vida.
-- **médio**: 7 acertos, errar tira 3.
-- **difícil**: 12 acertos, errar tira 4.
-- **chefe**: 18 acertos, errar tira 6.
+Os valores abaixo são a vida do monstro e o dano base do erro, antes dos
+modificadores de vocação, subcategoria, fase e proteção:
 
-O dano por acerto tem teto de 3, então o difícil continua sendo uma conversa
-longa mesmo com equipamento completo. O baralho do duelo começa pelas perguntas
+- **fácil**: 3 de vida, erro com dano base 2.
+- **médio**: 7 de vida, erro com dano base 3.
+- **difícil**: 12 de vida, erro com dano base 4.
+- **chefe**: 18 de vida, erro com dano base 6.
+
+O dano base do acerto tem teto de 4; subcategorias, caráter do monstro e ritmo
+podem alterar o resultado. Três acertos seguidos somam +1 e cinco somam +2.
+A quantidade de acertos necessária depende desses modificadores.
+O baralho do duelo começa pelas perguntas
 do andar do bicho e completa com as dos outros andares do continente, sem
 repetir pergunta no mesmo duelo.
 
@@ -489,6 +494,8 @@ A parte que não depende do navegador tem seis conferências, e elas rodam em
 sequência sem instalar nada:
 
 ```bash
+npm test
+# Ou uma verificação isolada:
 node test/core.test.mjs
 node test/content.test.mjs
 node test/ui.test.mjs
