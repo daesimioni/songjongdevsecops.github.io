@@ -516,6 +516,30 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
   backdrop-filter: blur(6px);
 }
 .modal[hidden] { display: none; }
+/* texto maior: o cartão cresce sem estourar a tela; a largura é reduzida na
+   mesma proporção do zoom para o resultado continuar dentro do viewport */
+@media (min-width: 560px) {
+  html[data-fonte="grande"] .modal-card {
+    width: min(539px, 81.7vw);
+    max-height: min(69vh, 626px);
+    zoom: 1.15;
+  }
+}
+
+.help-ajustes {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 14px 0 6px;
+}
+.help-ajustes span {
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
 .modal-card {
   width: min(620px, 94vw);
   max-height: min(80vh, 720px);

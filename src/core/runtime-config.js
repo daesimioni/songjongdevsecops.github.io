@@ -31,6 +31,7 @@ export const STORAGE = {
   explored: "mundo-song:explored:v2",
   name: "mundo-song:name:v1",
   sound: "mundo-song:sound:v1",
+  fonte: "mundo-song:fonte:v1",
   room: "mundo-song:room:v1",
   quests: "mundo-song:quests:v1",
   nostr: "mundo-song:nostr:v1",

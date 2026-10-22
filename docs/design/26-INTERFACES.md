@@ -101,3 +101,12 @@ achou estouro, alvo pequeno nem foco perdido. São melhorias de leitura.
    A-E deixaram de sumir no toque. Prova: `test/duel-acessivel.test.mjs` e sonda
    `cdp-duelo-a11y.mjs` em 390 px (5 alternativas, letra de 18x16, ✓ e ✗ nas
    opções certas, zero estouro horizontal, 0 erro de console).
+
+8. **Texto maior: fechado em 2026-10-22.** A Ajuda ganhou o botão `texto maior`,
+   que liga e desliga um zoom de 15% nos cartões de leitura, com largura e altura
+   reduzidas na mesma proporção (o resultado fica do tamanho do cartão normal),
+   salvo em `mundo-song:fonte:v1` e aplicado já na entrada, antes de existir
+   personagem. No celular a regra não vale: o toque já usa letra maior. Prova:
+   `test/fonte.test.mjs` e sonda `cdp-fonte-maior.mjs` (parágrafo de 46 para
+   53 px, cartão dentro da tela, escolha sobrevive ao recarregar, `zoom: 1` em
+   390 px, zero estouro e zero erro de console).

@@ -9,7 +9,7 @@ de ele existir, com números que o código já superou.
 Auditoria read-only de 2026-10-22 cruzou os documentos 00 a 38 com `src/`,
 `test/` e `tools/`. Números do código: 86 áreas, 454 estações, 93 cavernas, 541
 itens, 464 fichas, 284 missões, 194 NPCs, 2.251 entradas de wiki, 887 perguntas
-de duelo, 120 módulos e 79 testes node. `npm run validate` passa (lint,
+de duelo, 120 módulos e 80 testes node. `npm run validate` passa (lint,
 contrato de módulos, testes e build) e a matriz de navegador dá 19/19.
 
 Esforço: **P** até um dia, **M** de dois a cinco dias, **G** mais de uma semana.
@@ -51,7 +51,7 @@ Estado: **feito**, **parcial**, **ausente**, **decisão** (produto, não código
 | funções das peças temáticas | **feito** | as três peças respondem ao F, uma vez por descida: oficina afia (+1 de dano por 3 min), biblioteca guarda uma dica que risca duas alternativas no próximo duelo (e no treino) e observatório acende a sala do chefe no mapa (35 casas medidas); `test/pecas-tematicas.test.mjs` e `cdp-pecas-tematicas.mjs` | M |
 | tema de sala por área | **feito** | a peça veste a área, não só o continente: `varianteDaPeca` escolhe pelo id da caverna um de três arranjos (ferramenta da oficina, arranjo da estante, inclinação da luneta); `cdp-variantes-sala.mjs` mede 3 desenhos distintos por peça | M |
 | teste de fluxo real de loja e duelo | **feito** | loja aberta pelo guardião com F, compra real (material cobrado, peça na mochila, cartão vira "já é sua") e troca do mercador medidas em `cdp-loja.mjs` e `cdp-mercador.mjs`; o duelo já era exercido por `cdp-duelo-ritmo.mjs`, `cdp-dica.mjs` e `cdp-voz.mjs` com bicho real de caverna | M |
-| acessibilidade: voz, escala, daltonismo | parcial | teclado, foco e aria-live prontos; **voz feita** (ouvir/parar, pt-BR); **resultado sem cor feito**: ✓ na certa e ✗ na errada escolhida, letras A-E visíveis no toque (18x16 px em 390, 0 estouro), `test/duel-acessivel.test.mjs` e `cdp-duelo-a11y.mjs`; falta escala de fonte (decisão: o navegador já tem zoom) | M |
+| acessibilidade: voz, escala, daltonismo | **feito** | teclado, foco e aria-live; **voz** (ouvir/parar, pt-BR); **resultado sem cor** (✓ e ✗, letras A-E no toque); **texto maior** nos painéis de leitura (15% no desktop, salvo no save, sem zoom no celular). Provas: `test/voz-duelo`, `test/duel-acessivel`, `test/fonte`, `cdp-voz`, `cdp-duelo-a11y`, `cdp-fonte-maior` (parágrafo 46 → 53 px, zero estouro) | M |
 | save versionado, migração e exportar/importar | **feito** | backup carrega `v: 1` e só aplica as chaves conhecidas com valor JSON válido; a Rede ganhou `baixar arquivo` (JSON legível, sem a chave da conta) e `carregar arquivo` (recusa lixo, aplica e recarrega); `test/save-arquivo.test.mjs` e `cdp-save-arquivo.mjs` (7 partes, v1, nome trocado pelo arquivo) | M |
 | linter de conteúdo | ausente | validação só em teste; falta revisor e versão por pergunta | M |
 | ferries, elevadores, ciclo dia/noite, mapa grande, pontes por missão | ausente | skiff, túnel e 54 travessias fixas existem | M cada |
@@ -83,10 +83,10 @@ Estado: **feito**, **parcial**, **ausente**, **decisão** (produto, não código
 
 Perguntas exatas que ficam abertas depois das entregas de 2026-10-22:
 
-5. **Escala de fonte**: o navegador já dá zoom (Ctrl +/-) e o layout foi medido
-   em 1280 e 390. Um controle dentro do jogo exigiria converter ~131 rótulos em
-   px para uma unidade escalável. Quer o controle no jogo ou o zoom do navegador
-   basta?
+5. **Escala de fonte**: implementada como **texto maior** nos painéis de leitura
+   (15% no desktop, opção na Ajuda, salva no save, sem efeito no celular, que já
+   usa letra maior). Se quiser que os 131 rótulos do HUD também cresçam, isso
+   exige converter px para uma unidade escalável: decidir.
 6. **Ofícios por continente**: hoje a forja faz todas as receitas. Separar por
    continente é progressão (a forja da cidade só faz a linha dali) ou é só
    sabor (mesmas receitas, nomes diferentes)?

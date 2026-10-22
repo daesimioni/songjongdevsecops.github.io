@@ -69,6 +69,7 @@ const saved = {
   clima: "limpo",
   room: readJSON(STORAGE.room, NET.defaultRoom),
   sound: readJSON(STORAGE.sound, false),
+  fonte: readJSON(STORAGE.fonte, "normal"),
   cards: new Set(arrayOf(readJSON(STORAGE.cards, []))),
   docks: new Set(arrayOf(readJSON(STORAGE.docks, []))),
   xp: Number(readJSON(STORAGE.xp, 0)) || 0,
@@ -1478,6 +1479,19 @@ function setSound(on) {
   btn.textContent = on ? "Som on" : "Som off";
   if (on) audio.unlock();
   return on;
+}
+
+// texto maior: o cartão de leitura dos painéis cresce; a escolha fica no save
+function aplicarFonte(valor) {
+  const grande = valor === "grande";
+  document.documentElement.dataset.fonte = grande ? "grande" : "normal";
+  saved.fonte = grande ? "grande" : "normal";
+  writeJSON(STORAGE.fonte, saved.fonte);
+  const btn = $("btn-fonte");
+  if (btn) {
+    btn.setAttribute("aria-pressed", grande ? "true" : "false");
+    btn.textContent = `texto maior: ${grande ? "ligado" : "desligado"}`;
+  }
 }
 
 function setNetStatus({ state: s, count }) {
@@ -3089,6 +3103,10 @@ $("steps-min")?.addEventListener("click", () => $("steps").classList.toggle("min
 
 $("btn-help").addEventListener("click", () => { openModal("help"); audio.open(); });
 $("btn-sound").addEventListener("click", () => setSound(!saved.sound));
+$("btn-fonte")?.addEventListener("click", () => {
+  aplicarFonte(saved.fonte === "grande" ? "normal" : "grande");
+  audio.click?.();
+});
 $("net-pill").addEventListener("click", async () => {
   const url = `${location.origin}${location.pathname}#sala=${state.room}`;
   try {
@@ -3403,6 +3421,9 @@ window.addEventListener("beforeunload", () => {
   new MutationObserver(() => uiScope.sync()).observe($("app"), {
     subtree: true, attributes: true, attributeFilter: ["hidden"],
   });
+
+  // a preferência de texto vale já na entrada, antes de existir personagem
+  aplicarFonte(saved.fonte);
 
   // link direto: ?wiki=termo abre a wiki por cima da entrada, sem personagem
   const wikiParam = new URLSearchParams(location.search).get("wiki");
