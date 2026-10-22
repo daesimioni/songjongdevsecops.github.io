@@ -974,6 +974,17 @@ export const LICOES_POST = {
       "Monte uma tabela com valores cada vez mais perto de 2 para (x²-4)/(x-2) e veja o resultado convergir. Depois diga o valor no ponto e por que os dois não são a mesma coisa.",
   },
   series: {
+    oque:
+      "Série é a soma de infinitos termos de uma sequência, e convergir significa que essa soma se aproxima de um valor finito. O termo indo a zero é condição necessária, mas não garante convergência: a harmônica é a prova.",
+    como: [
+      "Escreva os primeiros termos e observe se eles diminuem.",
+      "Some os termos em blocos e veja se o total para de crescer.",
+      "Aplique um teste de convergência, como razão ou comparação.",
+      "Compare com a série harmônica e com a geométrica.",
+      "Separe convergência de valor: saber que converge não dá a soma.",
+    ],
+    quebra:
+      "Concluir convergência só porque o termo vai a zero. Também erra quem soma termos fora de ordem sem justificar, e quem confunde série com sequência: uma é a lista, a outra é a soma dela.",
     limite:
       "Série converge quando a soma dos termos se estabiliza, e o limite é o teste: termo indo a zero é condição necessária, não suficiente. A série harmônica tem termo indo a zero e soma divergindo, e é o contraexemplo que todo mundo precisa.",
     pergunta: {
@@ -986,6 +997,17 @@ export const LICOES_POST = {
       "Some os primeiros termos de uma série geométrica e de uma harmônica e compare. Depois diga qual estabiliza e por que a outra não.",
   },
   carbon: {
+    oque:
+      "Carbono tem quatro elétrons de valência e forma quatro ligações, o que permite cadeia, ramo e anel. É a espinha da química orgânica: com hidrogênio, oxigênio e nitrogênio ele monta a variedade dos compostos da vida.",
+    como: [
+      "Conte as ligações que o carbono faz e confira a valência quatro.",
+      "Monte uma cadeia reta, uma ramificada e um anel com o mesmo número de carbonos.",
+      "Compare fórmula molecular e propriedade nos três arranjos.",
+      "Troque um hidrogênio por outro grupo e veja a função química mudar.",
+      "Verifique se a estrutura fecha com a regra do octeto antes de aceitar.",
+    ],
+    quebra:
+      "Achar que carbono só forma cadeia reta, e que qualquer desenho com quatro traços é estável. Também erra quem confunde isômero com composto diferente por fórmula, e quem ignora que ligação dupla muda a geometria. A mesma fórmula pode esconder propriedades opostas.",
     limite:
       "Carbono faz quatro ligações e monta cadeia, e o limite é a reatividade: nem toda combinação é estável. A regra do octeto prevê o que costuma acontecer, e a química real tem exceção que a contagem sozinha não vê.",
     pergunta: {
@@ -998,6 +1020,17 @@ export const LICOES_POST = {
       "Monte três cadeias com quatro carbonos, uma reta, uma ramificada e um anel, e compare fórmula e propriedade. A diferença mostra o que a topologia faz.",
   },
   polymers: {
+    oque:
+      "Polímero é molécula longa formada pela repetição de unidades menores, os monômeros. O comprimento da cadeia e a forma como ela se organiza decidem dureza, elasticidade e ponto de fusão, e por isso a propriedade é média. Reciclar muda o comprimento, e por isso o material reciclado não é idêntico ao virgem.",
+    como: [
+      "Identifique o monômero e o tipo de ligação que repete a unidade.",
+      "Estime o comprimento médio da cadeia e a dispersão de tamanho.",
+      "Compare cadeia linear com ramificada e veja o empacotamento mudar.",
+      "Relacione mobilidade das cadeias com dureza e elasticidade.",
+      "Teste a mesma fórmula em dois processos e compare o resultado.",
+    ],
+    quebra:
+      "Achar que a fórmula do monômero define sozinha a propriedade do plástico. Também erra quem ignora a dispersão de tamanho, e quem trata o polímero como uma molécula única em vez de uma população.",
     limite:
       "Polímero é cadeia longa de repetição, e o limite é a dispersão: o tamanho varia de molécula para molécula, e a propriedade é média. Por isso o mesmo plástico pode ter comportamento diferente entre lote e lote.",
     pergunta: {
@@ -1010,6 +1043,17 @@ export const LICOES_POST = {
       "Compare polietileno de alta e de baixa densidade e explique a diferença pela organização das cadeias, não pela fórmula.",
   },
   acoustics: {
+    oque:
+      "Acústica estuda o som como onda de pressão e a resposta de salas e corpos à vibração. Ressonância acontece quando a excitação bate com a frequência natural do sistema, e a amplitude cresce até o amortecimento equilibrar.",
+    como: [
+      "Meça a frequência natural do corpo e anote.",
+      "Excitação na frequência natural e fora dela e compare a amplitude.",
+      "Varra a frequência e desenhe a curva de resposta.",
+      "Mude o amortecimento e veja o pico ficar mais largo e baixo.",
+      "Relacione o tempo de reverberação com o material das paredes.",
+    ],
+    quebra:
+      "Achar que ressonância é sempre boa, quando ela pode destruir a estrutura. Também erra quem confunde eco com reverberação, e quem mede amplitude sem olhar a frequência: o mesmo volume em outra frequência não empurra o sistema do mesmo jeito.",
     limite:
       "Ressonância amplia a vibração na frequência natural, e o limite é o amortecimento: sem perda, a amplitude cresce sem teto, e na prática o material sempre perde energia. A ponte que oscila é o aviso de que o projeto precisa prever isso.",
     pergunta: {
@@ -1022,6 +1066,17 @@ export const LICOES_POST = {
       "Ache a frequência de ressonância de um copo com água variando o nível e batendo de leve. Depois explique por que a altura da água muda a nota.",
   },
   instruments: {
+    oque:
+      "Instrumento musical é um corpo que vibra em modos próprios, e a frequência de cada modo depende de comprimento, tensão, massa e material. Corda, tubo e pele geram som por caminhos diferentes, e o músico ajusta as variáveis o tempo todo. A madeira, o metal e a pele respondem diferente ao mesmo esforço.",
+    como: [
+      "Identifique o elemento que vibra e o que define o comprimento dele.",
+      "Meça a frequência fundamental e relacione com tensão e comprimento.",
+      "Aperte a corda ou mude a coluna de ar e compare a nota.",
+      "Ouça os harmônicos e veja quais modos o corpo realça.",
+      "Compare o mesmo gesto em dois instrumentos e explique a diferença.",
+    ],
+    quebra:
+      "Achar que a física substitui o músico: ela explica a frequência, não o fraseado. Também erra quem mede só a fundamental e ignora os harmônicos, e quem confunde afinação com timbre. O mesmo instrumento muda de voz conforme quem toca.",
     limite:
       "Corda, tubo e pele geram som por modos de vibração, e o limite é o material: tensão, comprimento e densidade mudam a frequência, e o músico ajusta essas variáveis o tempo todo. A física explica o instrumento, mas não o substitui.",
     pergunta: {
@@ -1034,6 +1089,17 @@ export const LICOES_POST = {
       "Aperte uma corda no meio e compare a nota com a corda solta. Depois calcule a razão de frequência e confira se bate com a oitava.",
   },
   convolution: {
+    oque:
+      "Convolução combina uma imagem com uma máscara pequena e calcula, para cada pixel, a soma ponderada da vizinhança. É a operação que sustenta desfoque, realce de borda e detecção de padrão local.",
+    como: [
+      "Escolha a máscara e some os pesos para normalizar.",
+      "Aplique a máscara pixel a pixel e compare o resultado com a vizinhança.",
+      "Teste a máscara de borda e a de desfoque na mesma imagem.",
+      "Decida o preenchimento da margem e observe a beirada.",
+      "Empilhe filtros e veja o efeito acumular.",
+    ],
+    quebra:
+      "Ignorar a borda e tratar o artefato como padrão real. Também erra quem esquece de normalizar a máscara, o que muda o brilho, e quem acha que o filtro entende a imagem: ele só vê a vizinhança imediata.",
     limite:
       "Convolução aplica filtro local e realça padrão, e o limite é a borda: o filtro não sabe o que está fora da imagem, e o resultado depende de como você preenche a margem. Ignorar isso cria artefato que vira conclusão errada.",
     pergunta: {
@@ -1046,6 +1112,17 @@ export const LICOES_POST = {
       "Aplique uma máscara de borda e uma de desfoque na mesma foto e compare. Depois mude o preenchimento da margem e veja o que muda na beirada.",
   },
   detection: {
+    oque:
+      "Detecção de objeto é a tarefa de localizar e classificar cada instância numa imagem, devolvendo caixa e classe. A métrica combina acerto de classe com sobreposição entre a caixa prevista e a real, porque acertar o que é sem acertar onde não serve.",
+    como: [
+      "Defina o que conta como acerto de localização antes de medir.",
+      "Desenhe a caixa prevista e a real e calcule a sobreposição.",
+      "Some acerto de classe e sobreposição numa métrica única.",
+      "Separe os casos raros do conjunto e veja se o resultado se mantém.",
+      "Compare o modelo em duas imagens parecidas e entenda o erro.",
+    ],
+    quebra:
+      "Achar que acertar a classe basta, e que a métrica do conjunto de teste vale para qualquer cena. Também erra quem compara caixas de tamanhos diferentes sem normalizar, e quem treina e testa com o mesmo enquadramento.",
     limite:
       "Detecção de objeto junta região e classe, e o limite é a métrica: acerto alto no conjunto de teste pode esconder erro no caso raro. A caixa que envolve o objeto já é decisão de projeto, e ela erra.",
     pergunta: {
@@ -1058,6 +1135,17 @@ export const LICOES_POST = {
       "Desenhe duas caixas para o mesmo objeto, uma justa e uma deslocada, e calcule a sobreposição. Depois diga qual das duas o sistema deveria aceitar.",
   },
   narrative: {
+    oque:
+      "Narrativa organiza fatos em tempo e voz: quem conta, de que lugar conta e em que ordem revela. A mesma sequência de acontecimentos muda de sentido quando o narrador ou o recorte muda.",
+    como: [
+      "Escolha o narrador e o que ele pode saber.",
+      "Defina a ordem: cronológica, salto ou memória.",
+      "Marque o que fica escondido e quando é revelado.",
+      "Reescreva a mesma cena em outra voz e compare o efeito.",
+      "Confira se o recorte sustenta a leitura que você quer.",
+    ],
+    quebra:
+      "Achar que narrar é só listar fatos na ordem em que aconteceram. Também erra quem confunde narrador com autor, e quem usa salto de tempo para esconder o que a cena não preparou. O recorte é escolha, e toda escolha deixa algo de fora.",
     limite:
       "Narrador e tempo organizam a história, e o limite é a voz: o mesmo fato muda de sentido conforme quem conta e quando conta. A escolha não é enfeite técnico, é o que o leitor entende como verdade.",
     pergunta: {
