@@ -323,7 +323,6 @@ export function createPvp({ rpg, toast, audio, player, getNet, isBusy, openPanel
 
   function startCountdown() {
     if (state.countdown) clearInterval(state.countdown);
-    state.deadline = Date.now() + DEFEND_MS;
     state.countdown = setInterval(() => {
       if (state.phase !== "defending") {
         clearInterval(state.countdown);
@@ -397,6 +396,7 @@ export function createPvp({ rpg, toast, audio, player, getNet, isBusy, openPanel
     state.current = msg.question;
     state.damage = msg.damage;
     state.nonce = msg.nonce;
+    state.deadline = Date.now() + DEFEND_MS;
     state.phase = "defending";
     render();
   }
@@ -434,8 +434,9 @@ export function createPvp({ rpg, toast, audio, player, getNet, isBusy, openPanel
     // a assinatura pode demorar (a chave carrega sob demanda): o convite
     // aparece na hora e a prova entra assim que fica pronta.
     const proofText = `mundo-song:pvp:v1|challenge|${net.id}|${peer.id}|${Date.now()}`;
+    const invitation = state.peer;
     const sendInvite = (proof) => {
-      if (state.phase !== "challenging" || state.peer?.id !== String(peer.id).slice(0, 40)) return;
+      if (state.phase !== "challenging" || state.peer !== invitation) return;
       const sent = net.sendPvp?.({
         kind: "challenge", to: peer.id,
         proof, proofText: proof ? proofText : "",
@@ -445,7 +446,7 @@ export function createPvp({ rpg, toast, audio, player, getNet, isBusy, openPanel
         close();
       }
     };
-    if (signer) Promise.resolve(signer(proofText)).then(sendInvite).catch(() => sendInvite(null));
+    if (signer) Promise.resolve().then(() => signer(proofText)).then(sendInvite).catch(() => sendInvite(null));
     else sendInvite(null);
     return true;
   }
@@ -466,9 +467,10 @@ export function createPvp({ rpg, toast, audio, player, getNet, isBusy, openPanel
         pubkey: peer.pubkey || "",
       };
       state.verified = false;
+      const invitation = state.peer;
       if (msg.proof && msg.proofText && peer.pubkey && msg.proof.pubkey === peer.pubkey) {
-        verifier?.(msg.proof, msg.proofText).then((ok) => {
-          if (ok && state.peer?.id === peer.id) {
+        Promise.resolve().then(() => verifier?.(msg.proof, msg.proofText)).then((ok) => {
+          if (ok && state.peer === invitation) {
             state.verified = true;
             render();
           }
@@ -517,7 +519,8 @@ export function createPvp({ rpg, toast, audio, player, getNet, isBusy, openPanel
       return;
     }
     if (kind === "end") {
-      if (state.phase === "over" || state.finished) return;
+      if (!["choosing", "waiting", "defending"].includes(state.phase) || state.finished) return;
+      if (msg.winner && msg.winner !== myId() && msg.winner !== state.peer.id) return;
       clearTimers();
       if (!msg.winner) {
         toast("O outro lado encerrou o duelo.", 3000);

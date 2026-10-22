@@ -66,6 +66,7 @@ export function createSocial({ rede, backup, quests, player, getPeers, getNet, g
     partyInvite: null,
   };
 
+  const partyInvites = new Set();
   const body = $("rede-body");
   const tabs = Array.from(document.querySelectorAll("[data-rede-tab]"));
 
@@ -430,41 +431,57 @@ export function createSocial({ rede, backup, quests, player, getPeers, getNet, g
         members: [{ id: net.id, name: player.name || "você" }],
       };
     }
+    if (ui.party.leader !== net.id) { toast("Peça ao líder para convidar essa pessoa.", 2600); return; }
+    if (ui.party.members.length >= 8) { toast("A party já tem oito pessoas.", 2600); return; }
     if (ui.party.members.some((m) => m.id === peer.id)) {
       toast(`${peer.name || "Essa pessoa"} já está na party.`, 2200);
       return;
     }
-    sendParty({
+    if (!sendParty({
       act: "invite", to: peer.id, party: ui.party.id, leader: ui.party.leader,
-    });
+    })) { toast("Não consegui enviar o convite. Confira a Rede.", 3000); return; }
+    partyInvites.add(peer.id);
     toast(`Convite de party enviado para ${peer.name || "o jogador"}.`, 2600);
     renderPeople();
   }
 
   function acceptPartyInvite() {
     const invite = ui.partyInvite;
-    if (!invite) return;
+    if (!invite || ui.party) return;
+    if (!sendParty({ act: "accept", to: invite.fromId, party: invite.party })) {
+      toast("Não consegui aceitar o convite. Confira a Rede.", 3000); return;
+    }
     ui.party = {
       id: invite.party, leader: invite.leader,
       members: [{ id: invite.leader, name: invite.fromName }, { id: myNet()?.id || "eu", name: player.name || "você" }],
     };
     ui.partyInvite = null;
-    sendParty({ act: "accept", to: invite.fromId, party: invite.party });
     toast("Você entrou na party.", 2600);
     renderPeople();
   }
 
   function leaveParty() {
     if (!ui.party) return;
-    sendParty({ act: "leave", party: ui.party.id });
+    for (const member of ui.party.members) {
+      if (member.id !== myNet()?.id) sendParty({ act: "leave", to: member.id, party: ui.party.id });
+    }
+    partyInvites.clear();
     ui.party = null;
     toast("Você saiu da party.", 2200);
     renderPeople();
   }
 
+  function syncParty() {
+    if (!ui.party || ui.party.leader !== myNet()?.id) return;
+    for (const member of ui.party.members) {
+      if (member.id !== myNet()?.id) sendParty({ act: "sync", to: member.id, party: ui.party.id, leader: ui.party.leader, members: ui.party.members });
+    }
+  }
+
   function partyEvent(peer, msg) {
-    if (!peer?.id || !msg) return;
+    if (!peer?.id || !msg || typeof msg.party !== "string" || !/^[a-z0-9_-]{1,40}$/i.test(msg.party)) return;
     if (msg.act === "invite") {
+      if (msg.leader !== peer.id) return;
       if (ui.party) { sendParty({ act: "leave", to: peer.id, party: msg.party }); return; }
       ui.partyInvite = { fromId: peer.id, fromName: peer.name || "viajante", party: msg.party, leader: msg.leader || peer.id };
       toast(`${peer.name || "Alguém"} convidou você para uma party.`, 3800);
@@ -472,32 +489,38 @@ export function createSocial({ rede, backup, quests, player, getPeers, getNet, g
       return;
     }
     if (msg.act === "accept") {
-      if (!ui.party || msg.party !== ui.party.id) return;
+      if (!ui.party || msg.party !== ui.party.id || ui.party.leader !== myNet()?.id
+        || !partyInvites.delete(peer.id)) return;
+      if (ui.party.members.length >= 8) {
+        sendParty({ act: "leave", to: peer.id, party: ui.party.id });
+        return;
+      }
       if (!ui.party.members.some((m) => m.id === peer.id)) ui.party.members.push({ id: peer.id, name: peer.name || "viajante" });
-      sendParty({ act: "sync", to: peer.id, party: ui.party.id, leader: ui.party.leader, members: ui.party.members });
+      syncParty();
       toast(`${peer.name || "Alguém"} entrou na party.`, 2600);
       if (ui.open && ui.tab === "pessoas") renderPeople();
       return;
     }
     if (msg.act === "sync") {
-      if (!ui.party || msg.party !== ui.party.id) return;
-      if (Array.isArray(msg.members)) {
-        ui.party.members = msg.members
-          .filter((m) => m && typeof m.id === "string")
-          .slice(0, 8)
-          .map((m) => ({ id: m.id, name: String(m.name || "viajante").slice(0, 16) }));
-      }
-      if (msg.leader) ui.party.leader = msg.leader;
+      if (!ui.party || msg.party !== ui.party.id || peer.id !== ui.party.leader || msg.leader !== peer.id) return;
+      if (!Array.isArray(msg.members) || msg.members.length > 8) return;
+      const members = msg.members.filter(m => m && typeof m.id === "string" && m.id.length > 0 && m.id.length <= 40)
+        .map(m => ({ id: m.id, name: String(m.name || "viajante").slice(0, 16) }));
+      if (members.length !== msg.members.length || new Set(members.map(m => m.id)).size !== members.length
+        || !members.some(m => m.id === myNet()?.id) || !members.some(m => m.id === peer.id)) return;
+      ui.party.members = members;
       if (ui.open && ui.tab === "pessoas") renderPeople();
       return;
     }
     if (msg.act === "leave") {
-      if (!ui.party) return;
-      if (msg.id === ui.party.leader) {
+      if (!ui.party || msg.party !== ui.party.id || !ui.party.members.some(m => m.id === peer.id)) return;
+      if (peer.id === ui.party.leader) {
         ui.party = null;
+        partyInvites.clear();
         toast("O líder saiu e a party terminou.", 3000);
       } else {
         ui.party.members = ui.party.members.filter((m) => m.id !== peer.id);
+        syncParty();
       }
       if (ui.open && ui.tab === "pessoas") renderPeople();
     }
