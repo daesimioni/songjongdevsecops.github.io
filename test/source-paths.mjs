@@ -28,6 +28,7 @@ export const sourcePaths = {
   "dungeon-loot.js": "src/gameplay/dungeon-loot.js",
   "dungeon-plaza.js": "src/gameplay/dungeon-plaza.js",
   "render.js": "src/rendering/render.js",
+  "name-plate.js": "src/rendering/name-plate.js",
   "human.js": "src/rendering/human.js",
   "creature.js": "src/rendering/creature.js",
   "creature-detail.js": "src/rendering/creature-detail.js",

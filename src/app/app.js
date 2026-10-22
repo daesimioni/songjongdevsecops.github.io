@@ -365,6 +365,7 @@ dungeon = createDungeon({
   onInventory: () => openInventory(),
   onWiki: () => openWiki(),
   vitais: () => ({ hp: rpg.hp(), hpMax: rpg.hpMax(), mana: rpg.mana(), manaMax: rpg.manaMax() }),
+  placa: () => ({ nome: player.name, cor: player.color }),
   onGather: (ctx) => openGather(ctx.kind, ctx),
   onKeeper: () => openShop(),
   onConurbation: () => openTravel("caves"),

@@ -19,6 +19,7 @@ const props = ler("assets/props.js");
 const human = ler("human.js");
 const creature = fs.readFileSync(new URL("../src/rendering/creature-models.js",import.meta.url),"utf8");
 const dungeon = ler("dungeon.js");
+const placa = ler("name-plate.js");
 
 // ---- sprite de asset em 2x ----
 check(/\(def\.w \+ pad \* 2\) \* 2, \(def\.h \+ pad \* 2\) \* 2/.test(assets), "sprite de asset não nasce em 2x");
@@ -66,7 +67,7 @@ check(/miniPan\.y -= dy \* k/.test(renderFonte), "arrasto vertical do mapa no se
 
 // ---- a resolução forçada não voltou: dpr segue o aparelho ----
 check(/dpr = Math\.min\(2, window\.devicePixelRatio \|\| 1\) \* quality/.test(render), "dpr com piso forçado (perde fps em tela comum)");
-check(/Math\.round\(largura \* f\.vida\)/.test(render), "barra de vida do nome não usa a fração");
+check(/Math\.round\(bw \* f\.vida\)/.test(placa), "barra de vida da placa não usa a fração");
 
 assert.equal(problemas.length, 0, `pixels com ${problemas.length} problema(s):\n- ${problemas.join("\n- ")}`);
 console.log("ok pixels: sprite 2x, chão em meio pixel, árvores em passo fino, fogo/fumaça/espuma/gaivota com mais quadros e boneco com respiração, piscada e quique");

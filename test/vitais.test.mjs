@@ -1,9 +1,10 @@
-// As barrinhas de vida e mana acima do nome do jogador, com folga: a conta e o
-// layout são puros e o renderer tem que receber os vitais e desenhar as barras
-// antes do nome. Roda sem navegador: node test/vitais.test.mjs
+// A placa do jogador: fração presa, barras acima do nome, folga igual dos dois
+// lados, largura fixa e a mesma placa no vale e na caverna, por cima de tudo.
+// Roda sem navegador: node test/vitais.test.mjs
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { fracoesDeVida, layoutDaPlacaDoNome } from "../src/core/vitais.js";
+import { fracoesDeVida } from "../src/core/vitais.js";
+import { PLACA, geometriaDaPlaca } from "../src/rendering/name-plate.js";
 
 const problemas = [];
 const check = (ok, msg) => { if (!ok) problemas.push(msg); };
@@ -24,34 +25,34 @@ check(acima.vida === 1 && acima.mana === 1, `acima do máximo devia ser 1: ${JSO
 const semArg = fracoesDeVida();
 check(semArg.vida === 0 && semArg.mana === 0, "sem argumento devia dar 0/0");
 
-// ---- o layout: barras ACIMA, nome abaixo, com folga ----
-const placa = layoutDaPlacaDoNome(100);
-check(placa.topoBarras < placa.topoNome, `as barras ficaram abaixo do nome: ${JSON.stringify(placa)}`);
-check(placa.topoBarras + placa.alturaBarras === placa.topoNome - placa.vao, "a folga das barras não é a mesma dos dois lados");
-check(placa.topoVida >= placa.topoBarras + 2, "a barra de vida colou na borda");
-check(placa.topoVida + placa.alto + 2 <= placa.topoMana, "a barra de vida colou na de mana");
-check(placa.topoMana + placa.alto <= placa.topoBarras + placa.alturaBarras - 2, "a barra de mana colou na borda");
-check(placa.topoNome === 89 && placa.alturaNome === 9, `a placa do nome mudou de lugar: ${JSON.stringify(placa)}`);
+// ---- o layout: barras ACIMA, nome abaixo, folgas iguais e largura fixa ----
+const g = geometriaDaPlaca(100);
+check(g.barrasTopo < g.nomeTopo, `as barras ficaram abaixo do nome: ${JSON.stringify(g)}`);
+check(100 - (g.nomeTopo + PLACA.alturaNome) === PLACA.gapCabeca, "o nome colou na cabeça");
+check(g.nomeTopo - (g.barrasTopo + g.alturaBarras) === PLACA.vao, "as barras colaram no nome");
+check(PLACA.gapCabeca === PLACA.vao, "a folga do nome para a cabeça é diferente da folga das barras");
+check(PLACA.vaoBarras >= 4, "as duas barras estão coladas");
+check(PLACA.larguraBarras === 52, `a barra não está na metade do nome máximo: ${PLACA.larguraBarras}`);
+check(PLACA.alturaNome >= 14 && PLACA.barra >= 3, "a placa ficou pequena demais para ler");
 
-// ---- o renderer usa a conta e o app entrega os vitais ----
+// ---- a placa é de tela, desenhada por último, igual no vale e na caverna ----
 const render = fs.readFileSync(new URL("../src/rendering/render.js", import.meta.url), "utf8");
 const app = fs.readFileSync(new URL("../src/app/app.js", import.meta.url), "utf8");
-check(/from "\.\.\/core\/vitais\.js"/.test(render), "render.js não importa a conta dos vitais");
-check(/function draw\(now, player, peers, npcs, cat, moving, rastreador = false, vitais = null/.test(render), "draw() sem o parâmetro de vitais");
-check(/drawNameTag\(player\.name[^)]*vitais\)/.test(render), "o nome do jogador não recebe os vitais");
-check(/player\.y \* TILE - 25 - lift/.test(render), "a placa do nome não está perto da cabeça");
-check(/fracoesDeVida\(vitais\)/.test(render), "as barras não usam a conta de fração");
-check(/layoutDaPlacaDoNome\(py\)/.test(render), "o renderer não usa o layout da placa");
-check(/placa\.topoVida[\s\S]*placa\.topoMana[\s\S]*placa\.topoNome/.test(render), "as barras não são desenhadas antes do nome");
-check(/const largBarras = Math\.round\(\(ctx\.measureText\("M"\.repeat\(16\)\)\.width \+ 7\) \/ 2\)/.test(render), "a barra não é fixa na metade do nome máximo");
-check(/const larg = largBarras/.test(render), "o desenho das barras não usa a largura fixa");
-check(/#ff5a86/.test(render) && /#6bd5ff/.test(render), "cores de vida e mana diferentes do HUD");
-check(/hp: rpg\.hp\(\), hpMax: rpg\.hpMax\(\), mana: rpg\.mana\(\), manaMax: rpg\.manaMax\(\)/.test(app), "app.js não entrega os vitais ao renderer");
 const dungeon = fs.readFileSync(new URL("../src/app/dungeon.js", import.meta.url), "utf8");
-check(/from "\.\.\/core\/vitais\.js"/.test(dungeon), "caverna não usa a conta dos vitais");
-check(/fracoesDeVida\(vitais\(\)\)/.test(dungeon), "caverna não desenha as barras");
+const placa = fs.readFileSync(new URL("../src/rendering/name-plate.js", import.meta.url), "utf8");
+check(/from "\.\/name-plate\.js"/.test(render), "o vale não usa a placa compartilhada");
+check(/desenharPlacaDoJogador\(ctx, \{/.test(render), "o vale não desenha a placa do jogador");
+check(render.indexOf("drawMinimap(player") < render.indexOf("desenharPlacaDoJogador(ctx"), "a placa não fica depois do mundo e da noite");
+check(!/drawNameTag\(player\.name[^)]*vitais\)/.test(render), "o nome do jogador ainda é desenhado no meio do mundo");
+check(/setTransform\(1, 0, 0, 1, 0, 0\)/.test(placa), "a placa não é desenhada em pixels de tela");
+check(/nome: player\.name,\n\s+cor: player\.color/.test(render), "a placa do vale não recebe nome e cor");
+check(/placa: \(\) => \(\{ nome: player\.name, cor: player\.color \}\)/.test(app), "app.js não entrega a placa para a caverna");
+check(/from "\.\.\/rendering\/name-plate\.js"/.test(dungeon), "a caverna não usa a placa compartilhada");
+check(/desenharPlacaDoJogador\(ctx, \{[\s\S]*nome: dados\?\.nome/.test(dungeon), "a caverna não desenha nome e barras");
+check(/hp: rpg\.hp\(\), hpMax: rpg\.hpMax\(\), mana: rpg\.mana\(\), manaMax: rpg\.manaMax\(\)/.test(app), "app.js não entrega os vitais ao renderer");
 check(/vitais: \(\) => \(\{ hp: rpg\.hp\(\)/.test(app), "app.js não passa os vitais para a caverna");
-check(/alto \* 2 \+ vao \+ 2/.test(dungeon) && /const larg = 30, alto = 2, vao = 3/.test(dungeon), "a caverna não deu folga entre as barras");
+check(/#ff5a86/.test(placa) && /#6bd5ff/.test(placa), "cores de vida e mana diferentes do HUD");
+check(/Math\.round\(bw \* f\.vida\)/.test(placa), "a barra não usa a fração da vida");
 
 assert.equal(problemas.length, 0, `vitais com ${problemas.length} problema(s):\n- ${problemas.join("\n- ")}`);
 console.log("ok vitais: fração presa entre 0 e 1, renderer recebe vida e mana e desenha as barras com as cores do HUD");

@@ -23,7 +23,7 @@ import { escalaDaCamera, tilesNaVista } from "../core/camera.js";
 import { desenharAsset, assetDe } from "./assets/index.js";
 import { desenharIcone } from "./assets/icones.js";
 import { hexA } from "./assets/nucleo.js";
-import { fracoesDeVida, layoutDaPlacaDoNome } from "../core/vitais.js";
+import { desenharPlacaDoJogador } from "./name-plate.js";
 import { createAmbientRenderer } from "./ambient-renderer.js";
 
 
@@ -1415,7 +1415,6 @@ export function createRenderer(canvas, world, {collisionDebug=false} = {}) {
           drawHuman(ctx, player.x * TILE, player.y * TILE - lift + bob, player.dir, onShip ? false : moving, time,
             player.colors || PLAYER_COLORS[0], 1, player.look, player.gear || null);
         }
-        drawNameTag(player.name, player.x * TILE, player.y * TILE - 25 - lift, player.color, vitais);
         if (player.bubble && player.bubble.until > now) {
           drawBubble(player.bubble.text, player.x * TILE, player.y * TILE - lift, player.color);
         }
@@ -1473,6 +1472,17 @@ export function createRenderer(canvas, world, {collisionDebug=false} = {}) {
     }
     drawNpcLabels(npcs, scale, camX, camY);
     drawMinimap(player, peers, rastreador);
+    // a placa do jogador fecha o quadro: fica por cima do véu da noite, da
+    // vinheta da casa e de qualquer coisa que passe na frente
+    const liftPlaca = 5 * player.boost;
+    const bobPlaca = Math.sin(time * 0.007) * 1.1 * player.boost;
+    desenharPlacaDoJogador(ctx, {
+      nome: player.name,
+      cor: player.color,
+      vitais,
+      x: (player.x * TILE - camX + shx) * scale,
+      cabecaY: (player.y * TILE - liftPlaca + bobPlaca - camY + shy) * scale - 26 * scale,
+    });
     const frameEnd = performance.now();
     if (stats._prev) {
       const dt = frameEnd - stats._prev;
@@ -1509,34 +1519,13 @@ export function createRenderer(canvas, world, {collisionDebug=false} = {}) {
     quadrosTotais++;
   }
 
-  function drawNameTag(name, px, py, color, vitais = null) {
+  function drawNameTag(name, px, py, color) {
     if (!name) return;
     ctx.font = "5px ui-monospace, monospace";
     ctx.textAlign = "center";
     const w = ctx.measureText(name).width + 7;
-    // a barra não acompanha o nome: fica na metade da largura do nome máximo
-    // (dezesseis letras), para nome comprido não esticar a placa de vida
-    const largBarras = Math.round((ctx.measureText("M".repeat(16)).width + 7) / 2);
-    const placa = layoutDaPlacaDoNome(py);
-    // as barrinhas vêm primeiro, acima; o nome fica embaixo delas
-    if (vitais) {
-      const f = fracoesDeVida(vitais);
-      const larg = largBarras;
-      ctx.fillStyle = "rgba(8,10,20,0.78)";
-      roundRect(ctx, px - larg / 2, placa.topoBarras, larg, placa.alturaBarras, 2);
-      ctx.fill();
-      const x0 = px - larg / 2 + 1, largura = larg - 2;
-      ctx.fillStyle = "#3a1f2c";
-      ctx.fillRect(x0, placa.topoVida, largura, placa.alto);
-      ctx.fillStyle = "#ff5a86";
-      ctx.fillRect(x0, placa.topoVida, Math.round(largura * f.vida), placa.alto);
-      ctx.fillStyle = "#16283a";
-      ctx.fillRect(x0, placa.topoMana, largura, placa.alto);
-      ctx.fillStyle = "#6bd5ff";
-      ctx.fillRect(x0, placa.topoMana, Math.round(largura * f.mana), placa.alto);
-    }
     ctx.fillStyle = "rgba(8,10,20,0.7)";
-    roundRect(ctx, px - w / 2, placa.topoNome, w, placa.alturaNome, 2);
+    roundRect(ctx, px - w / 2, py - 11, w, 9, 2);
     ctx.fill();
     ctx.fillStyle = color || "#eae4ff";
     ctx.fillText(name, px, py - 4);

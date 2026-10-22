@@ -15,12 +15,12 @@ import { dungeonById, creatureId, creatureKind, creatureAccent } from "../conten
 import { GROUNDS, ITEMS, RELICS, TIERS } from "../content/rpg-data.js";
 import { PETS } from "../content/pets.js";
 import { drawCreatureArt } from "../rendering/creature.js";
+import { desenharPlacaDoJogador } from "../rendering/name-plate.js";
 import { findPathIn, findInteractionPath } from "../core/path.js";
 import { hash2 } from "../core/random.js";
 import { drawPetSprite } from "../rendering/pet-art.js";
 import { drawSkiff } from "../rendering/skiff.js";
 import { escalaDaCamera, tilesNaVista, dentroDaVista, caixaNaVista } from "../core/camera.js";
-import { fracoesDeVida } from "../core/vitais.js";
 import { propsDaSala } from "../content/salas-tematicas.js";
 import { nomeDaCacada } from "../content/cacada-clima.js";
 import { ouveOPassoS, direcaoPara, acordaComOPasso } from "../world/audicao.js";
@@ -57,7 +57,7 @@ function torchGlowSprite() {
 
 // ---------- a caverna em si ----------
 
-export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, onWiki, onGather, onExit, onKeeper, onConurbation, onElevador, onPortal, onVocacao, isBlocked, vitais = null, avatar = {}, look = null, gear = null, getClima = null, collisionDebug = false }) {
+export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, onWiki, onGather, onExit, onKeeper, onConurbation, onElevador, onPortal, onVocacao, isBlocked, vitais = null, placa = null, avatar = {}, look = null, gear = null, getClima = null, collisionDebug = false }) {
   const canvas = $("dungeon-canvas");
   const ctx = canvas?.getContext("2d", { alpha: false }) || null;
 
@@ -1878,23 +1878,16 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     else state.stats.drawMs = state.stats.drawMs * 0.9 + ms * 0.1;
     state.stats.visiveis = visiveis;
 
-    // vida e mana acima do herói, em espaço de tela: o breu não apaga
-    if (vitais) {
-      const f = fracoesDeVida(vitais());
-      const vx = (state.player.x * TILE - camX) * scale;
-      const vy = (state.player.y * TILE - camY) * scale - 46;
-      const larg = 30, alto = 2, vao = 3;
-      ctx.fillStyle = "rgba(8,10,20,0.82)";
-      ctx.fillRect(vx - larg / 2, vy, larg, alto * 2 + vao + 2);
-      const x0 = vx - larg / 2 + 1;
-      ctx.fillStyle = "#3a1f2c";
-      ctx.fillRect(x0, vy + 1, larg - 2, alto);
-      ctx.fillStyle = "#ff5a86";
-      ctx.fillRect(x0, vy + 1, Math.round((larg - 2) * f.vida), alto);
-      ctx.fillStyle = "#16283a";
-      ctx.fillRect(x0, vy + 1 + alto + vao, larg - 2, alto);
-      ctx.fillStyle = "#6bd5ff";
-      ctx.fillRect(x0, vy + 1 + alto + vao, Math.round((larg - 2) * f.mana), alto);
+    // a placa do jogador por cima de tudo, igual à do vale: nome, vida e mana
+    if (vitais && placa) {
+      const dados = placa();
+      desenharPlacaDoJogador(ctx, {
+        nome: dados?.nome,
+        cor: dados?.cor,
+        vitais: vitais(),
+        x: (state.player.x * TILE - camX) * scale,
+        cabecaY: (state.player.y * TILE - camY) * scale - 26 * scale,
+      });
     }
   }
 
