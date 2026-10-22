@@ -1,4 +1,4 @@
-# As 69 páginas escritas à mão: primeira leva
+# As 69 páginas escritas à mão: levas de enriquecimento
 
 Dívida da auditoria: "69 páginas escritas à mão do vale e das áreas antigas
 continuam com quatro partes e 255 a 469 palavras; falta o curso de seis partes
@@ -25,7 +25,7 @@ Quando os campos existem, o bloco monta as três seções **antes** de "O limite
 mantendo a ordem do catálogo. Página sem os campos continua como antes, então a
 mudança não duplica seção em página que já tinha o texto.
 
-## 3. Primeira, segunda e terceira leva (24 de 69)
+## 3. As levas já feitas (40 de 69)
 
 | página | tema | palavras |
 |---|---|---|
@@ -53,28 +53,46 @@ mudança não duplica seção em página que já tinha o texto.
 | statistics | a amostra fala, mas com sotaque | 467 |
 | bonds | os átomos têm preferências | 461 |
 | energy | toda reação tem um preço | 463 |
+| timbre | o mesmo dó, outra voz | 472 |
+| chance | a moeda não tem memória | 467 |
+| counterpoint | duas vozes, um caminho | 469 |
+| probability | o sino das causas pequenas | 467 |
+| form | o mapa que o ouvido usa | 462 |
+| genres | cada texto tem um lugar | 463 |
+| gravity | cair de lado sem errar o chão | 467 |
+| optics | a luz que se abre | 474 |
+| welcome | o vale não tem índice | 633 |
+| echo | a nota que dobra de frequência | 474 |
+| logic | o tijolo e a ligação | 478 |
+| adder | um mais um dá zero e transporte | 496 |
+| cpu | uma cidade chamada processador | 468 |
+| history | ideia sem oficina não muda nada | 470 |
+| infinity | parte do todo no hotel infinito | 468 |
+| calculus | a taxa e o acúmulo | 473 |
 
-As vinte e quatro agora têm as seis partes, passam de 460 palavras e não têm
+As quarenta agora têm as seis partes, passam de 460 palavras e não têm
 resposta vazia, `undefined` ou frase repetida. No navegador, `generative`
 mostrou 464 palavras, `ethics` 466, `thermo` 464, `geometry` 470, `statistics`
-466 e `rainbow` 482, todas com as seis seções.
+466, `rainbow` 482, `timbre` 470, `optics` 472, `cpu` 467 e `infinity` 467,
+todas com as seis seções.
 
 ## 4. Prova
 
-- `test/licoes.test.mjs`: as vinte e quatro estão no conjunto `ENRIQUECIDAS` e o teste
-  cobra as três partes novas e o piso de 460; as outras 45 continuam só com o
+- `test/licoes.test.mjs`: as quarenta estão no conjunto `ENRIQUECIDAS` e o teste
+  cobra as três partes novas e o piso de 460; as outras 29 continuam só com o
   fecho antigo, sem cobrança falsa.
 - `test/content.test.mjs` verde: nenhuma resposta vazia, nenhuma frase
   repetida, nenhum texto quebrado.
 - Sonda `cdp-pagina.mjs`: abre a página pelo painel, mede palavras e as seis
   seções, procura `undefined` e resposta vazia, e fotografa. Capturas
   `pagina-generative-*`, `pagina-ethics-*`, `pagina-thermo-*`,
-  `pagina-geometry-*`, `pagina-statistics-*` e `pagina-rainbow-*`.
+  `pagina-geometry-*`, `pagina-statistics-*`, `pagina-rainbow-*`,
+  `pagina-timbre-*`, `pagina-optics-*`, `pagina-cpu-*` e `pagina-infinity-*`.
 - 33 suítes node verdes; matriz de navegador 19/19; zero exceção.
 
 ## 5. O que continua em aberto
 
-1. **45 páginas** ainda estão com quatro partes e entre 255 e 469 palavras.
+1. **29 páginas** ainda estão com quatro partes e entre 255 e 469 palavras.
    A próxima leva deve seguir o mesmo método, oito por onda.
 2. A ordem das seções novas é fixa; páginas em que "Como se usa" pede mais de
    três passos ainda não têm um formato próprio.
