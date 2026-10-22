@@ -1,7 +1,9 @@
+import { artTime } from "./art-style.js";
 // O papel muda a silhueta e o assunto muda o objeto na mão. Antes todos os
 // 194 NPCs eram o mesmo boneco com a camisa de outra cor, e nada no desenho
 // dizia se a pessoa ensina química ou guarda o porto.
 export function drawNpcKit(ctx, npc, px, py, bob, time, colors) {
+  time = artTime(time);
   const s = npc.scale || 0.9;
   const accent = npc.accent || colors.accent || "#ffc857";
   const dark = "rgba(8,8,16,0.55)";
@@ -103,5 +105,8 @@ export function drawNpcKit(ctx, npc, px, py, bob, time, colors) {
       ctx.fillRect(x, y - 3, 1, 3);
       ctx.fillRect(x - 1, y - 2, 3, 1);
   }
+  // Bainha bordada e reflexo do instrumento carregado, comuns a todos os ofícios.
+  ctx.fillStyle='rgba(255,235,193,.45)';ctx.fillRect(-4,-10,1,.5);ctx.fillRect(x,-4,.5,1);
+  ctx.fillStyle='rgba(7,17,32,.45)';ctx.fillRect(x-1,-2,3,.5);
   ctx.restore();
 }

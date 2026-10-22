@@ -1,3 +1,5 @@
+import { spritePose } from "./sprite-cache.js";
+import { artTick, artTime } from "./art-style.js";
 import { directionAngle } from "./movement.js";
 import { outfitById } from "./outfits.js";
 import { avatarColors } from "./avatar.js";
@@ -152,11 +154,12 @@ export function createRenderer(canvas, world) {
   function groundGrain(c, x, y, t) {
     if (t === K.TREE || t === K.WALL || t === K.WATER || t === K.MAGMA) return;
     const px = x * TILE, py = y * TILE;
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 6; i++) {
       const gx = px + 1 + Math.floor(hash2(x * 13 + i * 5, y * 17 - i) * 14);
       const gy = py + 1 + Math.floor(hash2(x * 7 - i, y * 19 + i * 5) * 14);
       c.fillStyle = i % 2 ? "rgba(255,255,255,0.045)" : "rgba(0,0,0,0.09)";
-      c.fillRect(gx, gy, i === 0 ? 2 : 1, 1);
+      c.fillRect(gx, gy, i === 0 ? 2 : .5, .5);
+      if(t===K.STONE||t===K.PATH||t===K.MARBLE){c.fillStyle='rgba(230,222,203,.10)';c.fillRect(gx,gy-.5,1,.5);}
     }
   }
 
@@ -1574,7 +1577,11 @@ export function createRenderer(canvas, world) {
   // com folga, recebem o traço e voltam ao mundo no lugar de sempre.
   let pincelA = null;
   let pincelB = null;
-  function desenharComAcabamento(px, py, larg, alt, ox, oy, desenhar) {
+  function desenharComAcabamento(px, py, larg, alt, ox, oy, desenhar, poseKey = null) {
+    if(poseKey){
+      const pose=spritePose(poseKey,larg,alt,g=>{g.translate(ox,oy);desenhar(g);});
+      ctx.save();ctx.imageSmoothingEnabled=false;ctx.drawImage(pose,px-ox,py-oy);ctx.restore();return true;
+    }
     if (typeof document === "undefined") return false;
     if (!pincelA) {
       pincelA = document.createElement("canvas");
@@ -1623,10 +1630,14 @@ export function createRenderer(canvas, world) {
   }
 
   function drawNpcComAcabamento(npc, px, py, bob, time, colors) {
-    return desenharComAcabamento(px, py + bob, 72, 84, 36, 70, (g) => {
-      drawHuman(g, 0, 0, npc.facing || 0, !!npc.moving, time, colors, npc.scale || 0.9, npc.look || null);
-      drawNpcKit(g, npc, 0, 0, 0, time, colors);
+    const tick=artTick(time+(npc.bob||0)*40,100);
+    const key=JSON.stringify(['npc',npc.id,npc.facing,!!npc.moving,npc.look,colors,npc.role,npc.subject,npc.scale,tick]);
+    const pose=spritePose(key,72,84,g=>{
+      g.translate(36,70);
+      drawHuman(g,0,0,npc.facing||0,!!npc.moving,tick*100,colors,npc.scale||.9,npc.look||null);
+      drawNpcKit(g,npc,0,0,0,tick*100,colors);
     });
+    ctx.save();ctx.imageSmoothingEnabled=false;ctx.drawImage(pose,px-36,py+bob-70);ctx.restore();return true;
   }
 
   function drawNpc(npc, time) {
@@ -1799,7 +1810,7 @@ export function createRenderer(canvas, world) {
 
   function draw(now, player, peers, npcs, cat, moving, rastreador = false, vitais = null, cena = null) {
     const frameStart = performance.now();
-    const time = now;
+    const time = artTime(now);
     const areaJogador = world.areaAt(player.x, player.y);
     moodAtual = windMood(areaJogador ? BIOMES[areaJogador.id]?.material : null);
     if (shake > 0) shake = Math.max(0, shake - 0.016);
@@ -2045,9 +2056,11 @@ export function createRenderer(canvas, world) {
         const bob = Math.sin(time * 0.007) * 1.1 * player.boost;
         const onShip = player.boost > 0.35;
         if (player.boost > 0.01) drawSkiff(ctx, player.x * TILE, player.y * TILE, player.dir, time, player.boost, moving);
-        const desenhaHeroi = (g) => drawHuman(g, 0, 0, player.dir, onShip ? false : moving, time,
+        const heroTick=artTick(time,moving?70:120);
+        const heroKey=JSON.stringify(['hero',player.dir,!!moving,onShip,player.colors,player.look,player.gear,heroTick]);
+        const desenhaHeroi = (g) => drawHuman(g, 0, 0, player.dir, onShip ? false : moving, heroTick*(moving?70:120),
           player.colors || PLAYER_COLORS[0], 1, player.look, player.gear || null);
-        if (!desenharComAcabamento(player.x * TILE, player.y * TILE - lift + bob, 72, 84, 36, 70, desenhaHeroi)) {
+        if (!desenharComAcabamento(player.x * TILE, player.y * TILE - lift + bob, 72, 84, 36, 70, desenhaHeroi, heroKey)) {
           drawHuman(ctx, player.x * TILE, player.y * TILE - lift + bob, player.dir, onShip ? false : moving, time,
             player.colors || PLAYER_COLORS[0], 1, player.look, player.gear || null);
         }
