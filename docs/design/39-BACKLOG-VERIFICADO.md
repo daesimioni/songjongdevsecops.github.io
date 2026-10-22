@@ -9,7 +9,7 @@ de ele existir, com números que o código já superou.
 Auditoria read-only de 2026-10-22 cruzou os documentos 00 a 38 com `src/`,
 `test/` e `tools/`. Números do código: 86 áreas, 454 estações, 93 cavernas, 541
 itens, 464 fichas, 284 missões, 194 NPCs, 2.251 entradas de wiki, 887 perguntas
-de duelo, 120 módulos e 84 testes node. `npm run validate` passa (lint,
+de duelo, 128 módulos e 85 testes node. `npm run validate` passa (lint,
 contrato de módulos, testes e build) e a matriz de navegador dá 19/19.
 
 Esforço: **P** até um dia, **M** de dois a cinco dias, **G** mais de uma semana.
@@ -57,6 +57,14 @@ Estado: **feito**, **parcial**, **ausente**, **decisão** (produto, não código
 | ferries, elevadores, ciclo dia/noite, mapa grande, pontes por missão | ausente | skiff, túnel e 54 travessias fixas existem | M cada |
 | arcos de NPC, murais e bilhetes | **feito** | **bilhetes**: 93 cavernas com nota na parede da cidade, da lição da área (70), da relíquia (16) ou do lugar (7), lida no F (`test/bilhetes.test.mjs`, `cdp-bilhete.mjs`). **Arco do guardião**: a missão do chefe de cada área virou segundo capítulo, trancada até a trilha fechar, com aviso no cartão; 86 pares medidos (`test/arcos.test.mjs`, `cdp-arcos-npc.mjs`: só a trilha e o aviso, depois o chefe) | M |
 | presets de build na ficha | **feito** | a ficha guarda até três retratos do equipamento: `salvar a atual`, `usar` (troca o conjunto inteiro e avisa peça que faltou) e `remover`; save valida slot e sobrevive à recarga; `test/builds.test.mjs` e `cdp-builds.mjs` | P |
+
+## Arquitetura
+
+| item | estado | o que falta | esforço |
+|---|---|---|---|
+| mundo sem rendering | **feito** | `world.js` não importa mais `rendering/`: a colocação do ambiente foi para `src/world/povoado.js` e o tamanho das construções para `src/content/asset-meta.js`, fonte única entre desenho e mapa; `test/arquitetura.test.mjs` cobra os quatro pontos e a matriz de navegador deu 19/19 com 60,1 fps depois | P |
+| arquivos grandes (app 3,4 mil, dungeon 2,1 mil, rpg 1,9 mil linhas) | decisão | cada um é coeso por domínio e o contrato de módulos está sem ciclos (128 módulos, 284 dependências). Separar agora é risco sem ganho medido; reavaliar quando uma mudança precisar tocar o mesmo trecho por três frentes | G |
+| sondas CDP fora do repositório | decisão | ver pergunta 10: trazer todas engorda o repositório público com dependência de Chrome | — |
 
 ## Onda 3: conteúdo grande e endgame
 

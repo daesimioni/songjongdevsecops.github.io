@@ -5,8 +5,8 @@ import { CONTINENTS, AREAS, SITES, WAYSTONES, NPC_SPAWNS, CAT_SPAWN, SPAWN } fro
 import { GROUNDS } from "../content/rpg-data.js";
 import { dungeonById } from "../content/dungeon-data.js";
 import { CATALOG_CONTENT } from "../content/catalog-gen.js";
-import { espalharAmbiente } from "../rendering/assets/povoado.js";
-import { tamanhoDoAsset } from "../rendering/assets/index.js";
+import { espalharAmbiente } from "./povoado.js";
+import { tamanhoDoAsset } from "../content/asset-meta.js";
 import { CATALOG_BRIDGES, CATALOG_AREAS } from "../content/catalog-layout.js";
 import { AREA_ITEMS, BIOMES, npcStyle } from "../content/identity.js";
 

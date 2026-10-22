@@ -6,9 +6,9 @@
 //
 // A ordem importa: a construção e a ruína entram primeiro e ocupam o miolo da
 // coroa da ilha; a vegetação entra depois e respeita o espaço delas.
-import { TILE, TILE_KIND as K } from "../../core/runtime-config.js";
-import { BIOMES } from "../../content/identity.js";
-import { CONSTRUCOES } from "./construcoes.js";
+import { TILE, TILE_KIND as K } from "../core/runtime-config.js";
+import { BIOMES } from "../content/identity.js";
+import { ASSET_SIZE } from "../content/asset-meta.js";
 
 const MACIOS = new Set([K.GRASS, K.MOSS, K.FLOWER, K.SAND]);
 // o que ocupa a frente da casa: árvore não nasce em cima da porta, senão a
@@ -90,7 +90,7 @@ export function espalharAmbiente({ areas, get, hash2, waystones, hunts = [], gen
     let tipoCasa = DUREZA[disc] || "casa";
     if (["papel", "pergaminho", "ébano", "tinta", "fibra"].includes(bio.material)) tipoCasa = "cabana";
     if (["vidro", "cristal", "obsidiana"].includes(bio.material)) tipoCasa = "torre";
-    const defCasa = CONSTRUCOES[tipoCasa];
+    const defCasa = ASSET_SIZE[tipoCasa];
     const largCasa = ((defCasa?.w || 36) * (defCasa?.escala || 1)) / TILE;
     const meiaLarg = Math.ceil(largCasa / 2);
     const altCasa = ((defCasa?.h || 30) * (defCasa?.escala || 1)) / TILE;

@@ -3,6 +3,8 @@
 // própria (janela, fresta ou archote), para a ilha não parecer um descampado.
 // A paleta vem do bioma: giz, cobre, vidro e ébano mudam parede e telha.
 
+import { ASSET_SIZE } from "../../content/asset-meta.js";
+
 function sombra(g, p, w, h, raio = 0.42) {
   g.fillStyle = p.sombra;
   g.beginPath();
@@ -547,12 +549,12 @@ function doca(g, p, v) {
 }
 
 export const CONSTRUCOES = {
-  cabana: { w: 36, h: 30, variantes: 3, escala: 2, desenhar: cabana },
-  casa: { w: 44, h: 38, variantes: 3, escala: 2, desenhar: casa },
-  torre: { w: 28, h: 52, variantes: 3, escala: 2, desenhar: torre },
-  ruina: { w: 42, h: 28, variantes: 3, escala: 1.5, desenhar: ruina },
-  galpao: { w: 46, h: 32, variantes: 3, escala: 2, desenhar: galpao },
-  poco: { w: 22, h: 22, variantes: 3, escala: 1.5, desenhar: poco },
-  cerca: { w: 20, h: 14, variantes: 3, escala: 1.5, desenhar: cerca },
-  doca: { w: 42, h: 20, variantes: 3, escala: 1.5, desenhar: doca },
+  cabana: { ...ASSET_SIZE.cabana, variantes: 3, desenhar: cabana },
+  casa: { ...ASSET_SIZE.casa, variantes: 3, desenhar: casa },
+  torre: { ...ASSET_SIZE.torre, variantes: 3, desenhar: torre },
+  ruina: { ...ASSET_SIZE.ruina, variantes: 3, desenhar: ruina },
+  galpao: { ...ASSET_SIZE.galpao, variantes: 3, desenhar: galpao },
+  poco: { ...ASSET_SIZE.poco, variantes: 3, desenhar: poco },
+  cerca: { ...ASSET_SIZE.cerca, variantes: 3, desenhar: cerca },
+  doca: { ...ASSET_SIZE.doca, variantes: 3, desenhar: doca },
 };
