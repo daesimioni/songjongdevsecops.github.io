@@ -1,5 +1,5 @@
 {
- "versao": "b127fbcc6ae4bac3",
+ "versao": "d555a34da93e47f5",
  "arquivos": [
   "assets/favicon.svg",
   "assets/fonts/OFL.txt",
@@ -119,6 +119,7 @@
   "src/platform/backup.js",
   "src/platform/input.js",
   "src/platform/interp.js",
+  "src/platform/malha.js",
   "src/platform/net.js",
   "src/platform/nostr.js",
   "src/platform/storage.js",
