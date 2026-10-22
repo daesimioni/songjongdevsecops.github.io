@@ -22,7 +22,7 @@ Estado: **feito**, **parcial**, **ausente**, **decisão** (produto, não código
 | ritmo no parceiro + dano do próximo acerto | **feito** | previsão `~X` no duelo e no parceiro, sequência própria, erro zera | P |
 | atalho da busca para a lista | **feito** | seta para baixo sai da busca e foca o primeiro resultado (wiki e viagem) | P |
 | mochila em sessão longa | **medido** | 60,1 fps curta e 60,2 fps após 75 s, 18 a 19 MB, 0 tarefa longa; não reproduziu em headless, monitorar hardware real | P |
-| régua de densidade tipográfica | parcial | piso de 11 px e linha 1.45 em `p, li, dd, dt, label` de painel, com teste; faltam os 131 rótulos menores fora do texto corrido | P |
+| régua de densidade tipográfica | **decisão** | o corpo de texto de painel tem piso de 11 px e linha 1.45 (testado) e o texto maior dos painéis cresce 15% (2026-10-22). Sondagem nova achou 178 elementos abaixo de 11 px nos 9 painéis, mas são **rótulos em fonte pixel** (títulos de seção, preço, contagem, aba) desenhados para 7 a 10 px: subir todos mudaria a identidade visual e engorda cartões. Fica registrado que o piso vale para corpo, não para rótulo de pixel font | P |
 | índice de estações acessível | **feito** | diário com `role=list`, grupo rotulado por área, nome e estado em cada estação e progresso `aria-live`; wiki tem a categoria Páginas com as 454 estações | P |
 | estado vazio que ensina | **feito** | mochila, missões e bestiário dizem o próximo passo; diário mostra as estações por área | P |
 | telegrafia do tema pelo chefe | **feito** | baralho guarda a área; chefe mostra `◆ próximo tema: <área>` na cor do continente, testado e medido no navegador | P |

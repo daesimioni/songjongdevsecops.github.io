@@ -99,6 +99,10 @@ o que os testes e sondas desta data mostram, não o que o diário prometeu.
 | pedidos já feitos | auditoria dos 38 pedidos na fonte viva | correção de resposta vazia, frase repetida, seis alternativas e páginas curtas | 69 páginas com curso completo, revisão das PRs externas e documentos alinhados | `docs/design/20-AUDITORIA-PEDIDOS.md`, `docs/design/33-REVISAO-EXTERNA.md`, `test/licoes.test.mjs`, `cdp-pagina.mjs` |
 
 Prova de conjunto desta data: `npm test` com **82 testes em 85 arquivos, 82 passaram**;
+matriz de navegador **19/19** remedida em 2026-10-22 depois de clima, sono, famílias,
+texto maior e marcas do duelo (`cdp-regressao.mjs`: HUD, mochila 40, bestiário
+464, wiki 2.251 em 15 abas, diário 86, viagem 96, névoa r2, caverna, câmera,
+vida/mana, mapa recolhido, fps 60,5, 390 px sem estouro, console sem erro do jogo);
 matriz de navegador **19/19** (60 fps, 0 erro de console, 0 estouro em 390 px);
 contraste **0 falha**; fonte e transbordo **0 fora**. Sondas e capturas em
 `temporarios/2026-10-20-mundo-song-pedido/`; site publicado conferido com cache
