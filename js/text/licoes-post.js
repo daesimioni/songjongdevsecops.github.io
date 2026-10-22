@@ -145,6 +145,17 @@ export const LICOES_POST = {
       "Estime a derivada de uma curva em um ponto com dois pontos vizinhos, depois aproxime um do outro e veja o valor convergir. Faça o mesmo com a área sob a curva por retângulos.",
   },
   probability: {
+    oque:
+      "A probabilidade de um resultado individual é imprevisível, mas a distribuição de muitos resultados tem forma. A binomial conta sucessos em tentativas independentes e, com muitas tentativas, se aproxima da normal.",
+    como: [
+      "Repita o experimento muitas vezes e registre a frequência de cada resultado.",
+      "Compare a frequência com a probabilidade calculada.",
+      "Aumente o número de tentativas e veja a distribuição se estreitar.",
+      "Desenhe a curva binomial e compare com a normal no centro e nas pontas.",
+      "Mude a probabilidade de sucesso e veja a curva mudar de forma, não só de posição.",
+    ],
+    quebra:
+      "Achar que a curva normal é uma lei de qualquer dado. Ela aparece sob condições de independência, mesma chance e muitas tentativas. E confundir a probabilidade de um resultado com a forma da distribuição inteira. A aproximação normal também falha quando a chance é extrema, porque a binomial fica assimétrica e a cauda de um lado pesa mais. E a média de uma distribuição não descreve o caso individual, que pode cair longe do centro.",
     limite:
       "A máquina de Galton mostra o teorema central do limite, não uma prova de destino. Muitos fatores independentes empurram para o sino, e o mesmo raciocínio não vale quando os fatores são dependentes.",
     pergunta: {
@@ -227,6 +238,17 @@ export const LICOES_POST = {
       "Aqueça o gás com o volume travado e anote pressão e temperatura. Faça o gráfico e confira se a razão entre as duas se mantém.",
   },
   optics: {
+    oque:
+      "Óptica estuda a luz e sua interação com meios e superfícies. A dispersão separa cores porque o índice de refração depende do comprimento de onda; refração, reflexão e espalhamento explicam prisma, arco-íris e céu.",
+    como: [
+      "Faça a luz atravessar um prisma e marque a ordem das cores.",
+      "Mude o ângulo e o meio e observe o desvio mudar.",
+      "Compare o prisma com a gota de água e com a atmosfera.",
+      "Explique o céu azul pelo espalhamento, não por reflexo do mar.",
+      "Aponte a luz para um espelho e para um vidro e compare o que volta com o que atravessa.",
+    ],
+    quebra:
+      "Achar que o prisma pinta a luz: ele separa o que já estava junto. Também erra quem confunde refração com reflexão, e quem explica o céu azul como reflexo da água. O ângulo de desvio também depende da cor e do ângulo de entrada, e por isso o arco-íris só aparece numa faixa estreita do céu. E a cor do objeto não é a cor da luz que ele recebe.",
     limite:
       "O prisma separa cores porque o índice de refração muda com a frequência, e cada cor desvia por ângulo diferente. O limite é o material: em vidro diferente a ordem de desvio pode variar, e arco-íris é o mesmo fenômeno com gota em vez de prisma.",
     pergunta: {
@@ -239,6 +261,17 @@ export const LICOES_POST = {
       "Aponte luz branca num prisma ou num copo com água e marque a ordem das cores na parede. Depois gire o prisma e explique o que mudou.",
   },
   gravity: {
+    oque:
+      "Gravitação é a atração entre massas, que cai com o quadrado da distância. Uma órbita é uma queda contínua: o corpo anda de lado rápido o bastante para errar o chão, e as leis de Kepler descrevem o resultado.",
+    como: [
+      "Compare a força para massas e distâncias diferentes.",
+      "Calcule a força e veja como ela cai com o quadrado da distância.",
+      "Varie a velocidade inicial e classifique queda, órbita e escape.",
+      "Relacione período e raio pela terceira lei de Kepler.",
+      "Calcule a velocidade de escape para um corpo e compare com a de uma órbita baixa.",
+    ],
+    quebra:
+      "Achar que a Lua não cai ou que a gravidade some no espaço. Também erra quem usa a fórmula da superfície para qualquer distância, e quem confunde órbita com ausência de força. A fórmula da superfície também erra dentro da Terra, onde a massa envolvida diminui com a profundidade e a força não cresce mais. E órbita elíptica não tem velocidade constante: ela acelera perto do corpo central.",
     limite:
       "O poço gravitacional é analogia de espaço-tempo curvo, e a analogia tem teto: a gravidade não puxa ninguém por uma corda. O que a relatividade diz é que massa e energia curvam a métrica, e o corpo segue a curva mais reta possível.",
     pergunta: {
@@ -424,6 +457,17 @@ export const LICOES_POST = {
       "Calcule a razão de um semitom no temperamento igual e compare com a quinta pura. A diferença, em centésimos, é o preço da modulação.",
   },
   timbre: {
+    oque:
+      "Timbre é a identidade sonora de uma fonte: a mistura de harmônicos que acompanha a frequência fundamental. Dois instrumentos na mesma nota diferem porque têm pesos diferentes nesses harmônicos e no ataque.",
+    como: [
+      "Toque a mesma nota em dois instrumentos e compare o que muda além da altura.",
+      "Separe os harmônicos com um filtro ou analisador e veja quais aparecem mais fortes.",
+      "Altere os pesos de alguns harmônicos e ouça a mesma nota virar outra voz.",
+      "Compare o ataque e o envelope: o começo do som carrega tanta identidade quanto o espectro.",
+      "Grave o mesmo ataque em dois instrumentos e compare o transiente antes de a frequência estabilizar.",
+    ],
+    quebra:
+      "Achar que timbre é a nota ou o volume. Também erra quem ignora o ataque, que muda a leitura do instrumento antes do corpo da nota. E harmônico não é oitava: são múltiplos inteiros da fundamental. O timbre também muda com o volume e com a região tocada: o mesmo instrumento não tem uma cor só, e a mesma nota pode soar diferente no grave e no agudo.",
     limite:
       "Timbre é a mistura de harmônicos, e a mesma nota em instrumentos diferentes tem a fundamental igual. O limite é o ataque: o começo do som carrega tanta informação de identidade que dois instrumentos podem soar parecidos se o ataque for imitado.",
     pergunta: {
@@ -621,6 +665,17 @@ export const LICOES_POST = {
       "Separe dez palavras em oxítona, paroxítona e proparoxítona e aplique a regra de cada grupo. Depois confira no manual só as que ficaram em dúvida.",
   },
   genres: {
+    oque:
+      "Gênero textual é a combinação de forma, assunto e situação. Receita, notícia, contrato e poema organizam a linguagem de modos diferentes porque fazem coisas diferentes, e o leitor reconhece o lugar de cada texto.",
+    como: [
+      "Identifique a situação em que o texto circula e quem o lê.",
+      "Reconheça as marcas de forma e de registro que o gênero carrega.",
+      "Compare com outro gênero que trate do mesmo assunto.",
+      "Ajuste o registro ao leitor e ao suporte, não só ao tema.",
+      "Leia o mesmo assunto em três gêneros e marque o que cada um pressupõe do leitor.",
+    ],
+    quebra:
+      "Achar que gênero é só assunto ou só tamanho. Também erra quem trata literatura como um gênero único: ela abriga romance, crônica, cordel e poema, cada um com contrato próprio. O suporte também pesa: o que cabe num cartaz não cabe num contrato, e o gênero muda quando o meio muda. E gênero não é receita fixa: ele evolui com a prática que o usa.",
     limite:
       "Gênero textual é forma social de texto, e o limite é a mistura: notícia com opinião, receita com narrativa. Os gêneros se combinam, e o que orienta a escrita é a situação, não a lista fechada.",
     pergunta: {
@@ -918,6 +973,17 @@ export const LICOES_POST = {
       "Compare o espectro de duas fontes de luz e diga qual linha identifica cada uma. Depois explique por que a cor vista não basta para identificar.",
   },
   form: {
+    oque:
+      "Forma musical é a organização de motivos, frases e seções no tempo. Ela equilibra repetição e contraste para criar expectativa e memória; binária, ternária, rondó e sonata são arranjos desse equilíbrio.",
+    como: [
+      "Marque o motivo e veja onde ele reaparece.",
+      "Agrupe os motivos em frases e ouça onde a frase respira.",
+      "Rotule as seções e diga o que contrasta com o quê.",
+      "Ouça o retorno e explique o que mudou no caminho até ele.",
+      "Cante o tema de memória e depois ouça a peça inteira para notar onde ele é negado.",
+    ],
+    quebra:
+      "Repetir sem variar ou variar sem âncora. Também erra quem lê a forma como gaveta fixa: a sonata não é só ABA, e o retorno muda de sentido porque o caminho até ele mudou. A forma também depende do gênero e do tempo: o que numa peça de três minutos soa como retorno, numa sinfonia pode soar como afastamento longo. E repetir sem mudar cansa tanto quanto mudar sem repetir.",
     limite:
       "Forma musical organiza expectativa por repetição e contraste, e o limite é o ouvinte: a mesma estrutura pode soar clara para um e confusa para outro. Forma é mapa, e mapa não é a experiência.",
     pergunta: {
@@ -930,6 +996,17 @@ export const LICOES_POST = {
       "Escute uma peça e marque onde o tema volta. Depois desenhe a forma com letras e diga o que o retorno mudou no sentido.",
   },
   counterpoint: {
+    oque:
+      "Contraponto é a arte de combinar duas ou mais melodias independentes que soam juntas. Nenhuma é acompanhamento: o ouvinte consegue seguir cada linha, e os intervalos entre elas pedem resolução.",
+    como: [
+      "Escreva uma linha e cante enquanto toca outra.",
+      "Acrescente a segunda voz contra a primeira e verifique os intervalos.",
+      "Teste o movimento contrário e a inversão para ver se cada linha continua cantável.",
+      "Experimente defasar a mesma melodia e ouça o cânone se formar.",
+      "Toque as duas vozes separadas antes de juntá-las e confira se cada uma continua fazendo sentido sozinha.",
+    ],
+    quebra:
+      "Escrever duas linhas que só funcionam juntas, uma escondendo a outra. Também erra quem trata contraponto como harmonia: aqui o que importa é a condução das vozes, não só o acorde do momento. A segunda voz que só completa o acorde vira acompanhamento, e o contraponto se perde. O outro extremo é a voz que briga: independência sem encontro consonante soa como acidente. O equilíbrio é auditivo, não aritmético: a regra serve ao ouvido, e o ouvido decide.",
     limite:
       "Contraponto combina vozes independentes que soam juntas, e o limite é a inteligibilidade: vozes demais viram textura e o texto se perde. A regra serve à clareza, não ao cumprimento formal.",
     pergunta: {
@@ -942,6 +1019,17 @@ export const LICOES_POST = {
       "Escreva duas linhas de quatro notas que se movam em direções opostas e confira os intervalos em cada encontro. Depois diga qual encontro precisa de ajuste.",
   },
   chance: {
+    oque:
+      "Probabilidade mede a chance de um evento entre 0 e 1. Eventos independentes não têm memória: saber que deu cara não muda a próxima moeda, e a chance dos dois juntos é o produto.",
+    como: [
+      "Defina o espaço amostral e conte os casos favoráveis e possíveis.",
+      "Verifique se os eventos são independentes antes de multiplicar.",
+      "Calcule o valor esperado e compare com o custo da aposta.",
+      "Repita o experimento muitas vezes e compare a frequência com a previsão.",
+      "Separe os eventos que se repetem sem influência dos que têm memória, como sorteio sem reposição.",
+    ],
+    quebra:
+      "Falácia do apostador: achar que a moeda deve compensar o resultado anterior. Confundir independência com exclusividade, e somar probabilidades de eventos que se sobrepõem sem descontar a interseção. Outro erro é tratar probabilidade pequena como impossível e probabilidade alta como garantia: o modelo descreve frequência, e uma sequência curta pode contrariar a média. A chance de pelo menos um evento é um menos a chance de nenhum, e é aí que a conta de somar erra.",
     limite:
       "Probabilidade mede crença e frequência, e o limite é a informação: probabilidade não existe no objeto, existe no modelo. Mudar o dado muda a probabilidade sem mudar o mundo.",
     pergunta: {

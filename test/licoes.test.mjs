@@ -71,9 +71,9 @@ check(geradas === GERADAS_LEGADAS, `páginas geradas: ${geradas}, esperado ${GER
 // limite, pergunta, para levar e com as mãos, sem perder o corpo original
 const POSTS_ESCRITOS = 69;
 check(Object.keys(LICOES_POST).length === POSTS_ESCRITOS, `páginas antigas com lição: ${Object.keys(LICOES_POST).length}, esperado ${POSTS_ESCRITOS}`);
-// as primeiras oito que já receberam as três partes que faltavam (O que é,
+// as páginas que já receberam as três partes que faltavam (O que é,
 // Como se usa, Onde quebra) e o piso de 460; as demais entram nas próximas ondas
-const ENRIQUECIDAS = new Set(["generative", "harmony", "ethics", "scales", "motion", "rhythm", "state", "learning", "thermo", "balance", "induction", "pipeline", "neural", "vision", "geometry", "language", "rainbow", "periodic", "concord", "registers", "security", "statistics", "bonds", "energy"]);
+const ENRIQUECIDAS = new Set(["generative", "harmony", "ethics", "scales", "motion", "rhythm", "state", "learning", "thermo", "balance", "induction", "pipeline", "neural", "vision", "geometry", "language", "rainbow", "periodic", "concord", "registers", "security", "statistics", "bonds", "energy", "timbre", "chance", "counterpoint", "probability", "form", "genres", "gravity", "optics"]);
 let antigas = 0;
 for (const [id, licao] of Object.entries(LICOES_POST)) {
   const post = POSTS[id];
