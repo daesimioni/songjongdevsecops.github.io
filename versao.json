@@ -1,7 +1,15 @@
 {
- "versao": "9a90724f1e74229c",
+ "versao": "177c541dbf266630",
  "arquivos": [
   "assets/favicon.svg",
+  "assets/fonts/OFL.txt",
+  "assets/fonts/README.md",
+  "assets/fonts/press-start-2p-400-latino-ext.woff2",
+  "assets/fonts/press-start-2p-400-latino.woff2",
+  "assets/fonts/silkscreen-400-latino-ext.woff2",
+  "assets/fonts/silkscreen-400-latino.woff2",
+  "assets/fonts/silkscreen-700-latino-ext.woff2",
+  "assets/fonts/silkscreen-700-latino.woff2",
   "assets/og.png",
   "css/base.css",
   "css/bestiary.css",
