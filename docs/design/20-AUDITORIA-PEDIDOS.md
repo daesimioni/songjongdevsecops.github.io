@@ -9,8 +9,8 @@ com a linha do diário dizendo que foi feito.
 
 | pedido | prova viva | veredito |
 |---|---|---|
-| wiki com 2.246 fichas em 15 categorias | `test/wiki.test.mjs` e a matriz abre o índice | feito |
-| 538 itens desenhados, 277 silhuetas | `test/itens.test.mjs` | feito |
+| wiki com 2.247 fichas em 15 categorias | `test/wiki.test.mjs` e a matriz abre o índice | feito |
+| 539 itens desenhados, 277 silhuetas | `test/itens.test.mjs` | feito |
 | bestiário com 464 criaturas e 93 chefes | matriz de navegador | feito |
 | vida e mana acima do herói, no vale e na caverna | `test/vitais.test.mjs` e matriz | feito |
 | câmera única no vale e na caverna | `test/camera.test.mjs` | feito |

@@ -19,6 +19,13 @@ const check = (ok, msg) => { if (!ok) problemas.push(msg); };
 // ---- contrato de cada grupo ----
 const TOTAL = assets.totalDeAssets();
 check(TOTAL >= 30, `biblioteca com ${TOTAL} assets, esperado ao menos 30`);
+// o contrato é o número medido, não um piso frouxo: 41 peças e 111 silhuetas
+check(TOTAL === 41, `biblioteca com ${TOTAL} assets, esperado 41`);
+let SILHUETAS = 0;
+for (const grupo of ["solo", "vegetacao", "construcao", "fogo", "agua", "props"]) {
+  for (const tipo of assets.tiposDoGrupo(grupo)) SILHUETAS += assets.assetDe(tipo)?.variantes || 1;
+}
+check(SILHUETAS === 111, `silhuetas: ${SILHUETAS}, esperado 111`);
 for (const grupo of ["solo", "vegetacao", "construcao", "fogo", "agua", "props"]) {
   const tipos = assets.tiposDoGrupo(grupo);
   check(tipos.length >= 3, `grupo ${grupo}: ${tipos.length} assets, esperado ao menos 3`);

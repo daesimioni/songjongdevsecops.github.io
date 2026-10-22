@@ -19,4 +19,7 @@ assert.equal(document.activeElement.dataset.cat,'mundo');
 assert.equal($('wiki-tabs').children.filter(n=>n.tabIndex===0).length,1);
 $('wiki-search').value='xxxxxxxx-inexistente';$('wiki-search').handlers.input();
 assert.equal($('wiki-list').children.length,1);assert.equal($('wiki-more').hidden,true);assert.match($('wiki-resumo').textContent,/0 resultados/);
-console.log('ok wiki: paginação completa, contagem, foco de retorno, abas e vazio');
+$('wiki-search').value='';$('wiki-search').handlers.input();
+$('wiki-search').handlers.keydown({key:'ArrowDown',preventDefault(){}});
+assert.equal(document.activeElement,$('wiki-list').children[0],'seta para baixo deveria focar o primeiro resultado');
+console.log('ok wiki: paginação completa, contagem, foco de retorno, abas, vazio e atalho para a lista');

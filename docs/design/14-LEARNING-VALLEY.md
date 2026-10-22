@@ -325,8 +325,10 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
       redesenhado atrás do desfoque. A mochila aberta derrubava de 45,7 para
       8,2 fps. Agora o mundo desenha uma vez ao abrir e fica parado enquanto a
       tela está coberta: 56,9 fps com a mochila aberta em sessão curta
-- [ ] em sessão longa a mochila aberta voltou a medir 12 a 17 fps, sem o mundo
-      sendo redesenhado: falta trace de composição para achar o que repinta
+- [x] em sessão longa a mochila aberta media 12 a 17 fps; a sonda nova
+      (`cdp-mochila-fps.mjs`) mediu 60,1 fps na abertura e 60,2 fps após 75 s,
+      18 a 19 MB de heap e zero tarefa longa, sem redesenhar o mundo. Não
+      reproduziu em headless; fica o aviso de monitorar hardware real.
 
 ### Z. Título, letra B e botão
 

@@ -1,10 +1,15 @@
 import assert from 'node:assert/strict';
 import {makeDocument} from './ui-dom.mjs';
-import {filterGroupedList} from '../src/ui/search-ui.js';
-const {Node}=makeDocument();const list=new Node();
+import {filterGroupedList,focusFirstVisible} from '../src/ui/search-ui.js';
+const {document,Node}=makeDocument();const list=new Node();
 const row=(text,group=false)=>{const n=new Node();n.textContent=text;n.className=group?'travel-group':'travel-item';list.append(n);return n;};
 const a=row('Física',true),b=row('Óptica · Física'),c=row('Matemática',true),d=row('Álgebra · Matemática');
 assert.equal(filterGroupedList(list,'fisica optica'),1);assert.equal(b.hidden,false);assert.equal(a.hidden,false);assert.equal(c.hidden,true);assert.equal(d.hidden,true);
 assert.equal(filterGroupedList(list,'inexistente'),0);assert.equal(a.hidden,true);assert.equal(c.hidden,true);
 assert.equal(filterGroupedList(list,''),2);assert.equal(a.hidden,false);assert.equal(c.hidden,false);
-console.log('ok busca: acentos, múltiplos termos, grupos vazios e limpeza');
+filterGroupedList(list,'inexistente');
+assert.equal(focusFirstVisible(list,'.travel-item'),false,'sem resultado visível não deve focar');
+filterGroupedList(list,'');
+assert.equal(focusFirstVisible(list,'.travel-item'),true,'deveria focar o primeiro resultado');
+assert.equal(document.activeElement,b,'atalho deveria focar o primeiro item visível');
+console.log('ok busca: acentos, múltiplos termos, grupos vazios, limpeza e atalho para a lista');

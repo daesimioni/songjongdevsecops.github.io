@@ -70,10 +70,10 @@ achou estouro, alvo pequeno nem foco perdido. São melhorias de leitura.
 
 1. **Densidade tipográfica** não foi julgada: a sonda mede estouro e alvo, não
    se o texto de 10 px cansa. Uma régua de leitura por painel ainda falta.
-2. **Navegação por teclado** só garante foco inicial; Tab/Shift+Tab circulam e
-   as abas da wiki respondem a setas, mas não há atalho para pular direto ao
-   primeiro item da lista.
-3. **Estado vazio** da mochila e do diário aparece, mas não foi desenhado para
-   ensinar o próximo passo; só diz que não há nada.
+2. **Navegação por teclado: fechada.** Seta para baixo na busca da wiki e da
+   viagem sai do campo e foca o primeiro resultado visível, testado em
+   `test/wiki-navigation.test.mjs` e `test/travel-search.test.mjs`.
+3. **Estado vazio: parcial.** Mochila e missões já dizem o próximo passo
+   (`sheet.js`, `app.js`); falta revisar o diário de estações e a loja vazia.
 4. **Loja e duelo** dependem de caverna aberta; a sonda usa gancho de depuração.
    Um teste de fluxo real (mestra, treino) continua faltando.

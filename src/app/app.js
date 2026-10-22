@@ -3,7 +3,7 @@ import { LIVE } from "../learning/instruments.js";
 import { setArtMotion } from "../rendering/art-style.js";
 import { houseTargets, nextResidentLine } from "../gameplay/house-interactions.js";
 import { readSavedJSON as readJSON } from "../platform/storage.js";
-import { filterGroupedList } from "../ui/search-ui.js";
+import { filterGroupedList, focusFirstVisible } from "../ui/search-ui.js";
 import { createUiScope, availableFocusTargets } from "../ui/ui-scope.js";
 import { createInstrumentLoader } from "../learning/instrument-loader.js";
 import { isTextEntry, nativeActivation } from "../platform/input.js";
@@ -1745,6 +1745,11 @@ function wireTravelFilter() {
     clear.disabled = !input.value;
   };
   input.oninput = apply;
+  input.onkeydown = (event) => {
+    if (event.key !== "ArrowDown") return;
+    if (!focusFirstVisible(list, ".travel-item")) return;
+    event.preventDefault();
+  };
   clear.onclick = () => { input.value = ""; apply(); input.focus(); };
   apply();
 }

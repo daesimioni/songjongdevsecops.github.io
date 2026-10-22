@@ -6,6 +6,7 @@ import { AREAS, WAYSTONES, CONTINENTS } from "../content/config.js";
 import { DISCIPLINES } from "../content/catalog.js";
 
 import { DUNGEONS } from "../content/dungeon-data.js";
+import { focusFirstVisible } from "./search-ui.js";
 import { ITEMS, MONSTER_LABELS, MONSTER_WEAKNESS, RELICS, RECIPES, ENCHANTS, SKILLS, TIERS } from "../content/rpg-data.js";
 import { QUESTS } from "../gameplay/quests.js";
 import { POSTS, NPCS } from "../content/content.js";
@@ -711,6 +712,12 @@ export function abrirWiki(consulta = "") {
   if (!ligado) {
     ligado = true;
     $("wiki-search")?.addEventListener("input", () => { limiteVisivel = 80; renderizarLista(); });
+    // seta para baixo sai da busca e entra no primeiro resultado visível
+    $("wiki-search")?.addEventListener("keydown", (event) => {
+      if (event.key !== "ArrowDown") return;
+      if (!focusFirstVisible($("wiki-list"), ".wiki-item")) return;
+      event.preventDefault();
+    });
     $("wiki-more")?.addEventListener("click", () => {
       const previous = limiteVisivel;
       limiteVisivel += 80;

@@ -1,0 +1,87 @@
+# Backlog verificado
+
+Este é o mapa único do que ainda falta. Substitui a leitura dos documentos de
+planejamento antigos como lista de tarefas: vários deles descrevem o jogo antes
+de ele existir, com números que o código já superou.
+
+## Método e estado atual
+
+Auditoria read-only de 2026-10-22 cruzou os documentos 00 a 38 com `src/`,
+`test/` e `tools/`. Números do código: 86 áreas, 454 estações, 93 cavernas, 539
+itens, 464 fichas, 284 missões, 194 NPCs, 2.247 entradas de wiki, 887 perguntas
+de duelo, 119 módulos e 66 testes node. `npm run validate` passa (lint,
+contrato de módulos, testes e build) e a matriz de navegador dá 19/19.
+
+Esforço: **P** até um dia, **M** de dois a cinco dias, **G** mais de uma semana.
+Estado: **feito**, **parcial**, **ausente**, **decisão** (produto, não código).
+
+## Onda 1: fechar o que é pequeno
+
+| item | estado | o que falta | esforço |
+|---|---|---|---|
+| ritmo no parceiro + dano do próximo acerto | **feito** | previsão `~X` no duelo e no parceiro, sequência própria, erro zera | P |
+| atalho da busca para a lista | **feito** | seta para baixo sai da busca e foca o primeiro resultado (wiki e viagem) | P |
+| mochila em sessão longa | **medido** | 60,1 fps curta e 60,2 fps após 75 s, 18 a 19 MB, 0 tarefa longa; não reproduziu em headless, monitorar hardware real | P |
+| régua de densidade tipográfica | ausente | mínimo de 11 px em texto de painel (HUD isento), linha 1.4, teste varrendo o CSS | P |
+| índice de estações acessível | parcial | diário já agrupa por área; falta `role=list`, `aria-label` por item e `aria-disabled` no selado | P |
+| estado vazio que ensina | parcial | mochila e missões já dizem o próximo passo; conferir diário de estações e loja vazia | P |
+| telegrafia do tema pelo chefe | ausente | guardar a área no item do baralho e mostrar "próximo tema" com símbolo na fase de chefe | P |
+| capa e conjuntos de 3 peças | ausente | slot `cloak`, duas capas, bônus de conjunto por continente, desenho na ficha e no boneco | P a M |
+| ponto fraco do chefe após 2 acertos | ausente | terceiro acerto seguido causa +1 no chefe | P |
+| recarga de runa no altar | ausente | altar devolve uma carga com cooldown, além de curar | P |
+| documentos que mentem | pendente | 03-ITENS (70 peças), 10-ESTACOES (32 páginas), 05-MUNDO §10, 06-ROADMAP e 14 §AB ainda se leem como backlog | P |
+
+## Onda 2: sistemas que já têm casa
+
+| item | estado | o que falta | esforço |
+|---|---|---|---|
+| grafo de conceitos + domínio 0 a 5 + revisão espaçada + caderno | ausente | id estável por conceito, `mastery` no save com migração, baralho prioriza vencidos, painel do caderno | M a G |
+| misconceptions e escolha adaptativa | parcial | um `why` por pergunta; falta erro por distrator e peso por domínio | M |
+| dicas em escada e foco | parcial | dica só por runa/pet; falta contador e dica progressiva | M |
+| formatos de pergunta e prova de transferência | ausente | hoje só A-E; decidir com o dono a colisão com "não há prova final" | G |
+| ofícios por continente e mercador de troca | parcial | receitas globais, uma forja; separar ofício por continente e trocar material, sem leilão (decisão registrada) | M |
+| magias, encantos e consumíveis no alvo do desenho | parcial | 6 runas, 3 encantos, 18 receitas, 10 consumíveis; alvo era 12 magias, 12 encantos, 9 poções e 15 comidas | M |
+| famílias, variantes e fraqueza numérica | parcial | 16 espécies e 25 formas; falta entidade família, elite/antiga/eco, +50% de fraqueza e recompensa por completar | M |
+| clima afetando spawn | parcial | clima existe e não muda a composição da caçada | M |
+| audição, alerta, patrulha e perseguição | ausente | bicho só passeia; sem estados `?`/`!`, isca ou sono | M |
+| escudo que barra erro e resistência por tipo | parcial | `equipmentBonus` só soma vida e dano; escudo real vem de runa/pet | M |
+| party humana em combate | ausente | party social de 8 existe, duelo não junta humanos | G |
+| passo de pet, idle por espécie, gesto por papel | parcial | gato pisca e mexe a cauda; falta pata alternada, gesto por espécie e por papel de NPC | M |
+| funções das peças temáticas | parcial | oficina/biblioteca/observatório são cenário sólido; dar reparo, página e revelar sala do chefe | M |
+| tema de sala por área | parcial | tema por continente, não por área | M |
+| teste de fluxo real de loja e duelo | parcial | duelo tem controlador com DOM mínimo; loja só teste estático | M |
+| acessibilidade: voz, escala, daltonismo | parcial | teclado, foco e aria-live prontos; falta `speechSynthesis`, escala de fonte e paleta | M |
+| save versionado, migração e exportar/importar | parcial | névoa r2 e backup por DM; falta versão global e arquivo manual | M |
+| linter de conteúdo | ausente | validação só em teste; falta revisor e versão por pergunta | M |
+| ferries, elevadores, ciclo dia/noite, mapa grande, pontes por missão | ausente | skiff, túnel e 54 travessias fixas existem | M cada |
+| arcos de NPC, murais e bilhetes | parcial | memória de visitas existe; falta arco e lore no mundo | M |
+| presets de build na ficha | ausente | ficha monta peça por peça | P |
+
+## Onda 3: conteúdo grande e endgame
+
+| item | estado | o que falta | esforço |
+|---|---|---|---|
+| Grande Prova, Biblioteca Afogada, guilda | ausente | corrente de 7 missões, tela de escolha e biblioteca; guilda depende de camada social | G |
+| arco principal em capítulos e lore da Iara | ausente | 284 missões geradas, sem arco narrativo | G |
+| facções e reputação | ausente | nenhuma facção | G |
+| planta de casa por disciplina/ilha | parcial | duas plantas por tipo; falta uma por continente/área | G |
+| moeda Selo | ausente | preço em material; decisão de economia | G |
+| editor de mapa e WebGL do mundo | ausente | ferramenta e render alternativo | M cada |
+| grade de ilhas regular | parcial | catálogo nasce em malha 24x16; jitter exige regenerar o literal e revalidar 2.413 alvos | M |
+
+## Decisões que dependem do dono
+
+1. **Prova final**: o desenho 01 §13 pede exame por continente; o texto atual do
+   jogo diz que não há prova final. Escolher um dos dois antes de implementar.
+2. **Leilão**: os documentos 03 e 07 proíbem leilão global; o item de troca
+   local por material é o que falta de verdade. Confirmar.
+3. **Endgame e lore**: Grande Prova, Biblioteca, facções e arcos são semanas de
+   conteúdo. Confirmar se entram agora ou ficam como fase seguinte.
+4. **Nomes e tom**, **chefe do hub**, **variantes raras** e **bestiário em
+   party** continuam como escolha de produto.
+
+## Critério de pronto
+
+Cada item acima só vira **feito** com teste ou sonda que falha sem ele, prova no
+navegador quando for interface, `npm run validate` verde, commit, push e
+verificação no site publicado.
