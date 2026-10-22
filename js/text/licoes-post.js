@@ -4,6 +4,16 @@
 // também se comporte como curso.
 export const LICOES_POST = {
   welcome: {
+    oque:
+      "O vale é um caminho de pedras: cada estação guarda uma ideia, e a página dela é a lição. Não há índice obrigatório nem prova final, e a ordem existe no assunto, não no chão. O que existe é a pedra que se abre quando você chega perto e o caderno que registra o que já foi lido.",
+    como: [
+      "Comece pela pedra mais próxima do porto e leia a página inteira sem pressa.",
+      "Volte ao caderno e escreva em uma frase o que a pedra guarda.",
+      "Escolha o próximo passo pelo assunto que ficou em aberto, não pela distância no mapa.",
+      "Refaça a pergunta da página em voz alta antes de seguir adiante.",
+    ],
+    quebra:
+      "Procurar a ordem certa e travar por não achar. Também erra quem lê só o começo da página e acha que entendeu o assunto, e quem coleciona pedra sem parar para escrever. O vale não cobra velocidade: cobra atenção ao que ficou em aberto.",
     limite:
       "O vale não tem índice nem prova final: o que existe é caminho e pedra. Quem procura a ordem certa não encontra, porque não há uma. O que há é o próximo passo que faz sentido para quem chegou.",
     pergunta: {
@@ -16,6 +26,17 @@ export const LICOES_POST = {
       "Escolha a pedra mais próxima do porto, abra a página dela e leia só a primeira parte. Depois diga em uma frase o que ela guarda, sem consultar de novo.",
   },
   echo: {
+    oque:
+      "Eco é a síntese de som por oscilador e envelope. Uma frequência gera a nota, o envelope desenha ataque, corpo e decaimento, e o ouvido lê razão, não distância: a mesma nota reaparece a cada dobro de frequência.",
+    como: [
+      "Ligue o sintetizador e escolha uma forma de onda para ouvir o timbre cru.",
+      "Meça a frequência da nota e confirme que uma oitava acima dobra o valor.",
+      "Desenhe o envelope com ataque, decaimento, sustentação e liberação.",
+      "Mude um parâmetro por vez e anote o que mudou no clima.",
+      "Toque a mesma melodia em duas oitavas e compare o que permanece.",
+    ],
+    quebra:
+      "Achar que oitava é soma de frequências quando ela é dobro. Também erra quem mexe em tudo ao mesmo tempo e não sabe o que causou a diferença, e quem ignora o envelope: duas ondas iguais com ataques diferentes soam como instrumentos diferentes. E o volume não é a única pista de intensidade, porque o ataque curto soa mais forte que o longo no mesmo nível.",
     limite:
       "A síntese sonora mostra o mecanismo, não substitui um instrumento. O que o rádio ensina é a relação entre frequência, tempo e envelope, e essa relação vale em qualquer sintetizador.",
     pergunta: {
@@ -28,6 +49,17 @@ export const LICOES_POST = {
       "Ligue o som, monte um padrão de oito passos e mude uma única voz. Ouça antes e depois e diga o que mudou no clima sem olhar a tela.",
   },
   logic: {
+    oque:
+      "Porta lógica é um bloco que combina entradas binárias e devolve uma saída. E, OU, NÃO e as combinações delas formam a base do circuito digital; a tabela verdade descreve o bloco, e a ligação entre blocos descreve o sistema.",
+    como: [
+      "Liste as entradas e escreva a tabela verdade da porta antes de montar.",
+      "Ligue duas portas em série e acompanhe o sinal de entrada até a saída.",
+      "Troque uma porta por outra equivalente e confirme que a tabela não muda.",
+      "Monte a expressão booleana a partir do desenho e simplifique.",
+      "Teste a mesma função com duas combinações de entrada e compare com a tabela.",
+    ],
+    quebra:
+      "Achar que a porta isolada explica o circuito: o atraso e a ligação mudam o resultado. Também erra quem confunde OU com OU exclusivo, e quem esquece que a saída pode ficar indefinida quando a entrada não é binária de verdade. A simplificação não muda a função, só o número de portas.",
     limite:
       "A porta lógica é o tijolo, e o circuito é a frase. A tentação é achar que só a porta importa; o que decide o comportamento do conjunto é a ligação entre elas, e é ali que o erro de projeto costuma morar.",
     pergunta: {
@@ -40,6 +72,18 @@ export const LICOES_POST = {
       "Monte a tabela verdade de três portas ligadas em série e diga em que linha a saída acende. Confira contando pelo caminho, não pela tabela pronta.",
   },
   adder: {
+    oque:
+      "Somador é o circuito que soma dois bits e o transporte que vem da coluna anterior. O meio somador trata dois bits; o somador completo trata três, contando o transporte de entrada, e a fila deles soma palavras inteiras.",
+    como: [
+      "Monte a tabela do meio somador e confirme soma e transporte em cada linha.",
+      "Acrescente o transporte de entrada e refaça a tabela do somador completo.",
+      "Some na mão duas palavras de quatro bits, uma coluna por vez.",
+      "Ligue somadores em fila e acompanhe o transporte atravessando.",
+      "Confira o resultado em decimal para ver se a palavra final bate.",
+      "Repita a soma com transporte de entrada ligado e desligado e compare.",
+    ],
+    quebra:
+      "Esquecer o transporte de entrada quando ele existe, e tratar a soma como operação de uma coluna só. Também erra quem ignora o atraso da fila: o transporte do último bit depende de todos os anteriores, e é isso que limita a velocidade do somador. Um bit a mais no transporte muda o resultado final.",
     limite:
       "O somador completo resolve a soma de um bit com transporte, e a fila deles soma palavras inteiras. O limite aparece na velocidade: o transporte atravessa a fila e o último bit espera por todos os anteriores.",
     pergunta: {
@@ -74,6 +118,18 @@ export const LICOES_POST = {
       "Desenhe um flip-flop tipo D, dê dois pulsos de relógio com entradas diferentes e diga a saída em cada um. O exercício mostra por que o pulso precisa terminar antes da leitura.",
   },
   cpu: {
+    oque:
+      "CPU é a máquina que busca instruções, decodifica o que elas mandam, executa e volta a buscar. Registradores guardam o que está em uso, a memória guarda o resto, e o ciclo se repete enquanto houver instrução.",
+    como: [
+      "Escreva um programa pequeno com instruções de carregar, somar e guardar.",
+      "Siga o ciclo passo a passo, anotando registrador e memória.",
+      "Marque o contador de instruções a cada busca e confira se ele avança.",
+      "Troque a ordem de duas instruções e veja o resultado mudar.",
+      "Meça quantos ciclos o programa leva e onde está o gargalo.",
+      "Desenhe o caminho do dado da memória ao registrador e de volta.",
+    ],
+    quebra:
+      "Achar que o processador executa o programa inteiro de uma vez: ele faz uma instrução por ciclo e depende do que está no registrador. Também erra quem confunde registrador com memória, e quem ignora que o desvio muda o contador. E o relógio não é a velocidade do trabalho, é o compasso dele.",
     limite:
       "A CPU de brinquedo cabe no que um humano acompanha, e a de verdade troca clareza por paralelismo. O que sobrevive é o ciclo: buscar, decodificar, executar, voltar. Todo processador grande é isso com atalho e promessa de ordem.",
     pergunta: {
@@ -86,6 +142,17 @@ export const LICOES_POST = {
       "Escreva um programa de cinco instruções para a CPU de brinquedo e siga o ciclo na mão, anotando registrador e memória a cada passo.",
   },
   history: {
+    oque:
+      "História da técnica é a sequência de invenções e das condições que as tornaram possíveis. A linha do tempo ordena, e a explicação liga cada invenção à energia, ao material e à rede que a sustentaram.",
+    como: [
+      "Escolha uma invenção e localize o momento em que ela aparece na linha.",
+      "Liste as três condições materiais que precisaram existir antes.",
+      "Compare a mesma ideia em dois lugares e veja por que só um funcionou.",
+      "Marque o que foi inventado antes de poder ser usado.",
+      "Escreva uma frase ligando a invenção à condição que a sustentou.",
+    ],
+    quebra:
+      "Ler a linha como causa: a invenção não produz a condição, ela espera por ela. Também erra quem trata a história como corrida de gênios isolados, e quem esquece o esquecimento: muita técnica existiu e sumiu por falta de rede que a mantivesse. A ordem ajuda a lembrar, mas não explica sozinha, e o mapa mental precisa de causa, não só de data.",
     limite:
       "A linha do tempo mostra sequência, e a história real tem paralelo e esquecimento. Muita coisa foi inventada antes de poder ser usada, e muita foi usada antes de alguém saber por quê. A linha é mapa, não sentença.",
     pergunta: {
@@ -98,6 +165,16 @@ export const LICOES_POST = {
       "Escolha uma invenção da linha do tempo e escreva as três condições que precisaram existir para ela funcionar fora do papel.",
   },
   infinity: {
+    oque:
+      "Infinito é propriedade de conjunto, não número. Dois conjuntos têm o mesmo tamanho quando existe emparelhamento um a um entre eles, e por isso parte pode ter o mesmo tamanho do todo.",
+    como: [
+      "Emparelhe cada natural com o dobro dele e mostre que sobra nenhum.",
+      "Faça o mesmo com naturais e inteiros, alternando positivos e negativos.",
+      "Tente emparelhar naturais com reais entre zero e um e procure o que escapa.",
+      "Use a diagonal para construir um real que nenhum emparelhamento alcança.",
+    ],
+    quebra:
+      "Achar que todo infinito é igual: o critério é a bijeção, e os reais não podem ser emparelhados com os naturais. Também erra quem aplica regra de conjunto finito ao infinito, como dizer que a parte é sempre menor que o todo.",
     limite:
       "O paradoxo do hotel mostra que infinidade não é número e que parte pode ter o mesmo tamanho do todo. O limite é a intuição: ela foi treinada em conjunto finito, e no infinito a regra muda de nome.",
     pergunta: {
@@ -133,6 +210,18 @@ export const LICOES_POST = {
       "Conte faces, arestas e vértices de dois sólidos platônicos e confira a relação de Euler. Depois tente achar um sexto e diga por que não passa.",
   },
   calculus: {
+    oque:
+      "Cálculo estuda mudança: a derivada mede a taxa instantânea, a integral acumula o que varia, e o teorema fundamental mostra que uma desfaz a outra.",
+    como: [
+      "Aproxime a derivada num ponto com dois pontos vizinhos e vá juntando.",
+      "Desenhe a reta tangente e compare a inclinação com a conta.",
+      "Some retângulos sob a curva e aumente a quantidade até estabilizar.",
+      "Calcule a integral pela antiderivada e compare com a soma.",
+      "Verifique se a função é bem comportada no intervalo antes de aplicar o teorema.",
+      "Repita a soma com menos retângulos e veja o erro crescer.",
+    ],
+    quebra:
+      "Usar a conta contínua onde o dado é discreto, e esquecer que a função precisa ser bem comportada no intervalo. Também erra quem acha que a integral é só área: ela acumula qualquer taxa, inclusive negativa, e o sinal importa. E a derivada num ponto não é a média do intervalo.",
     limite:
       "A derivada mede taxa instantânea e a integral acumula, e o teorema fundamental diz que uma desfaz a outra. O cuidado é com o domínio: a função precisa ser bem comportada no intervalo, e a conta contínua não descreve o que é discreto.",
     pergunta: {
