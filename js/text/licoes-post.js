@@ -257,6 +257,17 @@ export const LICOES_POST = {
       "Jogue vinte vezes na máquina, registre o destino de cada bolinha e compare a forma com a curva esperada. Depois diga o que mudaria se um pino fosse viciado.",
   },
   fractal: {
+    oque:
+      "Fractal é uma forma que se repete em escala menor, e a autossemelhança faz o detalhe reaparecer quando se olha de perto. A dimensão fractal mede o quanto a forma preenche o espaço entre linha e superfície, e o comprimento cresce com a régua menor.",
+    como: [
+      "Meça o contorno com réguas de tamanhos diferentes e anote o comprimento.",
+      "Construa uma forma por repetição: substitua cada segmento por uma cópia reduzida da regra.",
+      "Conte quantas cópias cabem em cada passo e veja a razão se manter.",
+      "Compare o crescimento do comprimento com a régua e estime a dimensão.",
+      "Pare quando o detalhe ficar abaixo do que o olho ou o instrumento resolve.",
+    ],
+    quebra:
+      "Achar que fractal é só desenho bonito e que o comprimento tem um valor fixo. Também erra quem mede com uma régua só e conclui que a curva tem tamanho definido, e quem aplica a autossemelhança além da faixa em que ela vale.",
     limite:
       "O fractal repete a forma em escala diferente, e o comprimento cresce com a régua que se usa. O limite é prático: não existe fractal com detalhe infinito na natureza, e por isso a medida só faz sentido dentro da faixa em que a regra se repete.",
     pergunta: {
@@ -292,6 +303,18 @@ export const LICOES_POST = {
       "Cronometre dez oscilações de um pêndulo de tamanho conhecido e calcule a gravidade. Depois mude a massa e veja o período continuar o mesmo.",
   },
   waves: {
+    oque:
+      "Onda é perturbação que viaja levando energia, sem levar matéria junto. Frequência, comprimento de onda e velocidade se ligam, e Fourier mostra que qualquer sinal pode ser decomposto em senos e cossenos. O som é onda de pressão, a luz é onda de campo, e a mesma matemática descreve as duas.",
+    como: [
+      "Desenhe a onda e marque crista, vale, comprimento e amplitude.",
+      "Meça quantas oscilações passam por segundo e calcule a frequência.",
+      "Relacione velocidade, frequência e comprimento pela conta simples.",
+      "Decomponha um sinal em duas frequências e reconstrua somando as partes.",
+      "Corte o sinal no início e no fim e observe o espalhamento no espectro.",
+      "Compare duas ondas de mesma frequência e amplitudes diferentes.",
+    ],
+    quebra:
+      "Confundir frequência com amplitude, ou achar que a onda transporta a matéria do meio. Também erra quem espera espectro limpo de um sinal que começa e termina de repente: o corte espalha energia por toda a frequência.",
     limite:
       "Fourier decompõe sinal em senos e cossenos, e o limite é a condição: a função precisa ser bem comportada e o sinal precisa durar o suficiente. Sinais que começam e terminam abruptamente espalham energia por toda a frequência, e isso é física, não defeito da conta.",
     pergunta: {
@@ -419,6 +442,17 @@ export const LICOES_POST = {
       "Monte duas moléculas com os mesmos átomos em arranjos diferentes e diga qual delas encaixa no mesmo receptor, justificando pela geometria.",
   },
   titration: {
+    oque:
+      "Titulação mede a concentração de uma solução adicionando, aos poucos, outra de concentração conhecida até a reação se completar. O volume gasto na equivalência, junto com a estequiometria, dá a quantidade do analito. Perto do salto, o pH muda de forma abrupta e a medida fica sensível.",
+    como: [
+      "Escolha o indicador que muda de cor perto do pH de equivalência.",
+      "Encha a bureta, anote o volume inicial e goteje devagar.",
+      "Pare no ponto em que a cor muda e anote o volume final.",
+      "Calcule a quantidade pela estequiometria e compare com o esperado.",
+      "Repita a titulação e veja o quanto o ponto final varia entre as medidas.",
+    ],
+    quebra:
+      "Achar que o ponto final do indicador é a equivalência exata: ele é uma aproximação, e a diferença é o erro. Também erra quem lê o volume antes de a gota se misturar, e quem ignora a curva de pH perto do salto, onde qualquer gota muda tudo.",
     limite:
       "A titulação mede concentração por volume gasto até a equivalência, e o ponto final é visto pelo indicador, que erra um pouco. O limite é a curva de pH: perto do salto, uma gota muda tudo, e a leitura precisa de paciência.",
     pergunta: {
@@ -707,6 +741,18 @@ export const LICOES_POST = {
       "Escolha um uso de IA e liste quem decide, quem é afetado e quem responde se der errado. Se algum ficar vazio, o sistema não está pronto.",
   },
   words: {
+    oque:
+      "Palavra é forma e história: a etimologia conta de onde a forma veio, e o uso atual diz o que ela significa hoje. As duas informações são diferentes, e confundir uma com a outra é o erro que a falácia etimológica comete.",
+    como: [
+      "Escolha uma palavra e procure a raiz e o primeiro sentido registrado.",
+      "Liste os sentidos que ela tem hoje e em que contexto cada um aparece.",
+      "Compare o sentido antigo com o atual e marque o que mudou.",
+      "Verifique se a mudança foi por metáfora, empréstimo ou especialização.",
+      "Use a palavra numa frase e confira se o dicionário atual confirma o uso.",
+      "Anote uma palavra que mudou de sentido na sua vida e explique a mudança.",
+    ],
+    quebra:
+      "Corrigir o uso de hoje pela origem, como se a raiz mandasse no significado. Também erra quem trata etimologia como regra gramatical, e quem acha que a palavra mudou de sentido por acidente: a mudança costuma ter caminho. A origem explica de onde veio, não decide o que vale agora.",
     limite:
       "Etimologia explica história da palavra, não o significado de hoje. O limite é a falácia etimológica: o sentido atual não é obrigado a respeitar a origem, e usar a raiz para corrigir o uso é erro de método.",
     pergunta: {
@@ -742,6 +788,18 @@ export const LICOES_POST = {
       "Pegue três frases com sujeito distante, marque o núcleo e confira a concordância. Depois reescreva uma delas para o erro ficar visível.",
   },
   accents: {
+    oque:
+      "Acentuação em português segue a posição da sílaba tônica e a terminação da palavra. Oxítona, paroxítona e proparoxítona têm regras próprias, e o acento gráfico marca a tônica quando a regra pede. O hífen segue regra de composição e não de pronúncia, e por isso pede consulta separada.",
+    como: [
+      "Separe a palavra em sílabas e marque a tônica em voz alta.",
+      "Classifique a palavra pela posição da tônica.",
+      "Aplique a regra do grupo e confira a terminação.",
+      "Trate os casos de hiato, ditongo e acento diferencial em separado.",
+      "Consulte o manual atual nas palavras que ficaram em dúvida.",
+      "Marque três palavras que perderam acento com o acordo e diga por quê.",
+    ],
+    quebra:
+      "Decorar lista de palavras em vez de olhar a tônica e a terminação. Também erra quem aplica a regra de um grupo a outro, e quem ignora que o acordo ortográfico mudou acentos e hífens: texto antigo pode estar certo para a norma da época. A regra é a mesma, mas os casos de exceção pedem manual.",
     limite:
       "Acento e hífen seguem regra de prosódia e de composição, e o limite é o acordo: a regra muda com o tempo, e texto antigo pode estar correto pela norma da época. A consulta ao manual atual resolve.",
     pergunta: {
@@ -777,6 +835,17 @@ export const LICOES_POST = {
       "Reescreva a mesma notícia como receita e como carta. Marque o que mudou e diga o que a situação de uso exigiu em cada versão.",
   },
   crase: {
+    oque:
+      "Crase é a fusão da preposição a com o artigo a ou com o pronome demonstrativo a. Ela só acontece quando os dois a se encontram, e por isso o teste do masculino funciona: trocar por palavra masculina revela se o artigo estava ali. O acento grave é a marca visível da fusão, não uma letra nova.",
+    como: [
+      "Ache o a antes da palavra e pergunte se ele é preposição ou artigo.",
+      "Troque a palavra feminina por uma masculina e veja se o a continua.",
+      "Confira os casos de locução feminina, nome de lugar e pronome demonstrativo.",
+      "Aplique o teste nas frases que causam dúvida antes de escrever.",
+      "Reescreva a frase sem a crase e veja o que ficou faltando.",
+    ],
+    quebra:
+      "Escrever crase onde só existe preposição, como antes de verbo ou de palavra masculina. Também erra quem acha que toda palavra feminina pede artigo, e quem decora lista de locuções sem entender a fusão.",
     limite:
       "Crase é fusão de duas vogais iguais, e o teste é substituir por palavra masculina. O limite são as locuções e os nomes próprios: há caso em que a regra geral não decide, e a consulta ao manual é o caminho.",
     pergunta: {
@@ -812,6 +881,18 @@ export const LICOES_POST = {
       "Aproxime e afaste um ímã de uma bobina com galvanômetro e anote o sentido da corrente nos dois movimentos. Depois explique a diferença pela variação do fluxo.",
   },
   maxwell: {
+    oque:
+      "As equações de Maxwell dizem como campo elétrico e campo magnético se geram um ao outro e como a combinação se propaga. A velocidade dessa propagação sai das constantes elétricas e magnéticas do vácuo e coincide com a da luz. Não existe éter: a onda é do próprio campo.",
+    como: [
+      "Desenhe o campo elétrico variando e o magnético nascendo em volta.",
+      "Veja a variação do magnético gerando o elétrico de volta.",
+      "Monte a onda com os dois campos perpendiculares e calcule a velocidade.",
+      "Compare a velocidade calculada com a medida da luz.",
+      "Mude a frequência e observe o comprimento de onda mudar.",
+      "Verifique que a onda não precisa de meio e explique por que o éter foi descartado.",
+    ],
+    quebra:
+      "Achar que a luz precisa de meio material para viajar, como o som. Também erra quem separa eletricidade e magnetismo como fenômenos independentes: a variação de um produz o outro, e é isso que sustenta a onda. E a velocidade não depende de quem observa, o que pediu a relatividade.",
     limite:
       "As equações de Maxwell descrevem o campo clássico e preveem a velocidade da luz a partir de constantes elétricas. O limite é o regime quântico: em escala atômica o campo clássico não basta, e a descrição vira probabilidade.",
     pergunta: {
@@ -870,6 +951,17 @@ export const LICOES_POST = {
       "Reescreva um cálculo de cinco variáveis usando só três registradores e diga o que precisou ir para a memória. A contagem mostra o custo do derramamento.",
   },
   limits: {
+    oque:
+      "Limite descreve para onde a função tende quando a entrada se aproxima de um ponto, sem exigir que a função exista ali. É a ferramenta que permite falar de taxa instantânea e de continuidade.",
+    como: [
+      "Monte uma tabela com valores cada vez mais perto do ponto, pelos dois lados.",
+      "Compare os dois lados e veja se eles apontam para o mesmo valor.",
+      "Calcule o valor no ponto, se existir, e compare com o limite.",
+      "Simplifique a expressão antes de substituir, quando der zero sobre zero.",
+      "Verifique se o limite existe e se a função é contínua ali.",
+    ],
+    quebra:
+      "Confundir o valor no ponto com o limite, e achar que zero sobre zero é resposta em vez de indeterminação. Também erra quem olha só um lado, e quem substitui direto sem verificar se a expressão está definida.",
     limite:
       "O limite descreve o comportamento perto do ponto, e o limite é a existência: a função pode não estar definida ali e o limite existir. Confundir valor no ponto com limite é o erro que a definição precisou resolver.",
     pergunta: {
