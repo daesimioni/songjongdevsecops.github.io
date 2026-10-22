@@ -41,6 +41,7 @@ globalThis.document = {
     let rets = [];
     const ctx = {
       fillStyle: "#000",
+      save() {},restore() {},
       clearRect() {},
       fillRect(x, y, w, h) { rets.push([x, y, w, h, ctx.fillStyle]); },
     };

@@ -234,4 +234,21 @@ export function drawCaveFacade(ctx, c) {
   ctx.fillStyle=hexA(acento,.6+pulso*.2);ctx.fillRect(px-15,py-8,1,.5);ctx.fillRect(px+14,py-12,.5,1);
   ctx.fillStyle=hexA(claro,.5);ctx.fillRect(px-6,py,.5,.5);ctx.fillRect(px+2,py,3,.5);
 
+  // Intemperismo por arquitetura, sempre nos pilares que cercam o vão.
+  for(const side of [-1,1])for(let i=0;i<5;i++){
+    const x=px+side*(11+i%3*2),y=py-3-i*3;
+    if(familia==='mina'){
+      ctx.fillStyle='#d3ac7d';ctx.fillRect(x,y,.5,2);
+      ctx.fillStyle='#262b39';ctx.fillRect(x+1,y+1,.5,.5);
+    }else if(familia==='toca'){
+      ctx.fillStyle=i%2?'#57714d':'#a5a875';ctx.fillRect(x,y,1,.5);ctx.fillRect(x+side,y+1,.5,.5);
+    }else if(familia==='fenda'){
+      ctx.fillStyle=hexA(acento,.35+pulso*.2);ctx.fillRect(x,y,.5,2);
+      ctx.fillStyle=claro;ctx.fillRect(x-.5,y,.5,.5);
+    }else{
+      ctx.fillStyle=fundo;ctx.fillRect(x,y,2,.5);ctx.fillRect(x+1,y,.5,2);
+      ctx.fillStyle=claro;ctx.fillRect(x,y-.5,1,.5);
+    }
+  }
+
 }

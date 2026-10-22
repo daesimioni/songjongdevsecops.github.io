@@ -2,7 +2,7 @@
 import {pathToFileURL} from 'node:url';
 import {writeFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
-const {createCanvas}=await import(pathToFileURL(process.env.ART_CANVAS_MODULE));
+const {createCanvas}=await import(process.env.ART_CANVAS_MODULE ? pathToFileURL(process.env.ART_CANVAS_MODULE).href : '@napi-rs/canvas');
 globalThis.document={createElement:()=>createCanvas(1,1)};
 const {desenharAsset,GRUPOS}=await import('../src/rendering/assets/index.js');
 const {assetColliders}=await import('../src/content/collision-bodies.js');

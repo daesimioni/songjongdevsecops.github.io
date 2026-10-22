@@ -10,11 +10,15 @@
     "check:conteudo": "node tools/revisar-conteudo.mjs",
     "test": "node --test --test-concurrency=1 test/*.test.mjs",
     "build": "npm run check && node tools/build.mjs",
-    "validate": "npm run check && npm test && node tools/build.mjs",
+    "validate": "npm run check && npm test && npm run art:check && node tools/build.mjs",
     "art:check": "node tools/check-art.mjs",
-    "art:render": "node tools/render-art.mjs"
+    "art:render": "node tools/render-art.mjs",
+    "art:catalog": "node tools/art-catalog.mjs",
+    "art:scenes": "node tools/render-art-scene.mjs",
+    "art:og": "node tools/render-og.mjs"
   },
   "devDependencies": {
+    "@napi-rs/canvas": "1.0.13",
     "eslint": "10.13.0"
   },
   "description": "RPG educacional em pixel art para navegadores, publicado no GitHub Pages",

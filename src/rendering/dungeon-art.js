@@ -1,3 +1,5 @@
+import { detailFixture } from "./fixture-detail.js";
+import { actorView } from "./actor-volume.js";
 import { spritePose } from "./sprite-cache.js";
 import { artTick, artTime } from "./art-style.js";
 import { drawHuman } from "./human.js";
@@ -8,27 +10,17 @@ function drawAdventurerRaw(ctx, x, y, dir, moving, t, avatar = {}, look = null, 
   // desenhada por drawSkiff, em skiff.js, para o casco ser o mesmo nos dois
   // lugares.
   const c = { hair: "#3a2a55", skin: "#f0c9a8", shirt: "#61f4c0", pants: "#2f3a66", ...avatar };
-  const animate = moving;
-  const frame = animate ? Math.floor(t / 115) % 4 : 0;
-  const swing = animate ? [0, 1, 0, -1][frame] : 0;
-  const bob = animate && (frame === 1 || frame === 3) ? -1 : 0;
-  ctx.save();
-  ctx.translate(x, y + bob);
-  // capa atrás do corpo, balançando com o passo
-  ctx.fillStyle = "#242844";
-  ctx.fillRect(-6 + (swing > 0 ? 1 : 0), -15, 12, 11);
-  ctx.fillStyle = "#1b1f37";
-  ctx.fillRect(-5, -5 + (swing < 0 ? 1 : 0), 10, 2);
-  drawHuman(ctx, 0, 0, dir, animate, t, c, 1, look, gear);
-  // lanterna na mão direita, com halo curto
-  ctx.fillStyle = "rgba(255,200,87,0.16)";
-  ctx.beginPath();
-  ctx.arc(7, -7, 4.5, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.fillStyle = "#2a2438";
-  ctx.fillRect(6, -9, 3, 4);
-  ctx.fillStyle = "#ffc857";
-  ctx.fillRect(7, -8, 1, 2);
+  ctx.save();ctx.translate(x,y);
+  drawHuman(ctx,0,0,dir,moving,t,c,1,look,{cloak:{accent:'#334159'},...gear});
+  // A mão direita e sua luz acompanham o rumo; nas vistas traseiras a
+  // lanterna fica parcialmente escondida pelo corpo.
+  const hand=actorView(dir).project(7,1,7);
+  if(dir!==3){
+    ctx.fillStyle='rgba(255,200,87,.12)';ctx.beginPath();ctx.arc(hand.x,hand.y,4.5,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#2a2438';ctx.fillRect(hand.x-1,hand.y-2,3,4);
+    ctx.fillStyle='#ffc857';ctx.fillRect(hand.x,hand.y-1,1,2);
+    ctx.fillStyle='#fff0c3';ctx.fillRect(hand.x,hand.y-1,.5,.5);
+  }
   ctx.restore();
 }
 
@@ -528,27 +520,7 @@ function drawTunnelRaw(ctx, x, y, t, accent) {
 }
 
 function drawKeeperRaw(ctx, x, y, t, accent) {
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.fillStyle = "rgba(0,0,0,0.4)";
-  ctx.beginPath();
-  ctx.ellipse(0, 0, 6.5, 2.5, 0, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.fillStyle = "#5a4a2a";
-  ctx.fillRect(-5, -13, 10, 13);
-  ctx.fillStyle = "#8a7440";
-  ctx.fillRect(-5, -13, 2, 13);
-  ctx.fillStyle = "#c9a37c";
-  ctx.fillRect(-4, -19, 8, 6);
-  ctx.fillStyle = "#d9d2c2";
-  ctx.fillRect(-4, -21, 8, 3);
-  ctx.fillRect(-5, -19, 2, 4);
-  ctx.fillStyle = "#101426";
-  ctx.fillRect(-2, -17, 1, 1);
-  ctx.fillRect(1, -17, 1, 1);
-  ctx.fillStyle = accent;
-  ctx.fillRect(-1, -14, 2, 2);
-  ctx.restore();
+  drawHuman(ctx,x,y,0,false,t,{skin:'#c9a37c',hair:'#d9d2c2',shirt:'#716044',pants:'#403b36',accent},.9,{hair:'longo',gender:'m'},null,'mestre');
 }
 
 function drawPlotRaw(ctx, x, y, t, accent, planted, ready) {
@@ -564,6 +536,8 @@ function drawPlotRaw(ctx, x, y, t, accent, planted, ready) {
       ctx.fillStyle = accent;
       ctx.fillRect(-7 + i * 6, -13 + sway, 2, 6);
       ctx.fillRect(-4 + i * 6, -11 - sway, 2, 5);
+      ctx.fillStyle='#77a06b';ctx.fillRect(-8+i*6,-8+sway,3,.5);ctx.fillRect(-6+i*6,-10-sway,3,.5);
+      ctx.fillStyle='#e8d6a4';ctx.fillRect(-7+i*6,-13+sway,.5,.5);
     } else if (planted) {
       ctx.fillStyle = "#4a7a4e";
       ctx.fillRect(-7 + i * 6, -8, 2, 2);
@@ -651,15 +625,21 @@ export function drawBuilding(ctx, x, y, w, h, palette, accent) {
   ctx.fillRect(x + 4, y + 6, 3, 4);
   ctx.fillRect(x + w - 8, y + 6, 3, 4);
   ctx.globalAlpha = 1;
+  // Parede com blocos desencontrados e ferragens; porta mantém seu vão.
+  for(let row=0;row<Math.floor((h-10)/4);row++)for(let col=0;col<w-6;col+=7){
+    ctx.fillStyle='rgba(8,17,31,.28)';ctx.fillRect(x+3+col+(row%2)*2,y+10+row*4,4,.5);
+  }
+  ctx.fillStyle='#9ba79f';ctx.fillRect(x+2,y+2,w-4,.5);
+  ctx.fillStyle='#182338';ctx.fillRect(x+5,y+7,1,3);ctx.fillRect(x+w-7,y+7,1,3);
   ctx.fillStyle = "#0a0d18";
   ctx.fillRect(x + w / 2 - 3, y + h - 9, 6, 9);
 }
 
 export function drawDungeonSprite(name,paint,timeIndex,ctx,x,y,...args) {
   const values=args.slice();
-  if(timeIndex!==null)values[timeIndex]=artTick(values[timeIndex]+x*17+y*23,120)*120;
+  if(timeIndex!==null)values[timeIndex]=(artTick(values[timeIndex]+x*17+y*23,120)%32)*120;
   const key=JSON.stringify(['dungeon',name,...values]);
-  const pose=spritePose(key,112,112,g=>{g.translate(56,86);paint(g,0,0,...values);},'stone');
+  const pose=spritePose(key,112,112,g=>{g.translate(56,86);paint(g,0,0,...values);detailFixture(g,name,timeIndex===null?0:values[timeIndex]);},'stone');
   ctx.save();ctx.imageSmoothingEnabled=false;ctx.drawImage(pose,x-56,y-86);ctx.restore();
 }
 export function drawAdventurer(ctx,x,y,...args) { drawDungeonSprite("drawAdventurer",drawAdventurerRaw,2,ctx,x,y,...args); }
@@ -673,8 +653,8 @@ export function drawForge(ctx,x,y,...args) { drawDungeonSprite("drawForge",drawF
 export function drawOficina(ctx,x,y,...args) { drawDungeonSprite("drawOficina",drawOficinaRaw,0,ctx,x,y,...args); }
 export function drawBiblioteca(ctx,x,y,...args) { drawDungeonSprite("drawBiblioteca",drawBibliotecaRaw,0,ctx,x,y,...args); }
 export function drawObservatorio(ctx,x,y,...args) { drawDungeonSprite("drawObservatorio",drawObservatorioRaw,0,ctx,x,y,...args); }
-export function drawBilhete(ctx,x,y,...args) { drawDungeonSprite("drawBilhete",drawBilheteRaw,2,ctx,x,y,...args); }
-export function drawIsca(ctx,x,y,...args) { drawDungeonSprite("drawIsca",drawIscaRaw,2,ctx,x,y,...args); }
+export function drawBilhete(ctx,x,y,...args) { drawDungeonSprite("drawBilhete",drawBilheteRaw,0,ctx,x,y,...args); }
+export function drawIsca(ctx,x,y,...args) { drawDungeonSprite("drawIsca",drawIscaRaw,0,ctx,x,y,...args); }
 export function drawWaystone(ctx,x,y,...args) { drawDungeonSprite("drawWaystone",drawWaystoneRaw,0,ctx,x,y,...args); }
 export function drawPortal(ctx,x,y,...args) { drawDungeonSprite("drawPortal",drawPortalRaw,0,ctx,x,y,...args); }
 export function drawTunnel(ctx,x,y,...args) { drawDungeonSprite("drawTunnel",drawTunnelRaw,0,ctx,x,y,...args); }

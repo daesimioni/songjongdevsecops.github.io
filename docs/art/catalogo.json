@@ -1,0 +1,2156 @@
+{
+  "directions": [
+    "sul",
+    "oeste",
+    "leste",
+    "norte",
+    "sudoeste",
+    "sudeste",
+    "noroeste",
+    "nordeste"
+  ],
+  "environment": {
+    "solo": {
+      "pedra": {
+        "detail": "faces e inclusões minerais",
+        "width": 20,
+        "height": 12,
+        "scale": 1,
+        "variants": 3,
+        "frames": 1,
+        "frameMs": null
+      },
+      "rachadura": {
+        "detail": "lábio de pedra e ramificações",
+        "width": 22,
+        "height": 12,
+        "scale": 1,
+        "variants": 3,
+        "frames": 1,
+        "frameMs": null
+      },
+      "raiz": {
+        "detail": "casca e nós",
+        "width": 22,
+        "height": 12,
+        "scale": 1,
+        "variants": 3,
+        "frames": 1,
+        "frameMs": null
+      },
+      "poca": {
+        "detail": "reflexos concêntricos",
+        "width": 20,
+        "height": 12,
+        "scale": 1,
+        "variants": 3,
+        "frames": 4,
+        "frameMs": 240
+      },
+      "tufo": {
+        "detail": "lâminas e sementes",
+        "width": 16,
+        "height": 11,
+        "scale": 1,
+        "variants": 3,
+        "frames": 2,
+        "frameMs": 420
+      },
+      "folhada": {
+        "detail": "nervuras e folhas secas",
+        "width": 20,
+        "height": 10,
+        "scale": 1,
+        "variants": 3,
+        "frames": 1,
+        "frameMs": null
+      },
+      "cogumelo": {
+        "detail": "lamelas e pintas",
+        "width": 18,
+        "height": 12,
+        "scale": 1,
+        "variants": 3,
+        "frames": 1,
+        "frameMs": null
+      },
+      "musgo": {
+        "detail": "almofadas e esporos",
+        "width": 20,
+        "height": 10,
+        "scale": 1,
+        "variants": 3,
+        "frames": 1,
+        "frameMs": null
+      }
+    },
+    "vegetacao": {
+      "arvore": {
+        "detail": "ramos, folhas agrupadas e casca",
+        "width": 36,
+        "height": 46,
+        "scale": 1,
+        "variants": 3,
+        "frames": 4,
+        "frameMs": 340
+      },
+      "conifera": {
+        "detail": "agulhas e pinhas",
+        "width": 26,
+        "height": 48,
+        "scale": 1,
+        "variants": 3,
+        "frames": 4,
+        "frameMs": 340
+      },
+      "palmeira": {
+        "detail": "folíolos e anéis",
+        "width": 34,
+        "height": 48,
+        "scale": 1,
+        "variants": 3,
+        "frames": 4,
+        "frameMs": 340
+      },
+      "seca": {
+        "detail": "fissuras e líquen",
+        "width": 26,
+        "height": 36,
+        "scale": 1,
+        "variants": 3,
+        "frames": 4,
+        "frameMs": 340
+      },
+      "arbusto": {
+        "detail": "folhas, bagas e galhos",
+        "width": 22,
+        "height": 18,
+        "scale": 1,
+        "variants": 3,
+        "frames": 4,
+        "frameMs": 340
+      },
+      "junco": {
+        "detail": "espigas e pólen",
+        "width": 18,
+        "height": 24,
+        "scale": 1,
+        "variants": 3,
+        "frames": 4,
+        "frameMs": 340
+      },
+      "florada": {
+        "detail": "pétalas, miolo e folhas",
+        "width": 22,
+        "height": 15,
+        "scale": 1,
+        "variants": 3,
+        "frames": 4,
+        "frameMs": 340
+      },
+      "trepadeira": {
+        "detail": "nervuras e brotos",
+        "width": 14,
+        "height": 34,
+        "scale": 1,
+        "variants": 3,
+        "frames": 4,
+        "frameMs": 340
+      }
+    },
+    "construcao": {
+      "cabana": {
+        "detail": "palha e amarrações",
+        "width": 36,
+        "height": 30,
+        "scale": 2,
+        "variants": 3,
+        "frames": 1,
+        "frameMs": null
+      },
+      "casa": {
+        "detail": "telhas, reboco e soleira",
+        "width": 44,
+        "height": 38,
+        "scale": 2,
+        "variants": 3,
+        "frames": 1,
+        "frameMs": null
+      },
+      "torre": {
+        "detail": "cantaria e seteiras",
+        "width": 28,
+        "height": 52,
+        "scale": 2,
+        "variants": 3,
+        "frames": 1,
+        "frameMs": null
+      },
+      "ruina": {
+        "detail": "fissuras e líquen",
+        "width": 42,
+        "height": 28,
+        "scale": 1.5,
+        "variants": 3,
+        "frames": 1,
+        "frameMs": null
+      },
+      "galpao": {
+        "detail": "tábuas e ferragens",
+        "width": 46,
+        "height": 32,
+        "scale": 2,
+        "variants": 3,
+        "frames": 1,
+        "frameMs": null
+      },
+      "poco": {
+        "detail": "pedras e corda",
+        "width": 22,
+        "height": 22,
+        "scale": 1.5,
+        "variants": 3,
+        "frames": 1,
+        "frameMs": null
+      },
+      "cerca": {
+        "detail": "veios e pregos",
+        "width": 20,
+        "height": 14,
+        "scale": 1.5,
+        "variants": 3,
+        "frames": 1,
+        "frameMs": null
+      },
+      "doca": {
+        "detail": "tábuas molhadas e cracas",
+        "width": 42,
+        "height": 20,
+        "scale": 1.5,
+        "variants": 3,
+        "frames": 1,
+        "frameMs": null
+      }
+    },
+    "fogo": {
+      "fogueira": {
+        "detail": "carvão e brasas",
+        "width": 24,
+        "height": 20,
+        "scale": 1,
+        "variants": 2,
+        "frames": 8,
+        "frameMs": 95
+      },
+      "braseiro": {
+        "detail": "grade e rebites",
+        "width": 16,
+        "height": 22,
+        "scale": 1,
+        "variants": 2,
+        "frames": 8,
+        "frameMs": 95
+      },
+      "tocha": {
+        "detail": "fibras e fuligem",
+        "width": 10,
+        "height": 24,
+        "scale": 1,
+        "variants": 2,
+        "frames": 6,
+        "frameMs": 85
+      },
+      "lanterna": {
+        "detail": "vidro e armação",
+        "width": 14,
+        "height": 24,
+        "scale": 1,
+        "variants": 2,
+        "frames": 4,
+        "frameMs": 300
+      },
+      "fumaca": {
+        "detail": "volutas translúcidas",
+        "width": 16,
+        "height": 30,
+        "scale": 1,
+        "variants": 2,
+        "frames": 6,
+        "frameMs": 200
+      }
+    },
+    "agua": {
+      "pedraAgua": {
+        "detail": "linha molhada e reflexo",
+        "width": 20,
+        "height": 14,
+        "scale": 1,
+        "variants": 3,
+        "frames": 4,
+        "frameMs": 280
+      },
+      "juncoAgua": {
+        "detail": "espigas e ondulação",
+        "width": 22,
+        "height": 26,
+        "scale": 1,
+        "variants": 3,
+        "frames": 2,
+        "frameMs": 460
+      },
+      "espuma": {
+        "detail": "bolhas e cristas",
+        "width": 22,
+        "height": 9,
+        "scale": 1,
+        "variants": 1,
+        "frames": 6,
+        "frameMs": 200
+      },
+      "lirio": {
+        "detail": "nervuras e pétalas",
+        "width": 18,
+        "height": 12,
+        "scale": 1,
+        "variants": 3,
+        "frames": 2,
+        "frameMs": 620
+      }
+    },
+    "props": {
+      "barril": {
+        "detail": "aduelas e aros rebitados",
+        "width": 16,
+        "height": 20,
+        "scale": 1,
+        "variants": 3,
+        "frames": 1,
+        "frameMs": null
+      },
+      "saco": {
+        "detail": "costuras e trama",
+        "width": 16,
+        "height": 16,
+        "scale": 1,
+        "variants": 3,
+        "frames": 1,
+        "frameMs": null
+      },
+      "caixote": {
+        "detail": "encaixes e pregos",
+        "width": 18,
+        "height": 18,
+        "scale": 1,
+        "variants": 3,
+        "frames": 1,
+        "frameMs": null
+      },
+      "fardo": {
+        "detail": "fibras e cordas",
+        "width": 20,
+        "height": 15,
+        "scale": 1,
+        "variants": 3,
+        "frames": 1,
+        "frameMs": null
+      },
+      "mesa": {
+        "detail": "tampo e encaixes",
+        "width": 26,
+        "height": 18,
+        "scale": 1,
+        "variants": 2,
+        "frames": 1,
+        "frameMs": null
+      },
+      "cama": {
+        "detail": "costuras e dobras",
+        "width": 28,
+        "height": 20,
+        "scale": 1,
+        "variants": 2,
+        "frames": 1,
+        "frameMs": null
+      },
+      "estante": {
+        "detail": "lombadas e prateleiras",
+        "width": 20,
+        "height": 34,
+        "scale": 1,
+        "variants": 2,
+        "frames": 1,
+        "frameMs": null
+      },
+      "gaivota": {
+        "detail": "rêmiges, cauda e bico",
+        "width": 18,
+        "height": 12,
+        "scale": 1,
+        "variants": 1,
+        "frames": 4,
+        "frameMs": 210
+      }
+    }
+  },
+  "creatures": {
+    "slime": "gel",
+    "eye": "eye",
+    "bat": "wing",
+    "spider": "arthropod",
+    "wisp": "spirit",
+    "scorpion": "arthropod",
+    "golem": "biped",
+    "ant": "arthropod",
+    "moth": "wing",
+    "beetle": "arthropod",
+    "crab": "arthropod",
+    "jelly": "gel",
+    "imp": "biped",
+    "sentinel": "biped",
+    "serpent": "serpent",
+    "tome": "book",
+    "glyph": "relic",
+    "note": "relic",
+    "atom": "orbital",
+    "crystal": "crystal",
+    "gear": "relic",
+    "node": "orbital",
+    "prism": "crystal",
+    "vector": "relic",
+    "flask": "flask",
+    "boss": "biped"
+  },
+  "pets": [
+    "cat",
+    "owl",
+    "frog",
+    "wisp",
+    "cricket",
+    "shade",
+    "parrot"
+  ],
+  "humans": {
+    "outfits": [
+      "viajante",
+      "camiseta",
+      "avental",
+      "casaco",
+      "faroleiro",
+      "cacador",
+      "prisma",
+      "chaveiro",
+      "capote",
+      "silicio",
+      "geometra",
+      "luz",
+      "alquimista",
+      "maestro",
+      "trovador",
+      "adivinho",
+      "traje-math-fundamentos",
+      "traje-math-aritmetica",
+      "traje-math-algebra",
+      "traje-math-geometria",
+      "traje-math-topologia",
+      "traje-math-edo",
+      "traje-math-discreta",
+      "traje-math-otimizacao",
+      "traje-math-aplicada",
+      "traje-physics-fundamentos",
+      "traje-physics-mecanica",
+      "traje-physics-fluidos",
+      "traje-physics-eletronica",
+      "traje-physics-relatividade",
+      "traje-physics-quantica",
+      "traje-physics-atomica",
+      "traje-physics-nuclear",
+      "traje-physics-condensada",
+      "traje-physics-plasma",
+      "traje-physics-astro",
+      "traje-physics-outras",
+      "traje-chem-fundamentos",
+      "traje-chem-geral",
+      "traje-chem-inorganica",
+      "traje-chem-fisica",
+      "traje-chem-bioquimica",
+      "traje-chem-polimeros",
+      "traje-chem-materiais",
+      "traje-chem-ambiental",
+      "traje-chem-industrial",
+      "traje-chem-computacional",
+      "traje-chem-outras",
+      "traje-cs-fundamentos",
+      "traje-cs-algoritmos",
+      "traje-cs-teorica",
+      "traje-cs-linguagens",
+      "traje-cs-engenharia",
+      "traje-cs-sistemas",
+      "traje-cs-distribuida",
+      "traje-cs-dados",
+      "traje-cs-ia",
+      "traje-cs-devops",
+      "traje-cs-interfaces",
+      "traje-cs-hardware",
+      "traje-cs-dataciencia",
+      "traje-cs-emergente",
+      "traje-lingua-gramatica",
+      "traje-lingua-pragmatica",
+      "traje-lingua-linguistica",
+      "traje-lingua-discurso",
+      "traje-lingua-leitura",
+      "traje-lingua-redacao",
+      "traje-lingua-argumentacao",
+      "traje-lingua-generos",
+      "traje-lingua-oralidade",
+      "traje-lingua-historia",
+      "traje-lingua-lexico",
+      "traje-lingua-semitica",
+      "traje-lingua-traducao",
+      "traje-inter-math-physics",
+      "traje-inter-math-chem",
+      "traje-inter-math-cs",
+      "traje-inter-math-lingua",
+      "traje-inter-physics-chem",
+      "traje-inter-physics-cs",
+      "traje-inter-physics-lingua",
+      "traje-inter-chem-cs",
+      "traje-inter-chem-lingua",
+      "traje-inter-cs-lingua",
+      "traje-inter-todas",
+      "traje-physics-em",
+      "traje-cs-arch",
+      "traje-math-analysis",
+      "traje-chem-organic",
+      "traje-music-acoustics",
+      "traje-ai-vision",
+      "traje-lingua-literature",
+      "traje-cs-net",
+      "traje-physics-thermo",
+      "traje-chem-analytical",
+      "traje-music-form",
+      "traje-math-prob",
+      "traje-ai-language",
+      "traje-lingua-semantics",
+      "traje-physics-optics",
+      "traje-cs-security"
+    ],
+    "hairstyles": [
+      "curto",
+      "chanel",
+      "franja",
+      "rabo",
+      "coque",
+      "cacheado",
+      "moicano",
+      "longo",
+      "tranca",
+      "topete",
+      "ondas",
+      "chiquinha"
+    ],
+    "genders": [
+      "f",
+      "m"
+    ],
+    "states": [
+      "parado",
+      "caminhando",
+      "gestos de ofício",
+      "equipado"
+    ],
+    "equipmentFamilies": {
+      "helmet": [
+        "oculos",
+        "capuz",
+        "fones",
+        "lente",
+        "elmo",
+        "coroa",
+        "mascara",
+        "turbante"
+      ],
+      "armor": [
+        "colete",
+        "manto",
+        "avental",
+        "casaca",
+        "capa"
+      ],
+      "weapon": [
+        "chave",
+        "espada",
+        "cajado",
+        "frasco",
+        "batuta",
+        "pena",
+        "caneta",
+        "lamina",
+        "bastao",
+        "malho"
+      ],
+      "shield": [
+        "escudo"
+      ],
+      "cloak": [
+        "capa"
+      ]
+    }
+  },
+  "items": {
+    "parafuso": "ferramenta",
+    "chip": "tech",
+    "fita": "tech",
+    "nucleo": "tech",
+    "regua": "ferramenta",
+    "teorema": "ferramenta",
+    "axioma": "ferramenta",
+    "infinito": "runa",
+    "ima": "ferramenta",
+    "prisma": "gema",
+    "quanta": "ferramenta",
+    "orbita": "gema",
+    "frasco": "frasco",
+    "catalisador": "ferramenta",
+    "cristal": "gema",
+    "pedra": "gema",
+    "carbono": "ferramenta",
+    "cadeia": "tech",
+    "solvente": "ferramenta",
+    "pedra-kekule": "gema",
+    "amostra-quimica": "ferramenta",
+    "titulante": "ferramenta",
+    "espectro": "ferramenta",
+    "pedra-liebig": "gema",
+    "diapasao": "ferramenta",
+    "partitura": "livro",
+    "metronomo": "ferramenta",
+    "cravo": "ferramenta",
+    "harmonico": "ferramenta",
+    "tubo": "ferramenta",
+    "membrana": "ferramenta",
+    "pedra-helmholtz": "gema",
+    "motivo": "livro",
+    "tema": "livro",
+    "coda": "livro",
+    "pedra-hildegard": "gema",
+    "peso": "ferramenta",
+    "embedding": "ferramenta",
+    "matriz": "ferramenta",
+    "caixa": "ferramenta",
+    "pixel": "tech",
+    "borda": "tech",
+    "kernel": "tech",
+    "pedra-marr": "gema",
+    "prompt": "tech",
+    "contexto": "tech",
+    "vocabulario": "ferramenta",
+    "pedra-chomsky": "gema",
+    "pergaminho": "livro",
+    "tinta": "livro",
+    "letra": "livro",
+    "camoes": "gema",
+    "verso": "livro",
+    "estrofe": "livro",
+    "pagina": "livro",
+    "pedra-machado": "gema",
+    "sentido": "ferramenta",
+    "ironia": "ferramenta",
+    "implicatura": "ferramenta",
+    "pedra-saussure": "gema",
+    "cobre": "ferramenta",
+    "bobina": "ferramenta",
+    "fusivel": "ferramenta",
+    "capacitor": "ferramenta",
+    "pedra-faraday": "gema",
+    "calor": "ferramenta",
+    "ciclo": "ferramenta",
+    "entropia": "ferramenta",
+    "pedra-carnot": "gema",
+    "lente": "lente",
+    "reflexo": "ferramenta",
+    "arco-iris": "ferramenta",
+    "pedra-huygens": "gema",
+    "instrucao": "tech",
+    "registrador": "tech",
+    "barramento": "tech",
+    "pedra-von-neumann": "gema",
+    "pacote": "tech",
+    "datagrama": "tech",
+    "handshake": "ferramenta",
+    "pedra-baran": "gema",
+    "cifra": "ferramenta",
+    "assinatura": "ferramenta",
+    "segredo": "ferramenta",
+    "pedra-diffie": "gema",
+    "limite": "ferramenta",
+    "serie": "ferramenta",
+    "epsilon": "ferramenta",
+    "pedra-cauchy": "gema",
+    "dado": "ferramenta",
+    "amostra": "ferramenta",
+    "outlier": "ferramenta",
+    "pedra-laplace": "gema",
+    "chave-longa": "chave",
+    "colete-malha": "colete",
+    "espada-prova": "espada",
+    "manto-giz": "manto",
+    "cajado-luz": "cajado",
+    "lentes-prisma": "oculos",
+    "frasco-acido": "frasco",
+    "avental-alquimista": "avental",
+    "batuta-maestro": "batuta",
+    "casaca-harmonia": "casaca",
+    "cajado-vetores": "cajado",
+    "capuz-dados": "capuz",
+    "pena-poeta": "pena",
+    "sobretudo-pergaminho": "casaca",
+    "oculos-revisor": "oculos",
+    "anel-virgula": "anel",
+    "colar-rima": "colar",
+    "caneta-narrativa": "caneta",
+    "casaco-personagem": "casaca",
+    "oculos-narrador": "oculos",
+    "anel-sentido": "anel",
+    "manto-pragmatica": "manto",
+    "oculos-ironia": "oculos",
+    "anel-bobina": "anel",
+    "escudo-capacitor": "escudo",
+    "anel-carnot": "anel",
+    "manto-termico": "manto",
+    "capuz-entropia": "capuz",
+    "oculos-optica": "oculos",
+    "manto-luz": "manto",
+    "anel-foco": "anel",
+    "manto-dieletrico": "manto",
+    "anel-pipeline": "anel",
+    "capuz-registrador": "capuz",
+    "escudo-barramento": "escudo",
+    "anel-roteador": "anel",
+    "manto-malha": "manto",
+    "capuz-latencia": "capuz",
+    "anel-seguro": "anel",
+    "manto-cifra": "manto",
+    "capuz-chave": "capuz",
+    "anel-serie": "anel",
+    "manto-limite": "manto",
+    "escudo-delta": "escudo",
+    "anel-probavel": "anel",
+    "manto-amostra": "manto",
+    "oculos-estatistica": "oculos",
+    "anel-sinapse": "anel",
+    "colar-constante": "colar",
+    "pernas-reforcadas": "perneiras",
+    "botas-marcha": "botas",
+    "escudo-cristal": "escudo",
+    "oculos-organicos": "oculos",
+    "jaleco-organico": "casaca",
+    "colar-quiral": "colar",
+    "anel-analitico": "anel",
+    "avental-analitico": "avental",
+    "oculos-espectro": "oculos",
+    "anel-harmonico": "anel",
+    "manto-acustico": "manto",
+    "fones-eco": "fones",
+    "anel-forma": "anel",
+    "manto-contraponto": "manto",
+    "oculos-forma": "oculos",
+    "lente-convolucao": "lente",
+    "manto-pixels": "manto",
+    "anel-detector": "anel",
+    "anel-contexto": "anel",
+    "manto-tokens": "manto",
+    "capuz-prompt": "capuz",
+    "runa-faisca": "runa",
+    "runa-trovao": "runa",
+    "runa-fogo": "runa",
+    "runa-gelo": "runa",
+    "runa-cura": "runa",
+    "runa-espelho": "runa",
+    "runa-bencao": "runa",
+    "runa-mente": "runa",
+    "runa-eco": "runa",
+    "runa-punhal": "runa",
+    "runa-corrente": "runa",
+    "runa-lente": "runa",
+    "capa-vale": "capa",
+    "capa-submersa": "capa",
+    "colar-corrente": "colar",
+    "anel-fractal": "anel",
+    "colar-inercia": "colar",
+    "anel-equilibrio": "anel",
+    "colar-ressonancia": "colar",
+    "anel-atencao": "anel",
+    "pocao": "pocao",
+    "pocao-mana": "pocao",
+    "pocao-ferro": "pocao",
+    "pocao-cristal": "pocao",
+    "pocao-cinza": "pocao",
+    "pocao-sal": "pocao",
+    "pocao-vento": "pocao",
+    "pocao-brasa": "pocao",
+    "ferro": "ferramenta",
+    "erva": "planta",
+    "veio": "gema",
+    "madeira": "ferramenta",
+    "chave": "chave",
+    "tocha": "tocha",
+    "bomba": "bomba",
+    "isca": "ferramenta",
+    "caldo": "pocao",
+    "peixe": "peixe",
+    "peixe-prata": "peixe",
+    "peixe-raro": "peixe",
+    "peixe-lendario": "peixe",
+    "cafe": "pocao",
+    "pao-ferro": "pocao",
+    "bolo-erva": "pocao",
+    "peixe-seco": "peixe",
+    "ensopado": "pocao",
+    "tigela-quente": "pocao",
+    "sopa-pedra": "pocao",
+    "broa-veio": "pocao",
+    "assado": "pocao",
+    "doce": "pocao",
+    "picareta": "ferramenta",
+    "semente": "planta",
+    "racao": "ferramenta",
+    "math-fundamentos-lamina": "lamina",
+    "math-fundamentos-manto": "manto",
+    "math-fundamentos-elmo": "elmo",
+    "math-aritmetica-lamina": "bastao",
+    "math-aritmetica-manto": "casaca",
+    "math-aritmetica-elmo": "capuz",
+    "math-algebra-lamina": "malho",
+    "math-algebra-manto": "colete",
+    "math-algebra-elmo": "coroa",
+    "math-geometria-lamina": "lamina",
+    "math-geometria-manto": "avental",
+    "math-geometria-elmo": "mascara",
+    "math-topologia-lamina": "bastao",
+    "math-topologia-manto": "capa",
+    "math-topologia-elmo": "turbante",
+    "math-edo-lamina": "lamina",
+    "math-edo-manto": "casaca",
+    "math-edo-elmo": "capuz",
+    "math-discreta-lamina": "bastao",
+    "math-discreta-manto": "colete",
+    "math-discreta-elmo": "coroa",
+    "math-otimizacao-lamina": "lamina",
+    "math-otimizacao-manto": "capa",
+    "math-otimizacao-elmo": "turbante",
+    "math-aplicada-lamina": "bastao",
+    "math-aplicada-manto": "manto",
+    "math-aplicada-elmo": "elmo",
+    "physics-fundamentos-lamina": "lamina",
+    "physics-fundamentos-manto": "manto",
+    "physics-fundamentos-elmo": "elmo",
+    "physics-mecanica-lamina": "bastao",
+    "physics-mecanica-manto": "casaca",
+    "physics-mecanica-elmo": "capuz",
+    "physics-fluidos-lamina": "malho",
+    "physics-fluidos-manto": "colete",
+    "physics-fluidos-elmo": "coroa",
+    "physics-eletronica-lamina": "lamina",
+    "physics-eletronica-manto": "casaca",
+    "physics-eletronica-elmo": "capuz",
+    "physics-relatividade-lamina": "bastao",
+    "physics-relatividade-manto": "colete",
+    "physics-relatividade-elmo": "coroa",
+    "physics-quantica-lamina": "malho",
+    "physics-quantica-manto": "avental",
+    "physics-quantica-elmo": "mascara",
+    "physics-atomica-lamina": "lamina",
+    "physics-atomica-manto": "capa",
+    "physics-atomica-elmo": "turbante",
+    "physics-nuclear-lamina": "bastao",
+    "physics-nuclear-manto": "manto",
+    "physics-nuclear-elmo": "elmo",
+    "physics-condensada-lamina": "malho",
+    "physics-condensada-manto": "casaca",
+    "physics-condensada-elmo": "capuz",
+    "physics-plasma-lamina": "lamina",
+    "physics-plasma-manto": "colete",
+    "physics-plasma-elmo": "coroa",
+    "physics-astro-lamina": "bastao",
+    "physics-astro-manto": "avental",
+    "physics-astro-elmo": "mascara",
+    "physics-outras-lamina": "malho",
+    "physics-outras-manto": "capa",
+    "physics-outras-elmo": "turbante",
+    "chem-fundamentos-lamina": "lamina",
+    "chem-fundamentos-manto": "manto",
+    "chem-fundamentos-elmo": "elmo",
+    "chem-geral-lamina": "bastao",
+    "chem-geral-manto": "casaca",
+    "chem-geral-elmo": "capuz",
+    "chem-inorganica-lamina": "malho",
+    "chem-inorganica-manto": "colete",
+    "chem-inorganica-elmo": "coroa",
+    "chem-fisica-lamina": "bastao",
+    "chem-fisica-manto": "capa",
+    "chem-fisica-elmo": "turbante",
+    "chem-bioquimica-lamina": "lamina",
+    "chem-bioquimica-manto": "casaca",
+    "chem-bioquimica-elmo": "capuz",
+    "chem-polimeros-lamina": "bastao",
+    "chem-polimeros-manto": "colete",
+    "chem-polimeros-elmo": "coroa",
+    "chem-materiais-lamina": "malho",
+    "chem-materiais-manto": "avental",
+    "chem-materiais-elmo": "mascara",
+    "chem-ambiental-lamina": "lamina",
+    "chem-ambiental-manto": "capa",
+    "chem-ambiental-elmo": "turbante",
+    "chem-industrial-lamina": "bastao",
+    "chem-industrial-manto": "manto",
+    "chem-industrial-elmo": "elmo",
+    "chem-computacional-lamina": "malho",
+    "chem-computacional-manto": "casaca",
+    "chem-computacional-elmo": "capuz",
+    "chem-outras-lamina": "lamina",
+    "chem-outras-manto": "colete",
+    "chem-outras-elmo": "coroa",
+    "cs-fundamentos-lamina": "lamina",
+    "cs-fundamentos-manto": "manto",
+    "cs-fundamentos-elmo": "elmo",
+    "cs-algoritmos-lamina": "bastao",
+    "cs-algoritmos-manto": "casaca",
+    "cs-algoritmos-elmo": "capuz",
+    "cs-teorica-lamina": "malho",
+    "cs-teorica-manto": "colete",
+    "cs-teorica-elmo": "coroa",
+    "cs-linguagens-lamina": "lamina",
+    "cs-linguagens-manto": "avental",
+    "cs-linguagens-elmo": "mascara",
+    "cs-engenharia-lamina": "bastao",
+    "cs-engenharia-manto": "capa",
+    "cs-engenharia-elmo": "turbante",
+    "cs-sistemas-lamina": "malho",
+    "cs-sistemas-manto": "manto",
+    "cs-sistemas-elmo": "elmo",
+    "cs-distribuida-lamina": "malho",
+    "cs-distribuida-manto": "avental",
+    "cs-distribuida-elmo": "mascara",
+    "cs-dados-lamina": "lamina",
+    "cs-dados-manto": "capa",
+    "cs-dados-elmo": "turbante",
+    "cs-ia-lamina": "bastao",
+    "cs-ia-manto": "manto",
+    "cs-ia-elmo": "elmo",
+    "cs-devops-lamina": "lamina",
+    "cs-devops-manto": "colete",
+    "cs-devops-elmo": "coroa",
+    "cs-interfaces-lamina": "bastao",
+    "cs-interfaces-manto": "avental",
+    "cs-interfaces-elmo": "mascara",
+    "cs-hardware-lamina": "malho",
+    "cs-hardware-manto": "capa",
+    "cs-hardware-elmo": "turbante",
+    "cs-dataciencia-lamina": "lamina",
+    "cs-dataciencia-manto": "manto",
+    "cs-dataciencia-elmo": "elmo",
+    "cs-emergente-lamina": "bastao",
+    "cs-emergente-manto": "casaca",
+    "cs-emergente-elmo": "capuz",
+    "lingua-gramatica-lamina": "lamina",
+    "lingua-gramatica-manto": "manto",
+    "lingua-gramatica-elmo": "elmo",
+    "lingua-pragmatica-lamina": "malho",
+    "lingua-pragmatica-manto": "colete",
+    "lingua-pragmatica-elmo": "coroa",
+    "lingua-linguistica-lamina": "lamina",
+    "lingua-linguistica-manto": "avental",
+    "lingua-linguistica-elmo": "mascara",
+    "lingua-discurso-lamina": "bastao",
+    "lingua-discurso-manto": "capa",
+    "lingua-discurso-elmo": "turbante",
+    "lingua-leitura-lamina": "malho",
+    "lingua-leitura-manto": "manto",
+    "lingua-leitura-elmo": "elmo",
+    "lingua-redacao-lamina": "lamina",
+    "lingua-redacao-manto": "casaca",
+    "lingua-redacao-elmo": "capuz",
+    "lingua-argumentacao-lamina": "bastao",
+    "lingua-argumentacao-manto": "colete",
+    "lingua-argumentacao-elmo": "coroa",
+    "lingua-generos-lamina": "malho",
+    "lingua-generos-manto": "avental",
+    "lingua-generos-elmo": "mascara",
+    "lingua-oralidade-lamina": "lamina",
+    "lingua-oralidade-manto": "capa",
+    "lingua-oralidade-elmo": "turbante",
+    "lingua-historia-lamina": "malho",
+    "lingua-historia-manto": "casaca",
+    "lingua-historia-elmo": "capuz",
+    "lingua-lexico-lamina": "lamina",
+    "lingua-lexico-manto": "colete",
+    "lingua-lexico-elmo": "coroa",
+    "lingua-semitica-lamina": "bastao",
+    "lingua-semitica-manto": "avental",
+    "lingua-semitica-elmo": "mascara",
+    "lingua-traducao-lamina": "malho",
+    "lingua-traducao-manto": "capa",
+    "lingua-traducao-elmo": "turbante",
+    "inter-math-physics-lamina": "lamina",
+    "inter-math-physics-manto": "manto",
+    "inter-math-physics-elmo": "elmo",
+    "inter-math-chem-lamina": "bastao",
+    "inter-math-chem-manto": "casaca",
+    "inter-math-chem-elmo": "capuz",
+    "inter-math-cs-lamina": "malho",
+    "inter-math-cs-manto": "colete",
+    "inter-math-cs-elmo": "coroa",
+    "inter-math-lingua-lamina": "lamina",
+    "inter-math-lingua-manto": "avental",
+    "inter-math-lingua-elmo": "mascara",
+    "inter-physics-chem-lamina": "bastao",
+    "inter-physics-chem-manto": "capa",
+    "inter-physics-chem-elmo": "turbante",
+    "inter-physics-cs-lamina": "malho",
+    "inter-physics-cs-manto": "manto",
+    "inter-physics-cs-elmo": "elmo",
+    "inter-physics-lingua-lamina": "lamina",
+    "inter-physics-lingua-manto": "casaca",
+    "inter-physics-lingua-elmo": "capuz",
+    "inter-chem-cs-lamina": "bastao",
+    "inter-chem-cs-manto": "colete",
+    "inter-chem-cs-elmo": "coroa",
+    "inter-chem-lingua-lamina": "malho",
+    "inter-chem-lingua-manto": "avental",
+    "inter-chem-lingua-elmo": "mascara",
+    "inter-cs-lingua-lamina": "lamina",
+    "inter-cs-lingua-manto": "capa",
+    "inter-cs-lingua-elmo": "turbante",
+    "inter-todas-lamina": "bastao",
+    "inter-todas-manto": "manto",
+    "inter-todas-elmo": "elmo",
+    "physics-em-lamina": "bastao",
+    "physics-em-manto": "capa",
+    "physics-em-elmo": "turbante",
+    "cs-arch-lamina": "lamina",
+    "cs-arch-manto": "casaca",
+    "cs-arch-elmo": "capuz",
+    "math-analysis-lamina": "malho",
+    "math-analysis-manto": "manto",
+    "math-analysis-elmo": "elmo",
+    "chem-organic-lamina": "lamina",
+    "chem-organic-manto": "avental",
+    "chem-organic-elmo": "mascara",
+    "music-acoustics-lamina": "lamina",
+    "music-acoustics-manto": "manto",
+    "music-acoustics-elmo": "elmo",
+    "ai-vision-lamina": "lamina",
+    "ai-vision-manto": "manto",
+    "ai-vision-elmo": "elmo",
+    "lingua-literature-lamina": "bastao",
+    "lingua-literature-manto": "manto",
+    "lingua-literature-elmo": "elmo",
+    "cs-net-lamina": "bastao",
+    "cs-net-manto": "colete",
+    "cs-net-elmo": "coroa",
+    "physics-thermo-lamina": "lamina",
+    "physics-thermo-manto": "avental",
+    "physics-thermo-elmo": "mascara",
+    "chem-analytical-lamina": "malho",
+    "chem-analytical-manto": "manto",
+    "chem-analytical-elmo": "elmo",
+    "music-form-lamina": "bastao",
+    "music-form-manto": "casaca",
+    "music-form-elmo": "capuz",
+    "math-prob-lamina": "malho",
+    "math-prob-manto": "avental",
+    "math-prob-elmo": "mascara",
+    "ai-language-lamina": "bastao",
+    "ai-language-manto": "casaca",
+    "ai-language-elmo": "capuz",
+    "lingua-semantics-lamina": "bastao",
+    "lingua-semantics-manto": "casaca",
+    "lingua-semantics-elmo": "capuz",
+    "physics-optics-lamina": "malho",
+    "physics-optics-manto": "manto",
+    "physics-optics-elmo": "elmo",
+    "cs-security-lamina": "malho",
+    "cs-security-manto": "casaca",
+    "cs-security-elmo": "capuz",
+    "math-fundamentos-reliquia": "runa",
+    "math-aritmetica-reliquia": "runa",
+    "math-algebra-reliquia": "runa",
+    "math-geometria-reliquia": "runa",
+    "math-topologia-reliquia": "runa",
+    "math-edo-reliquia": "runa",
+    "math-discreta-reliquia": "runa",
+    "math-otimizacao-reliquia": "runa",
+    "math-aplicada-reliquia": "runa",
+    "physics-fundamentos-reliquia": "tech",
+    "physics-mecanica-reliquia": "tech",
+    "physics-fluidos-reliquia": "tech",
+    "physics-eletronica-reliquia": "tech",
+    "physics-relatividade-reliquia": "tech",
+    "physics-quantica-reliquia": "tech",
+    "physics-atomica-reliquia": "tech",
+    "physics-nuclear-reliquia": "tech",
+    "physics-condensada-reliquia": "tech",
+    "physics-plasma-reliquia": "tech",
+    "physics-astro-reliquia": "tech",
+    "physics-outras-reliquia": "tech",
+    "chem-fundamentos-reliquia": "ferramenta",
+    "chem-geral-reliquia": "ferramenta",
+    "chem-inorganica-reliquia": "ferramenta",
+    "chem-fisica-reliquia": "ferramenta",
+    "chem-bioquimica-reliquia": "ferramenta",
+    "chem-polimeros-reliquia": "ferramenta",
+    "chem-materiais-reliquia": "ferramenta",
+    "chem-ambiental-reliquia": "ferramenta",
+    "chem-industrial-reliquia": "ferramenta",
+    "chem-computacional-reliquia": "ferramenta",
+    "chem-outras-reliquia": "ferramenta",
+    "cs-fundamentos-reliquia": "ferramenta",
+    "cs-algoritmos-reliquia": "ferramenta",
+    "cs-teorica-reliquia": "ferramenta",
+    "cs-linguagens-reliquia": "ferramenta",
+    "cs-engenharia-reliquia": "ferramenta",
+    "cs-sistemas-reliquia": "ferramenta",
+    "cs-distribuida-reliquia": "ferramenta",
+    "cs-dados-reliquia": "ferramenta",
+    "cs-ia-reliquia": "ferramenta",
+    "cs-devops-reliquia": "ferramenta",
+    "cs-interfaces-reliquia": "ferramenta",
+    "cs-hardware-reliquia": "ferramenta",
+    "cs-dataciencia-reliquia": "ferramenta",
+    "cs-emergente-reliquia": "ferramenta",
+    "lingua-gramatica-reliquia": "ferramenta",
+    "lingua-pragmatica-reliquia": "ferramenta",
+    "lingua-linguistica-reliquia": "ferramenta",
+    "lingua-discurso-reliquia": "ferramenta",
+    "lingua-leitura-reliquia": "ferramenta",
+    "lingua-redacao-reliquia": "ferramenta",
+    "lingua-argumentacao-reliquia": "ferramenta",
+    "lingua-generos-reliquia": "ferramenta",
+    "lingua-oralidade-reliquia": "ferramenta",
+    "lingua-historia-reliquia": "ferramenta",
+    "lingua-lexico-reliquia": "ferramenta",
+    "lingua-semitica-reliquia": "ferramenta",
+    "lingua-traducao-reliquia": "ferramenta",
+    "inter-math-physics-reliquia": "ferramenta",
+    "inter-math-chem-reliquia": "ferramenta",
+    "inter-math-cs-reliquia": "ferramenta",
+    "inter-math-lingua-reliquia": "ferramenta",
+    "inter-physics-chem-reliquia": "ferramenta",
+    "inter-physics-cs-reliquia": "ferramenta",
+    "inter-physics-lingua-reliquia": "ferramenta",
+    "inter-chem-cs-reliquia": "ferramenta",
+    "inter-chem-lingua-reliquia": "ferramenta",
+    "inter-cs-lingua-reliquia": "ferramenta",
+    "inter-todas-reliquia": "ferramenta",
+    "physics-em-reliquia": "tech",
+    "cs-arch-reliquia": "ferramenta",
+    "math-analysis-reliquia": "runa",
+    "chem-organic-reliquia": "ferramenta",
+    "music-acoustics-reliquia": "ferramenta",
+    "ai-vision-reliquia": "ferramenta",
+    "lingua-literature-reliquia": "ferramenta",
+    "cs-net-reliquia": "ferramenta",
+    "physics-thermo-reliquia": "tech",
+    "chem-analytical-reliquia": "ferramenta",
+    "music-form-reliquia": "ferramenta",
+    "math-prob-reliquia": "runa",
+    "ai-language-reliquia": "ferramenta",
+    "lingua-semantics-reliquia": "ferramenta",
+    "physics-optics-reliquia": "tech",
+    "cs-security-reliquia": "ferramenta"
+  },
+  "concepts": {
+    "antenna": "metal",
+    "bell": "metal",
+    "bench": "wood",
+    "book": "paper",
+    "bubble": "glass",
+    "coil": "metal",
+    "compass": "metal",
+    "crane": "metal",
+    "crate": "wood",
+    "crystal": "glass",
+    "die": "stone",
+    "flask": "glass",
+    "gauge": "metal",
+    "gull": "feather",
+    "lamp": "metal",
+    "lens": "glass",
+    "lock": "metal",
+    "mask": "cloth",
+    "mast": "wood",
+    "metronome": "wood",
+    "molecule": "glass",
+    "mushroom": "organic",
+    "node": "metal",
+    "note": "metal",
+    "orb": "glass",
+    "petal": "organic",
+    "pillar": "stone",
+    "quill": "feather",
+    "rack": "wood",
+    "shard": "glass",
+    "sign": "wood",
+    "speaker": "metal",
+    "star": "metal",
+    "synapse": "glass",
+    "terminal": "metal",
+    "wave": "glass"
+  },
+  "fixtures": {
+    "drawChest": "wood",
+    "drawStairs": "stone",
+    "drawTorch": "fire",
+    "drawAltar": "stone",
+    "drawElevador": "metal",
+    "drawMesa": "paper",
+    "drawForge": "fire",
+    "drawOficina": "metal",
+    "drawBiblioteca": "paper",
+    "drawObservatorio": "glass",
+    "drawBilhete": "paper",
+    "drawIsca": "organic",
+    "drawWaystone": "rune",
+    "drawPortal": "rune",
+    "drawTunnel": "stone",
+    "drawKeeper": "cloth",
+    "drawPlot": "organic",
+    "drawVein": "crystal",
+    "drawEnchanter": "rune"
+  },
+  "caveFamilies": [
+    "ruina",
+    "mina",
+    "fenda",
+    "toca",
+    "morro"
+  ],
+  "baseTerrain": {
+    "GRASS": 0,
+    "PATH": 1,
+    "STONE": 2,
+    "WATER": 3,
+    "TREE": 4,
+    "WALL": 5,
+    "FLOWER": 6,
+    "SAND": 7,
+    "CIRCUIT": 10,
+    "DATA": 11,
+    "GOLD": 12,
+    "MARBLE": 13,
+    "BASALT": 14,
+    "MAGMA": 15,
+    "MOSS": 16,
+    "ACID": 17,
+    "BRIDGE": 18,
+    "PLAZA": 19,
+    "SONIC": 20,
+    "SCORE": 21,
+    "NEURAL": 22,
+    "SYNAPSE": 23
+  },
+  "terrain": {
+    "40": {
+      "pattern": "waves",
+      "color": "#15141f",
+      "accent": "#7166d6"
+    },
+    "41": {
+      "pattern": "waves",
+      "color": "#1c1a2e",
+      "accent": "#7166d6"
+    },
+    "42": {
+      "pattern": "waves",
+      "color": "#1c1929",
+      "accent": "#7d6ad7"
+    },
+    "43": {
+      "pattern": "waves",
+      "color": "#231e39",
+      "accent": "#7d6ad7"
+    },
+    "44": {
+      "pattern": "dots",
+      "color": "#231d34",
+      "accent": "#886ed8"
+    },
+    "45": {
+      "pattern": "dots",
+      "color": "#2a2244",
+      "accent": "#886ed8"
+    },
+    "46": {
+      "pattern": "cracks",
+      "color": "#2d263b",
+      "accent": "#8a66d6"
+    },
+    "47": {
+      "pattern": "cracks",
+      "color": "#352a4b",
+      "accent": "#8a66d6"
+    },
+    "48": {
+      "pattern": "waves",
+      "color": "#181320",
+      "accent": "#956ad7"
+    },
+    "49": {
+      "pattern": "waves",
+      "color": "#21192f",
+      "accent": "#956ad7"
+    },
+    "50": {
+      "pattern": "dunes",
+      "color": "#2a2032",
+      "accent": "#a366d6"
+    },
+    "51": {
+      "pattern": "dunes",
+      "color": "#342541",
+      "accent": "#a366d6"
+    },
+    "52": {
+      "pattern": "dots",
+      "color": "#33243d",
+      "accent": "#ad6ad7"
+    },
+    "53": {
+      "pattern": "dots",
+      "color": "#3f284d",
+      "accent": "#ad6ad7"
+    },
+    "54": {
+      "pattern": "grid",
+      "color": "#251a28",
+      "accent": "#bb66d6"
+    },
+    "55": {
+      "pattern": "grid",
+      "color": "#321f37",
+      "accent": "#bb66d6"
+    },
+    "56": {
+      "pattern": "grid",
+      "color": "#301f33",
+      "accent": "#c56ad7"
+    },
+    "57": {
+      "pattern": "grid",
+      "color": "#3e2343",
+      "accent": "#c56ad7"
+    },
+    "58": {
+      "pattern": "bricks",
+      "color": "#1f141c",
+      "accent": "#d666b5"
+    },
+    "59": {
+      "pattern": "bricks",
+      "color": "#2e1a28",
+      "accent": "#d666b5"
+    },
+    "60": {
+      "pattern": "runes",
+      "color": "#291924",
+      "accent": "#d76ab1"
+    },
+    "61": {
+      "pattern": "runes",
+      "color": "#391e2f",
+      "accent": "#d76ab1"
+    },
+    "62": {
+      "pattern": "bricks",
+      "color": "#341d2b",
+      "accent": "#d86ead"
+    },
+    "63": {
+      "pattern": "bricks",
+      "color": "#442236",
+      "accent": "#d86ead"
+    },
+    "64": {
+      "pattern": "grid",
+      "color": "#322027",
+      "accent": "#d66691"
+    },
+    "65": {
+      "pattern": "grid",
+      "color": "#412530",
+      "accent": "#d66691"
+    },
+    "66": {
+      "pattern": "cracks",
+      "color": "#3d242c",
+      "accent": "#d76a8e"
+    },
+    "67": {
+      "pattern": "cracks",
+      "color": "#4d2835",
+      "accent": "#d76a8e"
+    },
+    "68": {
+      "pattern": "bricks",
+      "color": "#211216",
+      "accent": "#d86e8c"
+    },
+    "69": {
+      "pattern": "bricks",
+      "color": "#30181e",
+      "accent": "#d86e8c"
+    },
+    "70": {
+      "pattern": "cracks",
+      "color": "#281a1d",
+      "accent": "#d66680"
+    },
+    "71": {
+      "pattern": "cracks",
+      "color": "#371f25",
+      "accent": "#d66680"
+    },
+    "72": {
+      "pattern": "runes",
+      "color": "#331f22",
+      "accent": "#d76a7d"
+    },
+    "73": {
+      "pattern": "runes",
+      "color": "#432329",
+      "accent": "#d76a7d"
+    },
+    "74": {
+      "pattern": "dots",
+      "color": "#3e2326",
+      "accent": "#d86e7b"
+    },
+    "75": {
+      "pattern": "dots",
+      "color": "#4f272c",
+      "accent": "#d86e7b"
+    },
+    "76": {
+      "pattern": "runes",
+      "color": "#1f1415",
+      "accent": "#d6666e"
+    },
+    "77": {
+      "pattern": "runes",
+      "color": "#2e1a1b",
+      "accent": "#d6666e"
+    },
+    "78": {
+      "pattern": "grid",
+      "color": "#291919",
+      "accent": "#d76a6c"
+    },
+    "79": {
+      "pattern": "grid",
+      "color": "#391e1e",
+      "accent": "#d76a6c"
+    },
+    "80": {
+      "pattern": "grid",
+      "color": "#341e1d",
+      "accent": "#d8726e"
+    },
+    "81": {
+      "pattern": "grid",
+      "color": "#442322",
+      "accent": "#d8726e"
+    },
+    "82": {
+      "pattern": "stars",
+      "color": "#171f14",
+      "accent": "#80d666"
+    },
+    "83": {
+      "pattern": "stars",
+      "color": "#1e2e1a",
+      "accent": "#80d666"
+    },
+    "84": {
+      "pattern": "bricks",
+      "color": "#1c2919",
+      "accent": "#7dd76a"
+    },
+    "85": {
+      "pattern": "bricks",
+      "color": "#23391e",
+      "accent": "#7dd76a"
+    },
+    "86": {
+      "pattern": "waves",
+      "color": "#20341d",
+      "accent": "#7ad86e"
+    },
+    "87": {
+      "pattern": "waves",
+      "color": "#264422",
+      "accent": "#7ad86e"
+    },
+    "88": {
+      "pattern": "dunes",
+      "color": "#132013",
+      "accent": "#6ad76b"
+    },
+    "89": {
+      "pattern": "dunes",
+      "color": "#192f19",
+      "accent": "#6ad76b"
+    },
+    "90": {
+      "pattern": "cracks",
+      "color": "#203222",
+      "accent": "#66d675"
+    },
+    "91": {
+      "pattern": "cracks",
+      "color": "#254129",
+      "accent": "#66d675"
+    },
+    "92": {
+      "pattern": "cracks",
+      "color": "#243d29",
+      "accent": "#6ad77f"
+    },
+    "93": {
+      "pattern": "cracks",
+      "color": "#284d30",
+      "accent": "#6ad77f"
+    },
+    "94": {
+      "pattern": "dunes",
+      "color": "#122116",
+      "accent": "#6ed889"
+    },
+    "95": {
+      "pattern": "dunes",
+      "color": "#18301e",
+      "accent": "#6ed889"
+    },
+    "96": {
+      "pattern": "grid",
+      "color": "#1a281e",
+      "accent": "#66d689"
+    },
+    "97": {
+      "pattern": "grid",
+      "color": "#1f3727",
+      "accent": "#66d689"
+    },
+    "98": {
+      "pattern": "dunes",
+      "color": "#1f3326",
+      "accent": "#6ad793"
+    },
+    "99": {
+      "pattern": "dunes",
+      "color": "#23432f",
+      "accent": "#6ad793"
+    },
+    "100": {
+      "pattern": "bricks",
+      "color": "#233e2f",
+      "accent": "#6ed89d"
+    },
+    "101": {
+      "pattern": "bricks",
+      "color": "#274f38",
+      "accent": "#6ed89d"
+    },
+    "102": {
+      "pattern": "grid",
+      "color": "#141f1a",
+      "accent": "#66d69e"
+    },
+    "103": {
+      "pattern": "grid",
+      "color": "#1a2e24",
+      "accent": "#66d69e"
+    },
+    "104": {
+      "pattern": "dunes",
+      "color": "#141f1d",
+      "accent": "#66d6c4"
+    },
+    "105": {
+      "pattern": "dunes",
+      "color": "#1a2e2a",
+      "accent": "#66d6c4"
+    },
+    "106": {
+      "pattern": "waves",
+      "color": "#192927",
+      "accent": "#6ad7ca"
+    },
+    "107": {
+      "pattern": "waves",
+      "color": "#1e3936",
+      "accent": "#6ad7ca"
+    },
+    "108": {
+      "pattern": "grid",
+      "color": "#1d3433",
+      "accent": "#6ed8d0"
+    },
+    "109": {
+      "pattern": "grid",
+      "color": "#224442",
+      "accent": "#6ed8d0"
+    },
+    "110": {
+      "pattern": "dunes",
+      "color": "#263b3a",
+      "accent": "#66d6d3"
+    },
+    "111": {
+      "pattern": "dunes",
+      "color": "#2a4b4a",
+      "accent": "#66d6d3"
+    },
+    "112": {
+      "pattern": "dunes",
+      "color": "#132020",
+      "accent": "#6ad6d7"
+    },
+    "113": {
+      "pattern": "dunes",
+      "color": "#192e2f",
+      "accent": "#6ad6d7"
+    },
+    "114": {
+      "pattern": "cracks",
+      "color": "#18292a",
+      "accent": "#6ed2d8"
+    },
+    "115": {
+      "pattern": "cracks",
+      "color": "#1d383a",
+      "accent": "#6ed2d8"
+    },
+    "116": {
+      "pattern": "dunes",
+      "color": "#121e21",
+      "accent": "#6ec3d8"
+    },
+    "117": {
+      "pattern": "dunes",
+      "color": "#182b30",
+      "accent": "#6ec3d8"
+    },
+    "118": {
+      "pattern": "waves",
+      "color": "#1a2528",
+      "accent": "#66bbd6"
+    },
+    "119": {
+      "pattern": "waves",
+      "color": "#1f3237",
+      "accent": "#66bbd6"
+    },
+    "120": {
+      "pattern": "waves",
+      "color": "#1f2d33",
+      "accent": "#6ab7d7"
+    },
+    "121": {
+      "pattern": "waves",
+      "color": "#233a43",
+      "accent": "#6ab7d7"
+    },
+    "122": {
+      "pattern": "runes",
+      "color": "#141b1f",
+      "accent": "#66abd6"
+    },
+    "123": {
+      "pattern": "runes",
+      "color": "#1a262e",
+      "accent": "#66abd6"
+    },
+    "124": {
+      "pattern": "runes",
+      "color": "#192229",
+      "accent": "#6aa8d7"
+    },
+    "125": {
+      "pattern": "runes",
+      "color": "#1e2d39",
+      "accent": "#6aa8d7"
+    },
+    "126": {
+      "pattern": "cracks",
+      "color": "#1d2934",
+      "accent": "#6ea6d8"
+    },
+    "127": {
+      "pattern": "cracks",
+      "color": "#223444",
+      "accent": "#6ea6d8"
+    },
+    "128": {
+      "pattern": "bricks",
+      "color": "#26303b",
+      "accent": "#669cd6"
+    },
+    "129": {
+      "pattern": "bricks",
+      "color": "#2a3a4b",
+      "accent": "#669cd6"
+    },
+    "130": {
+      "pattern": "dots",
+      "color": "#131920",
+      "accent": "#6a99d7"
+    },
+    "131": {
+      "pattern": "dots",
+      "color": "#19222f",
+      "accent": "#6a99d7"
+    },
+    "132": {
+      "pattern": "runes",
+      "color": "#1f1814",
+      "accent": "#d69366"
+    },
+    "133": {
+      "pattern": "runes",
+      "color": "#2e221a",
+      "accent": "#d69366"
+    },
+    "134": {
+      "pattern": "bricks",
+      "color": "#34291d",
+      "accent": "#d8a46e"
+    },
+    "135": {
+      "pattern": "bricks",
+      "color": "#443322",
+      "accent": "#d8a46e"
+    },
+    "136": {
+      "pattern": "grid",
+      "color": "#3b3226",
+      "accent": "#d6a566"
+    },
+    "137": {
+      "pattern": "grid",
+      "color": "#4b3d2a",
+      "accent": "#d6a566"
+    },
+    "138": {
+      "pattern": "waves",
+      "color": "#201b13",
+      "accent": "#d7ad6a"
+    },
+    "139": {
+      "pattern": "waves",
+      "color": "#2f2619",
+      "accent": "#d7ad6a"
+    },
+    "140": {
+      "pattern": "bricks",
+      "color": "#2a2418",
+      "accent": "#d8b46e"
+    },
+    "141": {
+      "pattern": "bricks",
+      "color": "#3a301d",
+      "accent": "#d8b46e"
+    },
+    "142": {
+      "pattern": "runes",
+      "color": "#322d20",
+      "accent": "#d6b666"
+    },
+    "143": {
+      "pattern": "runes",
+      "color": "#413925",
+      "accent": "#d6b666"
+    },
+    "144": {
+      "pattern": "dots",
+      "color": "#3d3724",
+      "accent": "#d7be6a"
+    },
+    "145": {
+      "pattern": "dots",
+      "color": "#4d4428",
+      "accent": "#d7be6a"
+    },
+    "146": {
+      "pattern": "grid",
+      "color": "#211e12",
+      "accent": "#d8c56e"
+    },
+    "147": {
+      "pattern": "grid",
+      "color": "#302b18",
+      "accent": "#d8c56e"
+    },
+    "148": {
+      "pattern": "dunes",
+      "color": "#28271a",
+      "accent": "#d6c866"
+    },
+    "149": {
+      "pattern": "dunes",
+      "color": "#37341f",
+      "accent": "#d6c866"
+    },
+    "150": {
+      "pattern": "cracks",
+      "color": "#3e3d23",
+      "accent": "#d8d66e"
+    },
+    "151": {
+      "pattern": "cracks",
+      "color": "#4f4e27",
+      "accent": "#d8d66e"
+    },
+    "152": {
+      "pattern": "dots",
+      "color": "#1f1f14",
+      "accent": "#d3d666"
+    },
+    "153": {
+      "pattern": "dots",
+      "color": "#2d2e1a",
+      "accent": "#d3d666"
+    },
+    "154": {
+      "pattern": "dots",
+      "color": "#282919",
+      "accent": "#cfd76a"
+    },
+    "155": {
+      "pattern": "dots",
+      "color": "#37391e",
+      "accent": "#cfd76a"
+    },
+    "156": {
+      "pattern": "runes",
+      "color": "#31341d",
+      "accent": "#cad86e"
+    },
+    "157": {
+      "pattern": "runes",
+      "color": "#404422",
+      "accent": "#cad86e"
+    },
+    "158": {
+      "pattern": "waves",
+      "color": "#232717",
+      "accent": "#c0d666"
+    },
+    "159": {
+      "pattern": "waves",
+      "color": "#31361c",
+      "accent": "#c0d666"
+    },
+    "160": {
+      "pattern": "stars",
+      "color": "#2b311b",
+      "accent": "#bad76a"
+    },
+    "161": {
+      "pattern": "stars",
+      "color": "#38411f",
+      "accent": "#bad76a"
+    },
+    "162": {
+      "pattern": "stars",
+      "color": "#333d1f",
+      "accent": "#b5d86e"
+    },
+    "163": {
+      "pattern": "stars",
+      "color": "#3f4d23",
+      "accent": "#b5d86e"
+    },
+    "164": {
+      "pattern": "dunes",
+      "color": "#384328",
+      "accent": "#a9d666"
+    },
+    "165": {
+      "pattern": "dunes",
+      "color": "#44542b",
+      "accent": "#a9d666"
+    },
+    "166": {
+      "pattern": "grid",
+      "color": "#1f2716",
+      "accent": "#a4d76a"
+    },
+    "167": {
+      "pattern": "grid",
+      "color": "#2a371b",
+      "accent": "#a4d76a"
+    },
+    "168": {
+      "pattern": "runes",
+      "color": "#25321a",
+      "accent": "#a0d86e"
+    },
+    "169": {
+      "pattern": "runes",
+      "color": "#2f431e",
+      "accent": "#a0d86e"
+    },
+    "170": {
+      "pattern": "cracks",
+      "color": "#2c3a22",
+      "accent": "#93d666"
+    },
+    "171": {
+      "pattern": "cracks",
+      "color": "#354a26",
+      "accent": "#93d666"
+    },
+    "172": {
+      "pattern": "grid",
+      "color": "#304526",
+      "accent": "#8ed76a"
+    },
+    "173": {
+      "pattern": "grid",
+      "color": "#385629",
+      "accent": "#8ed76a"
+    },
+    "174": {
+      "pattern": "waves",
+      "color": "#1a2815",
+      "accent": "#8ad86e"
+    },
+    "175": {
+      "pattern": "waves",
+      "color": "#223819",
+      "accent": "#8ad86e"
+    },
+    "176": {
+      "pattern": "cracks",
+      "color": "#20301c",
+      "accent": "#7cd666"
+    },
+    "177": {
+      "pattern": "cracks",
+      "color": "#274021",
+      "accent": "#7cd666"
+    },
+    "178": {
+      "pattern": "grid",
+      "color": "#243b21",
+      "accent": "#79d76a"
+    },
+    "179": {
+      "pattern": "grid",
+      "color": "#2a4c24",
+      "accent": "#79d76a"
+    },
+    "180": {
+      "pattern": "runes",
+      "color": "#201319",
+      "accent": "#d76aa0"
+    },
+    "181": {
+      "pattern": "runes",
+      "color": "#2f1923",
+      "accent": "#d76aa0"
+    },
+    "182": {
+      "pattern": "dots",
+      "color": "#203032",
+      "accent": "#66cad6"
+    },
+    "183": {
+      "pattern": "dots",
+      "color": "#253e41",
+      "accent": "#66cad6"
+    },
+    "184": {
+      "pattern": "grid",
+      "color": "#21182a",
+      "accent": "#a06ed8"
+    },
+    "185": {
+      "pattern": "grid",
+      "color": "#2a1d3a",
+      "accent": "#a06ed8"
+    },
+    "186": {
+      "pattern": "bricks",
+      "color": "#273b26",
+      "accent": "#6cd666"
+    },
+    "187": {
+      "pattern": "bricks",
+      "color": "#2c4b2a",
+      "accent": "#6cd666"
+    },
+    "188": {
+      "pattern": "grid",
+      "color": "#1f1514",
+      "accent": "#d66e66"
+    },
+    "189": {
+      "pattern": "grid",
+      "color": "#2e1b1a",
+      "accent": "#d66e66"
+    },
+    "190": {
+      "pattern": "dunes",
+      "color": "#14151f",
+      "accent": "#6674d6"
+    },
+    "191": {
+      "pattern": "dunes",
+      "color": "#1a1c2e",
+      "accent": "#6674d6"
+    },
+    "192": {
+      "pattern": "bricks",
+      "color": "#33311f",
+      "accent": "#d7cf6a"
+    },
+    "193": {
+      "pattern": "bricks",
+      "color": "#434023",
+      "accent": "#d7cf6a"
+    },
+    "194": {
+      "pattern": "cracks",
+      "color": "#24393d",
+      "accent": "#6ac7d7"
+    },
+    "195": {
+      "pattern": "cracks",
+      "color": "#28474d",
+      "accent": "#6ac7d7"
+    },
+    "196": {
+      "pattern": "grid",
+      "color": "#3b2631",
+      "accent": "#d666a3"
+    },
+    "197": {
+      "pattern": "grid",
+      "color": "#4b2a3c",
+      "accent": "#d666a3"
+    },
+    "198": {
+      "pattern": "waves",
+      "color": "#182a19",
+      "accent": "#6ed876"
+    },
+    "199": {
+      "pattern": "waves",
+      "color": "#1d3a1f",
+      "accent": "#6ed876"
+    },
+    "200": {
+      "pattern": "waves",
+      "color": "#291d19",
+      "accent": "#d7866a"
+    },
+    "201": {
+      "pattern": "waves",
+      "color": "#39251e",
+      "accent": "#d7866a"
+    },
+    "202": {
+      "pattern": "stars",
+      "color": "#1c1221",
+      "accent": "#b76ed8"
+    },
+    "203": {
+      "pattern": "stars",
+      "color": "#281830",
+      "accent": "#b76ed8"
+    },
+    "204": {
+      "pattern": "stars",
+      "color": "#1a1929",
+      "accent": "#706ad7"
+    },
+    "205": {
+      "pattern": "stars",
+      "color": "#1f1e39",
+      "accent": "#706ad7"
+    },
+    "206": {
+      "pattern": "cracks",
+      "color": "#292019",
+      "accent": "#d79b6a"
+    },
+    "207": {
+      "pattern": "cracks",
+      "color": "#392a1e",
+      "accent": "#d79b6a"
+    },
+    "208": {
+      "pattern": "cracks",
+      "color": "#2a1820",
+      "accent": "#d86e9d"
+    },
+    "209": {
+      "pattern": "cracks",
+      "color": "#3a1d2a",
+      "accent": "#d86e9d"
+    },
+    "210": {
+      "pattern": "bricks",
+      "color": "#23353e",
+      "accent": "#6eb5d8"
+    },
+    "211": {
+      "pattern": "bricks",
+      "color": "#27414f",
+      "accent": "#6eb5d8"
+    }
+  },
+  "atmosphericElements": [
+    "po-giz",
+    "forma",
+    "pendulo",
+    "orbe",
+    "bolha",
+    "fumaca",
+    "faisca",
+    "luzes",
+    "folha",
+    "letra",
+    "nota",
+    "onda",
+    "pulso",
+    "no",
+    "risco",
+    "pagina",
+    "gota",
+    "verdete",
+    "reflexo",
+    "poeira",
+    "fiapo",
+    "folha-escura"
+  ],
+  "worldLandmarks": [
+    "totem/monolito",
+    "totem/cairn",
+    "totem/portico",
+    "totem/obelisco",
+    "totem/bracos",
+    "totem/anel",
+    "fonte",
+    "radio",
+    "farol",
+    "estandarte",
+    "soleira"
+  ],
+  "presentation": [
+    "src/ui/title.js",
+    "assets/favicon.svg",
+    "assets/og.png"
+  ]
+}

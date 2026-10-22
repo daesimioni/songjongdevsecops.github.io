@@ -123,3 +123,15 @@ assert.equal(rpg.unequip(escolhidos[2][1].slot).ok, true, "não conseguiu tirar 
 assert.equal(rpg.equipmentBonus().conjunto, false, "duas peças não podem manter o conjunto");
 
 console.log("ok equipamento sai da mão, cobre o braço, acompanha o passo, veste capa e fecha conjunto");
+
+// Oito famílias do slot de cabeça mantêm silhuetas próprias no equipamento.
+const {drawHeadgear}=await import('../src/rendering/gear-art.js');
+const {familiaDe}=await import('../src/rendering/item-art.js');
+const hats=new Map();
+for(const item of Object.values(ITEMS).filter(i=>i.slot==='helmet')){
+ const family=familiaDe(item);if(hats.has(family))continue;
+ const rects=[];drawHeadgear({fillRect:(...args)=>rects.push(args)},item,0);
+ hats.set(family,JSON.stringify(rects));
+}
+assert.equal(hats.size,8,'catálogo deve cobrir as oito famílias de cabeça');
+assert.equal(new Set(hats.values()).size,8,'trocar capuz, coroa, lente, óculos ou fones não pode só mudar a cor');

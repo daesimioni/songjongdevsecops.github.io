@@ -1,3 +1,4 @@
+import { CREATURE_MODELS } from "../src/rendering/creature-models.js";
 import { QUESTION_INDEX } from "../src/gameplay/question-bank.js";
 const QUESTIONS = Object.fromEntries(QUESTION_INDEX);
 // Conferência do conteúdo: estações x textos, NPCs x missões, itens, receitas,
@@ -219,7 +220,7 @@ check(OUTFITS.length === 102, `trajes: ${OUTFITS.length}, esperado 102`);
 check(OUTFITS.filter((o) => o.continent === "hub").length === 4, "trajes básicos livres mudaram de tamanho");
 
 // cada bicho desenhado tem um jeito de atrapalhar o duelo, e o chefe morre por fase
-const creatureKinds = [...source("../src/rendering/creature.js").matchAll(/kind === "([a-z]+)"/g)].map((m) => m[1]);
+const creatureKinds = Object.keys(CREATURE_MODELS);
 for (const kind of creatureKinds) {
   if (kind === "boss") continue;
   check(!!MONSTER_TRAITS[kind], `espécie ${kind} sem jeito de atrapalhar no duelo`);
@@ -665,10 +666,10 @@ for (const dungeon of DUNGEONS.filter((d) => CATALOG_CONTENT.areas.some((a) => `
 
 // toda forma que o jogo usa precisa de desenho, nome de leitura e fraqueza;
 // o chefe cai no desenho final, então fica de fora dessa cobrança
-const creatureSrc = source("../src/rendering/creature.js");
+
 for (const kind of CREATURE_FORMS) {
   if (kind === "boss") continue;
-  check(creatureSrc.includes(`kind === "${kind}"`), `sem desenho para ${kind}`);
+  check(!!CREATURE_MODELS[kind], `sem desenho para ${kind}`);
   check(!!MONSTER_LABELS[kind], `bestiário sem nome para ${kind}`);
   check(!!MONSTER_WEAKNESS[kind], `bestiário sem fraqueza para ${kind}`);
 }

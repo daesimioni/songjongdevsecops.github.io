@@ -1,11 +1,11 @@
+import { detailConcept } from "./concept-detail.js";
 import { spritePose } from "../sprite-cache.js";
 import { artTick } from "../art-style.js";
 import { artTime } from "../art-style.js";
 // Grupo ícones: os enfeites de conceito que já existiam (livro, frasco,
 // terminal, compasso, guindaste, sino, gaivota...). O desenho é o mesmo de
 // antes, agora morando na biblioteca de assets junto dos grupos ambientais.
-// Eles não entram no cache de sprite: são poucos por tela e desenham direto,
-// com o acento e a fase de cada peça.
+// As poses usam o cache compartilhado, com material, acento e fase de cada peça.
 import { TILE } from "../../core/runtime-config.js";
 import { hexA } from "./nucleo.js";
 
@@ -382,10 +382,10 @@ function desenharIconeBase(g, d, time) {
 
 export function desenharIcone(g,d,time=0) {
   if(typeof document==='undefined')return desenharIconeBase(g,d,time);
-  const tick=artTick(time+(d.x||0)*23,120);
+  const tick=artTick(time+(d.x||0)*23,120)%32;
   const key=`concept:${d.type}:${d.accent}:${d.hue}:${tick}`;
   const pose=spritePose(key,112,128,ctx=>{
-    ctx.translate(56,92);desenharIconeBase(ctx,{...d,x:0,y:0},tick*120);
+    ctx.translate(56,92);desenharIconeBase(ctx,{...d,x:0,y:0},tick*120);detailConcept(ctx,d.type);
   },'metal');
   g.save();g.imageSmoothingEnabled=false;g.drawImage(pose,d.x*TILE-56,d.y*TILE-92);g.restore();
 }

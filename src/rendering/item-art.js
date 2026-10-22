@@ -1,3 +1,4 @@
+import { detailItem } from "./item-detail.js";
 import { finishMaterial } from "./art-style.js";
 // Ícones dos itens desenhados em canvas, no mesmo pixel do mapa. A forma vem
 // da PALAVRA do nome (família) e de parâmetros sorteados pelo id: comprimento,
@@ -539,11 +540,12 @@ export function itemIconCanvas(item) {
     ctx.imageSmoothingEnabled = false;
     desenhar(ctx, item || {});
     const family=familiaDe(item);
+    detailItem(ctx,family,semente(chave));
     const material=['manto','casaca','colete','avental','capa','capuz','perneiras'].includes(family)?'cloth'
       : ['bastao','cajado','batuta','livro'].includes(family)?'wood':'metal';
     finishMaterial(ctx,32,32,material,semente(chave));
     // Acabamento: o ícone cru ganha contorno escuro de um pixel e um véu de
-    // luz em cima. É feito uma vez por item, no cache, e vale para os 538.
+    // luz em cima. É feito uma vez por item, no cache, e vale para todo o catálogo.
     const S = 40;
     const bruto = document.createElement("canvas");
     bruto.width = S;
@@ -581,6 +583,7 @@ export function itemIconCanvas(item) {
     ctx.drawImage(bruto, -4, -4);
     ctx.imageSmoothingEnabled = false;
   }
+  if(cache.size>=640)cache.delete(cache.keys().next().value);
   cache.set(chave, canvas);
   return canvas;
 }

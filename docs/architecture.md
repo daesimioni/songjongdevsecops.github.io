@@ -83,7 +83,9 @@ A suíte inclui verificações do controlador de movimento, isolamento dos banco
 de perguntas e ferramentas de análise/build/HTTP, além dos testes anteriores.
 O verificador de estrutura também é testado com import ausente, export inválido,
 ciclo e dependência proibida. Não há cobertura de navegador ponta a ponta na CI;
-os testes de DOM usam doubles e a revisão de imagens usa Canvas nativo opcional.
+os testes de DOM usam doubles. A revisão de pixels usa Canvas nativo como
+dependência de desenvolvimento e integra `npm run validate`. O catálogo, as
+pranchas e os limites da revisão estão em [docs/art](art/README.md).
 
 ## Limites atuais
 

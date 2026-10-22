@@ -40,7 +40,18 @@ export function createTerrainRenderer({ ctx, world, getWindMood }) {
       const gy = py + 1 + Math.floor(hash2(x * 7 - i, y * 19 + i * 5) * 14);
       c.fillStyle = i % 2 ? "rgba(255,255,255,0.045)" : "rgba(0,0,0,0.09)";
       c.fillRect(gx, gy, i === 0 ? 2 : .5, .5);
-      if(t===K.STONE||t===K.PATH||t===K.MARBLE){c.fillStyle='rgba(230,222,203,.10)';c.fillRect(gx,gy-.5,1,.5);}
+      const pattern=TILE_STYLE[t]?.pattern;
+      if(t===K.STONE||t===K.PATH||t===K.MARBLE||pattern==='cracks'){
+        c.fillStyle='rgba(230,222,203,.10)';c.fillRect(gx,gy-.5,1,.5);
+        if(i<2){c.fillStyle='rgba(4,12,25,.12)';c.fillRect(gx+1,gy+1,.5,1);}
+      }else if(t===K.SAND||pattern==='dunes'){
+        c.fillStyle='rgba(237,205,151,.09)';c.fillRect(gx,gy,2,.5);c.fillRect(gx+2,gy+.5,1,.5);
+      }else if(t===K.BRIDGE){
+        c.fillStyle='rgba(213,174,119,.14)';c.fillRect(gx,gy,3,.5);
+        if(i<2){c.fillStyle='rgba(8,16,27,.35)';c.fillRect(gx,gy,.5,.5);}
+      }else if(t===K.MOSS||pattern==='dots'){
+        c.fillStyle='rgba(161,191,121,.10)';c.fillRect(gx,gy,1,.5);c.fillRect(gx+.5,gy-.5,.5,.5);
+      }
     }
   }
 
@@ -167,13 +178,16 @@ export function createTerrainRenderer({ ctx, world, getWindMood }) {
         c.fillStyle = shallow ? "rgba(178, 238, 255, 0.3)" : "rgba(107, 213, 255, 0.2)";
         for (let i = 0; i < 3; i++) {
           const w = 4 + ((Math.sin(time * 0.0016 + x + y + i) + 1) * 2.5 | 0);
-          c.fillRect(px + 1 + i * 5, py + 3 + i * 4, w, 1);
+          const start=1+i*5,width=Math.min(w,TILE-start);
+          c.fillRect(px+start,py+3+i*4,width,.5);
+          c.fillRect(px+start+Math.max(0,width-2),py+3.5+i*4,1,.5);
         }
       } else if (t === K.MAGMA) {
         const glow = 0.4 + Math.sin(time * 0.003 + x + y) * 0.18;
         c.fillStyle = `rgba(255, 122, 60, ${glow})`;
         c.fillRect(px + 3 + Math.floor(h * 6), py + 6, 3, 1);
         c.fillRect(px + 6 + Math.floor(hash2(y, x) * 5), py + 10, 2, 1);
+        if(glow>.53){c.fillStyle='rgba(255,219,135,.55)';c.fillRect(px+4+Math.floor(h*6),py+6,.5,.5);}
       }
       return;
     }
@@ -558,20 +572,21 @@ export function createTerrainRenderer({ ctx, world, getWindMood }) {
     // a copa verga com a frente de rajada: árvores vizinhas vão juntas
     const rajada = gustAt(x, y, time, getWindMood());
     const sway = swayAt(x, y, time, getWindMood()) * 0.8;
-    const cx = px + 8 + sway + (h - 0.5) * 1.4;
+    const rootX=px+8+(h-.5)*1.4;
+    const cx=rootX+sway;
     // sombra
     ctx.fillStyle = "rgba(2, 6, 10, 0.32)";
     ctx.beginPath();
-    ctx.ellipse(cx, py + 15, 6.5 + r * 2, 2.7, 0, 0, Math.PI * 2);
+    ctx.ellipse(rootX, py + 15, 6.5 + r * 2, 2.7, 0, 0, Math.PI * 2);
     ctx.fill();
     // tronco com raiz: não é um retângulo solto no meio do tile
     ctx.fillStyle = "#2a1e17";
-    ctx.fillRect(cx - 1.5, py + 9, 3, 6);
-    ctx.fillRect(cx - 2.5, py + 13, 5, 2);
+    ctx.fillRect(rootX - 1.5, py + 9, 3, 6);
+    ctx.fillRect(rootX - 2.5, py + 13, 5, 2);
     ctx.fillStyle = "#3d2a1f";
-    ctx.fillRect(cx - 1.5, py + 9, 1, 5);
+    ctx.fillRect(rootX - 1.5, py + 9, 1, 5);
     ctx.fillStyle = "rgba(2, 6, 10, 0.35)";
-    ctx.fillRect(cx + 1, py + 14, 3, 1);
+    ctx.fillRect(rootX + 1, py + 14, 3, 1);
     // copa em três camadas de elipses achatadas, desenhadas como spans de
     // 1 px: o contorno fica arredondado de verdade, sem retângulo
     const camadas = [
@@ -591,6 +606,9 @@ export function createTerrainRenderer({ ctx, world, getWindMood }) {
         ctx.fillRect(lx, Math.round(py + cam.topo + row), rx - lx, 1);
       }
     }
+    // Brotos no plano iluminado, com nervuras curtas em vez de ruído solto.
+    ctx.fillStyle='#3a6241';
+    for(let i=0;i<5;i++){const lx=cx-5+(i*3)%9,ly=py+4+(i*2)%6;ctx.fillRect(lx,ly,1.5,.5);ctx.fillRect(lx+.5,ly-.5,.5,.5);}
     // folhas soltas e brilho no lado iluminado
     ctx.fillStyle = "#1e4b2b";
     for (let i = 0; i < 4; i++) {
@@ -680,6 +698,8 @@ export function createTerrainRenderer({ ctx, world, getWindMood }) {
     ctx.fillRect(px, py, TILE, 1);
     ctx.fillStyle = "rgba(0,0,0,0.35)";
     ctx.fillRect(px, py + TILE - 1, TILE, 1);
+    ctx.fillStyle='rgba(189,181,165,.14)';ctx.fillRect(px+3+Math.floor(h*7),py+6,1,.5);
+    ctx.fillStyle='rgba(7,15,29,.35)';ctx.fillRect(px+10,py+8,.5,2);ctx.fillRect(px+10.5,py+10,1,.5);
     if (h > 0.84) {
       ctx.fillStyle = "rgba(96, 158, 106, 0.5)";
       ctx.fillRect(px + 2 + Math.floor(h * 6), py + 11, 2, 1);

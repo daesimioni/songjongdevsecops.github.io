@@ -1,3 +1,5 @@
+import {desenharAsset} from "../rendering/assets/index.js";
+import {drawPetSprite} from "../rendering/pet-art.js";
 // A tela de título: um vale em pixel art desenhado no canvas, com céu em
 // degradê, estrelas, aurora, lua, montanhas, rio, casas e árvores de verdade.
 // No centro do vale, um grimório aberto sobre um púlpito de pedra, dentro de um
@@ -496,6 +498,14 @@ export function startTitle(canvas) {
     arvore(44, 176, 26, "#040710", 9);
     arvore(286, 172, 44, "#040710", 5);
     pinheiro(304, 176, 30, "#040710");
+
+    // Primeiro plano usa a mesma biblioteca do jogo: folhas, flores e bichos
+    // mantêm material, luz e ritmo ao atravessar a tela de entrada.
+    const biome={id:'title',accent:'#c4ad78',floor:'#192333',path:'#3c4350'};
+    ctx.save();ctx.globalAlpha=.55;
+    for(const [kind,x,y,seed]of [['arbusto',30,177,2],['florada',91,175,3],['cogumelo',250,176,1],['junco',226,177,4]])desenharAsset(ctx,kind,x,y,{tempo:t,bioma:biome,seed});
+    ctx.restore();
+    drawPetSprite(ctx,'owl',247,163,t,false,4);
 
     // fogueira acesa à esquerda
     const fogo = ctx.createRadialGradient(64, 157, 1, 64, 157, 24);

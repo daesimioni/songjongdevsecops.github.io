@@ -1,3 +1,4 @@
+import { paintFoliage } from "./foliage-motion.js";
 import { detailAsset } from "./detail.js";
 import { artFrame } from "../art-style.js";
 // Biblioteca de assets ambientais, organizada por grupo. Cada grupo mora no
@@ -27,10 +28,9 @@ for (const [grupo, itens] of Object.entries(GRUPOS)) {
   for (const [tipo, def] of Object.entries(itens)) POR_TIPO.set(tipo, { grupo, ...def,
     desenhar(g,p,v,q) {
       g.save();
-      if(grupo==='vegetacao'){
-        g.translate(def.w/2,def.h);g.transform(1,0,[0,.012,0,-.012][q%4]||0,1,0,0);g.translate(-def.w/2,-def.h);
-      }
-      def.desenhar(g,p,v,q);detailAsset(g,p,v,q,tipo,grupo,def.w,def.h);g.restore();
+      if(grupo==='vegetacao')paintFoliage(g,def,p,v,q,tipo);
+      else def.desenhar(g,p,v,q);
+      detailAsset(g,p,v,q,tipo,grupo,def.w,def.h);g.restore();
     },
   });
 }

@@ -1,73 +1,36 @@
-import { directionVector, directionAngle } from "../core/movement.js";
-import { artTime } from "./art-style.js";
-// A nave: o mesmo casco na superfície e na caverna. Fica num módulo só para o
-// desenho de um lugar não divergir do outro.
-
+import { directionVector } from '../core/movement.js';
+import { artTime } from './art-style.js';
+import {actorView} from './actor-volume.js';
 export function skiffRear(dir) {
-  const { x, y } = directionVector(dir);
-  return { x: -x, y: -y };
+  const {x,y}=directionVector(dir);return {x:-x,y:-y};
 }
-
-export function drawSkiff(ctx, px, py, dir, time, boost = 1, moving = false) {
-  if (boost <= 0.01) return;
-  time = artTime(time);
-  const bob = Math.sin(time * 0.007) * 1.1;
-  let by = py - 2 + bob;
-  const rear = { x: -1, y: 0 };
-  const vx = -rear.x;
-  const vy = -rear.y;
-  ctx.save();
-  ctx.globalAlpha = Math.min(1, boost);
-
-  // sombra e halo
-  ctx.fillStyle = "rgba(2, 4, 10, 0.32)";
-  ctx.beginPath();
-  ctx.ellipse(px, py + 4, 12, 3.2, 0, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.translate(px, by);
-  ctx.rotate(directionAngle(dir));
-  px = 0; by = 0;
-  const pulse = 0.5 + Math.sin(time * 0.018) * 0.5;
-  const gx = px + rear.x * 9;
-  const gy = by + rear.y * 5;
-  const glow = ctx.createRadialGradient(gx, gy, 1, gx, gy, 19);
-  glow.addColorStop(0, `rgba(107, 213, 255, ${0.18 + pulse * 0.14})`);
-  glow.addColorStop(1, "rgba(107, 213, 255, 0)");
-  ctx.fillStyle = glow;
-  ctx.fillRect(px - 26, by - 20, 52, 40);
-
-  // Proa afilada e popa larga: a silhueta revela o rumo mesmo sem rastro.
-  ctx.fillStyle = "#0b2438";
-  ctx.beginPath();ctx.moveTo(13,0);ctx.lineTo(6,-6);ctx.lineTo(-10,-6);
-  ctx.lineTo(-12,-3);ctx.lineTo(-12,3);ctx.lineTo(-10,6);ctx.lineTo(6,6);ctx.closePath();ctx.fill();
-  ctx.fillStyle = "#1d6280";ctx.fillRect(-9,-4,14,8);
-  ctx.fillStyle = "#61f4c0";ctx.fillRect(-8,-5,13,1);ctx.fillRect(-8,4,13,1);
-  ctx.fillStyle = "#122a4a";ctx.fillRect(-6,-3,9,6);
-  ctx.fillStyle = "#ffc857";ctx.fillRect(4,-2,3,4);
-  ctx.fillStyle = "#2f8fae";ctx.fillRect(-9,-8,5,3);ctx.fillRect(-9,5,5,3);
-  // motor
-  ctx.fillStyle = "#ffb26b";
-  ctx.fillRect(px + rear.x * 9 - 2, by + rear.y * 6 - 1, 4, 3);
-  ctx.fillStyle = "#fff3d1";
-  ctx.fillRect(px + rear.x * 9 - 1, by + rear.y * 6, 2, 1);
-
-  // Nervuras do casco, escotilha e luzes de navegação.
-  ctx.fillStyle='#0a1b32';for(const x of [-7,-3,3,7])ctx.fillRect(px+x,by+1,.5,2);
-  ctx.fillStyle='#d4f2ed';ctx.fillRect(px-6,by-2,2,.5);ctx.fillRect(px+4,by-2,2,.5);
-  ctx.fillStyle='#ffb092';ctx.fillRect(px-12,by+1,1,.5);
-  ctx.fillStyle='#88eac3';ctx.fillRect(px+11,by+1,1,.5);
-  if (moving) {
-    ctx.strokeStyle = "rgba(223, 245, 255, 0.42)";
-    ctx.lineWidth = 1;
-    for (let i = 0; i < 3; i++) {
-      const d = 16 + i * 7;
-      const ox = -vy * (i - 1) * 3;
-      const oy = vx * (i - 1) * 3;
-      ctx.beginPath();
-      ctx.moveTo(px + rear.x * d + ox, by + rear.y * d + oy);
-      ctx.lineTo(px + rear.x * (d + 8) + ox, by + rear.y * (d + 8) + oy);
-      ctx.stroke();
-    }
+export function drawSkiff(ctx,px,py,dir,time,boost=1,moving=false) {
+  if(boost<=.01)return;
+  time=artTime(time);const view=actorView(dir),bob=Math.sin(time*.007)*1.1;
+  ctx.save();ctx.translate(px,py);ctx.globalAlpha=Math.min(1,boost);
+  ctx.fillStyle='rgba(2,4,10,.32)';ctx.beginPath();ctx.ellipse(0,4,12,3.2,0,0,Math.PI*2);ctx.fill();
+  const poly=(pts,color)=>{ctx.fillStyle=color;ctx.beginPath();pts.forEach((v,i)=>{const p=view.project(v[0],v[1],v[2]+2-bob);i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y);});ctx.closePath();ctx.fill();};
+  const line=(pts,color,width=1)=>{ctx.strokeStyle=color;ctx.lineWidth=width;ctx.beginPath();pts.forEach((v,i)=>{const p=view.project(v[0],v[1],v[2]+2-bob);i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y);});ctx.stroke();};
+  const hull=[[-5,-11],[5,-11],[7,-7],[6,5],[0,15],[-6,5],[-7,-7]];
+  // Espessura vertical permanece vertical em todos os rumos; a proa gira no
+  // plano do chão e não roda o desenho inteiro como uma placa de papel.
+  poly(hull.map(([x,y])=>[x,y,0]),'#091d2c');
+  const faces=hull.map((p,i)=>({a:p,b:hull[(i+1)%hull.length],depth:view.depth((p[0]+hull[(i+1)%hull.length][0])/2,(p[1]+hull[(i+1)%hull.length][1])/2)})).sort((a,b)=>a.depth-b.depth);
+  for(const {a,b}of faces)poly([[...a,0],[...b,0],[...b,4],[...a,4]],view.project((a[0]+b[0])/2,(a[1]+b[1])/2).x>0?'#244b63':'#416e80');
+  poly(hull.map(([x,y])=>[x,y,4]),'#367b8e');
+  line([...hull,hull[0]].map(([x,y])=>[x,y,4]),'#8bcdbb',.8);
+  for(const side of [-1,1]){
+    poly([[side*5,-9,4],[side*10,-9,2],[side*9,-3,2],[side*5,-2,4]],'#1c435d');
+    line([[side*6,-8,4],[side*8,-7,3]],side<0?'#efb38b':'#8cdbad',1);
   }
+  poly([[-3,-4,4],[3,-4,4],[3,4,4],[-3,4,4]],'#0c243e');
+  poly([[-3,-4,4],[-3,-3,8],[2,-3,8],[3,4,4]],'#79c3cc');
+  line([[-2,-3,8],[1,-3,8],[2,2,5]],'#d4eee0',.7);
+  for(let i=0;i<4;i++)line([[-5,-7+i*4,4],[-3,-7+i*4,4]],'#153b51',.7);
+  poly([[-2,7,4],[0,11,4],[2,7,4]],'#e6bc77');
+  const exhaust=4+Math.sin(time*.018)*1.2;
+  poly([[-2,-11,3],[2,-11,3],[1,-11-exhaust,3],[-1,-11-exhaust,3]],'#8fdaed');
+  line([[0,-11,3],[0,-13,3]],'#fff0c6',1);
+  if(moving)for(let i=0;i<3;i++)line([[(i-1)*3,-16-i*4,1],[(i-1)*3,-21-i*4,1]],'rgba(190,232,245,.38)',.7);
   ctx.restore();
 }
