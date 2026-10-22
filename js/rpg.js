@@ -6,6 +6,7 @@ import { STORAGE } from "./config.js";
 import { SKILLS, TIERS, ITEMS, QUESTIONS, RECIPES, ENCHANTS, DEEP_QUESTIONS, MONSTER_TRAITS, MONSTER_LABELS, MONSTER_WEAKNESS } from "./rpg-data.js";
 import { BOND_MAX, MANA_MS, PETS, MOUNTS, petById, mountById } from "./pets.js";
 import { VOCACAO_PADRAO, VOC_POR_ID, subcategoriaDe, vocacaoDe, multDe } from "./vocations.js";
+import { bonusDeRitmo } from "./duelo-ritmo.js";
 
 const RESPAWN_MS = 5 * 60 * 1000;
 const BOSS_RESPAWN_MS = 20 * 60 * 1000;
@@ -1462,6 +1463,13 @@ export class RPG {
       if (trait === "dodge" && Math.random() < 0.18) {
         damage = 0;
         note = "Desviou. O golpe passou de raspão.";
+      }
+      // ritmo: acertos seguidos somam dano, com teto de +2. Desvio que zerou o
+      // golpe não ganha ritmo, e o casco já descontou antes de somar.
+      const ritmo = damage > 0 ? bonusDeRitmo(d.seguidos) : 0;
+      if (ritmo) {
+        damage += ritmo;
+        note = `${note ? note + " " : ""}Ritmo: ${d.seguidos} acertos, +${ritmo} de dano.`;
       }
       d.monsterHp = Math.max(0, d.monsterHp - damage);
       d.feedback = { correct: true, why: d.question.why, damage: 0, note };

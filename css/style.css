@@ -1932,6 +1932,10 @@ body.na-casa .minimap { display: none; }
 .duel-bar.enemy .duel-bar-track i { background: linear-gradient(90deg, var(--rose), var(--amber)); }
 .duel-bar.self .duel-bar-track i { background: linear-gradient(90deg, var(--mint), var(--cyan)); }
 .duel-question { margin: 10px 0 12px; font-size: 15px; line-height: 1.55; color: var(--ink); }
+/* leitura de turno: dano previsto, rodada e ritmo */
+.duel-read { margin: -4px 0 12px; font-family: var(--mono); font-size: 10.5px; color: var(--muted); }
+.duel-round { display: inline-block; margin-right: 8px; font-family: var(--mono); font-size: 9.5px; color: var(--muted); }
+.duel-combo { display: inline-block; font-family: var(--mono); font-size: 9.5px; font-style: normal; color: var(--mint); }
 .duel-options { display: grid; gap: 7px; }
 .duel-option {
   display: flex;

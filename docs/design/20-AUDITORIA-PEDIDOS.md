@@ -31,6 +31,7 @@ com a linha do diário dizendo que foi feito.
 | sala temática por disciplina nas masmorras | `test/salas.test.mjs`: 93 cavernas com sala própria (oficina 35, biblioteca 36, observatório 22), 279 peças de cenário encostadas nas paredes, com caixa sólida; sonda `cdp-sala-tema.mjs` abre uma de cada e fotografa | feito em 2026-10-21 21:29 |
 | animação de NPC e pet | `test/animacao-idle.test.mjs` e sonda `cdp-anim-idle.mjs`: cabeça parada mexe 46 px e o corpo 0 (olhar/cabeceio), cauda do gato 60 px e olho 13 px (piscada); o passo do NPC já existia e a sonda confirma | feito em 2026-10-21 21:33 |
 | passada de interfaces | sonda `cdp-ui-audit.mjs` mede 9 painéis em 1280 e 390: 0 estouro horizontal, 0 alvo abaixo de 28 px, foco dentro do painel; abas da wiki e botões de ação cresceram, wiki virou 1 coluna no celular e a loja perdeu o estouro de 3 px | feito em 2026-10-21 21:45 |
+| ritmo e leitura de turno no duelo | `test/duelo-ritmo.test.mjs`: +1 dano com 3 acertos e +2 com 5 (teto), "se errar: X" com fase/haste/espelho; sonda `cdp-duelo-ritmo.mjs` mostrou rodada, previsão e "ritmo 3: +1 de dano" depois de três acertos; vida do bicho deixou de mostrar decimal | feito em 2026-10-21 21:51 |
 
 ## O que a auditoria pegou de errado
 
@@ -44,7 +45,9 @@ com a linha do diário dizendo que foi feito.
 
 1. **69 páginas escritas à mão** do vale e das áreas antigas: continuam com
    quatro partes e 255 a 469 palavras; falta o curso de seis partes do catálogo.
-2. **Sistema de batalha**: falta ritmo, habilidade de chefe e leitura de turno;
-   hoje o duelo é pergunta com vida.
+2. **Habilidade única de chefe**: fase, dano extra e baralho difícil já
+   existem, mas o golpe próprio de cada chefe (curar uma vez, trocar o
+   baralho) ainda é genérico; ritmo e leitura de turno foram fechados em
+   2026-10-21 21:51.
 3. **Etapa 2 e 3 dos assets**: vegetação, solo, construção, água, props e fogo
    já têm variantes; falta fechar animação própria de cada grupo.

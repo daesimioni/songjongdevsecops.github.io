@@ -2,6 +2,7 @@
 import { CONTINENTS } from "./config.js";
 import { ITEMS, TIERS, MONSTER_TRAITS } from "./rpg-data.js";
 import { drawCreatureArt } from "./creature.js";
+import { danoPrevisto, leituraDeRitmo } from "./duelo-ritmo.js";
 
 const $ = (id) => document.getElementById(id);
 const LETTERS = "ABCDE";
@@ -107,7 +108,9 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
   function bar(label, value, max, cls) {
     const wrap = el("div", `duel-bar ${cls}`);
     const head = el("div", "duel-bar-head");
-    head.append(el("span", "", label), el("b", "", `${Math.max(0, value)}/${max}`));
+    // dano pode ter decimal (vocação, pet, equipamento); a vida mostra inteiro
+    // para não aparecer 94.70000000000002/99 na tela
+    head.append(el("span", "", label), el("b", "", `${Math.max(0, Math.ceil(value))}/${Math.ceil(max)}`));
     const track = el("div", "duel-bar-track");
     const fill = el("i");
     fill.style.width = `${max ? Math.max(0, Math.min(100, Math.round((value / max) * 100))) : 0}%`;
@@ -137,9 +140,10 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
     }
     $("duel-name").textContent = d.monster.name;
     const trait = MONSTER_TRAITS[d.monster?.kind]?.label || "";
+    const nivel = d.monster.level ?? "?";
     const baseSub = d.training
-      ? `nível ${d.monster.level} · ${tier.stars} · treino sem dano e sem loot`
-      : `nível ${d.monster.level} · ${tier.stars} · ${d.boss ? "pergunta final" : "duelo de perguntas"}`;
+      ? `nível ${nivel} · ${tier.stars} · treino sem dano e sem loot`
+      : `nível ${nivel} · ${tier.stars} · ${d.boss ? "pergunta final" : "duelo de perguntas"}`;
     $("duel-sub").textContent = trait ? `${baseSub} · ${trait}` : baseSub;
     const meta = $("duel-meta");
     meta.textContent = "";
@@ -150,6 +154,10 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
     );
     rpg.pulse();
     if (rpg.activePet()) meta.appendChild(bar("mana", rpg.mana(), rpg.manaMax(), "mana"));
+    // leitura de turno: rodada e ritmo de acertos ficam à vista antes de escolher
+    meta.appendChild(el("span", "duel-round", `rodada ${(d.deckIndex || 0) + 1}`));
+    const ritmo = leituraDeRitmo(d.seguidos || 0);
+    if (ritmo) meta.appendChild(el("em", "duel-combo", ritmo));
     drawSprite();
 
     const body = $("duel-body");
@@ -164,6 +172,18 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
     const main = el("div", "duel-col main");
     cols.appendChild(main);
     main.appendChild(el("p", "duel-question", q.q));
+    // o número que o erro vai custar, antes da escolha: fase de chefe e caráter
+    // do bicho entram na conta, e o espelho aparece como zero
+    const previsao = danoPrevisto({
+      danoBase: TIERS[d.tier].damage,
+      bossPhase: d.boss ? d.bossPhase || 1 : 1,
+      trait: MONSTER_TRAITS[d.monster?.kind]?.id || "",
+      escudo: !!d.shield,
+    });
+    main.appendChild(el("p", "duel-read",
+      d.training
+        ? `Na caverna, esse erro tiraria ${previsao} de vida.`
+        : `Se errar: ${previsao} de dano${d.shield ? " (o espelho segura uma vez)" : ""}.`));
     const opts = el("div", "duel-options");
     q.options.forEach((text, i) => {
       const b = el("button", "duel-option");
