@@ -242,6 +242,11 @@ conceitos de continentes diferentes e termina com uma síntese.
 - cobertura do banco por conceito e formato;
 - sessões por dia e duração, para conforto (não para pressão).
 
+> **Decisão do dono (2026-10-22):** não há prova final. O §13 vale como
+> avaliação contínua e transferência; não há exame único nem reprovação. O
+> registro está em [`39-BACKLOG-VERIFICADO.md`](39-BACKLOG-VERIFICADO.md) e o
+> plano do próximo ciclo em [`40-PLANO-EXECUCAO.md`](40-PLANO-EXECUCAO.md).
+
 ## 15. Ética e acessibilidade
 
 - sem ranking global obrigatório, sem sequência que pune, sem loot box;

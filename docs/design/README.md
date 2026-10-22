@@ -50,13 +50,14 @@ Os números abaixo são os verificados no `39`, não promessas de conceito:
 - mapa grande, ferry pago ao Porto Submerso, elevador de volta, ciclo dia/noite,
   patrulha e perseguição dos bichos.
 
-## 4. O que ainda depende do dono
+## 4. Decisões do dono (respondidas em 2026-10-22)
 
-As perguntas abertas estão no `39` §"Decisões que dependem do dono", com o custo
-e o que cada escolha destrava. Hoje elas são: prova final (o doc 01 §13 pede
-exame por continente; o texto do jogo diz que não há prova final), endgame e
-lore, ofícios por continente, moeda Selo, escala dos rótulos do HUD, party no
-bestiário e o leilão (os docs 03 e 07 o proíbem; a troca local existe).
+As 13 perguntas do `39` §"Decisões que dependem do dono" foram respondidas pelo
+dono em 2026-10-22; as respostas estão registradas lá e o ciclo atual não tem
+pendência de código. O plano do próximo ciclo está em
+[`40-PLANO-EXECUCAO.md`](40-PLANO-EXECUCAO.md): Biblioteca Afogada, Grande Prova
+como evento, arcos e lore, facções e guilda. Reabrir uma resposta é uma decisão
+nova, registrada no 39.
 
 ## 5. Como uma ideia entra no jogo
 

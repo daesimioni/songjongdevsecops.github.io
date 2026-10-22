@@ -45,9 +45,22 @@ const retrato = ler("11-ESTADO-2026-10-20.md").slice(0, 700);
 assert.match(retrato, /Documento histórico, congelado/, "o retrato não avisa que é histórico");
 assert.match(retrato, /39-BACKLOG-VERIFICADO\.md/, "o retrato não aponta o mapa atual");
 
-// O 39 continua sendo o mapa: ondas e decisões.
+// O 39 continua sendo o mapa: ondas e as decisões respondidas.
 const mapa = ler("39-BACKLOG-VERIFICADO.md");
 assert.match(mapa, /## Onda 1/, "o 39 perdeu a primeira onda");
 assert.match(mapa, /Decisões que dependem do dono/, "o 39 perdeu as decisões do dono");
+assert.match(mapa, /respondidas em 2026-10-22/, "o 39 não registra as respostas do dono");
+assert.match(mapa, /40-PLANO-EXECUCAO\.md/, "o 39 não aponta o plano");
+
+// O plano do próximo ciclo existe, aponta o mapa e tem fases e critério.
+const plano = ler("40-PLANO-EXECUCAO.md");
+assert.match(plano, /39-BACKLOG-VERIFICADO\.md/, "o plano não aponta o mapa");
+assert.match(plano, /## 3\. Fases do próximo ciclo/, "o plano não tem as fases");
+assert.match(plano, /Biblioteca Afogada/, "o plano não começa pela Biblioteca Afogada");
+assert.match(plano, /## 7\. Critério de pronto/, "o plano não repete o critério de pronto");
+assert.match(indice, /40-PLANO-EXECUCAO\.md/, "o índice não aponta o plano");
+
+// A decisão de prova final ficou registrada no doc de aprendizagem.
+assert.match(ler("01-APRENDIZAGEM.md"), /Decisão do dono \(2026-10-22\)/, "o doc 01 não registra a decisão de prova final");
 
 console.log(`ok documentos: ${conceitos.length} conceitos congelados, índice sem as listas antigas e 39 como mapa único`);

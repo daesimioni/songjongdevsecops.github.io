@@ -13,7 +13,7 @@ de duelo, 133 módulos e 99 testes node. `npm run validate` passa (lint,
 contrato de módulos, testes e build) e a matriz de navegador dá 19/19.
 
 Esforço: **P** até um dia, **M** de dois a cinco dias, **G** mais de uma semana.
-Estado: **feito**, **parcial**, **ausente**, **decisão** (produto, não código).
+Estado: **feito**, **medido** e **decisão** (respondida em 2026-10-22). Não há linha ausente nem parcial.
 
 ## Onda 1: fechar o que é pequeno
 
@@ -78,21 +78,30 @@ Estado: **feito**, **parcial**, **ausente**, **decisão** (produto, não código
 | editor de mapa e WebGL do mundo | **decisão** | não fazer agora: o mundo é gerado por `catalog-*` e os testes de mapa, colisão e alcance são o editor; o Canvas 2D entrega 60,2 fps medidos e 19/19 na matriz de navegador. Migrar para WebGL não tem ganho medido e arrisca a arte; reavaliar se o fps cair abaixo de 50 em hardware real | M cada |
 | grade de ilhas regular | **decisão** | a malha 24x16 é a planta do arquipélago, e as ilhas já variam por bioma, tamanho e decoração; o jitter exigiria regenerar o literal e revalidar 2.413 alvos e as 54 ligações, sem ganho medido. Reavaliar se o dono apontar o alinhamento como defeito visual | M |
 
-## Decisões que dependem do dono
+## Decisões que dependem do dono (respondidas em 2026-10-22)
 
-1. **Prova final**: o desenho 01 §13 pede exame por continente; o texto atual do
-   jogo diz que não há prova final. Escolher um dos dois antes de implementar.
-2. **Leilão**: os documentos 03 e 07 proíbem leilão global; o item de troca
-   local por material é o que falta de verdade. Confirmar.
-3. **Endgame e lore**: Grande Prova, Biblioteca, facções e arcos são semanas de
-   conteúdo. Confirmar se entram agora ou ficam como fase seguinte.
-4. **Nomes e tom**, **chefe do hub**, **variantes raras** e **bestiário em
-   party** continuam como escolha de produto.
+O dono revisou as 13 perguntas e respondeu todas em 2026-10-22. As respostas
+abaixo são a decisão vigente; o plano do próximo ciclo está em
+[`40-PLANO-EXECUCAO.md`](40-PLANO-EXECUCAO.md).
 
-## Decisões de escopo (engenharia)
+| # | pergunta | resposta do dono |
+|---|---|---|
+| 1 | prova final | manter sem prova final e ajustar o doc 01 §13 com nota datada |
+| 2 | leilão | manter a troca local por material, sem leilão |
+| 3 | endgame e lore | próximo ciclo, com plano no 40 |
+| 4 | nomes e tom | manter o tom atual |
+| 5 | chefe do hub | não criar; o porto é seguro |
+| 6 | bestiário na party | não compartilhar |
+| 7 | variantes | marca da mesma criatura no bestiário |
+| 8 | escala de fonte | manter como está (corpo 11 px e texto maior nos painéis) |
+| 9 | ofícios | manter a forja global |
+| 10 | resistência por tipo | não fazer; escudo e família já cobrem |
+| 11 | misconceptions | manter sem texto autoral |
+| 12 | sondas CDP | manter fora do repo e documentar o caminho |
 
-Não são perguntas de produto: foram julgadas e registradas com a prova que
-existe. Reabrem se o dono apontar o ganho que falta.
+## Decisões de escopo (engenharia, confirmadas em 2026-10-22)
+
+O dono confirmou as quatro. Reabrem pelo mesmo caminho se ele apontar o ganho.
 
 | item | por que fica de fora |
 |---|---|
@@ -100,33 +109,6 @@ existe. Reabrem se o dono apontar o ganho que falta.
 | party humana em combate | o duelo é local e o jogo não tem servidor de estado; a party social de 8 cobre convite e encontro |
 | planta de casa por área | 8 plantas cobrem os 4 tipos e as 72 casas; uma por área seriam 86 desenhos sem ganho de jogo |
 | editor de mapa, WebGL, jitter das ilhas | o mundo é gerado e testado, o Canvas 2D faz 60,2 fps e o jitter exigiria revalidar 2.413 alvos e 54 ligações |
-
-Perguntas exatas que ficam abertas depois das entregas de 2026-10-22:
-
-5. **Escala de fonte**: implementada como **texto maior** nos painéis de leitura
-   (15% no desktop, opção na Ajuda, salva no save, sem efeito no celular, que já
-   usa letra maior). Se quiser que os 131 rótulos do HUD também cresçam, isso
-   exige converter px para uma unidade escalável: decidir.
-6. **Ofícios por continente**: as 20 receitas atuais são todas do porto, então
-   um filtro por continente não teria o que filtrar (conferido no código). A
-   decisão é de conteúdo: cada forja ganha 3 a 5 receitas próprias (quais peças,
-   que material, que preço) ou a forja fica global e o assunto fecha?
-7. **Resistência por tipo**: o escudo equipado já segura um erro por duelo.
-   "Resistência por tipo" é por espécie (ex.: cascudos comem menos dano), por
-   caráter (divisão, desvio, pressa, casco) ou por disciplina da pergunta?
-8. **Variantes elite/antiga/eco**: raras por descida (visual e recompensa
-   próprias) ou só em camada profunda? Entram no bestiário como ficha nova ou
-   como marca da mesma criatura?
-9. **Misconceptions por distrator**: são 887 perguntas; escrever uma explicação
-   para cada distrator é trabalho de conteúdo (semanas). Autorar por amostra e
-   medir, ou só quando a pergunta voltar a ser reescrita?
-10. **Resistência por tipo**: escolher o eixo (espécie, trait ou disciplina)
-    antes de implementar; o escudo equipado já cobre o primeiro erro e a
-    fraqueza de família já dá +50% contra a família completa.
-11. **Dívida de arquitetura e sondas**: as sondas CDP citadas nos documentos
-    vivem fora do repositório (`temporarios/`). Trazer todas para `tools/`
-    engorda o repositório público com dependência de Chrome. Trazer só um
-    subconjunto de regressão, ou manter fora e documentar o caminho?
 
 ## Critério de pronto
 

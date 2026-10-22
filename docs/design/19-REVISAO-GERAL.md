@@ -92,6 +92,7 @@ A árvore já vergava com a rajada e o fogo já tinha 4 a 8 quadros.
 | 2026-10-22 | documentos aposentados | o índice da pasta perde as listas antigas de perguntas e o plano pré-implementação, separa conceito, engenharia e histórico e aponta o 39; o retrato de 2026-10-20 ganha o banner histórico; 14 banners cobrados por teste | `test/documentos.test.mjs`, 99/99 suítes |
 | 2026-10-22 | escopo aposentado | editor de mapa, WebGL e jitter das ilhas ficam de fora com justificativa medida: o mundo é gerado e testado, o Canvas 2D faz 60,2 fps e o jitter exigiria revalidar 2.413 alvos e 54 ligações | 60,2 fps, 19/19, `test/dungeon-reachability.test.mjs`, `test/passagens.test.mjs` |
 | 2026-10-22 | escopo de jogo aposentado | pontes por missão, party em combate e planta por área passam a decisão com justificativa: o mapa não tem mais item ausente ou parcial de código, só as decisões do dono e a resistência por tipo | `test/passagens.test.mjs`, `test/casas.test.mjs`, `test/party-proof.test.mjs`, 99/99 suítes |
+| 2026-10-22 | decisões do dono respondidas | as 13 perguntas do 39 foram respondidas (12 de produto e as 4 de escopo confirmadas); o doc 01 §13 ganhou a nota "sem prova final" e o plano do próximo ciclo abriu em `40-PLANO-EXECUCAO.md` | `test/documentos.test.mjs`, 39 e 40 |
 
 ## Fecho da revisão (2026-10-22)
 
