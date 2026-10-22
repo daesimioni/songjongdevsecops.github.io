@@ -1183,6 +1183,20 @@ export function createWorld() {
     }
   }
 
+  // os três móveis fixos da sala (mesa, fogo e cama) também barram o corpo.
+  // A mobília sorteada (barril, caixote, fardo) continua decorativa; estas
+  // caixas ficam no bolsão da casa, longe das ilhas, e valem para as 4 salas.
+  for (const [tipo, sala] of Object.entries(INTERIORES)) {
+    const mesa = addProp(sala.mesa.x, sala.mesa.y - 0.3, 0.7, 0.3);
+    if (mesa) mesa.tipo = `movel:mesa:${tipo}`;
+    const fogo = addProp(sala.lareira.x, sala.lareira.y - 0.3, 0.6, 0.3);
+    if (fogo) fogo.tipo = `movel:lareira:${tipo}`;
+    if (tipo !== "galpao") {
+      const cama = addProp(sala.cama.x, sala.cama.y - 0.3, 0.8, 0.3);
+      if (cama) cama.tipo = `movel:cama:${tipo}`;
+    }
+  }
+
   // árvore em cima da boca fecha a descida quando o tronco passa a barrar:
   // tira a peça, porque a pedra da caverna e o degrau valem mais que a copa
   for (let i = ambiente.length - 1; i >= 0; i--) {

@@ -66,6 +66,8 @@ fundo de tábua escura e o minimapa é escondido (`body.na-casa`).
 A mobília é re-sorteada a cada entrada, pela semente da casa: mesa, fogueira,
 cama (menos no galpão), estante, barril, caixote, saco, fardo, tocha e planta.
 A mesma casa repete o mesmo arranjo; duas casas do mesmo tipo não.
+Mesa, fogo e cama têm caixa fixa e barram o corpo; a mobília sorteada continua
+decorativa (a dívida está no fim deste documento).
 
 ## 5. O que a casa faz
 
@@ -83,7 +85,7 @@ A mesma casa repete o mesmo arranjo; duas casas do mesmo tipo não.
 - `test/casas.test.mjs`: escala, 72 portas, sala fechada com exatamente uma
   porta, spawn livre, mesa/fogo/cama dentro, mobília determinística e
   diferente entre casas do mesmo tipo.
-- 28 suítes node verdes; matriz de navegador 19/19; 60 fps com a sala aberta.
+- 29 suítes node verdes; matriz de navegador 19/19; 60 fps com a sala aberta.
 - Sondas: `cdp-casa.mjs` (fachada antes/depois) e `cdp-casa2.mjs` (entrar,
   estudar, descansar, sair) em `temporarios/2026-10-20-mundo-song-pedido/`.
 
@@ -91,9 +93,10 @@ A mesma casa repete o mesmo arranjo; duas casas do mesmo tipo não.
 
 1. São **quatro plantas** compartilhadas por tipo; a mobília varia, a geometria
    da sala não. O próximo passo é uma planta por disciplina ou por ilha.
-2. A mobília é decorativa: não tem colisão, então o corpo passa por cima de
-   barril e cama. Fazer cada peça barrar exige caixa própria e um teste de
-   caminho dentro da sala.
+2. A mobília **sorteada** (barril, caixote, saco, fardo, estante, planta)
+   continua decorativa: o corpo passa por cima. Mesa, fogo e cama já barram.
+   Fechar o resto exige caixa por posição sorteada e teste de caminho dentro
+   da sala.
 3. Não há morador dentro de casa. Um NPC por casa, com falas do assunto, daria
    mais vida e uma segunda fonte de dica.
 4. A porta de fora é desenhada na fachada; não há soleira, número ou placa

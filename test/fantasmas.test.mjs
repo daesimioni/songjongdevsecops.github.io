@@ -22,7 +22,7 @@ const ambientais = {};
 for (const a of world.ambiente) ambientais[a.tipo] = (ambientais[a.tipo] || 0) + 1;
 const porTipo = {};
 for (const p of world.props) {
-  if (!p.tipo || String(p.tipo).startsWith("casa:")) continue;
+  if (!p.tipo || String(p.tipo).startsWith("casa:") || String(p.tipo).startsWith("movel:")) continue;
   porTipo[p.tipo] = (porTipo[p.tipo] || 0) + 1;
 }
 

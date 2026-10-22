@@ -87,8 +87,9 @@ horta, veio e baú já entram como caixa. Ficam atravessáveis de propósito:
 
 ## 6. O que continua em aberto
 
-1. **Móveis de interior** (mesa, cama, estante, barril da casa) continuam sem
-   colisão; é a dívida registrada em `22-CASAS.md`.
+1. **Móveis sorteados da casa** (barril, caixote, saco, fardo, estante, planta)
+   continuam sem colisão; mesa, fogo e cama já barram. É a dívida registrada em
+   `22-CASAS.md`.
 2. A conurbação da caverna pode ganhar caixa fina sem atrapalhar a interação,
    se o dono preferir que ela barre.
 3. Peças muito próximas umas das outras podem formar um bolsão de 1 tile; a
