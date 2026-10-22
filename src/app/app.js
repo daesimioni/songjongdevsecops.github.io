@@ -3121,6 +3121,8 @@ function pintarMapaGrande(aberto) {
   }
   mapaGrande = aberto;
   caixa.classList.toggle("grande", aberto);
+  // a dica de controles no meio da tela atrapalha a leitura do mapa
+  document.body.classList.toggle("mapa-grande", aberto);
   const botao = $("mini-expandir");
   if (botao) {
     botao.setAttribute("aria-pressed", String(aberto));

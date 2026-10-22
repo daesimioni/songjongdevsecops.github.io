@@ -907,14 +907,19 @@ body.na-casa .minimap { display: none; }
   z-index: 60;
   width: auto;
   height: auto;
+  /* opaco: as barras do mapa não podem mostrar o jogo atrás */
+  background: #070a18;
 }
 .minimap.grande #minimap-canvas {
-  width: 100%;
-  height: auto;
+  /* altura manda e a largura segue a proporção do mapa, centralizada: assim o
+     mundo não estica e as barras ficam iguais dos dois lados */
+  width: auto;
+  height: calc(100% - 62px);
   max-height: calc(100vh - 112px);
-  object-fit: contain;
+  margin: 0 auto;
 }
 .minimap.grande .mini-tools { justify-content: center; }
+body.mapa-grande #prompt { display: none; }
 .minimap.mini { padding: 5px 7px; }
 .minimap.mini .mini-head { gap: 8px; }
 .minimap.mini #minimap-canvas,

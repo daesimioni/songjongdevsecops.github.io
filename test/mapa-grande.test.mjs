@@ -17,7 +17,8 @@ assert.match(html, /id="mini-toggle"/, "o botão de recolher continua necessári
 // ---- o modo grande cobre a tela e não estica o desenho ----
 assert.match(css, /\.minimap\.grande\s*\{[^}]*position:\s*fixed/s, "modo grande não sai do canto");
 assert.match(css, /\.minimap\.grande\s*\{[^}]*inset:\s*12px/s, "modo grande sem margem de tela");
-assert.match(css, /\.minimap\.grande #minimap-canvas\s*\{[^}]*object-fit:\s*contain/s, "canvas pode distorcer");
+assert.match(css, /\.minimap\.grande #minimap-canvas\s*\{[^}]*width:\s*auto/s, "canvas pode distorcer");
+assert.match(css, /\.minimap\.grande #minimap-canvas\s*\{[^}]*margin:\s*0 auto/s, "canvas não centraliza");
 assert.match(css, /\.minimap\.grande #minimap-canvas\s*\{[^}]*max-height:\s*calc\(100vh - 112px\)/s, "canvas pode passar da tela");
 
 // ---- o JS alterna, dobra o canvas e devolve o estado recolhido ----
@@ -28,5 +29,7 @@ assert.match(app, /aplicarMiniRecolhido\(false\)/, "mapa recolhido não abre o c
 assert.match(app, /aplicarMiniRecolhido\(true\)/, "o estado recolhido não volta ao fechar");
 assert.match(app, /e\.key !== "Escape" \|\| !mapaGrande/, "Esc não fecha o mapa grande");
 assert.match(app, /botao\.setAttribute\("aria-pressed", String\(aberto\)\)/, "o botão não anuncia o estado");
+assert.match(app, /classList\.toggle\("mapa-grande", aberto\)/, "o body não sabe do mapa grande");
+assert.match(css, /body\.mapa-grande #prompt\s*\{\s*display:\s*none/, "a dica de controles fica em cima do mapa");
 
 console.log("ok mapa grande: botão, tela cheia, canvas 1200x800, estado recolhido preservado e Esc");
