@@ -477,6 +477,9 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 - [x] nenhuma caixa de área sobrepõe outra, e as 454 estações, 94 pedras, 186
       cavernas, 194 NPCs e 172 itens continuam alcançáveis a pé
 
+**Estado do §AB:** medido e fechado em 2026-10-21, com a prova na tabela acima.
+O que ainda falta de desempenho vive em `39-BACKLOG-VERIFICADO.md`, não aqui.
+
 ## 3. Regras de desenho
 
 - A tela de título é a primeira impressão: vale com camadas, céu em degradê,

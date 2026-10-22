@@ -1,9 +1,10 @@
 # The Learning Valley: pasta de conceito
 
 Esta pasta é a fase de **conceito e desenho macro** do jogo. A implementação
-começou em 2026-10-20, a pedido do dono: o que já está no ar e o que falta está
-em `11-ESTADO-2026-10-20.md`. O restante continua sendo desenho; nada entra no
-jogo sem virar tarefa e teste.
+começou em 2026-10-20, a pedido do dono. O que já está no ar está em
+`../README.md`; a lista única de pendências verificadas está em
+`39-BACKLOG-VERIFICADO.md`. Os documentos de conceito estão congelados: nada
+entra no jogo sem virar tarefa e teste.
 
 ## 1. O jogo em uma página
 
@@ -16,6 +17,7 @@ aberto, bestiário, slots, magias, cidades, NPCs), não no grind nem na puniçã
 
 ## 2. Ordem de leitura
 
+0. `39-BACKLOG-VERIFICADO.md`: o mapa único do que falta, por onda e esforço.
 1. `00-VISAO.md`: a promessa, os pilares, os loops, o primeiro dia, as decisões.
 2. `01-APRENDIZAGEM.md`: o motor educativo; é o documento mais importante.
 3. `02-COMBATE.md`: cone de visão, grupo, chefes, dano, morte.

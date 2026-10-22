@@ -1,5 +1,11 @@
 # As 32 estações: inventário e desenho
 
+> **Documento de conceito, congelado.** Os números e as listas abaixo descrevem
+> o desenho na data em que foram escritos, não o jogo de hoje. Estado atual:
+> [`../README.md`](../README.md); pendências verificadas:
+> [`39-BACKLOG-VERIFICADO.md`](39-BACKLOG-VERIFICADO.md).
+
+
 As estações são a alma educativa do jogo. Cada uma precisa ser uma **aula curta
 com um instrumento de verdade**, não uma página com um texto e um botão. Este
 documento mapeia o que existe, o conceito que cada uma serve e o que falta para

@@ -1,5 +1,11 @@
 # Mundo: duas camadas, pontes e a conurbação
 
+> **Documento de conceito, congelado.** Os números e as listas abaixo descrevem
+> o desenho na data em que foram escritos, não o jogo de hoje. Estado atual:
+> [`../README.md`](../README.md); pendências verificadas:
+> [`39-BACKLOG-VERIFICADO.md`](39-BACKLOG-VERIFICADO.md).
+
+
 O mapa é o menu. O jogador deve olhar o horizonte e querer ir. Este documento
 define a geografia do arquipélago, a rede subterrânea, as pontes, as cidades e
 como consertar os pontos de descida que hoje não têm subida para outro lugar.

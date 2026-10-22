@@ -1,5 +1,11 @@
 # Roadmap: do conceito ao mundo jogável
 
+> **Documento de conceito, congelado.** Os números e as listas abaixo descrevem
+> o desenho na data em que foram escritos, não o jogo de hoje. Estado atual:
+> [`../README.md`](../README.md); pendências verificadas:
+> [`39-BACKLOG-VERIFICADO.md`](39-BACKLOG-VERIFICADO.md).
+
+
 Este documento fecha a fase de conceito. Ele não autoriza implementação. A
 ordem pedida pelo dono é: conceito, desenho detalhado, revisão, só então código.
 

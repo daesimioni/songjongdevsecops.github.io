@@ -9,7 +9,7 @@ de ele existir, com números que o código já superou.
 Auditoria read-only de 2026-10-22 cruzou os documentos 00 a 38 com `src/`,
 `test/` e `tools/`. Números do código: 86 áreas, 454 estações, 93 cavernas, 541
 itens, 464 fichas, 284 missões, 194 NPCs, 2.251 entradas de wiki, 887 perguntas
-de duelo, 119 módulos e 66 testes node. `npm run validate` passa (lint,
+de duelo, 120 módulos e 68 testes node. `npm run validate` passa (lint,
 contrato de módulos, testes e build) e a matriz de navegador dá 19/19.
 
 Esforço: **P** até um dia, **M** de dois a cinco dias, **G** mais de uma semana.
@@ -29,7 +29,7 @@ Estado: **feito**, **parcial**, **ausente**, **decisão** (produto, não código
 | capa e conjuntos de 3 peças | **feito** | slot `cloak`, duas capas craftáveis, bônus de conjunto (+2 vida e +1 dano) em `equipmentBonus`, desenho atrás do corpo e aviso na ficha; `test/gear.test.mjs` e `cdp-capa.mjs` | P a M |
 | ponto fraco do chefe após 2 acertos | **feito** | terceiro acerto seguido soma +1, com nota no feedback e teste no duelo real | P |
 | recarga de runa no altar | **feito** | altar cura e devolve uma carga da runa aprendida mais vazia, com teste | P |
-| documentos que mentem | pendente | 03-ITENS (70 peças), 10-ESTACOES (32 páginas), 05-MUNDO §10, 06-ROADMAP e 14 §AB ainda se leem como backlog | P |
+| documentos que mentem | **feito** | 03-ITENS, 05-MUNDO, 06-ROADMAP e 10-ESTACOES ganharam aviso de documento congelado apontando o README e este backlog; 14 §AB fecha com a medição e remete a este mapa | P |
 
 ## Onda 2: sistemas que já têm casa
 

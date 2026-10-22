@@ -1,5 +1,11 @@
 # Itens: ferramentas de pensamento
 
+> **Documento de conceito, congelado.** Os números e as listas abaixo descrevem
+> o desenho na data em que foram escritos, não o jogo de hoje. Estado atual:
+> [`../README.md`](../README.md); pendências verificadas:
+> [`39-BACKLOG-VERIFICADO.md`](39-BACKLOG-VERIFICADO.md).
+
+
 Equipamento no The Learning Valley não é número maior. É uma forma de olhar o
 problema. Cada peça responde a uma pergunta: "que tipo de estudante eu quero ser
 hoje?".
