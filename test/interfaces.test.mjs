@@ -13,6 +13,16 @@ const app = fs.readFileSync(new URL("../src/app/app.js", import.meta.url), "utf8
 const problemas = [];
 const check = (ok, msg) => { if (!ok) problemas.push(msg); };
 check(/font-size: max\(11px, 1em\)/.test(css), "painel sem piso de 11px para texto corrido");
+// texto informativo (informação de item, bicho e duelo) também tem piso de 11 px
+const cssInfo = [fs.readFileSync(new URL("../css/bestiary.css", import.meta.url), "utf8"), css, fs.readFileSync(new URL("../css/combat.css", import.meta.url), "utf8")].join("\n");
+for (const seletor of [".best-trait, .best-weak", ".shop-grid span", ".shop-grid i", ".company-pet span", "#duel-sub"]) {
+  const linha = cssInfo.split("\n").find((l) => l.startsWith(seletor)) || "";
+  const px = Number((linha.match(/font-size: ([\d.]+)px/) || [])[1] || 0);
+  check(px >= 11, `${seletor} abaixo do piso de leitura (${px}px)`);
+}
+// o botão da troca do mercador também respeita o alvo de 28 px no celular
+const linhaTroca = css.split("\n").find((l) => l.startsWith(".shop-troca .shop-buy")) || "";
+check(/min-height: 28px/.test(linhaTroca), "botão da troca do mercador abaixo do alvo de 28 px");
 
 // todo painel interno precisa de contêiner com id e ligação de abertura
 for (const [id, rotulo] of [

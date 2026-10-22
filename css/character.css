@@ -83,7 +83,7 @@
   color: var(--ink);
 }
 .shop-troca span { flex: 1; }
-.shop-troca .shop-buy { padding: 4px 9px; font-size: 10px; }
+.shop-troca .shop-buy { padding: 4px 9px; font-size: 10px; min-height: 28px; }
 
 /* builds da ficha: retratos do equipamento */
 .sheet-builds { display: grid; gap: 6px; margin-bottom: 12px; }
@@ -174,8 +174,8 @@
   font-family: var(--mono);
 }
 .shop-grid b { font-family: var(--pixel); font-size: 8px; line-height: 1.5; color: var(--amber); }
-.shop-grid span { font-size: 10px; line-height: 1.5; color: var(--muted); }
-.shop-grid i { font-size: 9.5px; font-style: normal; color: var(--ink); }
+.shop-grid span { font-size: 11px; line-height: 1.5; color: var(--muted); }
+.shop-grid i { font-size: 11px; font-style: normal; color: var(--ink); }
 .shop-buy {
   margin-top: 2px;
   padding: 8px 10px;
@@ -221,7 +221,7 @@
   background: rgba(97, 244, 192, 0.05);
 }
 .company-pet b { font-family: var(--pixel); font-size: 9px; color: var(--mint); grid-column: 1; }
-.company-pet span { grid-column: 1; font-size: 10.5px; line-height: 1.5; color: var(--muted); }
+.company-pet span { grid-column: 1; font-size: 11px; line-height: 1.5; color: var(--muted); }
 .company-pet .item-use { grid-column: 2; grid-row: 1 / span 2; }
 .pet-roster { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 .pet-card {

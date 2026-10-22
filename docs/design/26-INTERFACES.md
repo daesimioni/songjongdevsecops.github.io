@@ -110,3 +110,12 @@ achou estouro, alvo pequeno nem foco perdido. São melhorias de leitura.
    `test/fonte.test.mjs` e sonda `cdp-fonte-maior.mjs` (parágrafo de 46 para
    53 px, cartão dentro da tela, escolha sobrevive ao recarregar, `zoom: 1` em
    390 px, zero estouro e zero erro de console).
+
+9. **Texto pequeno medido e peneirado: 2026-10-22.** Sonda nova abriu os 9
+   painéis e contou 178 elementos de texto abaixo de 11 px. Desses, 31 eram
+   informação (traço e fraqueza do bicho, preço, linha da compra, companhia,
+   subtítulo do duelo) e subiram para 11 px; o botão da troca do mercador ganhou
+   alvo de 28 px. Restam 147 rótulos em fonte pixel, que são desenho e ficaram
+   como decisão registrada. Reauditoria (18 painéis, 1280 e 390): 0 estouro,
+   0 alvo pequeno, 0 erro de console. Prova nova: `test/interfaces.test.mjs`
+   cobra os cinco seletores informativos e o alvo da troca.

@@ -116,7 +116,7 @@
 }
 .duel-meta { flex: 1; min-width: 0; }
 .duel-meta h2 { margin: 0 0 5px; font-family: var(--pixel); font-size: 13px; line-height: 1.5; color: var(--ink); }
-#duel-sub { margin: 0 0 10px; font-family: var(--mono); font-size: 10.5px; color: var(--muted); }
+#duel-sub { margin: 0 0 10px; font-family: var(--mono); font-size: 11px; color: var(--muted); }
 .duel-bar + .duel-bar { margin-top: 7px; }
 .duel-bar-head { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 4px; font-family: var(--mono); font-size: 9.5px; color: var(--muted); }
 .duel-bar-head b { color: var(--ink); }
