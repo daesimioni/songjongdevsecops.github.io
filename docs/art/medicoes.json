@@ -1,0 +1,54 @@
+{
+  "base": "8bf3c45",
+  "canvas": "@napi-rs/canvas 1.0.13",
+  "before": {
+    "medianMs": 1054.6099839999997,
+    "durations": [
+      1010.1550540000001,
+      1054.6099839999997,
+      1080.4447160000002
+    ],
+    "frames": 540,
+    "draws": 182520,
+    "canvases": 83,
+    "spriteCache": null,
+    "environmentCache": {
+      "tamanho": 79
+    }
+  },
+  "after": {
+    "medianMs": 807.6427880000001,
+    "durations": [
+      770.869256,
+      807.6427880000001,
+      850.542729
+    ],
+    "frames": 540,
+    "draws": 39960,
+    "canvases": 3668,
+    "spriteCache": {
+      "acertos": 14265,
+      "faltas": 3555,
+      "descartes": 3315,
+      "bytes": 9859584,
+      "maxBytes": 12582912,
+      "tamanho": 240,
+      "scratchBytes": 125440
+    },
+    "environmentCache": {
+      "acertos": 22031,
+      "faltas": 109,
+      "descartes": 0,
+      "bytes": 2660672,
+      "maxBytes": 8388608,
+      "tamanho": 109
+    }
+  },
+  "nativeValidation": {
+    "environmentRenders": 816,
+    "otherRenders": 838,
+    "total": 1654,
+    "animatedVariantsAcrossThreePalettes": 153
+  },
+  "note": "Benchmark isolado de Canvas em Node; n\u00e3o mede FPS do navegador ou do jogo inteiro."
+}
