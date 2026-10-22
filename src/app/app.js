@@ -705,6 +705,29 @@ function openShop() {
     grid.appendChild(card);
   }
   body.appendChild(grid);
+
+  // mercador de troca: material por material, com perda. Substitui o leilão
+  // global que os documentos proíbem, e vale na cidade de qualquer continente.
+  const trocas = el("div", "shop-trocas");
+  trocas.appendChild(el("h3", "shop-sec", "Trocar material"));
+  trocas.appendChild(el("p", "shop-empty", "O mercador troca material por material e perde um pouco na troca. Sem leilão e sem moeda."));
+  for (const t of rpg.trocasView()) {
+    const row = el("div", "shop-troca");
+    row.append(el("span", "", `${t.qtd} ${t.deNome} → ${t.ganho} ${t.paraNome}`));
+    const b = el("button", "shop-buy", t.pode ? "trocar" : "falta material");
+    b.type = "button";
+    b.disabled = !t.pode;
+    b.addEventListener("click", () => {
+      const res = rpg.trocar(t.id);
+      if (!res.ok) { toast(res.reason, 2800); return; }
+      audio.blip();
+      toast(`Trocou ${res.qtd} ${res.de} por ${res.ganho} ${res.para}.`, 2800);
+      openShop();
+    });
+    row.appendChild(b);
+    trocas.appendChild(row);
+  }
+  body.appendChild(trocas);
   openModal("shop");
   audio.open();
 }

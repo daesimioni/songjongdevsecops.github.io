@@ -4,7 +4,7 @@ import { THEME_WORDS, shuffle, OPTION_COUNT, looksNumeric, numericDistractors, v
 // só posição e conversa.
 import { backupCorrupt } from "../platform/storage.js";
 import { STORAGE } from "../core/runtime-config.js";
-import { SKILLS, TIERS, ITEMS, RECIPES, ENCHANTS, MONSTER_TRAITS, MONSTER_LABELS, MONSTER_WEAKNESS } from "../content/rpg-data.js";
+import { SKILLS, TIERS, ITEMS, RECIPES, TROCAS, ENCHANTS, MONSTER_TRAITS, MONSTER_LABELS, MONSTER_WEAKNESS } from "../content/rpg-data.js";
 import { BOND_MAX, MANA_MS, PETS, MOUNTS, petById, mountById } from "../content/pets.js";
 import { VOCACAO_PADRAO, VOC_POR_ID, subcategoriaDe, vocacaoDe, multDe } from "../content/vocations.js";
 import { bonusDeRitmo } from "./duelo-ritmo.js";
@@ -393,6 +393,36 @@ export class RPG {
     delete this.data.equipped[slot];
     this.save();
     return { ok: true, slot };
+  }
+
+  // Mercador de troca: sempre perde material, e a falta não cobra nada.
+  trocasView() {
+    return TROCAS.map((t) => ({
+      id: t.id,
+      de: t.de,
+      deNome: ITEMS[t.de]?.name || t.de,
+      qtd: t.qtd,
+      para: t.para,
+      paraNome: ITEMS[t.para]?.name || t.para,
+      ganho: t.ganho,
+      pode: this.itemCount(t.de) >= t.qtd,
+    }));
+  }
+
+  trocar(id) {
+    const t = TROCAS.find((x) => x.id === id);
+    if (!t) return { ok: false, reason: "Essa troca não existe." };
+    if (this.itemCount(t.de) < t.qtd) {
+      return { ok: false, reason: `Falta ${ITEMS[t.de]?.name || t.de}: a troca pede ${t.qtd}.` };
+    }
+    this.data.items[t.de] -= t.qtd;
+    if (this.data.items[t.de] <= 0) delete this.data.items[t.de];
+    this.addItem(t.para, t.ganho);
+    this.save();
+    return {
+      ok: true, de: ITEMS[t.de]?.name || t.de, qtd: t.qtd,
+      para: ITEMS[t.para]?.name || t.para, ganho: t.ganho,
+    };
   }
 
   // Builds: um retrato do que está vestido, para trocar o conjunto inteiro.

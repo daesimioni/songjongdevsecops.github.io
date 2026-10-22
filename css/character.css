@@ -60,6 +60,31 @@
 .gear-slot { min-width: 62px; color: var(--muted); text-transform: lowercase; }
 .gear-row .item-use { padding: 4px 8px; font-size: 10px; }
 
+/* mercador de troca dentro da loja */
+.shop-trocas { margin-top: 14px; display: grid; gap: 7px; }
+.shop-sec {
+  margin: 0;
+  font-family: var(--pixel);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--amber);
+}
+.shop-troca {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 9px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.02);
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink);
+}
+.shop-troca span { flex: 1; }
+.shop-troca .shop-buy { padding: 4px 9px; font-size: 10px; }
+
 /* builds da ficha: retratos do equipamento */
 .sheet-builds { display: grid; gap: 6px; margin-bottom: 12px; }
 .build-row {

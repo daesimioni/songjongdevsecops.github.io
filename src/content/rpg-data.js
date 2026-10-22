@@ -341,6 +341,16 @@ for (const [id, item] of Object.entries(ITEMS)) {
   if (!item.id) item.id = id;
 }
 
+// Trocas do mercador: sempre perde material, porque trocar não é fabricar. O
+// mercador é o guardião de cada cidade subterrânea, então a mesa vale no jogo
+// inteiro sem leilão e sem preço em moeda.
+export const TROCAS = [
+  { id: "madeira-ferro", de: "madeira", qtd: 4, para: "ferro", ganho: 1 },
+  { id: "erva-veio", de: "erva", qtd: 4, para: "veio", ganho: 1 },
+  { id: "ferro-veio", de: "ferro", qtd: 3, para: "veio", ganho: 1 },
+  { id: "madeira-veio", de: "madeira", qtd: 6, para: "veio", ganho: 1 },
+];
+
 export const RECIPES = [
   { id: "pocao", name: "Poção de Café", out: "pocao", qty: 1, need: { erva: 2, veio: 1 } },
   { id: "tocha", name: "Tocha de Veio", out: "tocha", qty: 1, need: { madeira: 1, veio: 1 } },

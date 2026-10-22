@@ -9,7 +9,7 @@ de ele existir, com números que o código já superou.
 Auditoria read-only de 2026-10-22 cruzou os documentos 00 a 38 com `src/`,
 `test/` e `tools/`. Números do código: 86 áreas, 454 estações, 93 cavernas, 541
 itens, 464 fichas, 284 missões, 194 NPCs, 2.251 entradas de wiki, 887 perguntas
-de duelo, 120 módulos e 74 testes node. `npm run validate` passa (lint,
+de duelo, 120 módulos e 75 testes node. `npm run validate` passa (lint,
 contrato de módulos, testes e build) e a matriz de navegador dá 19/19.
 
 Esforço: **P** até um dia, **M** de dois a cinco dias, **G** mais de uma semana.
@@ -39,7 +39,7 @@ Estado: **feito**, **parcial**, **ausente**, **decisão** (produto, não código
 | misconceptions e escolha adaptativa | parcial | um `why` por pergunta; falta erro por distrator e peso por domínio | M |
 | dicas em escada e foco | **feito** | botão de dica no duelo: 1 mana por passo, passo 1 risca duas erradas, passo 2 risca mais uma, passo 3 revela a correta, zera na pergunta nova e leva o foco para a alternativa viva; `test/duelo-dica.test.mjs` e `cdp-dica.mjs` | M |
 | formatos de pergunta e prova de transferência | ausente | hoje só A-E; decidir com o dono a colisão com "não há prova final" | G |
-| ofícios por continente e mercador de troca | parcial | receitas globais, uma forja; separar ofício por continente e trocar material, sem leilão (decisão registrada) | M |
+| ofícios por continente e mercador de troca | parcial | **mercador de troca feito**: quatro ofertas material por material no guardião de qualquer cidade, sempre com perda e sem leilão (`test/mercador.test.mjs`, `cdp-mercador.mjs`: 5 madeiras → 1 madeira e 1 ferro); falta separar o ofício (receita) por continente | M |
 | magias, encantos e consumíveis no alvo do desenho | parcial | 6 runas, 3 encantos, 18 receitas, 10 consumíveis; alvo era 12 magias, 12 encantos, 9 poções e 15 comidas | M |
 | famílias, variantes e fraqueza numérica | parcial | 16 espécies e 25 formas; falta entidade família, elite/antiga/eco, +50% de fraqueza e recompensa por completar | M |
 | clima afetando spawn | parcial | clima existe e não muda a composição da caçada | M |
@@ -50,7 +50,7 @@ Estado: **feito**, **parcial**, **ausente**, **decisão** (produto, não código
 | gesto de NPC por papel | **feito** | guia aponta o caminho, monitor ergue a mão, mestre folheia livro; só parado e de frente, fase por posto (`npc.bob`), troca o braço em vez de somar; `test/gesto-npc.test.mjs` e `cdp-gesto-npc.mjs` | M |
 | funções das peças temáticas | **feito** | as três peças respondem ao F, uma vez por descida: oficina afia (+1 de dano por 3 min), biblioteca guarda uma dica que risca duas alternativas no próximo duelo (e no treino) e observatório acende a sala do chefe no mapa (35 casas medidas); `test/pecas-tematicas.test.mjs` e `cdp-pecas-tematicas.mjs` | M |
 | tema de sala por área | **feito** | a peça veste a área, não só o continente: `varianteDaPeca` escolhe pelo id da caverna um de três arranjos (ferramenta da oficina, arranjo da estante, inclinação da luneta); `cdp-variantes-sala.mjs` mede 3 desenhos distintos por peça | M |
-| teste de fluxo real de loja e duelo | parcial | duelo tem controlador com DOM mínimo; loja só teste estático | M |
+| teste de fluxo real de loja e duelo | **feito** | loja aberta pelo guardião com F, compra real (material cobrado, peça na mochila, cartão vira "já é sua") e troca do mercador medidas em `cdp-loja.mjs` e `cdp-mercador.mjs`; o duelo já era exercido por `cdp-duelo-ritmo.mjs`, `cdp-dica.mjs` e `cdp-voz.mjs` com bicho real de caverna | M |
 | acessibilidade: voz, escala, daltonismo | parcial | teclado, foco e aria-live prontos; **voz feita** (botão ouvir/parar, pt-BR, testes e sonda); faltam escala de fonte e paleta para daltonismo | M |
 | save versionado, migração e exportar/importar | **feito** | backup carrega `v: 1` e só aplica as chaves conhecidas com valor JSON válido; a Rede ganhou `baixar arquivo` (JSON legível, sem a chave da conta) e `carregar arquivo` (recusa lixo, aplica e recarrega); `test/save-arquivo.test.mjs` e `cdp-save-arquivo.mjs` (7 partes, v1, nome trocado pelo arquivo) | M |
 | linter de conteúdo | ausente | validação só em teste; falta revisor e versão por pergunta | M |
