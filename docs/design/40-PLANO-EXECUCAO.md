@@ -17,14 +17,14 @@ combate, planta por área e editor/WebGL/jitter ficam de fora.
 
 O endgame e a lore entram no próximo ciclo, nesta ordem.
 
-## 2. O ciclo atual está fechado
+## 2. O estado do ciclo, depois das cinco fases
 
 - 0 linhas ausente e 0 parciais no 39; o que resta são decisões respondidas.
-- 106 testes em 109 arquivos, 19/19 na matriz de navegador a 60,2 fps, 141
-  módulos, 324 dependências, build de 149 arquivos.
+- 107 testes em 110 arquivos, 19/19 na matriz de navegador a 60,2 fps, 142
+  módulos, 326 dependências, build de 150 arquivos.
 - Site publicado com o 39 e o 40; o revisor de conteúdo roda no `check` e no CI.
-- A mochila medida em 60,2 fps após 75 s e 18 a 19 MB; acompanhar em hardware
-  real.
+- A mochila medida em 60 fps após 75 s e 21 MB, sem tarefa longa; acompanhar
+  em hardware real.
 
 ## 3. Fases do próximo ciclo
 
@@ -110,6 +110,11 @@ Rede.
   guilda.
 - **Prova**: `test/guilda.test.mjs` (fundar, convidar, cargo, save); `cdp-guilda.mjs`
   (fundar e convidar); wiki.
+- **Fechada (rodada 6)**: a sede local tem nome, brasão, oito lugares, cargos
+  (líder, oficial, membro), recrutamento pela party, quatro missões que leem o
+  save, diário e o título de Guardião da Sede. O diário abre a sede, o save
+  guarda tudo e a wiki ganhou a ficha (2.311 entradas). Teste node, sonda de 15
+  conferências (local e site) e 19/19 na matriz de navegador.
 - **Depende de**: F4 (as facções dão o prestígio) e da Rede.
 
 ### F6. Refinamentos reabríveis (M cada, só sob demanda)
@@ -123,7 +128,7 @@ Cada um tem o custo e o gatilho na tabela de escopo do 39.
 
 | item | quando | prova |
 |---|---|---|
-| mochila em hardware real | a cada sessão longa | 60,2 fps e 18 a 19 MB; se cair, medir e abrir item |
+| mochila em hardware real | a cada sessão longa | 60 fps e 21 MB em 2026-10-22; se cair, medir e abrir item |
 | fps abaixo de 50 | se acontecer | reabrir a decisão de WebGL; o Canvas 2D é o padrão |
 | revisor de conteúdo | no `check` e no CI | 887 versões únicas, 0 problema; 9 avisos de explicação repetida para quando o texto for reescrito |
 | Pages e fila | a cada push | verificar com cache bust; a fila externa pode atrasar e não é bug |
@@ -137,7 +142,7 @@ Cada um tem o custo e o gatilho na tabela de escopo do 39.
 | M2 | F2 | evento de 3 fases e desfecho | teste, sonda e site |
 | M3 | F3 | 7 capítulos e entradas de lore, **feito** | teste, sonda e wiki |
 | M4 | F4 | 3 facções com reputação, **feito** | teste, sonda e site |
-| M5 | F5 | guilda e party | teste, sonda e site |
+| M5 | F5 | guilda e party, **feito** | teste, sonda e site |
 
 A ordem é F1, F2, F3, F4, F5. F3 e F4 podem trocar de posição se o conteúdo do
 arco atrasar; F5 depende de F4. Cada marco fecha com `npm run validate`, commit,

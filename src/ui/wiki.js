@@ -90,6 +90,15 @@ export const COMO_JOGAR = [
     ],
   },
   {
+    nome: "Guilda e party",
+    resumo: "uma sede local, o quadro de membros e a party de oito",
+    campos: [
+      ["Fundação", "nome e brasão no Diário (Z); a sede nasce com você de líder"],
+      ["Membros", "quem entra é a party, pelo convite assinado da Rede; até oito lugares"],
+      ["Missões", "a sede lê o save: fundar, recrutar, concluir missões e derrubar um chefe"],
+    ],
+  },
+  {
     nome: "Facções e reputação",
     resumo: "Concílio, União e Porto lembram o que você fez",
     campos: [

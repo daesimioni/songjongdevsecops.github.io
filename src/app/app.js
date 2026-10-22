@@ -42,6 +42,7 @@ import { ALAS, itensDaAla, filtrarAcervo } from "../gameplay/acervo.js";
 import { DESFECHOS, GUARDIAO, GROUND_ACERVO, registrarDesfecho, estadoDaProva, desfechoPorId } from "../gameplay/grande-prova.js";
 import { estadoDosCapitulos, registrarLeitura, falaAtual, lidosDaHistoria } from "../gameplay/arcos.js";
 import { FACCOES, aplicarAto, atoPorMissao, atosPorDesfecho, reputacoes, reputacao, nivelDaReputacao, falaDaReputacao, faccaoPorId } from "../gameplay/faccoes.js";
+import { BRASOES, LIMITE_MEMBROS, guildaDe, fundarGuilda, recrutar as recrutarGuilda, promover as promoverGuilda, progressoDasMissoes, resgatarMissao, brasaoPorId } from "../gameplay/guilda.js";
 import { VOCACOES } from "../content/vocations.js";
 import { ITEMS, QUESTIONS } from "../content/rpg-data.js";
 import { createSheet } from "../ui/sheet.js";
@@ -1871,6 +1872,23 @@ function buildJournal() {
     fac.appendChild(linha);
   }
   list.appendChild(fac);
+  // a guilda: fundar ou abrir a sede
+  const guilda = guildaDe(rpg.data);
+  const sede = document.createElement("details");
+  sede.className = "journal-area-group";
+  const somaSede = document.createElement("summary");
+  somaSede.textContent = guilda
+    ? `A guilda ${guilda.nome} · ${guilda.membros.length}/${LIMITE_MEMBROS} na sede`
+    : "A guilda · ainda sem sede";
+  sede.appendChild(somaSede);
+  const abrirSede = el("button", "quest-btn", guilda ? "abrir a sede" : "fundar a guilda");
+  abrirSede.type = "button";
+  abrirSede.addEventListener("click", () => {
+    document.querySelector('#journal [data-close="journal"]')?.click();
+    openGuilda();
+  });
+  sede.appendChild(abrirSede);
+  list.appendChild(sede);
   for (const cid of CONTINENT_ORDER) {
     const continent = CONTINENTS[cid];
     const sites = sitesOf(cid);
@@ -2130,6 +2148,167 @@ function abrirDesfecho() {
   body.appendChild(grid);
   openModal("desfecho");
 }
+
+function statsDaGuilda() {
+  return { questsDone: quests.done().length, chefes: Object.keys(rpg.data.bosses || {}).length };
+}
+function buildGuilda() {
+  const body = $("guilda-body");
+  if (!body) return;
+  body.textContent = "";
+  const guilda = guildaDe(rpg.data);
+  $("guilda-lead").textContent = guilda
+    ? `${guilda.nome}: ${guilda.membros.length} de ${LIMITE_MEMBROS} na sede. Quem entra é a party.`
+    : "Ainda não há sede. Dê um nome e um brasão: a guilda é local e quem entra é a party.";
+  if (!guilda) {
+    const nome = document.createElement("input");
+    nome.id = "guilda-nome";
+    nome.className = "travel-filter";
+    nome.type = "text";
+    nome.maxLength = 24;
+    nome.placeholder = "nome da guilda";
+    nome.setAttribute("aria-label", "nome da guilda");
+    const select = document.createElement("select");
+    select.id = "guilda-brasao";
+    select.className = "travel-filter";
+    select.setAttribute("aria-label", "brasão da guilda");
+    for (const b of BRASOES) {
+      const opt = document.createElement("option");
+      opt.value = b.id;
+      opt.textContent = b.nome;
+      select.appendChild(opt);
+    }
+    const fundar = el("button", "quest-btn", "fundar a guilda");
+    fundar.type = "button";
+    fundar.addEventListener("click", () => {
+      const res = fundarGuilda(rpg.data, {
+        nome: nome.value,
+        brasao: select.value,
+        dono: { id: state.net?.id || "local", nome: player.name },
+      });
+      if (!res.ok) { toast(res.erro, 3000); return; }
+      rpg.save();
+      toast(`A guilda ${res.guilda.nome} tem sede.`, 4600);
+      audio.chime();
+      buildGuilda();
+    });
+    body.append(nome, select, fundar);
+    return;
+  }
+  const brasao = brasaoPorId(guilda.brasao);
+  const head = document.createElement("div");
+  head.className = "journal-continent";
+  head.style.setProperty("--c", brasao.cor);
+  const h3 = document.createElement("h3");
+  h3.textContent = guilda.nome;
+  const conta = document.createElement("span");
+  conta.textContent = `${guilda.membros.length}/${LIMITE_MEMBROS}`;
+  h3.appendChild(document.createTextNode(" "));
+  h3.appendChild(conta);
+  head.appendChild(h3);
+  body.appendChild(head);
+
+  // quadro de membros e cargos
+  const quadro = document.createElement("div");
+  quadro.className = "travel-list";
+  for (const membro of guilda.membros) {
+    const linha = document.createElement("div");
+    linha.className = "travel-item";
+    linha.prepend(travelDot(brasao.cor));
+    const left = document.createElement("span");
+    const b = document.createElement("b");
+    b.textContent = membro.nome;
+    const sub = document.createElement("span");
+    sub.textContent = membro.cargo === "lider" ? "líder da sede" : membro.cargo;
+    left.append(b, sub);
+    const right = document.createElement("span");
+    if (membro.cargo === "lider") {
+      right.textContent = "fundador";
+    } else {
+      const cargo = el("button", "hud-btn", membro.cargo === "oficial" ? "rebaixar" : "promover");
+      cargo.type = "button";
+      cargo.addEventListener("click", () => {
+        promoverGuilda(rpg.data, membro.id);
+        rpg.save();
+        audio.blip();
+        buildGuilda();
+      });
+      right.appendChild(cargo);
+    }
+    linha.append(left, right);
+    quadro.appendChild(linha);
+  }
+  body.appendChild(quadro);
+
+  const party = social?.party;
+  const recrutar = el("button", "quest-btn", party ? "recrutar a party" : "monte a party primeiro (R)");
+  recrutar.type = "button";
+  recrutar.disabled = !party || guilda.membros.length >= LIMITE_MEMBROS;
+  recrutar.addEventListener("click", () => {
+    const res = recrutarGuilda(rpg.data, (social?.party?.members || []).map((p) => ({ id: p.id, nome: p.name })));
+    if (!res.ok) { toast(res.erro || "Ninguém novo na party.", 2600); return; }
+    rpg.save();
+    toast(`${res.entraram} entrou na sede. ${res.total} de ${LIMITE_MEMBROS}.`, 4200);
+    audio.chime();
+    buildGuilda();
+  });
+  body.appendChild(recrutar);
+
+  // as missões da sede leem o save, sem contador inventado
+  const stats = statsDaGuilda();
+  body.appendChild(el("h3", "journal-sec", "Missões da sede"));
+  for (const missao of progressoDasMissoes(rpg.data, stats)) {
+    const row = document.createElement("div");
+    row.className = "quest-card";
+    row.append(
+      el("b", "", missao.titulo),
+      el("span", "", `${missao.feito}/${missao.meta} · ${missao.premio}`),
+    );
+    if (missao.resgatada) row.appendChild(el("em", "", "resgatada"));
+    else {
+      const resgatar = el("button", "quest-btn", missao.pronto ? "resgatar" : "em andamento");
+      resgatar.type = "button";
+      resgatar.disabled = !missao.pronto;
+      resgatar.addEventListener("click", () => {
+          const res = resgatarMissao(rpg.data, missao.id, statsDaGuilda());
+          if (!res.ok) { toast(res.erro, 2800); return; }
+          if (missao.id === "chefe") {
+            const titulo = `Guardião da ${guilda.nome}`;
+            if (!quests.data.titles.includes(titulo)) quests.data.titles.push(titulo);
+            quests.data.title = titulo;
+            quests.save();
+            quests.changed?.();
+          } else {
+            rpg.addItem("pergaminho", missao.id === "missoes" ? 2 : 1);
+          }
+          rpg.save();
+          toast(`A sede cumpriu "${missao.titulo}".`, 5000);
+          audio.chime();
+        buildGuilda();
+      });
+      row.appendChild(resgatar);
+    }
+    body.appendChild(row);
+  }
+
+  // o diário da sede
+  if (guilda.diario.length) {
+    body.appendChild(el("h3", "journal-sec", "Diário da sede"));
+    for (const linha of guilda.diario.slice(-8).reverse()) {
+      body.appendChild(el("p", "journal-conceito", linha));
+    }
+  }
+}
+function openGuilda() {
+  if (!state.started) return;
+  stopSprint();
+  if (state.panelOpen) closePanel();
+  closeChat();
+  buildGuilda();
+  openModal("guilda");
+  audio.open();
+}
+
 $("biblioteca-prova-btn")?.addEventListener("click", iniciarGrandeProva);
 
 function estadoDaHistoria() {
@@ -3828,7 +4007,7 @@ window.addEventListener("beforeunload", () => {
   }, { capture: true });
 
   if (new URLSearchParams(location.search).has("debug")) {
-    window.__mundo = { player, state, world, renderer, audio, quests, rede, backup, rpg, sheetUi, duelUi, dungeon, pvpUi, knockDown, findPath, assets: { cache: cacheDeAssets, total: totalDeAssets }, openPost: (id) => openPost(id), openTravel: (mode) => openTravel(mode), openShop: () => openShop(), openDuel: (mon, ground, boss, partner) => openDuel(mon, ground, boss, partner), openVocacoes: () => openVocacoes(), openWiki: (opcoes) => openWiki(opcoes), openBiblioteca: () => openBiblioteca(), catalog: CATALOG_CONTENT, catalogStones: [...CATALOG_STONES], waystones: WAYSTONES, get social() { return social; } };
+    window.__mundo = { player, state, world, renderer, audio, quests, rede, backup, rpg, sheetUi, duelUi, dungeon, pvpUi, knockDown, findPath, assets: { cache: cacheDeAssets, total: totalDeAssets }, openPost: (id) => openPost(id), openTravel: (mode) => openTravel(mode), openShop: () => openShop(), openDuel: (mon, ground, boss, partner) => openDuel(mon, ground, boss, partner), openVocacoes: () => openVocacoes(), openWiki: (opcoes) => openWiki(opcoes), openBiblioteca: () => openBiblioteca(), openGuilda: () => openGuilda(), catalog: CATALOG_CONTENT, catalogStones: [...CATALOG_STONES], waystones: WAYSTONES, get social() { return social; } };
   }
 
   uiScope.sync();

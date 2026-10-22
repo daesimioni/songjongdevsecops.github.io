@@ -14,6 +14,7 @@ import { versaoDaPergunta, registrarDistrator as registrarErro, recentes as erro
 import { estadoDaProva } from "./grande-prova.js";
 import { lidosDaHistoria } from "./arcos.js";
 import { atosValidos, reputacoes, ajusteDaCompra } from "./faccoes.js";
+import { guildaValida } from "./guilda.js";
 import { FAMILIAS, FAMILIA_POR_ID, familiaDeKind } from "../content/familias.js";
 
 const RESPAWN_MS = 5 * 60 * 1000;
@@ -71,6 +72,7 @@ function emptyData() {
     grandeProva: null,
     arcos: [],
     faccoes: [],
+    guilda: null,
     familias: {},
     plots: {},
     plotGift: {},
@@ -204,6 +206,7 @@ function readData() {
     if (prova) data.grandeProva = { escolha: prova.escolha, at: Number.isFinite(prova.at) ? prova.at : 0 };
     data.arcos = lidosDaHistoria(obj);
     data.faccoes = atosValidos(obj);
+    data.guilda = guildaValida(obj.guilda);
     for (const [key, plot] of Object.entries(obj.plots || {})) {
       if (typeof key !== "string" || key.length > 40 || !plot || typeof plot !== "object") continue;
       if (!plot.planted) continue;

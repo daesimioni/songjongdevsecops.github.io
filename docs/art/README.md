@@ -1,7 +1,7 @@
 # Arte e animação do vale
 
-Revisão de 22/10/2026, integrada às mudanças da `main` até `74cc4eb`
-(capítulos da Iara, acervo, desfecho e facções). O [catálogo completo](catalogo.json)
+Revisão de 22/10/2026, integrada às mudanças da `main` até `ccfcf14`
+(capítulos da Iara, acervo, desfecho, facções e guilda local). O [catálogo completo](catalogo.json)
 é gerado dos módulos de produção: inclui cada ID de item e cada tipo de cenário.
 
 ## Direção visual
@@ -80,7 +80,7 @@ pacote do jogo.
 ## Validação e reprodução
 
 `npm ci && npm run validate` executa lint, grafo de módulos, revisão de conteúdo,
-suíte de 107 arquivos de teste, prova de pixels e build. A mesma validação roda no Node 22 e 24
+suíte de 108 arquivos de teste, prova de pixels e build. A mesma validação roda no Node 22 e 24
 na CI. O Canvas nativo está fixado no lockfile como dependência de desenvolvimento.
 
 A prova executa **31.391 desenhos**: 816 ambientais, 861 vistas/ícones, 6.656 poses
