@@ -26,7 +26,7 @@ andamento e o que falta.
 - **Pessoas e pets**: jogador, 194 NPCs e 7 pets com contorno e luz; NPC tem
   papel (guardião, monitor, morador) e objeto do assunto na mão.
 - **Mundo**: 86 áreas (70 de catálogo e 16 antigas), 454 estações, 94 faróis,
-  93 cavernas e clareiras, 3.854 peças de ambiente, 72 casas com porta e
+  93 cavernas e clareiras, 3.816 peças de ambiente, 72 casas com porta e
   interior.
 - **Masmorras**: 93 plantas diferentes em 6 modelos, 4 acabamentos de piso,
   entrada embaixo, cidade no alto, chefe longe da boca e uma sala temática por
@@ -36,14 +36,14 @@ andamento e o que falta.
 
 | grupo | etapa 1 | etapa 2 | etapa 3 |
 |---|---|---|---|
-| vegetação | **feito**: 3 variantes por peça (24 silhuetas) | pendente | pendente |
-| solo | **feito**: 3 variantes por peça (24) | pendente | pendente |
-| construção | **feito**: 3 variantes por peça (24), com oca redonda, casa com ala, torre com balcão, ruína em arco, galpão com alpendre, poço com balde, cerca com portão e doca em T | pendente | pendente |
-| fogo | **feito**: 2 variantes por peça, cova de brasa, braseiro pendurado, tocha de arandela, lanterna de poste e fumaça fina | pendente | pendente |
-| água | **feito**: 3 variantes nas três peças quietas e a espuma com 6 quadros | pendente | pendente |
-| props | **feito**: 3 variantes nas quatro peças quietas, com barril deitado, saco aberto, caixote aberto e fardo redondo | pendente | pendente |
+| vegetação | **feito**: 3 variantes por peça (24 silhuetas) | **feito**: espelho por instância | **feito**: verga com o vento (`swayAt`); sem quadro próprio |
+| solo | **feito**: 3 variantes por peça (24) | **feito**: decalque espelhado | **feito**: `tufo` com 2 quadros |
+| construção | **feito**: 3 variantes por peça (24), com oca redonda, casa com ala, torre com balcão, ruína em arco, galpão com alpendre, poço com balde, cerca com portão e doca em T | não espelha (porta e placa têm lado) | **feito**: rígida por regra, zero quadro e zero inclinação |
+| fogo | **feito**: 2 variantes por peça, cova de brasa, braseiro pendurado, tocha de arandela, lanterna de poste e fumaça fina | **feito**: variantes por instância | **feito**: 5 de 5 tipos animam (4 a 8 quadros) |
+| água | **feito**: 3 variantes nas três peças quietas e a espuma com 6 quadros | **feito**: espelho por instância | **feito**: espuma 6 quadros, junco e lírio 2 quadros |
+| props | **feito**: 3 variantes nas quatro peças quietas, com barril deitado, saco aberto, caixote aberto e fardo redondo | **feito**: espelho nas peças de decoração | **feito**: gaivota com 4 quadros; mobília é estática de propósito |
 
-Silhuetas do grupo: 24 + 24 + 24 + 10 + 10 + 13 = **105** (antes 69).
+Silhuetas do grupo: 24 + 24 + 24 + 10 + 10 + 19 = **111** (antes 69).
 
 ### Etapa 2 (mais única): espelho por instância
 
@@ -75,3 +75,7 @@ A árvore já vergava com a rajada e o fogo já tinha 4 a 8 quadros.
 | 2026-10-21 | mapa, floresta | árvore em bosque com teto por ilha, copa livre de caminho, totem, NPC e caçada; metrópole com 4 árvores só na beirada; 1.365 para 582 árvores | teste de floresta, 25/25 suítes, 19/19 no navegador, 60,3 fps |
 | 2026-10-21 | assets, etapa 2 e 3 | espelho por instância nas peças de vegetação, props, água e solo; três peças pequenas ganharam dois quadros de animação; bicho da caverna ganhou porte próprio (0,90 a 1,06) | 24/24 suítes, 19/19 no navegador, 60,4 fps |
 | 2026-10-21 | assets, etapa 1 | vegetação, solo, construção, água, props e fogo com 2 ou 3 variantes: 69 para 105 silhuetas; três variantes fracas foram refeitas depois da auditoria da folha de contato (doca em T, braseiro pendurado e palmeira curta) | folha de contato das 105, 24/24 suítes, 19/19 no navegador, 60,6 fps |
+| 2026-10-21 | páginas antigas, levas 4 a 9 | as 69 páginas escritas à mão fecharam curso de seis partes e 460+ palavras; o teste deixou de ter conjunto de exceção e cobra todas | `test/licoes.test.mjs`, `cdp-pagina.mjs`, 54/54 suítes, 19/19 no navegador |
+| 2026-10-22 | chefes | fase 2 ganhou habilidade própria e estável para os 93 chefes: couraça, seiva, ímpeto e espelho, com nome na tela e aviso da fase | `test/chefe-habilidades.test.mjs`, `cdp-chefe-habilidade.mjs`, 54/54 suítes, 19/19 no navegador |
+| 2026-10-22 | revisão externa | PRs #1 a #4 auditadas no diff inteiro: 53 suítes, matriz 19/19, contraste 0 falha, 2.413 alvos de caverna, 72 casas; README alinhado e fórmula de dano duplicada removida | `docs/design/33-REVISAO-EXTERNA.md`, `npm test`, sondas de contraste e fonte |
+| 2026-10-22 | assets, etapa 3 fechada | 41 assets e 111 silhuetas medidos; guarda de animação por grupo (fogo 5/5, água 3/4, solo, props, vegetação pelo vento, construção rígida) no teste de assets | `test/assets.test.mjs`, 54/54 suítes |

@@ -85,7 +85,7 @@ decorativa (a dívida está no fim deste documento).
 - `test/casas.test.mjs`: escala, 72 portas, sala fechada com exatamente uma
   porta, spawn livre, mesa/fogo/cama dentro, mobília determinística e
   diferente entre casas do mesmo tipo.
-- 29 suítes node verdes; matriz de navegador 19/19; 60 fps com a sala aberta.
+- 54 suítes node verdes; matriz de navegador 19/19; 60 fps com a sala aberta.
 - Sondas: `cdp-casa.mjs` (fachada antes/depois) e `cdp-casa2.mjs` (entrar,
   estudar, descansar, sair) em `temporarios/2026-10-20-mundo-song-pedido/`.
 
@@ -93,10 +93,10 @@ decorativa (a dívida está no fim deste documento).
 
 1. São **quatro plantas** compartilhadas por tipo; a mobília varia, a geometria
    da sala não. O próximo passo é uma planta por disciplina ou por ilha.
-2. A mobília **sorteada** (barril, caixote, saco, fardo, estante, planta)
-   continua decorativa: o corpo passa por cima. Mesa, fogo e cama já barram.
-   Fechar o resto exige caixa por posição sorteada e teste de caminho dentro
-   da sala.
+2. **Fechado em 2026-10-22:** a mobília sorteada (barril, caixote, saco, fardo,
+   estante, seca e braseiro) agora barra o corpo com caixa por posição, e o
+   teste percorre a sala até porta, mesa e fogo sem travar. Ver
+   `test/interior-collision.test.mjs`.
 3. Não há morador dentro de casa. Um NPC por casa, com falas do assunto, daria
    mais vida e uma segunda fonte de dica.
 4. A porta de fora é desenhada na fachada; não há soleira, número ou placa
