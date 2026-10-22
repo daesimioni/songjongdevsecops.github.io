@@ -85,6 +85,7 @@
   .duel-top { gap: 10px; }
   .duel-option, .pvp-option { padding: 12px; font-size: 13px; min-height: 48px; }
   .duel-feedback, .duel-hint, .pvp-text, .pvp-note, .pvp-sub, .training-sub { font-size: 12px; }
+  .duel-dica { font-size: 12.5px; min-height: 44px; }
   .pvp-question { padding: 12px; }
   .pvp-question b { font-size: 12.5px; }
   .journal-progress { font-size: 12px; }

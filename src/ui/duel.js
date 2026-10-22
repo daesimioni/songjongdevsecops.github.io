@@ -209,7 +209,10 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
       b.appendChild(el("span", "", text));
       if (d.monsterHp <= 0) b.disabled = true;
       if (hinted === i) b.classList.add("hinted");
-      if (sparked.includes(i)) {
+      if ((d.eliminadas || []).includes(i)) {
+        b.disabled = true;
+        b.classList.add("riscada");
+      } else if (sparked.includes(i)) {
         b.disabled = true;
         b.classList.add("sparked");
       } else if (d.phase === "feedback") {
@@ -270,6 +273,14 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
         main.appendChild(bar);
       }
       if (petInfo) main.appendChild(el("p", "duel-petinfo", petInfo));
+      const dicas = d.dicas || 0;
+      const db = el("button", "duel-dica", dicas >= 3
+        ? "dicas desta pergunta: 3 de 3"
+        : `pedir dica · ${dicas + 1} de 3 · 1 mana`);
+      db.type = "button";
+      db.disabled = dicas >= 3 || d.monsterHp <= 0 || rpg.mana() < 1;
+      db.addEventListener("click", useHint);
+      main.appendChild(db);
       const foot = el("p", "duel-hint", "Toque numa alternativa (ou A a E no teclado). Errar tira vida; acertar tira vida do monstro.");
       main.appendChild(foot);
     }
@@ -357,6 +368,21 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
     b.type = "button";
     b.addEventListener("click", advance);
     body.appendChild(b);
+  }
+
+  function useHint() {
+    const res = rpg.usarDica();
+    if (!res.ok) {
+      toast(res.reason, 3200);
+      audio.error?.();
+      render();
+      return false;
+    }
+    if (res.revelar != null) hinted = res.revelar;
+    audio.blip();
+    render();
+    focusAction();
+    return true;
   }
 
   function usePet() {

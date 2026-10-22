@@ -9,7 +9,7 @@ de ele existir, com números que o código já superou.
 Auditoria read-only de 2026-10-22 cruzou os documentos 00 a 38 com `src/`,
 `test/` e `tools/`. Números do código: 86 áreas, 454 estações, 93 cavernas, 541
 itens, 464 fichas, 284 missões, 194 NPCs, 2.251 entradas de wiki, 887 perguntas
-de duelo, 120 módulos e 68 testes node. `npm run validate` passa (lint,
+de duelo, 120 módulos e 69 testes node. `npm run validate` passa (lint,
 contrato de módulos, testes e build) e a matriz de navegador dá 19/19.
 
 Esforço: **P** até um dia, **M** de dois a cinco dias, **G** mais de uma semana.
@@ -37,7 +37,7 @@ Estado: **feito**, **parcial**, **ausente**, **decisão** (produto, não código
 |---|---|---|---|
 | grafo de conceitos + domínio 0 a 5 + revisão espaçada + caderno | **núcleo feito** | domínio 0-5 no save, revisão espaçada por área, baralho prioriza vencido e caderno no diário; faltam arestas do grafo, misconceptions, formatos e prova de transferência | M a G |
 | misconceptions e escolha adaptativa | parcial | um `why` por pergunta; falta erro por distrator e peso por domínio | M |
-| dicas em escada e foco | parcial | dica só por runa/pet; falta contador e dica progressiva | M |
+| dicas em escada e foco | **feito** | botão de dica no duelo: 1 mana por passo, passo 1 risca duas erradas, passo 2 risca mais uma, passo 3 revela a correta, zera na pergunta nova e leva o foco para a alternativa viva; `test/duelo-dica.test.mjs` e `cdp-dica.mjs` | M |
 | formatos de pergunta e prova de transferência | ausente | hoje só A-E; decidir com o dono a colisão com "não há prova final" | G |
 | ofícios por continente e mercador de troca | parcial | receitas globais, uma forja; separar ofício por continente e trocar material, sem leilão (decisão registrada) | M |
 | magias, encantos e consumíveis no alvo do desenho | parcial | 6 runas, 3 encantos, 18 receitas, 10 consumíveis; alvo era 12 magias, 12 encantos, 9 poções e 15 comidas | M |

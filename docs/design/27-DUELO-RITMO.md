@@ -63,3 +63,11 @@ vida aparece como 1 e não como 0 vivo.
    `Se acertar: ~X`, com perícia, equipamento, caráter do bicho, couraça do
    chefe e o ritmo que o acerto fecharia. O til é honesto: desvio e efeitos de
    subcategoria podem mudar o resultado.
+
+4. **Dica em escada: fechada em 2026-10-22.** O duelo ganhou o botão
+   `pedir dica · N de 3 · 1 mana`: o passo 1 risca duas alternativas erradas, o
+   passo 2 risca mais uma e o passo 3 revela a correta, sempre custando 1 de
+   mana e zerando na pergunta seguinte. O foco pula para a primeira alternativa
+   viva. Prova: `test/duelo-dica.test.mjs` e sonda `cdp-dica.mjs` (mana 10 → 7,
+   2 e 3 alternativas riscadas, correta destacada só no terceiro passo, 0 erro
+   de console).

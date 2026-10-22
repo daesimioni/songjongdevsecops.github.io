@@ -52,7 +52,8 @@ assert.ok(rpg2.data.conceitos[areaA] || rpg2.data.conceitos[areaB], "conceito nÃ
 const rpg3 = new RPG();
 const deck = rpg3.duelDeck("cs", 1);
 assert.ok(deck.length > 2, "baralho curto para o teste de prioridade");
-const escolhido = deck[deck.length - 1].area || "cs";
+const escolhido = deck.map((item) => item.area).filter(Boolean).pop();
+assert.ok(escolhido, "o baralho precisa de perguntas com Ã¡rea para o teste de prioridade");
 for (const item of deck) rpg3.data.conceitos[item.area || "cs"] = { n: 3, r: 3, w: 0, due: Date.now() + 86400000 };
 rpg3.data.conceitos[escolhido] = { n: 1, r: 1, w: 0, due: 0 };
 const priorizado = rpg3.duelDeck("cs", 1);

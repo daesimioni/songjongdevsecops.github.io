@@ -576,6 +576,36 @@ export class RPG {
     return out;
   }
 
+  // Dica em escada: cada passo custa 1 de mana. O primeiro risca duas
+  // alternativas erradas, o segundo risca mais uma e o terceiro revela a
+  // correta. O estado vive no duelo e zera quando entra a próxima pergunta.
+  usarDica() {
+    const d = this.duel;
+    if (!d || d.phase !== "question" || d.monsterHp <= 0) {
+      return { ok: false, reason: "A dica só vale na pergunta de um duelo." };
+    }
+    const nivel = (d.dicas || 0) + 1;
+    if (nivel > 3) return { ok: false, reason: "As dicas desta pergunta acabaram." };
+    this.pulse();
+    if (this.mana() < 1) return { ok: false, reason: "Sem mana para a dica. Ela volta com o tempo." };
+    const q = d.question;
+    const eliminadas = d.eliminadas || (d.eliminadas = []);
+    this.addMana(-1);
+    d.dicas = nivel;
+    if (nivel === 3) {
+      this.save();
+      return { ok: true, nivel, revelar: q.answer };
+    }
+    const erradas = q.options.map((_, i) => i).filter((i) => i !== q.answer && !eliminadas.includes(i));
+    const novas = [];
+    for (let i = 0; i < (nivel === 1 ? 2 : 1) && erradas.length; i++) {
+      novas.push(erradas.splice(Math.floor(Math.random() * erradas.length), 1)[0]);
+    }
+    eliminadas.push(...novas);
+    this.save();
+    return { ok: true, nivel, eliminadas: novas };
+  }
+
   mountsView() {
     return Object.entries(MOUNTS).map(([id, mount]) => ({
       id,
@@ -1256,6 +1286,9 @@ export class RPG {
       venenoPendente: false,
       petUsado: false,
       surprise: !this.cave,
+      // escada de dica: passo usado e alternativas já riscadas nesta pergunta
+      dicas: 0,
+      eliminadas: [],
     };
     for (const p of extras) {
       const ptier = clamp(Number(p.tier) || 1, 1, 3);
@@ -1371,6 +1404,9 @@ export class RPG {
       venenoPendente: false,
       petUsado: false,
       surprise: !this.cave,
+      // escada de dica: passo usado e alternativas já riscadas nesta pergunta
+      dicas: 0,
+      eliminadas: [],
     };
     return { ok: true, duel: this.duel };
   }
@@ -1638,6 +1674,8 @@ export class RPG {
       }
     }
     d.question = d.deck[d.deckIndex];
+    d.dicas = 0;
+    d.eliminadas = [];
     return { phase: "question", duel: d };
   }
 
