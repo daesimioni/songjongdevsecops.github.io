@@ -86,6 +86,7 @@ A árvore já vergava com a rajada e o fogo já tinha 4 a 8 quadros.
 | 2026-10-22 | revisor de conteúdo | ferramenta fora do teste revisa as 887 perguntas do índice com contexto (`continente/dificuldade#posição`); pega duplicata global, alternativa ambígua, rascunho e resposta fora da faixa; cada pergunta ganha versão FNV-1a estável | `test/revisor-conteudo.test.mjs`, `npm run check:conteudo`, 93/93 suítes |
 | 2026-10-22 | erro por distrator | o duelo guarda a alternativa marcada com a versão FNV da pergunta (teto 120, purga, janela 7 dias), mostra "Você marcou: X" e o caderno lista os erros recentes com a resposta; a pergunta errada volta antes no mesmo domínio | `test/distratores.test.mjs`, `cdp-distratores.mjs`, 94/94 suítes |
 | 2026-10-22 | mapa grande | o minimapa ganhou modo tela cheia sem segundo desenho: canvas 600x400 para 1200x800, 1.256x733 da tela 1.280x757, botão com aria-pressed, Esc devolve ao canto e o estado recolhido volta | `test/mapa-grande.test.mjs`, `cdp-mapa-tela.mjs`, 95/95 suítes |
+| 2026-10-22 | ferry do porto | a lista de pedras no hub ganha a travessia paga ao Porto Submerso por 2 de madeira petrificada; sem material o botão fica desabilitado e diz o que falta, com material cobra e desce à camada -2, com fala do barqueiro na chegada | `test/ferry.test.mjs`, `cdp-ferry.mjs`, 96/96 suítes, viagem 96 -> 97 |
 
 ## Fecho da revisão (2026-10-22)
 
@@ -101,11 +102,11 @@ o que os testes e sondas desta data mostram, não o que o diário prometeu.
 | masmorras e batalha | 93 cavernas em 6 modelos e 4 pisos | sala temática por disciplina com 279 peças sólidas; 93 chefes | ritmo +1/+2, leitura de turno, fases 2 e 3, habilidade própria por chefe, turnos de PvP | `test/masmorras.test.mjs`, `test/salas.test.mjs`, `test/duelo-ritmo.test.mjs`, `test/chefe-habilidades.test.mjs`, `test/pvp-turnos.test.mjs`, `cdp-chefe-habilidade.mjs`, `cdp-sala-tema.mjs` |
 | pedidos já feitos | auditoria dos 38 pedidos na fonte viva | correção de resposta vazia, frase repetida, seis alternativas e páginas curtas | 69 páginas com curso completo, revisão das PRs externas e documentos alinhados | `docs/design/20-AUDITORIA-PEDIDOS.md`, `docs/design/33-REVISAO-EXTERNA.md`, `test/licoes.test.mjs`, `cdp-pagina.mjs` |
 
-Prova de conjunto desta data: `npm test` com **95 testes em 98 arquivos, 95 passaram**;
+Prova de conjunto desta data: `npm test` com **96 testes em 99 arquivos, 96 passaram**;
 matriz de navegador **19/19** remedida em 2026-10-22 depois de clima, sono, famílias,
 texto maior, marcas do duelo, variantes, bilhetes, arcos, patrulha e perseguição e do desacoplamento
 mundo→rendering (`cdp-regressao.mjs`: HUD, mochila 40, bestiário
-464, wiki 2.300 em 15 abas, diário 86, viagem 96, névoa r2, caverna, câmera,
+464, wiki 2.300 em 15 abas, diário 86, viagem 97, névoa r2, caverna, câmera,
 vida/mana, mapa recolhido, fps 60,5, 390 px sem estouro, console sem erro do jogo);
 matriz de navegador **19/19** (60 fps, 0 erro de console, 0 estouro em 390 px);
 contraste **0 falha**; fonte e transbordo **0 fora**. Sondas e capturas em

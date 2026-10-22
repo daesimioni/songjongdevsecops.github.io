@@ -1026,6 +1026,17 @@ export class RPG {
     this.save();
   }
 
+  // tira item do save; devolve false sem mexer se não há o suficiente
+  removeItem(id, qty = 1) {
+    const atual = Number(this.data.items[id]) || 0;
+    const n = Math.floor(Number(qty));
+    if (!ITEMS[id] || !Number.isFinite(n) || n < 1 || atual < n) return false;
+    if (atual === n) delete this.data.items[id];
+    else this.data.items[id] = atual - n;
+    this.save();
+    return true;
+  }
+
   itemCount(id) {
     return this.data.items[id] || 0;
   }

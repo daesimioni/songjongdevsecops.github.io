@@ -36,6 +36,7 @@ import { feedPeer, peerRenderPosition } from "../platform/interp.js";
 import { startTitle } from "../ui/title.js";
 import { RPG } from "../gameplay/rpg.js";
 import { resumoConceitos, vencido } from "../gameplay/conceitos.js";
+import { FERRY, precoDoFerry, podePagarFerry, cobrarFerry, faltaDoFerry, nomeDoMaterial, falaDoBarqueiro } from "../gameplay/ferry.js";
 import { VOCACOES } from "../content/vocations.js";
 import { ITEMS, QUESTIONS } from "../content/rpg-data.js";
 import { createSheet } from "../ui/sheet.js";
@@ -1883,7 +1884,7 @@ function buildTravel() {
     underRight.textContent = here === CONURBATION.id ? "aqui" : "descer";
     under.prepend(travelDot(CONURBATION.accent || "#6bd5ff"));
     under.append(underLeft, underRight);
-    if (here !== CONURBATION.id) under.addEventListener("click", enterUnderworld);
+    if (here !== CONURBATION.id) under.addEventListener("click", () => enterUnderworld());
     list.appendChild(under);
     // com 93 cavernas, a lista precisa de cabeçalho por continente
     const ordenadas = [...DUNGEONS].sort((a, b) => {
@@ -1918,6 +1919,36 @@ function buildTravel() {
       list.appendChild(btn);
     }
     return;
+  }
+  // ferry: a porta paga do porto para o Porto Submerso. Só de quem está no
+  // hub; sem a madeira do casco o botão fica desabilitado e diz o que falta.
+  const noHub = player.continentId === "hub" || world.areaAt(player.x, player.y)?.continent === "hub";
+  if (noHub) {
+    const pode = podePagarFerry(rpg.data.items);
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "travel-item";
+    btn.disabled = !pode;
+    const left = document.createElement("span");
+    const b = document.createElement("b");
+    b.textContent = `${FERRY.nome} · ${FERRY.destino}`;
+    const sub = document.createElement("span");
+    sub.textContent = pode
+      ? `${precoDoFerry()} · o barqueiro conta a travessia`
+      : `faltam ${faltaDoFerry(rpg.data.items)} de ${nomeDoMaterial().toLowerCase()}`;
+    left.append(b, sub);
+    const right = document.createElement("em");
+    right.textContent = pode ? "embarcar" : "sem material";
+    btn.prepend(travelDot("#6bd5ff"));
+    btn.append(left, right);
+    if (pode) btn.addEventListener("click", () => {
+      if (!cobrarFerry(rpg.data.items)) return;
+      rpg.save();
+      closeModal("travel");
+      enterUnderworld({ semEntrada: true });
+      toast(falaDoBarqueiro(Math.floor(Date.now() / 1000)), 4600);
+    });
+    list.appendChild(btn);
   }
   // expedição para o arquipélago do saber: cada seção tem farol, e o jogador
   // chega sem precisar descobrir a capital antes
@@ -1987,9 +2018,11 @@ function buildTravel() {
   }
 }
 
-function enterUnderworld() {
+function enterUnderworld({ semEntrada = false } = {}) {
   const current = dungeon?.state?.def?.id;
-  const cave = world.caves.find((c) => c.defId === current && c.mouth === "entrance") || dungeon?.state?.entryCave || null;
+  // o ferry chega de fora da caverna: sem entrada antiga, a saída usa a boca
+  // do continente da conurbação em vez da última caverna visitada
+  const cave = semEntrada ? null : (world.caves.find((c) => c.defId === current && c.mouth === "entrance") || dungeon?.state?.entryCave || null);
   closeModal("travel");
   dungeon.open(CONURBATION, cave);
   toast("Porto Submerso. A camada -2 liga as capitais por baixo do mar.", 3600);
