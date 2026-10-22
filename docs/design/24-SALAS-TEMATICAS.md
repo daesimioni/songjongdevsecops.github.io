@@ -85,3 +85,17 @@ A segunda tecla na mesma peça responde "Esta peça já rendeu o que tinha nesta
 descida". O efeito da biblioteca entra pelo `aplicarDicaGuardada` do RPG, que
 some do save ao ser gasto (`BUFF_NAMES.dica`). Prova node:
 `test/pecas-tematicas.test.mjs`.
+
+## 7. Tema por área, não só por continente (2026-10-22)
+
+Cada peça veste três arranjos, escolhidos pelo id da caverna por
+`varianteDaPeca(areaId)` (hash estável): a oficina troca a ferramenta da bancada
+(chip, frasco ou engrenagem), a biblioteca troca o arranjo da estante (livros,
+pergaminhos ou tomos com globo) e o observatório aponta a luneta para outro
+canto do céu, com constelação própria.
+
+A variante entra na chave do cache de sprite, então peças de áreas diferentes
+não compartilham bitmap errado. Prova: `test/pecas-tematicas.test.mjs` (estável,
+0 a 2, três arranjos na amostra) e sonda `cdp-variantes-sala.mjs`, que desenha as
+nove combinações e compara pixel: 3 hashes distintos por peça, 762 a 874 pixels
+pintados, zero erro de console. Captura `variantes-sala-*.png`.

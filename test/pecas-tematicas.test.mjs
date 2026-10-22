@@ -90,7 +90,24 @@ for (const [continente, tipo] of Object.entries(TEMA_DA_SALA)) {
 }
 
 // ---- oficina e observatório: fontes e efeitos ----
+const { varianteDaPeca } = await import("../src/rendering/dungeon-art.js");
+assert.equal(varianteDaPeca("dungeon-cs-arch"), varianteDaPeca("dungeon-cs-arch"), "a variante precisa ser estável");
+const amostra = ["cs-arch", "cs-devops", "math-analysis", "math-algebra", "physics-em", "physics-thermo", "chem-organic", "lingua-literature", "music-form", "ai-neural", "inter-todas", "hub-porto"];
+const variantes = amostra.map((id) => varianteDaPeca(id));
+assert.ok(variantes.every((v) => Number.isInteger(v) && v >= 0 && v <= 2), `variante fora de 0..2: ${variantes}`);
+assert.equal(new Set(variantes).size, 3, "a amostra de áreas precisa cobrir os três arranjos");
+assert.equal(varianteDaPeca(""), 0, "sem id a peça cai no arranjo 0");
+
+const arte = fs.readFileSync(new URL("../src/rendering/dungeon-art.js", import.meta.url), "utf8");
+assert.match(arte, /function drawOficinaRaw\(ctx, x, y, t, accent, variant = 0\)/, "oficina sem variante");
+assert.match(arte, /function drawBibliotecaRaw\(ctx, x, y, t, accent, variant = 0\)/, "biblioteca sem variante");
+assert.match(arte, /function drawObservatorioRaw\(ctx, x, y, t, accent, variant = 0\)/, "observatório sem variante");
+
 const dungeon = fs.readFileSync(new URL("../src/app/dungeon.js", import.meta.url), "utf8");
+assert.match(dungeon, /const variante = varianteDaPeca\(state\.def\?\.id\)/, "a caverna não escolhe a variante pela área");
+assert.match(dungeon, /drawOficina\([^)]*palette\.accent, variante\)/, "oficina não recebe a variante");
+assert.match(dungeon, /drawBiblioteca\([^)]*palette\.accent, variante\)/, "biblioteca não recebe a variante");
+assert.match(dungeon, /drawObservatorio\([^)]*palette\.accent, variante\)/, "observatório não recebe a variante");
 const sala = fs.readFileSync(new URL("../src/content/salas-tematicas.js", import.meta.url), "utf8");
 assert.match(dungeon, /usarPecaTematica\(obj\)/, "a caverna não usa a peça temática");
 assert.match(dungeon, /obj\.kind === "oficina" && |obj\.kind === "oficina"/, "faltou o caso da oficina");

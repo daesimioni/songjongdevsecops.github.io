@@ -206,7 +206,16 @@ function drawForgeRaw(ctx, x, y, t, accent) {
 }
 
 // ---- sala temática: cada disciplina tem um cômodo com a sua cara ----
-function drawOficinaRaw(ctx, x, y, t, accent) {
+// O id da caverna decide qual dos três arranjos a peça veste; é estável, então a
+// mesma área nunca troca de cara entre visitas.
+export function varianteDaPeca(areaId) {
+  const id = String(areaId || "");
+  let h = 0;
+  for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0;
+  return h % 3;
+}
+
+function drawOficinaRaw(ctx, x, y, t, accent, variant = 0) {
   ctx.save();
   ctx.translate(x, y);
   ctx.fillStyle = "rgba(0,0,0,0.35)";
@@ -223,6 +232,34 @@ function drawOficinaRaw(ctx, x, y, t, accent) {
   ctx.fillRect(-6, -17, 12, 1);
   ctx.fillStyle = accent;
   ctx.fillRect(-8, -9, 16, 1);
+  // a ferramenta em cima da bancada muda pela área: chip, frasco ou engrenagem
+  if (variant === 1) {
+    ctx.fillStyle = "#61f4c0";
+    ctx.fillRect(-12, -14, 5, 3);
+    ctx.fillStyle = "#1b1626";
+    ctx.fillRect(-11, -13, 3, 1);
+    ctx.fillStyle = "#8ab6ff";
+    ctx.fillRect(-11, -17, 3, 3);
+    ctx.fillRect(-10, -18, 1, 1);
+  } else if (variant === 2) {
+    ctx.fillStyle = "#8a7d5a";
+    ctx.fillRect(-12, -16, 6, 1);
+    ctx.fillRect(-12, -12, 6, 1);
+    ctx.fillRect(-12, -16, 1, 5);
+    ctx.fillRect(-7, -16, 1, 5);
+    ctx.fillStyle = "#ffd166";
+    for (const [dx, dy] of [[-11, -15], [-8, -15], [-9, -13], [-11, -12], [-8, -12]]) ctx.fillRect(dx, dy, 1, 1);
+  } else {
+    ctx.fillStyle = "#2f2c45";
+    ctx.fillRect(-12, -17, 5, 4);
+    ctx.fillStyle = "#9aa3b8";
+    ctx.fillRect(-11, -16, 3, 2);
+    ctx.fillStyle = "#ffc857";
+    ctx.fillRect(-13, -16, 1, 1);
+    ctx.fillRect(-7, -16, 1, 1);
+    ctx.fillRect(-9, -18, 1, 1);
+    ctx.fillRect(-9, -14, 1, 1);
+  }
   // martelo e faísca
   ctx.fillStyle = "#6b4b2a";
   ctx.fillRect(8, -25, 2, 10);
@@ -235,7 +272,7 @@ function drawOficinaRaw(ctx, x, y, t, accent) {
   ctx.restore();
 }
 
-function drawBibliotecaRaw(ctx, x, y, t, accent) {
+function drawBibliotecaRaw(ctx, x, y, t, accent, variant = 0) {
   ctx.save();
   ctx.translate(x, y);
   ctx.fillStyle = "rgba(0,0,0,0.35)";
@@ -255,6 +292,30 @@ function drawBibliotecaRaw(ctx, x, y, t, accent) {
       ctx.fillRect(-7 + i * 3, base, 2, 6);
     }
   }
+  // o arranjo muda pela área: livros, pergaminhos rolados ou tomos com globo
+  if (variant === 1) {
+    ctx.fillStyle = "#d9c9a0";
+    for (let s2 = 0; s2 < 3; s2++) {
+      const base = -27 + s2 * 9;
+      for (let i = 0; i < 4; i++) ctx.fillRect(-7 + i * 4, base, 3, 5);
+    }
+    ctx.fillStyle = "#8a7d5a";
+    ctx.fillRect(-7, -21, 14, 1);
+    ctx.fillRect(-7, -12, 14, 1);
+  } else if (variant === 2) {
+    ctx.fillStyle = "#5a3a2a";
+    ctx.fillRect(-7, -27, 5, 7);
+    ctx.fillRect(-1, -27, 6, 7);
+    ctx.fillRect(-7, -18, 4, 7);
+    ctx.fillRect(0, -18, 6, 7);
+    ctx.fillStyle = "#ffd166";
+    ctx.fillRect(-5, -26, 1, 5);
+    ctx.fillRect(3, -26, 1, 5);
+    ctx.fillStyle = "#8ab6ff";
+    ctx.fillRect(-8, -9, 16, 3);
+    ctx.fillStyle = "#1b1626";
+    ctx.fillRect(-6, -8, 12, 1);
+  }
   // vela acesa e brilho do conhecimento
   ctx.fillStyle = "#ffd166";
   ctx.fillRect(11, -18, 2, 3);
@@ -265,7 +326,7 @@ function drawBibliotecaRaw(ctx, x, y, t, accent) {
   ctx.restore();
 }
 
-function drawObservatorioRaw(ctx, x, y, t, accent) {
+function drawObservatorioRaw(ctx, x, y, t, accent, variant = 0) {
   ctx.save();
   ctx.translate(x, y);
   ctx.fillStyle = "rgba(0,0,0,0.35)";
@@ -281,7 +342,8 @@ function drawObservatorioRaw(ctx, x, y, t, accent) {
   // tubo apontado para o céu
   ctx.save();
   ctx.translate(0, -16);
-  ctx.rotate(-0.55);
+  // cada área aponta a luneta para um canto do céu
+  ctx.rotate(variant === 1 ? -0.25 : variant === 2 ? -0.8 : -0.55);
   ctx.fillStyle = "#1b1626";
   ctx.fillRect(-14, -4, 28, 8);
   ctx.fillStyle = "#3a3350";
@@ -297,7 +359,14 @@ function drawObservatorioRaw(ctx, x, y, t, accent) {
   for (let i = 0; i < 4; i++) {
     const a = 0.35 + Math.sin(t * 0.003 + i * 2.1) * 0.3;
     ctx.fillStyle = `rgba(180,220,255,${a.toFixed(2)})`;
-    ctx.fillRect(-8 + i * 6, -30 + (i % 2) * 4, 1, 1);
+    const ox = variant === 1 ? i * 3 : variant === 2 ? -i * 2 : i * 6;
+    ctx.fillRect(-8 + ox, -30 + (i % 2) * 4, 1, 1);
+  }
+  if (variant === 2) {
+    ctx.fillStyle = "rgba(180,220,255,0.55)";
+    ctx.fillRect(-9, -34, 1, 1);
+    ctx.fillRect(-6, -33, 1, 1);
+    ctx.fillRect(-9, -33, 3, 1);
   }
   ctx.restore();
 }

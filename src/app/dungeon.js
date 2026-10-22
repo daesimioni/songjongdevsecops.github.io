@@ -1,4 +1,4 @@
-import { drawPet, drawBuilding, drawAdventurer, drawChest, drawStairs, drawTorch, drawAltar, drawMesa, drawForge, drawOficina, drawBiblioteca, drawObservatorio, drawWaystone, drawKeeper, drawPlot, drawVein, drawEnchanter } from "../rendering/dungeon-art.js";
+import { drawPet, drawBuilding, drawAdventurer, drawChest, drawStairs, drawTorch, drawAltar, drawMesa, drawForge, drawOficina, drawBiblioteca, drawObservatorio, drawWaystone, drawKeeper, drawPlot, drawVein, drawEnchanter, varianteDaPeca } from "../rendering/dungeon-art.js";
 import { buildDungeonMap, dungeonSolid, roomIndexAt, boxFree, dungeonLineOfSight, dungeonCanSeePlayer } from "../gameplay/dungeon-map.js";
 import { lootDoBau } from "../gameplay/dungeon-loot.js";
 import { pracaDaCaverna } from "../gameplay/dungeon-plaza.js";
@@ -1624,6 +1624,9 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     ctx.scale(scale, scale);
     ctx.translate(-camX, -camY);
 
+    // a peça temática veste a área, não só o continente: três arranjos por
+    // disciplina, escolhidos pelo id da caverna, sem asset novo
+    const variante = varianteDaPeca(state.def?.id);
     const cityIndex = state.map.rooms.findIndex((r) => r.kind === "city");
     // chão e parede vêm do canvas pintado na descida. O recorte é da vista: o
     // resto do canvas não é lido nem amostrado pelo navegador.
@@ -1677,9 +1680,9 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
             drawPlot(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent, prop.planted, prop.planted && t >= prop.readyAt);
           }
           else if (prop.kind === "vein") drawVein(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent, prop.charges);
-          else if (prop.kind === "oficina") drawOficina(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent);
-          else if (prop.kind === "biblioteca") drawBiblioteca(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent);
-          else if (prop.kind === "observatorio") drawObservatorio(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent);
+          else if (prop.kind === "oficina") drawOficina(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent, variante);
+          else if (prop.kind === "biblioteca") drawBiblioteca(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent, variante);
+          else if (prop.kind === "observatorio") drawObservatorio(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent, variante);
           else if (prop.kind === "building") {
             drawBuilding(ctx, prop.x * TILE, prop.y * TILE, prop.w, prop.h, palette, palette.accent);
           }
