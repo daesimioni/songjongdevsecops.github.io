@@ -1,0 +1,34 @@
+name: Versão do vale
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: versao-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  versao:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Calcular a versão dos arquivos do jogo
+        run: node tools/versao.mjs
+      - name: Publicar versao.json
+        run: |
+          git config user.name songjongdevsecops
+          git config user.email songjongdevsecops@users.noreply.github.com
+          git add versao.json
+          if git diff --cached --quiet; then
+            echo "sem mudança nos arquivos do jogo"
+            exit 0
+          fi
+          git commit -m "Atualiza a versao publicada"
+          git push

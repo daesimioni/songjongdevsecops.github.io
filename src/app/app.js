@@ -34,6 +34,7 @@ const CATALOG_STONES = new Set(CATALOG.map((area) => area.existing || area.id));
 import { findPath, nearestWalkable, findLanding } from "../core/path.js";
 import { feedPeer, peerRenderPosition } from "../platform/interp.js";
 import { startTitle } from "../ui/title.js";
+import { ATUALIZACAO, lerManifesto, guardarRetomada, consumirRetomada, baixarArquivos } from "../platform/atualizacao.js";
 import { RPG } from "../gameplay/rpg.js";
 import { resumoConceitos, vencido } from "../gameplay/conceitos.js";
 import { FERRY, precoDoFerry, podePagarFerry, cobrarFerry, faltaDoFerry, nomeDoMaterial, falaDoBarqueiro } from "../gameplay/ferry.js";
@@ -1636,7 +1637,7 @@ function startNet() {
   state.net.connect();
 }
 
-function startGame() {
+function startGame({ retomar = false } = {}) {
   state.started = true;
   document.activeElement?.blur?.();
   rede.setName(player.name);
@@ -1652,12 +1653,17 @@ function startGame() {
   history.replaceState(null, "", `#sala=${state.room}`);
   $("room-label").textContent = `sala ${state.room}`;
   loadChatLog();
-  player.continentId = "hub";
+  if (retomar) {
+    markDock(player.continentId);
+    state.lastContinent = player.continentId;
+  } else {
+    player.continentId = "hub";
+    const first = !state.docks.has("hub");
+    markDock("hub");
+    state.lastContinent = "hub";
+    showZoneCard(CONTINENTS.hub, first);
+  }
   if ($("intro-net").checked && state.hasIdentity) { startNet(); bootSocial(); } else setNetStatus({ state: "solo", count: 1 });
-  const first = !state.docks.has("hub");
-  markDock("hub");
-  state.lastContinent = "hub";
-  showZoneCard(CONTINENTS.hub, first);
   updateProgress();
   const coarse = window.matchMedia("(pointer: coarse)").matches;
   if (coarse) {
@@ -3935,6 +3941,49 @@ window.addEventListener("beforeunload", () => {
   rede.destroy();
 });
 
+// ---------- atualização do site ----------
+let versaoAtual = "";
+let manifestoNovo = null;
+let atualizando = false;
+
+function avisarAtualizacao(manifesto) {
+  if (!manifesto?.versao) return;
+  if (!versaoAtual) { versaoAtual = manifesto.versao; return; }
+  if (manifesto.versao === versaoAtual) return;
+  manifestoNovo = manifesto;
+  const banner = $("update-banner");
+  if (!banner) return;
+  $("update-text").textContent = "Há uma atualização do vale. Você volta no mesmo lugar.";
+  banner.hidden = false;
+}
+
+async function conferirAtualizacao() {
+  if (atualizando) return;
+  const manifesto = await lerManifesto();
+  if (manifesto) avisarAtualizacao(manifesto);
+}
+
+async function aplicarAtualizacao() {
+  if (atualizando) return;
+  atualizando = true;
+  const botao = $("update-btn");
+  if (botao) { botao.disabled = true; botao.textContent = "atualizando..."; }
+  try { rpg.save(); quests.save(); saveFog(); } catch { /* o save já é gravado no uso */ }
+  guardarRetomada(player);
+  try { await baixarArquivos(manifestoNovo); } catch { /* o reload tenta pela rede */ }
+  const url = new URL(location.href);
+  if (manifestoNovo?.versao) url.searchParams.set("v", manifestoNovo.versao);
+  location.replace(url.toString());
+}
+
+function iniciarAtualizacao() {
+  conferirAtualizacao();
+  setInterval(conferirAtualizacao, ATUALIZACAO.intervalo);
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) conferirAtualizacao(); });
+  window.addEventListener("online", conferirAtualizacao);
+}
+$("update-btn")?.addEventListener("click", aplicarAtualizacao);
+
 // ---------- boot ----------
 (function boot() {
   const coarse = window.matchMedia("(pointer: coarse)").matches;
@@ -3969,13 +4018,19 @@ window.addEventListener("beforeunload", () => {
   setNetStatus({ state: "solo", count: 1 });
   requestAnimationFrame(loop);
 
+  // atualização: a retomada volta direto ao mundo, sem título e sem formulário
+  const retomada = consumirRetomada();
+  const voltarAoJogo = !!retomada && !!saved.name;
   // a tela de título cobre a entrada até a pessoa dizer que quer entrar; em
   // ?debug ela sai da frente para os testes acharem o formulário
   const splash = $("splash");
   const splashEnter = $("splash-enter");
   let stopTitle = () => {};
   if (splash) {
-    if (new URLSearchParams(location.search).has("debug")) {
+    if (voltarAoJogo) {
+      splash.hidden = true;
+      $("intro").inert = false;
+    } else if (new URLSearchParams(location.search).has("debug")) {
       splash.hidden = true;
       $("intro").inert = false;
     } else {
@@ -4011,6 +4066,17 @@ window.addEventListener("beforeunload", () => {
     window.__mundo = { player, state, world, renderer, audio, quests, rede, backup, rpg, sheetUi, duelUi, dungeon, pvpUi, knockDown, findPath, assets: { cache: cacheDeAssets, total: totalDeAssets }, openPost: (id) => openPost(id), openTravel: (mode) => openTravel(mode), openShop: () => openShop(), openDuel: (mon, ground, boss, partner) => openDuel(mon, ground, boss, partner), openVocacoes: () => openVocacoes(), openWiki: (opcoes) => openWiki(opcoes), openBiblioteca: () => openBiblioteca(), openGuilda: () => openGuilda(), catalog: CATALOG_CONTENT, catalogStones: [...CATALOG_STONES], waystones: WAYSTONES, get social() { return social; } };
   }
 
+  if (voltarAoJogo) {
+    player.name = saved.name;
+    player.x = retomada.x;
+    player.y = retomada.y;
+    player.dir = retomada.dir;
+    player.continentId = retomada.continente;
+    startGame({ retomar: true });
+    world.markExplored(player.x, player.y);
+    toast("Atualizado. Você voltou de onde estava.", 4200);
+  }
+  iniciarAtualizacao();
   uiScope.sync();
   new MutationObserver(() => uiScope.sync()).observe($("app"), {
     subtree: true, attributes: true, attributeFilter: ["hidden"],
