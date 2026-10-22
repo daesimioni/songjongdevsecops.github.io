@@ -25,7 +25,7 @@ Quando os campos existem, o bloco monta as três seções **antes** de "O limite
 mantendo a ordem do catálogo. Página sem os campos continua como antes, então a
 mudança não duplica seção em página que já tinha o texto.
 
-## 3. Primeira e segunda leva (16 de 69)
+## 3. Primeira, segunda e terceira leva (24 de 69)
 
 | página | tema | palavras |
 |---|---|---|
@@ -45,27 +45,36 @@ mudança não duplica seção em página que já tinha o texto.
 | vision | a imagem é uma grade | 465 |
 | geometry | as formas que existem antes de nós | 472 |
 | language | palavras viram números | 465 |
+| rainbow | o branco é uma multidão de cores | 483 |
+| periodic | a tabela não é uma lista | 465 |
+| concord | sujeito e verbo precisam combinar | 463 |
+| registers | o lugar onde o número mora | 462 |
+| security | esconder a mensagem não é esconder a chave | 464 |
+| statistics | a amostra fala, mas com sotaque | 467 |
+| bonds | os átomos têm preferências | 461 |
+| energy | toda reação tem um preço | 463 |
 
-As dezesseis agora têm as seis partes, passam de 460 palavras e não têm resposta
-vazia, `undefined` ou frase repetida. No navegador, `generative` mostrou 464
-palavras, `ethics` 466, `thermo` 464 e `geometry` 470, todas com as seis seções.
+As vinte e quatro agora têm as seis partes, passam de 460 palavras e não têm
+resposta vazia, `undefined` ou frase repetida. No navegador, `generative`
+mostrou 464 palavras, `ethics` 466, `thermo` 464, `geometry` 470, `statistics`
+466 e `rainbow` 482, todas com as seis seções.
 
 ## 4. Prova
 
-- `test/licoes.test.mjs`: as dezesseis estão no conjunto `ENRIQUECIDAS` e o teste
-  cobra as três partes novas e o piso de 460; as outras 53 continuam só com o
+- `test/licoes.test.mjs`: as vinte e quatro estão no conjunto `ENRIQUECIDAS` e o teste
+  cobra as três partes novas e o piso de 460; as outras 45 continuam só com o
   fecho antigo, sem cobrança falsa.
 - `test/content.test.mjs` verde: nenhuma resposta vazia, nenhuma frase
   repetida, nenhum texto quebrado.
 - Sonda `cdp-pagina.mjs`: abre a página pelo painel, mede palavras e as seis
   seções, procura `undefined` e resposta vazia, e fotografa. Capturas
-  `pagina-generative-*`, `pagina-ethics-*`, `pagina-thermo-*` e
-  `pagina-geometry-*`.
+  `pagina-generative-*`, `pagina-ethics-*`, `pagina-thermo-*`,
+  `pagina-geometry-*`, `pagina-statistics-*` e `pagina-rainbow-*`.
 - 33 suítes node verdes; matriz de navegador 19/19; zero exceção.
 
 ## 5. O que continua em aberto
 
-1. **53 páginas** ainda estão com quatro partes e entre 255 e 469 palavras.
+1. **45 páginas** ainda estão com quatro partes e entre 255 e 469 palavras.
    A próxima leva deve seguir o mesmo método, oito por onda.
 2. A ordem das seções novas é fixa; páginas em que "Como se usa" pede mais de
    três passos ainda não têm um formato próprio.

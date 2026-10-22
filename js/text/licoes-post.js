@@ -251,6 +251,17 @@ export const LICOES_POST = {
       "Coloque uma bola pesada numa cama elástica e role uma bolinha perto dela. Observe a curva e diga qual pedaço da analogia deixa de valer no espaço de verdade.",
   },
   periodic: {
+    oque:
+      "A tabela periódica organiza os elementos por número atômico e repete propriedades em colunas porque a camada de valência se repete. A posição diz quantos elétrons de valência e quantas camadas o átomo tem.",
+    como: [
+      "Localize o elemento pelo número atômico, que é a identidade dele.",
+      "Conte a coluna e a linha para estimar valência e número de camadas.",
+      "Compare metais, não-metais e gases nobres pela posição na tabela.",
+      "Use os buracos que Mendeleev deixou para entender a previsão antes da explicação.",
+      "Escolha três elementos da mesma coluna e compare o que eles têm em comum; a repetição de propriedades é o padrão que a tabela guarda. A linha cobra o número de camadas, a coluna cobra a valência, e a massa não substitui o número atômico.",
+    ],
+    quebra:
+      "Ler a tabela como lista alfabética ou só por peso. Confundir número atômico com massa: prótons mudam o elemento, nêutrons mudam o isótopo, elétrons mudam o íon. E achar que a tabela explica tudo sem a camada de valência. A tabela é um mapa, não uma lista.",
     limite:
       "A tabela organiza propriedade por número atômico, e a previsão funciona melhor na coluna que na linha. O limite é o bloco de transição, onde as propriedades variam de forma menos linear e a analogia de família aperta.",
     pergunta: {
@@ -263,6 +274,17 @@ export const LICOES_POST = {
       "Escolha três elementos da mesma coluna e compare raio atômico e reatividade. Depois faça o mesmo com três da mesma linha e explique a diferença.",
   },
   bonds: {
+    oque:
+      "Ligação química é o arranjo de elétrons que deixa o conjunto mais estável. Covalente compartilha, iônica doa e recebe, metálica forma um mar de elétrons; a eletronegatividade decide o meio.",
+    como: [
+      "Compare a eletronegatividade dos dois átomos.",
+      "Classifique a ligação pela diferença e pelo tipo de elemento.",
+      "Desenhe a geometria contando os pares de elétrons.",
+      "Relacione a forma com o encaixe e a função da molécula.",
+      "Compare a mesma fórmula em geometrias diferentes e veja como a função muda; a ligação explica a forma, a forma explica o encaixe. Eletronegatividade não é o mesmo que afinidade eletrônica, e a diferença decide o tipo de ligação.",
+    ],
+    quebra:
+      "Achar que ligação é só compartilhar ou só transferir. Confundir eletronegatividade com energia de ionização. E esquecer que a forma muda propriedade e função, então a mesma fórmula pode render moléculas diferentes. A forma é a consequência mais visível da ligação. Pares de elétrons decidem o ângulo. A mesma fórmula pode ter mais de uma geometria. A geometria decide a função.",
     limite:
       "A forma da molécula decide o encaixe, e a ligação desenhada no papel é média de elétron, não haste. O limite é que a geometria muda com o ambiente: solvente e temperatura podem torcer o que o desenho mostra rígido.",
     pergunta: {
@@ -287,6 +309,17 @@ export const LICOES_POST = {
       "Calcule o volume de equivalência de uma titulação simples e compare com o volume em que o indicador virou. A diferença é o erro que você precisa declarar.",
   },
   energy: {
+    oque:
+      "Toda reação precisa vencer uma barreira de energia para acontecer. A energia de ativação é o pedágio; o catalisador abre um caminho mais barato, sem mudar o saldo entre reagentes e produtos.",
+    como: [
+      "Desenhe o perfil de energia da reação e marque reagentes, produtos e pico.",
+      "Compare o pico com e sem catalisador.",
+      "Classifique a reação como exotérmica ou endotérmica pelo saldo dos patamares.",
+      "Explique por que a faísca inicia sem mudar o saldo final.",
+      "Meça a temperatura antes e depois de uma reação e compare com o saldo do perfil; o sinal do calor confirma se o saldo é positivo ou negativo. O catalisador não entra no balanço final, só no caminho.",
+    ],
+    quebra:
+      "Achar que catalisador aumenta o rendimento ou é consumido. Confundir energia de ativação com variação de entalpia. E achar que reação exotérmica não precisa de faísca: o pedágio ainda existe. O pedágio explica por que a reação espera. O saldo explica por que ela acontece. São duas perguntas diferentes. O caminho muda, o destino não.",
     limite:
       "A energia de ativação é a barreira que a reação precisa vencer, e o catalisador abaixa a barreira sem mudar o resultado. O limite é a especificidade: catalisador bom para uma reação pode não servir para outra parecida.",
     pergunta: {
@@ -553,6 +586,17 @@ export const LICOES_POST = {
       "Escolha uma palavra, ache a origem e compare com o sentido atual. Depois escreva uma frase em que a origem levaria a conclusão errada.",
   },
   concord: {
+    oque:
+      "Concordância é o acordo entre sujeito, verbo e nome: o verbo segue o núcleo do sujeito, e o adjetivo segue o nome. O núcleo manda, não a palavra mais próxima.",
+    como: [
+      "Ache o sujeito e sublinhe o núcleo dele.",
+      "Apague mentalmente o complemento e veja o que sobra como núcleo.",
+      "Escolha verbo e adjetivo pelo núcleo, não pela palavra vizinha.",
+      "Revise os casos de 'a gente', coletivos e sujeito distante antes de fechar o texto.",
+      "Reescreva a frase trocando o sujeito por um pronome e veja se o verbo continua fazendo sentido; o pronome expõe o núcleo. Leia em voz alta: o ouvido costuma denunciar concordância errada, mas não substitui a análise do núcleo.",
+    ],
+    quebra:
+      "Concordar com a palavra mais próxima, como em 'a lista de materiais chegaram'. Também erra quem trata 'a gente' como plural ou aplica regra de coletivo sem olhar o núcleo. A fala muda, mas a norma escrita cobra outra coisa. O núcleo é a âncora da frase. Sem ele, a concordância vira adivinhação. Afinal, o núcleo manda.",
     limite:
       "Concordância liga verbo a sujeito, e o limite são os casos em que o sujeito vem longe ou é composto. A regra é estável, mas a atenção cai: o erro típico é concordar com o substantivo mais próximo.",
     pergunta: {
@@ -659,6 +703,17 @@ export const LICOES_POST = {
       "Desenhe um pipeline de cinco etapas e acompanhe três instruções. Marque em que ciclo cada uma termina e compare com a execução sem sobreposição.",
   },
   registers: {
+    oque:
+      "A hierarquia de memória organiza registradores, cache, RAM e disco por distância da CPU. Quanto mais perto, menor, mais rápida e mais cara; o programa tenta manter perto o que usa agora.",
+    como: [
+      "Meça o custo de acesso em ciclos para cada nível.",
+      "Percorra uma lista em ordem e depois com saltos, comparando o tempo.",
+      "Conte acertos de cache e veja se o laço quente cabe no nível de cima.",
+      "Mova para perto o dado que a conta usa agora, em vez de aumentar tudo.",
+      "Reorganize uma matriz para percorrer por linha em vez de por coluna e meça de novo; a diferença vem da localidade, não do número de operações. A mesma conta pode custar dez vezes mais dependendo da ordem em que os dados chegam.",
+    ],
+    quebra:
+      "Achar que mais memória resolve tudo: o gargalo é a distância e a largura de banda. Também erra quem ignora localidade e culpa o compilador. E confundir cache com memória principal na conta de latência. Distância é desempenho. Ordem importa. A ordem decide.",
     limite:
       "Registrador é a memória mais rápida e menor, e o limite é a quantidade: poucos registradores obrigam o compilador a derramar valor para a memória. O desempenho depende de quem escolhe o que fica ali.",
     pergunta: {
@@ -899,6 +954,17 @@ export const LICOES_POST = {
       "Calcule a esperança de um jogo simples e decida se vale apostar. Depois repita o jogo dez vezes e compare o resultado com a média esperada.",
   },
   statistics: {
+    oque:
+      "Estatística estima propriedades de uma população a partir de uma amostra e mede a incerteza. Média, mediana e moda resumem de jeitos diferentes, e variância e desvio padrão medem o espalhamento.",
+    como: [
+      "Defina a população e diga como a amostra foi escolhida.",
+      "Verifique se a amostra é aleatória ou de conveniência.",
+      "Calcule centro e dispersão, não só a média.",
+      "Construa o intervalo de confiança e interprete-o pelo procedimento, não pela chance.",
+      "Repita a amostragem em simulação e veja a proporção de intervalos que contém o valor; é isso que a confiança mede. Média e mediana juntas contam mais que qualquer uma sozinha, e a dispersão mostra o que a média esconde.",
+    ],
+    quebra:
+      "Achar que 95% de confiança significa 95% de chance de o parâmetro estar ali. Também erra quem usa só a média e esconde o outlier, e quem generaliza de amostra de conveniência para toda a população. Amostra pequena fala mais alto do que deveria. Dispersão é metade da resposta. Confiança é procedimento. A leitura importa. O desenho da amostra decide o resto.",
     limite:
       "Média, variância e amostra descrevem dado, e o limite é a distribuição: a média esconde a forma, e a variância esconde a cauda. Olhar só os dois resumos pode esconder o caso que importa.",
     pergunta: {
@@ -971,6 +1037,17 @@ export const LICOES_POST = {
       "Com uma lente, projete a imagem de uma janela numa parede e meça a distância focal. Depois mova a lente e veja o que acontece com o tamanho da imagem.",
   },
   rainbow: {
+    oque:
+      "Cor é a leitura que o cérebro faz de uma mistura de frequências de luz. O prisma e a gota separam porque o índice de refração muda com a frequência, e o olho reduz a mistura a três respostas de cone.",
+    como: [
+      "Separe luz branca com um prisma ou uma gota e observe a ordem das cores.",
+      "Compare o violeta e o vermelho: o desvio maior mostra que o índice depende da frequência.",
+      "Ilumine um objeto colorido com luz de outra cor e veja a cor percebida mudar.",
+      "Olhe a tela de perto e compare os três canais com a mistura que o olho monta.",
+      "Anote a ordem das cores no prisma e compare com a do arco-íris no céu; a posição muda com o ângulo de observação e com o tamanho da gota. O espectro visível é só a faixa que o olho lê, mas o infravermelho e o ultravioleta continuam ali.",
+    ],
+    quebra:
+      "Dizer que a maçã tem cor vermelha: ela reflete vermelho e absorve o resto, e sob luz verde fica escura. Também erra quem trata o arco-íris como faixa fixa; ele depende do ângulo, da gota e do olho que olha.",
     limite:
       "O arco-íris nasce de refração e reflexão na gota, e o limite é o ângulo: a cor que você vê depende da posição do Sol e do seu olho. Arco-íris não está no céu, está na direção.",
     pergunta: {
@@ -983,6 +1060,17 @@ export const LICOES_POST = {
       "Com um prisma ou copo d'água, projete o espectro e marque a ordem das cores. Depois explique por que a ordem não muda quando você gira a fonte.",
   },
   security: {
+    oque:
+      "Segurança da informação responde a três perguntas: quem pode ler, quem pode alterar e quem pode provar a origem. Criptografia, hash e assinatura resolvem partes diferentes desse problema.",
+    como: [
+      "Classifique o que precisa de sigilo, integridade e autenticação.",
+      "Use cifra simétrica para o volume e assimétrica para combinar a chave.",
+      "Guarde senha com salt e algoritmo lento, nunca em texto ou hash rápido.",
+      "Verifique a assinatura antes de confiar na mensagem e proteja a chave, não o algoritmo.",
+      "Liste ativos e ameaças antes de escolher ferramenta; a pergunta de quem pode ler, alterar e provar a origem vale mais que o algoritmo da moda. Cada ferramenta cobre uma pergunta, não as três, e a chave continua sendo o segredo.",
+    ],
+    quebra:
+      "Confundir ofuscar com proteger e esconder o algoritmo em vez da chave. Guardar senha em texto ou com hash simples sem salt. E usar a mesma chave para tudo, misturando sigilo, assinatura e troca. Segurança é processo, não produto. A chave é o que se protege, e o algoritmo pode ser público.",
     limite:
       "Segurança protege confidencialidade, integridade e disponibilidade, e o limite é o elo humano: a senha reutilizada derrota a criptografia mais forte. O sistema é tão forte quanto o processo mais fraco.",
     pergunta: {

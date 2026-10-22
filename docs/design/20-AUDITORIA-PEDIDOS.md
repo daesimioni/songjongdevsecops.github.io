@@ -32,7 +32,7 @@ com a linha do diário dizendo que foi feito.
 | animação de NPC e pet | `test/animacao-idle.test.mjs` e sonda `cdp-anim-idle.mjs`: cabeça parada mexe 46 px e o corpo 0 (olhar/cabeceio), cauda do gato 60 px e olho 13 px (piscada); o passo do NPC já existia e a sonda confirma | feito em 2026-10-21 21:33 |
 | passada de interfaces | sonda `cdp-ui-audit.mjs` mede 9 painéis em 1280 e 390: 0 estouro horizontal, 0 alvo abaixo de 28 px, foco dentro do painel; abas da wiki e botões de ação cresceram, wiki virou 1 coluna no celular e a loja perdeu o estouro de 3 px | feito em 2026-10-21 21:45 |
 | ritmo e leitura de turno no duelo | `test/duelo-ritmo.test.mjs`: +1 dano com 3 acertos e +2 com 5 (teto), "se errar: X" com fase/haste/espelho; sonda `cdp-duelo-ritmo.mjs` mostrou rodada, previsão e "ritmo 3: +1 de dano" depois de três acertos; vida do bicho deixou de mostrar decimal | feito em 2026-10-21 21:51 |
-| páginas antigas, levas 1 e 2 de 16 | `blocoDeEstudo` ganhou O que é / Como se usa / Onde quebra; 16 páginas passaram de 460 palavras e seis partes (as 8 primeiras mais thermo, balance, induction, pipeline, neural, vision, geometry e language); sonda `cdp-pagina.mjs` mediu 464, 466, 464 e 470 palavras com as seis seções | feito em 2026-10-21 22:04 |
+| páginas antigas, levas 1 a 3 de 24 | `blocoDeEstudo` ganhou O que é / Como se usa / Onde quebra; 24 páginas passaram de 460 palavras e seis partes (as 16 anteriores mais rainbow, periodic, concord, registers, security, statistics, bonds e energy); sonda `cdp-pagina.mjs` mediu 466 e 482 palavras nas duas últimas com as seis seções | feito em 2026-10-21 22:08 |
 
 ## O que a auditoria pegou de errado
 
@@ -44,9 +44,9 @@ com a linha do diário dizendo que foi feito.
 
 ## O que continua em aberto (nada disso vai ser marcado como feito antes da prova)
 
-1. **53 páginas escritas à mão** (de 69) do vale e das áreas antigas: continuam
-   com quatro partes e 255 a 469 palavras. As dezesseis primeiras fecharam
-   curso de seis partes e 460+ palavras em 2026-10-21 22:04.
+1. **45 páginas escritas à mão** (de 69) do vale e das áreas antigas: continuam
+   com quatro partes e 255 a 469 palavras. As vinte e quatro primeiras fecharam
+   curso de seis partes e 460+ palavras em 2026-10-21 22:08.
 2. **Habilidade única de chefe**: fase, dano extra e baralho difícil já
    existem, mas o golpe próprio de cada chefe (curar uma vez, trocar o
    baralho) ainda é genérico; ritmo e leitura de turno foram fechados em
