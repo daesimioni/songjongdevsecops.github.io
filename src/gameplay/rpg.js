@@ -16,6 +16,8 @@ const BOSS_RESPAWN_MS = 20 * 60 * 1000;
 const MAX_SKILL_XP = 50;
 const SKILL_STEP = 5;
 const BUFF_NAMES = { speed: "passos rápidos", damage: "dano extra", maxhp: "vida extra", dica: "dica da biblioteca" };
+// a ordem dos espaços de equipamento, do corpo para os acessórios
+const SLOT_NAMES = { weapon: "arma", helmet: "elmo", armor: "armadura", legs: "pernas", boots: "botas", shield: "escudo", cloak: "capa", ring: "anel", necklace: "colar" };
 // custo em mana de cada runa aprendida; sem carga guardada, é por aqui que ela sai
 const SPELL_MANA = {
   "runa-faisca": 2,
@@ -50,6 +52,7 @@ function emptyData() {
     mounts: {},
     mountActive: null,
     equipped: {},
+    builds: [],
     seen: {},
     met: {},
     conceitos: {},
@@ -128,6 +131,16 @@ function readData() {
     if (typeof obj.mountActive === "string" && data.mounts[obj.mountActive]) data.mountActive = obj.mountActive;
     for (const [slot, id] of Object.entries(obj.equipped || {})) {
       if (ITEMS[id]?.slot === slot && Number(data.items[id]) > 0) data.equipped[slot] = id;
+    }
+    // builds: retratos do equipamento, no máximo três, só com peça de slot válido
+    for (const b of Array.isArray(obj.builds) ? obj.builds.slice(0, 3) : []) {
+      if (!b || typeof b.n !== "string" || !b.e || typeof b.e !== "object") continue;
+      const pecas = {};
+      for (const [slot, id] of Object.entries(b.e)) {
+        if (ITEMS[id]?.slot === slot) pecas[slot] = id;
+      }
+      if (!Object.keys(pecas).length) continue;
+      data.builds.push({ n: b.n.slice(0, 16), e: pecas });
     }
     for (const [id, at] of Object.entries(obj.met || {})) {
       if (!/^[a-z0-9-]{2,60}$/.test(id) || !Number.isFinite(at)) continue;
@@ -382,9 +395,56 @@ export class RPG {
     return { ok: true, slot };
   }
 
+  // Builds: um retrato do que está vestido, para trocar o conjunto inteiro.
+  // Três é o limite; a peça que sumiu da mochila entra como falta, não quebra.
+  buildsView() {
+    return (this.data.builds || []).map((b, index) => ({
+      index,
+      nome: b.n,
+      pecas: Object.keys(b.e || {}).length,
+    }));
+  }
+
+  salvarBuild(nome) {
+    const equipado = this.data.equipped || {};
+    if (!Object.keys(equipado).length) return { ok: false, reason: "Nada equipado para guardar nesta build." };
+    this.data.builds = Array.isArray(this.data.builds) ? this.data.builds : [];
+    if (this.data.builds.length >= 3) return { ok: false, reason: "Três builds é o limite. Remova uma antes." };
+    const limpo = String(nome || "").replace(/[<>\u0000-\u001f]/g, "").trim().slice(0, 16)
+      || `build ${this.data.builds.length + 1}`;
+    this.data.builds.push({ n: limpo, e: { ...equipado } });
+    this.save();
+    return { ok: true, nome: limpo, index: this.data.builds.length - 1 };
+  }
+
+  usarBuild(index) {
+    const b = this.data.builds?.[index];
+    if (!b) return { ok: false, reason: "Essa build não existe." };
+    const equipe = {};
+    const faltando = [];
+    for (const slot of Object.keys(SLOT_NAMES)) {
+      const id = b.e?.[slot];
+      if (!id) continue;
+      if (this.itemCount(id) <= 0) { faltando.push(SLOT_NAMES[slot]); continue; }
+      equipe[slot] = id;
+    }
+    if (!Object.keys(equipe).length) return { ok: false, reason: "Nenhuma peça desta build está na mochila." };
+    this.data.equipped = equipe;
+    this.save();
+    return { ok: true, nome: b.n, equipadas: Object.keys(equipe).length, faltando };
+  }
+
+  removerBuild(index) {
+    if (!Array.isArray(this.data.builds) || !this.data.builds[index]) {
+      return { ok: false, reason: "Essa build não existe." };
+    }
+    const [fora] = this.data.builds.splice(index, 1);
+    this.save();
+    return { ok: true, nome: fora.n };
+  }
+
   equippedView() {
-    const names = { weapon: "arma", helmet: "elmo", armor: "armadura", legs: "pernas", boots: "botas", shield: "escudo", cloak: "capa", ring: "anel", necklace: "colar" };
-    return Object.entries(names).map(([slot, name]) => {
+    return Object.entries(SLOT_NAMES).map(([slot, name]) => {
       const id = this.data.equipped?.[slot];
       return { slot, name, item: id && this.itemCount(id) > 0 ? { id, ...ITEMS[id] } : null };
     });

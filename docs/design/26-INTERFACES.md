@@ -86,3 +86,11 @@ achou estouro, alvo pequeno nem foco perdido. São melhorias de leitura.
    vez de fingir. Prova: `test/voz-duelo.test.mjs` e sonda `cdp-voz.mjs`
    (358 caracteres em pt-BR com pergunta e 5 alternativas, `aria-pressed`
    alternando, 0 erro de console; captura `voz-duelo-*.png`).
+
+6. **Builds na ficha: fechada em 2026-10-22.** A seção Builds guarda até três
+   retratos do equipamento: o nome vem de um campo da própria ficha (sem
+   `prompt`), `usar` troca o conjunto inteiro e lista o espaço que faltou, e
+   `remover` devolve a lista ao estado vazio que ensina. O save limpa build com
+   slot inválido e sobrevive à recarga. Prova: `test/builds.test.mjs` e sonda
+   `cdp-builds.mjs` (salvou "prova" com 3 peças, desmontou tudo, usou de volta os
+   três espaços e removeu; 0 erro de console).

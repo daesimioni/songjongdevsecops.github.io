@@ -227,6 +227,57 @@ export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onOu
       ? "Conjunto fechado: três peças do mesmo continente dão +2 de vida e +1 de dano."
       : "Três peças do mesmo continente fecham conjunto: +2 de vida e +1 de dano."));
 
+    body.appendChild(el("h3", "sheet-sec", "Builds"));
+    const builds = el("div", "sheet-builds");
+    const listaBuilds = rpg.buildsView();
+    if (!listaBuilds.length) {
+      builds.appendChild(el("p", "sheet-empty", "Nenhuma build guardada. Monte o conjunto e salve um retrato para trocar tudo de uma vez."));
+    }
+    for (const b of listaBuilds) {
+      const row = el("div", "build-row");
+      row.append(el("b", "", b.nome), el("span", "build-pecas", `${b.pecas} peça${b.pecas === 1 ? "" : "s"}`));
+      const usar = el("button", "item-use", "usar");
+      usar.type = "button";
+      usar.addEventListener("click", () => {
+        const res = rpg.usarBuild(b.index);
+        if (!res.ok) { toast(res.reason, 2800); return; }
+        const falta = res.faltando.length ? ` Falta: ${res.faltando.join(", ")}.` : "";
+        toast(`Build ${res.nome}: ${res.equipadas} peça${res.equipadas === 1 ? "" : "s"} equipada${res.equipadas === 1 ? "" : "s"}.${falta}`, 3200);
+        audio.blip();
+        render();
+      });
+      const tirar = el("button", "item-use", "remover");
+      tirar.type = "button";
+      tirar.addEventListener("click", () => {
+        const res = rpg.removerBuild(b.index);
+        if (!res.ok) { toast(res.reason, 2600); return; }
+        toast(`Build ${res.nome} removida.`, 2400);
+        audio.blip();
+        render();
+      });
+      row.append(usar, tirar);
+      builds.appendChild(row);
+    }
+    const salvarBuildRow = el("div", "build-row build-salvar");
+    const nomeBuild = el("input", "build-nome");
+    nomeBuild.placeholder = "nome da build";
+    nomeBuild.maxLength = 16;
+    nomeBuild.setAttribute("aria-label", "nome da build nova");
+    const salvarBuild = el("button", "item-use", "salvar a atual");
+    salvarBuild.type = "button";
+    salvarBuild.disabled = listaBuilds.length >= 3;
+    salvarBuild.addEventListener("click", () => {
+      const res = rpg.salvarBuild(nomeBuild.value);
+      if (!res.ok) { toast(res.reason, 2800); return; }
+      toast(`Build ${res.nome} guardada.`, 2400);
+      audio.blip();
+      render();
+    });
+    salvarBuildRow.append(nomeBuild, salvarBuild);
+    builds.appendChild(salvarBuildRow);
+    body.appendChild(builds);
+    body.appendChild(el("p", "company-hint", "A build guarda o retrato do que está vestido. Três é o limite; usar troca o conjunto inteiro."));
+
     body.appendChild(el("h3", "sheet-sec", "Perícias"));
     const grid = el("div", "sheet-skills");
     for (const s of rpg.skillsView()) {
