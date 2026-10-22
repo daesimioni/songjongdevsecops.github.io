@@ -81,6 +81,29 @@ Estado: **feito**, **parcial**, **ausente**, **decisão** (produto, não código
 4. **Nomes e tom**, **chefe do hub**, **variantes raras** e **bestiário em
    party** continuam como escolha de produto.
 
+Perguntas exatas que ficam abertas depois das entregas de 2026-10-22:
+
+5. **Escala de fonte**: o navegador já dá zoom (Ctrl +/-) e o layout foi medido
+   em 1280 e 390. Um controle dentro do jogo exigiria converter ~131 rótulos em
+   px para uma unidade escalável. Quer o controle no jogo ou o zoom do navegador
+   basta?
+6. **Ofícios por continente**: hoje a forja faz todas as receitas. Separar por
+   continente é progressão (a forja da cidade só faz a linha dali) ou é só
+   sabor (mesmas receitas, nomes diferentes)?
+7. **Resistência por tipo**: o escudo equipado já segura um erro por duelo.
+   "Resistência por tipo" é por espécie (ex.: cascudos comem menos dano), por
+   caráter (divisão, desvio, pressa, casco) ou por disciplina da pergunta?
+8. **Variantes elite/antiga/eco**: raras por descida (visual e recompensa
+   próprias) ou só em camada profunda? Entram no bestiário como ficha nova ou
+   como marca da mesma criatura?
+9. **Misconceptions por distrator**: são 887 perguntas; escrever uma explicação
+   para cada distrator é trabalho de conteúdo (semanas). Autorar por amostra e
+   medir, ou só quando a pergunta voltar a ser reescrita?
+10. **Dívida de arquitetura e sondas**: as sondas CDP citadas nos documentos
+    vivem fora do repositório (`temporarios/`). Trazer todas para `tools/`
+    engorda o repositório público com dependência de Chrome. Trazer só um
+    subconjunto de regressão, ou manter fora e documentar o caminho?
+
 ## Critério de pronto
 
 Cada item acima só vira **feito** com teste ou sonda que falha sem ele, prova no
