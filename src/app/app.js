@@ -4089,7 +4089,3 @@ $("update-btn")?.addEventListener("click", aplicarAtualizacao);
   const wikiParam = new URLSearchParams(location.search).get("wiki");
   if (wikiParam) openWiki({ consulta: wikiParam === "1" ? "" : wikiParam, livre: true });
 })();
-
-// verificação do fluxo de versão publicada
-
-// segunda marca para o CI publicar a versao
