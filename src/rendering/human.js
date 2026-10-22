@@ -37,7 +37,9 @@ export function ladoDaDiagonal(dir) {
 
 // O mesmo boneco na superfície e no subsolo: cabelo, gênero e cores vêm do
 // personagem salvo. Quem chama decide o chão, a sombra e o que fica por cima.
-export function drawHuman(ctx, px, py, dir, moving, time, colors, scale = 1, look = null, gear = null) {
+// `gesture` é o papel de NPC (guia, monitor, mestre): parado, ele ganha um
+// gesto próprio no lugar do braço morto.
+export function drawHuman(ctx, px, py, dir, moving, time, colors, scale = 1, look = null, gear = null, gesture = null) {
   time = artTime(time);
   const s = scale;
   const step = moving ? Math.sin(time * 0.016) : 0;
@@ -235,13 +237,49 @@ export function drawHuman(ctx, px, py, dir, moving, time, colors, scale = 1, loo
   ctx.fillStyle = pants;
   ctx.fillRect(-4, -5, 8, 2);
 
-  // braços
+  // braços. Parado, o papel do NPC troca o braço do lado do gesto: guia aponta
+  // o caminho, monitor ergue a mão, mestre segura um livro aberto. O ciclo é
+  // lento e a fase vem do lugar, então dois mestres não folheiam juntos.
+  const gestoCiclo = moving || !gesture || base === 3
+    ? 0
+    : Math.sin(time * 0.0009 + px * 0.05 + py * 0.04);
+  const gestoForca = gestoCiclo > 0.3 ? (gestoCiclo - 0.3) / 0.7 : 0;
+  const ladoGesto = base === 1 ? -1 : 1;
   ctx.fillStyle = shirt;
   ctx.fillRect(-armX, -12 + Math.max(0, legOff), 2, 6);
-  ctx.fillRect(armX - 1, -12 - Math.max(0, legOff), 2, 6);
+  if (gestoForca > 0) {
+    ctx.save();
+    ctx.scale(ladoGesto, 1);
+    const mao = Math.round(gestoForca * 2);
+    if (gesture === "guia") {
+      // braço esticado na altura do ombro, mão aberta apontando
+      ctx.fillStyle = shirt;
+      ctx.fillRect(armX - 1, -12 - mao, 3 + mao, 2);
+      ctx.fillStyle = colors.skin;
+      ctx.fillRect(armX + 1 + mao, -12 - mao, 2, 2);
+    } else if (gesture === "monitor") {
+      // mão erguida, de quem pede a palavra
+      ctx.fillStyle = shirt;
+      ctx.fillRect(armX - 1, -13 - mao, 2, 3 + mao);
+      ctx.fillStyle = colors.skin;
+      ctx.fillRect(armX - 1, -15 - mao, 2, 2);
+    } else {
+      // mestre folheando: livro aberto na frente do peito
+      ctx.fillStyle = "#e8e2f6";
+      ctx.fillRect(-3, -11 - mao, 6, 2);
+      ctx.fillStyle = "#8d84a8";
+      ctx.fillRect(-1, -11 - mao, 2, 2);
+      ctx.fillStyle = colors.skin;
+      ctx.fillRect(-5, -10 - mao, 2, 2);
+      ctx.fillRect(3, -10 - mao, 2, 2);
+    }
+    ctx.restore();
+  } else {
+    ctx.fillRect(armX - 1, -12 - Math.max(0, legOff), 2, 6);
+  }
   ctx.fillStyle = colors.skin;
   ctx.fillRect(-armX, -6 + Math.max(0, legOff), 2, 2);
-  ctx.fillRect(armX - 1, -6 - Math.max(0, legOff), 2, 2);
+  if (!gestoForca) ctx.fillRect(armX - 1, -6 - Math.max(0, legOff), 2, 2);
 
   // cabeça: na diagonal ela desliza um pixel para o lado da caminhada e, parada,
   // olha em volta (1 px) e cabeceia de vez em quando

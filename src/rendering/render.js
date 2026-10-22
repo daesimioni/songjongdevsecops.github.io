@@ -952,7 +952,9 @@ export function createRenderer(canvas, world) {
     const key=JSON.stringify(['npc',npc.id,npc.facing,!!npc.moving,npc.look,colors,npc.role,npc.subject,npc.scale,tick]);
     const pose=spritePose(key,72,84,g=>{
       g.translate(36,70);
-      drawHuman(g,0,0,npc.facing||0,!!npc.moving,tick*100,colors,npc.scale||.9,npc.look||null);
+      // o posto entra no desenho: cada NPC tem o gesto do seu papel, e o
+      // deslocamento de tempo pelo `bob` impede a praça de gestuar em uníssono
+      drawHuman(g,0,0,npc.facing||0,!!npc.moving,tick*100+(npc.bob||0)*4000,colors,npc.scale||.9,npc.look||null,null,npc.role||null);
       drawNpcKit(g,npc,0,0,0,tick*100,colors);
     });
     ctx.save();ctx.imageSmoothingEnabled=false;ctx.drawImage(pose,px-36,py+bob-70);ctx.restore();return true;
@@ -965,7 +967,7 @@ export function createRenderer(canvas, world) {
     const bob = Math.sin(time * 0.0013 + npc.bob) * 0.8 + Math.sin(time * 0.0007 + npc.bob * 2.3) * 0.5;
     const colors = npc.colors || { skin: "#d9b08c", hair: "#4a3a55", shirt: npc.accent, pants: "#2f2c45" };
     if (!drawNpcComAcabamento(npc, px, py, bob, time, colors)) {
-      drawHuman(ctx, px, py + bob, npc.facing || 0, !!npc.moving, time, colors, npc.scale || 0.9, npc.look || null);
+      drawHuman(ctx, px, py + bob, npc.facing || 0, !!npc.moving, time, colors, npc.scale || 0.9, npc.look || null, null, npc.role || null);
       drawNpcKit(ctx, npc, px, py, bob, time, colors);
     }
     // perto, a pessoa levanta a mão: o mundo reconhece quem chegou

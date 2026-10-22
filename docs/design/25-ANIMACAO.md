@@ -67,5 +67,13 @@ de profundidade para ondas futuras.
 2. **Idle por espécie: feito.** Coruja vira a cabeça, sapo infla o papo, fada
    pulsa o halo, grilo esfrega a pata, papagaio balança a cabeça e sombra
    ondula; cada um tem sinal próprio no teste.
-3. **Gesto de NPC por papel** continua pendente: olhar e cabeceio são genéricos;
-   um ferreiro martelando ou um mestre folheando livro exige parâmetro novo.
+3. **Gesto de NPC por papel: feito em 2026-10-22.** `drawHuman` ganhou o
+   décimo parâmetro `gesture`, que recebe o papel do NPC: **guia** estica o braço
+   apontando o caminho, **monitor** ergue a mão e **mestre** folheia um livro
+   aberto no peito. O gesto só aparece parado e de frente, troca o braço do lado
+   em vez de somar um terceiro, e o ciclo lento usa a fase do lugar; o `bob` de
+   cada NPC entra no tempo para a praça não gestuar em uníssono. Prova:
+   `test/gesto-npc.test.mjs` (14 s de amostras, controle determinístico, papel
+   errado não pega o gesto do outro) e sonda `cdp-gesto-npc.mjs` (controle
+   idêntico; guia difere em 531 px, monitor 415, mestre 315 mais 34 px de livro;
+   0 erro de console; captura `gesto-npc-*.png`).
