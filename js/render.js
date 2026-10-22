@@ -1703,7 +1703,7 @@ export function createRenderer(canvas, world) {
   }
 
   function drawCat(cat, moving, time) {
-    drawPetSprite(ctx, cat.kind || "cat", cat.x * TILE, cat.y * TILE, time, moving, cat.facing === -1 ? 1 : 2);
+    drawPetSprite(ctx, cat.kind || "cat", cat.x * TILE, cat.y * TILE, time, moving, cat.facing ?? 0);
   }
 
   function drawBubble(text, px, py, color) {

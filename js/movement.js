@@ -29,7 +29,7 @@ export function moveWithCollision(position, dx, dy, canOccupy, slide = true) {
       if (canOccupy(position.x, y)) position.y = y;
     }
   }
-  position.dir = facingDirection(dx, dy, position.dir);
+  position.dir = facingDirection(position.x - startX, position.y - startY, position.dir);
   position.moving = Math.hypot(position.x - startX, position.y - startY) > 1e-8;
   return position.moving;
 }

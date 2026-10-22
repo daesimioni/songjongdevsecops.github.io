@@ -1,3 +1,4 @@
+import { facingDirection } from "./movement.js";
 import {
   MAP_W, MAP_H, TILE, TILE_KIND as K, SOLID, CONTINENTS, AREAS, SITES,
   WAYSTONES, NPC_SPAWNS, CAT_SPAWN, REVEAL_RADIUS, PLAYER_W, PLAYER_H, SPAWN,
@@ -989,6 +990,7 @@ export function createWorld() {
         pickNpcTarget(n);
         continue;
       }
+      const oldX = n.x, oldY = n.y;
       const step = Math.min(d, n.speed * dt * molhado);
       const nx = n.x + ((n.tx - n.x) / d) * step;
       const ny = n.y + ((n.ty - n.y) / d) * step;
@@ -1017,12 +1019,7 @@ export function createWorld() {
         n.ty = n.hy;
       }
       n.moving = true;
-      const dx = n.tx - n.x;
-      const dy = n.ty - n.y;
-      n.facing =
-        Math.abs(dx) > 0.2 && Math.abs(dy) > 0.2
-          ? dy > 0 ? (dx < 0 ? 4 : 5) : dx < 0 ? 6 : 7
-          : Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 2 : 1) : (dy > 0 ? 0 : 3);
+      n.facing = facingDirection(n.x-oldX,n.y-oldY,n.facing);
     }
   }
 

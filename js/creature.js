@@ -66,6 +66,8 @@ export function drawCreature(ctx, kind, accent, time = 0, scale = 1, dir = 0, se
   ctx.save();
   ctx.scale(scale * (deLado ? vira : 1), scale);
   ctx.translate(0, bob);
+  // Projeção do volume: perfil estreito, três quartos com profundidade.
+  if (deLado) ctx.transform(dir < 4 ? .68 : .86, 0, dir >= 4 ? (dir >= 6 ? -.12 : .12) : 0, 1, 0, 0);
   // Massa elástica nos gelatinosos; membros conservam o próprio passo.
   if(['slime','jelly','wisp'].includes(kind)){
     const breath=Math.sin(time*.005+s)*.035;ctx.scale(1+breath,1-breath);
@@ -612,10 +614,17 @@ export function drawCreature(ctx, kind, accent, time = 0, scale = 1, dir = 0, se
     ctx.fillRect(-2, -23, 4, 8);
   }
   creatureDetail(ctx, kind, accent, time);
-  if (dir === 3) {
+  if (dir === 3 || dir >= 6 || dir === 1 || dir === 2) {
     const m = COSTAS[kind] || COSTAS.boss;
     ctx.fillStyle = m[4] === "accent" ? accent : m[4];
     ctx.fillRect(m[0], m[1], m[2], m[3]);
+    if (dir === 1 || dir === 2) {
+      // Perfil: o plano facial fica na borda dianteira, com apenas um olho.
+      ctx.fillStyle = "#101426";
+      ctx.fillRect(m[0]+m[2]-3, m[1]+2, 2, 2);
+      ctx.fillStyle = accent;
+      ctx.fillRect(m[0]+m[2]-2,m[1]+3,3,1);
+    }
     // espinha e cauda: de costas o bicho tem eixo, não rosto
     ctx.fillStyle = "rgba(0,0,0,0.28)";
     ctx.fillRect(Math.round(m[0] + m[2] / 2) - 1, m[1] + 1, 2, m[3] + 6);

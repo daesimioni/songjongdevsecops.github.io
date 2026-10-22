@@ -5,7 +5,7 @@ import { filterGroupedList } from "./search-ui.js";
 import { createUiScope, availableFocusTargets } from "./ui-scope.js";
 import { createInstrumentLoader } from "./instrument-loader.js";
 import { isTextEntry, nativeActivation } from "./input.js";
-import { moveWithCollision, advancePath, directionVector } from "./movement.js";
+import { moveWithCollision, advancePath, directionVector, facingDirection } from "./movement.js";
 import { cacheDeAssets, totalDeAssets } from "./assets/index.js";
 import {
   AREAS, CONTINENTS, CONTINENT_ORDER, SITES, WAYSTONES, SPAWN,
@@ -2294,10 +2294,7 @@ function walkStep(dx, dy, dt) {
   player.x = Math.max(0.5, Math.min(MAP_W - 0.5, player.x));
   player.y = Math.max(0.5, Math.min(MAP_H - 0.5, player.y));
   const moved = player.x !== oldX || player.y !== oldY;
-  // oito direções: a diagonal tem pose própria em vez de cair na lateral
-  if (dx !== 0 && dy !== 0) player.dir = dy > 0 ? (dx < 0 ? 4 : 5) : (dx < 0 ? 6 : 7);
-  else if (dx !== 0) player.dir = dx > 0 ? 2 : 1;
-  else player.dir = dy > 0 ? 0 : 3;
+  player.dir = facingDirection(player.x-oldX,player.y-oldY,player.dir);
   player.moving = moved;
   if (!moved) return false;
   movementSound();
@@ -2425,8 +2422,9 @@ function updateCat(dt) {
   }
   if (d > 1.15) {
     const sp = Math.min(4.2, 1.2 + d) * dt;
+    const oldX = cat.x, oldY = cat.y;
     const moved = moveCat(((behindX - cat.x) / d) * sp, ((behindY - cat.y) / d) * sp);
-    cat.facing = behindX >= cat.x ? 1 : -1;
+    cat.facing = facingDirection(cat.x-oldX, cat.y-oldY, cat.facing);
     cat.moving = moved;
   } else {
     cat.moving = false;
