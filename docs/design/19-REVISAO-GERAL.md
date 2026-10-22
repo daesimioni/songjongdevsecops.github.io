@@ -26,7 +26,8 @@ andamento e o que falta.
 - **Pessoas e pets**: jogador, 194 NPCs e 7 pets com contorno e luz; NPC tem
   papel (guardião, monitor, morador) e objeto do assunto na mão.
 - **Mundo**: 86 áreas (70 de catálogo e 16 antigas), 454 estações, 94 faróis,
-  93 cavernas e clareiras, 3.790 peças de ambiente.
+  93 cavernas e clareiras, 3.854 peças de ambiente, 72 casas com porta e
+  interior.
 - **Masmorras**: 93 plantas diferentes em 6 modelos, 4 acabamentos de piso,
   entrada embaixo, cidade no alto, chefe longe da boca.
 
@@ -60,6 +61,8 @@ A árvore já vergava com a rajada e o fogo já tinha 4 a 8 quadros.
 
 | data | onda | o que mudou | prova |
 |---|---|---|---|
+| 2026-10-21 | construções e interiores | casa, cabana, torre e galpão com escala 2 e porta ampliada; fachada sólida; 72 casas entram em 4 salas fechadas com mobília por casa, mesa de estudo e fogo que descansa; fundo escuro e sem clima lá dentro | `test/casas.test.mjs`, 28/28 suítes, 19/19 no navegador, sonda ao vivo em 60 fps |
+| 2026-10-21 | passagens das ilhas | 54 ligações entre ilhas: 31 istmos de terra com piso dos dois biomas, franja de areia e trilha de pedra, 23 pontes; decoração só em tile seco | `test/passagens.test.mjs`, 27/27 suítes, 19/19 no navegador |
 | 2026-10-21 | totens e conteúdo | 6 silhuetas, 3 pedras e 3 bases por estação (54 combinações, distribuição medida); página sem frase repetida e sem resposta vazia; baralho do duelo cortado em A-E; auditoria dos pedidos em `20-AUDITORIA-PEDIDOS.md` | 26/26 suítes, 19/19 no navegador, contagem por estação |
 | 2026-10-21 | mapa, floresta | árvore em bosque com teto por ilha, copa livre de caminho, totem, NPC e caçada; metrópole com 4 árvores só na beirada; 1.365 para 582 árvores | teste de floresta, 25/25 suítes, 19/19 no navegador, 60,3 fps |
 | 2026-10-21 | assets, etapa 2 e 3 | espelho por instância nas peças de vegetação, props, água e solo; três peças pequenas ganharam dois quadros de animação; bicho da caverna ganhou porte próprio (0,90 a 1,06) | 24/24 suítes, 19/19 no navegador, 60,4 fps |
