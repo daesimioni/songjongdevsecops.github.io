@@ -903,8 +903,12 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
         return;
       }
       const healed = rpg.heal(rpg.hpMax());
+      const runa = rpg.recarregarRuna();
       state.altarAt = clock();
-      say(healed > 0 ? `O altar devolve ${healed} de vida.` : "Você já está inteiro.", 3400);
+      const partes = [];
+      if (healed > 0) partes.push(`${healed} de vida`);
+      if (runa) partes.push(`uma carga de ${runa}`);
+      say(partes.length ? `O altar devolve ${partes.join(" e ")}.` : "Você já está inteiro.", 3400);
       audio.chime();
       updateHud();
       return;

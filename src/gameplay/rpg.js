@@ -769,6 +769,17 @@ export class RPG {
     return this.data.items[id] || 0;
   }
 
+  // o altar devolve uma carga da runa aprendida que estiver mais vazia
+  recarregarRuna() {
+    const aprendidas = Object.keys(this.data.spells || {})
+      .filter((id) => id.startsWith("runa-") && this.data.spells[id] && ITEMS[id]);
+    if (!aprendidas.length) return null;
+    aprendidas.sort((a, b) => this.itemCount(a) - this.itemCount(b) || a.localeCompare(b));
+    const id = aprendidas[0];
+    this.addItem(id, 1);
+    return ITEMS[id].name;
+  }
+
   // efeito da runa, sem cobrar item nem mana: quem chama cuida do custo
   applyRune(id) {
     const item = ITEMS[id];
@@ -1151,6 +1162,7 @@ export class RPG {
           options: filled.options,
           answer: filled.answer,
           why: q.why,
+          area: q.area,
           tier,
           score: this.themeScore(`${q.q} ${q.why}`, hint) + (q.deep ? 1 : 0),
         });
@@ -1397,6 +1409,11 @@ export class RPG {
       if (ritmo) {
         damage += ritmo;
         note = `${note ? note + " " : ""}Ritmo: ${d.seguidos} acertos, +${ritmo} de dano.`;
+      }
+      // chefe exposto: dois acertos seguidos abrem o ponto fraco
+      if (d.boss && d.seguidos >= 3) {
+        damage += 1;
+        note = `${note ? note + " " : ""}O ponto fraco está exposto: +1 de dano.`;
       }
       d.monsterHp = Math.max(0, d.monsterHp - damage);
       d.feedback = { correct: true, why: d.question.why, damage: 0, note };

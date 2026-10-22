@@ -24,3 +24,14 @@ const r=make('couraca');r.addItem('runa-trovao');const before=r.duel.monsterHp;
 r.castSpell('runa-trovao');
 assert.equal(before-r.duel.monsterHp,1,'couraça também reduz o golpe de trovão');
 assert.equal(danoDoJogador('couraca',2,0),0,'couraça nunca transforma golpe sem dano em dano positivo');
+
+// chefe exposto: o terceiro acerto seguido soma +1 do ponto fraco
+{
+  const r=make('couraca'),d=r.duel;
+  d.habilidade=null;d.bossPhase=1;d.monsterHp=30;d.monsterHpMax=40;d.seguidos=2;
+  const antes=d.monsterHp;
+  r.answer(d.question.answer);
+  assert.equal(antes-d.monsterHp,3,'terceiro acerto deveria somar ritmo +1 e ponto fraco +1');
+  assert.match(d.feedback.note||'',/ponto fraco/i,'feedback do ponto fraco ausente');
+}
+console.log('ok chefes: previsão, proteções sobrepostas, couraça em runas e ponto fraco exposto');

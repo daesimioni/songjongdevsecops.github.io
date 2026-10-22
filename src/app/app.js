@@ -1648,9 +1648,11 @@ function buildJournal() {
   buildJournalBestiary();
   const list = $("journal-list");
   list.textContent = "";
+  list.setAttribute("role", "list");
   const found = openedCount();
   $("journal-progress").textContent =
     `${found} de ${TOTAL} fragmentos · Nível ${level()} · ${state.xp} XP${quests.title ? ` · título ${quests.title}` : ""}. Cada pedra esconde um fragmento do que o vale sabe.`;
+  $("journal-progress").setAttribute("aria-live", "polite");
   for (const cid of CONTINENT_ORDER) {
     const continent = CONTINENTS[cid];
     const sites = sitesOf(cid);
@@ -1676,6 +1678,8 @@ function buildJournal() {
       if (group.title) {
         wrap.className = "journal-area-group";
         if (group.accent) wrap.style.setProperty("--c", group.accent);
+        wrap.setAttribute("role", "group");
+        wrap.setAttribute("aria-label", `${group.title}, ${group.sites.length} estações`);
         const summary = document.createElement("summary");
         const openedHere = group.sites.filter((site) => state.cards.has(site.post)).length;
         summary.textContent = `${group.title} · ${openedHere}/${group.sites.length}`;
@@ -1689,6 +1693,10 @@ function buildJournal() {
       btn.type = "button";
       btn.className = "journal-item";
       btn.disabled = !unlocked;
+      // o leitor de tela ouve o nome e o estado, não só "??? selado"
+      btn.setAttribute("aria-label", unlocked
+        ? `${post?.title || site.name}, ${site.name}, abrir`
+        : `${site.name}, ainda não aberto, selado`);
       const left = document.createElement("span");
       const b = document.createElement("b");
       b.textContent = unlocked ? (post?.title || site.name) : "???";

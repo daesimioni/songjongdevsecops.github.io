@@ -1,5 +1,5 @@
 // A janela do duelo: monstro, vida, pergunta, consequência e recompensa.
-import { CONTINENTS } from "../content/config.js";
+import { CONTINENTS, AREAS } from "../content/config.js";
 import { ITEMS, TIERS, MONSTER_TRAITS } from "../content/rpg-data.js";
 import { drawCreatureArt } from "../rendering/creature.js";
 import { petAbilityNeedsDuel } from "../gameplay/rpg.js";
@@ -167,6 +167,16 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
     const ritmo = leituraDeRitmo(d.seguidos || 0);
     if (ritmo) meta.appendChild(el("em", "duel-combo", ritmo));
     if (d.boss && d.habilidade) meta.appendChild(el("span", "duel-ability", `chefe: ${d.habilidade.nome}`));
+    // o chefe telegrafa o assunto da próxima pergunta: tema e cor da área
+    if (d.boss) {
+      const proxima = d.deck?.[(d.deckIndex ?? 0) + 1];
+      const area = proxima?.area ? AREAS.find((a) => a.id === proxima.area) : null;
+      if (area) {
+        const tema = el("span", "duel-theme", `◆ próximo tema: ${area.name}`);
+        tema.style.setProperty("--tema", CONTINENTS[area.continent]?.accent || "#b48cff");
+        meta.appendChild(tema);
+      }
+    }
     drawSprite();
 
     const body = $("duel-body");

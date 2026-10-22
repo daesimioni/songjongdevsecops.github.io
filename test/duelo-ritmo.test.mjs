@@ -33,6 +33,8 @@ check(/Se acertar: ~\$\{rpg\.acertoPrevisto\(\)\}/.test(duel), "duelo não mostr
 check(/acertoPrevistoParceiro\(p\)/.test(duel) && /leituraDeRitmo\(p\.seguidos/.test(duel), "parceiro sem previsão/ritmo na tela");
 check(/acertoPrevisto\(\)/.test(rpg) && /acertoPrevistoParceiro\(p\)/.test(rpg), "RPG sem a conta do próximo acerto");
 check(/duel-combo/.test(duel) && /duel-round/.test(duel), "duelo não mostra rodada/ritmo");
+check(/duel-theme/.test(duel) && /próximo tema/.test(duel), "duelo não telegrafa o tema da próxima pergunta");
+check(/area: q\.area/.test(rpg), "baralho não guarda a área da pergunta");
 
 // ---- RPG real: previsão do acerto e ritmo do parceiro ----
 const store = new Map();

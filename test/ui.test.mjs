@@ -113,6 +113,14 @@ console.log("ok casca: ids, imports, botões, rótulos, aria e handlers");
   assert.equal(semArte.length, 0, `estação com ícone sem desenho: ${semArte.join(", ")}`);
 }
 
+// diário acessível: lista, grupo por área e nome/estado em cada estação
+{
+  const app = fs.readFileSync(path.join(root, "src/app/app.js"), "utf8");
+  assert.match(app, /list\.setAttribute\("role", "list"\)/, "diário sem role=list");
+  assert.match(app, /setAttribute\("aria-label", `\$\{group\.title\}, \$\{group\.sites\.length\} estações`\)/, "grupo do diário sem rótulo");
+  assert.match(app, /ainda não aberto, selado/, "estação selada sem nome/estado no aria-label");
+  assert.match(app, /journal-progress"\)\.setAttribute\("aria-live", "polite"\)/, "progresso do diário sem aria-live");
+}
 // entrada: quem já tem personagem não pode ser barrado pelo pedido de vocação
 // (o seletor fica escondido para quem volta, e a entrada travava sem aviso)
 {

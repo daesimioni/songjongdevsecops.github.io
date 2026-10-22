@@ -23,12 +23,12 @@ Estado: **feito**, **parcial**, **ausente**, **decisão** (produto, não código
 | atalho da busca para a lista | **feito** | seta para baixo sai da busca e foca o primeiro resultado (wiki e viagem) | P |
 | mochila em sessão longa | **medido** | 60,1 fps curta e 60,2 fps após 75 s, 18 a 19 MB, 0 tarefa longa; não reproduziu em headless, monitorar hardware real | P |
 | régua de densidade tipográfica | ausente | mínimo de 11 px em texto de painel (HUD isento), linha 1.4, teste varrendo o CSS | P |
-| índice de estações acessível | parcial | diário já agrupa por área; falta `role=list`, `aria-label` por item e `aria-disabled` no selado | P |
-| estado vazio que ensina | parcial | mochila e missões já dizem o próximo passo; conferir diário de estações e loja vazia | P |
-| telegrafia do tema pelo chefe | ausente | guardar a área no item do baralho e mostrar "próximo tema" com símbolo na fase de chefe | P |
+| índice de estações acessível | **feito** | diário com `role=list`, grupo rotulado por área, nome e estado em cada estação e progresso `aria-live`; wiki tem a categoria Páginas com as 454 estações | P |
+| estado vazio que ensina | **feito** | mochila, missões e bestiário dizem o próximo passo; diário mostra as estações por área | P |
+| telegrafia do tema pelo chefe | **feito** | baralho guarda a área; chefe mostra `◆ próximo tema: <área>` na cor do continente, testado e medido no navegador | P |
 | capa e conjuntos de 3 peças | ausente | slot `cloak`, duas capas, bônus de conjunto por continente, desenho na ficha e no boneco | P a M |
-| ponto fraco do chefe após 2 acertos | ausente | terceiro acerto seguido causa +1 no chefe | P |
-| recarga de runa no altar | ausente | altar devolve uma carga com cooldown, além de curar | P |
+| ponto fraco do chefe após 2 acertos | **feito** | terceiro acerto seguido soma +1, com nota no feedback e teste no duelo real | P |
+| recarga de runa no altar | **feito** | altar cura e devolve uma carga da runa aprendida mais vazia, com teste | P |
 | documentos que mentem | pendente | 03-ITENS (70 peças), 10-ESTACOES (32 páginas), 05-MUNDO §10, 06-ROADMAP e 14 §AB ainda se leem como backlog | P |
 
 ## Onda 2: sistemas que já têm casa

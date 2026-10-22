@@ -134,3 +134,14 @@ for (const q of QUESTS) {
 }
 
 console.log(`ok itens: ${itens.length} desenhados, ${vistos.size} silhuetas, ${familiasArma.size} famílias de arma, ${porFamilia.size} famílias, ${Object.keys(RELICS).length} relíquias, ${QUESTS.length} missões com item`);
+
+// ---- altar recarrega a runa aprendida mais vazia -------------------------
+const { RPG } = await import("../src/gameplay/rpg.js");
+const rpgRuna = new RPG();
+assert.equal(rpgRuna.recarregarRuna(), null, "sem runa aprendida o altar não recarrega nada");
+rpgRuna.data.spells["runa-faisca"] = true;
+assert.match(rpgRuna.recarregarRuna(), /Faísca/, "altar deveria recarregar a runa aprendida");
+assert.equal(rpgRuna.itemCount("runa-faisca"), 1, "carga não entrou na mochila");
+rpgRuna.data.spells["runa-trovao"] = true;
+rpgRuna.data.items["runa-trovao"] = 2;
+assert.match(rpgRuna.recarregarRuna(), /Faísca/, "altar deveria escolher a runa mais vazia");
