@@ -27,7 +27,7 @@ check(semArg.vida === 0 && semArg.mana === 0, "sem argumento devia dar 0/0");
 // ---- o layout: barras ACIMA, nome abaixo, com folga ----
 const placa = layoutDaPlacaDoNome(100);
 check(placa.topoBarras < placa.topoNome, `as barras ficaram abaixo do nome: ${JSON.stringify(placa)}`);
-check(placa.topoBarras + placa.alturaBarras <= placa.topoNome - 3, "a placa das barras colou na placa do nome");
+check(placa.topoBarras + placa.alturaBarras === placa.topoNome - placa.vao, "a folga das barras não é a mesma dos dois lados");
 check(placa.topoVida >= placa.topoBarras + 2, "a barra de vida colou na borda");
 check(placa.topoVida + placa.alto + 2 <= placa.topoMana, "a barra de vida colou na de mana");
 check(placa.topoMana + placa.alto <= placa.topoBarras + placa.alturaBarras - 2, "a barra de mana colou na borda");
@@ -39,7 +39,7 @@ const app = fs.readFileSync(new URL("../src/app/app.js", import.meta.url), "utf8
 check(/from "\.\.\/core\/vitais\.js"/.test(render), "render.js não importa a conta dos vitais");
 check(/function draw\(now, player, peers, npcs, cat, moving, rastreador = false, vitais = null/.test(render), "draw() sem o parâmetro de vitais");
 check(/drawNameTag\(player\.name[^)]*vitais\)/.test(render), "o nome do jogador não recebe os vitais");
-check(/player\.y \* TILE - 36 - lift/.test(render), "placa de nome e barras coladas na cabeça");
+check(/player\.y \* TILE - 25 - lift/.test(render), "a placa do nome não está perto da cabeça");
 check(/fracoesDeVida\(vitais\)/.test(render), "as barras não usam a conta de fração");
 check(/layoutDaPlacaDoNome\(py\)/.test(render), "o renderer não usa o layout da placa");
 check(/placa\.topoVida[\s\S]*placa\.topoMana[\s\S]*placa\.topoNome/.test(render), "as barras não são desenhadas antes do nome");

@@ -10,7 +10,7 @@ export function fracoesDeVida({ hp = 0, hpMax = 0, mana = 0, manaMax = 0 } = {})
 // com folga entre as duas barras e entre elas e a placa. O layout é puro para
 // o teste medir a ordem e o espaçamento sem navegador.
 export function layoutDaPlacaDoNome(py) {
-  const alto = 2, folga = 3, vao = 4;
+  const alto = 2, folga = 3, vao = 2;
   const alturaNome = 9;
   const topoNome = py - 11;
   const alturaBarras = alto * 2 + folga * 3;

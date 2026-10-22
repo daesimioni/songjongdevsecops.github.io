@@ -1415,7 +1415,7 @@ export function createRenderer(canvas, world, {collisionDebug=false} = {}) {
           drawHuman(ctx, player.x * TILE, player.y * TILE - lift + bob, player.dir, onShip ? false : moving, time,
             player.colors || PLAYER_COLORS[0], 1, player.look, player.gear || null);
         }
-        drawNameTag(player.name, player.x * TILE, player.y * TILE - 36 - lift, player.color, vitais);
+        drawNameTag(player.name, player.x * TILE, player.y * TILE - 25 - lift, player.color, vitais);
         if (player.bubble && player.bubble.until > now) {
           drawBubble(player.bubble.text, player.x * TILE, player.y * TILE - lift, player.color);
         }
