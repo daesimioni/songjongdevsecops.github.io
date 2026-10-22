@@ -35,7 +35,7 @@ Estado: **feito**, **parcial**, **ausente**, **decisão** (produto, não código
 
 | item | estado | o que falta | esforço |
 |---|---|---|---|
-| grafo de conceitos + domínio 0 a 5 + revisão espaçada + caderno | ausente | id estável por conceito, `mastery` no save com migração, baralho prioriza vencidos, painel do caderno | M a G |
+| grafo de conceitos + domínio 0 a 5 + revisão espaçada + caderno | **núcleo feito** | domínio 0-5 no save, revisão espaçada por área, baralho prioriza vencido e caderno no diário; faltam arestas do grafo, misconceptions, formatos e prova de transferência | M a G |
 | misconceptions e escolha adaptativa | parcial | um `why` por pergunta; falta erro por distrator e peso por domínio | M |
 | dicas em escada e foco | parcial | dica só por runa/pet; falta contador e dica progressiva | M |
 | formatos de pergunta e prova de transferência | ausente | hoje só A-E; decidir com o dono a colisão com "não há prova final" | G |

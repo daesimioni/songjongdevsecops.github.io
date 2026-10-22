@@ -9,6 +9,7 @@ import { BOND_MAX, MANA_MS, PETS, MOUNTS, petById, mountById } from "../content/
 import { VOCACAO_PADRAO, VOC_POR_ID, subcategoriaDe, vocacaoDe, multDe } from "../content/vocations.js";
 import { bonusDeRitmo } from "./duelo-ritmo.js";
 import { habilidadeDoChefe, danoDoJogador, extraDoErro, curaDoChefe, espelhoDoChefe, notaDaHabilidade } from "./chefe-habilidades.js";
+import { registrarResposta, vencido, resumoConceitos, conceitoDe } from "./conceitos.js";
 
 const RESPAWN_MS = 5 * 60 * 1000;
 const BOSS_RESPAWN_MS = 20 * 60 * 1000;
@@ -51,6 +52,7 @@ function emptyData() {
     equipped: {},
     seen: {},
     met: {},
+    conceitos: {},
     plots: {},
     plotGift: {},
     // vocação: padrão para save antigo, que nunca escolheu
@@ -145,6 +147,15 @@ function readData() {
       for (const [field, max] of [["theme", 20], ["sample", 90]]) {
         if (typeof entry[field] === "string") saved[field] = entry[field].replace(/[<>\u0000-\u001f]/g, "").slice(0, max);
       }
+    }
+    for (const [area, entry] of Object.entries(obj.conceitos || {})) {
+      if (typeof area !== "string" || area.length > 40 || !entry || typeof entry !== "object") continue;
+      data.conceitos[area] = {
+        n: clamp(Number(entry.n) || 0, 0, 5),
+        r: Math.max(0, Math.floor(Number(entry.r) || 0)),
+        w: Math.max(0, Math.floor(Number(entry.w) || 0)),
+        due: Number.isFinite(Number(entry.due)) ? Number(entry.due) : 0,
+      };
     }
     for (const [key, plot] of Object.entries(obj.plots || {})) {
       if (typeof key !== "string" || key.length > 40 || !plot || typeof plot !== "object") continue;
@@ -764,6 +775,16 @@ export class RPG {
     return true;
   }
 
+  // ---------- caderno de conceitos ----------
+  registrarConceito(area, acertou) {
+    if (!this.data.conceitos || typeof this.data.conceitos !== "object") this.data.conceitos = {};
+    return registrarResposta(this.data.conceitos, conceitoDe(area, this.duel?.ground?.continent), acertou, now());
+  }
+
+  conceitosResumo() {
+    return resumoConceitos(this.data.conceitos, now());
+  }
+
   // ---------- itens ----------
   addItem(id, qty = 1) {
     if (!ITEMS[id] || !Number.isFinite(qty) || qty < 1) return;
@@ -1188,7 +1209,10 @@ export class RPG {
         deck.push(item);
       }
     }
-    return deck;
+    // conceito vencido volta antes: revisão espaçada dentro do tier
+    const agora = now();
+    const due = (item) => (item.area && vencido(this.data.conceitos?.[item.area], agora) ? 1 : 0);
+    return deck.sort((a, b) => due(b) - due(a));
   }
 
   startDuel(monster, ground, boss = false, partner = null) {
@@ -1422,6 +1446,7 @@ export class RPG {
         note = `${note ? note + " " : ""}O ponto fraco está exposto: +1 de dano.`;
       }
       d.monsterHp = Math.max(0, d.monsterHp - damage);
+      this.registrarConceito(d.question.area, true);
       d.feedback = { correct: true, why: d.question.why, damage: 0, note };
       this.atualizarFaseChefe(d);
       if (d.monsterHp <= 0) {
@@ -1458,6 +1483,7 @@ export class RPG {
         d.phase = "feedback";
         return { ok: true, correct, phase: d.phase, feedback: d.feedback, duel: d };
       }
+      this.registrarConceito(d.question.area, false);
       this.data.hp = Math.max(0, this.hp() - damage);
       const antesDaSeiva = d.monsterHp;
       d.monsterHp = curaDoChefe(d.habilidade?.id, d.bossPhase, d.monsterHp, d.monsterHpMax);
@@ -1493,6 +1519,7 @@ export class RPG {
       const ritmo = damage > 0 ? bonusDeRitmo(p.seguidos) : 0;
       if (ritmo) damage += ritmo;
       p.hp = Math.max(0, p.hp - damage);
+      this.registrarConceito(p.question.area, true);
       p.feedback = {
         correct: true,
         why: p.question.why,
@@ -1511,6 +1538,7 @@ export class RPG {
       p.hp = Math.min(p.hpMax, p.hp + Math.max(1, Math.round(p.hpMax * 0.12)));
     }
     p.seguidos = 0;
+    this.registrarConceito(p.question.area, false);
     const damage = this.erroPrevisto(p.monster, p.tier, 1);
     const petSegura = !d.shield && this.data.sub === "domador" && this.activePet() && !d.petUsado;
     const blocked = !!d.shield || !!petSegura;

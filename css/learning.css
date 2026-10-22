@@ -267,6 +267,8 @@
 .journal-continent h3 .done { color: var(--mint); }
 .journal-area { margin: 8px 0 4px; padding-left: 8px; border-left: 2px solid rgba(97, 244, 192, 0.35); font-family: var(--mono); font-size: 10.5px; color: var(--mint); }
 .journal-item { margin-bottom: 0; }
+.journal-conceito { font-size: 11px; line-height: 1.5; color: var(--muted); padding: 3px 6px; }
+.journal-conceito::first-letter { color: var(--mint); }
 
 /* computaria */
 .addr-grid { display: grid; gap: 6px; margin: 6px 0 10px; }

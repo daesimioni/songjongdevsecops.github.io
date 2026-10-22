@@ -34,6 +34,7 @@ import { findPath, nearestWalkable } from "../core/path.js";
 import { feedPeer, peerRenderPosition } from "../platform/interp.js";
 import { startTitle } from "../ui/title.js";
 import { RPG } from "../gameplay/rpg.js";
+import { resumoConceitos, vencido } from "../gameplay/conceitos.js";
 import { VOCACOES } from "../content/vocations.js";
 import { ITEMS, QUESTIONS } from "../content/rpg-data.js";
 import { createSheet } from "../ui/sheet.js";
@@ -1653,6 +1654,28 @@ function buildJournal() {
   $("journal-progress").textContent =
     `${found} de ${TOTAL} fragmentos · Nível ${level()} · ${state.xp} XP${quests.title ? ` · título ${quests.title}` : ""}. Cada pedra esconde um fragmento do que o vale sabe.`;
   $("journal-progress").setAttribute("aria-live", "polite");
+  // caderno de conceitos: domínio por área e o que já venceu a revisão
+  const conceitos = rpg.data.conceitos || {};
+  const resumo = resumoConceitos(conceitos, Date.now());
+  if (resumo.estudados) {
+    const caderno = document.createElement("details");
+    caderno.className = "journal-area-group";
+    caderno.open = resumo.revisar > 0;
+    const sumario = document.createElement("summary");
+    sumario.textContent = `Caderno de conceitos · ${resumo.revisar} para revisar · ${resumo.dominados} dominados`;
+    caderno.appendChild(sumario);
+    const linhas = Object.entries(conceitos)
+      .map(([area, entry]) => ({ area, entry, nome: AREAS.find((a) => a.id === area)?.name || area }))
+      .sort((a, b) => (Number(a.entry.due) || 0) - (Number(b.entry.due) || 0));
+    for (const { entry, nome } of linhas.slice(0, 40)) {
+      const nivel = Math.max(0, Math.min(5, Number(entry.n) || 0));
+      const linha = document.createElement("div");
+      linha.className = "journal-conceito";
+      linha.textContent = `${nome} · ${"●".repeat(nivel)}${"○".repeat(5 - nivel)} · ${vencido(entry, Date.now()) ? "revisar" : "em dia"}`;
+      caderno.appendChild(linha);
+    }
+    list.appendChild(caderno);
+  }
   for (const cid of CONTINENT_ORDER) {
     const continent = CONTINENTS[cid];
     const sites = sitesOf(cid);
