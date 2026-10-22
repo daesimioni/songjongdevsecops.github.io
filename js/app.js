@@ -1,3 +1,4 @@
+import { readSavedJSON as readJSON } from "./storage.js";
 import { filterGroupedList } from "./search-ui.js";
 import { createUiScope, availableFocusTargets } from "./ui-scope.js";
 import { createInstrumentLoader } from "./instrument-loader.js";
@@ -393,12 +394,6 @@ dungeon = createDungeon({
   },
 });
 
-function readJSON(key, fallback) {
-  try {
-    const raw = localStorage.getItem(key);
-    return raw ? JSON.parse(raw) : fallback;
-  } catch { return fallback; }
-}
 function arrayOf(v) { return Array.isArray(v) ? v : []; }
 function writeJSON(key, value) {
   try { localStorage.setItem(key, JSON.stringify(value)); } catch { /* sem storage */ }
@@ -2462,6 +2457,7 @@ function loop(now) {
     if (!state.manaAt || now - state.manaAt > 1000) {
       state.manaAt = now;
       rpg.pulse();
+      if (state.modal === "sheet") sheetUi.refresh();
     }
     if (dungeon?.isOpen()) {
       $("prompt").hidden = true;

@@ -96,6 +96,7 @@ export function localIsEmpty() {
     !Object.values(rpg?.skills || {}).some((n) => Number(n) > 0) &&
     ["pets", "mounts", "spells", "enchants", "plots", "plotGift"].every((key) => countKeys(rpg?.[key]) === 0) &&
     !(Number(rpg?.pet?.bond) > 0) &&
+    countKeys(quests?.stats?.labs) === 0 &&
     !Object.values(quests?.stats || {}).some((n) => Number(n) > 0) &&
     countKeys(quests?.done) === 0 &&
     countKeys(quests?.accepted) === 0
@@ -135,10 +136,19 @@ export function restore(snapshot) {
   }
   const entries = KEYS.filter((name) => typeof snapshot.keys[name] === "string");
   if (!entries.length) return { ok: false, keys: 0, reason: "backup vazio." };
+  // Valida tudo antes de tocar no save: a névoa do mapa usa base64, os demais valores usam JSON.
+  try {
+    for (const name of entries) {
+      if (name !== "explored") JSON.parse(snapshot.keys[name]);
+    }
+  } catch { return { ok: false, keys: 0, reason: "backup contém dados inválidos." }; }
   const previous = new Map();
   try {
-    for (const name of entries) previous.set(name, localStorage.getItem(STORAGE[name]));
-    for (const name of entries) localStorage.setItem(STORAGE[name], snapshot.keys[name]);
+    for (const name of KEYS) previous.set(name, localStorage.getItem(STORAGE[name]));
+    for (const name of KEYS) {
+      if (entries.includes(name)) localStorage.setItem(STORAGE[name], snapshot.keys[name]);
+      else localStorage.removeItem(STORAGE[name]);
+    }
   } catch {
     // Uma falha de cota não pode ser anunciada como restauração concluída.
     // Volta ao estado anterior em vez de misturar dois saves.
@@ -180,7 +190,9 @@ export async function saveTo(rede, { force = false } = {}) {
   }
   const text = await encode(snapshot);
   if (text.length > BACKUP.max) return { ok: false, reason: "o estado ficou grande demais para a DM." };
-  const res = await rede.sendSelf(text);
+  let res;
+  try { res = await rede.sendSelf(text); }
+  catch { return { ok: false, reason: "não foi possível enviar o backup. Tente novamente." }; }
   if (!res?.ok) return { ok: false, reason: res?.reason || "nenhum relay aceitou a DM.", relays: res?.relays || 0 };
   writeStatus({ at: snapshot.at, bytes: text.length, hash, relays: res.relays || 0 });
   return { ok: true, at: snapshot.at, bytes: text.length, relays: res.relays || 0 };
@@ -235,7 +247,9 @@ export function createBackup({ rede } = {}) {
 
   async function restoreIfEmpty() {
     if (!localIsEmpty()) return { ok: false, reason: "esta conta já tem progresso aqui." };
-    const snapshot = await latestFrom(rede);
+    let snapshot;
+    try { snapshot = await latestFrom(rede); }
+    catch { return { ok: false, reason: "não foi possível buscar o backup. Tente novamente." }; }
     if (!snapshot) return { ok: false, reason: "nenhum backup encontrado na sua DM." };
     // A busca é assíncrona: o jogador pode ter progredido enquanto a rede respondia.
     if (!localIsEmpty()) return { ok: false, reason: "esta conta já tem progresso aqui." };
@@ -244,7 +258,9 @@ export function createBackup({ rede } = {}) {
   }
 
   async function restoreFromDm() {
-    const snapshot = await latestFrom(rede);
+    let snapshot;
+    try { snapshot = await latestFrom(rede); }
+    catch { return { ok: false, reason: "não foi possível buscar o backup. Tente novamente." }; }
     if (!snapshot) return { ok: false, reason: "nenhum backup encontrado na sua DM." };
     const res = restore(snapshot);
     return { ...res, at: snapshot.at };

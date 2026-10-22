@@ -1,4 +1,5 @@
 // A ficha do aventureiro: vida, perícias, itens, forja e o que cada coisa faz.
+import { petAbilityNeedsDuel } from "./rpg.js";
 import { ITEMS, RECIPES } from "./rpg-data.js";
 
 const $ = (id) => document.getElementById(id);
@@ -21,10 +22,12 @@ function passiveText(passive = {}) {
 }
 
 export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onOutfits, onLook, onPetAbility, onInventory }) {
+  let refresh = () => {};
   function render() {
     const body = $("sheet-body");
     if (!body) return;
     body.textContent = "";
+    refresh = () => {};
     const level = getLevel();
     const hp = rpg.hp();
     const hpMax = rpg.hpMax();
@@ -72,18 +75,16 @@ export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onOu
     manaFill.style.width = `${manaMax ? Math.round((mana / manaMax) * 100) : 0}%`;
     manaBar.appendChild(manaFill);
     body.append(manaLabel, manaBar);
-    body.appendChild(el("p", "company-hint", "mana paga as habilidades do bicho ativo; runa é carga guardada, gasta uma por uso."));
+    body.appendChild(el("p", "company-hint", "Mana paga habilidades e runas aprendidas. Cargas de runa são gastas antes da mana."));
 
+    let petUse = null;
     const company = el("div", "company");
     const pet = rpg.activePet();
     if (pet) {
-      const cd = rpg.petCdLeft(pet.id);
       const row = el("div", "company-pet");
-      const use = el("button", "item-use", cd > 0
-        ? `${pet.ability.name} · ${Math.ceil(cd / 1000)}s`
-        : `${pet.ability.name} · ${pet.ability.mana} mana`);
+      const use = el("button", "item-use");
       use.type = "button";
-      use.disabled = cd > 0 || (pet.ability.id !== "mana" && mana < pet.ability.mana);
+      petUse = use;
       use.addEventListener("click", () => {
         const res = rpg.usePetAbility({ duel: false });
         if (!res.ok) { toast(res.reason, 3200); audio.error?.(); render(); return; }
@@ -99,6 +100,25 @@ export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onOu
     } else {
       company.appendChild(el("p", "sheet-empty", "Nenhum bicho anda com você ainda. Dê três rações ao bicho da praça subterrânea do continente."));
     }
+
+    // Atualiza os valores sem reconstruir botões e perder o foco do teclado.
+    refresh = () => {
+      const currentMana = rpg.mana();
+      const maximum = rpg.manaMax();
+      manaLabel.children[1].textContent = `${currentMana}/${maximum}`;
+      manaFill.style.width = `${maximum ? Math.round(currentMana / maximum * 100) : 0}%`;
+      hpLabel.children[1].textContent = `${rpg.hp()}/${rpg.hpMax()}`;
+      hpFill.style.width = `${Math.round(rpg.hp() / rpg.hpMax() * 100)}%`;
+      if (petUse && pet) {
+        const onlyDuel = petAbilityNeedsDuel(pet.ability.id);
+        const left = rpg.petCdLeft(pet.id);
+        petUse.textContent = onlyDuel ? `${pet.ability.name} · somente em duelo`
+          : left > 0 ? `${pet.ability.name} · ${Math.ceil(left / 1000)}s`
+            : `${pet.ability.name} · ${pet.ability.mana} mana`;
+        petUse.disabled = onlyDuel || left > 0 || (pet.ability.id !== "mana" && currentMana < pet.ability.mana);
+      }
+    };
+    refresh();
 
     const roster = el("div", "pet-roster");
     for (const p of rpg.petsView()) {
@@ -300,5 +320,5 @@ export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onOu
     body.appendChild(note);
   }
 
-  return { render };
+  return { render, refresh: () => refresh() };
 }

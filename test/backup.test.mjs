@@ -138,3 +138,35 @@ assert.equal(backup.restore(round).ok, false, 'falha parcial não anuncia sucess
 localStorage.setItem = originalSet;
 assert.equal(store.get(STORAGE.xp), '91');
 assert.equal(store.get(STORAGE.cards), '["local"]', 'falha desfaz chave que já tinha sido restaurada');
+
+// Restauração é um retrato completo, sem itens/progresso posteriores ao save.
+store.clear();
+store.set(STORAGE.rpg, '{"items":{"ferro":9}}');
+store.set(STORAGE.nostr, 'identidade-local');
+assert.equal(backup.restore({v:1, keys:{xp:'12'}}).ok, true);
+assert.equal(store.has(STORAGE.rpg), false, 'remove progresso ausente no retrato');
+assert.equal(store.get(STORAGE.nostr), 'identidade-local', 'preserva identidade fora do backup');
+const intact = new Map(store);
+assert.equal(backup.restore({v:1, keys:{xp:'13',cards:'{quebrado'}}).ok, false);
+assert.deepEqual(store, intact, 'JSON inválido é recusado antes da primeira escrita');
+store.set(STORAGE.steps, '{"walk":true}');
+assert.equal(backup.collect().keys.steps, '{"walk":true}', 'primeiros passos fazem parte do backup');
+assert.equal((await backup.saveTo({...fakeRede, sendSelf:async()=>{throw Error('offline');}},{force:true})).ok,false);
+const unavailable = backup.createBackup({rede:{ready:true,selfSavesRecent:async()=>{throw Error('offline');}}});
+assert.equal((await unavailable.restoreFromDm()).ok,false,'erro de rede devolve resposta para reabilitar UI');
+store.clear();
+assert.equal((await unavailable.restoreIfEmpty()).ok,false,'erro de rede no boot não interrompe entrada');
+
+store.set(STORAGE.quests, '{"stats":{"labs":["cs-circuitos"]}}');
+assert.equal(backup.localIsEmpty(),false,'instrumentos explorados impedem restauração automática por cima');
+store.clear();
+store.set(STORAGE.xp, '55');
+store.set(STORAGE.rpg, '{"items":{"ferro":9}}');
+const beforeFailedReplacement = new Map(store);
+localStorage.setItem = (key,value) => {
+  if (key === STORAGE.steps) throw Error('quota');
+  originalSet(key,value);
+};
+assert.equal(backup.restore({v:1,keys:{xp:'2',steps:'{}'}}).ok,false);
+localStorage.setItem = originalSet;
+assert.deepEqual(store,beforeFailedReplacement,'rollback recupera também chaves removidas do retrato');

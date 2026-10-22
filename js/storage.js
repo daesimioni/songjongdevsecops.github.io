@@ -13,3 +13,20 @@ export function backupCorrupt(key) {
     } catch { /* sem storage */ }
   }
 }
+
+// O JSON pode abrir e ainda ter um tipo incompatível com o consumidor.
+export function readSavedJSON(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    if (raw == null) return fallback;
+    const value = JSON.parse(raw);
+    if (fallback === null) return value;
+    if (Array.isArray(fallback)) return Array.isArray(value) ? value : fallback;
+    if (typeof fallback === "object") {
+      return value && typeof value === "object" && !Array.isArray(value) ? value : fallback;
+    }
+    if (typeof value !== typeof fallback) return fallback;
+    if (typeof value === "number" && (!Number.isFinite(value) || value < 0)) return fallback;
+    return value;
+  } catch { return fallback; }
+}

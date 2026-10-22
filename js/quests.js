@@ -671,12 +671,12 @@ function readData() {
   try {
     const raw = localStorage.getItem(STORAGE.quests);
     const obj = raw ? JSON.parse(raw) : null;
-    if (!obj || typeof obj !== "object") return {};
+    if (!obj || typeof obj !== "object" || Array.isArray(obj)) return {};
     return {
-      accepted: obj.accepted && typeof obj.accepted === "object" ? obj.accepted : {},
-      done: obj.done && typeof obj.done === "object" ? obj.done : {},
-      quiz: obj.quiz && typeof obj.quiz === "object" ? obj.quiz : {},
-      stats: obj.stats && typeof obj.stats === "object" ? obj.stats : {},
+      accepted: obj.accepted && typeof obj.accepted === "object" && !Array.isArray(obj.accepted) ? obj.accepted : {},
+      done: obj.done && typeof obj.done === "object" && !Array.isArray(obj.done) ? obj.done : {},
+      quiz: obj.quiz && typeof obj.quiz === "object" && !Array.isArray(obj.quiz) ? obj.quiz : {},
+      stats: obj.stats && typeof obj.stats === "object" && !Array.isArray(obj.stats) ? obj.stats : {},
       titles: Array.isArray(obj.titles) ? obj.titles.filter((t) => typeof t === "string") : [],
       title: typeof obj.title === "string" ? obj.title : "",
     };
