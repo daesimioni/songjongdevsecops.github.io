@@ -634,6 +634,81 @@ for (const area of IDENTITY_AREAS) {
   QUESTS.push(...questsForArea(area, keeper, giver));
 }
 
+// ---- Biblioteca Afogada: a corrente de sete missões que abre o acervo ----
+// A Dona Zefa guarda a chave do acervo. Cada capítulo só abre depois do
+// anterior; a sétima fecha a corrente e libera a tela de escolha e as alas.
+QUESTS.push(
+  {
+    id: "biblioteca-1",
+    npc: "guia",
+    giver: "Dona Zefa",
+    title: "A chave do acervo",
+    brief: "Cinco pedras abertas acendem a primeira lâmpada da Biblioteca Afogada. O resto é caminhada.",
+    goal: { type: "cards", count: 5 },
+    reward: { xp: 30, title: "Leitor do Porto" },
+  },
+  {
+    id: "biblioteca-2",
+    npc: "guia",
+    giver: "Dona Zefa",
+    title: "As três margens",
+    brief: "A biblioteca afundou entre três margens. Visite três regiões e volte com o nome delas.",
+    goal: { type: "docks", count: 3 },
+    depois: "biblioteca-1",
+    reward: { xp: 35 },
+  },
+  {
+    id: "biblioteca-3",
+    npc: "guia",
+    giver: "Dona Zefa",
+    title: "Os guardiões do corredor",
+    brief: "Três guardiões de caverna fazem a ronda do corredor afogado. Passe por eles.",
+    goal: { type: "hunts", count: 3 },
+    depois: "biblioteca-2",
+    reward: { xp: 40 },
+  },
+  {
+    id: "biblioteca-4",
+    npc: "guia",
+    giver: "Dona Zefa",
+    title: "O primeiro selo",
+    brief: "Um chefe de área abre o selo que prende a porta. O selo não abre por leitura.",
+    goal: { type: "bosses", count: 1 },
+    depois: "biblioteca-3",
+    reward: { xp: 50, title: "Chaveiro" },
+  },
+  {
+    id: "biblioteca-5",
+    npc: "guia",
+    giver: "Dona Zefa",
+    title: "As mãos que copiam",
+    brief: "Mexa em três instrumentos. A biblioteca não aceita quem só olha as estantes.",
+    goal: { type: "labs", count: 3 },
+    depois: "biblioteca-4",
+    reward: { xp: 45 },
+  },
+  {
+    id: "biblioteca-6",
+    npc: "guia",
+    giver: "Dona Zefa",
+    title: "A voz do arquivo",
+    brief: "Cinco regiões já conhecem você. A biblioteca quer a voz de quem voltou de todas.",
+    goal: { type: "docks", count: 5 },
+    depois: "biblioteca-5",
+    reward: { xp: 60 },
+  },
+  {
+    id: "biblioteca-7",
+    npc: "guia",
+    giver: "Dona Zefa",
+    title: "A porta afogada",
+    brief: "Três chefes caíram. A última porta abre para o acervo: as alas, as vozes e o que a Iara deixou.",
+    goal: { type: "bosses", count: 3 },
+    depois: "biblioteca-6",
+    reward: { xp: 90, title: "Guardião da Biblioteca" },
+  },
+);
+
 // ---- recompensa de item --------------------------------------------------
 // Toda missão entrega uma peça ligada ao assunto dela, além de XP e título.
 // O item sai do baralho do continente do NPC, sem relíquia (relíquia é do baú
@@ -759,8 +834,9 @@ export class Quests {
     } else if (goal.type === "docks") {
       need = goal.count;
       // área temática também marca doca, com prefixo; o Cartógrafo conta
-      // continentes, não pedaços deles.
-      have = [...this.getDocks()].filter((id) => !id.startsWith("area:")).size;
+      // continentes, não pedaços deles. Era `.size` num array: a missão de
+      // docas nunca fechava.
+      have = [...this.getDocks()].filter((id) => !String(id).startsWith("area:")).length;
     } else if (goal.type === "labs") {
       need = goal.count;
       have = this.data.stats.labs.length;

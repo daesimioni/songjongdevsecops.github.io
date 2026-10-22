@@ -73,7 +73,7 @@ const simples = QUESTS.find((q) => !q.id.startsWith("trilha-") && !q.id.startsWi
   const q = novo();
   const ofertas = q.offersFor(simples.npc);
   assert.ok(ofertas.some((x) => x.id === simples.id), "missão comum sem depois devia ser oferecida");
-  assert.equal(q.lockedFor(simples.npc).length, 0, "missão comum não pode ficar trancada");
+  assert.equal(q.lockedFor(simples.npc).some((x) => x.id === simples.id), false, "missão comum não pode ficar trancada");
 }
 
 // ---- o cartão avisa e o marcador respeita ----

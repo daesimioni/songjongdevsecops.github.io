@@ -42,7 +42,7 @@ Os números abaixo são os verificados no `39`, não promessas de conceito:
 
 - 86 áreas, 93 cavernas, 454 estações, 94 faróis e 54 travessias entre ilhas;
 - 887 perguntas de duelo, 561 itens, 40 receitas, 12 encantos e 12 runas;
-- 464 fichas de bestiário, 284 missões, 194 NPCs e 2.300 fichas de wiki;
+- 464 fichas de bestiário, 291 missões, 194 NPCs e 2.307 fichas de wiki;
 - domínio de 0 a 5, revisão espaçada, grafo de pré-requisitos, dicas em escada
   e erro por distrator no caderno;
 - morte suave, vocações com subcategorias, PvP opt-in e cronômetro desligado;

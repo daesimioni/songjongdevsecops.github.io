@@ -125,7 +125,7 @@ for (const l of selado) assert.ok(ITEMS[l.id] || l.id.startsWith("cs-x-"), `baú
 
 // ---- missão entrega item -------------------------------------------------
 const { QUESTS } = await import("../src/gameplay/quests.js");
-assert.equal(QUESTS.length, 284, `missões: ${QUESTS.length}`);
+assert.equal(QUESTS.length, 291, `missões: ${QUESTS.length}`);
 const semItem = QUESTS.filter((q) => !q.reward?.item);
 assert.equal(semItem.length, 0, `missão sem item: ${semItem.slice(0, 4).map((q) => q.id).join(", ")}`);
 for (const q of QUESTS) {

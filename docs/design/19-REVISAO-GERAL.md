@@ -94,6 +94,7 @@ A árvore já vergava com a rajada e o fogo já tinha 4 a 8 quadros.
 | 2026-10-22 | escopo de jogo aposentado | pontes por missão, party em combate e planta por área passam a decisão com justificativa: o mapa não tem mais item ausente ou parcial de código, só as decisões do dono e a resistência por tipo | `test/passagens.test.mjs`, `test/casas.test.mjs`, `test/party-proof.test.mjs`, 99/99 suítes |
 | 2026-10-22 | decisões do dono respondidas | as 13 perguntas do 39 foram respondidas (12 de produto e as 4 de escopo confirmadas); o doc 01 §13 ganhou a nota "sem prova final" e o plano do próximo ciclo abriu em `40-PLANO-EXECUCAO.md` | `test/documentos.test.mjs`, 39 e 40 |
 | 2026-10-22 | PR #9, colisões e passagens | colisões alinhadas aos assets e movimento, passagens e chegadas corrigidos; 2 testes novos (`collision-profiles`, `landing-collision`) e a ferramenta `render-collisions`; base do plano 40 | `test/colisao.test.mjs`, `test/collision-profiles.test.mjs`, `test/landing-collision.test.mjs`, 101/101 suítes |
+| 2026-10-22 | Biblioteca Afogada, corrente | as 7 missões estão no guia com cadeia, metas, save e o título final; a sonda achou o `progress` de docas usando `.size` num array, que travava a missão "Sete faróis", e corrigiu | `test/biblioteca.test.mjs`, `test/content.test.mjs`, 102/102 suítes |
 
 ## Fecho da revisão (2026-10-22)
 
@@ -104,16 +105,16 @@ o que os testes e sondas desta data mostram, não o que o diário prometeu.
 |---|---|---|---|---|
 | arte por peça | 41 assets, 111 silhuetas, 561 itens, 464 fichas, 194 NPCs e 7 pets com contorno e luz | espelho por instância, detalhe de meio pixel, portes e escalas | fogo 5/5, água 3/4, solo `tufo`, props `gaivota`, vegetação pelo vento, construção rígida; NPC olha/cabeceia e pet pisca | `test/assets.test.mjs`, `test/itens.test.mjs`, `test/bestiary.test.mjs`, `test/animacao-idle.test.mjs`, `cdp-anim-idle.mjs` (cabeça 46 px, corpo 0, cauda 60, olho 13) |
 | mapa | 3.816 peças em 86 áreas, 454 estações e 94 faróis | 54 ligações (31 istmos, 23 pontes), floresta com teto, 72 casas com 8 plantas, soleira e morador | vento, mar com crista, clima por bioma; câmera, minimapa e mapa grande | `test/passagens.test.mjs`, `test/floresta.test.mjs`, `test/espaco.test.mjs`, `test/casas.test.mjs`, `cdp-soleira.mjs`, `cdp-casa-planta.mjs`, `cdp-morador.mjs`, `cdp-mapa-tela.mjs` |
-| interfaces | 9 painéis em 1280 e 390 | wiki 2.300 entradas, bestiário 464 fichas, ficha com atualização sem perder foco | foco/inert, teclado nas abas e no duelo A-E, busca com limpar e contagem, avisos acima da tela ativa | `test/interfaces.test.mjs`, `test/ui.test.mjs`, `test/wiki.test.mjs`, `cdp-ui-audit.mjs` (18 painéis, 0 estouro, 0 alvo < 28 px), `cdp-contraste.mjs` (108 textos, 0 falha), `cdp-fonte-ui.mjs` |
+| interfaces | 9 painéis em 1280 e 390 | wiki 2.307 entradas, bestiário 464 fichas, ficha com atualização sem perder foco | foco/inert, teclado nas abas e no duelo A-E, busca com limpar e contagem, avisos acima da tela ativa | `test/interfaces.test.mjs`, `test/ui.test.mjs`, `test/wiki.test.mjs`, `cdp-ui-audit.mjs` (18 painéis, 0 estouro, 0 alvo < 28 px), `cdp-contraste.mjs` (108 textos, 0 falha), `cdp-fonte-ui.mjs` |
 | movimento | 1.040 caixas em 12 tipos | zero fantasma em barril, árvore, móvel sorteado e interior; 2.413 alvos de caverna | oito direções, passo, câmera, turbo e toque | `test/fantasmas.test.mjs`, `test/interior-collision.test.mjs`, `test/dungeon-reachability.test.mjs`, `test/movement.test.mjs`, `cdp-fantasma.mjs` |
 | masmorras e batalha | 93 cavernas em 6 modelos e 4 pisos | sala temática por disciplina com 279 peças sólidas; 93 chefes | ritmo +1/+2, leitura de turno, fases 2 e 3, habilidade própria por chefe, turnos de PvP | `test/masmorras.test.mjs`, `test/salas.test.mjs`, `test/duelo-ritmo.test.mjs`, `test/chefe-habilidades.test.mjs`, `test/pvp-turnos.test.mjs`, `cdp-chefe-habilidade.mjs`, `cdp-sala-tema.mjs` |
 | pedidos já feitos | auditoria dos 38 pedidos na fonte viva | correção de resposta vazia, frase repetida, seis alternativas e páginas curtas | 69 páginas com curso completo, revisão das PRs externas e documentos alinhados | `docs/design/20-AUDITORIA-PEDIDOS.md`, `docs/design/33-REVISAO-EXTERNA.md`, `test/licoes.test.mjs`, `cdp-pagina.mjs` |
 
-Prova de conjunto desta data: `npm test` com **101 testes em 104 arquivos, 101 passaram**;
+Prova de conjunto desta data: `npm test` com **102 testes em 105 arquivos, 102 passaram**;
 matriz de navegador **19/19** remedida em 2026-10-22 depois de clima, sono, famílias,
 texto maior, marcas do duelo, variantes, bilhetes, arcos, patrulha e perseguição e do desacoplamento
 mundo→rendering (`cdp-regressao.mjs`: HUD, mochila 40, bestiário
-464, wiki 2.300 em 15 abas, diário 86, viagem 97, névoa r2, caverna, câmera,
+464, wiki 2.307 em 15 abas, diário 86, viagem 97, névoa r2, caverna, câmera,
 vida/mana, mapa recolhido, fps 60,5, 390 px sem estouro, console sem erro do jogo);
 matriz de navegador **19/19** (60 fps, 0 erro de console, 0 estouro em 390 px);
 contraste **0 falha**; fonte e transbordo **0 fora**. Sondas e capturas em

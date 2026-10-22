@@ -577,7 +577,7 @@ check(AREAS.length === 86, `áreas no mapa: ${AREAS.length}, esperado 86`);
 check(DUNGEONS.length === 93, `cavernas: ${DUNGEONS.length}, esperado 93`);
 check(GROUNDS.length === 93, `caçadas: ${GROUNDS.length}, esperado 93`);
 check(SITES.length === totalEstacoes, `catações: ${SITES.length}, esperado ${totalEstacoes}`);
-check(QUESTS.length === 284, `missões: ${QUESTS.length}, esperado 284`);
+check(QUESTS.length === 291, `missões: ${QUESTS.length}, esperado 291`);
 // a missão fala como morador: campo cheio, recompensa que existe, frase
 // começando em maiúscula e sem concordância quebrada ("da de")
 const falhasMissao = [];

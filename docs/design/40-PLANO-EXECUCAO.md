@@ -20,7 +20,7 @@ O endgame e a lore entram no próximo ciclo, nesta ordem.
 ## 2. O ciclo atual está fechado
 
 - 0 linhas ausente e 0 parciais no 39; o que resta são decisões respondidas.
-- 101 testes em 104 arquivos, 19/19 na matriz de navegador a 60,2 fps, 137
+- 102 testes em 105 arquivos, 19/19 na matriz de navegador a 60,2 fps, 137
   módulos, build de 145 arquivos.
 - Site publicado com o 39 e o 40; o revisor de conteúdo roda no `check` e no CI.
 - A mochila medida em 60,2 fps após 75 s e 18 a 19 MB; acompanhar em hardware
@@ -32,6 +32,11 @@ O endgame e a lore entram no próximo ciclo, nesta ordem.
 
 A primeira entrega do endgame é o lugar: uma corrente de 7 missões que abre a
 biblioteca, a tela de escolha e o acervo navegável.
+
+**Andamento (rodada 1)**: a corrente de 7 missões está no guia, encadeada e com
+save (`test/biblioteca.test.mjs`); a sonda achou e corrigiu um defeito real no
+`progress` de docas, que usava `.size` num array e travava a missão "Sete
+faróis". Faltam a tela de escolha e o acervo.
 
 - **Entregáveis**: 7 missões encadeadas (`biblioteca-1` a `biblioteca-7`), cada
   uma com pré-requisito na anterior; a tela de escolha do que estudar; o acervo
@@ -56,7 +61,7 @@ de escolha e um desfecho. A decisão 1 do dono (sem prova final) continua valend
 
 ### F3. Arco principal em capítulos e lore da Iara (G)
 
-As 284 missões atuais são geradas e não têm fio. O arco transforma o acervo em 7
+As 284 missões geradas (mais as 7 da Biblioteca) não têm fio. O arco transforma o acervo em 7
 capítulos, do Silêncio à Iara, com marcos e diálogo.
 
 - **Entregáveis**: `src/gameplay/arcos.js` com 7 capítulos (porto e seis

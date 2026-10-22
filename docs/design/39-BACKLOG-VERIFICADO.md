@@ -8,8 +8,8 @@ de ele existir, com números que o código já superou.
 
 Auditoria read-only de 2026-10-22 cruzou os documentos 00 a 38 com `src/`,
 `test/` e `tools/`. Números do código: 86 áreas, 454 estações, 93 cavernas, 561
-itens, 464 fichas, 284 missões, 194 NPCs, 2.300 entradas de wiki, 887 perguntas
-de duelo, 137 módulos e 101 testes node. `npm run validate` passa (lint,
+itens, 464 fichas, 291 missões, 194 NPCs, 2.307 entradas de wiki, 887 perguntas
+de duelo, 137 módulos e 102 testes node. `npm run validate` passa (lint,
 contrato de módulos, testes e build) e a matriz de navegador dá 19/19.
 
 Esforço: **P** até um dia, **M** de dois a cinco dias, **G** mais de uma semana.
@@ -40,7 +40,7 @@ Estado: **feito**, **medido** e **decisão** (respondida em 2026-10-22). Não h�
 | dicas em escada e foco | **feito** | botão de dica no duelo: 1 mana por passo, passo 1 risca duas erradas, passo 2 risca mais uma, passo 3 revela a correta, zera na pergunta nova e leva o foco para a alternativa viva; `test/duelo-dica.test.mjs` e `cdp-dica.mjs` | M |
 | formatos de pergunta e prova de transferência | **decisão** | depende do dono: hoje só A-E e o texto do jogo diz que não há prova final, enquanto o desenho 01 §13 pede exame por continente. Escolher o formato e a prova antes de escrever conteúdo | G |
 | ofícios por continente | **decisão** | o **mercador de troca** está feito: quatro ofertas material por material no guardião, com perda e sem leilão (`test/mercador.test.mjs`, `cdp-mercador.mjs`). Separar a receita por continente é conteúdo (quais 3 a 5 peças por forja) e depende do dono; filtrar as 40 receitas atuais, todas do porto, não teria o que filtrar | M |
-| magias, encantos e consumíveis no alvo do desenho | **feito** | 12 encantos (`test/encantos.test.mjs`), 12 runas (6 novas em `test/runas-novas.test.mjs`) e 9 poções + 15 comidas, com cura, mana e buff medidos (`test/consumiveis.test.mjs`); wiki 2.300 fichas, 561 itens, 39 receitas | M |
+| magias, encantos e consumíveis no alvo do desenho | **feito** | 12 encantos (`test/encantos.test.mjs`), 12 runas (6 novas em `test/runas-novas.test.mjs`) e 9 poções + 15 comidas, com cura, mana e buff medidos (`test/consumiveis.test.mjs`); wiki 2.307 fichas, 561 itens, 39 receitas | M |
 | famílias, variantes e fraqueza numérica | **feito** | 25 formas em 5 famílias, faixa no bestiário e +50% contra a família completa (`test/familias.test.mjs`, previsão 1,1 → 1,7). **Variantes**: eco (10%), elite (5%) e antiga (3%) decididas por caverna e sala, trocando vida, dano, XP, material, cor e nome, com linha no duelo (`test/variantes.test.mjs`, `cdp-variantes-criatura.mjs`: "Sílaba Antiga" com vida 6) | M |
 | clima afetando spawn | **feito** | chuva, neblina e rajada trocam o elenco do subsolo pelo clima (`nomeDaCacada`), sem mexer em sala, posto ou tier; o relógio do clima passou a andar no laço (não só no desenho) e o `forcarEvento` emite os ganchos; `test/cacada-clima.test.mjs` e `cdp-cacada-clima.mjs` (6 de 6 bichos molhados na chuva, 7 no limpo) | M |
 | audição, alerta, patrulha e perseguição | **feito** | **audição, sono, isca, patrulha e perseguição**: correr perto vira o rosto para o som com `?`; um quinto nasce dormindo (`z`) e acorda com passo perto ou corrida; a **isca** atrai os bichos a menos de 8 tiles por 6 s e quem come não ouve nem vê. A **patrulha** dá a cada bicho acordado uma rota fixa de até quatro pontos em volta do posto (raio 1,4), ida e volta pelo posto; só entra ponto com a reta livre até o posto, e o índice anda mesmo quando o caminho bloqueia. O passo corrido vira **perseguição**: ele caminha até o último ponto ouvido por 2,6 s, desiste se bater parede e volta para casa. O raio maior custou 14% dos bichos (201 → 172 em 31 cavernas), e o espaçamento entre postos acompanha para os campos de visão não se cruzarem. Provas: `test/audicao`, `test/isca`, `test/patrulha`, `cdp-audicao`, `cdp-sono`, `cdp-isca` e `cdp-patrulha` (109 rotas em 137 bichos acordados, 9,4 tiles andados em 20 s, 2 de 3 bichos tocando dois pontos, 0,4 a 1,4 tile de avanço na perseguição, volta a 0,1 a 0,8 do posto) | M |
@@ -71,7 +71,7 @@ Estado: **feito**, **medido** e **decisão** (respondida em 2026-10-22). Não h�
 | item | estado | o que falta | esforço |
 |---|---|---|---|
 | Grande Prova, Biblioteca Afogada, guilda | **decisão** | endgame é conteúdo de semanas (corrente de 7 missões, tela de escolha, biblioteca) e a guilda depende da camada social; depende do dono decidir se entra agora | G |
-| arco principal em capítulos e lore da Iara | **decisão** | as 284 missões são geradas e não há arco narrativo; escrever capítulos e lore é conteúdo de semanas e depende do dono | G |
+| arco principal em capítulos e lore da Iara | **decisão** | as 284 missões geradas (mais as 7 da Biblioteca) não têm arco narrativo; escrever capítulos e lore é conteúdo de semanas e depende do dono | G |
 | facções e reputação | **decisão** | não há facção nem reputação; é sistema de conteúdo e economia, depende do dono | G |
 | planta de casa por disciplina/ilha | **decisão** | quatro tipos com duas plantas cada cobrem as 72 casas e a semente do tipo escolhe; uma planta por área seriam 86 desenhos sem ganho de jogo. Reavaliar se o dono quiser variedade visual nas casas | G |
 | moeda Selo | **decisão** | preço em material; uma moeda nova é decisão de economia e do dono, não de código | G |
