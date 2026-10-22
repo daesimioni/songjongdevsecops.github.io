@@ -52,7 +52,7 @@ export const BACKUP = {
   every: 5 * 60 * 1000,
   days: 30,
   max: 60000,
-  keys: ["cards", "xp", "docks", "explored", "name", "sound", "room", "quests", "rpg", "outfit", "avatar", "npc", "ground"],
+  keys: ["cards", "xp", "docks", "explored", "name", "sound", "room", "quests", "rpg", "outfit", "avatar", "npc", "ground", "steps"],
 };
 
 // A rede do mundo: relays públicos, canais do jogo e DMs privadas (NIP-17).
