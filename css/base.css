@@ -335,7 +335,7 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
 
 .update-banner {
   position: fixed;
-  z-index: 60;
+  z-index: 70;
   left: 50%;
   top: calc(56px + env(safe-area-inset-top));
   transform: translateX(-50%);

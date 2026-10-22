@@ -97,7 +97,9 @@ assert.match(app, /guardarRetomada\(player\)/, "não guarda a posição antes de
 assert.match(app, /startGame\(\{ retomar: true \}\)/, "não volta direto ao jogo");
 assert.match(html, /id="update-banner"/, "o aviso não existe no HTML");
 assert.match(html, /id="update-btn"/, "o botão de atualizar não existe");
+assert.match(html, /<\/div>\s*<div id="update-banner"/, "o aviso está dentro do app e vira inert com painel aberto");
 assert.match(css, /\.update-banner\s*\{/, "o aviso não tem estilo");
+assert.match(css, /\.update-banner\s*\{[^}]*z-index: 70/s, "o aviso não fica acima do mapa grande e dos painéis");
 assert.match(fluxo, /node tools\/versao\.mjs/, "o CI não gera a versão");
 assert.match(fluxo, /git commit -m "Atualiza a versao publicada"/, "o CI não publica a versão");
 assert.match(versaoDe(versao), /^[a-f0-9]{16}$/, "versao.json inválido");
