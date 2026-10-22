@@ -90,6 +90,7 @@ A árvore já vergava com a rajada e o fogo já tinha 4 a 8 quadros.
 | 2026-10-22 | grafo de pré-requisitos | 78 arestas entre as 86 áreas, derivadas da numeração do catálogo (1.1 -> 1.2), com uma raiz por grupo; o caderno mostra "Antes de avançar" quando a área está em 2+ e o pré-requisito em 0/1, com nomes e domínios | `test/grafo.test.mjs`, `cdp-grafo.mjs`, 97/97 suítes |
 | 2026-10-22 | elevador do Porto Submerso | a praça da camada -2 ganha o elevador desenhado (plataforma, cordas e alavanca) que sobe à pedra do Porto do Início, sem passar pela boca de uma caverna; arte nova e saída própria no `onExit` | `test/elevador.test.mjs`, `cdp-elevador.mjs`, 98/98 suítes |
 | 2026-10-22 | documentos aposentados | o índice da pasta perde as listas antigas de perguntas e o plano pré-implementação, separa conceito, engenharia e histórico e aponta o 39; o retrato de 2026-10-20 ganha o banner histórico; 14 banners cobrados por teste | `test/documentos.test.mjs`, 99/99 suítes |
+| 2026-10-22 | escopo aposentado | editor de mapa, WebGL e jitter das ilhas ficam de fora com justificativa medida: o mundo é gerado e testado, o Canvas 2D faz 60,2 fps e o jitter exigiria revalidar 2.413 alvos e 54 ligações | 60,2 fps, 19/19, `test/dungeon-reachability.test.mjs`, `test/passagens.test.mjs` |
 
 ## Fecho da revisão (2026-10-22)
 

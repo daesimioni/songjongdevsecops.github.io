@@ -75,8 +75,8 @@ Estado: **feito**, **parcial**, **ausente**, **decisão** (produto, não código
 | facções e reputação | ausente | nenhuma facção | G |
 | planta de casa por disciplina/ilha | parcial | duas plantas por tipo; falta uma por continente/área | G |
 | moeda Selo | ausente | preço em material; decisão de economia | G |
-| editor de mapa e WebGL do mundo | ausente | ferramenta e render alternativo | M cada |
-| grade de ilhas regular | parcial | catálogo nasce em malha 24x16; jitter exige regenerar o literal e revalidar 2.413 alvos | M |
+| editor de mapa e WebGL do mundo | **decisão** | não fazer agora: o mundo é gerado por `catalog-*` e os testes de mapa, colisão e alcance são o editor; o Canvas 2D entrega 60,2 fps medidos e 19/19 na matriz de navegador. Migrar para WebGL não tem ganho medido e arrisca a arte; reavaliar se o fps cair abaixo de 50 em hardware real | M cada |
+| grade de ilhas regular | **decisão** | a malha 24x16 é a planta do arquipélago, e as ilhas já variam por bioma, tamanho e decoração; o jitter exigiria regenerar o literal e revalidar 2.413 alvos e as 54 ligações, sem ganho medido. Reavaliar se o dono apontar o alinhamento como defeito visual | M |
 
 ## Decisões que dependem do dono
 
