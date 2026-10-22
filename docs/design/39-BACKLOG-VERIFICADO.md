@@ -9,7 +9,7 @@ de ele existir, com números que o código já superou.
 Auditoria read-only de 2026-10-22 cruzou os documentos 00 a 38 com `src/`,
 `test/` e `tools/`. Números do código: 86 áreas, 454 estações, 93 cavernas, 541
 itens, 464 fichas, 284 missões, 194 NPCs, 2.251 entradas de wiki, 887 perguntas
-de duelo, 120 módulos e 77 testes node. `npm run validate` passa (lint,
+de duelo, 120 módulos e 78 testes node. `npm run validate` passa (lint,
 contrato de módulos, testes e build) e a matriz de navegador dá 19/19.
 
 Esforço: **P** até um dia, **M** de dois a cinco dias, **G** mais de uma semana.
@@ -51,7 +51,7 @@ Estado: **feito**, **parcial**, **ausente**, **decisão** (produto, não código
 | funções das peças temáticas | **feito** | as três peças respondem ao F, uma vez por descida: oficina afia (+1 de dano por 3 min), biblioteca guarda uma dica que risca duas alternativas no próximo duelo (e no treino) e observatório acende a sala do chefe no mapa (35 casas medidas); `test/pecas-tematicas.test.mjs` e `cdp-pecas-tematicas.mjs` | M |
 | tema de sala por área | **feito** | a peça veste a área, não só o continente: `varianteDaPeca` escolhe pelo id da caverna um de três arranjos (ferramenta da oficina, arranjo da estante, inclinação da luneta); `cdp-variantes-sala.mjs` mede 3 desenhos distintos por peça | M |
 | teste de fluxo real de loja e duelo | **feito** | loja aberta pelo guardião com F, compra real (material cobrado, peça na mochila, cartão vira "já é sua") e troca do mercador medidas em `cdp-loja.mjs` e `cdp-mercador.mjs`; o duelo já era exercido por `cdp-duelo-ritmo.mjs`, `cdp-dica.mjs` e `cdp-voz.mjs` com bicho real de caverna | M |
-| acessibilidade: voz, escala, daltonismo | parcial | teclado, foco e aria-live prontos; **voz feita** (botão ouvir/parar, pt-BR, testes e sonda); faltam escala de fonte e paleta para daltonismo | M |
+| acessibilidade: voz, escala, daltonismo | parcial | teclado, foco e aria-live prontos; **voz feita** (ouvir/parar, pt-BR); **resultado sem cor feito**: ✓ na certa e ✗ na errada escolhida, letras A-E visíveis no toque (18x16 px em 390, 0 estouro), `test/duel-acessivel.test.mjs` e `cdp-duelo-a11y.mjs`; falta escala de fonte (decisão: o navegador já tem zoom) | M |
 | save versionado, migração e exportar/importar | **feito** | backup carrega `v: 1` e só aplica as chaves conhecidas com valor JSON válido; a Rede ganhou `baixar arquivo` (JSON legível, sem a chave da conta) e `carregar arquivo` (recusa lixo, aplica e recarrega); `test/save-arquivo.test.mjs` e `cdp-save-arquivo.mjs` (7 partes, v1, nome trocado pelo arquivo) | M |
 | linter de conteúdo | ausente | validação só em teste; falta revisor e versão por pergunta | M |
 | ferries, elevadores, ciclo dia/noite, mapa grande, pontes por missão | ausente | skiff, túnel e 54 travessias fixas existem | M cada |

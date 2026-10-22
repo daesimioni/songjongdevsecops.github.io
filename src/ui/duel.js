@@ -5,6 +5,7 @@ import { drawCreatureArt } from "../rendering/creature.js";
 import { petAbilityNeedsDuel } from "../gameplay/rpg.js";
 import { leituraDeRitmo } from "../gameplay/duelo-ritmo.js";
 import { lerPergunta, pararVoz, vozDisponivel } from "./voz.js";
+import { marcaDaOpcao } from "./duel-marcas.js";
 
 const $ = (id) => document.getElementById(id);
 const LETTERS = "ABCDE";
@@ -217,6 +218,12 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
       b.type = "button";
       b.appendChild(el("kbd", "", LETTERS[i] || String(i + 1)));
       b.appendChild(el("span", "", text));
+      // marca de resultado: quem não distingue as cores vê ✓ e ✗ no lugar
+      const marca = marcaDaOpcao(d.phase, i, q.answer, lastPick);
+      if (marca) {
+        b.appendChild(el("span", `duel-mark ${marca === "✓" ? "right" : "wrong"}`, marca))
+          .setAttribute("aria-hidden", "true");
+      }
       if (d.monsterHp <= 0) b.disabled = true;
       if (hinted === i) b.classList.add("hinted");
       if ((d.eliminadas || []).includes(i)) {

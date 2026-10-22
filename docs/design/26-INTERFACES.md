@@ -94,3 +94,10 @@ achou estouro, alvo pequeno nem foco perdido. São melhorias de leitura.
    slot inválido e sobrevive à recarga. Prova: `test/builds.test.mjs` e sonda
    `cdp-builds.mjs` (salvou "prova" com 3 peças, desmontou tudo, usou de volta os
    três espaços e removeu; 0 erro de console).
+
+7. **Resultado sem cor: fechado em 2026-10-22.** A resposta do duelo não depende
+   mais de verde e rosa: a alternativa certa ganha ✓ e a errada escolhida ganha
+   ✗, com `aria-hidden` (o texto do feedback já anuncia o resultado), e as letras
+   A-E deixaram de sumir no toque. Prova: `test/duel-acessivel.test.mjs` e sonda
+   `cdp-duelo-a11y.mjs` em 390 px (5 alternativas, letra de 18x16, ✓ e ✗ nas
+   opções certas, zero estouro horizontal, 0 erro de console).

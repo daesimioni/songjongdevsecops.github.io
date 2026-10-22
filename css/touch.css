@@ -9,7 +9,8 @@
   .rede-mini, .training-card, .intro-form .start, .panel-head .hud-btn {
     min-height: 44px;
   }
-  .duel-option kbd, .pvp-option kbd, .intro-controls kbd { display: none; }
+  .duel-option kbd { display: inline-flex; min-width: 22px; min-height: 22px; }
+  .pvp-option kbd, .intro-controls kbd { display: none; }
   #world, #dungeon-canvas, #touch, .dpad button, .touch-action, .touch-sprint {
     -webkit-touch-callout: none;
     user-select: none;
