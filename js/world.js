@@ -1014,6 +1014,7 @@ export function createWorld() {
     const p = { x, y, hw, hh, active };
     props.push(p);
     indexar(p);
+    return p;
   }
 
   const monsters = [];
@@ -1177,8 +1178,46 @@ export function createWorld() {
     const colunas = Math.max(1, Math.ceil(casa.w / 2));
     const meia = casa.w / (2 * colunas);
     for (let i = 0; i < colunas; i++) {
-      addProp(casa.x - casa.w / 2 + meia + i * 2 * meia, casa.y - 0.7, meia, 0.6);
+      const p = addProp(casa.x - casa.w / 2 + meia + i * 2 * meia, casa.y - 0.7, meia, 0.6);
+      if (p) p.tipo = `casa:${casa.tipo}`;
     }
+  }
+
+  // árvore em cima da boca fecha a descida quando o tronco passa a barrar:
+  // tira a peça, porque a pedra da caverna e o degrau valem mais que a copa
+  for (let i = ambiente.length - 1; i >= 0; i--) {
+    const a = ambiente[i];
+    if (a.tipo !== "arvore" && a.tipo !== "conifera" && a.tipo !== "palmeira" && a.tipo !== "seca") continue;
+    const perto = caves.some((c) =>
+      Math.hypot(c.x - a.x, c.y - a.y) < 1.5 || Math.hypot(c.exit.x - a.x, c.exit.y - a.y) < 0.9);
+    if (perto) ambiente.splice(i, 1);
+  }
+
+  // ---- colisão do cenário: o que tem volume barra o corpo ----
+  // Antes só estação, pedra, boca e doca barravam; barril, caixote, árvore e
+  // fogueira eram desenho puro e o boneco atravessava tudo. A caixa acompanha
+  // o desenho e fica presa ao chão. Árvore não nasce perto de casa (a folga é
+  // feita no povoado), então a porta não fica trancada.
+  const CAIXA_CENARIO = {
+    arvore: [0.28, 0.22, 0.34], conifera: [0.26, 0.22, 0.34],
+    palmeira: [0.24, 0.2, 0.34], seca: [0.24, 0.2, 0.34],
+    pedra: [0.36, 0.24, 0.3],
+    barril: [0.34, 0.28, 0.3], caixote: [0.4, 0.32, 0.34],
+    saco: [0.32, 0.26, 0.28], fardo: [0.44, 0.28, 0.3],
+    cerca: [0.68, 0.3, 0.35], poco: [0.8, 0.5, 0.42],
+    ruina: [0.95, 0.55, 0.5],
+    fogueira: [0.48, 0.28, 0.3], braseiro: [0.3, 0.26, 0.3],
+  };
+  const pertoDeBoca = (x, y) => caves.some((c) =>
+    Math.hypot(c.x - x, c.y - y) < 2.0 || Math.hypot(c.exit.x - x, c.exit.y - y) < 1.4);
+  const pertoDePorta = (x, y) => casas.some((c) =>
+    Math.hypot(c.door.x - x, c.door.y - y) < 1.5);
+  for (const a of ambiente) {
+    const caixa = CAIXA_CENARIO[a.tipo];
+    if (!caixa) continue;
+    if (pertoDeBoca(a.x, a.y) || pertoDePorta(a.x, a.y)) continue;
+    const p = addProp(a.x, a.y - caixa[2], caixa[0], caixa[1]);
+    if (p) p.tipo = a.tipo;
   }
 
   // nenhum NPC nasce dentro de pedra: se o posto caiu na área nova de uma

@@ -26,6 +26,7 @@ com a linha do diário dizendo que foi feito.
 | totens com silhueta própria | contagem por estação: 6 silhuetas, 3 pedras, 3 bases | feito em 2026-10-21 20:23 |
 | acessos às ilhas variados, não só ponte sobre o mar | `test/passagens.test.mjs`: 31 istmos de terra e 23 pontes nas 54 ligações, 0 ponto de água aberta; captura do istmo e da ponte em `temporarios/2026-10-20-mundo-song-pedido/` | feito em 2026-10-21 20:33 |
 | cabanas ridículas, desproporcionais e sem entrada | `test/casas.test.mjs`: escala 2 em casa, cabana, torre e galpão, 72 fachadas com porta livre e parede sólida, 4 salas fechadas com mesa, fogo e cama; sonda entra, estuda, descansa e sai | feito em 2026-10-21 21:02 |
+| colisão de fantasma no mundo | `test/fantasmas.test.mjs`: 1.040 caixas de cenário em 12 tipos (árvore, pedra, barril, caixote, saco, fardo, cerca, fogo); sonda `cdp-fantasma.mjs` anda contra barril e árvore e para; caverna auditada no código (altar, forja, pedra, horta, veio, encantador e baú sólidos) | feito em 2026-10-21 21:10 |
 
 ## O que a auditoria pegou de errado
 
@@ -47,9 +48,7 @@ com a linha do diário dizendo que foi feito.
    hoje o duelo é pergunta com vida.
 5. **Passada de interfaces**: HUD, diário, ficha, mochila e loja ainda não
    passaram pela auditoria de densidade e leitura.
-6. **Colisão de fantasma**: falta varrer o mundo e a caverna atrás de objeto
-   atravessável que não devia ser.
-7. **Contraste**: o pedido "544 textos sem falha" não tem teste vivo; precisa de
+6. **Contraste**: o pedido "544 textos sem falha" não tem teste vivo; precisa de
    uma varredura de contraste no navegador que possa rodar toda vez.
-8. **Etapa 2 e 3 dos assets**: vegetação, solo, construção, água, props e fogo
+7. **Etapa 2 e 3 dos assets**: vegetação, solo, construção, água, props e fogo
    já têm variantes; falta fechar animação própria de cada grupo.

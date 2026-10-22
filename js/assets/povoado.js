@@ -11,6 +11,9 @@ import { BIOMES } from "../identity.js";
 import { CONSTRUCOES } from "./construcoes.js";
 
 const MACIOS = new Set([K.GRASS, K.MOSS, K.FLOWER, K.SAND]);
+// o que ocupa a frente da casa: árvore não nasce em cima da porta, senão a
+// colisão nova tranca a entrada
+const ESTRUTURA = new Set(["casa", "cabana", "torre", "galpao", "ruina", "poco", "doca"]);
 const DUREZA = {
   math: "torre", physics: "torre", ai: "torre",
   cs: "galpao", chem: "galpao",
@@ -204,6 +207,9 @@ export function espalharAmbiente({ areas, get, hash2, waystones, hunts = [], gen
         if (hash2(x * 7 + ai * 5, y * 11 - ai) > (metropole ? 0.06 : 0.24)) continue;
         if (!pode(x, y, 1)) continue;
         if (pertoDaCacada(x, y) || pertoDeGente(x, y)) continue;
+        // árvore não fecha a porta de uma casa: 2,6 tiles de folga da fachada
+        if (ambiente.some((a) => ESTRUTURA.has(a.tipo) &&
+          Math.hypot(a.x - (x + 0.5), a.y - (y + 0.5)) < 2.2)) continue;
         const px = x + 0.5, py = y + 0.5;
         const t = get(x, y);
         let tipo = ARVORE[disc] || "arvore";
