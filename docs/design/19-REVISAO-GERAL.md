@@ -62,7 +62,7 @@ A árvore já vergava com a rajada e o fogo já tinha 4 a 8 quadros.
 
 | data | onda | o que mudou | prova |
 |---|---|---|---|
-| 2026-10-21 | páginas antigas, leva 1 | Oito páginas escritas à mão ganharam O que é, Como se usa e Onde quebra, passaram de 460 palavras e ficaram com seis partes | `test/licoes.test.mjs`, `cdp-pagina.mjs`, 33/33 suítes, 19/19 no navegador |
+| 2026-10-21 | páginas antigas, levas 1 e 2 | Dezesseis páginas escritas à mão ganharam O que é, Como se usa e Onde quebra, passaram de 460 palavras e ficaram com seis partes | `test/licoes.test.mjs`, `cdp-pagina.mjs`, 33/33 suítes, 19/19 no navegador |
 | 2026-10-21 | ritmo do duelo | +1 de dano com 3 acertos, +2 com 5 (teto); "se errar: X" com fase de chefe, haste e espelho; rodada e ritmo na tela; vida do bicho sem decimal | `test/duelo-ritmo.test.mjs`, `cdp-duelo-ritmo.mjs`, 33/33 suítes, 19/19 no navegador |
 | 2026-10-21 | passada de interfaces | 9 painéis medidos em 1280 e 390, zero estouro horizontal e zero alvo abaixo de 28 px; abas da wiki e botões de ação cresceram; wiki de 1 coluna no celular; loja sem estouro | `test/interfaces.test.mjs`, `cdp-ui-audit.mjs`, 32/32 suítes, 19/19 no navegador |
 | 2026-10-21 | animação de NPC e pet | cabeça parada olha em volta e cabeceia (46 px na cabeça, 0 no corpo); gato pisca e mexe a cauda (60 px na cauda, 13 no olho); passo do NPC confirmado | `test/animacao-idle.test.mjs`, `cdp-anim-idle.mjs`, 31/31 suítes, 19/19 no navegador |

@@ -110,6 +110,17 @@ export const LICOES_POST = {
       "Emparelhe naturais com pares e mostre que sobra nenhum par sem par. Depois tente o mesmo com reais entre zero e um e diga onde o emparelhamento falha.",
   },
   geometry: {
+    oque:
+      "Geometria é o estudo das formas e das relações que sobrevivem ao movimento. Em poliedros convexos, a relação de Euler V - A + F = 2 vale para qualquer tamanho, e os cinco sólidos platônicos são as únicas formas convexas de faces regulares iguais.",
+    como: [
+      "Conte vértices, arestas e faces com cuidado, marcando cada aresta uma vez só.",
+      "Aplique Euler para conferir a contagem antes de tirar conclusão.",
+      "Verifique o ângulo em volta de cada vértice e a soma dos ângulos das faces.",
+      "Compare com os cinco platônicos e diga por que outro arranjo não fecha.",
+      "Desenhe a planificação de cada platônico e conte as faces que se encontram em cada vértice; a soma dos ângulos precisa ser menor que 360 graus. É essa sobra que dobra a forma.",
+    ],
+    quebra:
+      "Contar aresta duas vezes ou esquecer a face de apoio. Aplicar Euler a poliedro não convexo ou com buraco e esperar 2. E confundir sólido platônico com qualquer poliedro regular: a exigência é face, vértice e ângulo iguais em todos os cantos. A contagem certa é a única prova de que a forma fecha.",
     limite:
       "Os cinco sólidos platônicos fecham porque o ângulo em volta do vértice não pode somar 360 graus. O limite não é escolha estética: é restrição de espaço. O mesmo raciocínio proíbe outros poliedros regulares.",
     pergunta: {
@@ -193,6 +204,17 @@ export const LICOES_POST = {
       "Monte um sinal de duas notas no sequenciador e olhe o espectro. Depois desligue uma e veja a linha desaparecer sem mudar a outra.",
   },
   thermo: {
+    oque:
+      "Termodinâmica é o estudo da energia que passa de um corpo a outro como calor e trabalho. Temperatura mede a agitação média das partículas, pressão mede a chuva de impactos nas paredes, e entropia conta os arranjos possíveis de um estado.",
+    como: [
+      "Escolha o sistema e o que fica de fora como vizinhança; sem essa fronteira, a conta de energia não fecha.",
+      "Meça ou estime temperatura, pressão e volume antes e depois do processo.",
+      "Aplique a primeira lei para a energia e a segunda para a entropia, lembrando que no sistema isolado ela não diminui.",
+      "Confira unidades e o sinal do trabalho: gás que expande realiza trabalho e perde energia.",
+      "Desenhe o ciclo num diagrama de pressão e volume e marque onde entra calor e onde sai trabalho; o desenho denuncia sinal trocado.",
+    ],
+    quebra:
+      "Confundir calor com temperatura: um corpo grande a 30 °C guarda mais energia térmica que um pequeno a 60 °C. Também erra quem espera que a entropia caia num sistema isolado; ela pode cair localmente se o entorno pagar a conta. E o zero absoluto não é atingível.",
     limite:
       "A caixa de gás mostra temperatura como energia cinética média, e a lei dos gases só descreve bem o regime diluído. Gás denso e interação forte pedem correção. O modelo é ponto de partida, não retrato completo.",
     pergunta: {
@@ -277,6 +299,17 @@ export const LICOES_POST = {
       "Compare a curva de energia de uma reação com e sem catalisador e marque a barreira e o delta final. Depois diga qual dos dois números não mudou.",
   },
   balance: {
+    oque:
+      "Balancear uma equação química é acertar o inventário de átomos: cada elemento precisa ter a mesma quantidade nos reagentes e nos produtos. Os coeficientes multiplicam moléculas inteiras, nunca trocam a fórmula de uma substância.",
+    como: [
+      "Escreva as fórmulas corretas dos reagentes e dos produtos, sem inventar subscrito.",
+      "Conte os átomos de cada elemento dos dois lados e monte a tabela do inventário.",
+      "Ajuste os coeficientes começando pelo elemento que aparece em menos lugares e confira a cada mudança.",
+      "Reduza à menor proporção inteira e separe o que é balanço do que é rendimento real.",
+      "Monte uma tabela com uma coluna por elemento e uma linha por composto, preencha com coeficiente vezes subscrito e ajuste até as colunas ficarem iguais. A tabela evita contar átomo de memória e mostra onde o coeficiente ainda falta.",
+    ],
+    quebra:
+      "Inventar coeficiente para fechar a conta ou mudar o subscrito da fórmula: subscrito é identidade da substância, coeficiente é quantidade. Também erra quem acha que balancear garante rendimento, e quem confunde mol com massa na hora de converter. A proporção mínima é a resposta, não qualquer múltiplo.",
     limite:
       "Balancear conserva átomo e não conserva massa de molécula solta. O limite é a reação real: a equação diz proporção, e o rendimento diz quanto de fato se formou. Equação balanceada não garante reação completa.",
     pergunta: {
@@ -416,6 +449,17 @@ export const LICOES_POST = {
       "Pegue cinco pontos, ajuste a reta na mão pelo método dos mínimos quadrados e preveja um ponto fora da faixa. Diga por que a previsão não é confiável.",
   },
   neural: {
+    oque:
+      "Uma rede neural é uma pilha de camadas de somas ponderadas e funções de ativação. Os pesos são ajustados por gradiente para reduzir o erro entre a saída e a resposta certa, e a retropropagação calcula a contribuição de cada peso.",
+    como: [
+      "Normalize as entradas e defina com clareza qual é a saída esperada.",
+      "Escolha a perda e treine em lotes, ajustando os pesos na direção que reduz o erro.",
+      "Separe uma parte dos dados para teste e compare o erro de treino com o de teste.",
+      "Se o teste piorar enquanto o treino melhora, pare: é sinal de overfitting.",
+      "Anote a perda a cada época; curva que para de cair no teste é aviso, não sucesso. Compare com uma linha de base simples antes de comemorar.",
+    ],
+    quebra:
+      "Decorar o treino e chamar de aprender: o erro de treino cai e o de teste sobe. Também erra quem acha que a rede explica a decisão; ela ajusta pesos, não escreve justificativa. Dado sem cobertura vira palpite confiante, e a fronteira aprende o que os exemplos mostraram.",
     limite:
       "Rede neural empilha camadas e ajusta peso por gradiente, e o limite é o dado: sem exemplo que cubra o caso, a rede não aprende. Ela também não explica a decisão, e confiança alta não é garantia de acerto.",
     pergunta: {
@@ -428,6 +472,17 @@ export const LICOES_POST = {
       "Desenhe uma rede de duas entradas, uma camada escondida e uma saída, e calcule na mão a saída para dois exemplos. Depois diga qual peso precisaria mudar para acertar o segundo.",
   },
   language: {
+    oque:
+      "Um modelo de linguagem corta o texto em tokens e representa cada um como vetor. Aprender é ajustar pesos para prever o próximo token a partir do contexto; a saída é uma distribuição de probabilidades, não uma consulta a fatos.",
+    como: [
+      "Tokenize a frase e observe como palavras raras se partem em pedaços.",
+      "Consulte a distribuição do próximo token e compare as probabilidades.",
+      "Escolha por amostragem ou pelo mais provável e repita com o contexto novo.",
+      "Teste a mesma pergunta com contexto diferente e veja a resposta mudar.",
+      "Peça ao modelo para continuar uma frase ambígua e repita com uma palavra de contexto; a mudança de distribuição mostra o que ele está usando. A comparação vale mais que uma resposta isolada.",
+    ],
+    quebra:
+      "Confundir fluência com verdade: o modelo pode inventar com segurança porque otimiza plausibilidade. Também erra quem acha que ele guarda o texto original ou consulta um banco de fatos. Contexto curto limita o que ele consegue relacionar, e a resposta muda com a pergunta. Probabilidade alta não é prova. O contexto decide o próximo passo.",
     limite:
       "O modelo de linguagem prevê o próximo token e não consulta o mundo. O limite é a verdade: fluência não é garantia de fato, e a mesma confiança aparece em frase certa e errada. A conferência continua sendo de quem lê.",
     pergunta: {
@@ -440,6 +495,17 @@ export const LICOES_POST = {
       "Peça ao modelo uma frase e depois peça a fonte de cada afirmação. Marque o que veio com fonte e o que veio só com confiança.",
   },
   vision: {
+    oque:
+      "Visão computacional trata a imagem como grade de números e aplica filtros locais para extrair bordas, cantos e texturas. A convolução desliza um kernel pela grade e transforma pixels em features; camadas seguintes combinam features em objetos.",
+    como: [
+      "Represente a imagem em canais de cor e normalize os valores.",
+      "Escolha um kernel e passe pela grade para ver o mapa de ativação.",
+      "Empilhe camadas e reduza a resolução para ganhar contexto.",
+      "Treine o classificador com imagens variadas e teste com uma que nunca apareceu.",
+      "Guarde o mapa de ativação de um filtro e compare com a imagem original; o que ele realça mostra o que a rede está usando. Se realçar o fundo, o objeto ainda não foi aprendido.",
+    ],
+    quebra:
+      "Achar que o filtro vê o objeto: ele vê contraste local e não sabe o que é a cena. Mudar a luz, o ângulo ou o fundo pode enganar sem mudar o objeto. E uma rede que acerta o treino pode falhar no mundo real se os exemplos não cobrirem a variação. Contraste local não é entendimento da cena.",
     limite:
       "Convolução aplica filtro local e detecta borda por contraste, e o limite é o contexto: o filtro vê a vizinhança imediata e não sabe o que o objeto é. Por isso a rede precisa de muitas camadas para juntar pedaço em objeto.",
     pergunta: {
@@ -535,6 +601,17 @@ export const LICOES_POST = {
       "Pegue cinco frases com a antes de palavra feminina, aplique o teste do masculino e corrija o que faltar. Depois explique cada correção pela regra.",
   },
   induction: {
+    oque:
+      "Indução eletromagnética é o aparecimento de corrente quando o fluxo magnético através de um circuito varia no tempo. Ímã parado não gera corrente; o que importa é a mudança do fluxo, não o seu valor.",
+    como: [
+      "Aproxime e afaste o ímã da bobina e observe o galvanômetro em cada movimento.",
+      "Inverta o sentido do movimento e veja a corrente inverter junto.",
+      "Aumente a velocidade e compare a intensidade: mais variação por segundo, mais corrente.",
+      "Troque a bobina por outra com mais espiras e repita para ver o efeito do enrolamento.",
+      "Registre o sentido da corrente para o ímã que entra e para o ímã que sai; a oposição da bobina explica por que os dois sentidos diferem.",
+    ],
+    quebra:
+      "Achar que basta um campo forte e parado; sem variação não há indução. Trocar a lei de Faraday pela de Lenz na hora de explicar o sinal também confunde: uma dá o tamanho, a outra o sentido. E medir a corrente média quando a pergunta pede a instantânea. A variação é a causa, não o campo. O sinal também importa.",
     limite:
       "A indução de Faraday mostra que campo magnético variável gera corrente, e o limite é a variação: campo parado não induz. O sinal depende da taxa de mudança, e por isso a lei é sobre variação, não sobre intensidade.",
     pergunta: {
@@ -559,6 +636,17 @@ export const LICOES_POST = {
       "Desenhe uma onda com campo elétrico e magnético perpendiculares e mostre por que a variação de um gera o outro. Depois diga o que muda se a frequência dobrar.",
   },
   pipeline: {
+    oque:
+      "Pipeline é a técnica de sobrepor etapas de instruções diferentes no processador: enquanto uma busca, outra decodifica, outra executa e outra grava. A vazão aumenta, mas a latência de uma instrução continua parecida.",
+    como: [
+      "Divida o ciclo da instrução em etapas e mantenha uma instrução em cada uma.",
+      "Encha a linha e meça quantas instruções terminam por ciclo, não o tempo de uma só.",
+      "Trate o desvio com previsão e descarte as instruções do caminho errado.",
+      "Separe dependência de dados de dependência de controle ao procurar o gargalo.",
+      "Some os ciclos de um trecho curto com e sem pipeline e compare; a conta mostra se a linha está cheia ou se o desvio está custando mais que o ganho. Não olhe só o relógio do processador.",
+    ],
+    quebra:
+      "Confundir vazão com latência: o pipeline não deixa uma instrução mais rápida, ele deixa mais instruções terminarem por ciclo. Desvio mal previsto esvazia a linha e custa ciclos. E dependência de dados entre instruções exige espera ou encaminhamento, senão o resultado sai errado. Linha cheia é o que dá vazão.",
     limite:
       "O ciclo de instrução busca, decodifica, executa e volta, e o limite é o atraso: memória lenta faz o processador esperar, e é por isso que existe cache. O ciclo simples descreve a ordem, não o desempenho real.",
     pergunta: {
