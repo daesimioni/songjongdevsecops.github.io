@@ -9,8 +9,8 @@ export const PLACA = {
   barra: 4,
   vaoBarras: 5,
   paddingBarras: 4,
-  vao: 8,
-  gapCabeca: 8,
+  vao: 4,
+  gapCabeca: 4,
   // metade da largura do nome máximo (dezesseis letras): nome comprido não
   // estica a vida
   larguraBarras: 52,
