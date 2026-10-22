@@ -50,13 +50,16 @@ vida aparece como 1 e não como 0 vivo.
   Captura `duelo-ritmo-*.png`.
 - 33 suítes node verdes; matriz de navegador 19/19; zero exceção.
 
-## 5. Refinamentos opcionais (sem defeito conhecido)
+## 5. Fechado em 2026-10-22
 
 1. **Habilidade única de chefe: fechada em 2026-10-22.** Cada um dos 93 chefes
    revela uma habilidade estável na fase 2 (couraça, seiva, ímpeto ou espelho),
    com nome na tela e aviso da fase; ver `34-HABILIDADES-CHEFE.md`,
    `test/chefe-habilidades.test.mjs` e `cdp-chefe-habilidade.mjs`.
-2. **Ritmo no parceiro**: o bônus vale para o jogador; o parceiro da matilha
-   responde no próprio baralho e não entra na sequência.
-3. **Leitura do acerto**: a tela mostra o dano do erro, não o dano que o
-   próximo acerto causaria (que depende de perícia, equipamento e ritmo).
+2. **Ritmo no parceiro: fechado.** Cada parceiro tem a própria sequência, o
+   bônus +1/+2 entra no dano dele, o feedback avisa e o erro zera a sequência;
+   a tela do parceiro mostra o ritmo e a previsão do próximo acerto.
+3. **Leitura do acerto: fechada como aproximada.** A tela mostra
+   `Se acertar: ~X`, com perícia, equipamento, caráter do bicho, couraça do
+   chefe e o ritmo que o acerto fecharia. O til é honesto: desvio e efeitos de
+   subcategoria podem mudar o resultado.

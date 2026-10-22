@@ -707,6 +707,28 @@ export class RPG {
       + (MONSTER_TRAITS[monster?.kind]?.id === "haste" ? Math.ceil(base / 2) : 0);
   }
 
+  // quanto o próximo acerto deve tirar: perícia, equipamento, caráter do bicho,
+  // couraça do chefe e o ritmo que o acerto fecharia. Aproximado porque desvio
+  // e efeitos de subcategoria podem mudar o resultado.
+  acertoPrevisto() {
+    const d = this.duel;
+    if (!d) return 0;
+    let dano = this.damageFor(d.ground.continent);
+    if (MONSTER_TRAITS[d.monster?.kind]?.id === "armor") dano = Math.max(1, dano - 1);
+    dano = danoDoJogador(d.habilidade?.id, d.bossPhase, dano);
+    if (dano > 0) dano += bonusDeRitmo((d.seguidos || 0) + 1);
+    return Math.round(dano * 10) / 10;
+  }
+
+  acertoPrevistoParceiro(p) {
+    const d = this.duel;
+    if (!d || !p) return 0;
+    let dano = this.damageFor(d.ground.continent);
+    if (MONSTER_TRAITS[p.monster?.kind]?.id === "armor") dano = Math.max(1, dano - 1);
+    if (dano > 0) dano += bonusDeRitmo((p.seguidos || 0) + 1);
+    return Math.round(dano * 10) / 10;
+  }
+
   atualizarFaseChefe(d) {
     // Toda fonte de dano deve atualizar a fase, inclusive runas.
     if (!d.boss || d.monsterHp <= 0) return;
@@ -1205,6 +1227,7 @@ export class RPG {
         question: pdeck[0],
         hp: TIERS[ptier].hp,
         hpMax: TIERS[ptier].hp,
+        seguidos: 0,
         feedback: null,
         done: false,
       });
@@ -1442,8 +1465,17 @@ export class RPG {
       const trait = MONSTER_TRAITS[p.monster?.kind]?.id;
       if (trait === "armor") damage = Math.max(1, damage - 1);
       if (trait === "dodge" && Math.random() < 0.18) damage = 0;
+      // o parceiro tem a própria sequência de acertos e o próprio ritmo
+      p.seguidos = (p.seguidos || 0) + 1;
+      const ritmo = damage > 0 ? bonusDeRitmo(p.seguidos) : 0;
+      if (ritmo) damage += ritmo;
       p.hp = Math.max(0, p.hp - damage);
-      p.feedback = { correct: true, why: p.question.why, damage: 0 };
+      p.feedback = {
+        correct: true,
+        why: p.question.why,
+        damage: 0,
+        note: ritmo ? `Ritmo do parceiro: ${p.seguidos} acertos, +${ritmo} de dano.` : "",
+      };
       if (p.hp <= 0) {
         p.done = true;
         this.data.monsters[p.monster.id] = now();
@@ -1455,6 +1487,7 @@ export class RPG {
     if (MONSTER_TRAITS[p.monster?.kind]?.id === "divide") {
       p.hp = Math.min(p.hpMax, p.hp + Math.max(1, Math.round(p.hpMax * 0.12)));
     }
+    p.seguidos = 0;
     const damage = this.erroPrevisto(p.monster, p.tier, 1);
     const petSegura = !d.shield && this.data.sub === "domador" && this.activePet() && !d.petUsado;
     const blocked = !!d.shield || !!petSegura;

@@ -188,6 +188,9 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
       d.training
         ? `Na caverna, esse erro tiraria ${previsao} de vida.`
         : `Se errar: ${previsao} de dano${d.shield ? " (o espelho segura uma vez)" : ""}.`));
+    // o próximo acerto também tem número, aproximado: desvio e subcategoria mudam
+    main.appendChild(el("p", "duel-read",
+      `Se acertar: ~${rpg.acertoPrevisto()} de dano.`));
     const opts = el("div", "duel-options");
     q.options.forEach((text, i) => {
       const b = el("button", "duel-option");
@@ -293,6 +296,9 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
     } else {
       box.appendChild(el("p", "duel-question partner", p.question.q));
       box.appendChild(el("p", "duel-read", `Se errar: ${rpg.erroPrevisto(p.monster, p.tier, 1)} de dano.`));
+      const ritmoParceiro = leituraDeRitmo(p.seguidos || 0);
+      box.appendChild(el("p", "duel-read",
+        `Se acertar: ~${rpg.acertoPrevistoParceiro(p)} de dano${ritmoParceiro ? ` · ${ritmoParceiro}` : ""}.`));
       const opts = el("div", "duel-options partner-options");
       p.question.options.forEach((text, i) => {
         const b = el("button", "duel-option");
