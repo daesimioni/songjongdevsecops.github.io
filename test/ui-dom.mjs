@@ -4,7 +4,7 @@ export function makeDocument(ids = [], { canvas = false } = {}) {
   const roots = new Map();
   const doc = { activeElement: null };
   class Node {
-    constructor(tag='div') { this.tagName=tag.toUpperCase();this.tabIndex=['BUTTON','INPUT','SELECT','TEXTAREA'].includes(this.tagName)?0:-1;this.children=[];this.dataset={};this.attrs={};this.hidden=false;this.inert=false;this.className='';this.text='';this.value='';this.handlers={};this.ownerDocument=doc;this.scrollTop=0;this.style={setProperty(){}};this.classList={contains:c=>this.className.split(' ').includes(c)}; }
+    constructor(tag='div') { this.tagName=tag.toUpperCase();this.tabIndex=['BUTTON','INPUT','SELECT','TEXTAREA'].includes(this.tagName)?0:-1;this.children=[];this.dataset={};this.attrs={};this.hidden=false;this.inert=false;this.className='';this.text='';this.value='';this.handlers={};this.ownerDocument=doc;this.scrollTop=0;this.style={setProperty(){}};this.classList={contains:c=>this.className.split(' ').includes(c),add:(...cs)=>{this.className=[...new Set([...this.className.split(' ').filter(Boolean),...cs])].join(' ');},remove:(...cs)=>{this.className=this.className.split(' ').filter(c=>!cs.includes(c)).join(' ');}}; }
     append(...nodes){for(const n of nodes){n.parent=this;this.children.push(n);}}
     appendChild(n){this.append(n);return n;}
     set textContent(s){for(const n of this.children)n.parent=null;this.children=[];this.text=String(s);}

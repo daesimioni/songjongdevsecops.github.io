@@ -1,3 +1,4 @@
+import { houseTargets, nextResidentLine } from "./house-interactions.js";
 import { readSavedJSON as readJSON } from "./storage.js";
 import { filterGroupedList } from "./search-ui.js";
 import { createUiScope, availableFocusTargets } from "./ui-scope.js";
@@ -989,18 +990,7 @@ function falarComMorador() {
   const prop = world.interiorProps.find((p) => p.tipo === "morador");
   if (!prop) return;
   const area = AREAS.find((a) => a.id === state.casa.bioma);
-  const nome = area?.name || "esta área";
-  if (!state.casa.frasesMorador) {
-    state.casa.frasesMorador = [
-      `${nome}: ${area?.sub || "o assunto que dá nome à casa"}.`,
-      "A mesa ali estuda; o fogo ali descansa. A casa é sua enquanto você estiver aqui.",
-      "Quem mora aqui aprendeu no caminho, não no livro. A pedra lá fora conta o resto.",
-    ];
-    state.casa.falaMorador = 0;
-  }
-  const frases = state.casa.frasesMorador;
-  state.casa.falaMorador = ((state.casa.falaMorador || 0) + 1) % frases.length;
-  toast(frases[state.casa.falaMorador], 4200);
+  toast(nextResidentLine(state.casa, area), 4200);
   audio.blip();
 }
 
@@ -1481,13 +1471,15 @@ function markDock(cid) {
 }
 
 function setSound(on) {
+  on = Boolean(on) && audio.setEnabled(true);
+  if (!on) audio.setEnabled(false);
   saved.sound = on;
   writeJSON(STORAGE.sound, on);
   const btn = $("btn-sound");
   btn.setAttribute("aria-pressed", on ? "true" : "false");
   btn.textContent = on ? "Som on" : "Som off";
-  if (on) { audio.setEnabled(true); audio.unlock(); }
-  else audio.setEnabled(false);
+  if (on) audio.unlock();
+  return on;
 }
 
 function setNetStatus({ state: s, count }) {
@@ -2227,12 +2219,9 @@ function findNearest() {
   };
   // dentro de casa só existem a mesa, o fogo, a porta e o morador
   if (state.casa) {
-    const cena = state.casa.cena;
-    near("porta", { x: cena.door.x, y: cena.door.y }, null, 1.5);
-    near("mesa", { x: cena.mesa.x, y: cena.mesa.y }, null, 1.7);
-    near("lareira", { x: cena.lareira.x, y: cena.lareira.y }, null, 1.7);
-    const morador = world.interiorProps.find((p) => p.tipo === "morador");
-    if (morador) near("morador", { x: morador.x, y: morador.y }, null, 1.7);
+    for (const target of houseTargets(state.casa.cena, world.interiorProps)) {
+      near(target.kind, target.obj, null, target.radius);
+    }
     return best;
   }
   // a boca da caverna é medida pelo degrau de saída, não pelo centro do
@@ -2339,7 +2328,7 @@ function clearPath() {
 }
 
 function interactionRadius(kind) {
-  return { item: 1.4, gather: 2.2, cave: 1.8, casa: 1.8, porta: 1.5, mesa: 1.7, lareira: 1.7 }[kind] || INTERACT_RADIUS;
+  return { item: 1.4, gather: 2.2, cave: 1.8, casa: 1.8, porta: 1.5, mesa: 1.7, lareira: 1.7, morador: 1.7 }[kind] || INTERACT_RADIUS;
 }
 
 function setPathTo(x, y, pending = null, silencioso = false) {
@@ -2815,10 +2804,9 @@ function entityAt(wx, wy) {
   };
   // dentro de casa o toque mira a mesa, o fogo e a porta
   if (state.casa) {
-    const cena = state.casa.cena;
-    hit("porta", { x: cena.door.x, y: cena.door.y }, null, 1.1);
-    hit("mesa", { x: cena.mesa.x, y: cena.mesa.y }, null, 1.2);
-    hit("lareira", { x: cena.lareira.x, y: cena.lareira.y }, null, 1.2);
+    for (const target of houseTargets(state.casa.cena, world.interiorProps)) {
+      hit(target.kind, target.obj, null, target.hitRadius);
+    }
     return best;
   }
   for (const s of world.stations) hit("station", s);
@@ -2926,9 +2914,13 @@ function abrirMenu(e, wx, wy) {
     if (magia) ctxMenu.appendChild(acaoMenu("✦", `usar ${magia.name}`, String(magia.mana), () => usarMagia(magia.id)));
   };
   if (alvo) {
-    const d = Math.hypot(alvo.obj.x - player.x, alvo.obj.y - player.y);
-    const perto = d <= INTERACT_RADIUS + 0.7;
-    if (perto && alvo.kind === "station") {
+    const point = alvo.kind === "cave" ? alvo.obj.exit : alvo.obj;
+    const d = Math.hypot(point.x - player.x, point.y - player.y);
+    const perto = d <= interactionRadius(alvo.kind);
+    const casaAction = {casa:"entrar na casa",porta:"sair da casa",mesa:"estudar na mesa",lareira:"descansar no fogo",morador:"conversar com o morador"}[alvo.kind];
+    if (perto && casaAction) {
+      ctxMenu.appendChild(acaoMenu("…", casaAction, "F", () => interactTarget(alvo)));
+    } else if (perto && alvo.kind === "station") {
       ctxMenu.appendChild(acaoMenu("▸", "abrir a pedra", "F", () => openPost(alvo.obj.post, alvo.obj)));
     } else if (perto && alvo.kind === "npc") {
       ctxMenu.appendChild(acaoMenu("…", "falar", "F", () => interactTarget(alvo)));
@@ -3070,8 +3062,9 @@ $("world").addEventListener("pointerdown", (e) => {
   const wy = (sy / renderer.zoom + renderer.camY) / 16;
   const hit = entityAt(wx, wy);
   if (hit) {
-    const d = Math.hypot(hit.obj.x - player.x, hit.obj.y - player.y);
-    if (d <= INTERACT_RADIUS + 0.7) {
+    const point = hit.kind === "cave" ? hit.obj.exit : hit.obj;
+    const d = Math.hypot(point.x - player.x, point.y - player.y);
+    if (d <= interactionRadius(hit.kind)) {
       clearPath();
       interactTarget(hit);
     } else if (hit.kind === "cave") {

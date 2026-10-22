@@ -2,6 +2,7 @@
 import { CONTINENTS } from "./config.js";
 import { ITEMS, TIERS, MONSTER_TRAITS } from "./rpg-data.js";
 import { drawCreatureArt } from "./creature.js";
+import { petAbilityNeedsDuel } from "./rpg.js";
 import { leituraDeRitmo } from "./duelo-ritmo.js";
 
 const $ = (id) => document.getElementById(id);
@@ -20,6 +21,13 @@ function el(tag, cls, text) {
 
 export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
   let timer = null;
+
+  function focusAction() {
+    const body = $("duel-body");
+    const next = body?.querySelector?.(".duel-next");
+    const answer = [...(body?.querySelectorAll?.(".duel-option") || [])].find((node) => !node.disabled);
+    (next && !next.disabled ? next : answer)?.focus?.();
+  }
 
   function accent() {
     return rpg.duel?.monster?.accent || CONTINENTS[rpg.duel?.ground.continent]?.accent || "#ffc857";
@@ -61,8 +69,8 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
 
   const SPELL_LABELS = {
     "runa-faisca": "faísca · risca uma alternativa",
-    "runa-trovao": "trovão · 2 de dano no da frente",
-    "runa-fogo": "fogo · 1 de dano em todos",
+    "runa-trovao": "trovão · atinge o monstro da frente",
+    "runa-fogo": "fogo · atinge todos os bichos",
     "runa-gelo": "gelo · passa a pergunta",
     "runa-cura": "cura · recupera 12",
     "runa-espelho": "espelho · o próximo erro não dói",
@@ -228,7 +236,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
           ? `${pet.name} · ${pet.ability.name} em ${Math.ceil(cd / 1000)}s`
           : `${pet.name} · ${pet.ability.name} · ${pet.ability.mana} mana`);
         pb.type = "button";
-        pb.disabled = cd > 0 || (pet.ability.id !== "mana" && rpg.mana() < pet.ability.mana);
+        pb.disabled = (d.monsterHp <= 0 && petAbilityNeedsDuel(pet.ability.id)) || cd > 0 || (pet.ability.id !== "mana" && rpg.mana() < pet.ability.mana);
         pb.addEventListener("click", usePet);
         main.appendChild(pb);
       }
@@ -242,7 +250,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
             : `${spell.mana} mana`;
           const rune = el("button", "duel-rune", `${label} · ${cost}`);
           rune.type = "button";
-          if (spell.id === "runa-faisca" && sparked.length > 0) rune.disabled = true;
+          if (spell.id === "runa-faisca" && (sparked.length > 0 || d.monsterHp <= 0)) rune.disabled = true;
           rune.addEventListener("click", () => castSpell(spell.id));
           bar.appendChild(rune);
         }
@@ -280,7 +288,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
       const next = el("button", "duel-next small", "continuar com este bicho");
       next.type = "button";
       next.disabled = dPhaseBloqueada();
-      next.addEventListener("click", () => { rpg.partnerNext(who); render(); });
+      next.addEventListener("click", () => { rpg.partnerNext(who); render(); focusAction(); });
       box.appendChild(next);
     } else {
       box.appendChild(el("p", "duel-question partner", p.question.q));
@@ -301,6 +309,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
             if (!rpg.duel.training) onVictory?.(rpg.duel.result);
           }
           render();
+          focusAction();
         });
         opts.appendChild(b);
       });
@@ -336,7 +345,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
 
   function usePet() {
     if (!rpg.duel || rpg.duel.phase !== "question") return false;
-    const res = rpg.usePetAbility({ duel: true });
+    const res = rpg.usePetAbility({ duel: true, excluded: sparked });
     if (!res.ok) {
       toast(res.reason, 3200);
       audio.error?.();
@@ -375,7 +384,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
   }
 
   function spark() {
-    if (!rpg.duel || rpg.duel.phase !== "question" || sparked.length) return false;
+    if (!rpg.duel || rpg.duel.phase !== "question" || rpg.duel.monsterHp <= 0 || sparked.length) return false;
     const res = rpg.castSpell("runa-faisca");
     if (!res.ok) { toast(res.reason, 2800); return false; }
     const q = rpg.duel.question;
@@ -400,6 +409,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
       if (!rpg.duel.training) onVictory?.(rpg.duel.result);
     }
     render();
+    focusAction();
   }
 
   function advance() {
@@ -415,7 +425,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
     hinted = null;
     petInfo = "";
     const res = rpg.next();
-    if (res?.phase === "question") render();
+    if (res?.phase === "question") { render(); focusAction(); }
   }
 
   return { open, openTraining, close, answer, advance, render, drawSprite, spark, usePet };

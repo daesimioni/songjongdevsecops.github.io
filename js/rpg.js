@@ -685,13 +685,13 @@ export class RPG {
     this.save();
   }
 
-  usePetAbility({ duel = false } = {}) {
+  usePetAbility({ duel = false, excluded = [] } = {}) {
     const pet = this.activePet();
     if (!pet) return { ok: false, reason: "Nenhum bicho tamed está ativo." };
     const ab = pet.ability;
     const left = this.petCdLeft(pet.id);
     if (left > 0) return { ok: false, cooldown: left, reason: `${pet.name} ainda está descansando (${Math.ceil(left / 1000)}s).` };
-    const inDuel = duel && this.duel && this.duel.phase === "question";
+    const inDuel = duel && this.duel && this.duel.phase === "question" && this.duel.monsterHp > 0;
     if (petAbilityNeedsDuel(ab.id) && !inDuel) {
       return { ok: false, reason: "Essa habilidade só funciona na pergunta de um duelo." };
     }
@@ -701,7 +701,7 @@ export class RPG {
     }
     const out = { ok: true, pet: { id: pet.id, name: pet.name }, ability: ab, effect: ab.id };
     if (ab.id === "faro" || ab.id === "tagarela") {
-      const wrong = this.duel.question.options.map((_, i) => i).filter((i) => i !== this.duel.question.answer);
+      const wrong = this.duel.question.options.map((_, i) => i).filter((i) => i !== this.duel.question.answer && !excluded.includes(i));
       if (!wrong.length) return { ok: false, reason: "Esta pergunta não tem alternativa para riscar." };
       const howMany = ab.id === "tagarela" ? 2 : 1;
       out.sparks = [];
@@ -871,6 +871,7 @@ export class RPG {
   erroPrevisto(monster = this.duel?.monster, tier = this.duel?.tier, bossPhase = this.duel?.boss ? this.duel.bossPhase : 1) {
     const d = this.duel;
     if (d?.shield || (this.data.sub === "domador" && this.activePet() && !d?.petUsado)) return 0;
+    if (monster === d?.monster && espelhoDoChefe(d?.habilidade?.id, bossPhase, d?.espelhoUsado)) return 0;
     const base = TIERS[tier]?.damage || 0;
     const extra = monster === d?.monster ? extraDoErro(d?.habilidade?.id, bossPhase) : 0;
     return this.danoSofrido(base + Math.max(0, (bossPhase || 1) - 1) * 2 + extra)
@@ -937,7 +938,8 @@ export class RPG {
     }
     // trovão acerta o da frente; fogo passa por todos, matilha incluída
     const dmg = (id === "runa-fogo" ? 1 : 2) + (this.data.sub === "alquimista" ? 1 : 0);
-    d.monsterHp = Math.max(0, d.monsterHp - dmg);
+    const mainDamage = danoDoJogador(d.habilidade?.id, d.bossPhase, dmg);
+    d.monsterHp = Math.max(0, d.monsterHp - mainDamage);
     if (id === "runa-fogo") {
       for (const p of d.partners || []) {
         if (p.done) continue;
@@ -970,6 +972,7 @@ export class RPG {
     if (!this.data.spells[id]) return { ok: false, reason: "Você ainda não aprendeu essa runa. Forje uma na forja." };
     const d = this.duel;
     if (!d || d.phase !== "question") return { ok: false, reason: "A runa só funciona na pergunta de um duelo." };
+    if (id === "runa-faisca" && d.monsterHp <= 0) return { ok: false, reason: "Este monstro já caiu. Vença os demais da matilha." };
     if (id === "runa-espelho" && d.shield) return { ok: false, reason: "O espelho já está armado." };
     this.pulse();
     const cost = SPELL_MANA[id];
@@ -1014,8 +1017,8 @@ export class RPG {
 
   useItem(id) {
     const item = ITEMS[id];
-    const rune = id.startsWith("runa-");
-    if (!item || !(rune || ["pocao", "pocao-mana", "tocha", "bomba", "caldo", "cafe", "assado", "doce"].includes(id))) {
+    const rune = typeof id === "string" && id.startsWith("runa-");
+    if (!item || !(rune || item.heal || item.mana || item.buff || ["tocha", "bomba"].includes(id))) {
       return { ok: false, reason: "Este item não se usa agora." };
     }
     if (this.itemCount(id) <= 0) return { ok: false, reason: `Você não tem ${item.name}.` };
@@ -1034,6 +1037,7 @@ export class RPG {
     if (rune) {
       const d = this.duel;
       if (!d || d.phase !== "question") return { ok: false, reason: "A runa só funciona na pergunta de um duelo." };
+      if (id === "runa-faisca" && d.monsterHp <= 0) return { ok: false, reason: "Este monstro já caiu. Vença os demais da matilha." };
       if (id === "runa-espelho" && d.shield) return { ok: false, reason: "O espelho já está armado." };
       this.data.items[id]--;
       if (this.data.items[id] <= 0) delete this.data.items[id];
@@ -1044,8 +1048,12 @@ export class RPG {
       return res;
     }
     // comida com efeito pode ser usada de vida cheia: o buff ainda vale
-    if (!item.buff && item.heal && this.hp() >= this.hpMax() && !item.mana) return { ok: false, reason: "Sua vida já está cheia." };
-    if (item.mana && this.mana() >= this.manaMax() && !item.heal) return { ok: false, reason: "Sua mana já está cheia." };
+    if (!item.buff && (item.heal || item.mana)
+      && (!item.heal || this.hp() >= this.hpMax())
+      && (!item.mana || this.mana() >= this.manaMax())) {
+      return { ok: false, reason: item.heal && item.mana ? "Sua vida e mana já estão cheias."
+        : item.heal ? "Sua vida já está cheia." : "Sua mana já está cheia." };
+    }
     this.data.items[id]--;
     if (this.data.items[id] <= 0) delete this.data.items[id];
     const healed = this.heal(item.heal || 0);
@@ -1551,12 +1559,12 @@ export class RPG {
     } else {
       d.seguidos = 0;
       const previsto = this.erroPrevisto();
-      const petSegura = !d.shield && this.data.sub === "domador" && this.activePet() && !d.petUsado;
-      if (petSegura) d.petUsado = true;
       const espelho = espelhoDoChefe(d.habilidade?.id, d.bossPhase, d.espelhoUsado);
+      const petSegura = !espelho && !d.shield && this.data.sub === "domador" && this.activePet() && !d.petUsado;
+      if (petSegura) d.petUsado = true;
       if (espelho) d.espelhoUsado = true;
       const blocked = !!d.shield || petSegura || espelho;
-      if (blocked && d.shield) d.shield = false;
+      if (!espelho && d.shield) d.shield = false;
       let damage = previsto;
       let note = "";
       if (trait === "haste") {

@@ -15,7 +15,7 @@ export function createAudio() {
     if (!ctx) {
       const AC = window.AudioContext || window.webkitAudioContext;
       if (!AC) return null;
-      ctx = new AC();
+      try { ctx = new AC(); } catch { return null; }
       master = ctx.createGain();
       master.gain.value = 0.7;
       master.connect(ctx.destination);
@@ -24,7 +24,9 @@ export function createAudio() {
       ambient.connect(master);
       startAmbient();
     }
-    if (ctx.state === "suspended") ctx.resume();
+    if (ctx.state === "suspended") {
+      try { Promise.resolve(ctx.resume()).catch(() => {}); } catch { /* áudio indisponível */ }
+    }
     return ctx;
   }
 
@@ -54,14 +56,15 @@ export function createAudio() {
   }
 
   function setEnabled(v) {
-    enabled = !!v;
-    if (enabled) {
+    if (v) {
       const c = ensure();
-      if (!c) return false;
+      if (!c) { enabled = false; return false; }
+      enabled = true;
       master.gain.setTargetAtTime(0.7, c.currentTime, 0.08);
       ambient.gain.setTargetAtTime(0.5, c.currentTime, 0.4);
-    } else if (ctx) {
-      master.gain.setTargetAtTime(0, ctx.currentTime, 0.06);
+    } else {
+      enabled = false;
+      if (ctx) master.gain.setTargetAtTime(0, ctx.currentTime, 0.06);
     }
     return true;
   }
@@ -70,7 +73,7 @@ export function createAudio() {
 
   function unlock() {
     if (!enabled) return;
-    ensure();
+    if (!ensure()) return;
     ambient.gain.setTargetAtTime(0.5, ctx.currentTime, 0.5);
   }
 
@@ -153,12 +156,15 @@ export function createAudio() {
   // sequenciador de 8 passos; pattern é uma matriz [3][8]
   function startSequencer(pattern, bpm = 96, onStep = null) {
     stopSequencer();
-    if (!enabled) { ensure(); enabled = true; setEnabled(true); }
+    if (!Array.isArray(pattern) || !Number.isFinite(bpm) || bpm < 20 || bpm > 300) return null;
+    if (!setEnabled(true)) return null;
     const stepDur = 60 / bpm / 2; // colcheias
     let step = 0;
     let nextTime = ctx.currentTime + 0.08;
     stepTimer = setInterval(() => {
-      if (!ctx) return;
+      if (!ctx || !enabled) return;
+      // Após uma aba suspensa, retoma no presente sem tocar o atraso inteiro.
+      if (nextTime < ctx.currentTime - 0.25) nextTime = ctx.currentTime;
       while (nextTime < ctx.currentTime + 0.12) {
         for (let row = 0; row < 3; row++) {
           if (pattern[row] && pattern[row][step % 8]) {
@@ -185,5 +191,6 @@ export function createAudio() {
     unlock, setEnabled, isEnabled, chime, blip, open, close, footstep, error, boost, hover,
     startSequencer, stopSequencer,
     get ctx() { return ctx; },
+    get output() { return master; },
   };
 }
