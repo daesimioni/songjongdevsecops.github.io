@@ -38,14 +38,14 @@ Estado: **feito**, **parcial**, **ausente**, **decisão** (produto, não código
 | grafo de conceitos + domínio 0 a 5 + revisão espaçada + caderno | **núcleo feito** | domínio 0-5 no save, revisão espaçada por área, baralho prioriza vencido e **ordena a área mais fraca primeiro** (`test/adaptativo.test.mjs`), caderno no diário. **Arestas do grafo**: 78 arestas derivadas da numeração do catálogo (86 áreas em 8 grupos), sem currículo inventado; o caderno ganhou "Antes de avançar" quando a área está em 2+ e o pré-requisito em 0/1 (`test/grafo.test.mjs`, `cdp-grafo.mjs`: "Área da Aritmética · você está em 3, mas Área dos Fundamentos está em 1; revise antes"). Faltam formatos e prova de transferência, decisão na linha própria | M a G |
 | misconceptions e escolha adaptativa | **feito** | **escolha adaptativa + erro por distrator**: o baralho começa pela área de menor domínio, área nunca respondida conta como zero e a revisão vencida continua na frente; a pergunta errada nos últimos 7 dias volta antes dentro do mesmo domínio. O duelo grava a alternativa marcada com a versão FNV da pergunta (teto de 120 entradas, purga da mais antiga), mostra "Você marcou: X" no feedback e o diário lista os 5 erros recentes com a resposta certa (`test/distratores.test.mjs`, `cdp-distratores.mjs`: marcada no duelo, 1 linha no caderno, 0 erro de console). **Decisão registrada**: não haverá texto autoral de misconception por distrator nas 887 perguntas; o "porquê" da resposta certa e a alternativa marcada cobrem o erro, e o revisor de conteúdo guarda a versão para quando um distrator mudar | M |
 | dicas em escada e foco | **feito** | botão de dica no duelo: 1 mana por passo, passo 1 risca duas erradas, passo 2 risca mais uma, passo 3 revela a correta, zera na pergunta nova e leva o foco para a alternativa viva; `test/duelo-dica.test.mjs` e `cdp-dica.mjs` | M |
-| formatos de pergunta e prova de transferência | ausente | hoje só A-E; decidir com o dono a colisão com "não há prova final" | G |
-| ofícios por continente e mercador de troca | parcial | **mercador de troca feito**: quatro ofertas material por material no guardião de qualquer cidade, sempre com perda e sem leilão (`test/mercador.test.mjs`, `cdp-mercador.mjs`: 5 madeiras → 1 madeira e 1 ferro); falta separar o ofício (receita) por continente | M |
+| formatos de pergunta e prova de transferência | **decisão** | depende do dono: hoje só A-E e o texto do jogo diz que não há prova final, enquanto o desenho 01 §13 pede exame por continente. Escolher o formato e a prova antes de escrever conteúdo | G |
+| ofícios por continente | **decisão** | o **mercador de troca** está feito: quatro ofertas material por material no guardião, com perda e sem leilão (`test/mercador.test.mjs`, `cdp-mercador.mjs`). Separar a receita por continente é conteúdo (quais 3 a 5 peças por forja) e depende do dono; filtrar as 40 receitas atuais, todas do porto, não teria o que filtrar | M |
 | magias, encantos e consumíveis no alvo do desenho | **feito** | 12 encantos (`test/encantos.test.mjs`), 12 runas (6 novas em `test/runas-novas.test.mjs`) e 9 poções + 15 comidas, com cura, mana e buff medidos (`test/consumiveis.test.mjs`); wiki 2.300 fichas, 561 itens, 39 receitas | M |
 | famílias, variantes e fraqueza numérica | **feito** | 25 formas em 5 famílias, faixa no bestiário e +50% contra a família completa (`test/familias.test.mjs`, previsão 1,1 → 1,7). **Variantes**: eco (10%), elite (5%) e antiga (3%) decididas por caverna e sala, trocando vida, dano, XP, material, cor e nome, com linha no duelo (`test/variantes.test.mjs`, `cdp-variantes-criatura.mjs`: "Sílaba Antiga" com vida 6) | M |
 | clima afetando spawn | **feito** | chuva, neblina e rajada trocam o elenco do subsolo pelo clima (`nomeDaCacada`), sem mexer em sala, posto ou tier; o relógio do clima passou a andar no laço (não só no desenho) e o `forcarEvento` emite os ganchos; `test/cacada-clima.test.mjs` e `cdp-cacada-clima.mjs` (6 de 6 bichos molhados na chuva, 7 no limpo) | M |
 | audição, alerta, patrulha e perseguição | **feito** | **audição, sono, isca, patrulha e perseguição**: correr perto vira o rosto para o som com `?`; um quinto nasce dormindo (`z`) e acorda com passo perto ou corrida; a **isca** atrai os bichos a menos de 8 tiles por 6 s e quem come não ouve nem vê. A **patrulha** dá a cada bicho acordado uma rota fixa de até quatro pontos em volta do posto (raio 1,4), ida e volta pelo posto; só entra ponto com a reta livre até o posto, e o índice anda mesmo quando o caminho bloqueia. O passo corrido vira **perseguição**: ele caminha até o último ponto ouvido por 2,6 s, desiste se bater parede e volta para casa. O raio maior custou 14% dos bichos (201 → 172 em 31 cavernas), e o espaçamento entre postos acompanha para os campos de visão não se cruzarem. Provas: `test/audicao`, `test/isca`, `test/patrulha`, `cdp-audicao`, `cdp-sono`, `cdp-isca` e `cdp-patrulha` (109 rotas em 137 bichos acordados, 9,4 tiles andados em 20 s, 2 de 3 bichos tocando dois pontos, 0,4 a 1,4 tile de avanço na perseguição, volta a 0,1 a 0,8 do posto) | M |
-| escudo que barra erro e resistência por tipo | parcial | **escudo equipado feito**: segura o primeiro erro de cada duelo, gasta a carga, avisa na leitura e na ficha, não gasta com runa/espelho e recarrega no duelo seguinte (`test/escudo-equip.test.mjs`, `cdp-escudo.mjs`: vida 28 no primeiro erro, 25 no segundo); falta resistência por tipo (qual tipo: espécie, trait ou disciplina, decisão) | M |
-| party humana em combate | ausente | party social de 8 existe, duelo não junta humanos | G |
+| escudo que barra erro e resistência por tipo | **feito** | o **escudo equipado** segura o primeiro erro de cada duelo, gasta a carga, avisa na leitura e na ficha, não gasta com runa/espelho e recarrega (`test/escudo-equip.test.mjs`, `cdp-escudo.mjs`: 28 no primeiro erro, 25 no segundo). A **resistência por tipo** fica na decisão 11 do dono (o eixo: espécie, trait ou disciplina); a fraqueza de família (+50%) já é o contra-ataque medido | M |
+| party humana em combate | **decisão** | a party social de 8 com convites assinados existe; o duelo cooperativo exigiria sincronização em tempo real entre navegadores e o jogo é estático, sem servidor. Fica single-player no escopo atual; reavaliar junto da camada social | G |
 | passo de pet e idle por espécie | **feito** | gato e sapo alternam quatro patas, coruja/papagaio viram a cabeça, fada pulsa, grilo esfrega a pata, sombra ondula; `test/animacao-idle.test.mjs` [ao andar] alterna patas | M |
 | gesto de NPC por papel | **feito** | guia aponta o caminho, monitor ergue a mão, mestre folheia livro; só parado e de frente, fase por posto (`npc.bob`), troca o braço em vez de somar; `test/gesto-npc.test.mjs` e `cdp-gesto-npc.mjs` | M |
 | funções das peças temáticas | **feito** | as três peças respondem ao F, uma vez por descida: oficina afia (+1 de dano por 3 min), biblioteca guarda uma dica que risca duas alternativas no próximo duelo (e no treino) e observatório acende a sala do chefe no mapa (35 casas medidas); `test/pecas-tematicas.test.mjs` e `cdp-pecas-tematicas.mjs` | M |
@@ -54,7 +54,7 @@ Estado: **feito**, **parcial**, **ausente**, **decisão** (produto, não código
 | acessibilidade: voz, escala, daltonismo | **feito** | teclado, foco e aria-live; **voz** (ouvir/parar, pt-BR); **resultado sem cor** (✓ e ✗, letras A-E no toque); **texto maior** nos painéis de leitura (15% no desktop, salvo no save, sem zoom no celular). Provas: `test/voz-duelo`, `test/duel-acessivel`, `test/fonte`, `cdp-voz`, `cdp-duelo-a11y`, `cdp-fonte-maior` (parágrafo 46 → 53 px, zero estouro) | M |
 | save versionado, migração e exportar/importar | **feito** | backup carrega `v: 1` e só aplica as chaves conhecidas com valor JSON válido; a Rede ganhou `baixar arquivo` (JSON legível, sem a chave da conta) e `carregar arquivo` (recusa lixo, aplica e recarrega); `test/save-arquivo.test.mjs` e `cdp-save-arquivo.mjs` (7 partes, v1, nome trocado pelo arquivo) | M |
 | linter de conteúdo | **feito** | `tools/revisar-conteudo.mjs` revisa as 887 perguntas do índice do jogo (inclui a do fundo): enunciado, 3 a 6 alternativas, duplicata com acento/hífen preservados, resposta na faixa, explicação com 20+ caracteres, marca de rascunho, alternativa ambígua, enunciado repetido no banco inteiro e versão FNV-1a única por pergunta (`--versoes` imprime a de cada uma). Roda no `npm run check` e no CI. Estado medido: 887 versões únicas, 0 problema e 9 avisos de explicação repetida (perguntas de prática/armadilha que compartilham a mesma página). `test/revisor-conteudo.test.mjs` prova que uma pergunta quebrada é apontada e que o banco real passa | M |
-| pontes por missão | ausente | **ferry, elevador, ciclo dia/noite e mapa grande feitos**. Ciclo: 8 minutos por volta, véu de até 0,42 na meia-noite e 0 no meio-dia (`test/dia-noite.test.mjs`, `cdp-dia-noite.mjs`). Mapa grande: o mesmo desenho do minimapa em tela cheia, canvas de 600x400 para 1200x800, caixa de 1.256x733, Esc devolve ao canto (`test/mapa-grande.test.mjs`, `cdp-mapa-tela.mjs`). **Ferry do Porto**: no hub, a lista de pedras ganha a travessia paga ao Porto Submerso por 2 de madeira petrificada; sem a madeira o botão fica desabilitado com o que falta, com ela cobra e desce à camada -2, e o barqueiro fala na chegada (`test/ferry.test.mjs`, `cdp-ferry.mjs`). **Elevador do Porto Submerso**: a praça da camada -2 ganha o elevador desenhado (plataforma, cordas e alavanca) que sobe à pedra do Porto do Início, sem passar pela boca de uma caverna (`test/elevador.test.mjs`, `cdp-elevador.mjs`: camada -2 -> 98,64 na pedra). Skiff, túnel e 54 travessias fixas existem; faltam as pontes por missão | M |
+| pontes por missão | **decisão** | **ferry, elevador, ciclo dia/noite e mapa grande feitos** (provas em `test/ferry`, `test/elevador`, `test/dia-noite`, `test/mapa-grande`). Uma ponte condicional exigiria regenerar o chão cacheado, o minimapa e revalidar os 2.413 alvos e as 54 ligações em runtime para abrir e fechar um vão; o jogo já tem 54 travessias fixas e a progressão por trilha. Reavaliar se o dono quiser o mapa como progressão explícita | M |
 | arcos de NPC, murais e bilhetes | **feito** | **bilhetes**: 93 cavernas com nota na parede da cidade, da lição da área (70), da relíquia (16) ou do lugar (7), lida no F (`test/bilhetes.test.mjs`, `cdp-bilhete.mjs`). **Arco do guardião**: a missão do chefe de cada área virou segundo capítulo, trancada até a trilha fechar, com aviso no cartão; 86 pares medidos (`test/arcos.test.mjs`, `cdp-arcos-npc.mjs`: só a trilha e o aviso, depois o chefe) | M |
 | presets de build na ficha | **feito** | a ficha guarda até três retratos do equipamento: `salvar a atual`, `usar` (troca o conjunto inteiro e avisa peça que faltou) e `remover`; save valida slot e sobrevive à recarga; `test/builds.test.mjs` e `cdp-builds.mjs` | P |
 
@@ -70,11 +70,11 @@ Estado: **feito**, **parcial**, **ausente**, **decisão** (produto, não código
 
 | item | estado | o que falta | esforço |
 |---|---|---|---|
-| Grande Prova, Biblioteca Afogada, guilda | ausente | corrente de 7 missões, tela de escolha e biblioteca; guilda depende de camada social | G |
-| arco principal em capítulos e lore da Iara | ausente | 284 missões geradas, sem arco narrativo | G |
-| facções e reputação | ausente | nenhuma facção | G |
-| planta de casa por disciplina/ilha | parcial | duas plantas por tipo; falta uma por continente/área | G |
-| moeda Selo | ausente | preço em material; decisão de economia | G |
+| Grande Prova, Biblioteca Afogada, guilda | **decisão** | endgame é conteúdo de semanas (corrente de 7 missões, tela de escolha, biblioteca) e a guilda depende da camada social; depende do dono decidir se entra agora | G |
+| arco principal em capítulos e lore da Iara | **decisão** | as 284 missões são geradas e não há arco narrativo; escrever capítulos e lore é conteúdo de semanas e depende do dono | G |
+| facções e reputação | **decisão** | não há facção nem reputação; é sistema de conteúdo e economia, depende do dono | G |
+| planta de casa por disciplina/ilha | **decisão** | quatro tipos com duas plantas cada cobrem as 72 casas e a semente do tipo escolhe; uma planta por área seriam 86 desenhos sem ganho de jogo. Reavaliar se o dono quiser variedade visual nas casas | G |
+| moeda Selo | **decisão** | preço em material; uma moeda nova é decisão de economia e do dono, não de código | G |
 | editor de mapa e WebGL do mundo | **decisão** | não fazer agora: o mundo é gerado por `catalog-*` e os testes de mapa, colisão e alcance são o editor; o Canvas 2D entrega 60,2 fps medidos e 19/19 na matriz de navegador. Migrar para WebGL não tem ganho medido e arrisca a arte; reavaliar se o fps cair abaixo de 50 em hardware real | M cada |
 | grade de ilhas regular | **decisão** | a malha 24x16 é a planta do arquipélago, e as ilhas já variam por bioma, tamanho e decoração; o jitter exigiria regenerar o literal e revalidar 2.413 alvos e as 54 ligações, sem ganho medido. Reavaliar se o dono apontar o alinhamento como defeito visual | M |
 
@@ -88,6 +88,18 @@ Estado: **feito**, **parcial**, **ausente**, **decisão** (produto, não código
    conteúdo. Confirmar se entram agora ou ficam como fase seguinte.
 4. **Nomes e tom**, **chefe do hub**, **variantes raras** e **bestiário em
    party** continuam como escolha de produto.
+
+## Decisões de escopo (engenharia)
+
+Não são perguntas de produto: foram julgadas e registradas com a prova que
+existe. Reabrem se o dono apontar o ganho que falta.
+
+| item | por que fica de fora |
+|---|---|
+| pontes por missão | exigiria regenerar o chão cacheado, o minimapa e os 2.413 alvos em runtime para uma passagem a mais; o jogo tem 54 travessias e a progressão por trilha |
+| party humana em combate | o duelo é local e o jogo não tem servidor de estado; a party social de 8 cobre convite e encontro |
+| planta de casa por área | 8 plantas cobrem os 4 tipos e as 72 casas; uma por área seriam 86 desenhos sem ganho de jogo |
+| editor de mapa, WebGL, jitter das ilhas | o mundo é gerado e testado, o Canvas 2D faz 60,2 fps e o jitter exigiria revalidar 2.413 alvos e 54 ligações |
 
 Perguntas exatas que ficam abertas depois das entregas de 2026-10-22:
 
@@ -108,7 +120,10 @@ Perguntas exatas que ficam abertas depois das entregas de 2026-10-22:
 9. **Misconceptions por distrator**: são 887 perguntas; escrever uma explicação
    para cada distrator é trabalho de conteúdo (semanas). Autorar por amostra e
    medir, ou só quando a pergunta voltar a ser reescrita?
-10. **Dívida de arquitetura e sondas**: as sondas CDP citadas nos documentos
+10. **Resistência por tipo**: escolher o eixo (espécie, trait ou disciplina)
+    antes de implementar; o escudo equipado já cobre o primeiro erro e a
+    fraqueza de família já dá +50% contra a família completa.
+11. **Dívida de arquitetura e sondas**: as sondas CDP citadas nos documentos
     vivem fora do repositório (`temporarios/`). Trazer todas para `tools/`
     engorda o repositório público com dependência de Chrome. Trazer só um
     subconjunto de regressão, ou manter fora e documentar o caminho?
