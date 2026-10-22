@@ -535,6 +535,7 @@ export class RPG {
     const corpo = 30 + (Math.max(1, this.getLevel()) - 1) * 4;
     let max = corpo * this.bonus().vida + this.relics() * 5 + this.equipmentBonus().hp;
     if (this.data.enchants.vigor) max += 10;
+    if (this.data.enchants.couro) max += 5;
     if (this.buffActive("maxhp")) max += 5;
     max += Number(this.activePet()?.passive.hp) || 0;
     if (!this.cave) max += Number(MOUNTS[this.data.mountActive]?.hp) || 0;
@@ -546,11 +547,13 @@ export class RPG {
   }
 
   speedMult() {
-    return this.buffActive("speed") ? 1.3 : 1;
+    const base = this.buffActive("speed") ? 1.3 : 1;
+    return base * (this.data.enchants.passo ? 1.1 : 1);
   }
 
   lightBonus() {
     return (this.data.enchants.luz ? 3 : 0)
+      + (this.data.enchants.olho ? 2 : 0)
       + (Number(this.activePet()?.passive.sight) || 0)
       + (this.cave ? 0 : Number(MOUNTS[this.data.mountActive]?.sight) || 0);
   }
@@ -628,7 +631,8 @@ export class RPG {
 
   manaMax() {
     // mesma regra da vida: mana de bicho entra depois do multiplicador
-    return Math.max(1, Math.round(10 * this.bonus().mana + (Number(this.activePet()?.passive.manaMax) || 0)));
+    return Math.max(1, Math.round(10 * this.bonus().mana + (this.data.enchants.folego ? 5 : 0)
+      + (Number(this.activePet()?.passive.manaMax) || 0)));
   }
 
   mana() {
@@ -873,6 +877,7 @@ export class RPG {
     const skill = this.skillLevel(id);
     let damage = skill >= 10 ? 3 : skill >= 6 ? 2 : 1;
     if (this.data.enchants.furor) damage++;
+    if (this.data.enchants.punho) damage++;
     if (this.buffActive("damage")) damage++;
     damage += (Number(this.activePet()?.passive.damage) || 0) * this.bonus().pet;
     damage += this.equipmentBonus().damage;
@@ -889,6 +894,7 @@ export class RPG {
   // o erro cobra por vocação, e duas subcategorias mexem na conta
   danoSofrido(base) {
     let dano = base * this.bonus().sofrido;
+    if (this.data.enchants.couraca) dano *= 0.9;
     if (this.data.sub === "baluarte") dano -= 1;
     if (this.data.sub === "barbaro") dano += 2;
     return Math.max(1, Math.round(dano));
@@ -1428,7 +1434,7 @@ export class RPG {
       espelhoUsado: false,
       shield: false,
       // carga do escudo equipado: segura um erro por duelo e some ao gastar
-      escudo: this.equipmentBonus().shield > 0,
+      escudo: this.equipmentBonus().shield > 0 || !!this.data.enchants.escudo,
       partners: [],
       get partner() { return this.partners[0] || null; },
       phase: "question",
@@ -1549,7 +1555,7 @@ export class RPG {
       bossPhase: 1,
       shield: false,
       // carga do escudo equipado: segura um erro por duelo e some ao gastar
-      escudo: this.equipmentBonus().shield > 0,
+      escudo: this.equipmentBonus().shield > 0 || !!this.data.enchants.escudo,
       partners: [],
       get partner() { return this.partners[0] || null; },
       phase: "question",
@@ -1791,6 +1797,8 @@ export class RPG {
     else if (Math.random() < 0.28) loot.push({ id: "pocao", qty: 1 });
     // caçador de recompensa: a caçada rende uma peça a mais
     if (this.data.sub === "cacador" && ground.material) loot.push({ id: ground.material, qty: 1 });
+    // sorte: uma em cada quatro vitórias devolve material extra
+    if (this.data.enchants.sorte && ground.material && Math.random() < 0.25) loot.push({ id: ground.material, qty: 1 });
     for (const l of loot) this.addItem(l.id, l.qty);
     if (d.boss) {
       const accessory = ground.continent === "cs" ? "anel-sinapse" : ground.continent === "music" ? "colar-constante" : null;
@@ -1809,6 +1817,7 @@ export class RPG {
     }
     // campeão ganha XP extra no duelo: a briga que rende
     if (this.data.sub === "campeao") xp = Math.round(xp * 1.2);
+    if (this.data.enchants.avo) xp = Math.round(xp * 1.1);
     this.addSkillXp(ground.continent, 2);
     this.gainXp(xp);
     if (d.boss) {

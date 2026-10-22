@@ -378,6 +378,15 @@ export const ENCHANTS = [
   { id: "vigor", name: "Encanto de Vigor", desc: "+10 de vida máxima.", need: { veio: 4, erva: 4 } },
   { id: "furor", name: "Encanto de Furor", desc: "+1 de dano em cada resposta certa.", need: { veio: 5, ferro: 5 } },
   { id: "luz", name: "Encanto de Luz", desc: "A lanterna da caverna enxerga mais longe.", need: { veio: 3, madeira: 3 } },
+  { id: "couro", name: "Encanto de Couro", desc: "+5 de vida máxima.", need: { erva: 5, madeira: 3 } },
+  { id: "folego", name: "Encanto de Fôlego", desc: "+5 de mana máxima.", need: { veio: 4, erva: 2 } },
+  { id: "punho", name: "Encanto de Punho", desc: "+1 de dano em cada resposta certa.", need: { ferro: 4, madeira: 2 } },
+  { id: "couraca", name: "Encanto de Couraça", desc: "Sofre 10% menos dano, com piso de 1.", need: { ferro: 6, veio: 2 } },
+  { id: "passo", name: "Encanto de Passo", desc: "Anda 10% mais rápido.", need: { madeira: 4, erva: 3 } },
+  { id: "olho", name: "Encanto de Olho", desc: "+2 de alcance na luz da lanterna.", need: { veio: 4, frasco: 2 } },
+  { id: "escudo", name: "Encanto de Escudo", desc: "Segura o primeiro erro de cada duelo.", need: { ferro: 5, veio: 3 } },
+  { id: "avo", name: "Encanto do Avô", desc: "+10% de XP nas vitórias.", need: { catalisador: 2, veio: 3 } },
+  { id: "sorte", name: "Encanto de Sorte", desc: "Um material a mais em uma em cada quatro vitórias.", need: { frasco: 3, cristal: 2 } },
 ];
 
 const GROUNDS_RAW = [
