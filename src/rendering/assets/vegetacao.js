@@ -1,3 +1,4 @@
+import { ASSET_META } from "../../content/asset-meta.js";
 // Grupo vegetação: árvores, arbusto, junco, florada e trepadeira. Tudo desenha
 // no próprio canvas, ancorado no pé (centro embaixo), com sombra, contorno e
 // duas ou três camadas de tom. A paleta vem do bioma, então a mesma árvore
@@ -320,12 +321,12 @@ function trepadeira(g, p, v) {
 }
 
 export const VEGETACAO = {
-  arvore: { w: 36, h: 46, variantes: 3, quadros: 4, ms: 340, desenhar: folhuda },
-  conifera: { w: 26, h: 48, variantes: 3, quadros: 4, ms: 340, desenhar: conifera },
-  palmeira: { w: 34, h: 48, variantes: 3, quadros: 4, ms: 340, desenhar: palmeira },
-  seca: { w: 26, h: 36, variantes: 3, quadros: 4, ms: 340, desenhar: seca },
-  arbusto: { w: 22, h: 18, variantes: 3, quadros: 4, ms: 340, desenhar: arbusto },
-  junco: { w: 18, h: 24, variantes: 3, quadros: 4, ms: 340, desenhar: junco },
-  florada: { w: 22, h: 15, variantes: 3, quadros: 4, ms: 340, desenhar: florada },
-  trepadeira: { w: 14, h: 34, variantes: 3, quadros: 4, ms: 340, desenhar: trepadeira },
+  arvore: { ...ASSET_META.arvore, quadros: 4, ms: 340, desenhar: folhuda },
+  conifera: { ...ASSET_META.conifera, quadros: 4, ms: 340, desenhar: conifera },
+  palmeira: { ...ASSET_META.palmeira, quadros: 4, ms: 340, desenhar: palmeira },
+  seca: { ...ASSET_META.seca, quadros: 4, ms: 340, desenhar: seca },
+  arbusto: { ...ASSET_META.arbusto, quadros: 4, ms: 340, desenhar: arbusto },
+  junco: { ...ASSET_META.junco, quadros: 4, ms: 340, desenhar: junco },
+  florada: { ...ASSET_META.florada, quadros: 4, ms: 340, desenhar: florada },
+  trepadeira: { ...ASSET_META.trepadeira, quadros: 4, ms: 340, desenhar: trepadeira },
 };

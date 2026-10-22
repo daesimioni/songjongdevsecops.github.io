@@ -13,3 +13,8 @@ export function hash2(x, y) {
   h = Math.imul(h ^ (h >>> 13), 1274126177);
   return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
 }
+
+export function variantIndex(seed,n){
+  const s=Math.sin(seed*127.1+311.7)*43758.5453;
+  return Math.floor((s-Math.floor(s))*n)%n;
+}

@@ -92,10 +92,7 @@ export function criarCache(limite = 240, fabrica = () => document.createElement(
 
 // Escolha determinística: o mesmo tile devolve sempre a mesma variante, então
 // a ilha não troca de cara quando a pessoa recarrega.
-export function variante(seed, n) {
-  const s = Math.sin(seed * 127.1 + 311.7) * 43758.5453;
-  return Math.floor((s - Math.floor(s)) * n) % n;
-}
+export { variantIndex as variante } from "../../core/random.js";
 
 // Quadro de animação pelo relógio da cena, com o mesmo passo em toda a ilha.
 export function quadroAnimado(tempo, quadros, ms = 160) {

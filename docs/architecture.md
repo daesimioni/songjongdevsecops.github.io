@@ -30,10 +30,9 @@ conteúdo e configuração, mas não cenas ou UI. `gameplay` pode usar `platform
 para persistência, além do núcleo e conteúdo. `learning` usa núcleo e conteúdo.
 `ui` compõe os sistemas necessários, sem importar `app`; `app` monta a aplicação.
 
-`world` ainda consulta os metadados e o posicionamento procedural de assets em
-`rendering/assets`. Essa dependência é explícita e permitida pelo verificador;
-não deve crescer para acessar a cena ou desenhar diretamente. Separar um catálogo
-só de metadados é um ponto de melhoria futuro, não uma separação já concluída.
+`world` usa `content/asset-meta.js` e `content/collision-bodies.js` para tamanhos
+e ocupação, sem importar renderização. O desenho lê os mesmos metadados.
+A verificação de camadas bloqueia a dependência de `world` para `rendering`.
 
 O verificador analisa sintaxe e exports com o parser/linker nativo de ES modules
 do Node, sem executar DOM, rede ou storage. Confere as dependências de cada camada,

@@ -1,3 +1,4 @@
+import { touchesSolidTiles, boxesOverlap } from "../core/collision.js";
 import { PLAYER_W, PLAYER_H } from "../core/runtime-config.js";
 import { directionVector } from "../core/movement.js";
 // ---------- mapa ----------
@@ -82,18 +83,10 @@ export function roomIndexAt(map, x, y) {
 export function boxFree(map, x, y, pad = 0, solids = null) {
   const hw = (PLAYER_W + pad) / 2;
   const hh = (PLAYER_H + pad) / 2;
-  const x0 = Math.floor(x - hw);
-  const x1 = Math.floor(x + hw - 0.001);
-  const y0 = Math.floor(y - hh);
-  const y1 = Math.floor(y + hh - 0.001);
-  for (let ty = y0; ty <= y1; ty++) {
-    for (let tx = x0; tx <= x1; tx++) {
-      if (dungeonSolid(map, tx, ty)) return false;
-    }
-  }
+  if(touchesSolidTiles(x,y,hw*2,hh*2,(tx,ty)=>dungeonSolid(map,tx,ty)))return false;
   if (solids) {
     for (const s of solids) {
-      if (Math.abs(x - s.x) < hw + s.hw && Math.abs(y - s.y) < hh + s.hh) return false;
+      if (boxesOverlap({x,y,hw,hh},s)) return false;
     }
   }
   return true;

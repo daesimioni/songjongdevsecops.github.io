@@ -82,3 +82,5 @@ registros de auditoria, incluindo `29-CORRECOES-FUNCIONAIS.md`,
 `33-REVISAO-EXTERNA.md`, `34-HABILIDADES-CHEFE.md`, `35-REVISAO-FLUXOS.md`,
 `36-REVISAO-ATUAL.md`, `37-ARTE-UNIFICADA.md`, `38-OITO-DIRECOES.md` e
 `39-BACKLOG-VERIFICADO.md`.
+
+- [41 — Revisão sistemática das colisões](41-COLISOES-SISTEMATICAS.md): perfis compartilhados, inspeção e regressões.

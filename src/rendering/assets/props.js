@@ -1,3 +1,4 @@
+import { ASSET_META } from "../../content/asset-meta.js";
 // Grupo props: o que se carrega, se guarda e se vê de longe. Barril, saco,
 // caixote e fardo servem a qualquer ilha (feira, oficina, doca, praça) e
 // substituem o enfeite genérico por objeto com volume e sombra. A gaivota
@@ -341,12 +342,12 @@ function cama(g, p, v) {
 }
 
 export const PROPS = {
-  barril: { w: 16, h: 20, variantes: 3, desenhar: barril },
-  saco: { w: 16, h: 16, variantes: 3, desenhar: saco },
-  caixote: { w: 18, h: 18, variantes: 3, desenhar: caixote },
-  fardo: { w: 20, h: 15, variantes: 3, desenhar: fardo },
-  mesa: { w: 26, h: 18, variantes: 2, desenhar: mesa },
-  cama: { w: 28, h: 20, variantes: 2, desenhar: cama },
-  estante: { w: 20, h: 34, variantes: 2, desenhar: estante },
-  gaivota: { w: 18, h: 12, variantes: 1, quadros: 4, ms: 210, desenhar: gaivota },
+  barril: { ...ASSET_META.barril, desenhar: barril },
+  saco: { ...ASSET_META.saco, desenhar: saco },
+  caixote: { ...ASSET_META.caixote, desenhar: caixote },
+  fardo: { ...ASSET_META.fardo, desenhar: fardo },
+  mesa: { ...ASSET_META.mesa, desenhar: mesa },
+  cama: { ...ASSET_META.cama, desenhar: cama },
+  estante: { ...ASSET_META.estante, desenhar: estante },
+  gaivota: { ...ASSET_META.gaivota, quadros: 4, ms: 210, desenhar: gaivota },
 };

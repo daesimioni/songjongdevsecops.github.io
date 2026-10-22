@@ -120,3 +120,5 @@ export function tamanhoDoAsset(tipo) {
 }
 
 export function cacheDeAssets() { return cache; }
+
+export { assetColliders } from "../../content/collision-bodies.js";

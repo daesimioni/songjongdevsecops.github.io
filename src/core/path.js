@@ -1,3 +1,4 @@
+import { segmentFree } from "./collision.js";
 // Caminho no mapa: A* em grade, oito direções, sem cortar quina.
 // É o que faz o clique no chão virar caminhada sem segurar tecla. O mesmo
 // algoritmo serve ao mundo e às cavernas; só muda o tamanho e o que é sólido.
@@ -73,23 +74,23 @@ class Heap {
 
 // `walkable(tx, ty, pad)` responde se o centro do tile cabe. O `pad` só é
 // aplicado no destino: o começo precisa aceitar o corpo onde ele já está.
-export function findPathIn(width, height, walkable, from, to, { goalPad = 0, maxNodes = 16000 } = {}) {
-  const nearest = (x, y, maxR, pad) => {
+export function findPathIn(width, height, walkable, from, to, { goalPad = 0, maxNodes = 16000, canTraverse = () => true } = {}) {
+  const nearest = (x, y, maxR, pad, accept = () => true) => {
     const cx = Math.floor(x);
     const cy = Math.floor(y);
-    if (walkable(cx, cy, pad)) return { x: cx + 0.5, y: cy + 0.5 };
+    if (walkable(cx, cy, pad) && accept({x:cx+.5,y:cy+.5})) return { x: cx + 0.5, y: cy + 0.5 };
     for (let r = 1; r <= maxR; r++) {
       for (let dy = -r; dy <= r; dy++) {
         for (let dx = -r; dx <= r; dx++) {
           if (Math.max(Math.abs(dx), Math.abs(dy)) !== r) continue;
-          if (walkable(cx + dx, cy + dy, pad)) return { x: cx + dx + 0.5, y: cy + dy + 0.5 };
+          if (walkable(cx + dx, cy + dy, pad) && accept({x:cx+dx+.5,y:cy+dy+.5})) return { x: cx + dx + 0.5, y: cy + dy + 0.5 };
         }
       }
     }
     return null;
   };
 
-  const start = nearest(from.x, from.y, 1, 0);
+  const start = nearest(from.x, from.y, 1, PATH_PAD, p=>canTraverse(from,p)) || nearest(from.x, from.y, 1, 0,p=>canTraverse(from,p));
   if (!start) return null;
   const goal = nearest(to.x, to.y, 2, goalPad);
   if (!goal) return null;
@@ -137,6 +138,7 @@ export function findPathIn(width, height, walkable, from, to, { goalPad = 0, max
         if (!walkable(node.x + dx, node.y, PATH_PAD)) continue;
         if (!walkable(node.x, node.y + dy, PATH_PAD)) continue;
       }
+      if(!canTraverse({x:node.x+.5,y:node.y+.5},{x:nx+.5,y:ny+.5}))continue;
       const ni = idx(nx, ny);
       if (closed[ni]) continue;
       const ng = g[ci] + cost;
@@ -150,16 +152,18 @@ export function findPathIn(width, height, walkable, from, to, { goalPad = 0, max
 }
 
 export function findPath(world, from, to, maxNodes = 16000) {
+  const blockedOrigin=world.boxCollides(from.x,from.y,PLAYER_W,PLAYER_H);
   return findPathIn(MAP_W, MAP_H, (tx, ty, pad) => tileWalkable(world, tx, ty, pad), from, to, {
     goalPad: PATH_PAD,
     maxNodes,
+    canTraverse:(a,b)=>(blockedOrigin&&a.x===from.x&&a.y===from.y)||segmentFree(a,b,(x,y)=>!world.boxCollides(x,y,PLAYER_W,PLAYER_H)),
   });
 }
 
 // Objetos sólidos não são destinos caminháveis. Escolhe um ponto de ação
 // alcançável, dentro do raio e com visão livre, em vez de parar atrás da parede.
 export function findInteractionPath(width, height, walkable, from, target, {
-  radius = 1.7, goalPad = PATH_PAD, canInteract = () => true,
+  radius = 1.7, goalPad = PATH_PAD, canInteract = () => true, canTraverse = () => true,
 } = {}) {
   const goals = [];
   for (let y = Math.max(0, Math.floor(target.y - radius)); y <= Math.min(height - 1, Math.ceil(target.y + radius)); y++) {
@@ -172,8 +176,18 @@ export function findInteractionPath(width, height, walkable, from, target, {
   }
   goals.sort((a, b) => Math.hypot(a.x - from.x, a.y - from.y) - Math.hypot(b.x - from.x, b.y - from.y));
   for (const goal of goals) {
-    const path = findPathIn(width, height, walkable, from, goal, { goalPad });
+    const path = findPathIn(width, height, walkable, from, goal, { goalPad, canTraverse });
     if (path) return path;
   }
   return null;
+}
+
+// Teleportes e elevadores chegam ao lado do marco, nunca dentro da sua base.
+export function findLanding(world,point){
+  const offsets=[[0,1.8],[0,-1.8],[1.8,0],[-1.8,0],[0,2.6],[2.6,0]];
+  for(const [dx,dy]of offsets){
+    const x=point.x+dx,y=point.y+dy;
+    if(!world.boxCollides(x,y,PLAYER_W+PATH_PAD,PLAYER_H+PATH_PAD))return {x,y};
+  }
+  return nearestWalkable(world,point.x,point.y,4,PATH_PAD);
 }

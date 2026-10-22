@@ -1,4 +1,7 @@
-import { drawPet, drawBuilding, drawAdventurer, drawChest, drawStairs, drawTorch, drawAltar, drawElevador, drawMesa, drawForge, drawOficina, drawBiblioteca, drawObservatorio, drawWaystone, drawKeeper, drawPlot, drawVein, drawEnchanter, drawBilhete, drawIsca, varianteDaPeca } from "../rendering/dungeon-art.js";
+import { drawCollisionOverlay } from "../rendering/collision-overlay.js";
+import { segmentFree } from "../core/collision.js";
+import { dungeonPropColliders } from "../content/collision-bodies.js";
+import { drawPortal, drawTunnel, drawPet, drawBuilding, drawAdventurer, drawChest, drawStairs, drawTorch, drawAltar, drawElevador, drawMesa, drawForge, drawOficina, drawBiblioteca, drawObservatorio, drawWaystone, drawKeeper, drawPlot, drawVein, drawEnchanter, drawBilhete, drawIsca, varianteDaPeca } from "../rendering/dungeon-art.js";
 import { buildDungeonMap, dungeonSolid, roomIndexAt, boxFree, dungeonLineOfSight, dungeonCanSeePlayer } from "../gameplay/dungeon-map.js";
 import { lootDoBau } from "../gameplay/dungeon-loot.js";
 import { pracaDaCaverna } from "../gameplay/dungeon-plaza.js";
@@ -54,7 +57,7 @@ function torchGlowSprite() {
 
 // ---------- a caverna em si ----------
 
-export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, onWiki, onGather, onExit, onKeeper, onConurbation, onElevador, onPortal, onVocacao, isBlocked, vitais = null, avatar = {}, look = null, gear = null, getClima = null }) {
+export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, onWiki, onGather, onExit, onKeeper, onConurbation, onElevador, onPortal, onVocacao, isBlocked, vitais = null, avatar = {}, look = null, gear = null, getClima = null, collisionDebug = false }) {
   const canvas = $("dungeon-canvas");
   const ctx = canvas?.getContext("2d", { alpha: false }) || null;
 
@@ -508,47 +511,8 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
         prop.label = `subir para ${target.name}`;
       }
     }
-    // o que ocupa espaço de verdade dentro da sala: prédios e baús
-    state.solids = [];
-    for (const p of state.props) {
-      if (p.kind === "plot") {
-        state.solids.push({ x: p.x, y: p.y, hw: 0.55, hh: 0.3 });
-        continue;
-      }
-      if (p.kind === "vein") {
-        state.solids.push({ x: p.x, y: p.y, hw: 0.55, hh: 0.35 });
-        continue;
-      }
-      if (p.kind === "enchanter") {
-        state.solids.push({ x: p.x, y: p.y, hw: 0.7, hh: 0.4 });
-        continue;
-      }
-      if (p.kind === "altar") {
-        state.solids.push({ x: p.x, y: p.y, hw: 0.65, hh: 0.4 });
-        continue;
-      }
-      if (p.kind === "forge") {
-        state.solids.push({ x: p.x, y: p.y, hw: 0.7, hh: 0.45 });
-        continue;
-      }
-      if (p.kind === "oficina" || p.kind === "biblioteca" || p.kind === "observatorio") {
-        state.solids.push({ x: p.x, y: p.y - 0.25, hw: 0.6, hh: 0.35 });
-        continue;
-      }
-      if (p.kind === "vocacao") {
-        state.solids.push({ x: p.x, y: p.y, hw: 0.7, hh: 0.45 });
-        continue;
-      }
-      if (p.kind === "waystone") {
-        state.solids.push({ x: p.x, y: p.y, hw: 0.4, hh: 0.35 });
-        continue;
-      }
-      if (!p.solid) continue;
-      const hw = p.w / TILE / 2;
-      const hh = p.h / TILE / 2;
-      state.solids.push({ x: p.x + hw, y: p.y + hh, hw, hh });
-    }
-    for (const c of state.chests) state.solids.push({ x: c.x, y: c.y, hw: 0.4, hh: 0.28 });
+    // Base física compartilhada com a auditoria: cada tipo tem política explícita.
+    state.solids = [...state.props,...state.chests].flatMap(dungeonPropColliders);
     state.path = null;
     state.pending = null;
     state.keys.clear();
@@ -798,9 +762,10 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     const path = pending
       ? findInteractionPath(state.map.W, state.map.H, walkable, state.player, pending, {
         goalPad: PATH_PAD,
+        canTraverse:(a,b)=>segmentFree(a,b,(x,y)=>boxFree(state.map,x,y,0,state.solids)),
         canInteract: (from, target) => dungeonLineOfSight(state.map, from.x, from.y, target.x, target.y),
       })
-      : findPathIn(state.map.W, state.map.H, walkable, state.player, { x, y }, { goalPad: PATH_PAD });
+      : findPathIn(state.map.W, state.map.H, walkable, state.player, { x, y }, { goalPad: PATH_PAD, canTraverse:(a,b)=>segmentFree(a,b,(cx,cy)=>boxFree(state.map,cx,cy,0,state.solids)) });
     if (!path || !path.length) {
       if (!silencioso) say("Não há passagem por ali.", 2200);
       return false;
@@ -1827,6 +1792,8 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
           else if (prop.kind === "biblioteca") drawBiblioteca(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent, variante);
           else if (prop.kind === "observatorio") drawObservatorio(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent, variante);
           else if (prop.kind === "bilhete") drawBilhete(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent);
+          else if (prop.kind === "portal") drawPortal(ctx,prop.x*TILE,prop.y*TILE,t,palette.accent);
+          else if (prop.kind === "conurbation") drawTunnel(ctx,prop.x*TILE,prop.y*TILE,t,palette.accent);
           else if (prop.kind === "building") {
             drawBuilding(ctx, prop.x * TILE, prop.y * TILE, prop.w, prop.h, palette, palette.accent);
           }
@@ -1871,6 +1838,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     });
     drawables.sort((a, b) => a.y - b.y);
     for (const d of drawables) d.draw();
+    if(collisionDebug)drawCollisionOverlay(ctx,state.solids,state.player,{x:camX,y:camY,w:viewW,h:viewH},(x,y)=>dungeonSolid(state.map,x,y));
 
     ctx.restore();
 

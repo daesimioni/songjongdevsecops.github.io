@@ -8,7 +8,7 @@ import { createUiScope, availableFocusTargets } from "../ui/ui-scope.js";
 import { createInstrumentLoader } from "../learning/instrument-loader.js";
 import { isTextEntry, nativeActivation } from "../platform/input.js";
 import { cacheDeAssets, totalDeAssets } from "../rendering/assets/index.js";
-import { PLAYER_SPEED, SPRINT_MULT, PLAYER_W, PLAYER_H, INTERACT_RADIUS, STORAGE, NET, MAP_W, MAP_H, TILE_KIND as K } from "../core/runtime-config.js";
+import { PLAYER_SPEED, SPRINT_MULT, INTERACT_RADIUS, STORAGE, NET, MAP_W, MAP_H, TILE_KIND as K } from "../core/runtime-config.js";
 import { AREAS, CONTINENTS, CONTINENT_ORDER, SITES, WAYSTONES, SPAWN } from "../content/config.js";
 import { createWorld } from "../world/world.js";
 import { createRenderer } from "../rendering/render.js";
@@ -31,7 +31,7 @@ import { CATALOG } from "../content/catalog.js";
 
 // as 82 seções do catálogo têm farol próprio e são a porta do arquipélago
 const CATALOG_STONES = new Set(CATALOG.map((area) => area.existing || area.id));
-import { findPath, nearestWalkable } from "../core/path.js";
+import { findPath, nearestWalkable, findLanding } from "../core/path.js";
 import { feedPeer, peerRenderPosition } from "../platform/interp.js";
 import { startTitle } from "../ui/title.js";
 import { RPG } from "../gameplay/rpg.js";
@@ -58,7 +58,8 @@ const instrumentLoader = createInstrumentLoader({ document, onError: (e) => cons
 
 const world = createWorld();
 const chaoPego = new Set();
-const renderer = createRenderer($("world"), world);
+const collisionDebug = new URLSearchParams(location.search).has("collisions");
+const renderer = createRenderer($("world"), world, {collisionDebug});
 const audio = createAudio();
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 setArtMotion(!reducedMotion);
@@ -336,6 +337,7 @@ const pvpUi = createPvp({
 });
 
 dungeon = createDungeon({
+  collisionDebug,
   rpg,
   audio,
   isBlocked: () => state.panelOpen || !!state.modal || state.chatOpen,
@@ -364,8 +366,10 @@ dungeon = createDungeon({
     if (kind === "elevador") {
       const stone = WAYSTONES.find((w) => w.id === "hub");
       if (stone) {
-        player.x = stone.x;
-        player.y = stone.y;
+        const landing=findLanding(world,stone);
+        if(!landing){toast("Não há espaço livre na chegada ao porto.");return;}
+        player.x = landing.x;
+        player.y = landing.y;
         player.dir = 0;
         player.moving = false;
         player.continentId = "hub";
@@ -985,6 +989,7 @@ function sairCasa() {
   const volta = state.casaVolta;
   state.casa = null;
   state.casaVolta = null;
+  world.limparInterior();
   if (volta) {
     player.x = volta.x;
     player.y = volta.y;
@@ -1368,7 +1373,8 @@ function godTravel(id) {
   const stone = WAYSTONES.find((w) => w.id === id);
   if (!stone) return;
   if (dungeon?.isOpen()) dungeon.close("god");
-  const spot = nearestWalkable(world, stone.x, stone.y + 1.6) || { x: stone.x, y: stone.y + 1.6 };
+  const spot=findLanding(world,stone);
+  if(!spot){toast("Não há espaço livre nesse destino.");return;}
   player.x = spot.x;
   player.y = spot.y;
   player.dir = 0;
@@ -2095,17 +2101,10 @@ function travelTo(cid) {
   const areaDestino = world.areaAt(stone.x, stone.y);
   const continenteDestino = areaDestino?.continent || stone.continent;
   const nomeDestino = areaDestino?.name || CONTINENTS[continenteDestino]?.name || stone.name;
-  const spots = [
-    [stone.x, stone.y + 1.8], [stone.x, stone.y - 1.8],
-    [stone.x + 1.8, stone.y], [stone.x - 1.8, stone.y],
-    [stone.x, stone.y + 2.6], [stone.x + 2.6, stone.y],
-  ];
-  let target = spots[0];
-  for (const [x, y] of spots) {
-    if (!world.boxCollides(x, y, PLAYER_W, PLAYER_H)) { target = [x, y]; break; }
-  }
-  player.x = target[0];
-  player.y = target[1];
+  const target=findLanding(world,stone);
+  if(!target){toast("Não há espaço livre nesse destino.");return;}
+  player.x=target.x;
+  player.y=target.y;
   player.moving = false;
   player.continentId = continenteDestino;
   state.lastContinent = null;

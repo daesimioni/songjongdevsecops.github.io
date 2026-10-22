@@ -11,7 +11,7 @@ const allowed = {
   platform: ['platform', 'content', 'core'],
   gameplay: ['gameplay', 'platform', 'content', 'core'],
   learning: ['learning', 'content', 'core'],
-  world: ['world', 'rendering', 'content', 'core'],
+  world: ['world', 'content', 'core'],
   ui: ['ui', 'gameplay', 'platform', 'rendering', 'content', 'core', 'world', 'learning'],
   app: ['app', 'ui', 'gameplay', 'platform', 'rendering', 'content', 'core', 'world', 'learning'],
 };

@@ -1,3 +1,4 @@
+import { ASSET_META } from "../../content/asset-meta.js";
 // Grupo solo: marcas de chão que quebram a laje lisa. São decalques baixos,
 // desenhados antes das entidades, sem colisão e sem y-sort. Cada um usa só dois
 // ou três tons da paleta do bioma, para não competir com o que está em cima.
@@ -197,12 +198,12 @@ function musgo(g, p, v) {
 }
 
 export const SOLOS = {
-  pedra: { w: 20, h: 12, variantes: 3, desenhar: pedra },
-  rachadura: { w: 22, h: 12, variantes: 3, desenhar: rachadura },
-  raiz: { w: 22, h: 12, variantes: 3, desenhar: raiz },
-  poca: { w: 20, h: 12, variantes: 3, quadros: 4, ms: 240, desenhar: poca },
-  tufo: { w: 16, h: 11, variantes: 3, quadros: 2, ms: 420, desenhar: tufo },
-  folhada: { w: 20, h: 10, variantes: 3, desenhar: folhada },
-  cogumelo: { w: 18, h: 12, variantes: 3, desenhar: cogumelo },
-  musgo: { w: 20, h: 10, variantes: 3, desenhar: musgo },
+  pedra: { ...ASSET_META.pedra, desenhar: pedra },
+  rachadura: { ...ASSET_META.rachadura, desenhar: rachadura },
+  raiz: { ...ASSET_META.raiz, desenhar: raiz },
+  poca: { ...ASSET_META.poca, quadros: 4, ms: 240, desenhar: poca },
+  tufo: { ...ASSET_META.tufo, quadros: 2, ms: 420, desenhar: tufo },
+  folhada: { ...ASSET_META.folhada, desenhar: folhada },
+  cogumelo: { ...ASSET_META.cogumelo, desenhar: cogumelo },
+  musgo: { ...ASSET_META.musgo, desenhar: musgo },
 };
