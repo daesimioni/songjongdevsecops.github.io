@@ -822,6 +822,28 @@ export function createWorld() {
     interiorProps.push({ tipo: "mesa", x: sala.mesa.x, y: sala.mesa.y, bioma: house.bioma });
     interiorProps.push({ tipo: "fogueira", x: sala.lareira.x, y: sala.lareira.y, bioma: house.bioma });
     if (house.tipo !== "galpao") interiorProps.push({ tipo: "cama", x: sala.cama.x, y: sala.cama.y, bioma: house.bioma });
+    // morador da casa: procurar um canto livre perto do fogo, longe dos móveis,
+    // da porta e do spawn. Ele não tem caixa: é visita, não parede.
+    const livre = (x, y) => Math.hypot(x - sala.mesa.x, y - sala.mesa.y) >= 1.5 &&
+      Math.hypot(x - sala.lareira.x, y - sala.lareira.y) >= 1.5 &&
+      Math.hypot(x - sala.door.x, y - sala.door.y) >= 1.7 &&
+      Math.hypot(x - sala.spawn.x, y - sala.spawn.y) >= 1.2 &&
+      interiorProps.every((p) => Math.hypot(p.x - x, p.y - y) >= 0.95);
+    let canto = null;
+    for (let raio = 2.2; raio <= 4.4 && !canto; raio += 0.35) {
+      for (let i = 0; i < 16 && !canto; i++) {
+        const ang = (i / 16) * Math.PI * 2;
+        const x = sala.lareira.x + Math.cos(ang) * raio;
+        const y = sala.lareira.y + 0.7 + Math.sin(ang) * raio * 0.7;
+        if (x < sala.x + 1.3 || x > sala.x + sala.w - 1.3) continue;
+        if (y < sala.y + 1.3 || y > sala.y + sala.h - 1.5) continue;
+        if (livre(x, y)) canto = { x, y };
+      }
+    }
+    if (canto) {
+      const estilo = npcStyle(`morador:${house.bioma}`, BIOMES[house.bioma]?.accent || "#ffc857", "inter");
+      interiorProps.push({ tipo: "morador", ...canto, bioma: house.bioma, dir: 0, ...estilo });
+    }
     for (const item of interiorProps) {
       const box = CAIXA_CENARIO[item.tipo] || (item.tipo === "estante" ? [0.5, 0.3, 0.3] : null);
       // Os móveis fixos já têm caixas permanentes; só a mobília da casa

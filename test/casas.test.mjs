@@ -121,5 +121,21 @@ for (const m of world.interiorProps) {
   check(m.y > salaA.y + 0.4 && m.y < salaA.y + salaA.h - 0.4, `móvel ${m.tipo} encostado na parede y`);
 }
 
+// ---- morador: uma pessoa por casa, com roupa própria e longe dos móveis ----
+const morador = world.interiorProps.find((m) => m.tipo === "morador");
+check(!!morador, "casa sem morador");
+if (morador) {
+  check(morador.x > salaA.x + 1 && morador.x < salaA.x + salaA.w - 1, "morador na parede x");
+  check(morador.y > salaA.y + 1 && morador.y < salaA.y + salaA.h - 1, "morador na parede y");
+  check(morador.colors?.shirt && morador.look?.hair, "morador sem roupa ou cabelo");
+  check(morador.scale > 0.5 && morador.scale < 1.2, "morador com escala estranha");
+  for (const m of world.interiorProps.filter((p) => p.tipo !== "morador")) {
+    check(Math.hypot(m.x - morador.x, m.y - morador.y) >= 0.9, `morador em cima de ${m.tipo}`);
+  }
+}
+const app = fs.readFileSync(new URL("../js/app.js", import.meta.url), "utf8");
+check(/kind === "morador"/.test(app) && /falarComMorador/.test(app), "app não conversa com o morador");
+check(/a\.tipo === "morador"/.test(render) && /drawHuman\(ctx, px, py/.test(render), "render não desenha o morador");
+
 assert.equal(problemas.length, 0, `casas com ${problemas.length} problema(s):\n- ${problemas.slice(0, 12).join("\n- ")}`);
-console.log(`ok casas: ${world.casas.length} fachadas com porta e soleira, ${salas.length} plantas fechadas, ${world.interiorProps.length} móveis na casa de ${casaA.bioma}`);
+console.log(`ok casas: ${world.casas.length} fachadas com porta e soleira, ${salas.length} plantas fechadas, morador com ${morador?.colors?.shirt || "?"}`);

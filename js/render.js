@@ -1965,6 +1965,14 @@ export function createRenderer(canvas, world) {
             ctx.drawImage(glowSprite("#ff9a55"), px - 36, py - 44);
             ctx.restore();
           }
+          if (a.tipo === "morador") {
+            ctx.fillStyle = "rgba(2,6,10,0.34)";
+            ctx.beginPath();
+            ctx.ellipse(px, py + 1, 9, 3, 0, 0, Math.PI * 2);
+            ctx.fill();
+            drawHuman(ctx, px, py, a.dir || 0, false, time, a.colors, a.scale || 0.9, a.look || null);
+            return;
+          }
           if (desenharAsset(ctx, a.tipo, px, py, {
             tempo: time, bioma: BIOMES[a.bioma], seed: hash2(a.x * 3, a.y * 7),
           })) assetsVisiveis++;
