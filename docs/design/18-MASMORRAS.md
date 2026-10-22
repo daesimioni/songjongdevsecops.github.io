@@ -63,3 +63,15 @@ cresceu de 4,45 para 5,1 tiles e respira com a chama.
 - quadro da caverna: 0,5 ms no navegador headless (16 props, 5 baús, 3 monstros,
   9 tochas e 1.290 tiles na vista), sem regressão de fps no vale (60,5);
 - 23 suítes no node e 19/19 no navegador.
+
+## Bilhete na parede da cidade (2026-10-22)
+
+Cada uma das 93 cavernas ganhou uma nota na parede da cidade subterrânea. O
+texto vem da própria lição da área (70 cavernas, a estação da vez e o "Para
+levar"), da relíquia da área (16) ou de uma linha do lugar (7 cavernas antigas,
+que não têm lição nem relíquia). O bilhete é curto (até 240 caracteres), sem
+HTML, e o F lê no painel da caverna com o título da estação.
+
+Prova: `test/bilhetes.test.mjs` (93 notas, fontes contadas, texto curto e sem
+HTML) e sonda `cdp-bilhete.mjs` ("Bilhete de Álgebra Elementar: Fatorar é trocar
+conta por leitura." lido no F).

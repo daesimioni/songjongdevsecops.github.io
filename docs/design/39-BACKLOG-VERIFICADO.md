@@ -9,7 +9,7 @@ de ele existir, com números que o código já superou.
 Auditoria read-only de 2026-10-22 cruzou os documentos 00 a 38 com `src/`,
 `test/` e `tools/`. Números do código: 86 áreas, 454 estações, 93 cavernas, 541
 itens, 464 fichas, 284 missões, 194 NPCs, 2.251 entradas de wiki, 887 perguntas
-de duelo, 120 módulos e 83 testes node. `npm run validate` passa (lint,
+de duelo, 120 módulos e 84 testes node. `npm run validate` passa (lint,
 contrato de módulos, testes e build) e a matriz de navegador dá 19/19.
 
 Esforço: **P** até um dia, **M** de dois a cinco dias, **G** mais de uma semana.
@@ -55,7 +55,7 @@ Estado: **feito**, **parcial**, **ausente**, **decisão** (produto, não código
 | save versionado, migração e exportar/importar | **feito** | backup carrega `v: 1` e só aplica as chaves conhecidas com valor JSON válido; a Rede ganhou `baixar arquivo` (JSON legível, sem a chave da conta) e `carregar arquivo` (recusa lixo, aplica e recarrega); `test/save-arquivo.test.mjs` e `cdp-save-arquivo.mjs` (7 partes, v1, nome trocado pelo arquivo) | M |
 | linter de conteúdo | ausente | validação só em teste; falta revisor e versão por pergunta | M |
 | ferries, elevadores, ciclo dia/noite, mapa grande, pontes por missão | ausente | skiff, túnel e 54 travessias fixas existem | M cada |
-| arcos de NPC, murais e bilhetes | parcial | memória de visitas existe; falta arco e lore no mundo | M |
+| arcos de NPC, murais e bilhetes | parcial | **bilhetes feitos**: as 93 cavernas têm uma nota na parede da cidade subterrânea, saindo da lição da área (70), da relíquia (16) ou de uma linha do lugar (7), curta e sem HTML; o F lê no painel (`test/bilhetes.test.mjs`, `cdp-bilhete.mjs`: "Bilhete de Álgebra Elementar"); a memória de visitas do NPC já existe; falta o arco pessoal por NPC | M |
 | presets de build na ficha | **feito** | a ficha guarda até três retratos do equipamento: `salvar a atual`, `usar` (troca o conjunto inteiro e avisa peça que faltou) e `remover`; save valida slot e sobrevive à recarga; `test/builds.test.mjs` e `cdp-builds.mjs` | P |
 
 ## Onda 3: conteúdo grande e endgame

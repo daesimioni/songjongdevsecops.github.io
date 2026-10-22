@@ -1,4 +1,4 @@
-import { drawPet, drawBuilding, drawAdventurer, drawChest, drawStairs, drawTorch, drawAltar, drawMesa, drawForge, drawOficina, drawBiblioteca, drawObservatorio, drawWaystone, drawKeeper, drawPlot, drawVein, drawEnchanter, varianteDaPeca } from "../rendering/dungeon-art.js";
+import { drawPet, drawBuilding, drawAdventurer, drawChest, drawStairs, drawTorch, drawAltar, drawMesa, drawForge, drawOficina, drawBiblioteca, drawObservatorio, drawWaystone, drawKeeper, drawPlot, drawVein, drawEnchanter, drawBilhete, varianteDaPeca } from "../rendering/dungeon-art.js";
 import { buildDungeonMap, dungeonSolid, roomIndexAt, boxFree, dungeonLineOfSight, dungeonCanSeePlayer } from "../gameplay/dungeon-map.js";
 import { lootDoBau } from "../gameplay/dungeon-loot.js";
 import { pracaDaCaverna } from "../gameplay/dungeon-plaza.js";
@@ -22,6 +22,7 @@ import { propsDaSala } from "../content/salas-tematicas.js";
 import { nomeDaCacada } from "../content/cacada-clima.js";
 import { ouveOPassoS, direcaoPara, acordaComOPasso } from "../world/audicao.js";
 import { varianteDe } from "../world/variantes.js";
+import { bilheteDaCaverna } from "../world/bilhetes.js";
 
 const $ = (id) => document.getElementById(id);
 const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
@@ -382,6 +383,22 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     }
     const city = def.rooms.find((r) => r.kind === "city");
     if (city) for (const p of pracaDaCaverna(def, city)) props.push(p);
+    // bilhete na parede da cidade: a lição da área fica legível no mundo
+    if (city) {
+      const bilhete = bilheteDaCaverna({
+        areaId: String(def.id || "").replace(/^dungeon-/, ""),
+        nome: def.name, material: def.material, continente: def.continent,
+      });
+      if (bilhete) {
+        const livre = [
+          { x: city.x + 1.5, y: city.y + 0.6 },
+          { x: city.x + city.w - 1.5, y: city.y + 0.6 },
+          { x: city.x + 1.5, y: city.y + city.h - 0.6 },
+        ].find((p) => !props.some((q) => Math.hypot(q.x - p.x, q.y - p.y) < 1.3)
+          && !state.chests.some((c) => Math.hypot(c.x - p.x, c.y - p.y) < 1.3));
+        if (livre) props.push({ kind: "bilhete", x: livre.x, y: livre.y, interact: true, titulo: bilhete.titulo, texto: bilhete.texto });
+      }
+    }
     // a sala da disciplina ganha a peça de assinatura (oficina, biblioteca ou
     // observatório) encostada nas paredes; baú e outra peça no meio mandam a
     // peça para outro canto em vez de empilhar
@@ -1047,6 +1064,11 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     if (obj.kind === "enchanter") {
       say("A mesa de encantamento. Grava um efeito permanente na sua lanterna.", 3000);
       onSheet?.();
+      return;
+    }
+    if (obj.kind === "bilhete") {
+      say(`${obj.titulo}: ${obj.texto}`, 9000);
+      audio.blip?.();
       return;
     }
     if (obj.kind === "oficina" || obj.kind === "biblioteca" || obj.kind === "observatorio") {
@@ -1716,6 +1738,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
           else if (prop.kind === "oficina") drawOficina(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent, variante);
           else if (prop.kind === "biblioteca") drawBiblioteca(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent, variante);
           else if (prop.kind === "observatorio") drawObservatorio(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent, variante);
+          else if (prop.kind === "bilhete") drawBilhete(ctx, prop.x * TILE, prop.y * TILE, t, palette.accent);
           else if (prop.kind === "building") {
             drawBuilding(ctx, prop.x * TILE, prop.y * TILE, prop.w, prop.h, palette, palette.accent);
           }
