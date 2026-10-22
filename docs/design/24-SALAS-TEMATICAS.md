@@ -69,3 +69,19 @@ da caverna:
    aperto e não achou bloqueio.
 3. O tema é por continente, não por área: Álgebra e Língua compartilham a
    biblioteca, mudando a paleta. A distinção por área fica como refinamento.
+
+## 6. Peças que respondem (2026-10-22)
+
+As três peças deixaram de ser cenário mudo: cada uma tem `interact: true` e uma
+função própria, uma vez por descida.
+
+| peça | efeito | prova |
+|---|---|---|
+| oficina | afia a arma: +1 de dano por 3 minutos (buff `damage`) | `cdp-pecas-tematicas.mjs`: buff gravado no save |
+| biblioteca | guarda uma dica: a próxima pergunta do duelo (ou do treino) abre com duas alternativas erradas riscadas | 2 `.duel-option.riscada` no duelo real, selo consumido |
+| observatório | acende a sala do chefe no mapa da caverna | 43 → 78 casas vistas (+35) |
+
+A segunda tecla na mesma peça responde "Esta peça já rendeu o que tinha nesta
+descida". O efeito da biblioteca entra pelo `aplicarDicaGuardada` do RPG, que
+some do save ao ser gasto (`BUFF_NAMES.dica`). Prova node:
+`test/pecas-tematicas.test.mjs`.

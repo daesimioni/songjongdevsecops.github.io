@@ -15,7 +15,7 @@ const RESPAWN_MS = 5 * 60 * 1000;
 const BOSS_RESPAWN_MS = 20 * 60 * 1000;
 const MAX_SKILL_XP = 50;
 const SKILL_STEP = 5;
-const BUFF_NAMES = { speed: "passos rápidos", damage: "dano extra", maxhp: "vida extra" };
+const BUFF_NAMES = { speed: "passos rápidos", damage: "dano extra", maxhp: "vida extra", dica: "dica da biblioteca" };
 // custo em mana de cada runa aprendida; sem carga guardada, é por aqui que ela sai
 const SPELL_MANA = {
   "runa-faisca": 2,
@@ -574,6 +574,17 @@ export class RPG {
     this.data.petCd[ab.id] = now() + ab.cd;
     this.save();
     return out;
+  }
+
+  // Consulta da biblioteca: a próxima pergunta já nasce com duas alternativas
+  // erradas riscadas. O selo vale uma vez e some do save ao ser gasto.
+  aplicarDicaGuardada(d) {
+    if (!d?.question || !this.buffActive("dica")) return 0;
+    const erradas = d.question.options.map((_, i) => i).filter((i) => i !== d.question.answer);
+    d.eliminadas = shuffle(erradas).slice(0, Math.min(2, erradas.length));
+    delete this.data.buffs.dica;
+    this.save();
+    return d.eliminadas.length;
   }
 
   // Dica em escada: cada passo custa 1 de mana. O primeiro risca duas
@@ -1307,6 +1318,7 @@ export class RPG {
         done: false,
       });
     }
+    this.aplicarDicaGuardada(this.duel);
     return { ok: true, duel: this.duel };
   }
 
@@ -1408,6 +1420,7 @@ export class RPG {
       dicas: 0,
       eliminadas: [],
     };
+    this.aplicarDicaGuardada(this.duel);
     return { ok: true, duel: this.duel };
   }
 

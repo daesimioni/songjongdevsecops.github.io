@@ -31,9 +31,11 @@ export function propsDaSala(def) {
   const alvo = salaTematica(def);
   if (!alvo) return [];
   const { tipo, room } = alvo;
+  // as três peças conversam com o jogador (F): cada uma dá algo uma vez por
+  // descida, e o miolo da sala continua livre para o combate
   return [
-    { kind: tipo, x: room.x + 2.2, y: room.y + 1.4, special: true },
-    { kind: tipo, x: room.x + room.w - 2.2, y: room.y + 1.4, special: true },
-    { kind: tipo, x: room.x + room.w - 2.2, y: room.y + room.h - 1.4, special: true },
+    { kind: tipo, x: room.x + 2.2, y: room.y + 1.4, special: true, interact: true },
+    { kind: tipo, x: room.x + room.w - 2.2, y: room.y + 1.4, special: true, interact: true },
+    { kind: tipo, x: room.x + room.w - 2.2, y: room.y + room.h - 1.4, special: true, interact: true },
   ];
 }

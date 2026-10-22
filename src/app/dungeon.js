@@ -1030,6 +1030,55 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
       onSheet?.();
       return;
     }
+    if (obj.kind === "oficina" || obj.kind === "biblioteca" || obj.kind === "observatorio") {
+      usarPecaTematica(obj);
+      return;
+    }
+  }
+
+  // Peça de assinatura da disciplina: cada uma dá uma coisa por descida. A
+  // oficina afia a arma, a biblioteca guarda uma dica para a próxima pergunta
+  // e o observatório acende a sala do chefe no mapa.
+  function usarPecaTematica(obj) {
+    if (obj.used) {
+      say("Esta peça já rendeu o que tinha nesta descida. Volte noutra.", 2800);
+      return;
+    }
+    if (obj.kind === "oficina") {
+      rpg.data.buffs.damage = Date.now() + 180000;
+      rpg.save();
+      obj.used = true;
+      say("A oficina afia a arma: +1 de dano por três minutos.", 3600);
+      audio.blip();
+      updateHud();
+      return;
+    }
+    if (obj.kind === "biblioteca") {
+      rpg.data.buffs.dica = Date.now() + 600000;
+      rpg.save();
+      obj.used = true;
+      say("A biblioteca abre uma página: a próxima pergunta do duelo vem com duas alternativas riscadas.", 4400);
+      audio.blip();
+      updateHud();
+      return;
+    }
+    const sala = (state.map?.rooms || []).find((r) => r.id === state.def?.layout?.bossRoom);
+    let marcados = 0;
+    if (sala && state.seen && state.map) {
+      for (let y = sala.y; y < sala.y + sala.h; y++) {
+        for (let x = sala.x; x < sala.x + sala.w; x++) {
+          const i = y * state.map.W + x;
+          if (!state.map.grid[i] || state.seen[i]) continue;
+          state.seen[i] = 1;
+          marcados++;
+        }
+      }
+      drawMinimap();
+    }
+    obj.used = true;
+    say(`O observatório acende o fundo da caverna no mapa (${marcados} casas).`, 3800);
+    audio.chime();
+    updateHud();
   }
 
   function interact() {
