@@ -3,6 +3,7 @@
 // era um enfeite do tamanho do boneco e não servia para nada.
 // Roda sem navegador: node test/casas.test.mjs
 import assert from "node:assert/strict";
+import fs from "node:fs";
 
 globalThis.localStorage = { getItem: () => null, setItem: () => {}, removeItem: () => {}, clear: () => {} };
 
@@ -38,6 +39,12 @@ for (const casa of world.casas) {
   check(world.boxCollides(casa.x, casa.y - 0.6, PLAYER_W, PLAYER_H), `casa atravessável em ${casa.bioma}`);
 }
 
+// ---- soleira desenhada: degrau com as runas da área na frente de cada porta ----
+const render = fs.readFileSync(new URL("../js/render.js", import.meta.url), "utf8");
+check(/function drawSoleira\(casa\)/.test(render), "render sem soleira da casa");
+check(/for \(const casa of world\.casas\)[\s\S]{0,200}drawSoleira\(casa\)/.test(render), "soleira fora da fila das casas");
+check(/BIOMES\[casa\.bioma\]\?\.accent/.test(render), "soleira não usa a cor da área");
+
 // ---- quatro salas fechadas, cada uma com a sua porta ----
 const salas = Object.values(world.interiores);
 check(salas.length === 4, `salas: ${salas.length}, esperado 4`);
@@ -72,7 +79,7 @@ for (const sala of salas) {
 }
 
 // mesa, fogo e cama ficam parados na sala e barram o corpo; a mobília
-// sorteada (barril, caixote, fardo) continua decorativa
+// sorteada também virou sólida (ver test/interior-collision.test.mjs)
 const moveisFixos = world.props.filter((p) => String(p.tipo || "").startsWith("movel:"));
 check(moveisFixos.length === 11, `móveis fixos com caixa: ${moveisFixos.length}, esperado 11`);
 for (const sala of salas) {
@@ -104,4 +111,4 @@ for (const m of world.interiorProps) {
 }
 
 assert.equal(problemas.length, 0, `casas com ${problemas.length} problema(s):\n- ${problemas.slice(0, 12).join("\n- ")}`);
-console.log(`ok casas: ${world.casas.length} fachadas com porta, 4 salas fechadas, ${world.interiorProps.length} móveis na casa de ${casaA.bioma}`);
+console.log(`ok casas: ${world.casas.length} fachadas com porta e soleira, 4 salas fechadas, ${world.interiorProps.length} móveis na casa de ${casaA.bioma}`);

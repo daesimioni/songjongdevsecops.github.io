@@ -1463,6 +1463,35 @@ export function createRenderer(canvas, world) {
     ctx.fillRect(px - 4, py - 31, 7, 2);
   }
 
+  // Soleira de cada casa: degrau de pedra na entrada, com as runas da área
+  // gravadas como número de porta. Sem montante: a casa já tem batente na arte.
+  function drawSoleira(casa) {
+    const px = Math.round(casa.door.x * TILE);
+    const baseY = Math.round(casa.door.y * TILE + 1);
+    const accent = BIOMES[casa.bioma]?.accent || "#ffc857";
+    ctx.fillStyle = "rgba(2,6,10,0.35)";
+    ctx.beginPath();
+    ctx.ellipse(px, baseY + 4, 17, 4, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#292338";
+    ctx.fillRect(px - 15, baseY - 1, 30, 5);
+    ctx.fillStyle = "#5b546c";
+    ctx.fillRect(px - 14, baseY - 1, 28, 3);
+    ctx.fillStyle = "#8a8399";
+    ctx.fillRect(px - 14, baseY - 1, 28, 1);
+    // pedras laterais um pouco mais baixas, para o degrau não virar tarima
+    ctx.fillStyle = "#3b3448";
+    ctx.fillRect(px - 18, baseY + 1, 4, 3);
+    ctx.fillRect(px + 14, baseY + 1, 4, 3);
+    // runas da área na soleira, como um número de porta
+    ctx.globalAlpha = 0.9;
+    ctx.fillStyle = accent;
+    ctx.fillRect(px - 5, baseY + 0, 2, 2);
+    ctx.fillRect(px - 1, baseY + 0, 2, 2);
+    ctx.fillRect(px + 3, baseY + 0, 2, 2);
+    ctx.globalAlpha = 1;
+  }
+
   function drawCave(c, time) {
     const bioma = BIOMES[c.areaId] || BIOMES[c.groundId] || null;
     drawCaveFacade(ctx, {
@@ -1947,6 +1976,11 @@ export function createRenderer(canvas, world) {
       const py = wy * TILE;
       return px > camX - pad && px < camX + viewW + pad && py > camY - pad && py < camY + viewH + pad;
     };
+    // a soleira fica na frente da fachada, alinhada com o centro da porta
+    for (const casa of world.casas) {
+      if (!onScreen(casa.door.x, casa.door.y, 60)) continue;
+      drawables.push({ y: casa.door.y * TILE + 4, fn: () => drawSoleira(casa) });
+    }
     for (const h of world.hunters) {
       if (!onScreen(h.banner.x, h.banner.y, 80)) continue;
       drawables.push({ y: h.banner.y * TILE + 8, fn: () => drawBanner(h, time) });

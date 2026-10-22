@@ -86,8 +86,9 @@ decorativa (a dívida está no fim deste documento).
   porta, spawn livre, mesa/fogo/cama dentro, mobília determinística e
   diferente entre casas do mesmo tipo.
 - 54 suítes node verdes; matriz de navegador 19/19; 60 fps com a sala aberta.
-- Sondas: `cdp-casa.mjs` (fachada antes/depois) e `cdp-casa2.mjs` (entrar,
-  estudar, descansar, sair) em `temporarios/2026-10-20-mundo-song-pedido/`.
+- Sondas: `cdp-casa.mjs` (fachada antes/depois), `cdp-casa2.mjs` (entrar,
+  estudar, descansar, sair) e `cdp-soleira.mjs` (degrau da porta) em
+  `temporarios/2026-10-20-mundo-song-pedido/`.
 
 ## 7. O que continua em aberto
 
@@ -99,5 +100,9 @@ decorativa (a dívida está no fim deste documento).
    `test/interior-collision.test.mjs`.
 3. Não há morador dentro de casa. Um NPC por casa, com falas do assunto, daria
    mais vida e uma segunda fonte de dica.
-4. A porta de fora é desenhada na fachada; não há soleira, número ou placa
-   dizendo o nome da casa.
+4. **Fechado em 2026-10-22:** toda porta ganhou soleira de pedra com três runas
+   na cor da área, desenhada na fila do cenário e alinhada à frente da fachada.
+   A captura `soleira-casa-*` e a sonda `cdp-soleira.mjs` mostram o degrau; o
+   `test/casas.test.mjs` falha se a soleira sair da fila ou perder a cor da área.
+   Placa com o nome escrito continua fora: o nome da casa é o da área, e a runa
+   já carrega essa cor.
