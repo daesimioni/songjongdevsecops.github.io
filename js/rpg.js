@@ -871,6 +871,7 @@ export class RPG {
   erroPrevisto(monster = this.duel?.monster, tier = this.duel?.tier, bossPhase = this.duel?.boss ? this.duel.bossPhase : 1) {
     const d = this.duel;
     if (d?.shield || (this.data.sub === "domador" && this.activePet() && !d?.petUsado)) return 0;
+    if (monster === d?.monster && espelhoDoChefe(d?.habilidade?.id, bossPhase, d?.espelhoUsado)) return 0;
     const base = TIERS[tier]?.damage || 0;
     const extra = monster === d?.monster ? extraDoErro(d?.habilidade?.id, bossPhase) : 0;
     return this.danoSofrido(base + Math.max(0, (bossPhase || 1) - 1) * 2 + extra)
@@ -937,7 +938,8 @@ export class RPG {
     }
     // trovão acerta o da frente; fogo passa por todos, matilha incluída
     const dmg = (id === "runa-fogo" ? 1 : 2) + (this.data.sub === "alquimista" ? 1 : 0);
-    d.monsterHp = Math.max(0, d.monsterHp - dmg);
+    const mainDamage = danoDoJogador(d.habilidade?.id, d.bossPhase, dmg);
+    d.monsterHp = Math.max(0, d.monsterHp - mainDamage);
     if (id === "runa-fogo") {
       for (const p of d.partners || []) {
         if (p.done) continue;
@@ -1557,12 +1559,12 @@ export class RPG {
     } else {
       d.seguidos = 0;
       const previsto = this.erroPrevisto();
-      const petSegura = !d.shield && this.data.sub === "domador" && this.activePet() && !d.petUsado;
-      if (petSegura) d.petUsado = true;
       const espelho = espelhoDoChefe(d.habilidade?.id, d.bossPhase, d.espelhoUsado);
+      const petSegura = !espelho && !d.shield && this.data.sub === "domador" && this.activePet() && !d.petUsado;
+      if (petSegura) d.petUsado = true;
       if (espelho) d.espelhoUsado = true;
       const blocked = !!d.shield || petSegura || espelho;
-      if (blocked && d.shield) d.shield = false;
+      if (!espelho && d.shield) d.shield = false;
       let damage = previsto;
       let note = "";
       if (trait === "haste") {

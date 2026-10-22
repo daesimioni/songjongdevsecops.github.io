@@ -34,6 +34,7 @@ export function habilidadeDoChefe(monster) {
 
 // dano que o jogador causa no chefe, já com a couraça da fase 2
 export function danoDoJogador(habilidadeId, fase, dano) {
+  if (dano <= 0) return 0;
   if (habilidadeId === "couraca" && (fase || 1) >= 2) return Math.max(1, dano - 1);
   return dano;
 }
