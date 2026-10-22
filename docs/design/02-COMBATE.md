@@ -278,3 +278,15 @@ do raio de audição (6,5) e não volta a dormir na mesma descida.
 Prova: `test/audicao.test.mjs` (limiares do passo e da corrida) e sonda
 `cdp-sono.mjs`: três cavernas com 2, 2 e 1 bicho dormindo; a 5,2 tiles o passo
 não acordou; perto e correndo acordou, zero duelo iniciado dormindo.
+
+## Isca: o cheiro distrai (2026-10-22)
+
+A **Isca de Peixe** (peixe + erva) joga no chão da caverna. Por 6 segundos,
+todo bicho a menos de 8 tiles larga o posto e caminha até o cheiro; os que
+dormiam acordam, e enquanto comem **não olham para o jogador** (não iniciam
+duelo). Passado o tempo, voltam para casa. Bichos além do raio não sentem, e o
+chefe ignora.
+
+Prova: `test/isca.test.mjs` e sonda `cdp-isca.mjs`: 1 bicho sentiu, 6 ficaram
+longe, o alvo parou a menos de 3 tiles do cheiro, não abriu duelo e a isca
+venceu no tempo.

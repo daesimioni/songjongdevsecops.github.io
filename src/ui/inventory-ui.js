@@ -63,7 +63,7 @@ export function createInventoryUI({ rpg, toast, audio, onUse, onChange, getAvata
       acoes.appendChild(botao);
     }
     const ehRuna = item.id.startsWith("runa-");
-    const consumivel = item.heal || item.mana || item.use === "light" || item.use === "bomb" || item.use === "spark" || ehRuna;
+    const consumivel = item.heal || item.mana || item.use === "light" || item.use === "bomb" || item.use === "bait" || item.use === "spark" || ehRuna;
     if (consumivel) {
       const usar = el("button", "inv-action usar", ehRuna ? "conjurar" : "usar");
       usar.type = "button";
@@ -87,6 +87,7 @@ export function createInventoryUI({ rpg, toast, audio, onUse, onChange, getAvata
         if (res.buff) bits.push(`${res.buff.name} ${Math.round(res.buff.ms / 1000)}s`);
         if (bits.length) toast(bits.join(" · "), 3000);
         else if ((res.light || res.bomb) && aceito) toast(res.light ? "A tocha acende." : "A bomba estoura.", 2400);
+        else if (res.bait && aceito) toast("A isca foi jogada no chão.", 2200);
         audio.blip();
         render();
         onChange?.();

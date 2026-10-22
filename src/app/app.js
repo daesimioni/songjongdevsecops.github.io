@@ -210,6 +210,15 @@ function usarItem(id, res) {
       toast("A tocha é para a caverna. Guardei de volta.", 2800);
       return false;
     }
+    if (id === "isca") {
+      if (dungeon?.isOpen()) {
+        dungeon.lure(8, 6000);
+        return true;
+      }
+      rpg.addItem("isca", 1);
+      toast("A isca é para a caverna. Guardei de volta.", 2800);
+      return false;
+    }
     if (id === "bomba") {
       if (dungeon?.isOpen()) {
         dungeon.useBomb();

@@ -7,9 +7,9 @@ de ele existir, com números que o código já superou.
 ## Método e estado atual
 
 Auditoria read-only de 2026-10-22 cruzou os documentos 00 a 38 com `src/`,
-`test/` e `tools/`. Números do código: 86 áreas, 454 estações, 93 cavernas, 560
-itens, 464 fichas, 284 missões, 194 NPCs, 2.298 entradas de wiki, 887 perguntas
-de duelo, 128 módulos e 90 testes node. `npm run validate` passa (lint,
+`test/` e `tools/`. Números do código: 86 áreas, 454 estações, 93 cavernas, 561
+itens, 464 fichas, 284 missões, 194 NPCs, 2.300 entradas de wiki, 887 perguntas
+de duelo, 128 módulos e 91 testes node. `npm run validate` passa (lint,
 contrato de módulos, testes e build) e a matriz de navegador dá 19/19.
 
 Esforço: **P** até um dia, **M** de dois a cinco dias, **G** mais de uma semana.
@@ -40,10 +40,10 @@ Estado: **feito**, **parcial**, **ausente**, **decisão** (produto, não código
 | dicas em escada e foco | **feito** | botão de dica no duelo: 1 mana por passo, passo 1 risca duas erradas, passo 2 risca mais uma, passo 3 revela a correta, zera na pergunta nova e leva o foco para a alternativa viva; `test/duelo-dica.test.mjs` e `cdp-dica.mjs` | M |
 | formatos de pergunta e prova de transferência | ausente | hoje só A-E; decidir com o dono a colisão com "não há prova final" | G |
 | ofícios por continente e mercador de troca | parcial | **mercador de troca feito**: quatro ofertas material por material no guardião de qualquer cidade, sempre com perda e sem leilão (`test/mercador.test.mjs`, `cdp-mercador.mjs`: 5 madeiras → 1 madeira e 1 ferro); falta separar o ofício (receita) por continente | M |
-| magias, encantos e consumíveis no alvo do desenho | **feito** | 12 encantos (`test/encantos.test.mjs`), 12 runas (6 novas em `test/runas-novas.test.mjs`) e 9 poções + 15 comidas, com cura, mana e buff medidos (`test/consumiveis.test.mjs`); wiki 2.298 fichas, 560 itens, 39 receitas | M |
+| magias, encantos e consumíveis no alvo do desenho | **feito** | 12 encantos (`test/encantos.test.mjs`), 12 runas (6 novas em `test/runas-novas.test.mjs`) e 9 poções + 15 comidas, com cura, mana e buff medidos (`test/consumiveis.test.mjs`); wiki 2.300 fichas, 561 itens, 39 receitas | M |
 | famílias, variantes e fraqueza numérica | **feito** | 25 formas em 5 famílias, faixa no bestiário e +50% contra a família completa (`test/familias.test.mjs`, previsão 1,1 → 1,7). **Variantes**: eco (10%), elite (5%) e antiga (3%) decididas por caverna e sala, trocando vida, dano, XP, material, cor e nome, com linha no duelo (`test/variantes.test.mjs`, `cdp-variantes-criatura.mjs`: "Sílaba Antiga" com vida 6) | M |
 | clima afetando spawn | **feito** | chuva, neblina e rajada trocam o elenco do subsolo pelo clima (`nomeDaCacada`), sem mexer em sala, posto ou tier; o relógio do clima passou a andar no laço (não só no desenho) e o `forcarEvento` emite os ganchos; `test/cacada-clima.test.mjs` e `cdp-cacada-clima.mjs` (6 de 6 bichos molhados na chuva, 7 no limpo) | M |
-| audição, alerta, patrulha e perseguição | parcial | **audição e sono feitos**: correr perto (6,5 tiles) de quem não vê vira o rosto para o som com `?` por 2,2 s, sem duelo; andar não faz barulho; um quinto dos bichos nasce dormindo (`z`), e só acorda com passo a menos de 2,6 tiles ou corrida no raio; provas `test/audicao.test.mjs`, `cdp-audicao.mjs` e `cdp-sono.mjs` (2/2/1 dormindo por caverna, longe a 5,2 tiles não acorda); faltam patrulha e isca | M |
+| audição, alerta, patrulha e perseguição | parcial | **audição, sono e isca feitos**: correr perto vira o rosto para o som com `?`; um quinto nasce dormindo (`z`) e acorda com passo perto ou corrida; a **isca de peixe** atrai os bichos a menos de 8 tiles por 6 s, acorda os dormindo e eles não olham para você enquanto comem (depois voltam para casa); provas `test/audicao.test.mjs`, `test/isca.test.mjs`, `cdp-audicao.mjs`, `cdp-sono.mjs` e `cdp-isca.mjs`; faltam patrulha e perseguição | M |
 | escudo que barra erro e resistência por tipo | parcial | **escudo equipado feito**: segura o primeiro erro de cada duelo, gasta a carga, avisa na leitura e na ficha, não gasta com runa/espelho e recarrega no duelo seguinte (`test/escudo-equip.test.mjs`, `cdp-escudo.mjs`: vida 28 no primeiro erro, 25 no segundo); falta resistência por tipo (qual tipo: espécie, trait ou disciplina, decisão) | M |
 | party humana em combate | ausente | party social de 8 existe, duelo não junta humanos | G |
 | passo de pet e idle por espécie | **feito** | gato e sapo alternam quatro patas, coruja/papagaio viram a cabeça, fada pulsa, grilo esfrega a pata, sombra ondula; `test/animacao-idle.test.mjs` [ao andar] alterna patas | M |

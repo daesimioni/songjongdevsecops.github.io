@@ -1146,7 +1146,7 @@ export class RPG {
   useItem(id) {
     const item = ITEMS[id];
     const rune = typeof id === "string" && id.startsWith("runa-");
-    if (!item || !(rune || item.heal || item.mana || item.buff || ["tocha", "bomba"].includes(id))) {
+    if (!item || !(rune || item.heal || item.mana || item.buff || ["tocha", "bomba", "isca"].includes(id))) {
       return { ok: false, reason: "Este item não se usa agora." };
     }
     if (this.itemCount(id) <= 0) return { ok: false, reason: `Você não tem ${item.name}.` };
@@ -1161,6 +1161,12 @@ export class RPG {
       if (this.data.items[id] <= 0) delete this.data.items[id];
       this.save();
       return { ok: true, bomb: true, name: item.name };
+    }
+    if (id === "isca") {
+      this.data.items[id]--;
+      if (this.data.items[id] <= 0) delete this.data.items[id];
+      this.save();
+      return { ok: true, bait: true, name: item.name };
     }
     if (rune) {
       const d = this.duel;

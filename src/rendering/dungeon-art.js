@@ -215,6 +215,28 @@ export function varianteDaPeca(areaId) {
   return h % 3;
 }
 
+function drawIscaRaw(ctx, x, y, t, accent) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.fillStyle = "rgba(0,0,0,0.3)";
+  ctx.beginPath(); ctx.ellipse(0, 0, 7, 3, 0, 0, Math.PI * 2); ctx.fill();
+  // peixe deitado no chão, com a cauda batendo de leve
+  ctx.fillStyle = "#8ab6ff";
+  ctx.beginPath(); ctx.ellipse(0, -5, 6, 3.4, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = "#c8ddff";
+  ctx.beginPath(); ctx.ellipse(-1, -6, 4, 2, 0, 0, Math.PI * 2); ctx.fill();
+  const bat = Math.sin(t * 0.01) * 1.2;
+  ctx.fillStyle = "#6b8fd6";
+  ctx.beginPath();
+  ctx.moveTo(5, -5); ctx.lineTo(9, -7 + bat); ctx.lineTo(9, -3 + bat); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = "#14121f";
+  ctx.fillRect(-4, -6, 1, 1);
+  ctx.fillStyle = accent;
+  ctx.globalAlpha = 0.5;
+  ctx.fillRect(-6, -3, 12, 1);
+  ctx.restore();
+}
+
 function drawBilheteRaw(ctx, x, y, t, accent) {
   ctx.save();
   ctx.translate(x, y);
@@ -619,6 +641,7 @@ export function drawOficina(ctx,x,y,...args) { drawDungeonSprite("drawOficina",d
 export function drawBiblioteca(ctx,x,y,...args) { drawDungeonSprite("drawBiblioteca",drawBibliotecaRaw,0,ctx,x,y,...args); }
 export function drawObservatorio(ctx,x,y,...args) { drawDungeonSprite("drawObservatorio",drawObservatorioRaw,0,ctx,x,y,...args); }
 export function drawBilhete(ctx,x,y,...args) { drawDungeonSprite("drawBilhete",drawBilheteRaw,2,ctx,x,y,...args); }
+export function drawIsca(ctx,x,y,...args) { drawDungeonSprite("drawIsca",drawIscaRaw,2,ctx,x,y,...args); }
 export function drawWaystone(ctx,x,y,...args) { drawDungeonSprite("drawWaystone",drawWaystoneRaw,0,ctx,x,y,...args); }
 export function drawPortal(ctx,x,y,...args) { drawDungeonSprite("drawPortal",drawPortalRaw,0,ctx,x,y,...args); }
 export function drawTunnel(ctx,x,y,...args) { drawDungeonSprite("drawTunnel",drawTunnelRaw,0,ctx,x,y,...args); }

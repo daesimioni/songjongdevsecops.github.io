@@ -1,4 +1,4 @@
-import { drawPet, drawBuilding, drawAdventurer, drawChest, drawStairs, drawTorch, drawAltar, drawMesa, drawForge, drawOficina, drawBiblioteca, drawObservatorio, drawWaystone, drawKeeper, drawPlot, drawVein, drawEnchanter, drawBilhete, varianteDaPeca } from "../rendering/dungeon-art.js";
+import { drawPet, drawBuilding, drawAdventurer, drawChest, drawStairs, drawTorch, drawAltar, drawMesa, drawForge, drawOficina, drawBiblioteca, drawObservatorio, drawWaystone, drawKeeper, drawPlot, drawVein, drawEnchanter, drawBilhete, drawIsca, varianteDaPeca } from "../rendering/dungeon-art.js";
 import { buildDungeonMap, dungeonSolid, roomIndexAt, boxFree, dungeonLineOfSight, dungeonCanSeePlayer } from "../gameplay/dungeon-map.js";
 import { lootDoBau } from "../gameplay/dungeon-loot.js";
 import { pracaDaCaverna } from "../gameplay/dungeon-plaza.js";
@@ -86,6 +86,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     sprint: false,
     paused: false,
     alert: null,
+    bait: null,
     pack: [],
     partnerMonsters: [],
     duelMonster: null,
@@ -552,6 +553,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     state.boost = 0;
     state.paused = false;
     state.alert = null;
+    state.bait = null;
     state.encounterLockUntil = clock() + 1200;
     state.torchUntil = 0;
     state.altarAt = 0;
@@ -1168,6 +1170,25 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     for (const m of list) {
       if (!m.alive) continue;
       {
+        // isca no chão: por alguns segundos o bicho larga o posto e vai até o
+        // cheiro; quando acaba, volta para casa
+        if (m.lure) {
+          if (t < m.lure.until) {
+            const dl = Math.hypot(m.lure.x - m.x, m.lure.y - m.y);
+            if (dl > 1.2) {
+              m.tx = m.lure.x - ((m.lure.x - m.x) / dl) * 1.2;
+              m.ty = m.lure.y - ((m.lure.y - m.y) / dl) * 1.2;
+              m.waitUntil = Math.min(m.waitUntil || 0, t);
+              m.passos = 0;
+              m.ouvindo = 0;
+            }
+          } else {
+            m.lure = null;
+            m.tx = m.hx;
+            m.ty = m.hy;
+            m.waitUntil = Math.min(m.waitUntil || 0, t);
+          }
+        }
         // audição: o passo corrido chega antes da vista. O bicho para, vira para
         // o som e marca "?"; o duelo continua nascendo só da visão. Quem dorme
         // não ouve nem vê: o passo perto ou a corrida acordam.
@@ -1221,8 +1242,10 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
           m.olharEm = t + 380 + Math.random() * 900;
         }
       }
-      // o campo de visão: perto e com linha reta até você
+      // o campo de visão: perto e com linha reta até você. Quem está comendo a
+      // isca não levanta a cabeça, então o cheiro serve de distração.
       if (t < state.encounterLockUntil) continue;
+      if (m.lure && t < m.lure.until) continue;
       if (!canSeePlayer(m)) continue;
       startAlert(m, t);
       return;
@@ -1745,6 +1768,11 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
         },
       });
     }
+    // isca no chão fica na mesma fila por y das peças
+    if (state.bait && state.bait.until > clock() && dentroDaVista(state.bait.x, state.bait.y, vista)) {
+      const b = state.bait;
+      drawables.push({ y: b.y, draw: () => drawIsca(ctx, b.x * TILE, b.y * TILE, t, palette.accent) });
+    }
     for (const m of state.monsters) {
       if (!m.alive || !dentroDaVista(m.x, m.y, vista)) continue;
       visiveis.monstros++;
@@ -2108,6 +2136,23 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
       state.torchUntil = Math.max(state.torchUntil, clock() + ms);
       say("A tocha acende. A caverna fica menor.", 2600);
       updateHud();
+    },
+    lure(raio = 8, ms = 6000) {
+      if (!state.open) return 0;
+      const x = state.player.x;
+      const y = state.player.y;
+      let n = 0;
+      for (const m of state.monsters) {
+        if (!m.alive || m.boss) continue;
+        if (Math.hypot(m.x - x, m.y - y) > raio) continue;
+        m.lure = { x, y, until: clock() + ms };
+        m.dorme = false;
+        n++;
+      }
+      state.bait = { x, y, until: clock() + ms };
+      say(n ? `${n} bicho(s) sentiram a isca.` : "A isca não chamou ninguém.", 2600);
+      updateHud();
+      return n;
     },
     useBomb() {
       if (!state.open) return { ok: false, hit: 0 };
