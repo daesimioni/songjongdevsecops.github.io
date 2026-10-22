@@ -234,3 +234,21 @@ O loot é por espécie, não por sorte pura: o jogador sabe o que procurar. Nada
 - Variantes raras: quantas e com que frequência.
 - Chefe de hub: o Porto tem um chefe ou é só tutorial?
 - Bestiário compartilhado em party: cada um vê o seu ou o do grupo?
+
+## Famílias (2026-10-22)
+
+As 25 formas de criatura caem em cinco famílias pelo jeito de lutar:
+**Gelatinosos** (slime, jelly, atom, flask), **Alados** (bat, moth, wisp, note,
+imp), **Cascudos** (scorpion, golem, beetle, crab, sentinel, crystal, gear,
+tome), **Rastejantes** (spider, ant, serpent, node, vector) e **Olhos** (eye,
+glyph, prism). O chefe não entra em família.
+
+- o bestiário mostra uma faixa com `conhecidos/total` por família;
+- conhecer todas as espécies de uma família grava a família no save, avisa uma
+  vez ("Família Gelatinosos estudada: +50% de dano contra ela") e passa a dar
+  **+50% de dano** contra as criaturas dela, na previsão e no dano real;
+- golpe que zerou (desvio) não é ressuscitado pelo bônus.
+
+Prova: `test/familias.test.mjs` (cobertura das 25 formas, complemento, aviso
+único, dano, save) e sonda `cdp-familias.mjs` (5 chips, 4/4 com +50%, previsão
+de 1,1 para 1,7 contra a família completa).

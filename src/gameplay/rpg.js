@@ -10,6 +10,7 @@ import { VOCACAO_PADRAO, VOC_POR_ID, subcategoriaDe, vocacaoDe, multDe } from ".
 import { bonusDeRitmo } from "./duelo-ritmo.js";
 import { habilidadeDoChefe, danoDoJogador, extraDoErro, curaDoChefe, espelhoDoChefe, notaDaHabilidade } from "./chefe-habilidades.js";
 import { registrarResposta, vencido, resumoConceitos, conceitoDe } from "./conceitos.js";
+import { FAMILIAS, FAMILIA_POR_ID, familiaDeKind } from "../content/familias.js";
 
 const RESPAWN_MS = 5 * 60 * 1000;
 const BOSS_RESPAWN_MS = 20 * 60 * 1000;
@@ -56,6 +57,7 @@ function emptyData() {
     seen: {},
     met: {},
     conceitos: {},
+    familias: {},
     plots: {},
     plotGift: {},
     // vocação: padrão para save antigo, que nunca escolheu
@@ -141,6 +143,9 @@ function readData() {
       }
       if (!Object.keys(pecas).length) continue;
       data.builds.push({ n: b.n.slice(0, 16), e: pecas });
+    }
+    for (const [id, at] of Object.entries(obj.familias || {})) {
+      if (FAMILIA_POR_ID.has(id) && Number.isFinite(at)) data.familias[id] = at;
     }
     for (const [id, at] of Object.entries(obj.met || {})) {
       if (!/^[a-z0-9-]{2,60}$/.test(id) || !Number.isFinite(at)) continue;
@@ -317,10 +322,52 @@ export class RPG {
     const bank = QUESTION_INDEX.get(entry.continent)?.[entry.tier] || [];
     if (bank.length) entry.sample = bank[entry.count % bank.length].q.slice(0, 90);
     this.data.seen[kind] = entry;
+    // conhecer a última espécie da família rende a fraqueza estudada
+    this.revisarFamilias();
     // o bestiário guarda a criatura pelo id: encontrar já revela a ficha
     const id = String(monster.id || "").toLowerCase().replace(/[^a-z0-9-]/g, "").slice(0, 60);
     if (id) this.data.met[id] = now();
     this.save();
+  }
+
+  // Família estudada: todas as espécies conhecidas rendem +50% de dano contra
+  // ela, registrado uma vez no save e avisado na tela.
+  revisarFamilias() {
+    const completas = [];
+    for (const familia of FAMILIAS) {
+      if (this.data.familias?.[familia.id]) continue;
+      if (!familia.kinds.every((kind) => Number(this.data.seen[kind]?.count) > 0)) continue;
+      this.data.familias = this.data.familias || {};
+      this.data.familias[familia.id] = now();
+      completas.push(familia);
+    }
+    for (const familia of completas) {
+      this.toast(`Família ${familia.nome} estudada: +50% de dano contra ela.`, 5200);
+    }
+    return completas;
+  }
+
+  familiaDe(kind) {
+    return familiaDeKind(kind);
+  }
+
+  familiaCompleta(kind) {
+    const familia = familiaDeKind(kind);
+    return Boolean(familia && this.data.familias?.[familia.id]);
+  }
+
+  familiasView() {
+    return FAMILIAS.map((familia) => {
+      const conhecidos = familia.kinds.filter((kind) => Number(this.data.seen[kind]?.count) > 0).length;
+      return {
+        id: familia.id,
+        nome: familia.nome,
+        desc: familia.desc,
+        total: familia.kinds.length,
+        conhecidos,
+        completa: Boolean(this.data.familias?.[familia.id]),
+      };
+    });
   }
 
   seenView() {
@@ -867,6 +914,7 @@ export class RPG {
     if (MONSTER_TRAITS[d.monster?.kind]?.id === "armor") dano = Math.max(1, dano - 1);
     dano = danoDoJogador(d.habilidade?.id, d.bossPhase, dano);
     if (dano > 0) dano += bonusDeRitmo((d.seguidos || 0) + 1);
+    if (dano > 0 && this.familiaCompleta(d.monster?.kind)) dano = Math.round(dano * 1.5 * 10) / 10;
     return Math.round(dano * 10) / 10;
   }
 
@@ -1589,6 +1637,11 @@ export class RPG {
       if (d.boss && d.seguidos >= 3) {
         damage += 1;
         note = `${note ? note + " " : ""}O ponto fraco está exposto: +1 de dano.`;
+      }
+      // família estudada: +50% contra ela, sem ressuscitar golpe que zerou
+      if (damage > 0 && this.familiaCompleta(d.monster?.kind)) {
+        damage = Math.max(1, Math.round(damage * 1.5));
+        note = `${note ? note + " " : ""}Fraqueza da família estudada: +50%.`;
       }
       d.monsterHp = Math.max(0, d.monsterHp - damage);
       this.registrarConceito(d.question.area, true);

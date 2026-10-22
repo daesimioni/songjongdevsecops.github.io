@@ -176,6 +176,21 @@ export function createBestiary({ rpg, getAreaId }) {
         numeros.appendChild(tile);
       }
     }
+    // famílias: o jogador vê o que já conhece e o que a família rende
+    const familias = document.getElementById("best-familias");
+    if (familias) {
+      familias.textContent = "";
+      for (const familia of rpg?.familiasView?.() || []) {
+        const chip = el("div", `best-familia${familia.completa ? " completa" : ""}`);
+        chip.setAttribute("role", "listitem");
+        chip.append(
+          el("b", "", familia.nome),
+          el("span", "", `${familia.conhecidos}/${familia.total}${familia.completa ? " · +50% de dano" : ""}`),
+        );
+        chip.title = familia.desc;
+        familias.appendChild(chip);
+      }
+    }
     for (const botao of document.querySelectorAll("#best-tabs .best-tab")) {
       const ativo = botao.dataset.filtro === filtro;
       botao.setAttribute("aria-pressed", ativo ? "true" : "false");
