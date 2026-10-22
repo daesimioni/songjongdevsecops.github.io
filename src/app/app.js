@@ -3103,6 +3103,47 @@ $("mini-toggle").addEventListener("click", () => {
 });
 aplicarMiniRecolhido(readJSON(MINI_RECOLHIDO, false) === true);
 
+// Mapa grande: o mesmo minimapa em tela cheia. Só o canvas cresce, o desenho é
+// o mesmo; o estado recolhido volta quando fecha.
+let mapaGrande = false;
+let miniRecolhidoAntes = false;
+function pintarMapaGrande(aberto) {
+  const caixa = $("minimap");
+  const tela = $("minimap-canvas");
+  if (!caixa || !tela) return;
+  if (aberto && caixa.classList.contains("mini")) {
+    miniRecolhidoAntes = true;
+    aplicarMiniRecolhido(false);
+  }
+  if (!aberto && miniRecolhidoAntes) {
+    miniRecolhidoAntes = false;
+    aplicarMiniRecolhido(true);
+  }
+  mapaGrande = aberto;
+  caixa.classList.toggle("grande", aberto);
+  const botao = $("mini-expandir");
+  if (botao) {
+    botao.setAttribute("aria-pressed", String(aberto));
+    botao.setAttribute("aria-label", aberto ? "fechar o mapa grande" : "abrir o mapa grande");
+  }
+  const lado = aberto ? [1200, 800] : [600, 400];
+  if (tela.width !== lado[0]) {
+    tela.width = lado[0];
+    tela.height = lado[1];
+    pintarZoomMini(renderer.miniScale ? `${renderer.miniScale}×` : "1×");
+  }
+}
+$("mini-expandir")?.addEventListener("click", () => {
+  pintarMapaGrande(!mapaGrande);
+  audio.blip();
+});
+window.addEventListener("keydown", (e) => {
+  if (e.key !== "Escape" || !mapaGrande) return;
+  e.preventDefault();
+  e.stopPropagation();
+  pintarMapaGrande(false);
+}, true);
+
 $("mini-in").addEventListener("click", () => trocarZoomMini(1));
 $("mini-out").addEventListener("click", () => trocarZoomMini(-1));
 $("mini-fit").addEventListener("click", () => {

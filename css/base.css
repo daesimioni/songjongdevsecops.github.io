@@ -900,6 +900,21 @@ body.na-casa .minimap { display: none; }
   line-height: 1;
 }
 /* recolhido: fica só o fio com a coordenada, o piso e o botão de abrir */
+/* mapa grande: o mesmo canvas do minimapa em tela cheia, sem segundo desenho */
+.minimap.grande {
+  position: fixed;
+  inset: 12px;
+  z-index: 60;
+  width: auto;
+  height: auto;
+}
+.minimap.grande #minimap-canvas {
+  width: 100%;
+  height: auto;
+  max-height: calc(100vh - 112px);
+  object-fit: contain;
+}
+.minimap.grande .mini-tools { justify-content: center; }
 .minimap.mini { padding: 5px 7px; }
 .minimap.mini .mini-head { gap: 8px; }
 .minimap.mini #minimap-canvas,
