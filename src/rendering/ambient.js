@@ -115,9 +115,13 @@ export function criarAmbiente({ semente = 1, data = new Date(), estacao = null }
     forcarEvento(id, duracao = null, agora = 0) {
       const evento = EVENTO_POR_ID.get(id);
       if (!evento) return false;
+      // evento forçado passa pelos mesmos ganchos do evento sorteado: quem escuta
+      // `:comeca` e `:termina` (HUD, caçada, morador) não pode ficar de fora
+      if (atual) emitir(`${atual.evento.id}:termina`, atual.evento, 0);
       const dur = duracao || evento.duracao;
       atual = { evento: { ...evento, duracao: dur }, inicio: agora, pico: agora + dur * 0.3, fim: agora + dur, picado: false };
       proximoEm = atual.fim + evento.espera;
+      emitir(`${evento.id}:comeca`, atual.evento, 0);
       return true;
     },
     intensidade(t) {

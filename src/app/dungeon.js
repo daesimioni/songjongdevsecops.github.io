@@ -19,6 +19,7 @@ import { drawSkiff } from "../rendering/skiff.js";
 import { escalaDaCamera, tilesNaVista, dentroDaVista, caixaNaVista } from "../core/camera.js";
 import { fracoesDeVida } from "../core/vitais.js";
 import { propsDaSala } from "../content/salas-tematicas.js";
+import { nomeDaCacada } from "../content/cacada-clima.js";
 
 const $ = (id) => document.getElementById(id);
 const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
@@ -49,7 +50,7 @@ function torchGlowSprite() {
 
 // ---------- a caverna em si ----------
 
-export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, onWiki, onGather, onExit, onKeeper, onConurbation, onPortal, onVocacao, isBlocked, vitais = null, avatar = {}, look = null, gear = null }) {
+export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, onWiki, onGather, onExit, onKeeper, onConurbation, onPortal, onVocacao, isBlocked, vitais = null, avatar = {}, look = null, gear = null, getClima = null }) {
   const canvas = $("dungeon-canvas");
   const ctx = canvas?.getContext("2d", { alpha: false }) || null;
 
@@ -209,7 +210,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     for (const room of def.rooms) {
       if (room.kind === "entrance" || room.kind === "city") continue;
       const tier = clamp(room.tier || 1, 1, 3);
-      const name = names[n % Math.max(1, names.length)] || "Coisa";
+      const name = nomeDaCacada(names, n, tier, String(getClima?.() || "limpo"), (nome, t) => creatureKind(def, nome, t)) || "Coisa";
       n++;
       // o chefe mora sozinho: comum e chefe na mesma sala veriam o jogador
       // juntos, que é exatamente o combo que esta regra proíbe

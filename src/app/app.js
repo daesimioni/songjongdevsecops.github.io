@@ -66,6 +66,7 @@ const TOTAL = SITES.length;
 
 const saved = {
   name: readJSON(STORAGE.name, ""),
+  clima: "limpo",
   room: readJSON(STORAGE.room, NET.defaultRoom),
   sound: readJSON(STORAGE.sound, false),
   cards: new Set(arrayOf(readJSON(STORAGE.cards, []))),
@@ -268,7 +269,10 @@ for (const [id, aviso] of Object.entries(AVISO_CLIMA)) {
     // dentro de casa o céu não chega: o aviso fica para quando sair
     if (state.started && !state.casa) toast(aviso, 3400);
   });
-  // o morador recolhe na chuva e volta a passear quando ela passa
+  // o clima corrente vale para a caçada e para o morador: a chuva recolhe,
+  // a neblina muda o elenco do subsolo e a rajada traz o que voa
+  renderer.ambiente.on(`${id}:comeca`, () => { state.clima = id; });
+  renderer.ambiente.on(`${id}:termina`, () => { if (state.clima === id) state.clima = "limpo"; });
   if (id === "chuva") {
     renderer.ambiente.on("chuva:comeca", () => world.setClima("chuva"));
     renderer.ambiente.on("chuva:termina", () => world.setClima("limpo"));
@@ -338,6 +342,7 @@ dungeon = createDungeon({
   avatar: player.colors,
   look: player.look,
   gear: () => gearAtual(),
+  getClima: () => state.clima || "limpo",
   onExit: ({ kind, dungeon: def, target }) => {
     rpg.setCave(false);
     if (kind === "death") return;
@@ -2340,6 +2345,8 @@ function loop(now) {
     const active = state.started && !state.panelOpen && !state.modal && !state.chatOpen && now >= state.pvpDownUntil;
     updateBoost(dt, active);
     rpg.tick();
+    // o relógio do clima anda sempre, inclusive dentro da caverna e no modo leve
+    renderer.ambiente.tick(now);
     if (!state.manaAt || now - state.manaAt > 1000) {
       state.manaAt = now;
       rpg.pulse();

@@ -20,9 +20,11 @@ export function createAmbientRenderer(ctx) {
   function drawAmbient(area, time, camX, camY, viewW, viewH, cena = null) {
     const kit = kitDaArea(area);
     if (!kit) return;
-    const ev = relogioAmbiente.tick(time);
-    const id = ev.evento?.id || "";
-    const intensidade = ev.intensidade || 0;
+    // o relógio do clima anda no laço do jogo, não no desenho: no modo leve a
+    // camada some, mas a chuva continua começando e terminando
+    const evento = relogioAmbiente.eventoAtual?.evento || null;
+    const id = evento?.id || "";
+    const intensidade = evento ? relogioAmbiente.intensidade(time) : 0;
     const chuva = id === "chuva" ? intensidade : 0;
     const vento = id === "rajada" ? intensidade : 0;
     const neblina = id === "neblina" ? intensidade : 0;

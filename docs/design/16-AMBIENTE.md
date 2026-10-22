@@ -74,3 +74,27 @@ ela carrega o que o lugar tem, não um capim genérico.
   material;
 - captura de seis ilhas (uma de cada disciplina) mostrando o elemento no ar;
 - fps dentro do que foi medido antes do item 29.
+
+## Clima na caçada e relógio sempre andando (2026-10-22)
+
+O clima deixou de ser só cenário e aviso no HUD:
+
+- **chuva** puxa o elenco molhado (`jelly`, `crab`, `slime`, `serpent`);
+- **neblina** puxa o que some da vista (`moth`, `wisp`, `eye`, `glyph`);
+- **rajada** puxa o que voa (`bat`, `vector`, `ant`, `node`).
+
+A troca é feita por `nomeDaCacada` em `src/content/cacada-clima.js`, posto a
+posto, dentro do próprio continente: sala, posto, tier e dificuldade não mudam.
+Sem bicho que combine, o rodízio normal da caverna continua.
+
+Dois defeitos apareceram na prova e foram corrigidos: o relógio do clima só
+andava dentro do desenho de ambiente, então no **modo leve** a chuva nunca
+terminava; agora ele anda no laço do jogo, inclusive dentro da caverna. E o
+`forcarEvento` (usado por teste e depuração) trocava o evento sem passar pelos
+ganchos `:comeca`/`:termina`, então quem escuta o clima não ficava sabendo;
+agora ele passa.
+
+Prova: `test/cacada-clima.test.mjs` (rodízio, chuva, neblina, rajada, fallback e
+volta do índice) e sonda `cdp-cacada-clima.mjs`: chuva forçada mudou os 6 bichos
+da caverna de computação, todos de espécie molhada, contra 7 no clima limpo; ao
+encerrar, o estado voltou a `limpo`. Zero erro de console.
