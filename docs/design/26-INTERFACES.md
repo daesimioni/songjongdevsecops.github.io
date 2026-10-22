@@ -77,3 +77,12 @@ achou estouro, alvo pequeno nem foco perdido. São melhorias de leitura.
    (`sheet.js`, `app.js`); falta revisar o diário de estações e a loja vazia.
 4. **Loja e duelo** dependem de caverna aberta; a sonda usa gancho de depuração.
    Um teste de fluxo real (mestra, treino) continua faltando.
+
+5. **Leitura em voz alta: fechada em 2026-10-22.** O duelo ganhou o botão
+   `ouvir a pergunta`, que lê a pergunta e as cinco alternativas com as letras
+   do teclado pelo `speechSynthesis` do navegador, em voz pt-BR quando existe;
+   o segundo clique (`parar leitura`) cala, e responder, avançar ou fechar o
+   duelo também cala. Sem a API, o botão nasce desabilitado e a tela avisa em
+   vez de fingir. Prova: `test/voz-duelo.test.mjs` e sonda `cdp-voz.mjs`
+   (358 caracteres em pt-BR com pergunta e 5 alternativas, `aria-pressed`
+   alternando, 0 erro de console; captura `voz-duelo-*.png`).

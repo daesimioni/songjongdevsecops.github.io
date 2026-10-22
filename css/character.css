@@ -215,6 +215,20 @@
 }
 .duel-dica:hover:not(:disabled) { background: rgba(180, 140, 255, 0.14); }
 .duel-dica:disabled { opacity: 0.42; cursor: default; }
+.duel-voz {
+  width: 100%;
+  margin-top: 8px;
+  padding: 9px 12px;
+  border: 1px solid rgba(140, 180, 255, 0.4);
+  border-radius: 7px;
+  background: rgba(140, 180, 255, 0.05);
+  color: #b9cdf2;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  text-align: left;
+}
+.duel-voz:hover:not(:disabled) { background: rgba(140, 180, 255, 0.12); }
+.duel-voz:disabled { opacity: 0.42; cursor: default; }
 .duel-option.riscada {
   opacity: 0.45;
   text-decoration: line-through;

@@ -9,7 +9,7 @@ de ele existir, com números que o código já superou.
 Auditoria read-only de 2026-10-22 cruzou os documentos 00 a 38 com `src/`,
 `test/` e `tools/`. Números do código: 86 áreas, 454 estações, 93 cavernas, 541
 itens, 464 fichas, 284 missões, 194 NPCs, 2.251 entradas de wiki, 887 perguntas
-de duelo, 120 módulos e 70 testes node. `npm run validate` passa (lint,
+de duelo, 120 módulos e 71 testes node. `npm run validate` passa (lint,
 contrato de módulos, testes e build) e a matriz de navegador dá 19/19.
 
 Esforço: **P** até um dia, **M** de dois a cinco dias, **G** mais de uma semana.
@@ -51,7 +51,7 @@ Estado: **feito**, **parcial**, **ausente**, **decisão** (produto, não código
 | funções das peças temáticas | parcial | oficina/biblioteca/observatório são cenário sólido; dar reparo, página e revelar sala do chefe | M |
 | tema de sala por área | parcial | tema por continente, não por área | M |
 | teste de fluxo real de loja e duelo | parcial | duelo tem controlador com DOM mínimo; loja só teste estático | M |
-| acessibilidade: voz, escala, daltonismo | parcial | teclado, foco e aria-live prontos; falta `speechSynthesis`, escala de fonte e paleta | M |
+| acessibilidade: voz, escala, daltonismo | parcial | teclado, foco e aria-live prontos; **voz feita** (botão ouvir/parar, pt-BR, testes e sonda); faltam escala de fonte e paleta para daltonismo | M |
 | save versionado, migração e exportar/importar | parcial | névoa r2 e backup por DM; falta versão global e arquivo manual | M |
 | linter de conteúdo | ausente | validação só em teste; falta revisor e versão por pergunta | M |
 | ferries, elevadores, ciclo dia/noite, mapa grande, pontes por missão | ausente | skiff, túnel e 54 travessias fixas existem | M cada |

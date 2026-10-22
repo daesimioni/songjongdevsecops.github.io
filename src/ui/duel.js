@@ -4,6 +4,7 @@ import { ITEMS, TIERS, MONSTER_TRAITS } from "../content/rpg-data.js";
 import { drawCreatureArt } from "../rendering/creature.js";
 import { petAbilityNeedsDuel } from "../gameplay/rpg.js";
 import { leituraDeRitmo } from "../gameplay/duelo-ritmo.js";
+import { lerPergunta, pararVoz, vozDisponivel } from "./voz.js";
 
 const $ = (id) => document.getElementById(id);
 const LETTERS = "ABCDE";
@@ -11,6 +12,8 @@ let lastPick = null;
 let sparked = [];
 let hinted = null;
 let petInfo = "";
+// true enquanto a leitura em voz alta da pergunta está no alto-falante
+let vozLida = false;
 
 function el(tag, cls, text) {
   const node = document.createElement(tag);
@@ -86,6 +89,8 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
     sparked = [];
     hinted = null;
     petInfo = "";
+    pararVoz();
+    vozLida = false;
     render();
     startSprite();
     return true;
@@ -93,6 +98,8 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
 
   function close() {
     stopSprite();
+    pararVoz();
+    vozLida = false;
     rpg.flee();
     lastPick = null;
     sparked = [];
@@ -108,6 +115,8 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
     sparked = [];
     hinted = null;
     petInfo = "";
+    pararVoz();
+    vozLida = false;
     render();
     startSprite();
     return true;
@@ -281,6 +290,12 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
       db.disabled = dicas >= 3 || d.monsterHp <= 0 || rpg.mana() < 1;
       db.addEventListener("click", useHint);
       main.appendChild(db);
+      const vb = el("button", "duel-voz", vozLida ? "parar leitura" : "ouvir a pergunta");
+      vb.type = "button";
+      vb.disabled = d.monsterHp <= 0 || !vozDisponivel();
+      vb.setAttribute("aria-pressed", vozLida ? "true" : "false");
+      vb.addEventListener("click", useVoice);
+      main.appendChild(vb);
       const foot = el("p", "duel-hint", "Toque numa alternativa (ou A a E no teclado). Errar tira vida; acertar tira vida do monstro.");
       main.appendChild(foot);
     }
@@ -370,6 +385,31 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
     body.appendChild(b);
   }
 
+  function useVoice() {
+    const d = rpg.duel;
+    if (!d || d.phase !== "question") return false;
+    if (vozLida) {
+      pararVoz();
+      vozLida = false;
+      render();
+      return false;
+    }
+    const question = d.question;
+    const ok = lerPergunta(question, {
+      onend: () => {
+        vozLida = false;
+        if (rpg.duel?.phase === "question" && rpg.duel.question === question) render();
+      },
+    });
+    if (!ok) {
+      toast("Este navegador não tem leitura em voz alta.", 2800);
+      return false;
+    }
+    vozLida = true;
+    render();
+    return true;
+  }
+
   function useHint() {
     const res = rpg.usarDica();
     if (!res.ok) {
@@ -440,6 +480,8 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
 
   function answer(index) {
     if (!rpg.duel || rpg.duel.phase !== "question") return;
+    pararVoz();
+    vozLida = false;
     if (sparked.includes(index)) return;
     lastPick = index;
     const res = rpg.answer(index);
@@ -466,6 +508,8 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
     sparked = [];
     hinted = null;
     petInfo = "";
+    pararVoz();
+    vozLida = false;
     const res = rpg.next();
     if (res?.phase === "question") { render(); focusAction(); }
   }
