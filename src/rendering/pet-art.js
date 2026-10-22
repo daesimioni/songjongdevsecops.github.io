@@ -33,6 +33,13 @@ function desenharPet(ctx, kind, x, y, t = 0, moving = false, dir = 0, semSombra 
   const bob = moving ? Math.abs(Math.sin(t * 0.02)) * 1.2 : Math.sin(t * 0.002) * 0.5;
   // pisca de vez em quando, como o dono; parado o bicho também mexe a cauda
   const blink = !moving && Math.floor(t / 2400) % 8 === 0;
+  // Parado, cada bicho tem o tique da própria espécie. Só a coruja e o
+  // papagaio giram a cabeça em lateral; o resto do tique mora no ramo da
+  // espécie e some ao andar, para não brigar com o passo.
+  const gira = moving ? 0
+    : kind === "owl" ? Math.round(Math.sin(t * 0.0009) * 2)
+    : kind === "parrot" ? Math.round(Math.sin(t * 0.0026) * 2)
+    : 0;
   ctx.save();
   ctx.translate(x, y);
   // o bicho vira junto com quem ele segue; o espelho é em volta do próprio
@@ -50,14 +57,14 @@ function desenharPet(ctx, kind, x, y, t = 0, moving = false, dir = 0, semSombra 
   if (kind === "owl") {
     ctx.fillStyle = colors.body;
     ctx.fillRect(-5, -9 - bob, 10, 8);
-    ctx.fillRect(-4, -12 - bob, 8, 4);
+    ctx.fillRect(-4 + gira, -12 - bob, 8, 4);
     ctx.fillStyle = colors.light;
     ctx.fillRect(-4, -8 - bob, 8, 3);
     ctx.fillStyle = colors.eye;
-    ctx.fillRect(-3, -11 - bob, 2, 2);
-    ctx.fillRect(1, -11 - bob, 2, 2);
+    ctx.fillRect(-3 + gira, -11 - bob, 2, 2);
+    ctx.fillRect(1 + gira, -11 - bob, 2, 2);
     ctx.fillStyle = "#e8b04a";
-    ctx.fillRect(-1, -8 - bob, 2, 1);
+    ctx.fillRect(-1 + gira, -8 - bob, 2, 1);
     ctx.fillStyle = colors.body;
     ctx.fillRect(-7, -8 - bob, 2, 5);
     ctx.fillRect(5, -8 - bob, 2, 5);
@@ -75,8 +82,16 @@ function desenharPet(ctx, kind, x, y, t = 0, moving = false, dir = 0, semSombra 
     ctx.fillRect(2, -11 - bob, 2, 1);
     ctx.fillStyle = "#2c4a2c";
     ctx.fillRect(-2, -4 - bob, 4, 1);
+    // parado a garganta infla, como o sapo chamando
+    if (!moving) {
+      const papo = 1 + Math.round((Math.sin(t * 0.0035) + 1) * 0.5);
+      ctx.fillStyle = colors.light;
+      ctx.fillRect(-1 - papo, -3 - bob, 2 + papo * 2, papo);
+    }
   } else if (kind === "wisp") {
     const float = Math.sin(t * 0.004) * 1.5;
+    // parada a luz pulsa; andando o rastro já move o desenho
+    const brilho = moving ? 1 : 1 + Math.sin(t * 0.005) * 0.15;
     ctx.fillStyle = colors.body;
     ctx.beginPath();
     ctx.arc(0, -8 + float, 4, 0, Math.PI * 2);
@@ -85,9 +100,9 @@ function desenharPet(ctx, kind, x, y, t = 0, moving = false, dir = 0, semSombra 
     ctx.beginPath();
     ctx.arc(0, -8 + float, 2.4, 0, Math.PI * 2);
     ctx.fill();
-    ctx.globalAlpha = 0.35;
+    ctx.globalAlpha = 0.35 * brilho;
     ctx.beginPath();
-    ctx.arc(0, -8 + float, 7, 0, Math.PI * 2);
+    ctx.arc(0, -8 + float, 7 * brilho, 0, Math.PI * 2);
     ctx.fill();
     ctx.globalAlpha = 1;
     ctx.fillStyle = colors.body;
@@ -110,28 +125,37 @@ function desenharPet(ctx, kind, x, y, t = 0, moving = false, dir = 0, semSombra 
     ctx.moveTo(2, -7 - bob);
     ctx.lineTo(4, -10 - bob);
     ctx.stroke();
+    // parado esfrega a perna da frente na de apoio
+    if (!moving) {
+      const esfrega = Math.sin(t * 0.009) > 0 ? 1 : 0;
+      ctx.fillStyle = colors.body;
+      ctx.fillRect(-3, -1 - bob, 1 + esfrega, 1);
+      ctx.fillRect(2, -1 - bob, 1, 1);
+    }
   } else if (kind === "parrot") {
     ctx.fillStyle = colors.body;
     ctx.fillRect(-4, -6 - bob, 8, 5);
-    ctx.fillRect(-3, -9 - bob, 6, 4);
+    ctx.fillRect(-3 + gira, -9 - bob, 6, 4);
     ctx.fillStyle = colors.light;
     ctx.fillRect(-2, -5 - bob, 4, 2);
     ctx.fillStyle = "#d94f3d";
-    ctx.fillRect(-3, -10 - bob, 2, 2);
-    ctx.fillRect(-2, -11 - bob, 3, 1);
+    ctx.fillRect(-3 + gira, -10 - bob, 2, 2);
+    ctx.fillRect(-2 + gira, -11 - bob, 3, 1);
     ctx.fillStyle = colors.eye;
-    ctx.fillRect(0, -8 - bob, 2, 2);
+    ctx.fillRect(gira, -8 - bob, 2, 2);
     ctx.fillStyle = "#1a1a1a";
-    ctx.fillRect(1, -8 - bob, 1, 1);
+    ctx.fillRect(1 + gira, -8 - bob, 1, 1);
     ctx.fillStyle = "#e8b84a";
-    ctx.fillRect(2, -6 - bob, 2, 2);
+    ctx.fillRect(2 + gira, -6 - bob, 2, 2);
     ctx.fillStyle = colors.body;
     ctx.fillRect(-6, -5 - bob, 2, 4);
   } else if (kind === "shade") {
+    // parada a sombra ondula de largura e as pontas varrem o chão
+    const onda = moving ? 0 : Math.round(Math.sin(t * 0.004));
     ctx.globalAlpha = 0.9;
     ctx.fillStyle = colors.body;
     ctx.beginPath();
-    ctx.ellipse(0, -7 - bob, 5.5, 7, 0, 0, Math.PI * 2);
+    ctx.ellipse(0, -7 - bob, 5.5 + onda, 7, 0, 0, Math.PI * 2);
     ctx.fill();
     ctx.globalAlpha = 1;
     ctx.fillStyle = colors.light;
@@ -141,8 +165,8 @@ function desenharPet(ctx, kind, x, y, t = 0, moving = false, dir = 0, semSombra 
     ctx.fillRect(1, -8 - bob, 1, 1);
     ctx.globalAlpha = 0.55;
     ctx.fillStyle = colors.body;
-    ctx.fillRect(-2, -1, 1, 2);
-    ctx.fillRect(1, -1, 1, 2);
+    ctx.fillRect(-2 + onda, -1, 1, 2);
+    ctx.fillRect(1 + onda, -1, 1, 2);
     ctx.globalAlpha = 1;
   } else {
     // gato
@@ -169,26 +193,33 @@ function desenharPet(ctx, kind, x, y, t = 0, moving = false, dir = 0, semSombra 
   if (dir !== 0 && kind !== "wisp") {
     ctx.fillStyle = colors.body;
     const top = kind === 'owl' ? -12 : kind === 'cricket' ? -8 : -10;
-    ctx.fillRect(-4,top-bob,8,5);
+    ctx.fillRect(-4 + gira,top-bob,8,5);
     if (dir === 1 || dir === 2 || dir === 4 || dir === 5) {
       ctx.fillStyle = blink ? colors.body : colors.eye;
-      ctx.fillRect(2,top+2-bob,1,1);
-      if (dir >= 4) ctx.fillRect(-1,top+2-bob,1,1);
+      ctx.fillRect(2 + gira,top+2-bob,1,1);
+      if (dir >= 4) ctx.fillRect(-1 + gira,top+2-bob,1,1);
       if(kind === 'parrot' || kind === 'owl') {
-        ctx.fillStyle='#e8b04a';ctx.fillRect(4,top+3-bob,2,1);
+        ctx.fillStyle='#e8b04a';ctx.fillRect(4 + gira,top+3-bob,2,1);
       }
     } else {
       ctx.fillStyle=colors.light;ctx.fillRect(-1,top+1-bob,2,4);
     }
   }
-  // Passo alternado no plano do chão, asas para os companheiros voadores.
+  // Passo alternado no plano do chão: quatro patas em trote diagonal nos
+  // quadrúpedes (gato, sapo), duas patas nos bípedes e no grilo, e asas para
+  // os voadores. A pata sobe e desce, o corpo não: a âncora fica no chão.
   if (moving && kind !== 'wisp' && kind !== 'shade') {
-    const stride = Math.sin(t*.02)*1.5;
+    const passo=Math.sin(t*.02)*1.1;
     ctx.fillStyle=colors.body;
     if(kind === 'owl' || kind === 'parrot') {
-      ctx.fillRect(-7,-7-bob-stride,2,4);ctx.fillRect(5,-7-bob+stride,2,4);
+      ctx.fillRect(-7,-7-bob-passo,2,4);ctx.fillRect(5,-7-bob+passo,2,4);
+      ctx.fillRect(-2,-2+passo,1,2);ctx.fillRect(1,-2-passo,1,2);
+    } else if(kind === 'cricket') {
+      ctx.fillRect(-3,-2+passo,1,2);ctx.fillRect(2,-2-passo,1,2);
     } else {
-      ctx.fillRect(-4,-2+stride,2,2);ctx.fillRect(2,-2-stride,2,2);
+      const px=kind === 'frog' ? 5 : 4;
+      ctx.fillRect(-px,-2+passo,1,2);ctx.fillRect(-1,-2-passo,1,2);
+      ctx.fillRect(1,-2+passo,1,2);ctx.fillRect(px,-2-passo,1,2);
     }
   }
   if(kind === 'wisp') {
