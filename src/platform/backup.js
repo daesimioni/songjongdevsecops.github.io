@@ -67,6 +67,54 @@ function hashOf(text) {
   return (h >>> 0).toString(16);
 }
 
+// Arquivo manual: o mesmo conteúdo do backup, em JSON legível, para o jogador
+// guardar fora do navegador. A leitura aceita só as chaves conhecidas, exige que
+// cada valor seja JSON válido e recusa o que não seja um backup do jogo.
+export function serialize() {
+  return JSON.stringify(collect());
+}
+
+export function parseArquivo(texto) {
+  let obj;
+  try {
+    obj = JSON.parse(String(texto || ""));
+  } catch {
+    return { ok: false, reason: "O arquivo não é um JSON válido." };
+  }
+  if (!obj || typeof obj !== "object" || obj.v !== 1 || !obj.keys || typeof obj.keys !== "object") {
+    return { ok: false, reason: "O arquivo não é um backup do The Learning Valley." };
+  }
+  const keys = {};
+  for (const nome of KEYS) {
+    const valor = obj.keys[nome];
+    if (typeof valor !== "string" || valor.length > BACKUP.max) continue;
+    try { JSON.parse(valor); } catch { continue; }
+    keys[nome] = valor;
+  }
+  if (!Object.keys(keys).length) return { ok: false, reason: "O arquivo não tem nenhum progresso aproveitável." };
+  return {
+    ok: true,
+    name: typeof obj.name === "string" ? obj.name.slice(0, 24) : "",
+    at: Number(obj.at) || 0,
+    keys,
+  };
+}
+
+// Aplica o que a leitura aprovou. Devolve quantas partes entraram, para a tela
+// dizer a verdade quando o storage recusar alguma.
+export function aplicarArquivo(parsed) {
+  if (!parsed?.ok || !parsed.keys) return 0;
+  let n = 0;
+  for (const [nome, valor] of Object.entries(parsed.keys)) {
+    if (!KEYS.includes(nome)) continue;
+    try {
+      localStorage.setItem(STORAGE[nome], valor);
+      n++;
+    } catch { /* sem espaço ou sem storage */ }
+  }
+  return n;
+}
+
 export function collect() {
   const keys = {};
   for (const name of KEYS) {

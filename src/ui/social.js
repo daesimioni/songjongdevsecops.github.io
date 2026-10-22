@@ -1,6 +1,7 @@
 // A janela da Rede: conta, canais do mundo, DMs e quem está por perto.
 // Constrói o DOM na mão para nunca injetar conteúdo de relay como HTML.
 import { NOSTR } from "../core/runtime-config.js";
+import { serialize, parseArquivo, aplicarArquivo } from "../platform/backup.js";
 import { CONTINENTS } from "../content/config.js";
 
 const $ = (id) => document.getElementById(id);
@@ -716,6 +717,47 @@ export function createSocial({ rede, backup, quests, player, getPeers, getNet, g
     });
     bkRow.append(saveNow, loadNow);
     bk.appendChild(bkRow);
+
+    // arquivo manual: o mesmo save em JSON, para guardar fora do navegador
+    const arquivoRow = el("div", "rede-keyrow");
+    const baixar = el("button", "rede-mini", "baixar arquivo");
+    baixar.type = "button";
+    baixar.addEventListener("click", () => {
+      const texto = serialize();
+      let partes = 0;
+      try { partes = Object.keys(JSON.parse(texto).keys || {}).length; } catch { partes = 0; }
+      const url = URL.createObjectURL(new Blob([texto], { type: "application/json" }));
+      const a = el("a", "");
+      a.href = url;
+      a.download = `mundo-song-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      toast(`arquivo baixado com ${partes} parte${partes === 1 ? "" : "s"} do save.`, 3600);
+    });
+    const arquivo = el("input", "");
+    arquivo.type = "file";
+    arquivo.accept = "application/json,.json";
+    arquivo.hidden = true;
+    arquivo.setAttribute("aria-label", "arquivo de save para carregar");
+    const carregar = el("button", "rede-mini", "carregar arquivo");
+    carregar.type = "button";
+    carregar.addEventListener("click", () => arquivo.click());
+    arquivo.addEventListener("change", async () => {
+      const file = arquivo.files?.[0];
+      if (!file) return;
+      if (!confirm("Carregar este arquivo? O progresso deste navegador será trocado.")) { arquivo.value = ""; return; }
+      let texto = "";
+      try { texto = await file.text(); } catch { texto = ""; }
+      const parsed = parseArquivo(texto);
+      if (!parsed.ok) { toast(parsed.reason, 4400); arquivo.value = ""; return; }
+      const partes = aplicarArquivo(parsed);
+      if (!partes) { toast("nada entrou: o navegador recusou escrever o save.", 4400); arquivo.value = ""; return; }
+      toast(`arquivo carregado (${partes} parte${partes === 1 ? "" : "s"}). Recarregando o mundo.`, 4400);
+      setTimeout(() => location.reload(), 1500);
+    });
+    arquivoRow.append(baixar, carregar, arquivo);
+    bk.appendChild(arquivoRow);
+    bk.appendChild(el("p", "rede-hint", "O arquivo é o mesmo save do backup, em JSON legível: guarde fora do navegador e carregue em qualquer navegador. A chave da conta continua de fora."));
     wrap.appendChild(bk);
 
     const imp = el("form", "rede-card rede-form-stack");
