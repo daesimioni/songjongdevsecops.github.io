@@ -106,6 +106,7 @@ A árvore já vergava com a rajada e o fogo já tinha 4 a 8 quadros.
 | 2026-10-22 | Andar na diagonal | o boneco ganhou pose 3/4 de verdade: tronco inclinado para o lado do passo, ombro de trás com um pixel e cabeça virada dois pixels; de costas a nuca é cabelo, não a face, e as oito direções diferem entre si | `test/diagonal.test.mjs`, `cdp-avatar-diag.mjs` (oito poses), 111/111 suítes, 19/19 no navegador |
 | 2026-10-22 | Tempo e calendário | o relógio do jogo corre 60x (1 minuto real = 1 hora), o dia tem 24 minutos reais, o calendário é gregoriano desde 18/01/1997 e o HUD mostra data, hora, estação e dia/noite; as quatro estações têm cor e partículas, e chuva, tempestade, tornado, eclipse e neve mexem no céu e no chão | `test/calendario.test.mjs`, `test/dia-noite.test.mjs`, `test/ambiente.test.mjs`, `cdp-calendario.mjs` (14/14), 112/112 suítes, 19/19 no navegador |
 | 2026-10-22 | Foco do botão | botão usado com o mouse perde o foco depois do clique e modal aberto no mouse devolve o foco ao jogo, então o Espaço liga a nave em vez de repetir o botão; a ativação por teclado continua igual | `test/interfaces.test.mjs`, `cdp-foco.mjs` (11/11), 112/112 suítes, 19/19 no navegador |
+| 2026-10-22 | Malha P2P entre jogadores | o broker apresenta as pessoas e cada par abre um canal WebRTC direto; posição vai por canal não confiável a 10 Hz e eventos por canal confiável, com repasse ttl 2, dedupe por uid e broker de reserva; a espera de peer subiu para 12 s; o teste de duas abas derruba o broker de um lado e a posição continua chegando pelo canal direto | `test/malha.test.mjs`, `cdp-malha.mjs` (10/10), 113/113 suítes, 19/19 no navegador |
 
 ## Fecho da revisão (2026-10-22)
 
@@ -121,7 +122,7 @@ o que os testes e sondas desta data mostram, não o que o diário prometeu.
 | masmorras e batalha | 93 cavernas em 6 modelos e 4 pisos | sala temática por disciplina com 279 peças sólidas; 93 chefes | ritmo +1/+2, leitura de turno, fases 2 e 3, habilidade própria por chefe, turnos de PvP | `test/masmorras.test.mjs`, `test/salas.test.mjs`, `test/duelo-ritmo.test.mjs`, `test/chefe-habilidades.test.mjs`, `test/pvp-turnos.test.mjs`, `cdp-chefe-habilidade.mjs`, `cdp-sala-tema.mjs` |
 | pedidos já feitos | auditoria dos 38 pedidos na fonte viva | correção de resposta vazia, frase repetida, seis alternativas e páginas curtas | 69 páginas com curso completo, revisão das PRs externas e documentos alinhados | `docs/design/20-AUDITORIA-PEDIDOS.md`, `docs/design/33-REVISAO-EXTERNA.md`, `test/licoes.test.mjs`, `cdp-pagina.mjs` |
 
-Prova de conjunto desta data: `npm test` com **112 testes em 115 arquivos, 112 passaram**;
+Prova de conjunto desta data: `npm test` com **113 testes em 116 arquivos, 113 passaram**;
 matriz de navegador **19/19** remedida em 2026-10-22 depois de clima, sono, famílias,
 texto maior, marcas do duelo, variantes, bilhetes, arcos, patrulha e perseguição e do desacoplamento
 mundo→rendering (`cdp-regressao.mjs`: HUD, mochila 40, bestiário

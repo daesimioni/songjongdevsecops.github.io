@@ -60,8 +60,11 @@ No teclado: `WASD` ou setas andam; segure duas direções para andar na diagonal
 diário e `C` a ficha. `Enter` também abre a conversa.
 
 A praça compartilhada mostra outras pessoas na mesma sala. Não existe servidor
-próprio: o site é estático e o sinal usa um broker MQTT público por WebSocket.
-Se o sinal falhar, o mundo continua funcionando sozinho.
+próprio: o site é estático, e o broker MQTT público só apresenta as pessoas. No
+encontro, cada par de jogadores abre um canal WebRTC direto: a posição vai por
+um canal rápido e os eventos por um canal confiável, com repasse pelos outros
+jogadores e o broker como reserva. Se um enlace cair, a pessoa continua sendo
+vista pelo caminho alternativo; se o sinal todo falhar, o mundo roda sozinho.
 
 O estado de cada jogador vai a 10 Hz, com número de sequência. O desenho guarda
 um pequeno buffer e interpola entre pacotes, então os outros bonecos caminham

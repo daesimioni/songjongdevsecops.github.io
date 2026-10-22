@@ -1,5 +1,6 @@
 import { MAP_W, MAP_H, NET } from "../core/runtime-config.js";
 import { avatarFromCode } from "../content/avatar.js";
+import { Malha } from "./malha.js";
 
 const CDN = "https://cdn.jsdelivr.net/npm/mqtt@5.10.1/dist/mqtt.min.js";
 
@@ -57,6 +58,62 @@ export class Net {
     this.msgCount = 0;
     this.pubkey = "";
     this.seq = 0;
+    this.ultimoBroker = 0;
+    this.vistos = new Map();
+    this.malha = new Malha({
+      id: this.id,
+      enviarSinal: (para, tipo, dados) => this.publishSignal(para, tipo, dados),
+      aoEstado: (msg) => this.absorverEstado(msg),
+      aoEvento: (msg) => this.absorverEvento(msg),
+      aoMudar: () => this.emitPeers(),
+    });
+  }
+
+  // sinalização da malha também passa pelo broker: é o único jeito de dois
+  // browsers se encontrarem; depois do canal aberto, a conversa é direta
+  publishSignal(para, tipo, dados) {
+    if (!this.connected || !this.client) return false;
+    const corpo = { id: this.id, to: para, kind: tipo };
+    if (dados?.sdp) corpo.sdp = dados.sdp;
+    if (dados?.candidate) corpo.candidate = dados.candidate;
+    this.client.publish(this.topic("malha"), JSON.stringify(corpo), { qos: 1 });
+    return true;
+  }
+
+  jaVisto(uid) {
+    if (!uid) return false;
+    if (this.vistos.has(uid)) return true;
+    this.vistos.set(uid, Date.now());
+    if (this.vistos.size > 400) {
+      const corte = Date.now() - 30000;
+      for (const [k, t] of this.vistos) if (t < corte) this.vistos.delete(k);
+    }
+    return false;
+  }
+
+  eventoDeMalha(kind, corpo) {
+    const msg = { ...corpo, id: corpo.id || this.id };
+    if (this.jaVisto(msg.uid)) return;
+    if (kind === "chat") this.aplicarChat(msg);
+    else if (kind === "pvp") this.aplicarPvp(msg);
+    else if (kind === "party") this.aplicarParty(msg);
+  }
+
+  absorverEvento(msg) {
+    if (!msg || typeof msg !== "object") return;
+    if (msg.id === this.id) return;
+    const kind = msg.tipo;
+    if (kind === "chat" || kind === "pvp" || kind === "party") {
+      this.handle(this.topic(kind), msg);
+    }
+  }
+
+  // o estado que chega pelo canal direto passa pelo mesmo crivo do broker
+  absorverEstado(msg) {
+    if (!msg || typeof msg !== "object" || typeof msg.id !== "string") return;
+    if (msg.id === this.id) return;
+    this.handle(this.topic("state"), msg);
+    this.malha.garantir(msg.id);
   }
 
   topic(kind) { return `${NET.prefix}/${this.room}/${kind}`; }
@@ -95,6 +152,7 @@ export class Net {
           this.topic("chat"),
           this.topic("pvp"),
           this.topic("party"),
+          this.topic("malha"),
           this.topic("bye"),
         ], { qos: 0 }, (err, granted) => {
           if (err) { this.fail("sem sinal"); if (!settled) { settled = true; resolve(false); } return; }
@@ -139,10 +197,18 @@ export class Net {
     if (!msg || typeof msg !== "object" || typeof msg.id !== "string") return;
     if (msg.id.length > 40) return;
     if (msg.id === this.id) return;
+    if (msg.uid && this.jaVisto(msg.uid)) return;
     const now = Date.now();
 
     if (topic.endsWith("/bye")) {
       if (this.peers.delete(msg.id)) this.emitPeers();
+      return;
+    }
+
+    if (topic.endsWith("/malha")) {
+      if (msg.to !== this.id) return;
+      if (!["offer", "answer", "ice"].includes(msg.kind)) return;
+      this.malha.receberSinal(msg.id, msg.kind, msg);
       return;
     }
 
@@ -155,6 +221,8 @@ export class Net {
       const dir = Number.isInteger(msg.d) && msg.d >= 0 && msg.d <= 7 ? msg.d : 0;
       const color = validColor(msg.c);
       const old = this.peers.get(msg.id);
+      const seq = Number(msg.s) || 0;
+      if (old && msg.s !== undefined && seq < Number(old.seq || 0)) return;
       const moving = old ? Math.hypot(old.x - x, old.y - y) > 0.015 : false;
       const pubkey = typeof msg.k === "string" && /^[0-9a-f]{64}$/i.test(msg.k) ? msg.k.toLowerCase() : "";
       // Reaproveita o mesmo objeto: a interpolação guarda amostras e posição
@@ -167,7 +235,7 @@ export class Net {
         color,
         x, y, dir,
         mount: msg.m === 1 || msg.m === true,
-        seq: Number(msg.s) || 0,
+        seq,
         pubkey,
         outfit: validOutfit(msg.o),
         look: avatarFromCode(validLook(msg.a)),
@@ -176,6 +244,8 @@ export class Net {
       });
       this.peers.set(msg.id, peer);
       this.emitPeers();
+      // achou alguém: tenta o canal direto; o broker fica de reserva
+      this.malha.garantir(msg.id);
       return;
     }
 
@@ -275,9 +345,8 @@ export class Net {
   }
 
   publishState(force) {
-    if (!this.connected || !this.client) return;
     this.seq = (this.seq + 1) % 1000000000;
-    this.client.publish(this.topic("state"), JSON.stringify({
+    const msg = {
       id: this.id, n: this.name, c: this.color,
       x: Number(this.state.x.toFixed(2)),
       y: Number(this.state.y.toFixed(2)),
@@ -287,43 +356,58 @@ export class Net {
       k: this.pubkey || undefined,
       o: this.outfit || undefined,
       a: this.look || undefined,
-    }), { qos: 0 });
+      ttl: 2,
+    };
+    const diretos = this.malha.enviarEstado(msg);
+    // o broker continua servindo de descoberta e de socorro; com canal direto,
+    // o estado vai a 10 Hz por ele e o broker fica só como pano de fundo
+    const agora = Date.now();
+    if (this.connected && this.client && (force || diretos === 0 || agora - this.ultimoBroker > 400)) {
+      this.ultimoBroker = agora;
+      this.client.publish(this.topic("state"), JSON.stringify(msg), { qos: 0 });
+    }
     if (force) this.emitPeers();
   }
 
   sendPvp(payload) {
-    if (!this.connected || !this.client || !payload || typeof payload !== "object") return false;
+    if (!payload || typeof payload !== "object") return false;
     const kind = payload.kind;
     if (!["challenge", "accept", "decline", "attack", "defend", "end"].includes(kind)) return false;
     const now = Date.now();
     if (now - this.lastPvpSend < 150 && kind !== "end") return false;
     this.lastPvpSend = now;
-    this.client.publish(this.topic("pvp"), JSON.stringify({
-      ...payload, id: this.id, n: this.name,
-    }), { qos: 0 });
-    return true;
+    const msg = { ...payload, id: this.id, n: this.name, tipo: "pvp", uid: `${this.id}:pvp:${now}:${kind}`, ttl: 2 };
+    const diretos = this.malha.enviarEvento(msg);
+    if (this.connected && this.client) {
+      this.client.publish(this.topic("pvp"), JSON.stringify(msg), { qos: 0 });
+    }
+    return diretos > 0 || !!this.client;
   }
 
   sendParty(payload) {
-    if (!this.connected || !this.client || !payload || typeof payload !== "object") return false;
+    if (!payload || typeof payload !== "object") return false;
     if (!["invite", "accept", "leave", "sync"].includes(payload.act)) return false;
-    this.client.publish(this.topic("party"), JSON.stringify({
-      ...payload, id: this.id, n: this.name,
-    }), { qos: 0 });
-    return true;
+    const now = Date.now();
+    const msg = { ...payload, id: this.id, n: this.name, tipo: "party", uid: `${this.id}:party:${now}:${payload.act}`, ttl: 2 };
+    const diretos = this.malha.enviarEvento(msg);
+    if (this.connected && this.client) {
+      this.client.publish(this.topic("party"), JSON.stringify(msg), { qos: 0 });
+    }
+    return diretos > 0 || !!this.client;
   }
 
   sendChat(text) {
     const now = Date.now();
     if (now - this.lastChat < 900) return false;
-    if (!this.connected || !this.client) return false;
     const cleanText = clean(text, 120);
     if (!cleanText) return false;
     this.lastChat = now;
-    this.client.publish(this.topic("chat"), JSON.stringify({
-      id: this.id, n: this.name, c: this.color, txt: cleanText,
-    }), { qos: 0 });
-    return true;
+    const msg = { id: this.id, n: this.name, c: this.color, txt: cleanText, tipo: "chat", uid: `${this.id}:chat:${now}`, ttl: 2 };
+    const diretos = this.malha.enviarEvento(msg);
+    if (this.connected && this.client) {
+      this.client.publish(this.topic("chat"), JSON.stringify(msg), { qos: 0 });
+    }
+    return diretos > 0 || !!this.client;
   }
 
   destroy() {
@@ -339,6 +423,7 @@ export class Net {
     }
     this.client = null;
     this.connected = false;
+    this.malha.fechar();
     this.peers.clear();
   }
 }

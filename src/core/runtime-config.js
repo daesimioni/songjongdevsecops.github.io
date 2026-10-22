@@ -18,7 +18,7 @@ export const NET = {
   prefix: "mundo-song/v2",
   defaultRoom: "praca",
   stateEvery: 100,
-  peerTimeout: 6500,
+  peerTimeout: 12000,
   interpDelay: 200,
 };
 
