@@ -82,4 +82,4 @@ desenho e seu histórico; propostas antigas não devem ser confundidas com o
 estado implementado. As revisões com falhas reproduzidas e testes ficam nos
 registros de auditoria, incluindo `29-CORRECOES-FUNCIONAIS.md` e
 `30-COLISOES-INTERFACE-LOGICA.md`, `31-UI-UX.md`, `32-REVISAO-GERAL.md`,
-`33-REVISAO-EXTERNA.md`, `34-HABILIDADES-CHEFE.md`, `35-REVISAO-FLUXOS.md`, `36-REVISAO-ATUAL.md` e `37-ARTE-UNIFICADA.md`.
+`33-REVISAO-EXTERNA.md`, `34-HABILIDADES-CHEFE.md`, `35-REVISAO-FLUXOS.md`, `36-REVISAO-ATUAL.md`, `37-ARTE-UNIFICADA.md` e `38-OITO-DIRECOES.md`.

@@ -18,7 +18,7 @@ A abertura é uma tela de título com o vale em pixel art animado: estrelas, lua
 
 No jogo, a vida e a mana ficam em barras no topo. A mochila abre com <kbd>I</kbd> na superfície e na caverna, e também pelo botão escrito no HUD dos dois: grade de itens com ícones desenhados, equipamento ao lado, arrastar e soltar, detalhe do item e um boneco que muda de arma, elmo e cor de armadura conforme você veste. O botão direito abre um menu com olhar, falar, abrir, descer, viajar, pegar e andar até aqui. Runas e magias aparecem na barra inferior e gastam mana.
 
-O **Bestiário** abre com <kbd>B</kbd> ou pelo botão escrito no menu. São as 93 cavernas agrupadas por continente, com 464 fichas: nome, espécie, andar, o que o bicho faz contra você e a fraqueza dele. O que você ainda não encontrou aparece como silhueta e `???`; o primeiro encontro revela a ficha, e a vitória marca o bicho como vencido. Tem busca sem acento, filtro por conhecidos/vencidos/por ver, placar de descobertas por continente e a caverna onde você está já vem aberta. A forma vem do nome, não de um sorteio: `Ácido` é um frasco, `Acorde` uma nota, `Instrução` uma engrenagem, `Sílaba` um símbolo, `Fóton` um prisma. São 25 formas desenhadas, cada uma com nome de leitura, fraqueza e jeito próprio de atrapalhar o duelo.
+O **Bestiário** abre com <kbd>B</kbd> ou pelo botão escrito no menu. São as 93 cavernas agrupadas por continente, com 464 fichas: nome, espécie, andar, o que o bicho faz contra você e a fraqueza dele. O que você ainda não encontrou aparece como silhueta e `???`; o primeiro encontro revela a ficha, e a vitória marca o bicho como vencido. Tem busca sem acento, filtro por conhecidos/vencidos/por ver, placar de descobertas por continente e a caverna onde você está já vem aberta. A forma vem do nome, não de um sorteio: `Ácido` é um frasco, `Acorde` uma nota, `Instrução` uma engrenagem, `Sílaba` um símbolo, `Fóton` um prisma. São 26 formas desenhadas, cada uma com nome de leitura, fraqueza e jeito próprio de atrapalhar o duelo.
 
 O **minimapa** tem coordenada `x y z` (z 0 superfície, -1 subsolo, -2 Porto Submerso), zoom de 1× a 6× pela roda do mouse ou pelos botões, o botão **mapa** para ver o arquipélago inteiro e clique num ponto revelado para andar até lá. O personagem é uma seta branca com anel, apontando para onde olha; a caverna tem a mesma coordenada e profundidade no minimapa dela, que ficou maior. A névoa guardada leva a assinatura do mundo: quando o mapa ganha áreas novas, o save antigo revela a terra dessas áreas na primeira abertura, em vez de deixar o mapa preso no mundo velho.
 
@@ -515,7 +515,7 @@ pergunta que casa com o tema. O duelo entre jogadores entra pela mesma prova: as
 cinco cartas, a dificuldade que vira dano e a compostura.
 
 A segunda confere o conteúdo inteiro: as 454 estações e seus textos, falas de NPC,
-284 missões, 538 itens, equipamento, relíquias por continente, receitas, encantos, as
+284 missões, 539 itens, equipamento, relíquias por continente, receitas, encantos, as
 1603 perguntas (sem repetição e com resposta válida), as cinco cartas do PvP por
 continente, as 93 cavernas e o mundo montado (93 instrutores, 186 bocas, nenhum
 monstro na superfície). Confere também a cobertura das 82 seções do catálogo:
