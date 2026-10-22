@@ -79,6 +79,12 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
     "runa-gelo": "gelo · passa a pergunta",
     "runa-cura": "cura · recupera 12",
     "runa-espelho": "espelho · o próximo erro não dói",
+    "runa-bencao": "bênção · cura 8 e arma o escudo",
+    "runa-mente": "mente · devolve 6 de mana",
+    "runa-eco": "eco · o próximo acerto soma 2",
+    "runa-punhal": "punhal · 1 agora e +1 no próximo acerto",
+    "runa-corrente": "corrente · 1 no bicho e nos parceiros",
+    "runa-lente": "lente · revela a certa",
   };
 
   function open(monster, ground, boss = false, partner = null) {
@@ -145,6 +151,8 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
       if (card) card.hidden = true;
       return;
     }
+    // a runa da lente revela a certa até a pergunta mudar
+    if (d.revelada && d.question) hinted = d.question.answer;
     const tier = TIERS[d.tier];
     const continent = CONTINENTS[d.ground.continent]?.name || d.ground.name;
     const phaseLabel = d.boss && (d.bossPhase || 1) > 1 ? ` · fase ${d.bossPhase}` : "";
@@ -178,6 +186,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
     const ritmo = leituraDeRitmo(d.seguidos || 0);
     if (ritmo) meta.appendChild(el("em", "duel-combo", ritmo));
     if (d.boss && d.habilidade) meta.appendChild(el("span", "duel-ability", `chefe: ${d.habilidade.nome}`));
+    if (Number(d.eco) > 0) meta.appendChild(el("em", "duel-eco", `eco armado: +${d.eco} no próximo acerto`));
     const variante = VARIANTE_POR_ID.get(d.monster?.variante);
     if (variante) meta.appendChild(el("em", "duel-variant", `variante ${variante.nome}: ${variante.desc}`));
     // o chefe telegrafa o assunto da próxima pergunta: tema e cor da área

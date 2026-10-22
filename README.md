@@ -516,7 +516,7 @@ pergunta que casa com o tema. O duelo entre jogadores entra pela mesma prova: as
 cinco cartas, a dificuldade que vira dano e a compostura.
 
 A segunda confere o conteúdo inteiro: as 454 estações e seus textos, falas de NPC,
-284 missões, 541 itens, equipamento, relíquias por continente, receitas, encantos, as
+284 missões, 547 itens, equipamento, relíquias por continente, receitas, encantos, as
 887 perguntas de duelo (sem repetição e com resposta válida), as cinco cartas do PvP por
 continente, as 93 cavernas e o mundo montado (93 instrutores, 186 bocas, nenhum
 monstro na superfície). Confere também a cobertura das 82 seções do catálogo:

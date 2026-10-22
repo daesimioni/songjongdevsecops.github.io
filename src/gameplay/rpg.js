@@ -27,6 +27,12 @@ const SPELL_MANA = {
   "runa-gelo": 3,
   "runa-cura": 3,
   "runa-espelho": 2,
+  "runa-bencao": 4,
+  "runa-mente": 1,
+  "runa-eco": 3,
+  "runa-punhal": 2,
+  "runa-corrente": 3,
+  "runa-lente": 4,
 };
 export const petAbilityNeedsDuel = (id) => ["faro", "tagarela", "sabedoria", "aviso"].includes(id);
 const PET_ABILITY_IDS = new Set(Object.values(PETS).map((pet) => pet.ability.id));
@@ -1007,6 +1013,51 @@ export class RPG {
       d.shield = true;
       return { ok: true, shield: true, name: item.name };
     }
+    if (id === "runa-bencao") {
+      const healed = this.heal(8);
+      d.shield = true;
+      return { ok: true, healed, shield: true, name: item.name };
+    }
+    if (id === "runa-mente") {
+      const mana = Math.min(6, this.manaMax() - this.mana());
+      this.addMana(6);
+      return { ok: true, mana, name: item.name };
+    }
+    if (id === "runa-eco") {
+      d.eco = (Number(d.eco) || 0) + 2;
+      return { ok: true, eco: d.eco, name: item.name };
+    }
+    if (id === "runa-lente") {
+      d.revelada = true;
+      return { ok: true, reveal: true, name: item.name };
+    }
+    if (id === "runa-punhal" || id === "runa-corrente") {
+      const dmg = danoDoJogador(d.habilidade?.id, d.bossPhase, 1);
+      d.monsterHp = Math.max(0, d.monsterHp - dmg);
+      if (id === "runa-punhal") d.eco = (Number(d.eco) || 0) + 1;
+      else {
+        for (const p of d.partners || []) {
+          if (p.done) continue;
+          p.hp = Math.max(0, p.hp - 1);
+          if (p.hp <= 0) { p.done = true; this.data.monsters[p.monster.id] = now(); }
+        }
+      }
+      d.feedback = {
+        correct: true,
+        spell: item.name,
+        damage: 0,
+        why: id === "runa-punhal"
+          ? "O punhal entrou primeiro; o eco dele espera o próximo acerto."
+          : "A corrente passou pelo bicho da frente e por cada parceiro.",
+      };
+      this.atualizarFaseChefe(d);
+      if (d.monsterHp <= 0) {
+        if (!this.concluirMatilha(d)) d.phase = "question";
+      } else {
+        d.phase = "feedback";
+      }
+      return { ok: true, name: item.name, victory: d.phase === "victory" };
+    }
     if (id === "runa-gelo") {
       d.feedback = { correct: true, spell: item.name, damage: 0, why: "O gelo segurou o tempo: a pergunta passou sem resposta e sem dano." };
       d.phase = "feedback";
@@ -1077,6 +1128,7 @@ export class RPG {
     const item = ITEMS[id];
     let healed = 0;
     if (id === "runa-cura") healed = this.heal(10);
+    if (id === "runa-bencao") healed = this.heal(8);
     this.save();
     return { ok: true, name: item.name, healed, manaCost: temCarga ? 0 : cost, charge: temCarga, effect: id };
   }
@@ -1435,6 +1487,8 @@ export class RPG {
       shield: false,
       // carga do escudo equipado: segura um erro por duelo e some ao gastar
       escudo: this.equipmentBonus().shield > 0 || !!this.data.enchants.escudo,
+      eco: 0,
+      revelada: false,
       partners: [],
       get partner() { return this.partners[0] || null; },
       phase: "question",
@@ -1556,6 +1610,8 @@ export class RPG {
       shield: false,
       // carga do escudo equipado: segura um erro por duelo e some ao gastar
       escudo: this.equipmentBonus().shield > 0 || !!this.data.enchants.escudo,
+      eco: 0,
+      revelada: false,
       partners: [],
       get partner() { return this.partners[0] || null; },
       phase: "question",
@@ -1645,6 +1701,12 @@ export class RPG {
       if (d.boss && d.seguidos >= 3) {
         damage += 1;
         note = `${note ? note + " " : ""}O ponto fraco está exposto: +1 de dano.`;
+      }
+      // eco da runa: o próximo acerto paga a espera
+      if (damage > 0 && Number(d.eco) > 0) {
+        damage += Number(d.eco);
+        note = `${note ? note + " " : ""}O eco somou ${d.eco} de dano.`;
+        d.eco = 0;
       }
       // família estudada: +50% contra ela, sem ressuscitar golpe que zerou
       if (damage > 0 && this.familiaCompleta(d.monster?.kind)) {
@@ -1852,6 +1914,7 @@ export class RPG {
     d.question = d.deck[d.deckIndex];
     d.dicas = 0;
     d.eliminadas = [];
+    d.revelada = false;
     return { phase: "question", duel: d };
   }
 
