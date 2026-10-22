@@ -493,10 +493,11 @@ conferida dos dois lados.
 
 Use Node.js 22.13 ou superior. `npm ci` instala somente ferramentas de desenvolvimento;
 o jogo não depende de pacotes em runtime. `npm run validate` verifica lint,
-imports, arquitetura, testes e distribuição. Para verificações isoladas:
+imports, arquitetura, conteúdo das 887 perguntas, testes e distribuição. Para verificações isoladas:
 
 ```bash
 npm test
+npm run check:conteudo
 # Ou uma verificação isolada:
 node test/core.test.mjs
 node test/content.test.mjs

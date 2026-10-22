@@ -5,8 +5,9 @@
   "scripts": {
     "dev": "node tools/serve.mjs",
     "lint": "eslint src tools test eslint.config.js",
+    "check": "npm run lint && npm run check:modules && npm run check:conteudo",
     "check:modules": "node --experimental-vm-modules tools/check-project.mjs",
-    "check": "npm run lint && npm run check:modules",
+    "check:conteudo": "node tools/revisar-conteudo.mjs",
     "test": "node --test --test-concurrency=1 test/*.test.mjs",
     "build": "npm run check && node tools/build.mjs",
     "validate": "npm run check && npm test && node tools/build.mjs",
