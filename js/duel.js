@@ -2,7 +2,7 @@
 import { CONTINENTS } from "./config.js";
 import { ITEMS, TIERS, MONSTER_TRAITS } from "./rpg-data.js";
 import { drawCreatureArt } from "./creature.js";
-import { danoPrevisto, leituraDeRitmo } from "./duelo-ritmo.js";
+import { leituraDeRitmo } from "./duelo-ritmo.js";
 
 const $ = (id) => document.getElementById(id);
 const LETTERS = "ABCDE";
@@ -153,7 +153,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
       bar("sua vida", rpg.hp(), rpg.hpMax(), "self"),
     );
     rpg.pulse();
-    if (rpg.activePet()) meta.appendChild(bar("mana", rpg.mana(), rpg.manaMax(), "mana"));
+    meta.appendChild(bar("mana", rpg.mana(), rpg.manaMax(), "mana"));
     // leitura de turno: rodada e ritmo de acertos ficam à vista antes de escolher
     meta.appendChild(el("span", "duel-round", `rodada ${(d.deckIndex || 0) + 1}`));
     const ritmo = leituraDeRitmo(d.seguidos || 0);
@@ -174,12 +174,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
     main.appendChild(el("p", "duel-question", q.q));
     // o número que o erro vai custar, antes da escolha: fase de chefe e caráter
     // do bicho entram na conta, e o espelho aparece como zero
-    const previsao = danoPrevisto({
-      danoBase: TIERS[d.tier].damage,
-      bossPhase: d.boss ? d.bossPhase || 1 : 1,
-      trait: MONSTER_TRAITS[d.monster?.kind]?.id || "",
-      escudo: !!d.shield,
-    });
+    const previsao = rpg.erroPrevisto();
     main.appendChild(el("p", "duel-read",
       d.training
         ? `Na caverna, esse erro tiraria ${previsao} de vida.`
@@ -190,6 +185,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
       b.type = "button";
       b.appendChild(el("kbd", "", LETTERS[i] || String(i + 1)));
       b.appendChild(el("span", "", text));
+      if (d.monsterHp <= 0) b.disabled = true;
       if (hinted === i) b.classList.add("hinted");
       if (sparked.includes(i)) {
         b.disabled = true;
@@ -204,6 +200,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
       opts.appendChild(b);
     });
     main.appendChild(opts);
+    if (d.monsterHp <= 0) main.appendChild(el("p", "duel-hint", "Este monstro caiu. Vença os demais da matilha para concluir o duelo."));
 
     if (d.phase === "feedback") {
       const fb = d.feedback;
@@ -212,7 +209,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
       const wrong = fb.training
         ? `Errou. Na caverna isso tiraria ${fb.damage} de vida.`
         : `Errou. Você levou ${fb.damage} de dano.`;
-      const label = fb.spell || (fb.blocked ? "O espelho segurou o golpe." : fb.correct ? "Acertou." : wrong);
+      const label = fb.spell || (fb.blocked ? "A proteção segurou o golpe." : fb.correct ? "Acertou." : wrong);
       box.appendChild(el("b", "", label));
       box.appendChild(el("span", "", fb.why));
       if (fb.note) box.appendChild(el("em", "duel-note", fb.note));
@@ -265,6 +262,8 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
     body.appendChild(cols);
   }
 
+  function dPhaseBloqueada() { return rpg.duel?.phase !== "question"; }
+
   function partnerCard(p, who) {
     const box = el("div", "duel-partner");
     const head = el("div", "duel-partner-head");
@@ -274,25 +273,32 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
     if (p.feedback) {
       const fb = el("div", `duel-feedback ${p.feedback.correct ? "good" : "bad"}`);
       fb.setAttribute("role", "status");
-      fb.appendChild(el("b", "", p.feedback.blocked ? "O espelho segurou o golpe." : p.feedback.correct ? "Acertou." : `Errou. Levou ${p.feedback.damage} de dano.`));
+      fb.appendChild(el("b", "", p.feedback.blocked ? "A proteção segurou o golpe." : p.feedback.correct ? "Acertou." : `Errou. Levou ${p.feedback.damage} de dano.`));
       fb.appendChild(el("span", "", p.feedback.why));
       box.appendChild(fb);
       const next = el("button", "duel-next small", "continuar com este bicho");
       next.type = "button";
+      next.disabled = dPhaseBloqueada();
       next.addEventListener("click", () => { rpg.partnerNext(who); render(); });
       box.appendChild(next);
     } else {
       box.appendChild(el("p", "duel-question partner", p.question.q));
+      box.appendChild(el("p", "duel-read", `Se errar: ${rpg.erroPrevisto(p.monster, p.tier, 1)} de dano.`));
       const opts = el("div", "duel-options partner-options");
       p.question.options.forEach((text, i) => {
         const b = el("button", "duel-option");
         b.type = "button";
         b.appendChild(el("kbd", "", LETTERS[i] || String(i + 1)));
         b.appendChild(el("span", "", text));
+        b.disabled = dPhaseBloqueada();
         b.addEventListener("click", () => {
           const res = rpg.answerPartner(i, who);
           if (!res?.ok) return;
           if (res.correct) audio.blip(); else audio.error?.();
+          if (rpg.duel.phase === "victory") {
+            audio.chime();
+            if (!rpg.duel.training) onVictory?.();
+          }
           render();
         });
         opts.appendChild(b);
@@ -385,6 +391,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
     if (sparked.includes(index)) return;
     lastPick = index;
     const res = rpg.answer(index);
+    if (!res.ok) return;
     if (res.correct) audio.blip();
     else audio.error?.();
     if (rpg.duel.phase === "victory") {

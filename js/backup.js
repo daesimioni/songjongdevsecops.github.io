@@ -93,6 +93,10 @@ export function localIsEmpty() {
     countKeys(rpg?.met) === 0 &&
     countKeys(rpg?.monsters) === 0 &&
     countKeys(rpg?.bosses) === 0 &&
+    !Object.values(rpg?.skills || {}).some((n) => Number(n) > 0) &&
+    ["pets", "mounts", "spells", "enchants", "plots", "plotGift"].every((key) => countKeys(rpg?.[key]) === 0) &&
+    !(Number(rpg?.pet?.bond) > 0) &&
+    !Object.values(quests?.stats || {}).some((n) => Number(n) > 0) &&
     countKeys(quests?.done) === 0 &&
     countKeys(quests?.accepted) === 0
   );
@@ -129,16 +133,27 @@ export function restore(snapshot) {
   if (!snapshot || snapshot.v !== 1 || typeof snapshot.keys !== "object" || !snapshot.keys) {
     return { ok: false, reason: "backup inválido." };
   }
-  let written = 0;
-  for (const name of KEYS) {
-    const value = snapshot.keys[name];
-    if (typeof value !== "string") continue;
-    try {
-      localStorage.setItem(STORAGE[name], value);
-      written++;
-    } catch { /* cota cheia: segue o que der */ }
+  const entries = KEYS.filter((name) => typeof snapshot.keys[name] === "string");
+  if (!entries.length) return { ok: false, keys: 0, reason: "backup vazio." };
+  const previous = new Map();
+  try {
+    for (const name of entries) previous.set(name, localStorage.getItem(STORAGE[name]));
+    for (const name of entries) localStorage.setItem(STORAGE[name], snapshot.keys[name]);
+  } catch {
+    // Uma falha de cota não pode ser anunciada como restauração concluída.
+    // Volta ao estado anterior em vez de misturar dois saves.
+    let rolledBack = true;
+    for (const [name, value] of previous) {
+      try {
+        if (value == null) localStorage.removeItem(STORAGE[name]);
+        else localStorage.setItem(STORAGE[name], value);
+      } catch { rolledBack = false; }
+    }
+    return { ok: false, keys: 0, reason: rolledBack
+      ? "não foi possível restaurar; o progresso anterior foi preservado."
+      : "a restauração falhou e não foi possível recuperar todo o estado anterior." };
   }
-  return { ok: written > 0, keys: written };
+  return { ok: true, keys: entries.length };
 }
 
 function readStatus() {
@@ -222,6 +237,8 @@ export function createBackup({ rede } = {}) {
     if (!localIsEmpty()) return { ok: false, reason: "esta conta já tem progresso aqui." };
     const snapshot = await latestFrom(rede);
     if (!snapshot) return { ok: false, reason: "nenhum backup encontrado na sua DM." };
+    // A busca é assíncrona: o jogador pode ter progredido enquanto a rede respondia.
+    if (!localIsEmpty()) return { ok: false, reason: "esta conta já tem progresso aqui." };
     const res = restore(snapshot);
     return { ...res, restored: res.ok, at: snapshot.at };
   }

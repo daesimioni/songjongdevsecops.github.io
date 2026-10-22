@@ -31,7 +31,8 @@ const rpg = fs.readFileSync(new URL("../js/rpg.js", import.meta.url), "utf8");
 const duel = fs.readFileSync(new URL("../js/duel.js", import.meta.url), "utf8");
 check(/import \{ bonusDeRitmo \} from "\.\/duelo-ritmo\.js"/.test(rpg), "rpg não importa o ritmo");
 check(/bonusDeRitmo\(d\.seguidos\)/.test(rpg), "acerto não soma ritmo");
-check(/import \{ danoPrevisto, leituraDeRitmo \} from "\.\/duelo-ritmo\.js"/.test(duel), "duelo não importa a leitura");
+check(/import \{ leituraDeRitmo \} from "\.\/duelo-ritmo\.js"/.test(duel), "duelo não importa a leitura");
+check(/rpg\.erroPrevisto\(\)/.test(duel), "previsão deve usar a conta real do RPG");
 check(/duel-read/.test(duel) && /Se errar: \$\{previsao\} de dano/.test(duel), "duelo não mostra o dano previsto");
 check(/duel-combo/.test(duel) && /duel-round/.test(duel), "duelo não mostra rodada/ritmo");
 

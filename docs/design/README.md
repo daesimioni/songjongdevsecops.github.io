@@ -77,5 +77,7 @@ antes de mexer.
 
 ## 7. Nota de publicação
 
-Esta pasta não foi empurrada para o GitHub. O site público não muda com ela. Se
-o dono quiser publicar o design, é uma decisão separada.
+Esta pasta está versionada no repositório público. Os documentos registram o
+desenho e seu histórico; propostas antigas não devem ser confundidas com o
+estado implementado. As revisões com falhas reproduzidas e testes ficam nos
+registros de auditoria, incluindo `29-CORRECOES-FUNCIONAIS.md`.
