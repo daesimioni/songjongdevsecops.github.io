@@ -1,5 +1,10 @@
 # Decisões de desenho: o porquê de cada escolha
 
+> **Documento de conceito, congelado.** O que está abaixo é o desenho na data em
+> que foi escrito, não a lista do que falta. Estado atual: [`../README.md`](../README.md);
+> pendências verificadas: [`39-BACKLOG-VERIFICADO.md`](39-BACKLOG-VERIFICADO.md).
+
+
 Este documento existe para o dono discordar com precisão. Cada decisão tem
 alternativa, motivo e o que faria a gente mudar de ideia.
 

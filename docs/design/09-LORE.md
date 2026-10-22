@@ -1,5 +1,10 @@
 # Lore: o arquipélago, o Silêncio e a Grande Prova
 
+> **Documento de conceito, congelado.** O que está abaixo é o desenho na data em
+> que foi escrito, não a lista do que falta. Estado atual: [`../README.md`](../README.md);
+> pendências verificadas: [`39-BACKLOG-VERIFICADO.md`](39-BACKLOG-VERIFICADO.md).
+
+
 O mundo precisa de uma razão para existir além do loot. Esta é a bíblia curta:
 o que aconteceu, por que as ilhas estão separadas, por que o subsolo é habitado
 e o que o jogador está fazendo ali.

@@ -1,5 +1,10 @@
 # The Learning Valley: o arquipélago que se estuda a pé
 
+> **Documento de conceito, congelado.** O que está abaixo é o desenho na data em
+> que foi escrito, não a lista do que falta. Estado atual: [`../README.md`](../README.md);
+> pendências verificadas: [`39-BACKLOG-VERIFICADO.md`](39-BACKLOG-VERIFICADO.md).
+
+
 Documento de conceito e direção. Este arquivo é intenção, não implementação.
 Nada aqui foi codificado ainda; a ordem é conceito, desenho detalhado, revisão
 do dono, só então implementação.

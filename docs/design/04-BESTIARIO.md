@@ -1,5 +1,10 @@
 # Bestiário: famílias, espécies e grupos
 
+> **Documento de conceito, congelado.** O que está abaixo é o desenho na data em
+> que foi escrito, não a lista do que falta. Estado atual: [`../README.md`](../README.md);
+> pendências verificadas: [`39-BACKLOG-VERIFICADO.md`](39-BACKLOG-VERIFICADO.md).
+
+
 O bestiário é o catálogo do mundo e a lista de misconceptions que o jogador
 enfrenta. Cada família tem um jeito de andar, de ver, de lutar e de perguntar.
 Não são 40 skins do mesmo slime: são 8 ecologias.

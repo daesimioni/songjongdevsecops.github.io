@@ -1,5 +1,10 @@
 # Aprendizagem: o motor que faz a pergunta ensinar
 
+> **Documento de conceito, congelado.** O que está abaixo é o desenho na data em
+> que foi escrito, não a lista do que falta. Estado atual: [`../README.md`](../README.md);
+> pendências verificadas: [`39-BACKLOG-VERIFICADO.md`](39-BACKLOG-VERIFICADO.md).
+
+
 Este documento define como o jogo ensina. Sem isso, o resto é enfeite. A meta
 não é "ter muitas perguntas", é **fazer o jogador entender, lembrar e transferir**
 sem sentir que está estudando.

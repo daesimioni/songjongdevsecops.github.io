@@ -1,10 +1,13 @@
 # The Learning Valley: pasta de conceito
 
-Esta pasta é a fase de **conceito e desenho macro** do jogo. A implementação
-começou em 2026-10-20, a pedido do dono. O que já está no ar está em
-`../README.md`; a lista única de pendências verificadas está em
-`39-BACKLOG-VERIFICADO.md`. Os documentos de conceito estão congelados: nada
-entra no jogo sem virar tarefa e teste.
+Esta pasta tem duas metades. Os documentos **00 a 13** são a fase de conceito e
+desenho macro, congelada: descrevem a intenção da data em que foram escritos e
+não são a lista do que falta. Do **14 em diante** estão os registros de
+engenharia, com medição e prova.
+
+O estado atual do jogo está no [`../README.md`](../README.md) e a lista única de
+pendências verificadas em [`39-BACKLOG-VERIFICADO.md`](39-BACKLOG-VERIFICADO.md).
+Nada entra no jogo sem virar tarefa e teste.
 
 ## 1. O jogo em uma página
 

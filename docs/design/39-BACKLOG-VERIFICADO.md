@@ -29,7 +29,7 @@ Estado: **feito**, **parcial**, **ausente**, **decisão** (produto, não código
 | capa e conjuntos de 3 peças | **feito** | slot `cloak`, duas capas craftáveis, bônus de conjunto (+2 vida e +1 dano) em `equipmentBonus`, desenho atrás do corpo e aviso na ficha; `test/gear.test.mjs` e `cdp-capa.mjs` | P a M |
 | ponto fraco do chefe após 2 acertos | **feito** | terceiro acerto seguido soma +1, com nota no feedback e teste no duelo real | P |
 | recarga de runa no altar | **feito** | altar cura e devolve uma carga da runa aprendida mais vazia, com teste | P |
-| documentos que mentem | **feito** | 03-ITENS, 05-MUNDO, 06-ROADMAP e 10-ESTACOES ganharam aviso de documento congelado apontando o README e este backlog; 14 §AB fecha com a medição e remete a este mapa | P |
+| documentos que mentem | **feito** | todos os documentos de conceito (00 a 13) estão congelados com aviso apontando o README e este backlog; os de engenharia (14 a 38) trazem medição; a pasta `README.md` separa as duas metades. 14 §AB fecha com a prova e remete a este mapa | P |
 
 ## Onda 2: sistemas que já têm casa
 

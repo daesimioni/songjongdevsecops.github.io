@@ -1,5 +1,10 @@
 # 13. A alma das ilhas
 
+> **Documento de conceito, congelado.** O que está abaixo é o desenho na data em
+> que foi escrito, não a lista do que falta. Estado atual: [`../README.md`](../README.md);
+> pendências verificadas: [`39-BACKLOG-VERIFICADO.md`](39-BACKLOG-VERIFICADO.md).
+
+
 Este documento é o contrato da fase que vem depois de o catálogo inteiro estar
 no mapa: **cada área e cada subárea com identidade própria**, não a mesma pele
 repetida por disciplina.

@@ -1,5 +1,10 @@
 # Combate: visão em meia lua, grupos e consequência
 
+> **Documento de conceito, congelado.** O que está abaixo é o desenho na data em
+> que foi escrito, não a lista do que falta. Estado atual: [`../README.md`](../README.md);
+> pendências verificadas: [`39-BACKLOG-VERIFICADO.md`](39-BACKLOG-VERIFICADO.md).
+
+
 O combate é a pergunta. O resto é encenação para dar peso e leitura ao momento.
 Este documento define como o bicho vê, como o grupo ataca, como o dano funciona
 e como o jogador sai vivo sem perder o que estudou.

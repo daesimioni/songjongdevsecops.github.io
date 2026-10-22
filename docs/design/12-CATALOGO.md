@@ -1,5 +1,10 @@
 # 12. O catálogo inteiro dentro do mundo
 
+> **Documento de conceito, congelado.** O que está abaixo é o desenho na data em
+> que foi escrito, não a lista do que falta. Estado atual: [`../README.md`](../README.md);
+> pendências verificadas: [`39-BACKLOG-VERIFICADO.md`](39-BACKLOG-VERIFICADO.md).
+
+
 Este documento é o contrato da expansão pedida: **uma área de jogo para cada
 seção** do catálogo de conhecimento, com geografia coerente e caminho entre
 áreas vizinhas. Ele é a fonte de verdade da execução; cada fase marcada aqui
