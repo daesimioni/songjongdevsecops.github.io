@@ -37,6 +37,7 @@ import { startTitle } from "../ui/title.js";
 import { RPG } from "../gameplay/rpg.js";
 import { resumoConceitos, vencido } from "../gameplay/conceitos.js";
 import { FERRY, precoDoFerry, podePagarFerry, cobrarFerry, faltaDoFerry, nomeDoMaterial, falaDoBarqueiro } from "../gameplay/ferry.js";
+import { pontosFracos } from "../gameplay/grafo.js";
 import { VOCACOES } from "../content/vocations.js";
 import { ITEMS, QUESTIONS } from "../content/rpg-data.js";
 import { createSheet } from "../ui/sheet.js";
@@ -1737,13 +1738,27 @@ function buildJournal() {
     const erros = rpg.errosRecentes(5);
     if (erros.length) {
       const titulo = document.createElement("div");
-      titulo.className = "journal-erros-title";
+      titulo.className = "journal-subtitulo";
       titulo.textContent = "Erros recentes";
       caderno.appendChild(titulo);
       for (const erro of erros) {
         const linha = document.createElement("div");
         linha.className = "journal-conceito";
         linha.textContent = `${erro.q} · você marcou: ${erro.marcou || "?"} · resposta: ${erro.resposta}`;
+        caderno.appendChild(linha);
+      }
+    }
+    // grafo de pré-requisitos: áreas em que ele avançou sem o degrau anterior
+    const fracos = pontosFracos(conceitos, { limite: 5 });
+    if (fracos.length) {
+      const titulo = document.createElement("div");
+      titulo.className = "journal-subtitulo";
+      titulo.textContent = "Antes de avançar";
+      caderno.appendChild(titulo);
+      for (const p of fracos) {
+        const linha = document.createElement("div");
+        linha.className = "journal-conceito";
+        linha.textContent = `${p.nome} · você está em ${p.dArea}, mas ${p.nomePre} está em ${p.dPre}; revise antes.`;
         caderno.appendChild(linha);
       }
     }

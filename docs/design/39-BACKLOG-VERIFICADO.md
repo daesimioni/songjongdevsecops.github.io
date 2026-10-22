@@ -9,7 +9,7 @@ de ele existir, com números que o código já superou.
 Auditoria read-only de 2026-10-22 cruzou os documentos 00 a 38 com `src/`,
 `test/` e `tools/`. Números do código: 86 áreas, 454 estações, 93 cavernas, 561
 itens, 464 fichas, 284 missões, 194 NPCs, 2.300 entradas de wiki, 887 perguntas
-de duelo, 132 módulos e 96 testes node. `npm run validate` passa (lint,
+de duelo, 133 módulos e 97 testes node. `npm run validate` passa (lint,
 contrato de módulos, testes e build) e a matriz de navegador dá 19/19.
 
 Esforço: **P** até um dia, **M** de dois a cinco dias, **G** mais de uma semana.
@@ -35,7 +35,7 @@ Estado: **feito**, **parcial**, **ausente**, **decisão** (produto, não código
 
 | item | estado | o que falta | esforço |
 |---|---|---|---|
-| grafo de conceitos + domínio 0 a 5 + revisão espaçada + caderno | **núcleo feito** | domínio 0-5 no save, revisão espaçada por área, baralho prioriza vencido e **ordena a área mais fraca primeiro** (`test/adaptativo.test.mjs`), caderno no diário; faltam arestas do grafo, formatos e prova de transferência (o erro por distrator está na linha seguinte) | M a G |
+| grafo de conceitos + domínio 0 a 5 + revisão espaçada + caderno | **núcleo feito** | domínio 0-5 no save, revisão espaçada por área, baralho prioriza vencido e **ordena a área mais fraca primeiro** (`test/adaptativo.test.mjs`), caderno no diário. **Arestas do grafo**: 78 arestas derivadas da numeração do catálogo (86 áreas em 8 grupos), sem currículo inventado; o caderno ganhou "Antes de avançar" quando a área está em 2+ e o pré-requisito em 0/1 (`test/grafo.test.mjs`, `cdp-grafo.mjs`: "Área da Aritmética · você está em 3, mas Área dos Fundamentos está em 1; revise antes"). Faltam formatos e prova de transferência, decisão na linha própria | M a G |
 | misconceptions e escolha adaptativa | **feito** | **escolha adaptativa + erro por distrator**: o baralho começa pela área de menor domínio, área nunca respondida conta como zero e a revisão vencida continua na frente; a pergunta errada nos últimos 7 dias volta antes dentro do mesmo domínio. O duelo grava a alternativa marcada com a versão FNV da pergunta (teto de 120 entradas, purga da mais antiga), mostra "Você marcou: X" no feedback e o diário lista os 5 erros recentes com a resposta certa (`test/distratores.test.mjs`, `cdp-distratores.mjs`: marcada no duelo, 1 linha no caderno, 0 erro de console). **Decisão registrada**: não haverá texto autoral de misconception por distrator nas 887 perguntas; o "porquê" da resposta certa e a alternativa marcada cobrem o erro, e o revisor de conteúdo guarda a versão para quando um distrator mudar | M |
 | dicas em escada e foco | **feito** | botão de dica no duelo: 1 mana por passo, passo 1 risca duas erradas, passo 2 risca mais uma, passo 3 revela a correta, zera na pergunta nova e leva o foco para a alternativa viva; `test/duelo-dica.test.mjs` e `cdp-dica.mjs` | M |
 | formatos de pergunta e prova de transferência | ausente | hoje só A-E; decidir com o dono a colisão com "não há prova final" | G |
@@ -63,7 +63,7 @@ Estado: **feito**, **parcial**, **ausente**, **decisão** (produto, não código
 | item | estado | o que falta | esforço |
 |---|---|---|---|
 | mundo sem rendering | **feito** | `world.js` não importa mais `rendering/`: a colocação do ambiente foi para `src/world/povoado.js` e o tamanho das construções para `src/content/asset-meta.js`, fonte única entre desenho e mapa; `test/arquitetura.test.mjs` cobra os quatro pontos e a matriz de navegador deu 19/19 com 60,1 fps depois | P |
-| arquivos grandes (app 3,4 mil, dungeon 2,2 mil, rpg 1,9 mil linhas) | decisão | cada um é coeso por domínio e o contrato de módulos está sem ciclos (132 módulos, 290 dependências). Separar agora é risco sem ganho medido; reavaliar quando uma mudança precisar tocar o mesmo trecho por três frentes | G |
+| arquivos grandes (app 3,4 mil, dungeon 2,2 mil, rpg 1,9 mil linhas) | decisão | cada um é coeso por domínio e o contrato de módulos está sem ciclos (133 módulos, 292 dependências). Separar agora é risco sem ganho medido; reavaliar quando uma mudança precisar tocar o mesmo trecho por três frentes | G |
 | sondas CDP fora do repositório | decisão | ver pergunta 10: trazer todas engorda o repositório público com dependência de Chrome | — |
 
 ## Onda 3: conteúdo grande e endgame
