@@ -6,77 +6,108 @@ import {
   KIT_CATEGORIES,
   kitBounds,
   kitColliders,
+  kitBody,
+  kitAnimation,
 } from "../src/content/sprite-kit/catalog.js";
+import { creatureAttack } from "../src/content/sprite-kit/creatures.js";
 import { paintKit } from "../src/rendering/sprite-kit/index.js";
 const output = path.resolve(
   process.argv[2] || "/tmp/learning-valley-sprite-kit",
 );
 await mkdir(output, { recursive: true });
 const manifest = {
-  version: 1,
+  version: 2,
   tileSize: 16,
+  pixelRatio: 1,
   coordinateSystem:
-    "anchor at local 0,0; x right; y down; z up; dimensions in logical pixels",
-  directions: ["front", "left", "right", "back"],
+    "anchor at local 0,0; x right; y down; z up; dimensions in logical pixels; colliders/body in world tiles",
+  directions: [
+    "front",
+    "left",
+    "right",
+    "back",
+    "southwest",
+    "southeast",
+    "northwest",
+    "northeast",
+  ],
+  pages: [],
   assets: [],
 };
 for (const category of Object.keys(KIT_CATEGORIES)) {
-  const cells = [];
+  let page = 0,
+    x = 0,
+    y = 0,
+    row = 0,
+    used = false;
+  const canvas = createCanvas(1024, 1024),
+    g = canvas.getContext("2d");
+  const filename = () => `${category}-${String(page).padStart(3, "0")}.png`;
+  async function flush() {
+    if (!used) return;
+    await writeFile(
+      path.join(output, filename()),
+      canvas.toBuffer("image/png"),
+    );
+    manifest.pages.push({ file: filename(), w: 1024, h: 1024 });
+    page++;
+    g.clearRect(0, 0, 1024, 1024);
+    x = 0;
+    y = 0;
+    row = 0;
+    used = false;
+  }
   for (const a of SPRITE_KIT.filter((a) => a.category === category))
     for (const state of Object.keys(a.states || { default: [] }))
       for (const direction of a.orientations)
         for (let frame = 0; frame < a.frames; frame++) {
           const options = {
-            state: a.states ? state : undefined,
+              state: a.states ? state : undefined,
+              direction,
+              frame,
+            },
+            b = kitBounds(a.id, options);
+          if (b.w > 1024 || b.h > 1024)
+            throw new Error(`Sprite excede a página: ${a.id}`);
+          if (x + b.w > 1024) {
+            x = 0;
+            y += row;
+            row = 0;
+          }
+          if (y + b.h > 1024) await flush();
+          g.save();
+          g.translate(x - b.x, y - b.y);
+          paintKit(g, a.id, options);
+          g.restore();
+          used = true;
+          manifest.assets.push({
+            id: a.id,
+            category,
+            name: a.name,
+            layer: a.layer,
+            tags: a.tags,
+            sheet: filename(),
+            state: options.state ?? null,
             direction,
             frame,
-          };
-          cells.push({ a, options, b: kitBounds(a.id, options) });
+            ms: a.ms,
+            loop: kitAnimation(a.id, options.state).loop,
+            region: { x, y, w: b.w, h: b.h },
+            anchor: { x: -b.x, y: -b.y },
+            colliders: kitColliders(a.id, 0, 0, options),
+            body: kitBody(a.id),
+            area: a.area ?? null,
+            attack: creatureAttack(a.id),
+          });
+          x += b.w;
+          row = Math.max(row, b.h);
         }
-  let x = 0,
-    y = 0,
-    row = 0;
-  for (const c of cells) {
-    if (x + c.b.w > 1024) {
-      x = 0;
-      y += row;
-      row = 0;
-    }
-    c.x = x;
-    c.y = y;
-    x += c.b.w;
-    row = Math.max(row, c.b.h);
-  }
-  const canvas = createCanvas(1024, y + row);
-  const g = canvas.getContext("2d");
-  for (const c of cells) {
-    g.save();
-    g.translate(c.x - c.b.x, c.y - c.b.y);
-    paintKit(g, c.a.id, c.options);
-    g.restore();
-    manifest.assets.push({
-      id: c.a.id,
-      category,
-      name: c.a.name,
-      layer: c.a.layer,
-      tags: c.a.tags,
-      sheet: category + ".png",
-      state: c.options.state ?? null,
-      direction: c.options.direction,
-      frame: c.options.frame,
-      ms: c.a.ms,
-      region: { x: c.x, y: c.y, w: c.b.w, h: c.b.h },
-      anchor: { x: -c.b.x, y: -c.b.y },
-      colliders: kitColliders(c.a.id, 0, 0, c.options),
-    });
-  }
-  await writeFile(
-    path.join(output, category + ".png"),
-    canvas.toBuffer("image/png"),
-  );
+  await flush();
 }
 await writeFile(
   path.join(output, "manifest.json"),
-  JSON.stringify(manifest, null, 2) + "\n",
+  JSON.stringify(manifest) + "\n",
 );
-console.log(`${SPRITE_KIT.length} peças exportadas para ${output}`);
+console.log(
+  `${SPRITE_KIT.length} peças, ${manifest.assets.length} poses e ${manifest.pages.length} páginas exportadas para ${output}`,
+);

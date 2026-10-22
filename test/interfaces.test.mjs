@@ -46,5 +46,11 @@ check(/\.shop-card \{ width: 100%; \}/.test(css), "card da loja ainda com largur
 check(/openShop: \(\) => openShop\(\)/.test(app), "gancho openShop da sonda sumiu");
 check(/openDuel: \(mon, ground, boss, partner\) => openDuel\(/.test(app), "gancho openDuel da sonda sumiu");
 
+// botão usado com o ponteiro solta o foco: o próximo Espaço é da nave, não do botão
+check(/let ultimoGesto = "teclado"/.test(app), "sem rastreio do último gesto");
+check(/botao\.blur\(\)/.test(app), "botão clicado continua selecionado");
+check(/state\.focoDePonteiro/.test(app), "modal aberto no mouse devolve o foco ao botão");
+check(/nativeActivation\(e\)/.test(app), "a ativação nativa do teclado sumiu");
+
 assert.equal(problemas.length, 0, `interfaces com ${problemas.length} problema(s):\n- ${problemas.join("\n- ")}`);
 console.log("ok interfaces: 9 painéis, alvo de 28 px, wiki de 1 coluna e loja sem estouro no celular");

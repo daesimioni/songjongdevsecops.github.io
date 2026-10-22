@@ -6,8 +6,8 @@ Revisão de 22/10/2026, integrada às mudanças da `main` até `ccfcf14`
 
 ## Biblioteca modular ampliada
 
-Mais 207 peças em dez categorias, com galeria pesquisável, estados, quatro
-vistas de objetos, colisões e exportação de atlas. Veja o [guia e as pranchas](biblioteca-modular/README.md).
+Mais 515 entradas em quinze categorias, com galeria pesquisável, estados, quatro
+vistas de objetos, criaturas e ataques em oito direções, clima, colisões e exportação de atlas. Veja o [guia e as pranchas](biblioteca-modular/README.md).
 
 ## Direção visual
 

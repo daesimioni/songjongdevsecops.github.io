@@ -34,6 +34,7 @@ const CATALOG_STONES = new Set(CATALOG.map((area) => area.existing || area.id));
 import { findPath, nearestWalkable, findLanding } from "../core/path.js";
 import { feedPeer, peerRenderPosition } from "../platform/interp.js";
 import { startTitle } from "../ui/title.js";
+import { dataDoJogo, formatarData, formatarHora, eDia } from "../core/calendario.js";
 import { ATUALIZACAO, lerManifesto, guardarRetomada, consumirRetomada, baixarArquivos } from "../platform/atualizacao.js";
 import { RPG } from "../gameplay/rpg.js";
 import { resumoConceitos, vencido } from "../gameplay/conceitos.js";
@@ -117,6 +118,7 @@ const state = {
   chatOpen: false,
   chatLog: [],
   modal: null,
+  focoDePonteiro: false,
   peers: [],
   net: null,
   hasIdentity: false,
@@ -165,6 +167,19 @@ function activeUiLayer() {
   return null;
 }
 const uiScope = createUiScope({ root: $("app"), getActive: activeUiLayer, exceptions: [$("toast"), $("scrim")] });
+
+// Botão usado com o ponteiro não fica selecionado: depois do clique ele perde o
+// foco, então o próximo Espaço liga a nave em vez de repetir o botão. Quem
+// navega pelo teclado continua com o foco e com a ativação nativa.
+let ultimoGesto = "teclado";
+window.addEventListener("pointerdown", () => { ultimoGesto = "ponteiro"; }, { capture: true, passive: true });
+window.addEventListener("keydown", () => { ultimoGesto = "teclado"; }, { capture: true });
+window.addEventListener("click", (e) => {
+  if (ultimoGesto !== "ponteiro") return;
+  const botao = e.target?.closest?.("button");
+  if (!botao || botao.closest(".modal, [role='dialog']")) return;
+  setTimeout(() => { if (document.activeElement === botao) botao.blur(); }, 0);
+}, true);
 
 const NOME_CASA = { casa: "casa", cabana: "cabana", torre: "torre", galpao: "galpão" };
 const nomeDaArea = (id) => AREAS.find((a) => a.id === id)?.name || "ilha";
@@ -283,6 +298,10 @@ const AVISO_CLIMA = {
   meteoro: "Um meteoro cruzou o vale.",
   calmaria: "Calmaria: o mar alisou.",
   silencio: "O vale ficou em silêncio.",
+  tempestade: "Tempestade no vale: raios e trovões.",
+  tornado: "Tornado! O vento está arrastando tudo.",
+  eclipse: "Eclipse no vale: o sol sumiu por um instante.",
+  neve: "Neve no vale: o inverno cobriu as ilhas.",
 };
 for (const [id, aviso] of Object.entries(AVISO_CLIMA)) {
   renderer.ambiente.on(`${id}:comeca`, () => {
@@ -293,9 +312,13 @@ for (const [id, aviso] of Object.entries(AVISO_CLIMA)) {
   // a neblina muda o elenco do subsolo e a rajada traz o que voa
   renderer.ambiente.on(`${id}:comeca`, () => { state.clima = id; });
   renderer.ambiente.on(`${id}:termina`, () => { if (state.clima === id) state.clima = "limpo"; });
-  if (id === "chuva") {
-    renderer.ambiente.on("chuva:comeca", () => world.setClima("chuva"));
-    renderer.ambiente.on("chuva:termina", () => world.setClima("limpo"));
+  if (id === "chuva" || id === "tempestade") {
+    renderer.ambiente.on(`${id}:comeca`, () => world.setClima("chuva"));
+    renderer.ambiente.on(`${id}:termina`, () => world.setClima("limpo"));
+  }
+  if (id === "neve") {
+    renderer.ambiente.on("neve:comeca", () => world.setClima("neve"));
+    renderer.ambiente.on("neve:termina", () => world.setClima("limpo"));
   }
 }
 
@@ -2583,6 +2606,14 @@ const MODAL_FOCUS_BACK = {
   wiki: "btn-wiki",
 };
 function restoreFocus(modalName) {
+  // fechado o que foi aberto pelo mouse, o foco volta ao jogo: nada de botão
+  // pré-selecionado para o Espaço ativar sem querer
+  if (state.focoDePonteiro) {
+    state.focoDePonteiro = false;
+    state.lastFocus = null;
+    document.activeElement?.blur?.();
+    return;
+  }
   const back = state.lastFocus;
   state.lastFocus = null;
   if (back?.isConnected && !back.disabled && !back.closest("[inert]") && back.getClientRects().length) {
@@ -2598,9 +2629,12 @@ function openModal(name) {
   stopSprint();
   pararSeguir();
   dungeon?.stopControls();
-  const opener = document.activeElement?.closest?.("button, a, input, [tabindex]") || document.activeElement;
+  const opener = ultimoGesto === "teclado"
+    ? (document.activeElement?.closest?.("button, a, input, [tabindex]") || document.activeElement)
+    : null;
   if (state.modal !== name) closeModal(state.modal);
   state.lastFocus = opener && opener !== document.body ? opener : null;
+  state.focoDePonteiro = ultimoGesto === "ponteiro";
   state.modal = name;
   $(name).hidden = false;
   $("scrim").hidden = false;
@@ -2869,7 +2903,7 @@ function updatePrompt() {
   $("prompt").hidden = false;
 }
 
-const { updateBoost, updateMovement, clearPath, interactionRadius, setPathTo, updateAutoWalk, updateCat } = createSurfaceMovement({
+const { updateBoost, updateMovement, clearPath, interactionRadius, setPathTo, updateAutoWalk, updateCat, empurrar } = createSurfaceMovement({
   player, state, world, rpg, audio, toast, interactTarget, isDungeonOpen: () => !!dungeon?.isOpen(),
 });
 
@@ -2900,6 +2934,22 @@ function updateZone() {
   showZoneCard(CONTINENTS[cid], first);
 }
 
+let calendarioEm = 0;
+function atualizarCalendario(now) {
+  if (now - calendarioEm < 1000) return;
+  calendarioEm = now;
+  const el = $("calendario");
+  if (!el) return;
+  el.hidden = !state.started;
+  if (el.hidden) return;
+  const data = dataDoJogo();
+  $("calendario-data").textContent = formatarData(data);
+  $("calendario-hora").textContent = formatarHora(data);
+  $("calendario-estacao").textContent = data.estacaoNome;
+  $("calendario-fase").textContent = eDia(data) ? "dia" : "noite";
+  const barra = $("calendario-progresso");
+  if (barra) barra.style.width = `${(data.fracaoDoDia * 100).toFixed(1)}%`;
+}
 let cobertoAntes = false;
 
 function loop(now) {
@@ -2911,13 +2961,14 @@ function loop(now) {
     updateBoost(dt, active);
     rpg.tick();
     // o relógio do clima anda sempre, inclusive dentro da caverna e no modo leve
-    renderer.ambiente.tick(now);
+    renderer.ambiente.tick(Date.now());
     // troca de dia para noite avisa uma vez, sem repetir a cada quadro
-    const agoraNoite = eNoite(now);
+    const agoraNoite = eNoite();
     if (loop.noite !== undefined && loop.noite !== agoraNoite && state.started && !state.casa && !state.modal && !state.panelOpen) {
       toast(agoraNoite ? "A noite caiu no vale." : "O dia voltou ao vale.", 2600);
     }
     loop.noite = agoraNoite;
+    atualizarCalendario(now);
     if (!state.manaAt || now - state.manaAt > 1000) {
       state.manaAt = now;
       rpg.pulse();
@@ -2928,6 +2979,11 @@ function loop(now) {
       return;
     }
     if (active) {
+      if (renderer.ambiente.eventoAtual?.evento.id === "tornado") {
+        const giro = now / 260;
+        const forca = 0.55 * dt * (1 + renderer.ambiente.intensidade() * 0.8);
+        empurrar(Math.cos(giro) * forca, Math.sin(giro) * forca);
+      }
       if (state.path) updateAutoWalk(dt);
       else updateMovement(dt);
       if (!state.casa) updateZone();

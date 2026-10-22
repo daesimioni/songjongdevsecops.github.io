@@ -961,7 +961,7 @@ export function createWorld() {
   }
 
   function updateNpcs(dt, t) {
-    const molhado = clima === "chuva" ? 0.55 : 1;
+    const molhado = clima === "chuva" || clima === "neve" ? 0.55 : 1;
     for (const n of npcs) {
       if (t < n.waitUntil) {
         n.moving = false;

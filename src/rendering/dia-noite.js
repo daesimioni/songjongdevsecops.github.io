@@ -1,7 +1,9 @@
-// Ciclo dia/noite do vale: oito minutos por volta completa. O meio-dia fica no
-// meio (luz 1) e a meia-noite no começo (luz 0); o desenho aplica só uma véu
-// escuro por cima do mundo, então nada muda em colisão, lógica ou performance.
-export const CICLO_MS = 8 * 60 * 1000;
+// Ciclo dia/noite do vale preso ao calendário: cada dia do jogo tem 24 horas,
+// e cada hora do jogo dura um minuto real. O desenho aplica só um véu escuro
+// por cima do mundo, então nada muda em colisão, lógica ou performance.
+import { dataDoJogo, faseDoDiaDaHora } from "../core/calendario.js";
+
+export const CICLO_MS = 24 * 60 * 1000;
 const NOITE_MAX = 0.42;
 
 let horaForcada = null;
@@ -19,16 +21,18 @@ export function horaForcadaAtual() {
   return horaForcada;
 }
 
+// `t` é o instante real (Date.now), não o relógio de animação: o calendário
+// manda na luz, e quem quiser prender a hora usa forcarHora.
 export function faseDoDia(t = Date.now()) {
-  const bruto = horaForcada != null ? horaForcada * CICLO_MS : Number(t);
-  const base = Number.isFinite(bruto) ? bruto : 0;
-  const p = (((base % CICLO_MS) + CICLO_MS) % CICLO_MS) / CICLO_MS;
-  const luz = (1 - Math.cos(p * Math.PI * 2)) / 2;
-  const noite = 1 - luz;
+  const p = horaForcada != null
+    ? horaForcada
+    : (Number.isFinite(Number(t)) ? dataDoJogo(Number(t)).fracaoDoDia : 0);
+  const { luz, noite } = faseDoDiaDaHora(p * 24);
   const alpha = Math.round(noite * NOITE_MAX * 100) / 100;
   return { p, luz, noite, alpha, cor: `rgba(8, 12, 34, ${alpha})` };
 }
 
 export function eNoite(t = Date.now()) {
-  return faseDoDia(t).noite > 0.55;
+  const hora = faseDoDia(t).p * 24;
+  return hora < 6 || hora >= 18;
 }

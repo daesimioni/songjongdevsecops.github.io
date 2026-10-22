@@ -1,5 +1,5 @@
 {
- "versao": "c665a841d1d5ee6f",
+ "versao": "b127fbcc6ae4bac3",
  "arquivos": [
   "assets/favicon.svg",
   "assets/fonts/OFL.txt",
@@ -73,6 +73,7 @@
   "src/content/text/physics.js",
   "src/content/text/secoes.js",
   "src/content/vocations.js",
+  "src/core/calendario.js",
   "src/core/camera.js",
   "src/core/collision.js",
   "src/core/movement.js",

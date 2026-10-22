@@ -1,3 +1,7 @@
+import { MEASURED_BOUNDS } from "./measured-bounds.js";
+import { effects, weather } from "./effects.js";
+import { creatures, monsterCasts } from "./creatures.js";
+import { coast, terrainEdges, wildPlants } from "./coast.js";
 import { ground, architecture, boundaries } from "./architecture.js";
 import {
   furniture,
@@ -9,16 +13,21 @@ import {
   learning,
 } from "./objects.js";
 export const KIT_CATEGORIES = {
-  terrenos: ground,
+  terrenos: [...ground, ...terrainEdges],
   arquitetura: architecture,
   limites: boundaries,
   mobiliario: furniture,
   armazenamento: storage,
   oficios: workshops,
-  natureza: nature,
+  natureza: [...nature, ...wildPlants],
   agricultura: agriculture,
   comunidade: civic,
   aprendizado: learning,
+  litoral: coast,
+  criaturas: creatures,
+  ataques: effects,
+  clima: weather,
+  conjuracoes: monsterCasts,
 };
 function freeze(value) {
   if (value && typeof value === "object") {
@@ -64,7 +73,7 @@ export function kitParts(id, state) {
   const key = state ?? a.defaultState;
   const parts = Object.hasOwn(a.states, key) ? a.states[key] : null;
   if (!parts) throw new Error(`Estado inválido: ${state} (${id})`);
-  return parts;
+  return a.renderer ? a.parts : parts;
 }
 export function kitRotation(direction = 0) {
   if (!Number.isInteger(direction) || direction < 0 || direction > 3) {
@@ -85,6 +94,10 @@ export function kitPoint(x, y, z, direction = 0) {
 }
 export function kitBounds(id, { direction = 0, state } = {}) {
   const parts = kitParts(id, state);
+  const asset = kitAsset(id);
+  if (!asset.orientations.includes(direction))
+    throw new Error(`Orientação inválida: ${direction} (${id})`);
+  if (asset.renderer) return MEASURED_BOUNDS[id] ?? asset.bounds;
   kitRotation(direction);
   const key = `${id}:${direction}:${state ?? kitAsset(id).defaultState ?? ""}`;
   if (boundsCache.has(key)) return boundsCache.get(key);
@@ -119,6 +132,11 @@ export function kitBounds(id, { direction = 0, state } = {}) {
 }
 // Coordenadas de mundo em tiles; desenho local em pixels (16 px por tile).
 export function kitColliders(id, x = 0, y = 0, { direction = 0, state } = {}) {
+  const asset = kitAsset(id);
+  if (asset?.renderer) {
+    kitBounds(id, { direction, state });
+    return [];
+  }
   kitRotation(direction);
   return kitParts(id, state)
     .filter((p) => p.solid)
@@ -133,4 +151,20 @@ export function kitColliders(id, x = 0, y = 0, { direction = 0, state } = {}) {
         tipo: id,
       };
     });
+}
+
+// Dynamic actor body in world tiles. Never register it as a static scenery blocker.
+export function kitBody(id, x = 0, y = 0) {
+  const a = kitAsset(id);
+  return a?.body ? { x, y, ...a.body } : null;
+}
+
+export function kitAnimation(id, state) {
+  const a = kitAsset(id);
+  kitParts(id, state);
+  return {
+    frames: a.frames,
+    ms: a.ms,
+    loop: a.states?.[state ?? a.defaultState]?.loop ?? a.loop ?? true,
+  };
 }

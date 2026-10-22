@@ -1,0 +1,7 @@
+{
+  "method": "Soma das áreas dos retângulos rasterizados em todas as poses, antes/depois da medição de limites, sem alocar todos os quadros simultaneamente.",
+  "broadPixels": 338235712,
+  "croppedPixels": 98601730,
+  "reduction": 0.7084822019030326,
+  "cacheMaxBytes": 12582912
+}

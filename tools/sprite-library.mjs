@@ -3,6 +3,7 @@ import {
   searchKit,
   kitBounds,
   kitColliders,
+  kitAnimation,
 } from "../src/content/sprite-kit/catalog.js";
 import { drawKit } from "../src/rendering/sprite-kit/index.js";
 const $ = (id) => document.getElementById(id);
@@ -45,8 +46,22 @@ function refresh() {
     article.append(info);
     const direction = document.createElement("select");
     direction.setAttribute("aria-label", "Orientação de " + a.name);
-    ["Frente", "Esquerda", "Direita", "Trás"].forEach((label, i) =>
-      direction.add(new window.Option(label, i)),
+    a.orientations.forEach((i) =>
+      direction.add(
+        new window.Option(
+          [
+            "Frente",
+            "Esquerda",
+            "Direita",
+            "Trás",
+            "Diagonal inferior esquerda",
+            "Diagonal inferior direita",
+            "Diagonal superior esquerda",
+            "Diagonal superior direita",
+          ][i],
+          i,
+        ),
+      ),
     );
     article.append(direction);
     const state = document.createElement("select");
@@ -82,9 +97,14 @@ function tick(time) {
     drawKit(g, c.a.id, 0, 0, {
       direction,
       state,
-      tempo: $("motion").checked ? time : 0,
+      tempo: $("motion").checked
+        ? kitAnimation(c.a.id, state).loop
+          ? time
+          : time % (c.a.frames * c.a.ms + 500)
+        : 0,
     });
     if ($("collision").checked) {
+      if (c.a.area) drawArea(g, c.a, direction);
       g.strokeStyle = "#83e89c";
       g.lineWidth = 0.5;
       for (const p of kitColliders(c.a.id, 0, 0, { direction, state }))
@@ -96,8 +116,42 @@ function tick(time) {
         );
     }
     g.restore();
-    c.info.textContent = `${b.w - 6} × ${b.h - 6} px · ${c.a.frames} quadro(s) · ${c.a.layer}`;
+    c.info.textContent = `${b.w - 2 * (b.padding ?? 3)} × ${b.h - 2 * (b.padding ?? 3)} px · ${c.a.frames} quadro(s) · ${c.a.layer}`;
   }
   window.requestAnimationFrame(tick);
 }
 window.requestAnimationFrame(tick);
+
+function drawArea(g, a, direction) {
+  const { shape, radius, range, width, halfAngle } = a.area;
+  const angle = [
+    Math.PI / 2,
+    Math.PI,
+    0,
+    -Math.PI / 2,
+    Math.PI * 0.75,
+    Math.PI * 0.25,
+    -Math.PI * 0.75,
+    -Math.PI * 0.25,
+  ][direction];
+  g.save();
+  g.rotate(angle);
+  g.strokeStyle = "#83e89c";
+  g.lineWidth = 0.7;
+  g.beginPath();
+  if (shape === "line" || shape === "projectile")
+    g.rect(0, -width / 2, range, width);
+  else if (shape === "cone") {
+    g.moveTo(0, 0);
+    g.arc(0, 0, range, -halfAngle, halfAngle);
+    g.closePath();
+  } else {
+    g.arc(0, 0, radius, 0, Math.PI * 2);
+    if (shape === "ring") {
+      g.moveTo(radius - width, 0);
+      g.arc(0, 0, radius - width, 0, Math.PI * 2);
+    }
+  }
+  g.stroke();
+  g.restore();
+}

@@ -1,11 +1,14 @@
+import { paintKitCreature, paintMonsterCast } from "./creatures.js";
+import { paintKitEffect, paintKitWeather } from "./effects.js";
 import {
   kitAsset,
+  kitAnimation,
   kitParts,
   kitPoint,
   kitBounds,
 } from "../../content/sprite-kit/catalog.js";
 import { criarCache } from "../assets/nucleo.js";
-import { artFrame } from "../art-style.js";
+import { artFrame, artTime } from "../art-style.js";
 const colors = {
   wood: "#a77948",
   bark: "#715139",
@@ -69,7 +72,7 @@ function polygon(g, points, fill) {
   g.lineWidth = 0.5;
   g.stroke();
 }
-function surfaceTexture(g, points, color, material, detail) {
+function surfaceTexture(g, points, color, material, detail, frame) {
   const xs = points.map((p) => p[0]),
     ys = points.map((p) => p[1]);
   const left = Math.min(...xs),
@@ -105,6 +108,11 @@ function surfaceTexture(g, points, color, material, detail) {
         g.fillRect(x, y, 0.5, 0.5);
       }
   }
+  if (material === "water") {
+    g.fillStyle = "#b3dacf";
+    for (let y = top + ((frame * 2) % 8); y < bottom; y += 8)
+      g.fillRect(left + 1, y, Math.max(1, right - left - 2), 0.75);
+  }
   if (detail === "door") {
     g.fillStyle = "#d2b56a";
     g.fillRect(right - 3, (top + bottom) / 2, 1, 2);
@@ -122,6 +130,22 @@ function surfaceTexture(g, points, color, material, detail) {
   g.restore();
 }
 export function paintKit(g, id, { direction = 0, state, frame = 0 } = {}) {
+  const definition = kitAsset(id);
+  if (!definition) throw new Error(`Sprite desconhecido: ${id}`);
+  if (!Number.isInteger(frame) || frame < 0 || frame >= definition.frames)
+    throw new Error(`Quadro inválido: ${frame}`);
+  if (definition.renderer) {
+    kitBounds(id, { direction, state });
+    const options = { direction, state, frame };
+    if (definition.renderer === "creature")
+      paintKitCreature(g, definition, options);
+    else if (definition.renderer === "legacy-cast")
+      paintMonsterCast(g, definition, options);
+    else if (definition.renderer === "effect")
+      paintKitEffect(g, definition, options);
+    else paintKitWeather(g, definition, options);
+    return;
+  }
   const parts = kitParts(id, state).map((p) =>
     !p.solid &&
     [
@@ -270,6 +294,7 @@ export function paintKit(g, id, { direction = 0, state, frame = 0 } = {}) {
             color,
             p.material,
             p.detail,
+            frame,
           );
         });
       polygon(g, upper, shade(color, 16));
@@ -353,7 +378,7 @@ export function drawKit(
   const a = kitAsset(id);
   if (!a) return false;
   const bounds = kitBounds(id, { direction, state });
-  const frame = artFrame(tempo, a.frames, a.ms);
+  const frame = kitFrame(id, tempo, state);
   const key = `${id}:${direction}:${state ?? a.defaultState ?? ""}:${frame}`;
   const sprite = cache.pegar(key, bounds.w * 2, bounds.h * 2, (g) => {
     g.scale(2, 2);
@@ -371,4 +396,13 @@ export function drawKit(
 }
 export function kitCache() {
   return cache;
+}
+
+export function kitFrame(id, tempo = 0, state) {
+  const a = kitAsset(id);
+  if (!a) throw new Error(`Sprite desconhecido: ${id}`);
+  const { loop } = kitAnimation(id, state);
+  return loop
+    ? artFrame(tempo, a.frames, a.ms)
+    : Math.min(a.frames - 1, Math.floor(artTime(tempo) / a.ms));
 }

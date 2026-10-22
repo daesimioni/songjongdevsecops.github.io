@@ -116,7 +116,7 @@ export function desenharAsset(ctx, tipo, x, y, { tempo = 0, bioma = null, seed =
 // peça usa isto para reservar folga em vez de adivinhar pelo desenho
 export function tamanhoDoAsset(tipo, options = {}) {
   const def = POR_TIPO.get(tipo);
-  if (!def) { if (!kitAsset(tipo)) return null; const b = kitBounds(tipo, options); return {w:b.w-6,h:b.h-6}; }
+  if (!def) { if (!kitAsset(tipo)) return null; const b = kitBounds(tipo, options); return {w:b.w-2*(b.padding??3),h:b.h-2*(b.padding??3)}; }
   const e = def.escala || 1;
   return { w: def.w * e, h: def.h * e };
 }
