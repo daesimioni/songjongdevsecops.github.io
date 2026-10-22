@@ -1,10 +1,11 @@
+import { readStyles } from "./styles.mjs";
 // Habilidade própria de cada chefe: a fase 2 deixa de ser genérica. O mesmo
 // chefe sempre revela a mesma habilidade, e cada uma muda uma conta diferente.
 // Roda sem navegador: node test/chefe-habilidades.test.mjs
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { HABILIDADES, habilidadeDoChefe, danoDoJogador, extraDoErro, curaDoChefe, espelhoDoChefe } from "../js/chefe-habilidades.js";
-import { DUNGEONS } from "../js/dungeon-data.js";
+import { HABILIDADES, habilidadeDoChefe, danoDoJogador, extraDoErro, curaDoChefe, espelhoDoChefe } from "../src/gameplay/chefe-habilidades.js";
+import { DUNGEONS } from "../src/content/dungeon-data.js";
 
 const problemas = [];
 const check = (ok, msg) => { if (!ok) problemas.push(msg); };
@@ -35,8 +36,8 @@ check(espelhoDoChefe("espelho", 1, false) === false, "espelho não vale na fase 
 // ---- integração com o RPG de verdade ----
 const store = new Map();
 globalThis.localStorage = { getItem: (k) => (store.has(k) ? store.get(k) : null), setItem: (k, v) => store.set(k, String(v)), removeItem: (k) => store.delete(k), clear: () => store.clear() };
-const { RPG } = await import("../js/rpg.js");
-const { GROUNDS } = await import("../js/rpg-data.js");
+const { RPG } = await import("../src/gameplay/rpg.js");
+const { GROUNDS } = await import("../src/content/rpg-data.js");
 const ground = GROUNDS.find((g) => g.id === "cs");
 
 function bossRpg() {
@@ -129,9 +130,9 @@ const hab = (id) => HABILIDADES.find((h) => h.id === id);
 }
 
 // ---- integração na fonte ----
-const rpgSrc = fs.readFileSync(new URL("../js/rpg.js", import.meta.url), "utf8");
-const duelSrc = fs.readFileSync(new URL("../js/duel.js", import.meta.url), "utf8");
-const css = fs.readFileSync(new URL("../css/style.css", import.meta.url), "utf8");
+const rpgSrc = fs.readFileSync(new URL("../src/gameplay/rpg.js", import.meta.url), "utf8");
+const duelSrc = fs.readFileSync(new URL("../src/ui/duel.js", import.meta.url), "utf8");
+const css = readStyles();
 check(/from "\.\/chefe-habilidades\.js"/.test(rpgSrc), "rpg não importa as habilidades");
 check(/danoDoJogador\(/.test(rpgSrc) && /extraDoErro\(/.test(rpgSrc), "rpg não aplica couraça/ímpeto");
 check(/curaDoChefe\(/.test(rpgSrc) && /espelhoDoChefe\(/.test(rpgSrc), "rpg não aplica seiva/espelho");

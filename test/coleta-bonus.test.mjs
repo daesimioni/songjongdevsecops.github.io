@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { rollGather } from '../js/gather.js';
+import { rollGather } from '../src/ui/gather.js';
 for (const kind of ['vein', 'tree', 'water']) {
   const counts = bonus => {
     const grades = { comum: 0, incomum: 0, raro: 0, lendario: 0 };

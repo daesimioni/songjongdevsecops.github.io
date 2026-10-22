@@ -13,7 +13,7 @@ parede, mesmo chão, nenhum móvel que dissesse "aqui se forja", "aqui se lê" o
 
 ## 2. O mapa das salas
 
-Cada continente ganhou um tipo de cômodo (`js/salas-tematicas.js`):
+Cada continente ganhou um tipo de cômodo (`src/content/salas-tematicas.js`):
 
 | continente | sala | cavernas |
 |---|---|---|

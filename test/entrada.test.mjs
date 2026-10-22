@@ -1,3 +1,4 @@
+import { readStyles } from "./styles.mjs";
 // A arte da entrada depois da limpeza: sem pentagrama, sem sinais soltos, duas
 // figuras de cada lado, faixa de texto no pé e vinheta no centro. Roda sem
 // navegador: node test/entrada.test.mjs
@@ -6,9 +7,9 @@ import fs from "node:fs";
 
 const problemas = [];
 const check = (ok, msg) => { if (!ok) problemas.push(msg); };
-const title = fs.readFileSync(new URL("../js/title.js", import.meta.url), "utf8");
+const title = fs.readFileSync(new URL("../src/ui/title.js", import.meta.url), "utf8");
 const html = fs.readFileSync(new URL("../index.html", import.meta.url), "utf8");
-const css = fs.readFileSync(new URL("../css/style.css", import.meta.url), "utf8");
+const css = readStyles();
 
 // ---- cena clara: um pentagrama e sinais soltos saíram ----
 check(!/pentagrama/i.test(title), "title.js ainda fala do pentagrama");

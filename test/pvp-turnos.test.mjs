@@ -8,7 +8,7 @@ globalThis.setTimeout = (fn,ms) => { const id = ++sequence; timers.set(id,{fn,ms
 globalThis.clearTimeout = id => timers.delete(id);
 globalThis.setInterval = globalThis.setTimeout;
 globalThis.clearInterval = globalThis.clearTimeout;
-const {createPvp} = await import('../js/pvp.js');
+const {createPvp} = await import('../src/ui/pvp.js');
 const question = {q:'Teste?',options:['A','B','C','D','E'],answer:0,damage:2};
 const peer = {id:'other',name:'Outro'};
 const pvp = createPvp({rpg:{pvpQuestions:()=>[question]},audio:{chime(){},blip(){}},toast(){},player:{continentId:'cs'},getNet:()=>({id:'me',sendPvp:()=>true})});

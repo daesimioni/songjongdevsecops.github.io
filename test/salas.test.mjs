@@ -4,8 +4,8 @@
 // Roda sem navegador: node test/salas.test.mjs
 import assert from "node:assert/strict";
 
-const { DUNGEONS } = await import("../js/dungeon-data.js");
-const { salaTematica, propsDaSala, TEMA_DA_SALA } = await import("../js/salas-tematicas.js");
+const { DUNGEONS } = await import("../src/content/dungeon-data.js");
+const { salaTematica, propsDaSala, TEMA_DA_SALA } = await import("../src/content/salas-tematicas.js");
 
 const problemas = [];
 const check = (ok, msg) => { if (!ok) problemas.push(msg); };

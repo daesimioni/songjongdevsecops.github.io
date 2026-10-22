@@ -5,9 +5,9 @@ import assert from "node:assert/strict";
 
 globalThis.localStorage = { getItem: () => null, setItem: () => {}, removeItem: () => {}, clear: () => {} };
 
-const { BIOMES } = await import("../js/identity.js");
-const { CATALOG_AREAS } = await import("../js/catalog-layout.js");
-const { ESTACOES, EVENTOS, ELEMENTOS, estacaoDe, criarAmbiente, ambienteDe, assinaturaDoKit } = await import("../js/ambient.js");
+const { BIOMES } = await import("../src/content/identity.js");
+const { CATALOG_AREAS } = await import("../src/content/catalog-layout.js");
+const { ESTACOES, EVENTOS, ELEMENTOS, estacaoDe, criarAmbiente, ambienteDe, assinaturaDoKit } = await import("../src/rendering/ambient.js");
 
 // 1. estação pelo mês (hemisfério sul)
 assert.equal(ESTACOES.length, 4);

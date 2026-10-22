@@ -11,8 +11,8 @@ globalThis.localStorage = {
   clear() { this._d.clear(); },
 };
 
-const { VOCACOES, SUB_POR_ID, VOCACAO_PADRAO, multDe } = await import("../js/vocations.js");
-const { RPG } = await import("../js/rpg.js");
+const { VOCACOES, SUB_POR_ID, VOCACAO_PADRAO, multDe } = await import("../src/content/vocations.js");
+const { RPG } = await import("../src/gameplay/rpg.js");
 
 assert.equal(VOCACOES.length, 5, `vocações: ${VOCACOES.length}`);
 for (const v of VOCACOES) assert.equal(v.subs.length, 3, `${v.id} sem três subcategorias`);

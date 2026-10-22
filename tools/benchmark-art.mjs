@@ -3,7 +3,7 @@ import {resolve} from 'node:path';
 const {createCanvas}=await import(pathToFileURL(process.env.ART_CANVAS_MODULE));
 let canvases=0,draws=0;globalThis.document={createElement(){canvases++;return createCanvas(1,1);}};
 const root=resolve(process.argv[2]||'.');
-const module=path=>import(pathToFileURL(`${root}/js/${path}`));
+const module=path=>import(pathToFileURL(`${root}/src/rendering/${path}`));
 const {drawCreatureArt,COSTAS}=await module('creature.js');
 const {drawPetSprite,PET_COLORS}=await module('pet-art.js');
 const {desenharAsset,cacheDeAssets,GRUPOS}=await module('assets/index.js');

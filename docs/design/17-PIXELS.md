@@ -7,14 +7,14 @@ arte em 2x cai quase 1:1 no dispositivo: o detalhe de meio pixel aparece.
 
 ## Sprite em 2x
 
-`js/assets/index.js` pinta o sprite num canvas de `w*2` por `h*2` com o contexto
+`src/rendering/assets/index.js` pinta o sprite num canvas de `w*2` por `h*2` com o contexto
 escalado em 2 e copia no **mesmo tamanho de mundo**. Como a tela desenha a 3,2
 pixels de dispositivo por pixel de mundo (dpr 2 × zoom 1,6), a fonte em 2x chega
 à tela sem perder o detalhe: o desenho de meio pixel aparece.
 
 A árvore folhuda, a conífera, a palmeira e as construções usam passo de **0,5
 pixel** no contorno e nas texturas (casca, telha, junta de pedra, palha). O
-`elipseFina()` de `js/assets/vegetacao.js` desenha a copa em linhas de meio
+`elipseFina()` de `src/rendering/assets/vegetacao.js` desenha a copa em linhas de meio
 pixel, com chiado no contorno, e a copa ganha moitas de folha em dois tons.
 
 ## Chão
@@ -63,8 +63,8 @@ O desenho de cada espécie e de cada item já existia; faltava o que envolve o
 desenho. Agora todo bicho e todo ícone de item ganham:
 
 - **contorno escuro de um pixel**, carimbando a própria silhueta em oito
-  direções (`drawCreatureArt`, em `js/creature.js`, e `itemIconCanvas`, em
-  `js/item-art.js`);
+  direções (`drawCreatureArt`, em `src/rendering/creature.js`, e `itemIconCanvas`, em
+  `src/rendering/item-art.js`);
 - **véu de luz** preso ao corpo por `source-atop`: 17% de branco em cima, 30% de
   breu embaixo, o que dá volume a um sprite chapado;
 - **sombra no chão** desenhada fora do sprite, para o contorno não copiar a

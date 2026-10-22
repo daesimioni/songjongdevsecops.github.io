@@ -1,0 +1,198 @@
+/* ---- The Learning Valley: abertura ---- */
+.splash {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: stretch;
+  overflow: hidden;
+  background: #05070f;
+}
+.splash[hidden] { display: none; }
+#splash-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  image-rendering: pixelated;
+}
+.splash-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(80% 70% at 50% 42%, transparent 35%, rgba(4, 6, 14, 0.55) 100%),
+    linear-gradient(180deg, rgba(4, 6, 14, 0.25), transparent 30%, transparent 70%, rgba(4, 6, 14, 0.7));
+}
+.splash-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: min(920px, 94vw);
+  margin: 0 auto;
+  /* o meio da tela é do grimório: o título fica em cima, o botão embaixo */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100%;
+  padding: clamp(16px, 4.5vh, 44px) 24px clamp(14px, 3.5vh, 34px);
+  text-align: center;
+  animation: splash-rise 900ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes splash-rise {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.splash-kicker {
+  font-family: var(--pixel);
+  font-size: 8px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #bfffe3;
+  margin: 0 0 16px;
+  text-shadow: 0 0 18px rgba(97, 244, 192, 0.55), 0 1px 0 rgba(0, 0, 0, 0.8);
+}
+.splash-logo {
+  font-family: var(--pixel-display);
+  font-size: clamp(18px, 3.8vw, 38px);
+  line-height: 1.3;
+  letter-spacing: 0.03em;
+  color: #fff3d1;
+  margin: 0 0 24px;
+  text-shadow: 0 4px 0 #201426, 0 0 34px rgba(255, 200, 87, 0.42), 0 0 90px rgba(97, 244, 192, 0.16);
+}
+.splash-logo span, .splash-logo b { display: block; font-weight: 400; }
+.splash-logo b {
+  background: linear-gradient(180deg, #fff3d1 0%, #ffc857 52%, #ff9f6b 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 3px 0 #201426) drop-shadow(0 0 26px rgba(255, 200, 87, 0.45));
+}
+.splash-tag {
+  font-family: var(--mono);
+  font-size: clamp(11px, 1.15vw, 13px);
+  line-height: 1.65;
+  color: #eee8ff;
+  max-width: 62ch;
+  /* o texto sai de cima da arte e vira uma faixa legível no pé */
+  margin: auto auto 12px;
+  padding: 10px 16px;
+  background: rgba(6, 8, 18, 0.66);
+  border: 1px solid rgba(150, 160, 210, 0.18);
+  border-radius: 10px;
+  backdrop-filter: blur(2px);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.8);
+}
+.splash-enter {
+  /* o botão fica no pé, depois da faixa de texto */
+  margin-top: 0;
+  font-family: var(--pixel);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: #0a0c18;
+  background: linear-gradient(180deg, #fff3d1, #ffc857 65%, #f0b83c);
+  border: 1px solid #fff3d1;
+  border-radius: 8px;
+  padding: 17px 30px;
+  cursor: pointer;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.45), 0 14px 44px rgba(255, 200, 87, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.splash-enter:hover { transform: translateY(-2px); box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.45), 0 20px 54px rgba(255, 200, 87, 0.36), inset 0 1px 0 rgba(255, 255, 255, 0.8); }
+.splash-enter:focus-visible { outline: 2px solid var(--mint); outline-offset: 5px; }
+.splash-enter kbd {
+  font-size: 7px;
+  margin-left: 8px;
+  opacity: 0.85;
+  /* dentro do botão claro, o kbd não pode usar a cor clara do jogo */
+  color: #0a0c18;
+  background: rgba(10, 12, 24, 0.14);
+  border-color: rgba(10, 12, 24, 0.4);
+}
+.splash-foot {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(206, 201, 230, 0.55);
+  margin: 26px 0 0;
+}
+.splash.saindo { animation: splash-out 0.55s ease forwards; }
+@keyframes splash-out {
+  to { opacity: 0; visibility: hidden; }
+}
+.intro {
+  background:
+    radial-gradient(70% 60% at 50% 30%, rgba(97, 244, 192, 0.1), transparent 62%),
+    radial-gradient(60% 50% at 74% 80%, rgba(255, 200, 87, 0.1), transparent 70%),
+    radial-gradient(80% 70% at 20% 70%, rgba(180, 140, 255, 0.14), transparent 70%),
+    linear-gradient(180deg, rgba(6, 9, 22, 0.86), rgba(9, 8, 24, 0.92));
+  backdrop-filter: blur(4px);
+}
+.intro-card {
+  border-color: rgba(255, 200, 87, 0.32);
+  box-shadow: 0 42px 130px rgba(0, 0, 0, 0.78), 0 0 70px rgba(97, 244, 192, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+#intro-title {
+  font-size: clamp(22px, 4.6vw, 40px);
+  color: #fff3d1;
+  text-shadow: 0 3px 0 #201426, 0 0 34px rgba(255, 200, 87, 0.3);
+}
+@media (max-width: 560px) {
+  .splash-card { padding: 16px; }
+  .splash-logo { font-size: 20px; }
+  .splash-tag { font-size: 12px; margin-bottom: 24px; }
+  .splash-enter { padding: 15px 20px; font-size: 9px; }
+}
+
+/* ---- vida e mana no HUD ---- */
+.hud-vitals {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: min(230px, 26vw);
+  padding: 9px 11px 10px;
+  border: 1px solid rgba(151, 140, 190, 0.28);
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(10, 14, 32, 0.82), rgba(7, 10, 24, 0.9));
+  box-shadow: 0 10px 34px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(4px);
+}
+.vital { display: grid; gap: 4px; }
+.vital-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  font-family: var(--pixel);
+  font-size: 7px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.vital-head b { font-family: var(--mono); font-size: 11px; letter-spacing: 0; color: var(--ink); }
+.vital-bar {
+  height: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.6);
+  border-radius: 3px;
+  background: rgba(4, 6, 14, 0.9);
+  overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+.vital-bar i {
+  display: block;
+  height: 100%;
+  width: 100%;
+  border-radius: 2px;
+  transition: width 0.22s ease, background 0.22s ease;
+}
+.vital-hp .vital-bar i { background: linear-gradient(180deg, #ff9cc0, #ff5a86 70%, #c92f5c); box-shadow: 0 0 10px rgba(255, 90, 134, 0.35); }
+.vital-mana .vital-bar i { background: linear-gradient(180deg, #b9f4ff, #6bd5ff 65%, #2f8fc9); box-shadow: 0 0 10px rgba(107, 213, 255, 0.35); }
+.vital-hp.baixo .vital-head b { color: #ff9cc0; }
+.vital-hp.baixo .vital-bar i { animation: vital-pulse 0.9s infinite; }
+@keyframes vital-pulse { 50% { opacity: 0.55; } }
+@media (max-width: 760px) {
+  .hud-vitals { width: 100%; max-width: none; order: 3; flex-direction: row; gap: 10px; }
+  .hud-vitals .vital { flex: 1; }
+}

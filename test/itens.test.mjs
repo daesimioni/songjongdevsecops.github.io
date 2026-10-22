@@ -6,8 +6,8 @@ import assert from "node:assert/strict";
 
 globalThis.localStorage = { getItem: () => null, setItem: () => {}, removeItem: () => {}, clear: () => {} };
 
-const { ITEMS } = await import("../js/rpg-data.js");
-const { familiaDe, FAMILIAS } = await import("../js/item-art.js");
+const { ITEMS } = await import("../src/content/rpg-data.js");
+const { familiaDe, FAMILIAS } = await import("../src/rendering/item-art.js");
 
 // canvas de mentira: só os retângulos importam
 function desenhar(item) {
@@ -53,7 +53,7 @@ globalThis.document = {
     return canvas;
   },
 };
-const mod = await import("../js/item-art.js");
+const mod = await import("../src/rendering/item-art.js");
 for (const item of itens) {
   const canvas = mod.itemIconCanvas(item);
   const rets = canvas._ctx._rets();
@@ -90,7 +90,7 @@ assert.ok(familiasArma.size >= 4, `famílias de arma: ${familiasArma.size}`);
 assert.ok(vistos.size >= 120, `silhuetas distintas: ${vistos.size}`);
 
 // ---- relíquia por caverna ------------------------------------------------
-const { RELICS } = await import("../js/rpg-data.js");
+const { RELICS } = await import("../src/content/rpg-data.js");
 assert.equal(Object.keys(RELICS).length, 86, `relíquias: ${Object.keys(RELICS).length}`);
 const nomesReliquia = new Set();
 for (const [areaId, rel] of Object.entries(RELICS)) {
@@ -103,7 +103,7 @@ for (const [areaId, rel] of Object.entries(RELICS)) {
 assert.equal(nomesReliquia.size, 86, "nome de relíquia repetido");
 
 // ---- baú -----------------------------------------------------------------
-const { TABELAS_DE_BAU, classeDoBau, lootDoBau } = await import("../js/dungeon.js");
+const { TABELAS_DE_BAU, classeDoBau, lootDoBau } = await import("../src/gameplay/dungeon-loot.js");
 assert.ok(Object.keys(TABELAS_DE_BAU).length >= 4, "classes de baú");
 assert.equal(classeDoBau("Entrada", 0), "entrada");
 assert.equal(classeDoBau("Sala das Chaves", 1), "cofre");
@@ -124,7 +124,7 @@ assert.ok(!jaTem.some((l) => l.id === "cs-x-reliquia"), "relíquia saiu duas vez
 for (const l of selado) assert.ok(ITEMS[l.id] || l.id.startsWith("cs-x-"), `baú com item inexistente: ${l.id}`);
 
 // ---- missão entrega item -------------------------------------------------
-const { QUESTS } = await import("../js/quests.js");
+const { QUESTS } = await import("../src/gameplay/quests.js");
 assert.equal(QUESTS.length, 284, `missões: ${QUESTS.length}`);
 const semItem = QUESTS.filter((q) => !q.reward?.item);
 assert.equal(semItem.length, 0, `missão sem item: ${semItem.slice(0, 4).map((q) => q.id).join(", ")}`);

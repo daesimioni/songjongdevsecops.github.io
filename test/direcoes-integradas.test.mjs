@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
-import { DIRECTIONS, directionVector, facingDirection, moveWithCollision } from '../js/movement.js';
-import { skiffRear } from '../js/skiff.js';
+import { DIRECTIONS, directionVector, facingDirection, moveWithCollision } from '../src/core/movement.js';
+import { skiffRear } from '../src/rendering/skiff.js';
 for(let dir=0;dir<8;dir++){
  const [dx,dy]=DIRECTIONS[dir];
  assert.equal(facingDirection(dx,dy),dir);

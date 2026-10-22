@@ -7,10 +7,10 @@ import fs from "node:fs";
 
 globalThis.localStorage = { getItem: () => null, setItem: () => {}, removeItem: () => {}, clear: () => {} };
 
-const { createWorld } = await import("../js/world.js");
-const { CONSTRUCOES } = await import("../js/assets/construcoes.js");
-const { tamanhoDoAsset } = await import("../js/assets/index.js");
-const { TILE, TILE_KIND: K, PLAYER_W, PLAYER_H } = await import("../js/config.js");
+const { createWorld } = await import("../src/world/world.js");
+const { CONSTRUCOES } = await import("../src/rendering/assets/construcoes.js");
+const { tamanhoDoAsset } = await import("../src/rendering/assets/index.js");
+const { TILE, TILE_KIND: K, PLAYER_W, PLAYER_H } = await import("../src/content/config.js");
 
 const problemas = [];
 const check = (ok, msg) => { if (!ok) problemas.push(msg); };
@@ -40,7 +40,7 @@ for (const casa of world.casas) {
 }
 
 // ---- soleira desenhada: degrau com as runas da área na frente de cada porta ----
-const render = fs.readFileSync(new URL("../js/render.js", import.meta.url), "utf8");
+const render = fs.readFileSync(new URL("../src/rendering/render.js", import.meta.url), "utf8");
 check(/function drawSoleira\(casa\)/.test(render), "render sem soleira da casa");
 check(/for \(const casa of world\.casas\)[\s\S]{0,200}drawSoleira\(casa\)/.test(render), "soleira fora da fila das casas");
 check(/BIOMES\[casa\.bioma\]\?\.accent/.test(render), "soleira não usa a cor da área");
@@ -133,7 +133,7 @@ if (morador) {
     check(Math.hypot(m.x - morador.x, m.y - morador.y) >= 0.9, `morador em cima de ${m.tipo}`);
   }
 }
-const app = fs.readFileSync(new URL("../js/app.js", import.meta.url), "utf8");
+const app = fs.readFileSync(new URL("../src/app/app.js", import.meta.url), "utf8");
 check(/kind === "morador"/.test(app) && /falarComMorador/.test(app), "app não conversa com o morador");
 check(/a\.tipo === "morador"/.test(render) && /drawHuman\(ctx, px, py/.test(render), "render não desenha o morador");
 

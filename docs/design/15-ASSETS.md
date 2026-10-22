@@ -9,13 +9,13 @@ que está na vista.
 
 | Grupo | Arquivo | Assets |
 |---|---|---|
-| solo | `js/assets/solos.js` | pedra, rachadura, raiz, poça, tufo, folhada, cogumelo, musgo |
-| vegetação | `js/assets/vegetacao.js` | árvore, conífera, palmeira, seca, arbusto, junco, florada, trepadeira |
-| construção | `js/assets/construcoes.js` | cabana, casa, torre, ruína, galpão, poço, cerca, doca |
-| fogo | `js/assets/fogo.js` | fogueira, braseiro, tocha, lanterna, fumaça |
-| água | `js/assets/agua.js` | pedra molhada, junco d'água, espuma, lírio |
-| props | `js/assets/props.js` | barril, saco, caixote, fardo, gaivota |
-| ícones | `js/assets/icones.js` | os 36 enfeites de conceito (livro, frasco, terminal, guindaste, sino...) que antes moravam no renderer |
+| solo | `src/rendering/assets/solos.js` | pedra, rachadura, raiz, poça, tufo, folhada, cogumelo, musgo |
+| vegetação | `src/rendering/assets/vegetacao.js` | árvore, conífera, palmeira, seca, arbusto, junco, florada, trepadeira |
+| construção | `src/rendering/assets/construcoes.js` | cabana, casa, torre, ruína, galpão, poço, cerca, doca |
+| fogo | `src/rendering/assets/fogo.js` | fogueira, braseiro, tocha, lanterna, fumaça |
+| água | `src/rendering/assets/agua.js` | pedra molhada, junco d'água, espuma, lírio |
+| props | `src/rendering/assets/props.js` | barril, saco, caixote, fardo, gaivota |
+| ícones | `src/rendering/assets/icones.js` | os 36 enfeites de conceito (livro, frasco, terminal, guindaste, sino...) que antes moravam no renderer |
 
 Cada asset declara `w`, `h`, `variantes`, `quadros`/`ms` quando anima e uma
 função `desenhar(g, paleta, variante, quadro)`. O contrato é cobrado por
@@ -24,7 +24,7 @@ duração e função de desenho.
 
 ## Paleta
 
-`paletaDaArea(bioma)` em `js/assets/nucleo.js` monta a paleta a partir do
+`paletaDaArea(bioma)` em `src/rendering/assets/nucleo.js` monta a paleta a partir do
 bioma da área: o material tinge tronco, pedra e telha; o acento da disciplina
 tinge folha, tecido, metal e chama. A mesma árvore parece de giz numa ilha e de
 cobre em outra sem arte nova. A paleta é calculada uma vez por bioma e
@@ -32,14 +32,14 @@ reaproveitada.
 
 ## Cache
 
-`js/assets/index.js` pinta cada sprite uma vez por `(tipo, variante, bioma,
+`src/rendering/assets/index.js` pinta cada sprite uma vez por `(tipo, variante, bioma,
 quadro)` num canvas fora de tela e guarda num cache LRU de **240 sprites**. O
 quadro só faz `drawImage`. O teto prende a memória mesmo depois de visitar as
 86 ilhas; medido: o cache chega ao teto depois de duas ilhas e para ali.
 
 ## Colocação
 
-`js/assets/povoado.js` roda na geração do mundo e devolve `world.ambiente`.
+`src/rendering/assets/povoado.js` roda na geração do mundo e devolve `world.ambiente`.
 Regras:
 
 - construção e ruína entram primeiro, na coroa da ilha; vegetação entra depois
@@ -57,9 +57,9 @@ braseiros**. Nada colide: a malha de caminhada é a mesma de antes.
 
 ## Desenho no quadro
 
-`js/render.js` desenha o decalque de chão chapado antes das entidades e o que
+`src/rendering/render.js` desenha o decalque de chão chapado antes das entidades e o que
 tem volume na fila ordenada por y. A camada inteira é culled pelo retângulo da
-câmera (`js/camera.js`). Fogueira e braseiro acendem um brilho pulsante antes do
+câmera (`src/core/camera.js`). Fogueira e braseiro acendem um brilho pulsante antes do
 sprite. Animação fica em quadro cacheado, com o relógio da cena escolhendo o
 quadro: fogueira, braseiro, tocha, lanterna, fumaça, espuma e gaivota.
 

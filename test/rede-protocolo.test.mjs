@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { Net } from '../js/net.js';
+import { Net } from '../src/platform/net.js';
 let attacks = 0;
 const net = new Net({ room: 'test', onPvp: () => attacks++ });
 for (let dir = 0; dir < 8; dir++) {

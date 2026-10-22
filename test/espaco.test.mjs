@@ -7,8 +7,8 @@ import assert from "node:assert/strict";
 
 globalThis.localStorage = { getItem: () => null, setItem: () => {}, removeItem: () => {}, clear: () => {} };
 
-const { createWorld } = await import("../js/world.js");
-const { pracaDaCaverna } = await import("../js/dungeon.js");
+const { createWorld } = await import("../src/world/world.js");
+const { pracaDaCaverna } = await import("../src/gameplay/dungeon-plaza.js");
 
 const problemas = [];
 const check = (ok, msg) => { if (!ok) problemas.push(msg); };

@@ -8,10 +8,10 @@ import fs from "node:fs";
 
 globalThis.localStorage = { getItem: () => null, setItem: () => {}, removeItem: () => {}, clear: () => {} };
 
-const assets = await import("../js/assets/index.js");
-const nucleo = await import("../js/assets/nucleo.js");
-const { BIOMES } = await import("../js/identity.js");
-const { TILE_KIND: K } = await import("../js/config.js");
+const assets = await import("../src/rendering/assets/index.js");
+const nucleo = await import("../src/rendering/assets/nucleo.js");
+const { BIOMES } = await import("../src/content/identity.js");
+const { TILE_KIND: K } = await import("../src/content/config.js");
 
 const problemas = [];
 const check = (ok, msg) => { if (!ok) problemas.push(msg); };
@@ -85,8 +85,8 @@ check(!cache.tem("a"), "cache não descartou o item mais antigo");
 check(criados === 4, `fabrica chamada ${criados} vezes, esperado 4`);
 
 // ---- colocação no mundo ----
-const { createWorld } = await import("../js/world.js");
-const { ICONES } = await import("../js/assets/icones.js");
+const { createWorld } = await import("../src/world/world.js");
+const { ICONES } = await import("../src/rendering/assets/icones.js");
 const world = createWorld();
 check(world.ambiente.length >= 1800, `camada de ambiente com ${world.ambiente.length} peças, esperado ao menos 1800`);
 const porTipo = {};
@@ -137,7 +137,7 @@ for (const a of world.ambiente) {
 }
 
 // ---- o renderer usa a biblioteca e desenha só a vista ----
-const render = fs.readFileSync(new URL("../js/render.js", import.meta.url), "utf8");
+const render = fs.readFileSync(new URL("../src/rendering/render.js", import.meta.url), "utf8");
 check(/from "\.\/assets\/index\.js"/.test(render), "render.js não importa a biblioteca");
 check(/world\.ambiente/.test(render), "render.js não desenha a camada de ambiente");
 check(/stats\.assets = 0/.test(render), "render.js não zera a contagem de assets do quadro");

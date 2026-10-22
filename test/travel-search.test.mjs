@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {makeDocument} from './ui-dom.mjs';
-import {filterGroupedList} from '../js/search-ui.js';
+import {filterGroupedList} from '../src/ui/search-ui.js';
 const {Node}=makeDocument();const list=new Node();
 const row=(text,group=false)=>{const n=new Node();n.textContent=text;n.className=group?'travel-group':'travel-item';list.append(n);return n;};
 const a=row('Física',true),b=row('Óptica · Física'),c=row('Matemática',true),d=row('Álgebra · Matemática');

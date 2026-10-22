@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
 globalThis.localStorage={getItem:()=>null,setItem(){}};
-const {createWorld}=await import('../js/world.js');
-const {findPath}=await import('../js/path.js');
-const {advancePath}=await import('../js/movement.js');
-const {PLAYER_W,PLAYER_H}=await import('../js/config.js');
+const {createWorld}=await import('../src/world/world.js');
+const {findPath}=await import('../src/core/path.js');
+const {advancePath}=await import('../src/core/movement.js');
+const {PLAYER_W,PLAYER_H}=await import('../src/content/config.js');
 const w=createWorld();
 const failures=[];
 for(const house of w.casas) {

@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {makeDocument} from './ui-dom.mjs';
 const {document}=makeDocument(['wiki-search','wiki-tabs','wiki-list','wiki-detail','wiki-resumo','wiki-more']);
 globalThis.document=document;
-const {abrirWiki,indiceDaWiki}=await import('../js/wiki.js');
+const {abrirWiki,indiceDaWiki}=await import('../src/ui/wiki.js');
 const $=id=>document.getElementById(id);
 abrirWiki();
 assert.equal($('wiki-list').children.length,80);assert.equal($('wiki-more').hidden,false);

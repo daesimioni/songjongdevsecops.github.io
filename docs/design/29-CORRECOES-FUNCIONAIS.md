@@ -28,7 +28,7 @@ do desenho em funcionalidades novas.
 | Conta com só perícia, pet ou magia era tratada como vazia | Esses registros também contam como progresso | `backup.test.mjs` |
 | Restauração parcial era anunciada como sucesso | Falha tenta desfazer gravações e retorna erro explícito | `backup.test.mjs`, simulação de falha de cota |
 | `npm test` só rodava o arquivo core | Executa todos os `*.test.mjs`, isolados e sequenciais | `package.json` |
-| README descrevia mapa e dano antigos | Dimensões 560×360 e vida/dano base diferenciados de acertos | `js/config.js`, `js/rpg-data.js`, `js/rpg.js` |
+| README descrevia mapa e dano antigos | Dimensões 560×360 e vida/dano base diferenciados de acertos | `src/content/config.js`, `src/content/rpg-data.js`, `src/gameplay/rpg.js` |
 
 ## Validação e limites
 

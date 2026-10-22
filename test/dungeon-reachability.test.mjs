@@ -12,11 +12,12 @@ globalThis.document={createElement:node,querySelectorAll:()=>[],getElementById:i
 globalThis.window={addEventListener(){},matchMedia:()=>({matches:false}),innerWidth:1280,innerHeight:720,devicePixelRatio:1};
 globalThis.localStorage={getItem:()=>null,setItem(){}};
 globalThis.requestAnimationFrame=()=>1;globalThis.cancelAnimationFrame=()=>{};
-const {createDungeon,dungeonBoxFree,dungeonLineOfSight}=await import('../js/dungeon.js');
-const {DUNGEONS,CONURBATION}=await import('../js/dungeon-data.js');
-const {findInteractionPath}=await import('../js/path.js');
-const {RPG}=await import('../js/rpg.js');
-const {advancePath}=await import('../js/movement.js');
+const { createDungeon } = await import("../src/app/dungeon.js");
+const { boxFree: dungeonBoxFree, dungeonLineOfSight } = await import("../src/gameplay/dungeon-map.js");
+const {DUNGEONS,CONURBATION}=await import('../src/content/dungeon-data.js');
+const {findInteractionPath}=await import('../src/core/path.js');
+const {RPG}=await import('../src/gameplay/rpg.js');
+const {advancePath}=await import('../src/core/movement.js');
 const visits=[...DUNGEONS,CONURBATION];
 const dg=createDungeon({rpg:new RPG(),audio:{open(){},close(){}}});
 const failures=[];let total=0;

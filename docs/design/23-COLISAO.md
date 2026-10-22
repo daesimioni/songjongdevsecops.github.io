@@ -26,7 +26,7 @@ O boneco atravessava barril, árvore e fogueira como se não existissem.
 ## 2. A regra
 
 Cada peça com volume ganhou uma caixa presa ao chão, menor que o desenho
-(`CAIXA_CENARIO` em `js/world.js`):
+(`CAIXA_CENARIO` em `src/world/world.js`):
 
 | peça | meia-largura | meia-altura | centro acima da base |
 |---|---|---|---|
@@ -68,7 +68,7 @@ Os pontos de interesse continuam alcançáveis a pé: a suíte de colisão varre
 ## 4. Caverna
 
 A varredura do subsolo foi feita no caminho de criação de `state.solids`
-(`js/dungeon.js`): altar, forja, pedra de retorno, mesa de vocação, encantador,
+(`src/app/dungeon.js`): altar, forja, pedra de retorno, mesa de vocação, encantador,
 horta, veio e baú já entram como caixa. Ficam atravessáveis de propósito:
 
 - **conurbação, escada e portal**: são travessia, o corpo pisa em cima para

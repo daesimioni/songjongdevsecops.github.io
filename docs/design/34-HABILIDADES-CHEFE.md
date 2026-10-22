@@ -19,11 +19,11 @@ sem habilidade; fase 3 mantém a habilidade e troca o baralho para difícil.
 
 ## Onde a regra mora
 
-- `js/chefe-habilidades.js`: tabela, escolha estável e as quatro contas puras
+- `src/gameplay/chefe-habilidades.js`: tabela, escolha estável e as quatro contas puras
   (`danoDoJogador`, `extraDoErro`, `curaDoChefe`, `espelhoDoChefe`).
-- `js/rpg.js`: aplica couraça no acerto, ímpeto na conta do erro, seiva no erro
+- `src/gameplay/rpg.js`: aplica couraça no acerto, ímpeto na conta do erro, seiva no erro
   e espelho no bloqueio; a fase anuncia a habilidade no `phaseNote`.
-- `js/duel.js`: mostra `chefe: <nome>` no cabeçalho da vida e o aviso da fase
+- `src/ui/duel.js`: mostra `chefe: <nome>` no cabeçalho da vida e o aviso da fase
   no feedback.
 - `css/style.css`: `.duel-ability`, na mesma linha da rodada e do ritmo.
 

@@ -14,7 +14,7 @@ function walk(dir) {
     else if (entry.name.endsWith(".js")) jsFiles.push(full);
   }
 }
-walk(path.join(root, "js"));
+walk(path.join(root, "src"));
 
 const faults = [];
 const check = (cond, message) => { if (!cond) faults.push(message); };
@@ -101,14 +101,14 @@ console.log("ok casca: ids, imports, botões, rótulos, aria e handlers");
 
 // todo ícone de estação tem desenho (ou tratamento próprio na função da estação)
 {
-  const render = fs.readFileSync(path.join(root, "js/render.js"), "utf8");
+  const render = fs.readFileSync(path.join(root, "src/rendering/render.js"), "utf8");
   const start = render.indexOf("function drawStationIcon");
   const end = render.indexOf("function drawBanner", start);
   const body = render.slice(start, end);
   const supported = new Set([...body.matchAll(/icon === "([a-z]+)"/g)].map((m) => m[1]));
   supported.add("fountain");
   supported.add("radio");
-  const { SITES } = await import("../js/config.js");
+  const { SITES } = await import("../src/content/config.js");
   const semArte = [...new Set(SITES.map((s) => s.icon))].filter((icon) => !supported.has(icon));
   assert.equal(semArte.length, 0, `estação com ícone sem desenho: ${semArte.join(", ")}`);
 }
@@ -116,7 +116,7 @@ console.log("ok casca: ids, imports, botões, rótulos, aria e handlers");
 // entrada: quem já tem personagem não pode ser barrado pelo pedido de vocação
 // (o seletor fica escondido para quem volta, e a entrada travava sem aviso)
 {
-  const app = fs.readFileSync(path.join(root, "js/app.js"), "utf8");
+  const app = fs.readFileSync(path.join(root, "src/app/app.js"), "utf8");
   assert.match(app, /personagemCriado: Boolean\(saved\.name\) \|\| Boolean\(avatarGuardado\)/, "entrada: personagemCriado não vem do save");
   assert.match(app, /if \(!state\.personagemCriado && !vocacaoEscolhida\)/, "entrada: checagem de vocação mudou de forma");
 }

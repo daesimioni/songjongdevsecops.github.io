@@ -3,7 +3,7 @@ import {makeDocument} from './ui-dom.mjs';
 const ids=['gather-kicker','gather-title','gather-sub','gather-body','duel','duel-kicker','duel-name','duel-sub','duel-meta','duel-body'];
 const {document}=makeDocument(ids);globalThis.document=document;
 globalThis.localStorage={getItem:()=>null,setItem(){}};
-const {createGather}=await import('../js/gather.js');
+const {createGather}=await import('../src/ui/gather.js');
 let skills=0,items=0;
 const questions=[{q:'Primeira?',options:['A','B','C','D','E'],answer:0,tier:3,why:'Porque sim'},{q:'Segunda?',options:['A','B','C','D','E'],answer:1,tier:3,why:'Porque sim'}];
 const gather=createGather({rpg:{buildDeck:()=>questions,addSkillXp(){skills++;},addItem(){items++;},save(){}},toast(){},audio:{}});
@@ -19,9 +19,9 @@ assert.equal(document.activeElement.className,'duel-option','segunda pergunta re
 gather.answer(1);assert.equal(items,1);
 assert.equal(document.activeElement.className,'duel-next');
 gather.close();
-const {RPG}=await import('../js/rpg.js');
-const {GROUNDS}=await import('../js/rpg-data.js');
-const {createDuel}=await import('../js/duel.js');
+const {RPG}=await import('../src/gameplay/rpg.js');
+const {GROUNDS}=await import('../src/content/rpg-data.js');
+const {createDuel}=await import('../src/ui/duel.js');
 const rpg=new RPG();const ground=GROUNDS.find(g=>g.id==='cs');
 const ui=createDuel({rpg,toast(){},audio:{blip(){},chime(){}}});
 try {

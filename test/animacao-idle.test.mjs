@@ -5,8 +5,8 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 
-const human = fs.readFileSync(new URL("../js/human.js", import.meta.url), "utf8");
-const pet = fs.readFileSync(new URL("../js/pet-art.js", import.meta.url), "utf8");
+const human = fs.readFileSync(new URL("../src/rendering/human.js", import.meta.url), "utf8");
+const pet = fs.readFileSync(new URL("../src/rendering/pet-art.js", import.meta.url), "utf8");
 
 const problemas = [];
 const check = (ok, msg) => { if (!ok) problemas.push(msg); };

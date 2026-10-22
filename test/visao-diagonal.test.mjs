@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { dungeonCanSeePlayer } from '../js/dungeon.js';
+import { dungeonCanSeePlayer } from "../src/gameplay/dungeon-map.js";
 const map = {W:20,H:20,grid:new Uint8Array(400).fill(1)};
 const directions = [[0,1],[-1,0],[1,0],[0,-1],[-1,1],[1,1],[-1,-1],[1,-1]];
 for (let dir=0;dir<8;dir++) {

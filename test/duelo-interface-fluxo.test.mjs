@@ -20,9 +20,9 @@ globalThis.document = {
 };
 const store = new Map();
 globalThis.localStorage = { getItem: k => store.get(k) ?? null, setItem: (k,v) => store.set(k,String(v)) };
-const { RPG } = await import('../js/rpg.js');
-const { GROUNDS } = await import('../js/rpg-data.js');
-const { createDuel } = await import('../js/duel.js');
+const { RPG } = await import('../src/gameplay/rpg.js');
+const { GROUNDS } = await import('../src/content/rpg-data.js');
+const { createDuel } = await import('../src/ui/duel.js');
 const rpg = new RPG(); let wins = 0, defeated = 0;
 const ui = createDuel({ rpg, audio: { blip() {}, chime() {} }, toast() {}, onVictory: result => { wins++; defeated = result.defeated; } });
 const ground = GROUNDS.find(g => g.id === 'cs');

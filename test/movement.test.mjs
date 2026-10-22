@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { advancePath, moveWithCollision, directionVector, directionAngle } from '../js/movement.js';
+import { advancePath, moveWithCollision, directionVector, directionAngle } from '../src/core/movement.js';
 const free = x => x < .8 || x > 1.2;
 for (const speed of [.2, 1, 20]) {
   const p = {x:.5, y:.5};

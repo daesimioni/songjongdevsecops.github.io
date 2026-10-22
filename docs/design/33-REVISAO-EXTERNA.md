@@ -15,7 +15,7 @@ diff inteiro, roda as provas e registra o que ficou de fora.
 | Fonte e transbordo | HUD em `system-ui`, 0 elemento fora em 1280 e 390 |
 | Alvos de caverna | 94 visitas, 2.413 alvos alcançáveis com sólidos |
 | Interiores | 72 casas, móveis sólidos, spawn livre, três acessos |
-| Site publicado | `travel-status` no `index.html` e `atualizarFaseChefe` no `js/rpg.js`, com cache bust |
+| Site publicado | `travel-status` no `index.html` e `atualizarFaseChefe` no `src/gameplay/rpg.js`, com cache bust |
 
 ## Problemas encontrados e corrigidos
 

@@ -7,7 +7,7 @@ import { readFileSync } from "node:fs";
 
 globalThis.localStorage = { getItem: () => null, setItem: () => {}, removeItem: () => {}, clear: () => {} };
 
-const { DUNGEONS, CONURBATION } = await import("../js/dungeon-data.js");
+const { DUNGEONS, CONURBATION } = await import("../src/content/dungeon-data.js");
 
 const problemas = [];
 const check = (ok, msg) => { if (!ok) problemas.push(msg); };
@@ -85,7 +85,7 @@ check(CONURBATION.layout.rooms.length === 9, `conurbação: ${CONURBATION.layout
 check(CONURBATION.portals.length === 7, `conurbação: ${CONURBATION.portals.length} portais`);
 
 // o pintor do chão usa o acabamento da planta e o chefe ganha arena
-const fonte = readFileSync(new URL("../js/dungeon.js", import.meta.url), "utf8");
+const fonte = readFileSync(new URL("../src/app/dungeon.js", import.meta.url), "utf8");
 check(/buildTerrain\(state\.map, def\.palette, def\.layout\)/.test(fonte), "pintor de chão sem o layout");
 check(/acabamento === 1/.test(fonte) && /acabamento === 2/.test(fonte) && /acabamento === 3/.test(fonte), "menos de quatro acabamentos de piso");
 check(/room\.id === layout\?\.bossRoom/.test(fonte), "arena do chefe sem marca no chão");

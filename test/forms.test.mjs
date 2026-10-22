@@ -3,8 +3,8 @@
 // engrenagem, e o mesmo nome não pode virar bicho diferente por andar.
 import assert from "node:assert/strict";
 
-const { DUNGEONS, creatureKind, dungeonCreatures } = await import("../js/dungeon-data.js");
-const { CREATURE_FORMS, MONSTER_LABELS, MONSTER_WEAKNESS } = await import("../js/rpg-data.js");
+const { DUNGEONS, creatureKind, dungeonCreatures } = await import("../src/content/dungeon-data.js");
+const { CREATURE_FORMS, MONSTER_LABELS, MONSTER_WEAKNESS } = await import("../src/content/rpg-data.js");
 
 const porId = new Map(DUNGEONS.map((def) => [def.id, def]));
 const forma = (id, nome) => creatureKind(porId.get(id), nome);

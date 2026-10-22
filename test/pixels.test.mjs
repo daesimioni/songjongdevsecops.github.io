@@ -1,3 +1,4 @@
+import { sourcePaths } from "./source-paths.mjs";
 // O contrato do pixel fino: sprite de asset nasce em 2x (cada pixel antigo
 // vira quatro), o chão ganha detalhe de meio pixel, as animações têm mais
 // quadros e o boneco respira e pisca. Roda sem navegador:
@@ -7,10 +8,10 @@ import fs from "node:fs";
 
 const problemas = [];
 const check = (ok, msg) => { if (!ok) problemas.push(msg); };
-const ler = (nome) => fs.readFileSync(new URL(`../js/${nome}`, import.meta.url), "utf8");
+const ler = (nome) => fs.readFileSync(new URL(`../${sourcePaths[nome]}`, import.meta.url), "utf8");
 
 const assets = ler("assets/index.js");
-const render = ler("render.js");
+const render = ler("render.js") + ler("terrain-renderer.js");
 const veg = ler("assets/vegetacao.js");
 const fogo = ler("assets/fogo.js");
 const agua = ler("assets/agua.js");
@@ -59,7 +60,7 @@ check(/const pisca = Math\.sin\(time \* 0\.0017/.test(creature), "olho do bicho 
 check(/a tocha tremula/.test(dungeon), "halo da tocha não tremula");
 
 // ---- arrasto do minimapa: agarrar e puxar ----
-const renderFonte = fs.readFileSync(new URL("../js/render.js", import.meta.url), "utf8");
+const renderFonte = fs.readFileSync(new URL("../src/rendering/render.js", import.meta.url), "utf8");
 check(/miniPan\.x -= dx \* k/.test(renderFonte), "arrasto do mapa empurra a câmera em vez de puxar o mapa");
 check(/miniPan\.y -= dy \* k/.test(renderFonte), "arrasto vertical do mapa no sentido errado");
 
