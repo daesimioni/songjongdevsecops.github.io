@@ -3,7 +3,8 @@
 import assert from "node:assert/strict";
 globalThis.localStorage = { getItem: () => null, setItem: () => {}, removeItem: () => {}, clear: () => {} };
 
-const { drawCreature, COSTAS } = await import("../src/rendering/creature.js");
+const { drawCreature } = await import("../src/rendering/creature.js");
+const {CREATURE_MODELS}=await import("../src/rendering/creature-models.js");
 const { DUNGEONS, creatureKind } = await import("../src/content/dungeon-data.js");
 
 function desenhar(kind, dir) {
@@ -28,7 +29,7 @@ function desenhar(kind, dir) {
   return ops;
 }
 
-const kinds = Object.keys(COSTAS);
+const kinds = Object.keys(CREATURE_MODELS);
 assert.ok(kinds.length >= 26, `espécies com costas: ${kinds.length}`);
 for (const kind of kinds) {
   const frente = desenhar(kind, 0);
@@ -36,9 +37,8 @@ for (const kind of kinds) {
   assert.ok(frente.length > 3 && costas.length > 3, `${kind} sem desenho`);
   const assinatura = (ops) => ops.map((o) => o.join(":")).join("|");
   assert.notEqual(assinatura(frente), assinatura(costas), `${kind}: costas iguais à frente`);
-  // a marca da espinha tem que estar no desenho de costas
-  const m = COSTAS[kind];
-  assert.ok(costas.some((o) => o[0] === "r" && o[1] === Math.round(m[0] + m[2] / 2) - 1), `${kind}: costas sem espinha`);
+  // As oito vistas vêm de geometria e oclusão, sem máscara facial retangular.
+  assert.equal(new Set(Array.from({length:8},(_,d)=>assinatura(desenhar(kind,d)))).size,8,`${kind}: vista repetida`);
   // de lado e de frente seguem desenhando
   assert.ok(desenhar(kind, 1).length > 3, `${kind} sem lado esquerdo`);
   assert.ok(desenhar(kind, 2).length > 3, `${kind} sem lado direito`);
@@ -52,9 +52,9 @@ for (const d of DUNGEONS) {
     monstros++;
     // o desenho recebe o kind calculado pelo nome e pela dificuldade
     const kind = creatureKind(d, m.name, m.tier || 1, i);
-    if (!COSTAS[kind]) faltando.add(`${kind} (${d.id})`);
+    if (!CREATURE_MODELS[kind]) faltando.add(`${kind} (${d.id})`);
   });
-  if (d.boss && !COSTAS.boss) faltando.add(`boss (${d.id})`);
+  if (d.boss && !CREATURE_MODELS.boss) faltando.add(`boss (${d.id})`);
 }
 assert.equal(faltando.size, 0, `espécie sem costas: ${[...faltando].slice(0, 5).join(", ")}`);
 assert.equal(DUNGEONS.length, 93, `cavernas: ${DUNGEONS.length}`);

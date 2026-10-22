@@ -17,7 +17,7 @@ const fogo = ler("assets/fogo.js");
 const agua = ler("assets/agua.js");
 const props = ler("assets/props.js");
 const human = ler("human.js");
-const creature = ler("creature.js");
+const creature = fs.readFileSync(new URL("../src/rendering/creature-models.js",import.meta.url),"utf8");
 const dungeon = ler("dungeon.js");
 
 // ---- sprite de asset em 2x ----
@@ -56,7 +56,7 @@ check(quadros(props, "gaivota") >= 4, "gaivota com poucos quadros");
 check(/const respira = moving \? 0 : Math\.sin/.test(human), "boneco não respira parado");
 check(/const pisca = !moving/.test(human), "boneco não pisca");
 check(/const quique = moving/.test(human), "passo sem quique");
-check(/const pisca = Math\.sin\(time \* 0\.0017/.test(creature), "olho do bicho não pisca");
+check(/const blink = !moving && Math\.floor\(time \/ 180\) % 27 === 0/.test(creature), "olho do bicho não pisca");
 check(/a tocha tremula/.test(dungeon), "halo da tocha não tremula");
 
 // ---- arrasto do minimapa: agarrar e puxar ----

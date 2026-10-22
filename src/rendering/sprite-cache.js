@@ -1,6 +1,6 @@
 import {criarCache} from './assets/nucleo.js';
 import {finishMaterial,ART_STYLE} from './art-style.js';
-const cache=criarCache(240,undefined,12*1024*1024);
+const cache=criarCache(512,undefined,12*1024*1024);
 const scratch=new Map();
 function buffers(w,h) {
   const key=`${w}:${h}`;let pair=scratch.get(key);

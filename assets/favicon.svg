@@ -1,9 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
-  <rect width="32" height="32" rx="6" fill="#070b18"/>
-  <rect x="4" y="4" width="24" height="24" rx="4" fill="#0d1430" stroke="#b48cff" stroke-width="1.5"/>
-  <rect x="10" y="10" width="12" height="12" fill="#ffc857" opacity="0.18"/>
-  <path d="M12 22 L16 8 L20 22 Z" fill="#61f4c0"/>
-  <rect x="15" y="7" width="2" height="18" fill="#ff7aa8"/>
-  <rect x="8" y="26" width="4" height="1" fill="#6bd5ff"/>
-  <rect x="20" y="5" width="1" height="4" fill="#6bd5ff"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" shape-rendering="crispEdges">
+  <title>The Learning Valley — grimório do vale</title>
+  <path fill="#101c2d" d="M5 0h22v2h3v3h2v22h-2v3h-3v2H5v-2H2v-3H0V5h2V2h3z"/>
+  <path fill="#293f50" d="M4 5h24v22H4z"/>
+  <path fill="#0a1322" d="M5 12h10v1h2v-1h10v13H17v2h-2v-2H5z"/>
+  <path fill="#aa8058" d="M6 23h9v2H6zm11 0h9v2h-9z"/>
+  <path fill="#f0dbac" d="M6 11h7v1h2v11h-2v-1H6zm13 0h7v11h-7v1h-2V12h2z"/>
+  <path fill="#bda47c" d="M13 12h2v11h-2zm4 0h2v11h-2z"/>
+  <path fill="#6b796c" d="M8 14h4v1H8zm0 3h4v1H8zm0 3h3v1H8zm12-6h4v1h-4zm0 3h4v1h-4zm1 3h3v1h-3z"/>
+  <path fill="#63b796" d="M15 3h2v3h3v2h-3v3h-2V8h-3V6h3z"/>
+  <path fill="#fff0c2" d="M15 6h2v2h-2zM6 5h1v1H6zm19 3h1v1h-1z"/>
 </svg>

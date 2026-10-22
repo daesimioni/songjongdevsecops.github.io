@@ -1,4 +1,4 @@
-import { directionVector } from "../core/movement.js";
+import { drawPetModel } from "./pet-models.js";
 import { spritePose } from "./sprite-cache.js";
 import { artTime, artTick } from "./art-style.js";
 // Desenho dos bichos companheiros, um por espécie. Usado na superfície, na
@@ -16,225 +16,19 @@ export const PET_COLORS = {
 };
 
 // O bicho pequeno do jogador com o mesmo acabamento dos monstros: contorno de
-// um pixel e véu de luz. O desenho de cada espécie continua embaixo, intacto.
+// um pixel e luz comum. Cada pose vem da anatomia direcional da espécie.
 export function drawPetSprite(ctx, kind, x, y, t = 0, moving = false, dir = 0) {
   if (typeof document === "undefined") return desenharPet(ctx,kind,x,y,t,moving,dir);
-  const tick=artTick(t,moving?70:120);
+  const tick=artTick(t,100)%(moving?8:32);
   const pose=spritePose(`pet:${kind}:${moving}:${dir}:${tick}`,56,56,g=>{
-    g.translate(28,40);desenharPet(g,kind,0,0,tick*(moving?70:120),moving,dir,true);
+    g.translate(28,40);desenharPet(g,kind,0,0,tick*100,moving,dir,true);
   },'cloth');
   ctx.save();ctx.fillStyle='rgba(2,4,10,0.3)';ctx.beginPath();ctx.ellipse(x,y,kind==='frog'?7:5,2,0,0,Math.PI*2);ctx.fill();
   ctx.imageSmoothingEnabled=false;ctx.drawImage(pose,x-28,y-40);ctx.restore();
 }
 
 function desenharPet(ctx, kind, x, y, t = 0, moving = false, dir = 0, semSombra = false) {
-  t = artTime(t);
-  const colors = PET_COLORS[kind] || PET_COLORS.cat;
-  const bob = moving ? Math.abs(Math.sin(t * 0.02)) * 1.2 : Math.sin(t * 0.002) * 0.5;
-  // pisca de vez em quando, como o dono; parado o bicho também mexe a cauda
-  const blink = !moving && Math.floor(t / 2400) % 8 === 0;
-  // Parado, cada bicho tem o tique da própria espécie. Só a coruja e o
-  // papagaio giram a cabeça em lateral; o resto do tique mora no ramo da
-  // espécie e some ao andar, para não brigar com o passo.
-  const gira = moving ? 0
-    : kind === "owl" ? Math.round(Math.sin(t * 0.0009) * 2)
-    : kind === "parrot" ? Math.round(Math.sin(t * 0.0026) * 2)
-    : 0;
-  ctx.save();
-  ctx.translate(x, y);
-  // o bicho vira junto com quem ele segue; o espelho é em volta do próprio
-  // ponto de desenho, então a sombra e o corpo vão juntos
-  if (dir === 1 || dir === 4 || dir === 6) ctx.scale(-1, 1);
-  if (dir === 1 || dir === 2) ctx.scale(.72,1);
-  else if (dir >= 4) ctx.transform(.88,0,dir >= 6 ? -.12 : .12,1,0,0);
-  if (!semSombra) {
-    ctx.fillStyle = "rgba(2,4,10,0.3)";
-    ctx.beginPath();
-    ctx.ellipse(0, 0, kind === "frog" ? 7 : 5, 2, 0, 0, Math.PI * 2);
-    ctx.fill();
-  }
-
-  if (kind === "owl") {
-    ctx.fillStyle = colors.body;
-    ctx.fillRect(-5, -9 - bob, 10, 8);
-    ctx.fillRect(-4 + gira, -12 - bob, 8, 4);
-    ctx.fillStyle = colors.light;
-    ctx.fillRect(-4, -8 - bob, 8, 3);
-    ctx.fillStyle = colors.eye;
-    ctx.fillRect(-3 + gira, -11 - bob, 2, 2);
-    ctx.fillRect(1 + gira, -11 - bob, 2, 2);
-    ctx.fillStyle = "#e8b04a";
-    ctx.fillRect(-1 + gira, -8 - bob, 2, 1);
-    ctx.fillStyle = colors.body;
-    ctx.fillRect(-7, -8 - bob, 2, 5);
-    ctx.fillRect(5, -8 - bob, 2, 5);
-  } else if (kind === "frog") {
-    ctx.fillStyle = colors.body;
-    ctx.fillRect(-7, -6 - bob, 14, 5);
-    ctx.fillRect(-5, -9 - bob, 10, 4);
-    ctx.fillStyle = colors.light;
-    ctx.fillRect(-4, -5 - bob, 8, 2);
-    ctx.fillStyle = colors.eye;
-    ctx.fillRect(-4, -10 - bob, 2, 2);
-    ctx.fillRect(2, -10 - bob, 2, 2);
-    ctx.fillStyle = colors.body;
-    ctx.fillRect(-4, -11 - bob, 2, 1);
-    ctx.fillRect(2, -11 - bob, 2, 1);
-    ctx.fillStyle = "#2c4a2c";
-    ctx.fillRect(-2, -4 - bob, 4, 1);
-    // parado a garganta infla, como o sapo chamando
-    if (!moving) {
-      const papo = 1 + Math.round((Math.sin(t * 0.0035) + 1) * 0.5);
-      ctx.fillStyle = colors.light;
-      ctx.fillRect(-1 - papo, -3 - bob, 2 + papo * 2, papo);
-    }
-  } else if (kind === "wisp") {
-    const float = Math.sin(t * 0.004) * 1.5;
-    // parada a luz pulsa; andando o rastro já move o desenho
-    const brilho = moving ? 1 : 1 + Math.sin(t * 0.005) * 0.15;
-    ctx.fillStyle = colors.body;
-    ctx.beginPath();
-    ctx.arc(0, -8 + float, 4, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = colors.light;
-    ctx.beginPath();
-    ctx.arc(0, -8 + float, 2.4, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.globalAlpha = 0.35 * brilho;
-    ctx.beginPath();
-    ctx.arc(0, -8 + float, 7 * brilho, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.globalAlpha = 1;
-    ctx.fillStyle = colors.body;
-    ctx.fillRect(-5, -10 + float, 2, 2);
-    ctx.fillRect(3, -10 + float, 2, 2);
-  } else if (kind === "cricket") {
-    ctx.fillStyle = colors.body;
-    ctx.fillRect(-4, -5 - bob, 8, 4);
-    ctx.fillRect(-3, -7 - bob, 6, 3);
-    ctx.fillStyle = colors.light;
-    ctx.fillRect(-2, -4 - bob, 4, 1);
-    ctx.fillStyle = colors.eye;
-    ctx.fillRect(-2, -7 - bob, 1, 1);
-    ctx.fillRect(1, -7 - bob, 1, 1);
-    ctx.strokeStyle = colors.body;
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(-2, -7 - bob);
-    ctx.lineTo(-4, -10 - bob);
-    ctx.moveTo(2, -7 - bob);
-    ctx.lineTo(4, -10 - bob);
-    ctx.stroke();
-    // parado esfrega a perna da frente na de apoio
-    if (!moving) {
-      const esfrega = Math.sin(t * 0.009) > 0 ? 1 : 0;
-      ctx.fillStyle = colors.body;
-      ctx.fillRect(-3, -1 - bob, 1 + esfrega, 1);
-      ctx.fillRect(2, -1 - bob, 1, 1);
-    }
-  } else if (kind === "parrot") {
-    ctx.fillStyle = colors.body;
-    ctx.fillRect(-4, -6 - bob, 8, 5);
-    ctx.fillRect(-3 + gira, -9 - bob, 6, 4);
-    ctx.fillStyle = colors.light;
-    ctx.fillRect(-2, -5 - bob, 4, 2);
-    ctx.fillStyle = "#d94f3d";
-    ctx.fillRect(-3 + gira, -10 - bob, 2, 2);
-    ctx.fillRect(-2 + gira, -11 - bob, 3, 1);
-    ctx.fillStyle = colors.eye;
-    ctx.fillRect(gira, -8 - bob, 2, 2);
-    ctx.fillStyle = "#1a1a1a";
-    ctx.fillRect(1 + gira, -8 - bob, 1, 1);
-    ctx.fillStyle = "#e8b84a";
-    ctx.fillRect(2 + gira, -6 - bob, 2, 2);
-    ctx.fillStyle = colors.body;
-    ctx.fillRect(-6, -5 - bob, 2, 4);
-  } else if (kind === "shade") {
-    // parada a sombra ondula de largura e as pontas varrem o chão
-    const onda = moving ? 0 : Math.round(Math.sin(t * 0.004));
-    ctx.globalAlpha = 0.9;
-    ctx.fillStyle = colors.body;
-    ctx.beginPath();
-    ctx.ellipse(0, -7 - bob, 5.5 + onda, 7, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.globalAlpha = 1;
-    ctx.fillStyle = colors.light;
-    ctx.fillRect(-3, -9 - bob, 6, 2);
-    ctx.fillStyle = colors.eye;
-    ctx.fillRect(-2, -8 - bob, 1, 1);
-    ctx.fillRect(1, -8 - bob, 1, 1);
-    ctx.globalAlpha = 0.55;
-    ctx.fillStyle = colors.body;
-    ctx.fillRect(-2 + onda, -1, 1, 2);
-    ctx.fillRect(1 + onda, -1, 1, 2);
-    ctx.globalAlpha = 1;
-  } else {
-    // gato
-    ctx.fillStyle = colors.body;
-    ctx.fillRect(-5, -6 - bob, 10, 5);
-    ctx.fillRect(-4, -9 - bob, 7, 4);
-    ctx.fillStyle = colors.light;
-    ctx.fillRect(-4, -9 - bob, 2, 2);
-    ctx.fillStyle = colors.body;
-    ctx.fillRect(-4, -11 - bob, 2, 2);
-    ctx.fillRect(1, -11 - bob, 2, 2);
-    ctx.fillStyle = blink ? colors.body : colors.eye;
-    ctx.fillRect(-2, -8 - bob, 1, 1);
-    ctx.fillRect(1, -8 - bob, 1, 1);
-    ctx.strokeStyle = colors.body;
-    ctx.lineWidth = 2;
-    const cauda = Math.sin(t * 0.006) * 1.6;
-    ctx.beginPath();
-    ctx.moveTo(5, -4 - bob);
-    ctx.quadraticCurveTo(9 + cauda, -6 - bob, 8 + cauda * 0.5, -10 - bob);
-    ctx.stroke();
-  }
-  // A face ocupa outro plano no perfil; a nuca oculta olhos e bico atrás.
-  if (dir !== 0 && kind !== "wisp") {
-    ctx.fillStyle = colors.body;
-    const top = kind === 'owl' ? -12 : kind === 'cricket' ? -8 : -10;
-    ctx.fillRect(-4 + gira,top-bob,8,5);
-    if (dir === 1 || dir === 2 || dir === 4 || dir === 5) {
-      ctx.fillStyle = blink ? colors.body : colors.eye;
-      ctx.fillRect(2 + gira,top+2-bob,1,1);
-      if (dir >= 4) ctx.fillRect(-1 + gira,top+2-bob,1,1);
-      if(kind === 'parrot' || kind === 'owl') {
-        ctx.fillStyle='#e8b04a';ctx.fillRect(4 + gira,top+3-bob,2,1);
-      }
-    } else {
-      ctx.fillStyle=colors.light;ctx.fillRect(-1,top+1-bob,2,4);
-    }
-  }
-  // Passo alternado no plano do chão: quatro patas em trote diagonal nos
-  // quadrúpedes (gato, sapo), duas patas nos bípedes e no grilo, e asas para
-  // os voadores. A pata sobe e desce, o corpo não: a âncora fica no chão.
-  if (moving && kind !== 'wisp' && kind !== 'shade') {
-    const passo=Math.sin(t*.02)*1.1;
-    ctx.fillStyle=colors.body;
-    if(kind === 'owl' || kind === 'parrot') {
-      ctx.fillRect(-7,-7-bob-passo,2,4);ctx.fillRect(5,-7-bob+passo,2,4);
-      ctx.fillRect(-2,-2+passo,1,2);ctx.fillRect(1,-2-passo,1,2);
-    } else if(kind === 'cricket') {
-      ctx.fillRect(-3,-2+passo,1,2);ctx.fillRect(2,-2-passo,1,2);
-    } else {
-      const px=kind === 'frog' ? 5 : 4;
-      ctx.fillRect(-px,-2+passo,1,2);ctx.fillRect(-1,-2-passo,1,2);
-      ctx.fillRect(1,-2+passo,1,2);ctx.fillRect(px,-2-passo,1,2);
-    }
-  }
-  if(kind === 'wisp') {
-    const v=directionVector(dir);
-    ctx.fillStyle=colors.light;
-    ctx.fillRect(v.x*3,-8+v.y*2,1,1);
-    if(moving){
-      ctx.fillStyle=colors.body;
-      for(let i=1;i<=3;i++){ctx.globalAlpha=1-i*.2;ctx.fillRect(-v.x*i*3,-8-v.y*i*2,2,2);}
-      ctx.globalAlpha=1;
-    }
-  }
-  // Textura própria no flanco, preservando a leitura dos olhos e do bico.
-  ctx.fillStyle=colors.light;
-  for(let i=0;i<3;i++)ctx.fillRect(-3+i*2,-4-bob+(i%2)*.5,1,.5);
-  ctx.fillStyle='rgba(12,20,35,.35)';ctx.fillRect(-3,-2-bob,6,.5);
-  ctx.restore();
+  ctx.save();ctx.translate(x,y);
+  if(!semSombra){ctx.fillStyle='rgba(2,4,10,0.3)';ctx.beginPath();ctx.ellipse(0,0,kind==='frog'?7:5,2,0,0,Math.PI*2);ctx.fill();}
+  drawPetModel(ctx,kind,PET_COLORS[kind]||PET_COLORS.cat,artTime(t),moving,dir);ctx.restore();
 }

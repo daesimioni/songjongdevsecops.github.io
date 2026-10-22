@@ -1,3 +1,4 @@
+import { actorView } from "./actor-volume.js";
 import { artTime } from "./art-style.js";
 // O papel muda a silhueta e o assunto muda o objeto na mão. Antes todos os
 // 194 NPCs eram o mesmo boneco com a camisa de outra cor, e nada no desenho
@@ -11,9 +12,6 @@ export function drawNpcKit(ctx, npc, px, py, bob, time, colors) {
   ctx.translate(px, py + bob);
   ctx.scale(s, s);
   const dir=npc.facing ?? 0;
-  if(dir===1||dir===4||dir===6)ctx.scale(-1,1);
-  if(dir===1||dir===2)ctx.scale(.78,1);
-  else if(dir>=4)ctx.transform(.9,0,(dir>=6?-.08:.08),1,0,0);
   if (npc.role === "mestre") {
     // casaco comprido e manto nos ombros: a silhueta do guardião do saber
     ctx.fillStyle = colors.shirt;
@@ -27,6 +25,9 @@ export function drawNpcKit(ctx, npc, px, py, bob, time, colors) {
     ctx.fillRect(-5, -12, 1, 4);
     ctx.fillRect(4, -12, 1, 4);
     ctx.globalAlpha = 1;
+  } else if (npc.role === "monitor" && (dir===3||dir===6||dir===7)) {
+    ctx.fillStyle=dark;ctx.fillRect(-4,-7,8,1);
+    ctx.fillStyle="rgba(242,238,226,.4)";ctx.fillRect(-2,-12,.5,2);ctx.fillRect(2,-12,.5,2);
   } else if (npc.role === "monitor") {
     ctx.fillStyle = "rgba(242,238,226,0.32)";
     ctx.fillRect(-3, -11, 6, 6);
@@ -44,8 +45,10 @@ export function drawNpcKit(ctx, npc, px, py, bob, time, colors) {
   }
   // o objeto do assunto vai na mão direita, sempre visível
   // na altura da mão, não do ombro
-  const x = 6;
-  const y = -6;
+  const hand=actorView(dir).project(6,1,6);
+  const x=hand.x,y=hand.y;
+  // A ferramenta fica oculta pelo corpo nas vistas de trás.
+  if(dir===3||dir===6||dir===7){ctx.restore();return;}
   ctx.fillStyle = accent;
   switch (npc.subject) {
     case "math":

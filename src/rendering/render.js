@@ -228,6 +228,10 @@ export function createRenderer(canvas, world, {collisionDebug=false} = {}) {
       ctx.fillRect(px - 7, py - 19, 14, 3);
       ctx.fillStyle = "rgba(140,230,255,0.8)";
       ctx.fillRect(px - 1, py - 22, 2, 4);
+      // Cantaria do tanque e ondulações preservam o contorno físico.
+      ctx.fillStyle='#465774';for(let i=0;i<7;i++)ctx.fillRect(px-14+i*4,py+5,.5,2);
+      ctx.strokeStyle='rgba(201,238,238,.35)';ctx.lineWidth=.5;
+      for(let i=0;i<3;i++){const r=2+(time/300+i*2)%5;ctx.beginPath();ctx.ellipse(px+(i-1)*5,py+1,r,r*.24,0,0,Math.PI*2);ctx.stroke();}
       return;
     }
     if (s.icon === "radio") {
@@ -243,6 +247,9 @@ export function createRenderer(canvas, world, {collisionDebug=false} = {}) {
       ctx.fillStyle = "#ffb26b";
       ctx.fillRect(px - 5, py + 6, 2, 2);
       ctx.fillRect(px, py + 6, 2, 2);
+      ctx.fillStyle='#a5b9c2';ctx.fillRect(px-1.5,py-23,.5,26);
+      ctx.fillStyle='#121f32';for(let i=0;i<4;i++)ctx.fillRect(px+4,py+5+i,2,.5);
+      ctx.fillStyle='#e2c59c';ctx.fillRect(px-6,py+5,.5,.5);ctx.fillRect(px+6,py+9,.5,.5);
       return;
     }
 
@@ -433,6 +440,17 @@ export function createRenderer(canvas, world, {collisionDebug=false} = {}) {
       escalaSigilo = 0.54;
     }
 
+    // Junta e desgaste na base de todas as seis arquiteturas; os símbolos
+    // científicos continuam íntegros no plano acima da pedra.
+    ctx.fillStyle=pedra.tinta;for(let i=0;i<5;i++)ctx.fillRect(px+(-8+i*4)*k,py+3*k,.5,2*k);
+    ctx.fillStyle=pedra.claro;ctx.fillRect(px-9*k,py-1*k,5*k,.5);
+    if(estilo===0||estilo===2||estilo===4){
+      const edge=estilo===0?6:estilo===2?9:4;
+      for(const side of [-1,1])for(let i=0;i<4;i++){
+        ctx.fillStyle=pedra.tinta;ctx.fillRect(px+(side*edge-1)*k,py+(-6-i*5)*k,2*k,.5);
+        ctx.fillStyle=pedra.claro;ctx.fillRect(px+(side*edge-1)*k,py+(-6.5-i*5)*k,.5,.5);
+      }
+    }
     // enfeite de base: vela, pedras ou capim, sorteado por estação
     if (enfeite === 0) {
       for (const lado of [-1, 1]) {
@@ -745,6 +763,9 @@ export function createRenderer(canvas, world, {collisionDebug=false} = {}) {
     ctx.closePath(); ctx.fill();
     ctx.fillStyle = hexA(w.accent, 0.5);
     ctx.fillRect(px - 1, py - 11, 2, 6);
+    ctx.fillStyle='#7b8b9b';ctx.fillRect(px-5,py-25,.5,19);ctx.fillRect(px-7,py-3,5,.5);
+    ctx.fillStyle='#131d31';for(let i=0;i<4;i++)ctx.fillRect(px+3,py-22+i*5,2,.5);
+    ctx.fillStyle='#598a70';ctx.fillRect(px-8,py+4,2,.5);ctx.fillRect(px+5,py+3,1,.5);
   }
 
   function drawHunterRing(h, time) {
@@ -777,7 +798,13 @@ export function createRenderer(canvas, world, {collisionDebug=false} = {}) {
     ctx.fillStyle = "#141827";
     ctx.fillRect(px - 2, py - 28, 3, 28);
     ctx.fillStyle = hexA(h.accent, 0.9);
-    ctx.fillRect(px + 1, py - 27, 12, 8);
+    // Ondulação por coluna: a costura junto ao mastro nunca se desloca.
+    for(let col=0;col<12;col++){
+      const wave=Math.round(Math.sin(time*.004-col*.5)*col/12);
+      ctx.fillStyle=hexA(h.accent,.9);ctx.fillRect(px+1+col,py-27+wave,1,8);
+      ctx.fillStyle=col%4===0?'rgba(255,235,193,.25)':'rgba(8,18,32,.12)';ctx.fillRect(px+1+col,py-26+wave,.5,6);
+    }
+    ctx.fillStyle='#899391';ctx.fillRect(px-1,py-26,.5,24);
     ctx.fillStyle = "rgba(8,10,20,0.85)";
     ctx.fillRect(px + 3, py - 25, 2, 2);
     ctx.fillRect(px + 8, py - 25, 2, 2);
@@ -813,6 +840,8 @@ export function createRenderer(canvas, world, {collisionDebug=false} = {}) {
     ctx.fillRect(px - 1, baseY + 0, 2, 2);
     ctx.fillRect(px + 3, baseY + 0, 2, 2);
     ctx.globalAlpha = 1;
+    ctx.fillStyle='#a6a19c';ctx.fillRect(px-12,baseY-.5,4,.5);ctx.fillRect(px+9,baseY+.5,2,.5);
+    ctx.fillStyle='#292938';ctx.fillRect(px-10,baseY+1,.5,1);ctx.fillRect(px+8,baseY+1,.5,1);
   }
 
   function drawCave(c, time) {

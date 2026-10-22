@@ -1,0 +1,64 @@
+{
+  "baseline": "926a427 (arte inalterada pelos commits de conteúdo até 74cc4eb)",
+  "objectsPerFrame": 74,
+  "framesPerPass": 180,
+  "passes": 3,
+  "before": {
+    "medianMs": 1339.616454,
+    "durations": [
+      1279.4549979999997,
+      1339.616454,
+      1496.1921040000002
+    ],
+    "frames": 540,
+    "draws": 39960,
+    "canvases": 3668,
+    "spriteCache": {
+      "acertos": 14265,
+      "faltas": 3555,
+      "descartes": 3315,
+      "bytes": 9859584,
+      "maxBytes": 12582912,
+      "tamanho": 240,
+      "scratchBytes": 125440
+    },
+    "environmentCache": {
+      "acertos": 22031,
+      "faltas": 109,
+      "descartes": 0,
+      "bytes": 2660672,
+      "maxBytes": 8388608,
+      "tamanho": 109
+    }
+  },
+  "after": {
+    "medianMs": 175.99025100000006,
+    "durations": [
+      169.85187300000007,
+      175.99025100000006,
+      542.876681
+    ],
+    "frames": 540,
+    "draws": 39960,
+    "canvases": 444,
+    "spriteCache": {
+      "acertos": 17490,
+      "faltas": 330,
+      "descartes": 0,
+      "bytes": 7716864,
+      "maxBytes": 12582912,
+      "tamanho": 330,
+      "scratchBytes": 76288
+    },
+    "environmentCache": {
+      "acertos": 22031,
+      "faltas": 109,
+      "descartes": 0,
+      "bytes": 2660672,
+      "maxBytes": 8388608,
+      "tamanho": 109
+    }
+  },
+  "medianReductionPercent": 86.86263889380385,
+  "scope": "Desenho nativo isolado, sem DOM, entrada, rede ou simulação completa."
+}

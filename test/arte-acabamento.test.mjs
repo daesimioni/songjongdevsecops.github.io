@@ -37,7 +37,7 @@ check(/for \(const \[dx, dy\] of \[\[-1, 0\], \[1, 0\], \[0, -1\], \[0, 1\], \[-
 check(/cache\.set\(chave, canvas\)/.test(itens), "acabamento fora do cache: refaz a cada ícone");
 
 // a arte não pode encolher o bicho no contorno: o canvas tem folga para o traço
-check(/const S = 112, OX = 56, OY = 92;/.test(creature), "canvas do bicho sem folga para o contorno");
+check(/const S = 80, OX = 40, OY = 64;/.test(creature), "canvas do bicho sem folga para o contorno");
 
 // gente e bicho de companhia usam o mesmo acabamento
 const render = ler("render.js");

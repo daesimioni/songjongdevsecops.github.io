@@ -31,3 +31,16 @@ desenharAsset(dest,'casa',300,200,{bioma:{id:'ancora',accent:'#61f4c0'},seed:3})
 const house=assetDe('casa'),e=house.escala||1,pad=8*e,last=calls.at(-1);
 assert.deepEqual(last.slice(1),[Math.round(300-house.w*e/2)-pad,Math.round(200-house.h*e)-pad,house.w*e+pad*2,house.h*e+pad*2],'margem não desloca casa nem escala o corpo');
 assert.deepEqual(tamanhoDoAsset('casa'),{w:house.w*e,h:house.h*e},'ocupação usada pelo mundo não cresce com margem');
+// Uma passada inteira com todos os móveis precisa caber no cache. Depois do
+// aquecimento não se alocam novas telas ao repetir o mesmo ciclo.
+const {drawCreatureArt}=await import('../src/rendering/creature.js');
+const {CREATURE_MODELS}=await import('../src/rendering/creature-models.js');
+const {drawPetSprite,PET_COLORS}=await import('../src/rendering/pet-art.js');
+clearSpriteCache();const target=context();
+const cycle=()=>{for(let frame=0;frame<32;frame++){
+ for(const kind of Object.keys(CREATURE_MODELS))drawCreatureArt(target,kind,'#61d5b2',frame*100,1,5,true);
+ for(const kind of Object.keys(PET_COLORS))drawPetSprite(target,kind,0,0,frame*100,true,5);
+}};
+cycle();const warm=spriteCacheStats();cycle();
+assert.equal(spriteCacheStats().faltas,warm.faltas,'ciclo aquecido não deve refazer sprites');
+assert.ok(spriteCacheStats().bytes<=spriteCacheStats().maxBytes);

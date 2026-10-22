@@ -11,19 +11,25 @@ npm run validate
 ```
 
 O servidor abre em `http://127.0.0.1:4173`. `PORT=8000 npm run dev` altera a porta.
-`npm run validate` executa análise estática, contratos dos módulos, testes e build.
+`npm run validate` executa análise estática, contratos dos módulos, testes, verificação de pixels dos assets e build.
 `npm run build` gera `dist/`; a pasta é descartável e não entra no Git.
 
-Para conferir arte procedural com Canvas nativo, instale `@napi-rs/canvas` em
-um ambiente separado e defina `ART_CANVAS_MODULE` com o caminho de `index.js`:
+O Canvas nativo usado na revisão de arte é uma dependência de desenvolvimento
+fixada no lockfile; não é enviado ao navegador. Depois de `npm ci`:
 
 ```bash
-ART_CANVAS_MODULE=/caminho/@napi-rs/canvas/index.js npm run art:check
-ART_CANVAS_MODULE=/caminho/@napi-rs/canvas/index.js npm run art:render -- /tmp/arte
+npm run art:check
+npm run art:render -- /tmp/arte
+npm run art:scenes -- /tmp/cenas
+npm run art:catalog
+npm run art:og
 ```
 
-Essas verificações opcionais complementam a inspeção visual e não medem qualidade
-artística. Elas não adicionam dependências ao navegador.
+`art:check` integra `validate` e a matriz de CI. Confere cobertura, vistas distintas,
+poses sem cortes, combinações de avatar e estados de móveis, cavernas e terrenos.
+As provas de pixels complementam a inspeção visual; não medem qualidade artística.
+`ART_CANVAS_MODULE=/caminho/index.js` permite testar outra instalação do Canvas.
+Consulte o [catálogo e as pranchas](docs/art/README.md).
 
 ## Onde modificar
 

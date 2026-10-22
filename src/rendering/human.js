@@ -1,3 +1,5 @@
+import {drawHeadgear,detailGarment} from "./gear-art.js";
+import { actorView } from "./actor-volume.js";
 import { artTime } from "./art-style.js";
 import { hairById } from "../content/avatar.js";
 
@@ -58,8 +60,7 @@ export function drawHuman(ctx, px, py, dir, moving, time, colors, scale = 1, loo
   ctx.translate(px, py + respira + quique);
   ctx.scale(s, s);
   // Ombros e profundidade acompanham o plano de visão do rosto.
-  if(dir === 1 || dir === 2) ctx.scale(.78,1);
-  else if(dir >= 4) ctx.transform(.9,0,(dir === 4 || dir === 6 ? -1 : 1)*.08,1,0,0);
+  const view = actorView(dir);
 
   ctx.fillStyle = "rgba(2,4,10,0.38)";
   ctx.beginPath();
@@ -89,8 +90,9 @@ export function drawHuman(ctx, px, py, dir, moving, time, colors, scale = 1, loo
     ctx.fillRect(4, -19, 1, Math.max(0, hair.back - 2));
   }
 
-  // capa: tecido atrás do corpo, balançando com o passo
-  if (equip.cloak) {
+  // A capa fica atrás na frente e cobre o dorso nas vistas de costas.
+  const desenharCapa = () => {
+    if (!equip.cloak) return;
     const cor = equip.cloak.accent || "#6b4a8f";
     const bal = moving ? Math.sin(time * 0.01) * 1.2 : 0;
     ctx.fillStyle = "#1a1428";
@@ -105,7 +107,8 @@ export function drawHuman(ctx, px, py, dir, moving, time, colors, scale = 1, loo
     ctx.closePath(); ctx.fill();
     ctx.fillStyle = "rgba(255,255,255,0.18)";
     ctx.fillRect(-4, -19, 8, 1);
-  }
+  };
+  if(base!==3)desenharCapa();
 
   // Arma e escudo trocam de lado com a visão. De costas os dois ficam atrás
   // do corpo; de lado o escudo fica no braço de trás. O desenho é feito do
@@ -221,21 +224,36 @@ export function drawHuman(ctx, px, py, dir, moving, time, colors, scale = 1, loo
   if (armaAtras) desenharArma();
   if (escudoAtras) desenharEscudo();
 
-  // pernas
-  ctx.fillStyle = pants;
-  ctx.fillRect(-4, -5, 3, 5 - lift);
-  ctx.fillRect(1, -5, 3, 4);
-  ctx.fillStyle = shoes;
-  ctx.fillRect(-4, -1, 3, 1);
-  ctx.fillRect(1, -2, 3, 1);
+  // Pés no plano do chão, com apoio alternado e avanço no rumo real.
+  const feet=[-1,1].map(side=>{
+    const stride=step*side*2,ground=view.project(side*2.5,stride,0);
+    return {side,ground,lift:Math.max(0,step*side)*lift,depth:view.depth(side*2.5,stride)};
+  }).sort((a,b)=>a.depth-b.depth);
+  for(const foot of feet){
+    const x=foot.ground.x,y=foot.ground.y-foot.lift;
+    ctx.fillStyle=pants;ctx.fillRect(Math.round(x)-1.5,-5,3,Math.max(1,5+y));
+    ctx.fillStyle=shoes;ctx.fillRect(Math.round(x)-1.5,y-1,3,1.5);
+    ctx.fillStyle='rgba(255,236,204,.25)';ctx.fillRect(Math.round(x)-1,y-1,1,.5);
+  }
 
-  // corpo
-  ctx.fillStyle = shirt;
-  ctx.fillRect(-shoulder, -13, shoulder * 2, 9);
-  ctx.fillStyle = "rgba(255,255,255,0.16)";
-  ctx.fillRect(-shoulder, -13, 2, 8);
-  ctx.fillStyle = pants;
-  ctx.fillRect(-4, -5, 8, 2);
+  // Frente, flanco e costas têm planos próprios. Luz fica à esquerda da
+  // câmera: espelhar a direção não espelha a iluminação do mundo.
+  const turn=view.forward.x,frontWidth=view.profile?shoulder*.55:shoulder;
+  ctx.fillStyle=shirt;
+  ctx.beginPath();ctx.moveTo(-frontWidth+turn,-13);ctx.lineTo(frontWidth+turn,-13);
+  ctx.lineTo(frontWidth,-4);ctx.lineTo(-frontWidth,-4);ctx.closePath();ctx.fill();
+  ctx.fillStyle='rgba(255,236,204,.22)';ctx.fillRect(-frontWidth+1,-12,1,7);
+  ctx.fillStyle='rgba(8,18,32,.3)';ctx.fillRect(frontWidth-1,-12,1,8);
+  ctx.fillStyle=pants;ctx.fillRect(-frontWidth,-5,frontWidth*2,2);
+  if(base===3){
+    ctx.fillStyle='rgba(8,18,32,.3)';ctx.fillRect(turn,-12,.5,7);
+    ctx.fillStyle=colors.accent||'#e5c792';ctx.fillRect(-2+turn,-12,4,.5);
+  }else{
+    ctx.fillStyle='rgba(255,236,204,.35)';ctx.fillRect(-2+turn,-13,1,2);ctx.fillRect(1+turn,-13,1,2);
+  }
+
+  detailGarment(ctx,equip.armor,base,turn,frontWidth);
+  if(base===3)desenharCapa();
 
   // braços. Parado, o papel do NPC troca o braço do lado do gesto: guia aponta
   // o caminho, monitor ergue a mão, mestre segura um livro aberto. O ciclo é
@@ -286,7 +304,11 @@ export function drawHuman(ctx, px, py, dir, moving, time, colors, scale = 1, loo
   ctx.save();
   if (ladoDiag || olhar || cabeceio) ctx.translate(ladoDiag + olhar, cabeceio);
   ctx.fillStyle = colors.skin;
-  ctx.fillRect(-4, -20, 8, 8);
+  // Têmporas, bochechas e queixo recortam o quadrado da cabeça.
+  ctx.beginPath();ctx.moveTo(-3,-20);ctx.lineTo(3,-20);ctx.lineTo(4,-18);
+  ctx.lineTo(4,-15);ctx.lineTo(2,-12);ctx.lineTo(-2,-12);ctx.lineTo(-4,-15);ctx.lineTo(-4,-18);ctx.closePath();ctx.fill();
+  ctx.fillStyle='rgba(108,65,64,.24)';ctx.fillRect(3,-18,1,3);ctx.fillRect(-2,-13,4,.5);
+  ctx.fillStyle='rgba(255,231,190,.26)';ctx.fillRect(-3,-18,.5,3);ctx.fillRect(-2,-19,3,.5);
   // cabelo: topo, costeleta e nuca, sempre deixando o rosto de fora
   ctx.fillStyle = colors.hair;
   const crown = -20 - hair.cap;
@@ -351,46 +373,13 @@ export function drawHuman(ctx, px, py, dir, moving, time, colors, scale = 1, loo
       ctx.fillRect(tx, tailY, 5, hair.tail);
     }
   }
-  if (equip.helmet) {
-    const metal = equip.helmet.accent || "#b8b0d8";
-    if (base === 3) {
-      // de costas o elmo é fechado: sem rosto, com a costura no meio
-      ctx.fillStyle = "#101426";
-      ctx.fillRect(-5, -23, 10, 11);
-      ctx.fillStyle = metal;
-      ctx.fillRect(-5, -23, 10, 8);
-      ctx.fillRect(-4, -15, 8, 2);
-      ctx.fillStyle = "rgba(0,0,0,0.3)";
-      ctx.fillRect(-1, -23, 1, 8);
-      ctx.fillStyle = "rgba(255,255,255,0.22)";
-      ctx.fillRect(-3, -23, 2, 1);
-    } else if (base === 0) {
-      // de frente: aba, laterais e abertura para o rosto
-      ctx.fillStyle = "#101426";
-      ctx.fillRect(-5, -23, 10, 3);
-      ctx.fillStyle = metal;
-      ctx.fillRect(-5, -23, 10, 2);
-      ctx.fillRect(-5, -21, 2, 5);
-      ctx.fillRect(3, -21, 2, 5);
-      ctx.fillStyle = "rgba(255,255,255,0.28)";
-      ctx.fillRect(-3, -23, 3, 1);
-      ctx.fillStyle = "rgba(0,0,0,0.22)";
-      ctx.fillRect(-4, -21, 8, 1);
-    } else {
-      // de perfil: o elmo cobre a nuca e projeta a proteção para o lado da cara
-      const frente = base === 1 ? -1 : 1;
-      ctx.fillStyle = "#101426";
-      ctx.fillRect(-5, -23, 10, 3);
-      ctx.fillStyle = metal;
-      ctx.fillRect(-5, -23, 10, 2);
-      ctx.fillRect(frente < 0 ? -5 : 3, -21, 2, 6);
-      ctx.fillRect(frente < 0 ? -4 : 3, -20, 1, 4);
-      ctx.fillStyle = "rgba(255,255,255,0.28)";
-      ctx.fillRect(frente < 0 ? -4 : 1, -23, 3, 1);
-      ctx.fillStyle = "rgba(0,0,0,0.2)";
-      ctx.fillRect(frente < 0 ? 2 : -4, -21, 2, 5);
-    }
-  }
+  // Mechas seguem o corte escolhido, sem apagar coque, trança ou franja.
+  ctx.save();ctx.globalCompositeOperation='source-atop';
+  ctx.fillStyle='rgba(255,226,188,.22)';ctx.fillRect(-3,crown+1,2,.5);
+  ctx.fillRect(-2,crown+2,.5,Math.max(1,hair.cap-1));
+  ctx.fillStyle='rgba(10,18,31,.3)';ctx.fillRect(2,crown+1,.5,Math.max(1,hair.cap));
+  ctx.restore();
+  if(equip.helmet)drawHeadgear(ctx,equip.helmet,base);
   // rosto: olho e nariz do lado para onde anda
   ctx.fillStyle = colors.eyes || "#14121f";
   const olhoAlto = pisca ? 1 : 2;

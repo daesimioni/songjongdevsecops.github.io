@@ -1935,7 +1935,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     }
     ctx.save();
     ctx.translate(x, y);
-    drawCreatureArt(ctx, m.kind, m.accent, t + m.x * 90, m.escala || (m.boss ? 1.15 : 0.95), m.dir);
+    drawCreatureArt(ctx, m.kind, m.accent, t + m.x * 90, m.escala || (m.boss ? 1.15 : 0.95), m.dir, Boolean(m.moving));
     ctx.restore();
     if (state.alert?.monster === m) {
       ctx.save();
