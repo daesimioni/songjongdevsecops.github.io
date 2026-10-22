@@ -93,6 +93,7 @@ A árvore já vergava com a rajada e o fogo já tinha 4 a 8 quadros.
 | 2026-10-22 | escopo aposentado | editor de mapa, WebGL e jitter das ilhas ficam de fora com justificativa medida: o mundo é gerado e testado, o Canvas 2D faz 60,2 fps e o jitter exigiria revalidar 2.413 alvos e 54 ligações | 60,2 fps, 19/19, `test/dungeon-reachability.test.mjs`, `test/passagens.test.mjs` |
 | 2026-10-22 | escopo de jogo aposentado | pontes por missão, party em combate e planta por área passam a decisão com justificativa: o mapa não tem mais item ausente ou parcial de código, só as decisões do dono e a resistência por tipo | `test/passagens.test.mjs`, `test/casas.test.mjs`, `test/party-proof.test.mjs`, 99/99 suítes |
 | 2026-10-22 | decisões do dono respondidas | as 13 perguntas do 39 foram respondidas (12 de produto e as 4 de escopo confirmadas); o doc 01 §13 ganhou a nota "sem prova final" e o plano do próximo ciclo abriu em `40-PLANO-EXECUCAO.md` | `test/documentos.test.mjs`, 39 e 40 |
+| 2026-10-22 | PR #9, colisões e passagens | colisões alinhadas aos assets e movimento, passagens e chegadas corrigidos; 2 testes novos (`collision-profiles`, `landing-collision`) e a ferramenta `render-collisions`; base do plano 40 | `test/colisao.test.mjs`, `test/collision-profiles.test.mjs`, `test/landing-collision.test.mjs`, 101/101 suítes |
 
 ## Fecho da revisão (2026-10-22)
 
@@ -108,7 +109,7 @@ o que os testes e sondas desta data mostram, não o que o diário prometeu.
 | masmorras e batalha | 93 cavernas em 6 modelos e 4 pisos | sala temática por disciplina com 279 peças sólidas; 93 chefes | ritmo +1/+2, leitura de turno, fases 2 e 3, habilidade própria por chefe, turnos de PvP | `test/masmorras.test.mjs`, `test/salas.test.mjs`, `test/duelo-ritmo.test.mjs`, `test/chefe-habilidades.test.mjs`, `test/pvp-turnos.test.mjs`, `cdp-chefe-habilidade.mjs`, `cdp-sala-tema.mjs` |
 | pedidos já feitos | auditoria dos 38 pedidos na fonte viva | correção de resposta vazia, frase repetida, seis alternativas e páginas curtas | 69 páginas com curso completo, revisão das PRs externas e documentos alinhados | `docs/design/20-AUDITORIA-PEDIDOS.md`, `docs/design/33-REVISAO-EXTERNA.md`, `test/licoes.test.mjs`, `cdp-pagina.mjs` |
 
-Prova de conjunto desta data: `npm test` com **99 testes em 102 arquivos, 99 passaram**;
+Prova de conjunto desta data: `npm test` com **101 testes em 104 arquivos, 101 passaram**;
 matriz de navegador **19/19** remedida em 2026-10-22 depois de clima, sono, famílias,
 texto maior, marcas do duelo, variantes, bilhetes, arcos, patrulha e perseguição e do desacoplamento
 mundo→rendering (`cdp-regressao.mjs`: HUD, mochila 40, bestiário

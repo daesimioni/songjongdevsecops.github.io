@@ -20,8 +20,8 @@ O endgame e a lore entram no próximo ciclo, nesta ordem.
 ## 2. O ciclo atual está fechado
 
 - 0 linhas ausente e 0 parciais no 39; o que resta são decisões respondidas.
-- 99 testes em 102 arquivos, 19/19 na matriz de navegador a 60,2 fps, 133
-  módulos, build de 141 arquivos.
+- 101 testes em 104 arquivos, 19/19 na matriz de navegador a 60,2 fps, 137
+  módulos, build de 145 arquivos.
 - Site publicado com o 39 e o 40; o revisor de conteúdo roda no `check` e no CI.
 - A mochila medida em 60,2 fps após 75 s e 18 a 19 MB; acompanhar em hardware
   real.
