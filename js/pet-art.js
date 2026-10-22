@@ -69,6 +69,8 @@ export function drawPetSprite(ctx, kind, x, y, t = 0, moving = false, dir = 0) {
 function desenharPet(ctx, kind, x, y, t = 0, moving = false, dir = 0, semSombra = false) {
   const colors = PET_COLORS[kind] || PET_COLORS.cat;
   const bob = moving ? Math.abs(Math.sin(t * 0.02)) * 1.2 : Math.sin(t * 0.002) * 0.5;
+  // pisca de vez em quando, como o dono; parado o bicho também mexe a cauda
+  const blink = !moving && Math.floor(t / 2400) % 8 === 0;
   ctx.save();
   ctx.translate(x, y);
   // o bicho vira junto com quem ele segue; o espelho é em volta do próprio
@@ -188,14 +190,15 @@ function desenharPet(ctx, kind, x, y, t = 0, moving = false, dir = 0, semSombra 
     ctx.fillStyle = colors.body;
     ctx.fillRect(-4, -11 - bob, 2, 2);
     ctx.fillRect(1, -11 - bob, 2, 2);
-    ctx.fillStyle = colors.eye;
+    ctx.fillStyle = blink ? colors.body : colors.eye;
     ctx.fillRect(-2, -8 - bob, 1, 1);
     ctx.fillRect(1, -8 - bob, 1, 1);
     ctx.strokeStyle = colors.body;
     ctx.lineWidth = 2;
+    const cauda = Math.sin(t * 0.006) * 1.6;
     ctx.beginPath();
     ctx.moveTo(5, -4 - bob);
-    ctx.quadraticCurveTo(9, -6 - bob, 8, -10 - bob);
+    ctx.quadraticCurveTo(9 + cauda, -6 - bob, 8 + cauda * 0.5, -10 - bob);
     ctx.stroke();
   }
   ctx.restore();

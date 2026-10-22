@@ -29,6 +29,7 @@ com a linha do diário dizendo que foi feito.
 | colisão de fantasma no mundo | `test/fantasmas.test.mjs`: 1.040 caixas de cenário em 12 tipos (árvore, pedra, barril, caixote, saco, fardo, cerca, fogo); sonda `cdp-fantasma.mjs` anda contra barril e árvore e para; caverna auditada no código (altar, forja, pedra, horta, veio, encantador e baú sólidos) | feito em 2026-10-21 21:10 |
 | contraste vivo em todos os estados | sonda `cdp-contraste.mjs` corrigida (gradiente mais próximo e elemento coberto/fora da tela): 218 textos únicos em 10 estados mais 390 px, **0 falha**; autoteste confirma que o medidor acha um par ruim | feito em 2026-10-21 21:20 |
 | sala temática por disciplina nas masmorras | `test/salas.test.mjs`: 93 cavernas com sala própria (oficina 35, biblioteca 36, observatório 22), 279 peças de cenário encostadas nas paredes, com caixa sólida; sonda `cdp-sala-tema.mjs` abre uma de cada e fotografa | feito em 2026-10-21 21:29 |
+| animação de NPC e pet | `test/animacao-idle.test.mjs` e sonda `cdp-anim-idle.mjs`: cabeça parada mexe 46 px e o corpo 0 (olhar/cabeceio), cauda do gato 60 px e olho 13 px (piscada); o passo do NPC já existia e a sonda confirma | feito em 2026-10-21 21:33 |
 
 ## O que a auditoria pegou de errado
 
@@ -40,13 +41,11 @@ com a linha do diário dizendo que foi feito.
 
 ## O que continua em aberto (nada disso vai ser marcado como feito antes da prova)
 
-1. **Animação de NPC e pet**: hoje só respiram; falta passo, cabeceio e o bicho
-   de companhia andando com o dono.
-2. **69 páginas escritas à mão** do vale e das áreas antigas: continuam com
+1. **69 páginas escritas à mão** do vale e das áreas antigas: continuam com
    quatro partes e 255 a 469 palavras; falta o curso de seis partes do catálogo.
-3. **Sistema de batalha**: falta ritmo, habilidade de chefe e leitura de turno;
+2. **Sistema de batalha**: falta ritmo, habilidade de chefe e leitura de turno;
    hoje o duelo é pergunta com vida.
-4. **Passada de interfaces**: HUD, diário, ficha, mochila e loja ainda não
+3. **Passada de interfaces**: HUD, diário, ficha, mochila e loja ainda não
    passaram pela auditoria de densidade e leitura.
-5. **Etapa 2 e 3 dos assets**: vegetação, solo, construção, água, props e fogo
+4. **Etapa 2 e 3 dos assets**: vegetação, solo, construção, água, props e fogo
    já têm variantes; falta fechar animação própria de cada grupo.

@@ -44,6 +44,10 @@ export function drawHuman(ctx, px, py, dir, moving, time, colors, scale = 1, loo
   const respira = moving ? 0 : Math.sin(time * 0.0042) * 0.45;
   // pisca de vez em quando; o olho fechado é uma linha de 1 px
   const pisca = !moving && Math.floor(time / 170) % 23 === 0;
+  // parado, a cabeça olha em volta e às vezes cabeceia. A fase vem do posto,
+  // então dois NPCs não olham no mesmo compasso e a praça não fica coreografada
+  const olhar = moving ? 0 : Math.round(Math.sin(time * 0.0011 + px * 0.07 + py * 0.05));
+  const cabeceio = !moving && Math.sin(time * 0.0017 + px * 0.03 + py * 0.05) > 0.9 ? -1 : 0;
   // passo com quique: o corpo sobe e desce um terço de pixel no compasso
   const quique = moving ? -Math.abs(Math.sin(time * 0.016)) * 0.6 : 0;
   ctx.save();
@@ -216,9 +220,10 @@ export function drawHuman(ctx, px, py, dir, moving, time, colors, scale = 1, loo
   ctx.fillRect(-armX, -6 + Math.max(0, legOff), 2, 2);
   ctx.fillRect(armX - 1, -6 - Math.max(0, legOff), 2, 2);
 
-  // cabeça: na diagonal ela desliza um pixel para o lado da caminhada
+  // cabeça: na diagonal ela desliza um pixel para o lado da caminhada e, parada,
+  // olha em volta (1 px) e cabeceia de vez em quando
   ctx.save();
-  if (ladoDiag) ctx.translate(ladoDiag, 0);
+  if (ladoDiag || olhar || cabeceio) ctx.translate(ladoDiag + olhar, cabeceio);
   ctx.fillStyle = colors.skin;
   ctx.fillRect(-4, -20, 8, 8);
   // cabelo: topo, costeleta e nuca, sempre deixando o rosto de fora

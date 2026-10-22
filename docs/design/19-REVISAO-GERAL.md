@@ -62,6 +62,7 @@ A árvore já vergava com a rajada e o fogo já tinha 4 a 8 quadros.
 
 | data | onda | o que mudou | prova |
 |---|---|---|---|
+| 2026-10-21 | animação de NPC e pet | cabeça parada olha em volta e cabeceia (46 px na cabeça, 0 no corpo); gato pisca e mexe a cauda (60 px na cauda, 13 no olho); passo do NPC confirmado | `test/animacao-idle.test.mjs`, `cdp-anim-idle.mjs`, 31/31 suítes, 19/19 no navegador |
 | 2026-10-21 | salas temáticas | 93 cavernas com sala de assinatura: oficina (35), biblioteca (36) e observatório (22), três peças de cenário encostadas na parede e sólidas; miolo livre para o combate | `test/salas.test.mjs`, 30/30 suítes, 19/19 no navegador, sonda `cdp-sala-tema.mjs` |
 | 2026-10-21 | contraste | sonda de contraste corrigida para fundo em gradiente e elemento coberto/fora da tela; 218 textos únicos em 10 estados e no 390 px, zero falha | `cdp-contraste.mjs`, autoteste do medidor, 0 falha |
 | 2026-10-21 | colisão de cenário | 1.040 caixas novas em 12 tipos (árvore, pedra, barril, caixote, saco, fardo, cerca, poço, ruína, fogo); NPC usa a mesma colisão; caverna auditada no caminho de `state.solids` | `test/fantasmas.test.mjs`, 29/29 suítes, 19/19 no navegador, sonda andando contra barril e árvore |
