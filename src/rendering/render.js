@@ -1393,7 +1393,6 @@ export function createRenderer(canvas, world, {collisionDebug=false} = {}) {
           const lift = p.mount ? 5 : 0;
           if (p.mount) drawSkiff(ctx, px, py, p.dir || 0, time, 1, p.moving);
           drawHuman(ctx, px, py - lift, p.dir || 0, p.mount ? false : p.moving, time, peerColors, 1, p.look);
-          drawNameTag(p.name, px, py - 26 - lift, p.color);
           if (p.bubble && p.bubble.until > now) {
             drawBubble(p.bubble.text, px, py - lift, p.color);
           }
@@ -1472,6 +1471,17 @@ export function createRenderer(canvas, world, {collisionDebug=false} = {}) {
     }
     drawNpcLabels(npcs, scale, camX, camY);
     drawMinimap(player, peers, rastreador);
+    // a placa de cada par também fecha o quadro, com vida e mana à vista
+    for (const p of peers) {
+      if (!onScreen(p.rx ?? p.x, p.ry ?? p.y, 48)) continue;
+      desenharPlacaDoJogador(ctx, {
+        nome: p.name,
+        cor: p.color,
+        vitais: p.vitais,
+        x: ((p.rx ?? p.x) * TILE - camX + shx) * scale,
+        cabecaY: ((p.ry ?? p.y) * TILE - camY + shy) * scale - 26 * scale,
+      });
+    }
     // a placa do jogador fecha o quadro: fica por cima do véu da noite, da
     // vinheta da casa e de qualquer coisa que passe na frente
     const liftPlaca = 5 * player.boost;
@@ -1519,18 +1529,6 @@ export function createRenderer(canvas, world, {collisionDebug=false} = {}) {
     quadrosTotais++;
   }
 
-  function drawNameTag(name, px, py, color) {
-    if (!name) return;
-    ctx.font = "5px ui-monospace, monospace";
-    ctx.textAlign = "center";
-    const w = ctx.measureText(name).width + 7;
-    ctx.fillStyle = "rgba(8,10,20,0.7)";
-    roundRect(ctx, px - w / 2, py - 11, w, 9, 2);
-    ctx.fill();
-    ctx.fillStyle = color || "#eae4ff";
-    ctx.fillText(name, px, py - 4);
-    ctx.textAlign = "left";
-  }
 
   const { drawAmbient, relogioAmbiente } = createAmbientRenderer(ctx);
 

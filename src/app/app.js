@@ -3075,7 +3075,10 @@ function loop(now) {
       state.walked += stepD;
       if (state.walked > 20) markStep("walk");
     }
-    if (state.net) state.net.setLocal(player.x, player.y, player.dir, player.boost);
+    if (state.net) {
+      state.net.setLocal(player.x, player.y, player.dir, player.boost);
+      state.net.setVitals(rpg.hp(), rpg.hpMax(), rpg.mana(), rpg.manaMax());
+    }
   } catch (e) {
     console.error("[loop] erro", e);
     if (!loop.warned) { loop.warned = true; toast("ops, o mundo tropeçou. Abra o console."); }

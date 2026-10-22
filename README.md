@@ -61,7 +61,8 @@ diário e `C` a ficha. `Enter` também abre a conversa.
 
 A praça compartilhada mostra outras pessoas na mesma sala. Não existe servidor
 próprio: o site é estático, e o broker MQTT público só apresenta as pessoas. No
-encontro, cada par de jogadores abre um canal WebRTC direto: a posição vai por
+encontro, cada par de jogadores abre um canal WebRTC direto: a posição, a vida
+e a mana vão por
 um canal rápido e os eventos por um canal confiável, com repasse pelos outros
 jogadores e o broker como reserva. Se um enlace cair, a pessoa continua sendo
 vista pelo caminho alternativo; se o sinal todo falhar, o mundo roda sozinho.

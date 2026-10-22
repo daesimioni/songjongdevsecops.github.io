@@ -54,6 +54,7 @@ export class Net {
     this.pruneEvery = null;
     this.closed = false;
     this.state = { x: 24, y: 19.5, dir: 0, m: 0 };
+    this.vitals = { hp: 0, hpMax: 1, mana: 0, manaMax: 1 };
     this.connected = false;
     this.msgCount = 0;
     this.pubkey = "";
@@ -229,6 +230,11 @@ export class Net {
       // renderizada nele, e recriar a cada pacote jogaria isso no lixo.
       const peer = old || {};
       if (!old) peer.bubble = null;
+      const hpMax = Math.max(1, Number(msg.hmax) || 1);
+      const manaMax = Math.max(1, Number(msg.mmax) || 1);
+      const hp = Number.isFinite(Number(msg.hp)) ? Math.max(0, Math.min(hpMax, Number(msg.hp))) : null;
+      const mana = Number.isFinite(Number(msg.mn)) ? Math.max(0, Math.min(manaMax, Number(msg.mn))) : null;
+      peer.vitais = hp === null || mana === null ? null : { hp, hpMax, mana, manaMax };
       Object.assign(peer, {
         id: msg.id,
         name,
@@ -319,6 +325,19 @@ export class Net {
     this.state = { x, y, dir, m: boost > 0.35 ? 1 : 0 };
   }
 
+  // vida e mana vão no mesmo pacote da posição: qualquer um vê a barra do outro
+  setVitals(hp, hpMax, mana, manaMax) {
+    const num = (n, fallback = 0) => (Number.isFinite(Number(n)) ? Math.max(0, Number(n)) : fallback);
+    const maxHp = Math.max(1, num(hpMax, 1));
+    const maxMana = Math.max(1, num(manaMax, 1));
+    this.vitals = {
+      hp: Math.min(maxHp, num(hp)),
+      hpMax: maxHp,
+      mana: Math.min(maxMana, num(mana)),
+      manaMax: maxMana,
+    };
+  }
+
   setIdentity(pubkey) {
     this.pubkey = typeof pubkey === "string" && /^[0-9a-f]{64}$/i.test(pubkey) ? pubkey.toLowerCase() : "";
     this.publishState(true);
@@ -356,6 +375,10 @@ export class Net {
       k: this.pubkey || undefined,
       o: this.outfit || undefined,
       a: this.look || undefined,
+      hp: Math.round(this.vitals.hp),
+      hmax: Math.round(this.vitals.hpMax),
+      mn: Math.round(this.vitals.mana),
+      mmax: Math.round(this.vitals.manaMax),
       ttl: 2,
     };
     const diretos = this.malha.enviarEstado(msg);

@@ -50,6 +50,12 @@ check(/placa: \(\) => \(\{ nome: player\.name, cor: player\.color \}\)/.test(app
 check(/from "\.\.\/rendering\/name-plate\.js"/.test(dungeon), "a caverna não usa a placa compartilhada");
 check(/desenharPlacaDoJogador\(ctx, \{[\s\S]*nome: dados\?\.nome/.test(dungeon), "a caverna não desenha nome e barras");
 check(/hp: rpg\.hp\(\), hpMax: rpg\.hpMax\(\), mana: rpg\.mana\(\), manaMax: rpg\.manaMax\(\)/.test(app), "app.js não entrega os vitais ao renderer");
+check(/setVitals\(rpg\.hp\(\), rpg\.hpMax\(\), rpg\.mana\(\), rpg\.manaMax\(\)\)/.test(app), "o app não compartilha vida e mana");
+const net = fs.readFileSync(new URL("../src/platform/net.js", import.meta.url), "utf8");
+check(/setVitals\(hp, hpMax, mana, manaMax\)/.test(net), "a rede não guarda os vitais");
+check(/hp: Math\.round\(this\.vitals\.hp\)/.test(net), "a rede não publica a vida");
+check(/peer\.vitais = hp === null/.test(net), "a rede não lê a vida do outro");
+check(/for \(const p of peers\)[\s\S]*desenharPlacaDoJogador\(ctx, \{[\s\S]*vitais: p\.vitais/.test(render), "o par não mostra a própria vida e mana");
 check(/vitais: \(\) => \(\{ hp: rpg\.hp\(\)/.test(app), "app.js não passa os vitais para a caverna");
 check(/#ff5a86/.test(placa) && /#6bd5ff/.test(placa), "cores de vida e mana diferentes do HUD");
 check(/Math\.round\(bw \* f\.vida\)/.test(placa), "a barra não usa a fração da vida");
