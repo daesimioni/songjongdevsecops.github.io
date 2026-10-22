@@ -84,6 +84,7 @@ A árvore já vergava com a rajada e o fogo já tinha 4 a 8 quadros.
 | 2026-10-22 | plantas das casas | cada tipo ganhou duas plantas (8 salas em bolsão de mar) e a semente da casa escolhe; as 72 casas usam as duas plantas do tipo | `test/casas.test.mjs`, `cdp-casa-planta.mjs`, captura `casa-planta-*` |
 | 2026-10-22 | morador das casas | uma pessoa por casa, com roupa da área, canto livre perto do fogo e três falas (área, mesa/fogo, a pedra lá fora); interação por F e sem colisão | `test/casas.test.mjs`, `cdp-morador.mjs`, captura `morador-casa-*` |
 | 2026-10-22 | revisor de conteúdo | ferramenta fora do teste revisa as 887 perguntas do índice com contexto (`continente/dificuldade#posição`); pega duplicata global, alternativa ambígua, rascunho e resposta fora da faixa; cada pergunta ganha versão FNV-1a estável | `test/revisor-conteudo.test.mjs`, `npm run check:conteudo`, 93/93 suítes |
+| 2026-10-22 | erro por distrator | o duelo guarda a alternativa marcada com a versão FNV da pergunta (teto 120, purga, janela 7 dias), mostra "Você marcou: X" e o caderno lista os erros recentes com a resposta; a pergunta errada volta antes no mesmo domínio | `test/distratores.test.mjs`, `cdp-distratores.mjs`, 94/94 suítes |
 
 ## Fecho da revisão (2026-10-22)
 
@@ -99,7 +100,7 @@ o que os testes e sondas desta data mostram, não o que o diário prometeu.
 | masmorras e batalha | 93 cavernas em 6 modelos e 4 pisos | sala temática por disciplina com 279 peças sólidas; 93 chefes | ritmo +1/+2, leitura de turno, fases 2 e 3, habilidade própria por chefe, turnos de PvP | `test/masmorras.test.mjs`, `test/salas.test.mjs`, `test/duelo-ritmo.test.mjs`, `test/chefe-habilidades.test.mjs`, `test/pvp-turnos.test.mjs`, `cdp-chefe-habilidade.mjs`, `cdp-sala-tema.mjs` |
 | pedidos já feitos | auditoria dos 38 pedidos na fonte viva | correção de resposta vazia, frase repetida, seis alternativas e páginas curtas | 69 páginas com curso completo, revisão das PRs externas e documentos alinhados | `docs/design/20-AUDITORIA-PEDIDOS.md`, `docs/design/33-REVISAO-EXTERNA.md`, `test/licoes.test.mjs`, `cdp-pagina.mjs` |
 
-Prova de conjunto desta data: `npm test` com **93 testes em 96 arquivos, 93 passaram**;
+Prova de conjunto desta data: `npm test` com **94 testes em 97 arquivos, 94 passaram**;
 matriz de navegador **19/19** remedida em 2026-10-22 depois de clima, sono, famílias,
 texto maior, marcas do duelo, variantes, bilhetes, arcos, patrulha e perseguição e do desacoplamento
 mundo→rendering (`cdp-regressao.mjs`: HUD, mochila 40, bestiário

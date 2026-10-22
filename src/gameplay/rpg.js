@@ -10,6 +10,7 @@ import { VOCACAO_PADRAO, VOC_POR_ID, subcategoriaDe, vocacaoDe, multDe } from ".
 import { bonusDeRitmo } from "./duelo-ritmo.js";
 import { habilidadeDoChefe, danoDoJogador, extraDoErro, curaDoChefe, espelhoDoChefe, notaDaHabilidade } from "./chefe-habilidades.js";
 import { registrarResposta, vencido, resumoConceitos, conceitoDe } from "./conceitos.js";
+import { versaoDaPergunta, registrarDistrator as registrarErro, recentes as errosRecentesDoSave, erroRecente, purgar as purgarDistratores } from "./distratores.js";
 import { FAMILIAS, FAMILIA_POR_ID, familiaDeKind } from "../content/familias.js";
 
 const RESPAWN_MS = 5 * 60 * 1000;
@@ -63,6 +64,7 @@ function emptyData() {
     seen: {},
     met: {},
     conceitos: {},
+    distratores: {},
     familias: {},
     plots: {},
     plotGift: {},
@@ -181,6 +183,17 @@ function readData() {
         due: Number.isFinite(Number(entry.due)) ? Number(entry.due) : 0,
       };
     }
+    for (const [versao, entry] of Object.entries(obj.distratores || {})) {
+      if (!/^[0-9a-f]{8}$/.test(versao) || !entry || typeof entry !== "object") continue;
+      const texto = String(entry.t || "").replace(/[<>\u0000-\u001f]/g, "").trim().slice(0, 160);
+      if (!texto) continue;
+      data.distratores[versao] = {
+        t: texto,
+        n: clamp(Number(entry.n) || 1, 1, 9999),
+        at: Number.isFinite(Number(entry.at)) ? Number(entry.at) : 0,
+      };
+    }
+    purgarDistratores(data.distratores);
     for (const [key, plot] of Object.entries(obj.plots || {})) {
       if (typeof key !== "string" || key.length > 40 || !plot || typeof plot !== "object") continue;
       if (!plot.planted) continue;
@@ -978,6 +991,34 @@ export class RPG {
     return resumoConceitos(this.data.conceitos, now());
   }
 
+  // erro por distrator: guarda a alternativa marcada e a versão da pergunta
+  registrarDistrator(pergunta, indice) {
+    const marcada = pergunta?.options?.[indice];
+    if (typeof marcada !== "string" || !marcada) return null;
+    if (!this.data.distratores || typeof this.data.distratores !== "object") this.data.distratores = {};
+    return registrarErro(this.data.distratores, pergunta, marcada, now());
+  }
+
+  // últimas perguntas erradas, com o texto do banco: o save guarda a versão e
+  // o caderno mostra o enunciado, a alternativa marcada e a resposta certa
+  errosRecentes(limite = 5) {
+    const lista = errosRecentesDoSave(this.data.distratores, limite);
+    if (!lista.length) return [];
+    const banco = new Map();
+    for (const tiers of QUESTION_INDEX.values()) {
+      for (const perguntas of Object.values(tiers)) {
+        for (const q of perguntas) banco.set(versaoDaPergunta(q), q);
+      }
+    }
+    return lista
+      .map((entry) => {
+        const q = banco.get(entry.versao);
+        if (!q) return null;
+        return { q: q.q, marcou: entry.texto, resposta: q.options[q.a], n: entry.n, at: entry.at };
+      })
+      .filter(Boolean);
+  }
+
   // ---------- itens ----------
   addItem(id, qty = 1) {
     if (!ITEMS[id] || !Number.isFinite(qty) || qty < 1) return;
@@ -1431,6 +1472,7 @@ export class RPG {
         const filled = this.padOptions(mixed.map((o) => o.text), mixed.findIndex((o) => o.ok), continent, tier, q.area, q.q);
         deck.push({
           q: q.q,
+          version: versaoDaPergunta(q),
           options: filled.options,
           answer: filled.answer,
           why: q.why,
@@ -1463,7 +1505,10 @@ export class RPG {
       const n = Number(this.data.conceitos?.[item.area]?.n);
       return Number.isFinite(n) ? n : 0;
     };
-    return deck.sort((a, b) => due(b) - due(a) || dominio(a) - dominio(b));
+    // dentro do mesmo domínio, a pergunta que ele errou nos últimos dias volta
+    // antes: o erro específico também é informação de revisão
+    const erro = (item) => (erroRecente(this.data.distratores?.[item.version], agora) ? 1 : 0);
+    return deck.sort((a, b) => due(b) - due(a) || dominio(a) - dominio(b) || erro(b) - erro(a));
   }
 
   startDuel(monster, ground, boss = false, partner = null) {
@@ -1762,16 +1807,17 @@ export class RPG {
       if (espelho) note = `${note ? note + " " : ""}O espelho partido engoliu o golpe.`;
       if (escudoSegura) note = `${note ? note + " " : ""}O escudo segurou o golpe inteiro.`;
       if (d.training) {
-        d.feedback = { correct: false, why: d.question.why, damage, blocked, escudo: escudoSegura, note, training: true };
+        d.feedback = { correct: false, why: d.question.why, damage, blocked, escudo: escudoSegura, note, training: true, picked: index };
         d.phase = "feedback";
         return { ok: true, correct, phase: d.phase, feedback: d.feedback, duel: d };
       }
       this.registrarConceito(d.question.area, false);
+      this.registrarDistrator(d.question, index);
       this.data.hp = Math.max(0, this.hp() - damage);
       const antesDaSeiva = d.monsterHp;
       d.monsterHp = curaDoChefe(d.habilidade?.id, d.bossPhase, d.monsterHp, d.monsterHpMax);
       if (d.monsterHp > antesDaSeiva) note = `${note ? note + " " : ""}A seiva amarga devolveu ${d.monsterHp - antesDaSeiva} de vida.`;
-      d.feedback = { correct: false, why: d.question.why, damage, blocked, escudo: escudoSegura, note };
+      d.feedback = { correct: false, why: d.question.why, damage, blocked, escudo: escudoSegura, note, picked: index };
       if (this.data.hp <= 0) {
         this.data.hp = this.hpMax();
         d.phase = "defeat";
@@ -1822,13 +1868,14 @@ export class RPG {
     }
     p.seguidos = 0;
     this.registrarConceito(p.question.area, false);
+    this.registrarDistrator(p.question, index);
     const damage = this.erroPrevisto(p.monster, p.tier, 1);
     const petSegura = !d.shield && this.data.sub === "domador" && this.activePet() && !d.petUsado;
     const blocked = !!d.shield || !!petSegura;
     if (petSegura) d.petUsado = true;
     if (d.shield) d.shield = false;
     this.data.hp = Math.max(0, this.hp() - damage);
-    p.feedback = { correct: false, why: p.question.why, damage, blocked };
+    p.feedback = { correct: false, why: p.question.why, damage, blocked, picked: index };
     if (this.data.hp <= 0) {
       this.data.hp = this.hpMax();
       d.phase = "defeat";

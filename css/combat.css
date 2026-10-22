@@ -195,6 +195,7 @@
 .duel-feedback.good b { color: var(--mint); }
 .duel-feedback.bad { border-color: var(--rose); }
 .duel-feedback.bad b { color: var(--rose); }
+.duel-picked { display: block; margin-top: 6px; color: var(--amber); }
 .duel-note { display: block; margin-top: 6px; font-style: normal; color: var(--ink); }
 .duel-phase { display: block; margin-top: 6px; font-style: normal; color: var(--amber); }
 .duel-next {

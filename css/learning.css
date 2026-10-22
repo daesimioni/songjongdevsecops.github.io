@@ -269,6 +269,7 @@
 .journal-item { margin-bottom: 0; }
 .journal-conceito { font-size: 11px; line-height: 1.5; color: var(--muted); padding: 3px 6px; }
 .journal-conceito::first-letter { color: var(--mint); }
+.journal-erros-title { margin-top: 10px; font-family: var(--mono); font-size: 11px; color: var(--amber); }
 
 /* computaria */
 .addr-grid { display: grid; gap: 6px; margin: 6px 0 10px; }

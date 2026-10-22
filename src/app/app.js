@@ -1732,6 +1732,20 @@ function buildJournal() {
       linha.textContent = `${nome} · ${"●".repeat(nivel)}${"○".repeat(5 - nivel)} · ${vencido(entry, Date.now()) ? "revisar" : "em dia"}`;
       caderno.appendChild(linha);
     }
+    // erro por distrator: o que ele marcou nas últimas perguntas erradas
+    const erros = rpg.errosRecentes(5);
+    if (erros.length) {
+      const titulo = document.createElement("div");
+      titulo.className = "journal-erros-title";
+      titulo.textContent = "Erros recentes";
+      caderno.appendChild(titulo);
+      for (const erro of erros) {
+        const linha = document.createElement("div");
+        linha.className = "journal-conceito";
+        linha.textContent = `${erro.q} · você marcou: ${erro.marcou || "?"} · resposta: ${erro.resposta}`;
+        caderno.appendChild(linha);
+      }
+    }
     list.appendChild(caderno);
   }
   for (const cid of CONTINENT_ORDER) {

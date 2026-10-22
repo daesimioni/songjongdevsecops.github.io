@@ -266,6 +266,9 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
       const label = fb.spell || (fb.escudo ? "O escudo segurou o golpe." : fb.blocked ? "A proteção segurou o golpe." : fb.correct ? "Acertou." : wrong);
       box.appendChild(el("b", "", label));
       box.appendChild(el("span", "", fb.why));
+      if (!fb.correct && Number.isInteger(fb.picked) && d.question?.options?.[fb.picked]) {
+        box.appendChild(el("span", "duel-picked", `Você marcou: ${d.question.options[fb.picked]}.`));
+      }
       if (fb.note) box.appendChild(el("em", "duel-note", fb.note));
       if (fb.phaseNote) box.appendChild(el("em", "duel-phase", fb.phaseNote));
       main.appendChild(box);
@@ -343,6 +346,9 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
       fb.setAttribute("role", "status");
       fb.appendChild(el("b", "", p.feedback.blocked ? "A proteção segurou o golpe." : p.feedback.correct ? "Acertou." : `Errou. Levou ${p.feedback.damage} de dano.`));
       fb.appendChild(el("span", "", p.feedback.why));
+      if (!p.feedback.correct && Number.isInteger(p.feedback.picked) && p.question?.options?.[p.feedback.picked]) {
+        fb.appendChild(el("span", "duel-picked", `Você marcou: ${p.question.options[p.feedback.picked]}.`));
+      }
       box.appendChild(fb);
       const next = el("button", "duel-next small", "continuar com este bicho");
       next.type = "button";
