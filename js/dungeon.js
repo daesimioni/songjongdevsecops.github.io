@@ -185,6 +185,19 @@ export function dungeonLineOfSight(map, ax, ay, bx, by) {
   return true;
 }
 
+// O desenho e a caminhada usam oito direções; o cone precisa das mesmas oito.
+export function dungeonCanSeePlayer(map, monster, player) {
+  if (!monster?.alive) return false;
+  const dx = player.x - monster.x, dy = player.y - monster.y;
+  const distance = Math.hypot(dx, dy);
+  if (distance > monster.vision) return false;
+  const directions = [[0, 1], [-1, 0], [1, 0], [0, -1], [-1, 1], [1, 1], [-1, -1], [1, -1]];
+  const [vx, vy] = directions[monster.dir] || directions[0];
+  const facing = distance > 0.001 ? (vx * dx + vy * dy) / (distance * Math.hypot(vx, vy)) : 1;
+  if (facing < Math.cos(monster.fov ?? 1.2)) return false;
+  return dungeonLineOfSight(map, monster.x, monster.y, player.x, player.y);
+}
+
 // ---------- desenho ----------
 function drawAdventurer(ctx, x, y, dir, moving, t, avatar = {}, look = null, gear = null) {
   // O mesmo boneco da superfície, com capa e lanterna por cima. A nave é
@@ -1767,14 +1780,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
   }
 
   function canSeePlayer(m) {
-    if (!m?.alive) return false;
-    const d = Math.hypot(state.player.x - m.x, state.player.y - m.y);
-    if (d > m.vision) return false;
-    const vx = m.dir === 1 ? -1 : m.dir === 2 ? 1 : 0;
-    const vy = m.dir === 0 ? 1 : m.dir === 3 ? -1 : 0;
-    const facing = d > 0.001 ? (vx * (state.player.x - m.x) + vy * (state.player.y - m.y)) / d : 1;
-    if (facing < Math.cos(m.fov || 1.2)) return false;
-    return dungeonLineOfSight(state.map, m.x, m.y, state.player.x, state.player.y);
+    return dungeonCanSeePlayer(state.map, m, state.player);
   }
 
   function updateMonsters(dt, t) {

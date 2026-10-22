@@ -139,7 +139,6 @@ export class Net {
     if (!msg || typeof msg !== "object" || typeof msg.id !== "string") return;
     if (msg.id.length > 40) return;
     if (msg.id === this.id) return;
-    if (this.peers.size > 40) return;
     const now = Date.now();
 
     if (topic.endsWith("/bye")) {
@@ -148,11 +147,12 @@ export class Net {
     }
 
     if (topic.endsWith("/state")) {
+      if (!this.peers.has(msg.id) && this.peers.size >= 40) return;
       const x = Number(msg.x), y = Number(msg.y);
       if (!Number.isFinite(x) || !Number.isFinite(y)) return;
       if (x < 0 || y < 0 || x > MAP_W || y > MAP_H) return;
       const name = clean(msg.n, 16) || "viajante";
-      const dir = Number.isInteger(msg.d) && msg.d >= 0 && msg.d <= 3 ? msg.d : 0;
+      const dir = Number.isInteger(msg.d) && msg.d >= 0 && msg.d <= 7 ? msg.d : 0;
       const color = validColor(msg.c);
       const old = this.peers.get(msg.id);
       const moving = old ? Math.hypot(old.x - x, old.y - y) > 0.015 : false;
@@ -187,9 +187,9 @@ export class Net {
       if (kind === "attack") {
         const q = msg.question;
         const ok = q && typeof q.q === "string" && q.q.length >= 4 && q.q.length <= 400
-          && Array.isArray(q.options) && q.options.length === 3
+          && Array.isArray(q.options) && q.options.length === 5
           && q.options.every((o) => typeof o === "string" && o.length >= 1 && o.length <= 200)
-          && Number.isInteger(q.answer) && q.answer >= 0 && q.answer <= 2
+          && Number.isInteger(q.answer) && q.answer >= 0 && q.answer < q.options.length
           && typeof q.why === "string" && q.why.length <= 500
           && Number.isInteger(msg.damage) && msg.damage >= 1 && msg.damage <= 7
           && typeof msg.nonce === "string" && msg.nonce.length >= 1 && msg.nonce.length <= 40;
@@ -330,11 +330,12 @@ export class Net {
     this.closed = true;
     clearInterval(this.sendEvery);
     clearInterval(this.pruneEvery);
-    if (this.client && this.connected) {
-      try {
-        this.client.publish(this.topic("bye"), JSON.stringify({ id: this.id }));
-        this.client.end(true);
-      } catch { /* já foi */ }
+    if (this.client) {
+      if (this.connected) {
+        try { this.client.publish(this.topic("bye"), JSON.stringify({ id: this.id })); } catch { /* já foi */ }
+      }
+      // Mesmo offline, o cliente tem um laço de reconexão que precisa parar.
+      try { this.client.end(true); } catch { /* já foi */ }
     }
     this.client = null;
     this.connected = false;
