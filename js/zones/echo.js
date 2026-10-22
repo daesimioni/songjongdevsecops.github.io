@@ -84,6 +84,7 @@ export async function mount(el, api) {
       lastStep = step;
       highlight(step);
     });
+    if (!seq) return;
     playing = true;
     playBtn.textContent = "parar";
     playBtn.classList.add("on");

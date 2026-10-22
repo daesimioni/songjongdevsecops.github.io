@@ -1460,13 +1460,15 @@ function markDock(cid) {
 }
 
 function setSound(on) {
+  on = Boolean(on) && audio.setEnabled(true);
+  if (!on) audio.setEnabled(false);
   saved.sound = on;
   writeJSON(STORAGE.sound, on);
   const btn = $("btn-sound");
   btn.setAttribute("aria-pressed", on ? "true" : "false");
   btn.textContent = on ? "Som on" : "Som off";
-  if (on) { audio.setEnabled(true); audio.unlock(); }
-  else audio.setEnabled(false);
+  if (on) audio.unlock();
+  return on;
 }
 
 function setNetStatus({ state: s, count }) {

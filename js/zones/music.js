@@ -1,8 +1,7 @@
 // Música: ritmo, razões, temperamento, timbre e composição generativa.
 
 function ctxOf(api) {
-  api.enableSound();
-  return api.audio.ctx;
+  return api.audio.isEnabled() ? api.audio.ctx : null;
 }
 function tone(api, freq, { dur = 0.3, type = "sine", vol = 0.12, when = 0 } = {}) {
   const ctx = ctxOf(api);
@@ -15,7 +14,7 @@ function tone(api, freq, { dur = 0.3, type = "sine", vol = 0.12, when = 0 } = {}
   g.gain.setValueAtTime(0.0001, t);
   g.gain.linearRampToValueAtTime(vol, t + 0.008);
   g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-  o.connect(g).connect(ctx.destination);
+  o.connect(g).connect(api.audio.output);
   o.start(t); o.stop(t + dur + 0.03);
 }
 function playPartials(api, base, weights, dur = 0.9) {
@@ -148,6 +147,7 @@ function mountRhythm(el, api) {
   }
   playBtn.addEventListener("click", () => {
     playing = !playing;
+    if (playing) api.enableSound();
     playBtn.textContent = playing ? "parar" : "tocar";
     playBtn.classList.toggle("on", playing);
     lastPhase = -0.001;
@@ -255,6 +255,7 @@ function mountHarmony(el, api) {
     });
   }
   el.querySelector("#harm-play").addEventListener("click", () => {
+    api.enableSound();
     const f2 = secondFreq();
     playPair(api, base, f2, 1.4);
     update();
@@ -309,6 +310,7 @@ function mountScales(el, api) {
       b.innerHTML = `<span>${NAMES[n]}</span>`;
       b.addEventListener("click", () => {
         selected = n;
+        api.enableSound();
         tone(api, freq(n), { dur: 0.5, type: mode === "equal" ? "triangle" : "sine", vol: 0.13 });
         render(); updateInfo();
       });
@@ -414,6 +416,7 @@ function mountTimbre(el, api) {
     });
   }
   el.querySelector("#timbre-play").addEventListener("click", () => {
+    api.enableSound();
     playPartials(api, 261.63, weights, 1.1);
   });
   draw();
@@ -528,6 +531,7 @@ function mountGenerative(el, api) {
   }
   function play() {
     if (playing) { stop(); return; }
+    api.enableSound();
     if (!sequence.length) generate();
     playing = true;
     el.querySelector("#gen-play").textContent = "parar";
