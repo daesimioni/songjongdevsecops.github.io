@@ -61,6 +61,7 @@ A árvore já vergava com a rajada e o fogo já tinha 4 a 8 quadros.
 
 | data | onda | o que mudou | prova |
 |---|---|---|---|
+| 2026-10-21 | contraste | sonda de contraste corrigida para fundo em gradiente e elemento coberto/fora da tela; 218 textos únicos em 10 estados e no 390 px, zero falha | `cdp-contraste.mjs`, autoteste do medidor, 0 falha |
 | 2026-10-21 | colisão de cenário | 1.040 caixas novas em 12 tipos (árvore, pedra, barril, caixote, saco, fardo, cerca, poço, ruína, fogo); NPC usa a mesma colisão; caverna auditada no caminho de `state.solids` | `test/fantasmas.test.mjs`, 29/29 suítes, 19/19 no navegador, sonda andando contra barril e árvore |
 | 2026-10-21 | construções e interiores | casa, cabana, torre e galpão com escala 2 e porta ampliada; fachada sólida; 72 casas entram em 4 salas fechadas com mobília por casa, mesa de estudo e fogo que descansa; fundo escuro e sem clima lá dentro | `test/casas.test.mjs`, 28/28 suítes, 19/19 no navegador, sonda ao vivo em 60 fps |
 | 2026-10-21 | passagens das ilhas | 54 ligações entre ilhas: 31 istmos de terra com piso dos dois biomas, franja de areia e trilha de pedra, 23 pontes; decoração só em tile seco | `test/passagens.test.mjs`, 27/27 suítes, 19/19 no navegador |
