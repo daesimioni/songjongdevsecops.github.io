@@ -20,7 +20,7 @@ import { escalaDaCamera, tilesNaVista, dentroDaVista, caixaNaVista } from "../co
 import { fracoesDeVida } from "../core/vitais.js";
 import { propsDaSala } from "../content/salas-tematicas.js";
 import { nomeDaCacada } from "../content/cacada-clima.js";
-import { ouveOPassoS, direcaoPara } from "../world/audicao.js";
+import { ouveOPassoS, direcaoPara, acordaComOPasso } from "../world/audicao.js";
 
 const $ = (id) => document.getElementById(id);
 const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
@@ -258,6 +258,11 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
       if (!plano.post) continue;
       const m = makeMonster(def, plano.room, 0, plano.name, plano.tier, plano.post);
       m.vision = Math.max(1.6, m.vision * fatorVisao);
+      // um quinto das criaturas dorme até o passo chegar: a descida tem bicho
+      // parado e bicho acordado, decidido pelo id da caverna e da sala
+      let h = 0;
+      for (const ch of `${def.id}:${plano.room.id}`) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+      if (h % 5 === 0) m.dorme = true;
       out.push(m);
     }
     return out;
@@ -1130,8 +1135,13 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
       if (!m.alive) continue;
       {
         // audição: o passo corrido chega antes da vista. O bicho para, vira para
-        // o som e marca "?"; o duelo continua nascendo só da visão.
+        // o som e marca "?"; o duelo continua nascendo só da visão. Quem dorme
+        // não ouve nem vê: o passo perto ou a corrida acordam.
         const distOuve = Math.hypot(state.player.x - m.x, state.player.y - m.y);
+        if (m.dorme) {
+          if (!acordaComOPasso({ dist: distOuve, sprint: state.sprint })) continue;
+          m.dorme = false;
+        }
         if (ouveOPassoS({ sprint: state.sprint, dist: distOuve, vendo: canSeePlayer(m), boss: m.boss })) {
           if (!m.ouvindo || t >= m.ouvindo - 1800) {
             m.ouvindo = t + 2200;
@@ -1837,6 +1847,14 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
       ctx.font = "bold 14px monospace";
       ctx.textAlign = "center";
       ctx.fillText("!", x, y - 42);
+      ctx.restore();
+    } else if (m.dorme) {
+      ctx.save();
+      ctx.fillStyle = "#8ea0c0";
+      ctx.font = "bold 11px monospace";
+      ctx.textAlign = "center";
+      ctx.globalAlpha = 0.75;
+      ctx.fillText("z", x, y - 40);
       ctx.restore();
     } else if (m.ouvindo > clock()) {
       ctx.save();

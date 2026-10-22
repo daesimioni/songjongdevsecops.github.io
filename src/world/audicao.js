@@ -17,3 +17,13 @@ export function direcaoPara(x, y, tx, ty) {
   if (Math.abs(dx) > Math.abs(dy)) return dx > 0 ? 2 : 1;
   return dy > 0 ? 0 : 3;
 }
+
+// Sono: alguns bichos começam dormindo. Pisar perto (2,6 tiles) ou correr no
+// raio de audição acorda; acordado, ele nunca volta a dormir na mesma descida.
+export const RAIO_QUE_ACORDA = 2.6;
+
+export function acordaComOPasso({ dist, sprint } = {}) {
+  const d = Number(dist);
+  if (!Number.isFinite(d)) return false;
+  return d < RAIO_QUE_ACORDA || (Boolean(sprint) && d < RAIO_DE_AUDICAO);
+}

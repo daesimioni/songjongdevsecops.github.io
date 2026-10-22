@@ -267,3 +267,14 @@ bicho já viu (`!`) tem precedência.
 Prova: `test/audicao.test.mjs` (raio, barulho só na corrida, chefe fora, direção
 cardinal e o `?` no desenho) e sonda `cdp-audicao.mjs` (Bit a 3,2 tiles virou
 para leste, sem alerta nem duelo; parado, não reagiu).
+
+## Sono: um quinto das criaturas começa dormindo (2026-10-22)
+
+Um quinto dos bichos de cada descida nasce dormindo, decidido pelo id da
+caverna e da sala. Dormindo, ele não passeia, não vê e não inicia duelo; mostra
+`z` no lugar do `?`. Acorda com passo a menos de 2,6 tiles ou com corrida dentro
+do raio de audição (6,5) e não volta a dormir na mesma descida.
+
+Prova: `test/audicao.test.mjs` (limiares do passo e da corrida) e sonda
+`cdp-sono.mjs`: três cavernas com 2, 2 e 1 bicho dormindo; a 5,2 tiles o passo
+não acordou; perto e correndo acordou, zero duelo iniciado dormindo.
