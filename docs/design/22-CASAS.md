@@ -82,18 +82,22 @@ decorativa (a dívida está no fim deste documento).
 
 ## 6. Prova
 
-- `test/casas.test.mjs`: escala, 72 portas, sala fechada com exatamente uma
-  porta, spawn livre, mesa/fogo/cama dentro, mobília determinística e
-  diferente entre casas do mesmo tipo.
+- `test/casas.test.mjs`: escala, 72 portas, 8 plantas fechadas (duas por tipo,
+  todas em bolsão de mar), escolha determinística da planta, spawn livre,
+  mesa/fogo/cama dentro, mobília determinística e diferente entre casas do
+  mesmo tipo, e soleira na fila do cenário.
 - 54 suítes node verdes; matriz de navegador 19/19; 60 fps com a sala aberta.
 - Sondas: `cdp-casa.mjs` (fachada antes/depois), `cdp-casa2.mjs` (entrar,
-  estudar, descansar, sair) e `cdp-soleira.mjs` (degrau da porta) em
+  estudar, descansar, sair), `cdp-soleira.mjs` (degrau da porta) e
+  `cdp-casa-planta.mjs` (segunda planta) em
   `temporarios/2026-10-20-mundo-song-pedido/`.
 
 ## 7. O que continua em aberto
 
-1. São **quatro plantas** compartilhadas por tipo; a mobília varia, a geometria
-   da sala não. O próximo passo é uma planta por disciplina ou por ilha.
+1. **Reduzido em 2026-10-22:** cada tipo ganhou **duas plantas** (8 salas ao
+   todo), e a semente da casa escolhe a sua; as 72 casas usam as duas plantas
+   de cada tipo. Uma planta por disciplina ou por ilha continua como refinamento
+   opcional, não como pendência de conteúdo.
 2. **Fechado em 2026-10-22:** a mobília sorteada (barril, caixote, saco, fardo,
    estante, seca e braseiro) agora barra o corpo com caixa por posição, e o
    teste percorre a sala até porta, mesa e fogo sem travar. Ver

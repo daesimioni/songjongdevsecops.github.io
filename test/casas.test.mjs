@@ -46,8 +46,9 @@ check(/for \(const casa of world\.casas\)[\s\S]{0,200}drawSoleira\(casa\)/.test(
 check(/BIOMES\[casa\.bioma\]\?\.accent/.test(render), "soleira não usa a cor da área");
 
 // ---- quatro salas fechadas, cada uma com a sua porta ----
-const salas = Object.values(world.interiores);
-check(salas.length === 4, `salas: ${salas.length}, esperado 4`);
+const salas = world.salas;
+check(salas.length === 8, `salas: ${salas.length}, esperado 8 (duas plantas por tipo)`);
+check(salas.every((s) => s.mar), "sala cavada fora do mar: abriria buraco na ilha");
 for (const sala of salas) {
   let paredes = 0, furos = 0;
   const portaX = Math.floor(sala.door.x), portaY = sala.y + sala.h - 1;
@@ -78,10 +79,20 @@ for (const sala of salas) {
   }
 }
 
+// ---- duas plantas por tipo: cada casa escolhe uma, e as duas aparecem ----
+const usadas = {};
+for (const casa of world.casas) {
+  const sala = world.prepararInterior(casa);
+  (usadas[casa.tipo] ||= new Set()).add(sala);
+}
+for (const [tipo, conjunto] of Object.entries(usadas)) {
+  check(conjunto.size === 2, `${tipo}: só uma planta usada pelas casas`);
+}
+
 // mesa, fogo e cama ficam parados na sala e barram o corpo; a mobília
 // sorteada também virou sólida (ver test/interior-collision.test.mjs)
 const moveisFixos = world.props.filter((p) => String(p.tipo || "").startsWith("movel:"));
-check(moveisFixos.length === 11, `móveis fixos com caixa: ${moveisFixos.length}, esperado 11`);
+check(moveisFixos.length === 22, `móveis fixos com caixa: ${moveisFixos.length}, esperado 22`);
 for (const sala of salas) {
   check(world.boxCollides(sala.mesa.x, sala.mesa.y - 0.3, PLAYER_W, PLAYER_H), "mesa atravessável");
   check(world.boxCollides(sala.lareira.x, sala.lareira.y - 0.3, PLAYER_W, PLAYER_H), "fogo atravessável");
@@ -98,7 +109,7 @@ check(guardar() === layoutA, "a mesma casa muda de mobília ao entrar de novo");
 world.prepararInterior(casaB);
 const layoutB = guardar();
 check(layoutA !== layoutB || !casaB, "duas casas do mesmo tipo têm a mesma mobília");
-const salaA = world.interiores[casaA.tipo];
+const salaA = world.prepararInterior(casaA);
 world.prepararInterior(casaA);
 const tiposMoveis = world.interiorProps.map((m) => m.tipo);
 check(tiposMoveis.includes("mesa"), "sala sem mesa de estudo");
@@ -111,4 +122,4 @@ for (const m of world.interiorProps) {
 }
 
 assert.equal(problemas.length, 0, `casas com ${problemas.length} problema(s):\n- ${problemas.slice(0, 12).join("\n- ")}`);
-console.log(`ok casas: ${world.casas.length} fachadas com porta e soleira, 4 salas fechadas, ${world.interiorProps.length} móveis na casa de ${casaA.bioma}`);
+console.log(`ok casas: ${world.casas.length} fachadas com porta e soleira, ${salas.length} plantas fechadas, ${world.interiorProps.length} móveis na casa de ${casaA.bioma}`);

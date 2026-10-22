@@ -725,31 +725,57 @@ export function createWorld() {
   }
 
   // ---- casas por dentro: a fachada é a porta ----
-  // Cada tipo tem uma sala própria num bolsão de mar, longe das ilhas. A sala
-  // é um recorte iluminado: ao entrar, a câmera salta para o bolsão e o
-  // renderer escurece o mar em volta. A mobília muda com a semente da casa,
-  // então duas cabanas não têm a mesma cara por dentro.
-  const INTERIORES = {
-    casa: { x: 492, y: 330, w: 16, h: 12, piso: BRIDGE },
-    cabana: { x: 492, y: 4, w: 14, h: 11, piso: BRIDGE },
-    torre: { x: 276, y: 4, w: 12, h: 13, piso: K.MARBLE },
-    galpao: { x: 520, y: 180, w: 18, h: 11, piso: K.STONE },
+  // Cada tipo tem DUAS plantas próprias, cada uma num bolsão de mar, longe das
+  // ilhas. A casa escolhe a planta pela semente, então duas casas do mesmo tipo
+  // já não têm a mesma geometria. A sala é um recorte iluminado: ao entrar, a
+  // câmera salta para o bolsão e o renderer escurece o mar em volta.
+  const SALAS = {
+    casa: [
+      { x: 492, y: 330, w: 16, h: 12, piso: BRIDGE },
+      { x: 320, y: 20, w: 15, h: 13, piso: BRIDGE },
+    ],
+    cabana: [
+      { x: 492, y: 4, w: 14, h: 11, piso: BRIDGE },
+      { x: 300, y: 200, w: 16, h: 10, piso: BRIDGE },
+    ],
+    torre: [
+      { x: 276, y: 4, w: 12, h: 13, piso: K.MARBLE },
+      { x: 158, y: 26, w: 12, h: 13, piso: K.MARBLE },
+    ],
+    galpao: [
+      { x: 520, y: 180, w: 18, h: 11, piso: K.STONE },
+      { x: 404, y: 32, w: 17, h: 12, piso: K.STONE },
+    ],
   };
-  for (const sala of Object.values(INTERIORES)) {
-    for (let y = sala.y; y < sala.y + sala.h; y++) {
-      for (let x = sala.x; x < sala.x + sala.w; x++) {
-        const borda = x === sala.x || y === sala.y || x === sala.x + sala.w - 1 || y === sala.y + sala.h - 1;
-        set(x, y, borda ? K.WALL : sala.piso);
+  const TODAS_AS_SALAS = [];
+  for (const [tipo, lista] of Object.entries(SALAS)) {
+    for (const sala of lista) {
+      sala.tipo = tipo;
+      // antes de cavar, confirma que o bolsão é mar: cavar em ilha abriria buraco
+      let mar = true;
+      for (let y = sala.y; y < sala.y + sala.h && mar; y++) {
+        for (let x = sala.x; x < sala.x + sala.w && mar; x++) {
+          if (get(x, y) !== K.WATER) mar = false;
+        }
       }
+      sala.mar = mar;
+      for (let y = sala.y; y < sala.y + sala.h; y++) {
+        for (let x = sala.x; x < sala.x + sala.w; x++) {
+          const borda = x === sala.x || y === sala.y || x === sala.x + sala.w - 1 || y === sala.y + sala.h - 1;
+          set(x, y, borda ? K.WALL : sala.piso);
+        }
+      }
+      const px = sala.x + Math.floor(sala.w / 2);
+      set(px, sala.y + sala.h - 1, sala.piso);
+      sala.door = { x: px + 0.5, y: sala.y + sala.h - 0.5 };
+      sala.spawn = { x: px + 0.5, y: sala.y + sala.h - 2.2 };
+      sala.mesa = { x: sala.x + 2.6, y: sala.y + 2.1 };
+      sala.lareira = { x: sala.x + sala.w - 2.8, y: sala.y + 2.1 };
+      sala.cama = { x: sala.x + 2.6, y: sala.y + 5.1 };
+      TODAS_AS_SALAS.push(sala);
     }
-    const px = sala.x + Math.floor(sala.w / 2);
-    set(px, sala.y + sala.h - 1, sala.piso);
-    sala.door = { x: px + 0.5, y: sala.y + sala.h - 0.5 };
-    sala.spawn = { x: px + 0.5, y: sala.y + sala.h - 2.2 };
-    sala.mesa = { x: sala.x + 2.6, y: sala.y + 2.1 };
-    sala.lareira = { x: sala.x + sala.w - 2.8, y: sala.y + 2.1 };
-    sala.cama = { x: sala.x + 2.6, y: sala.y + 5.1 };
   }
+  const INTERIORES = Object.fromEntries(Object.entries(SALAS).map(([tipo, lista]) => [tipo, lista[0]]));
   const interiorProps = [];
   const interiorSolids = [];
   const assentosDaSala = (sala) => {
@@ -774,8 +800,10 @@ export function createWorld() {
     galpao: ["barril", "caixote", "saco", "fardo", "fardo", "braseiro", "caixote"],
   };
   function prepararInterior(house) {
-    const sala = INTERIORES[house.tipo];
-    if (!sala) return null;
+    const plantas = SALAS[house.tipo];
+    if (!plantas) return null;
+    // a semente da casa escolhe uma das duas plantas do tipo
+    const sala = plantas[hash2(house.x * 1.7 + 3.1, house.y * 2.3 - 1.7) < 0.5 ? 0 : 1];
     interiorProps.length = 0;
     interiorSolids.length = 0;
     const lista = MOVEIS[house.tipo] || MOVEIS.casa;
@@ -1200,7 +1228,8 @@ export function createWorld() {
   // os três móveis fixos da sala (mesa, fogo e cama) também barram o corpo.
   // A mobília sorteada tem caixas trocadas em prepararInterior; estas
   // caixas fixas ficam no bolsão da casa, longe das ilhas, e valem para as 4 salas.
-  for (const [tipo, sala] of Object.entries(INTERIORES)) {
+  for (const sala of TODAS_AS_SALAS) {
+    const tipo = sala.tipo;
     const mesa = addProp(sala.mesa.x, sala.mesa.y - 0.3, 0.7, 0.3);
     if (mesa) mesa.tipo = `movel:mesa:${tipo}`;
     const fogo = addProp(sala.lareira.x, sala.lareira.y - 0.3, 0.6, 0.3);
@@ -1388,7 +1417,7 @@ export function createWorld() {
 
   return {
     tiles, decor, ambiente, interiorProps, props, stations, waystones, npcs, hunters, monsters, caves, groundItems, takeGroundItem,
-    casas, interiores: INTERIORES, prepararInterior,
+    casas, interiores: INTERIORES, salas: TODAS_AS_SALAS, prepararInterior,
     cat: { ...CAT_SPAWN, facing: 1, t: 0, moving: false },
     get, set, isSolidTile, boxCollides, updateNpcs, setClima,
     continentAt, continentAtTile, areaAt, areaAtTile,
