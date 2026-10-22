@@ -684,13 +684,13 @@ export class RPG {
     this.save();
   }
 
-  usePetAbility({ duel = false } = {}) {
+  usePetAbility({ duel = false, excluded = [] } = {}) {
     const pet = this.activePet();
     if (!pet) return { ok: false, reason: "Nenhum bicho tamed está ativo." };
     const ab = pet.ability;
     const left = this.petCdLeft(pet.id);
     if (left > 0) return { ok: false, cooldown: left, reason: `${pet.name} ainda está descansando (${Math.ceil(left / 1000)}s).` };
-    const inDuel = duel && this.duel && this.duel.phase === "question";
+    const inDuel = duel && this.duel && this.duel.phase === "question" && this.duel.monsterHp > 0;
     if (petAbilityNeedsDuel(ab.id) && !inDuel) {
       return { ok: false, reason: "Essa habilidade só funciona na pergunta de um duelo." };
     }
@@ -700,7 +700,7 @@ export class RPG {
     }
     const out = { ok: true, pet: { id: pet.id, name: pet.name }, ability: ab, effect: ab.id };
     if (ab.id === "faro" || ab.id === "tagarela") {
-      const wrong = this.duel.question.options.map((_, i) => i).filter((i) => i !== this.duel.question.answer);
+      const wrong = this.duel.question.options.map((_, i) => i).filter((i) => i !== this.duel.question.answer && !excluded.includes(i));
       if (!wrong.length) return { ok: false, reason: "Esta pergunta não tem alternativa para riscar." };
       const howMany = ab.id === "tagarela" ? 2 : 1;
       out.sparks = [];
@@ -966,6 +966,7 @@ export class RPG {
     if (!this.data.spells[id]) return { ok: false, reason: "Você ainda não aprendeu essa runa. Forje uma na forja." };
     const d = this.duel;
     if (!d || d.phase !== "question") return { ok: false, reason: "A runa só funciona na pergunta de um duelo." };
+    if (id === "runa-faisca" && d.monsterHp <= 0) return { ok: false, reason: "Este monstro já caiu. Vença os demais da matilha." };
     if (id === "runa-espelho" && d.shield) return { ok: false, reason: "O espelho já está armado." };
     this.pulse();
     const cost = SPELL_MANA[id];
@@ -1010,8 +1011,8 @@ export class RPG {
 
   useItem(id) {
     const item = ITEMS[id];
-    const rune = id.startsWith("runa-");
-    if (!item || !(rune || ["pocao", "pocao-mana", "tocha", "bomba", "caldo", "cafe", "assado", "doce"].includes(id))) {
+    const rune = typeof id === "string" && id.startsWith("runa-");
+    if (!item || !(rune || item.heal || item.mana || item.buff || ["tocha", "bomba"].includes(id))) {
       return { ok: false, reason: "Este item não se usa agora." };
     }
     if (this.itemCount(id) <= 0) return { ok: false, reason: `Você não tem ${item.name}.` };
@@ -1030,6 +1031,7 @@ export class RPG {
     if (rune) {
       const d = this.duel;
       if (!d || d.phase !== "question") return { ok: false, reason: "A runa só funciona na pergunta de um duelo." };
+      if (id === "runa-faisca" && d.monsterHp <= 0) return { ok: false, reason: "Este monstro já caiu. Vença os demais da matilha." };
       if (id === "runa-espelho" && d.shield) return { ok: false, reason: "O espelho já está armado." };
       this.data.items[id]--;
       if (this.data.items[id] <= 0) delete this.data.items[id];
@@ -1040,8 +1042,12 @@ export class RPG {
       return res;
     }
     // comida com efeito pode ser usada de vida cheia: o buff ainda vale
-    if (!item.buff && item.heal && this.hp() >= this.hpMax() && !item.mana) return { ok: false, reason: "Sua vida já está cheia." };
-    if (item.mana && this.mana() >= this.manaMax() && !item.heal) return { ok: false, reason: "Sua mana já está cheia." };
+    if (!item.buff && (item.heal || item.mana)
+      && (!item.heal || this.hp() >= this.hpMax())
+      && (!item.mana || this.mana() >= this.manaMax())) {
+      return { ok: false, reason: item.heal && item.mana ? "Sua vida e mana já estão cheias."
+        : item.heal ? "Sua vida já está cheia." : "Sua mana já está cheia." };
+    }
     this.data.items[id]--;
     if (this.data.items[id] <= 0) delete this.data.items[id];
     const healed = this.heal(item.heal || 0);

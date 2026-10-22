@@ -94,8 +94,14 @@ export function createGather({ rpg, audio, toast, onClose }) {
     onClose?.();
   }
 
+  function focusAction() {
+    const body = $("gather-body");
+    const node = body?.querySelector?.(done ? ".duel-next" : ".duel-option");
+    node?.focus?.();
+  }
+
   function escolher(i) {
-    if (!current || done) return;
+    if (!current || done || !Number.isInteger(i) || i < 0 || i >= current.questions[etapa].options.length) return;
     done = true;
     pick = i;
     const q = current.questions[etapa];
@@ -103,6 +109,7 @@ export function createGather({ rpg, audio, toast, onClose }) {
       resultado = "errou";
       audio.error?.();
       render();
+      focusAction();
       return;
     }
     rpg.addSkillXp(current.continent, q.tier);
@@ -111,6 +118,7 @@ export function createGather({ rpg, audio, toast, onClose }) {
       resultado = "mais";
       audio.blip?.();
       render();
+      focusAction();
       return;
     }
     const { reward } = current;
@@ -125,6 +133,7 @@ export function createGather({ rpg, audio, toast, onClose }) {
       audio.error?.();
     }
     render();
+    focusAction();
   }
 
   function advance() {
@@ -136,6 +145,7 @@ export function createGather({ rpg, audio, toast, onClose }) {
       resultado = "";
       audio.blip?.();
       render();
+      focusAction();
       return;
     }
     close();
