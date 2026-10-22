@@ -123,7 +123,7 @@ function readData() {
       data.skills[k] = clamp(Number(obj.skills?.[k]) || 0, 0, MAX_SKILL_XP);
     }
     for (const [id, qty] of Object.entries(obj.items || {})) {
-      if (ITEMS[id] && Number(qty) > 0) data.items[id] = Math.floor(Number(qty));
+      if (ITEMS[id] && Number.isFinite(Number(qty)) && Number(qty) >= 1) data.items[id] = Math.floor(Number(qty));
     }
     for (const [id, at] of Object.entries(obj.monsters || {})) {
       if (Number.isFinite(at)) data.monsters[id] = at;
@@ -677,7 +677,7 @@ export class RPG {
     const left = this.petCdLeft(pet.id);
     if (left > 0) return { ok: false, cooldown: left, reason: `${pet.name} ainda está descansando (${Math.ceil(left / 1000)}s).` };
     const inDuel = duel && this.duel && this.duel.phase === "question";
-    if (["faro", "sabedoria", "aviso"].includes(ab.id) && !inDuel) {
+    if (["faro", "tagarela", "sabedoria", "aviso"].includes(ab.id) && !inDuel) {
       return { ok: false, reason: "Essa habilidade só funciona na pergunta de um duelo." };
     }
     this.pulse();
@@ -853,9 +853,24 @@ export class RPG {
     return Math.max(1, Math.round(dano));
   }
 
+  erroPrevisto(monster = this.duel?.monster, tier = this.duel?.tier, bossPhase = this.duel?.boss ? this.duel.bossPhase : 1) {
+    const d = this.duel;
+    if (d?.shield || (this.data.sub === "domador" && this.activePet() && !d?.petUsado)) return 0;
+    const base = TIERS[tier]?.damage || 0;
+    return this.danoSofrido(base + Math.max(0, (bossPhase || 1) - 1) * 2)
+      + (MONSTER_TRAITS[monster?.kind]?.id === "haste" ? Math.ceil(base / 2) : 0);
+  }
+
+  concluirMatilha(d) {
+    if (d.phase === "victory" || d.monsterHp > 0 || d.partners.some((p) => !p.done)) return false;
+    d.phase = "victory";
+    d.result = this.victory(d);
+    return true;
+  }
+
   // ---------- itens ----------
   addItem(id, qty = 1) {
-    if (!ITEMS[id] || qty <= 0) return;
+    if (!ITEMS[id] || !Number.isFinite(qty) || qty < 1) return;
     this.data.items[id] = (this.data.items[id] || 0) + Math.floor(qty);
     this.save();
   }
@@ -902,8 +917,7 @@ export class RPG {
       why: id === "runa-fogo" ? "O fogo passou por todos os bichos da tela." : "O trovão bateu no monstro da frente.",
     };
     if (d.monsterHp <= 0) {
-      d.phase = "victory";
-      d.result = this.victory(d);
+      if (!this.concluirMatilha(d)) d.phase = "question";
     } else {
       d.phase = "feedback";
     }
@@ -1054,6 +1068,7 @@ export class RPG {
     }
     this.addItem(recipe.out, recipe.qty);
     if (String(recipe.out).startsWith("runa-")) this.data.spells[recipe.out] = true;
+    this.save();
     return { ok: true, recipe, item: ITEMS[recipe.out] };
   }
 
@@ -1264,8 +1279,13 @@ export class RPG {
     if (boss ? !this.bossAlive(ground) : !this.monsterAlive(monster.id)) {
       return { ok: false, reason: "Este monstro não está mais aqui." };
     }
+    const vistos = new Set([monster.id]);
     const extras = (Array.isArray(partner) ? partner : partner ? [partner] : [])
-      .filter((p) => p && p.id !== monster.id && this.monsterAlive(p.id))
+      .filter((p) => {
+        if (!p || vistos.has(p.id) || !this.monsterAlive(p.id)) return false;
+        vistos.add(p.id);
+        return true;
+      })
       .slice(0, 3);
     const deck = this.duelDeck(ground.continent, boss ? 3 : monster.tier, monster?.theme || ground.theme);
     if (!deck.length) return { ok: false, reason: "As perguntas deste continente ainda não foram escritas." };
@@ -1415,7 +1435,7 @@ export class RPG {
 
   answer(index) {
     const d = this.duel;
-    if (!d || d.phase !== "question") return { ok: false };
+    if (!d || d.phase !== "question" || d.monsterHp <= 0 || !Number.isInteger(index) || index < 0 || index >= d.question.options.length) return { ok: false };
     const trait = MONSTER_TRAITS[d.monster?.kind]?.id || "";
     const correct = Number(index) === d.question.answer;
     if (correct) {
@@ -1493,8 +1513,7 @@ export class RPG {
         }
       }
       if (d.monsterHp <= 0) {
-        d.phase = "victory";
-        d.result = this.victory(d);
+        if (!this.concluirMatilha(d)) d.phase = "question";
         this.save();
       } else {
         d.phase = "feedback";
@@ -1502,15 +1521,14 @@ export class RPG {
       }
     } else {
       d.seguidos = 0;
-      const petSegura = this.data.sub === "domador" && this.activePet() && !d.petUsado;
+      const previsto = this.erroPrevisto();
+      const petSegura = !d.shield && this.data.sub === "domador" && this.activePet() && !d.petUsado;
       if (petSegura) d.petUsado = true;
       const blocked = !!d.shield || petSegura;
       if (blocked && d.shield) d.shield = false;
-      const phaseBonus = d.boss ? ((d.bossPhase || 1) - 1) * 2 : 0;
-      let damage = this.danoSofrido(TIERS[d.tier].damage + phaseBonus);
+      let damage = previsto;
       let note = "";
       if (trait === "haste") {
-        damage += Math.ceil(TIERS[d.tier].damage / 2);
         note = "Ele bateu de novo, sem esperar.";
       }
       if (trait === "divide" && d.monsterHp > 0) {
@@ -1543,23 +1561,33 @@ export class RPG {
   answerPartner(index, who = 0) {
     const d = this.duel;
     const p = d?.partners?.[who];
-    if (!d || !p || p.done || p.feedback || d.phase !== "question") return { ok: false };
+    if (!d || !p || p.done || p.feedback || d.phase !== "question" || !Number.isInteger(index) || index < 0 || index >= p.question.options.length) return { ok: false };
     const correct = Number(index) === p.question.answer;
     if (correct) {
       this.addSkillXp(d.ground.continent, 1);
       this.addMana(Number(this.activePet()?.passive.manaHit) || 0);
-      p.hp = Math.max(0, p.hp - this.damageFor(d.ground.continent));
+      let damage = this.damageFor(d.ground.continent);
+      const trait = MONSTER_TRAITS[p.monster?.kind]?.id;
+      if (trait === "armor") damage = Math.max(1, damage - 1);
+      if (trait === "dodge" && Math.random() < 0.18) damage = 0;
+      p.hp = Math.max(0, p.hp - damage);
       p.feedback = { correct: true, why: p.question.why, damage: 0 };
       if (p.hp <= 0) {
         p.done = true;
         this.data.monsters[p.monster.id] = now();
+        this.concluirMatilha(d);
       }
       this.save();
       return { ok: true, correct, partner: true, who, done: p.done };
     }
-    const blocked = !!d.shield;
-    if (blocked) d.shield = false;
-    const damage = blocked ? 0 : this.danoSofrido(TIERS[p.tier].damage);
+    if (MONSTER_TRAITS[p.monster?.kind]?.id === "divide") {
+      p.hp = Math.min(p.hpMax, p.hp + Math.max(1, Math.round(p.hpMax * 0.12)));
+    }
+    const damage = this.erroPrevisto(p.monster, p.tier, 1);
+    const petSegura = !d.shield && this.data.sub === "domador" && this.activePet() && !d.petUsado;
+    const blocked = !!d.shield || !!petSegura;
+    if (petSegura) d.petUsado = true;
+    if (d.shield) d.shield = false;
     this.data.hp = Math.max(0, this.hp() - damage);
     p.feedback = { correct: false, why: p.question.why, damage, blocked };
     if (this.data.hp <= 0) {
@@ -1576,7 +1604,7 @@ export class RPG {
   partnerNext(who = 0) {
     const d = this.duel;
     const p = d?.partners?.[who];
-    if (!d || !p || p.done) return null;
+    if (!d || !p || p.done || d.phase !== "question") return null;
     if (!p.feedback) return { phase: d.phase, partner: p };
     p.feedback = null;
     if (p.hp <= 0) { p.done = true; return { phase: d.phase, partner: p }; }
