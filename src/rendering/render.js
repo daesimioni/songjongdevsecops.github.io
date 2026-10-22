@@ -1514,11 +1514,14 @@ export function createRenderer(canvas, world, {collisionDebug=false} = {}) {
     ctx.font = "5px ui-monospace, monospace";
     ctx.textAlign = "center";
     const w = ctx.measureText(name).width + 7;
+    // a barra não acompanha o nome: fica na metade da largura do nome máximo
+    // (dezesseis letras), para nome comprido não esticar a placa de vida
+    const largBarras = Math.round((ctx.measureText("M".repeat(16)).width + 7) / 2);
     const placa = layoutDaPlacaDoNome(py);
     // as barrinhas vêm primeiro, acima; o nome fica embaixo delas
     if (vitais) {
       const f = fracoesDeVida(vitais);
-      const larg = w;
+      const larg = largBarras;
       ctx.fillStyle = "rgba(8,10,20,0.78)";
       roundRect(ctx, px - larg / 2, placa.topoBarras, larg, placa.alturaBarras, 2);
       ctx.fill();

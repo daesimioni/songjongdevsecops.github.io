@@ -43,6 +43,8 @@ check(/player\.y \* TILE - 25 - lift/.test(render), "a placa do nome não está 
 check(/fracoesDeVida\(vitais\)/.test(render), "as barras não usam a conta de fração");
 check(/layoutDaPlacaDoNome\(py\)/.test(render), "o renderer não usa o layout da placa");
 check(/placa\.topoVida[\s\S]*placa\.topoMana[\s\S]*placa\.topoNome/.test(render), "as barras não são desenhadas antes do nome");
+check(/const largBarras = Math\.round\(\(ctx\.measureText\("M"\.repeat\(16\)\)\.width \+ 7\) \/ 2\)/.test(render), "a barra não é fixa na metade do nome máximo");
+check(/const larg = largBarras/.test(render), "o desenho das barras não usa a largura fixa");
 check(/#ff5a86/.test(render) && /#6bd5ff/.test(render), "cores de vida e mana diferentes do HUD");
 check(/hp: rpg\.hp\(\), hpMax: rpg\.hpMax\(\), mana: rpg\.mana\(\), manaMax: rpg\.manaMax\(\)/.test(app), "app.js não entrega os vitais ao renderer");
 const dungeon = fs.readFileSync(new URL("../src/app/dungeon.js", import.meta.url), "utf8");

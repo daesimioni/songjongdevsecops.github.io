@@ -100,7 +100,7 @@ A árvore já vergava com a rajada e o fogo já tinha 4 a 8 quadros.
 | 2026-10-22 | Fio da Iara | sete capítulos com missão-marco, lore e fala do guia; o diário mostra lido, aberto e bloqueado, a leitura grava no save e a wiki ganhou a ficha (2.309 entradas) | `test/arcos-historia.test.mjs`, `cdp-arco-capitulo.mjs` (13/13), 105/105 suítes, 19/19 no navegador |
 | 2026-10-22 | Facções e reputação | Concílio, União e Porto de -3 a +3; missão e desfecho movem os atos, o save guarda, o título de aliado sai no +2, o Porto muda o preço da loja e o Concílio abre a estante reservada | `test/faccoes.test.mjs`, `cdp-faccao.mjs` (14/14), 106/106 suítes, 19/19 no navegador |
 | 2026-10-22 | Guilda e party | a sede local com nome e brasão, quadro de oito membros e cargos, recrutamento pela party, quatro missões que leem o save, diário e o título de Guardião da Sede | `test/guilda.test.mjs`, `cdp-guilda.mjs` (15/15), 107/107 suítes, 19/19 no navegador |
-| 2026-10-22 | Placa do herói | a vida e a mana ficaram acima do nome, com a mesma folga entre as duas barras, delas para o nome e do nome para a cabeça; a caverna ganhou a mesma folga | `test/vitais.test.mjs`, `cdp-vitais-layout.mjs` (7/7), 108/108 suítes, 19/19 no navegador |
+| 2026-10-22 | Placa do herói | a vida e a mana ficaram acima do nome, com a mesma folga entre as duas barras, delas para o nome e do nome para a cabeça; a barra tem largura fixa na metade do nome máximo, para nome comprido não esticar a vida; a caverna ganhou a mesma folga | `test/vitais.test.mjs`, `cdp-vitais-layout.mjs` (9/9), 108/108 suítes, 19/19 no navegador |
 
 ## Fecho da revisão (2026-10-22)
 
