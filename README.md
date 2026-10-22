@@ -490,7 +490,7 @@ conferida dos dois lados.
 
 ## Conferir
 
-A parte que não depende do navegador roda as 53 conferências em sequência sem
+A parte que não depende do navegador roda os arquivos de teste em sequência sem
 instalar nada (`npm test`). Para uma verificação isolada:
 
 ```bash
