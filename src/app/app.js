@@ -41,6 +41,7 @@ import { pontosFracos } from "../gameplay/grafo.js";
 import { ALAS, itensDaAla, filtrarAcervo } from "../gameplay/acervo.js";
 import { DESFECHOS, GUARDIAO, GROUND_ACERVO, registrarDesfecho, estadoDaProva, desfechoPorId } from "../gameplay/grande-prova.js";
 import { estadoDosCapitulos, registrarLeitura, falaAtual, lidosDaHistoria } from "../gameplay/arcos.js";
+import { FACCOES, aplicarAto, atoPorMissao, atosPorDesfecho, reputacoes, reputacao, nivelDaReputacao, falaDaReputacao, faccaoPorId } from "../gameplay/faccoes.js";
 import { VOCACOES } from "../content/vocations.js";
 import { ITEMS, QUESTIONS } from "../content/rpg-data.js";
 import { createSheet } from "../ui/sheet.js";
@@ -729,6 +730,8 @@ function openShop() {
   $("shop-title").textContent = `Loja de ${CONTINENTS[def.continent]?.name || def.name}`;
   const mats = ["ferro", "veio", "erva", "madeira"].map((id) => `${ITEMS[id]?.name || id} ${rpg.itemCount(id)}`).join(" · ");
   $("shop-sub").textContent = `A mestra troca material por peça. ${mats}.`;
+  const repPorto = nivelDaReputacao(reputacoes(rpg.data).porto);
+  if (repPorto.valor) $("shop-sub").textContent += ` O Porto trata você como ${repPorto.rotulo}.`;
   if (!offers.length) {
     body.appendChild(el("p", "shop-empty", "A mestra não tem peça desta caverna hoje."));
   }
@@ -1177,6 +1180,7 @@ function questCard(q, npc) {
         const nomeItem = ITEMS[res.item]?.name || res.item;
         ganhos.push(`item ${nomeItem}`);
       }
+      aplicarAtoFaccao(atoPorMissao(q.id));
       const ganhou = ganhos.length ? ` · você ganhou ${ganhos.join(", ")}` : "";
       toast(`Missão concluída: ${q.title}. +${res.xp} XP${res.title ? ` · título ${res.title}` : ""}${ganhou}`, 6200);
       audio.chime();
@@ -1241,6 +1245,12 @@ function buildNpc(npc) {
   if (npc.id === "guia") {
     const fala = falaAtual(estadoDaHistoria());
     if (fala) body.appendChild(el("p", "npc-line npc-context", fala.fala));
+  }
+  // a facção que mais lembra do jogador também fala no guia
+  if (npc.id === "guia") {
+    const reps = reputacoes(rpg.data);
+    const mais = FACCOES.map((f) => ({ f, n: reps[f.id] })).sort((a, b) => Math.abs(b.n) - Math.abs(a.n))[0];
+    if (mais?.n) body.appendChild(el("p", "npc-line npc-context", falaDaReputacao(mais.f.id, mais.n)));
   }
   // a corrente das sete missões abre o acervo: o guia mostra a porta
   if (npc.id === "guia" && quests.isDone("biblioteca-7")) {
@@ -1845,6 +1855,22 @@ function buildJournal() {
     }
   }
   list.appendChild(arco);
+  // as três facções e o que elas lembram de você
+  const reps = reputacoes(rpg.data);
+  const fac = document.createElement("details");
+  fac.className = "journal-area-group";
+  const somaFac = document.createElement("summary");
+  const aliados = FACCOES.filter((f) => reps[f.id] >= 2).length;
+  somaFac.textContent = `Facções e reputação · ${aliados} de ${FACCOES.length} aliadas`;
+  fac.appendChild(somaFac);
+  for (const f of FACCOES) {
+    const nivel = nivelDaReputacao(reps[f.id]);
+    const linha = document.createElement("div");
+    linha.className = "journal-conceito";
+    linha.textContent = `${f.nome} · ${nivel.rotulo} (${nivel.valor >= 0 ? "+" : ""}${nivel.valor}) · ${f.resumo}`;
+    fac.appendChild(linha);
+  }
+  list.appendChild(fac);
   for (const cid of CONTINENT_ORDER) {
     const continent = CONTINENTS[cid];
     const sites = sitesOf(cid);
@@ -1991,6 +2017,33 @@ function buildBiblioteca() {
     });
     lista.appendChild(btn);
   }
+  if (acervoAla === "lore") {
+    const repConcilio = reputacoes(rpg.data).concilio;
+    const reservada = todas.at(-1);
+    if (reservada) {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "travel-item";
+      btn.prepend(travelDot("#9ecbff"));
+      const left = document.createElement("span");
+      const b = document.createElement("b");
+      b.textContent = "A estante reservada";
+      const sub = document.createElement("span");
+      sub.textContent = repConcilio >= 2 ? reservada.nome : "o Concílio abre para aliados (+2)";
+      left.append(b, sub);
+      const right = document.createElement("em");
+      right.textContent = repConcilio >= 2 ? "abrir" : "trancada";
+      btn.append(left, right);
+      btn.disabled = repConcilio < 2;
+      btn.addEventListener("click", () => {
+        if (repConcilio < 2) return;
+        closeModal("biblioteca");
+        if (reservada.tipo === "post") openPost(reservada.post);
+        else openWiki({ consulta: `${reservada.categoria}:${reservada.nome}` });
+      });
+      lista.prepend(btn);
+    }
+  }
   $("biblioteca-status").textContent = `${itens.length} ${itens.length === 1 ? "entrada" : "entradas"} em ${ala?.nome || "acervo"}`;
   $("biblioteca-empty").hidden = itens.length !== 0;
   $("biblioteca-clear").disabled = !filtro;
@@ -2066,6 +2119,7 @@ function abrirDesfecho() {
       quests.data.title = feito.titulo;
       quests.save();
       quests.changed?.();
+      for (const ato of atosPorDesfecho(d.id)) aplicarAtoFaccao(ato);
       rpg.addItem("pergaminho", 2);
       closeModal("desfecho");
       toast(`A Grande Prova: ${feito.nome}. ${feito.texto}`, 5600);
@@ -2083,6 +2137,27 @@ function estadoDaHistoria() {
     lidos: lidosDaHistoria(rpg.data),
     concluidas: new Set(quests.done().map((q) => q.id)),
   });
+}
+// o ato fica na memória da facção: sobe ou desce, e o aliado ganha título
+function aplicarAtoFaccao(ato) {
+  if (!ato) return null;
+  const antes = reputacao(rpg.data, ato.faccao);
+  const aplicado = aplicarAto(rpg.data, ato.id);
+  if (!aplicado) return null;
+  rpg.save();
+  const agora = reputacao(rpg.data, ato.faccao);
+  const faccao = faccaoPorId(ato.faccao);
+  toast(`${ato.rotulo}. ${faccao.nome}: ${nivelDaReputacao(agora).rotulo}.`, 5600);
+  if (antes < 2 && agora >= 2) {
+    const titulo = faccao.titulo;
+    if (!quests.data.titles.includes(titulo)) {
+      quests.data.titles.push(titulo);
+      quests.data.title = titulo;
+      quests.save();
+      quests.changed?.();
+    }
+  }
+  return aplicado;
 }
 function registrarLeituraArco(id) {
   const capitulo = registrarLeitura(rpg.data, id, estadoDaHistoria());

@@ -90,6 +90,15 @@ export const COMO_JOGAR = [
     ],
   },
   {
+    nome: "Facções e reputação",
+    resumo: "Concílio, União e Porto lembram o que você fez",
+    campos: [
+      ["Faixa", "cada facção vai de -3 (hostil) a +3 (aliado)"],
+      ["Atos", "missão sobe um; o desfecho da Grande Prova sobe três na facção atendida e desce duas nas outras"],
+      ["Efeito", "o Porto cobra menos do aliado e mais do hostil; o Diário (Z) mostra o painel"],
+    ],
+  },
+  {
     nome: "Andar e interagir",
     resumo: "WASD ou setas, clique no chão, arrastar para guiar",
     campos: [

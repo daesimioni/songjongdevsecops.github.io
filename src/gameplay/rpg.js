@@ -13,6 +13,7 @@ import { registrarResposta, vencido, resumoConceitos, conceitoDe } from "./conce
 import { versaoDaPergunta, registrarDistrator as registrarErro, recentes as errosRecentesDoSave, erroRecente, purgar as purgarDistratores } from "./distratores.js";
 import { estadoDaProva } from "./grande-prova.js";
 import { lidosDaHistoria } from "./arcos.js";
+import { atosValidos, reputacoes, ajusteDaCompra } from "./faccoes.js";
 import { FAMILIAS, FAMILIA_POR_ID, familiaDeKind } from "../content/familias.js";
 
 const RESPAWN_MS = 5 * 60 * 1000;
@@ -69,6 +70,7 @@ function emptyData() {
     distratores: {},
     grandeProva: null,
     arcos: [],
+    faccoes: [],
     familias: {},
     plots: {},
     plotGift: {},
@@ -201,6 +203,7 @@ function readData() {
     const prova = estadoDaProva(obj);
     if (prova) data.grandeProva = { escolha: prova.escolha, at: Number.isFinite(prova.at) ? prova.at : 0 };
     data.arcos = lidosDaHistoria(obj);
+    data.faccoes = atosValidos(obj);
     for (const [key, plot] of Object.entries(obj.plots || {})) {
       if (typeof key !== "string" || key.length > 40 || !plot || typeof plot !== "object") continue;
       if (!plot.planted) continue;
@@ -434,7 +437,15 @@ export class RPG {
       ring: { veio: 3, erva: 2 },
       necklace: { erva: 3, veio: 2 },
     };
-    return table[item.slot] ? { ...table[item.slot] } : null;
+    if (!table[item.slot]) return null;
+    const price = { ...table[item.slot] };
+    // o Porto é quem vende: a reputação mexe no material mais caro da peça
+    const ajuste = ajusteDaCompra(reputacoes(this.data));
+    if (ajuste) {
+      const caro = Object.keys(price).sort((a, b) => price[b] - price[a])[0];
+      price[caro] = Math.max(1, price[caro] + ajuste);
+    }
+    return price;
   }
 
   buy(id) {

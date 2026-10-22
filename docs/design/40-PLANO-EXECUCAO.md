@@ -20,8 +20,8 @@ O endgame e a lore entram no próximo ciclo, nesta ordem.
 ## 2. O ciclo atual está fechado
 
 - 0 linhas ausente e 0 parciais no 39; o que resta são decisões respondidas.
-- 105 testes em 108 arquivos, 19/19 na matriz de navegador a 60,2 fps, 140
-  módulos, 322 dependências, build de 148 arquivos.
+- 106 testes em 109 arquivos, 19/19 na matriz de navegador a 60,2 fps, 141
+  módulos, 324 dependências, build de 149 arquivos.
 - Site publicado com o 39 e o 40; o revisor de conteúdo roda no `check` e no CI.
 - A mochila medida em 60,2 fps após 75 s e 18 a 19 MB; acompanhar em hardware
   real.
@@ -92,6 +92,11 @@ Minas e o Porto.
   nas falas dos NPCs.
 - **Prova**: `test/faccoes.test.mjs` (ato sobe, ato desce, teto, save, efeito na
   loja); `cdp-faccao.mjs` (um ato e o painel); wiki.
+- **Fechada (rodada 5)**: as três facções valem de -3 a +3; a missão move um, o
+  desfecho da Grande Prova move as três (+3 na atendida, -2 nas outras), o
+  save guarda os atos, o painel está no diário, o título de aliado sai no +2, o
+  Porto muda o preço da loja e o Concílio abre a estante reservada. O teste node,
+  a sonda de 14 conferências (local e site) e 19/19 na matriz de navegador.
 - **Depende de**: F3 (os capítulos definem os atos).
 
 ### F5. Guilda e party (G)
@@ -131,7 +136,7 @@ Cada um tem o custo e o gatilho na tabela de escopo do 39.
 | M1 | F1 | corrente de 7 missões, tela e acervo | teste, sonda e site |
 | M2 | F2 | evento de 3 fases e desfecho | teste, sonda e site |
 | M3 | F3 | 7 capítulos e entradas de lore, **feito** | teste, sonda e wiki |
-| M4 | F4 | 3 facções com reputação | teste, sonda e site |
+| M4 | F4 | 3 facções com reputação, **feito** | teste, sonda e site |
 | M5 | F5 | guilda e party | teste, sonda e site |
 
 A ordem é F1, F2, F3, F4, F5. F3 e F4 podem trocar de posição se o conteúdo do
