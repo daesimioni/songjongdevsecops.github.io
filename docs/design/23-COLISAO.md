@@ -85,12 +85,14 @@ horta, veio e baú já entram como caixa. Ficam atravessáveis de propósito:
   para a 0,50 tile da base; contra uma árvore, a 0,41 tile. Zero exceção.
 - 29 suítes node e 19/19 na matriz de navegador; 60 fps.
 
-## 6. O que continua em aberto
+## 6. Decisões do dono e limites conhecidos
 
-1. **Móveis sorteados da casa** (barril, caixote, saco, fardo, estante, planta)
-   continuam sem colisão; mesa, fogo e cama já barram. É a dívida registrada em
-   `22-CASAS.md`.
+1. **Fechado em 2026-10-22:** a mobília sorteada da casa (barril, caixote, saco,
+   fardo, estante, seca e braseiro) barra o corpo, com caixa por posição e troca
+   a cada casa; `test/interior-collision.test.mjs` percorre as 72 casas até
+   porta, mesa e fogo.
 2. A conurbação da caverna pode ganhar caixa fina sem atrapalhar a interação,
-   se o dono preferir que ela barre.
-3. Peças muito próximas umas das outras podem formar um bolsão de 1 tile; a
-   suíte prova os pontos de interesse, não cada célula isolada.
+   **se o dono preferir que ela barre**. É decisão de gosto, não defeito.
+3. Peças muito próximas podem formar bolsão de 1 tile; a suíte prova os pontos
+   de interesse (2.413 alvos em 94 visitas), não cada célula isolada. Limite do
+   teste, não do mapa.

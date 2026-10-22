@@ -7,6 +7,7 @@ import { SKILLS, TIERS, ITEMS, QUESTIONS, RECIPES, ENCHANTS, DEEP_QUESTIONS, MON
 import { BOND_MAX, MANA_MS, PETS, MOUNTS, petById, mountById } from "./pets.js";
 import { VOCACAO_PADRAO, VOC_POR_ID, subcategoriaDe, vocacaoDe, multDe } from "./vocations.js";
 import { bonusDeRitmo } from "./duelo-ritmo.js";
+import { habilidadeDoChefe, danoDoJogador, extraDoErro, curaDoChefe, espelhoDoChefe, notaDaHabilidade } from "./chefe-habilidades.js";
 
 const RESPAWN_MS = 5 * 60 * 1000;
 const BOSS_RESPAWN_MS = 20 * 60 * 1000;
@@ -871,7 +872,8 @@ export class RPG {
     const d = this.duel;
     if (d?.shield || (this.data.sub === "domador" && this.activePet() && !d?.petUsado)) return 0;
     const base = TIERS[tier]?.damage || 0;
-    return this.danoSofrido(base + Math.max(0, (bossPhase || 1) - 1) * 2)
+    const extra = monster === d?.monster ? extraDoErro(d?.habilidade?.id, bossPhase) : 0;
+    return this.danoSofrido(base + Math.max(0, (bossPhase || 1) - 1) * 2 + extra)
       + (MONSTER_TRAITS[monster?.kind]?.id === "haste" ? Math.ceil(base / 2) : 0);
   }
 
@@ -882,10 +884,12 @@ export class RPG {
     const phase = ratio <= 0.33 ? 3 : ratio <= 0.66 ? 2 : 1;
     if (phase <= (d.bossPhase || 1)) return;
     d.bossPhase = phase;
+    d.habilidade = d.habilidade || habilidadeDoChefe(d.monster);
     d.feedback.phase = phase;
+    const nota = notaDaHabilidade(d.habilidade);
     d.feedback.phaseNote = phase === 3
-      ? "Fase 3: encurralado, ele só aceita pergunta difícil e o erro dói mais."
-      : "Fase 2: ferido, ele acelera. O próximo erro dói mais.";
+      ? `Fase 3: encurralado, ele só aceita pergunta difícil e o erro dói mais. ${nota}`
+      : `Fase 2: ferido, ele revela a habilidade. ${nota}`;
     if (phase === 3) {
       const harder = this.duelDeck(d.ground.continent, 3, d.monster?.theme || d.ground.theme);
       if (harder.length) {
@@ -1342,6 +1346,8 @@ export class RPG {
       monsterHp: hp,
       monsterHpMax: hp,
       bossPhase: 1,
+      habilidade: boss ? habilidadeDoChefe(monster) : null,
+      espelhoUsado: false,
       shield: false,
       partners: [],
       get partner() { return this.partners[0] || null; },
@@ -1525,6 +1531,12 @@ export class RPG {
         damage = 0;
         note = "Desviou. O golpe passou de raspão.";
       }
+      // couraça da fase 2: o golpe rende 1 a menos, sem nunca zerar
+      if (damage > 0) {
+        const reduzido = danoDoJogador(d.habilidade?.id, d.bossPhase, damage);
+        if (reduzido !== damage) note = `${note ? note + " " : ""}A couraça viva comeu 1 de dano.`;
+        damage = reduzido;
+      }
       // ritmo: acertos seguidos somam dano, com teto de +2. Desvio que zerou o
       // golpe não ganha ritmo, e o casco já descontou antes de somar.
       const ritmo = damage > 0 ? bonusDeRitmo(d.seguidos) : 0;
@@ -1547,7 +1559,9 @@ export class RPG {
       const previsto = this.erroPrevisto();
       const petSegura = !d.shield && this.data.sub === "domador" && this.activePet() && !d.petUsado;
       if (petSegura) d.petUsado = true;
-      const blocked = !!d.shield || petSegura;
+      const espelho = espelhoDoChefe(d.habilidade?.id, d.bossPhase, d.espelhoUsado);
+      if (espelho) d.espelhoUsado = true;
+      const blocked = !!d.shield || petSegura || espelho;
       if (blocked && d.shield) d.shield = false;
       let damage = previsto;
       let note = "";
@@ -1561,12 +1575,16 @@ export class RPG {
         note = `O bicho se recompôs: +${d.monsterHp - before} de vida.`;
       }
       if (blocked) damage = 0;
+      if (espelho) note = `${note ? note + " " : ""}O espelho partido engoliu o golpe.`;
       if (d.training) {
         d.feedback = { correct: false, why: d.question.why, damage, blocked, note, training: true };
         d.phase = "feedback";
         return { ok: true, correct, phase: d.phase, feedback: d.feedback, duel: d };
       }
       this.data.hp = Math.max(0, this.hp() - damage);
+      const antesDaSeiva = d.monsterHp;
+      d.monsterHp = curaDoChefe(d.habilidade?.id, d.bossPhase, d.monsterHp, d.monsterHpMax);
+      if (d.monsterHp > antesDaSeiva) note = `${note ? note + " " : ""}A seiva amarga devolveu ${d.monsterHp - antesDaSeiva} de vida.`;
       d.feedback = { correct: false, why: d.question.why, damage, blocked, note };
       if (this.data.hp <= 0) {
         this.data.hp = this.hpMax();

@@ -42,14 +42,17 @@ com a linha do diário dizendo que foi feito.
 | "páginas sem resposta vazia" | 183 páginas tinham "a resposta é ." | corrigido em 2026-10-21 17:00; auditoria agora dá 0 |
 | "conteúdo sem repetição" | 30 páginas repetiam a mesma frase (banco e lição) | frase repetida caiu para 0; lições curtas ganharam parágrafo próprio |
 
-## O que continua em aberto (nada disso vai ser marcado como feito antes da prova)
+## Fechado desde a auditoria (com prova)
 
-1. **45 páginas escritas à mão** (de 69) do vale e das áreas antigas: continuam
-   com quatro partes e 255 a 469 palavras. As vinte e quatro primeiras fecharam
-   curso de seis partes e 460+ palavras em 2026-10-21 22:08.
-2. **Habilidade única de chefe**: fase, dano extra e baralho difícil já
-   existem, mas o golpe próprio de cada chefe (curar uma vez, trocar o
-   baralho) ainda é genérico; ritmo e leitura de turno foram fechados em
-   2026-10-21 21:51.
-3. **Etapa 2 e 3 dos assets**: vegetação, solo, construção, água, props e fogo
-   já têm variantes; falta fechar animação própria de cada grupo.
+| item | prova |
+|---|---|
+| **69 de 69 páginas escritas à mão** com curso de seis partes e 460+ palavras | `test/licoes.test.mjs` cobra as 69 sem conjunto de exceção; sonda `cdp-pagina.mjs` mediu `timbre` 470, `optics` 472, `cpu` 467, `infinity` 467, `crypto` 466 e `poetry` 481 palavras com as seis seções |
+| **Habilidade única de chefe** | `test/chefe-habilidades.test.mjs`: quatro habilidades estáveis em 93 chefes, com couraça, seiva, ímpeto e espelho medidas no RPG real; sonda `cdp-chefe-habilidade.mjs` mostra o nome na tela e o aviso da fase 2 |
+| **Etapa 2 e 3 dos assets** | `test/assets.test.mjs` mede 41 assets, 111 silhuetas e a animação de cada grupo: fogo 5 de 5, água 3 de 4, solo `tufo`, props `gaivota`, vegetação pelo vento e construção rígida; guarda falha se um grupo perder a animação |
+
+## Fechamento
+
+Nada nesta auditoria. As dívidas de casas (`22-CASAS.md` §7) fecharam: mobília
+sólida, morador e soleira em 2026-10-22, e a segunda planta por tipo na mesma
+data. O que resta nos documentos são refinamentos opcionais, sem defeito
+conhecido.

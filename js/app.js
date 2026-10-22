@@ -984,12 +984,33 @@ function descansarNaCasa() {
   toast(curado > 0 ? `O fogo da casa devolveu ${curado} de vida.` : "A vida já estava cheia. O fogo aquece.", 3200);
 }
 
+function falarComMorador() {
+  if (!state.casa) return;
+  const prop = world.interiorProps.find((p) => p.tipo === "morador");
+  if (!prop) return;
+  const area = AREAS.find((a) => a.id === state.casa.bioma);
+  const nome = area?.name || "esta área";
+  if (!state.casa.frasesMorador) {
+    state.casa.frasesMorador = [
+      `${nome}: ${area?.sub || "o assunto que dá nome à casa"}.`,
+      "A mesa ali estuda; o fogo ali descansa. A casa é sua enquanto você estiver aqui.",
+      "Quem mora aqui aprendeu no caminho, não no livro. A pedra lá fora conta o resto.",
+    ];
+    state.casa.falaMorador = 0;
+  }
+  const frases = state.casa.frasesMorador;
+  state.casa.falaMorador = ((state.casa.falaMorador || 0) + 1) % frases.length;
+  toast(frases[state.casa.falaMorador], 4200);
+  audio.blip();
+}
+
 function interactTarget(target) {
   if (!target) return;
   if (target.kind === "casa") entrarNaCasa(target.obj.casa);
   else if (target.kind === "porta") sairCasa();
   else if (target.kind === "mesa") estudarNaCasa();
   else if (target.kind === "lareira") descansarNaCasa();
+  else if (target.kind === "morador") falarComMorador();
   else if (target.kind === "station") openPost(target.obj.post, target.obj);
   else if (target.kind === "waystone") openTravel();
   else if (target.kind === "npc") {
@@ -2206,12 +2227,14 @@ function findNearest() {
       best = { kind, obj, ground };
     }
   };
-  // dentro de casa só existem a mesa, o fogo e a porta
+  // dentro de casa só existem a mesa, o fogo, a porta e o morador
   if (state.casa) {
     const cena = state.casa.cena;
     near("porta", { x: cena.door.x, y: cena.door.y }, null, 1.5);
     near("mesa", { x: cena.mesa.x, y: cena.mesa.y }, null, 1.7);
     near("lareira", { x: cena.lareira.x, y: cena.lareira.y }, null, 1.7);
+    const morador = world.interiorProps.find((p) => p.tipo === "morador");
+    if (morador) near("morador", { x: morador.x, y: morador.y }, null, 1.7);
     return best;
   }
   // a boca da caverna é medida pelo degrau de saída, não pelo centro do
@@ -2246,6 +2269,7 @@ function updatePrompt() {
   else if (near.kind === "porta") label = "sair da casa";
   else if (near.kind === "mesa") label = "estudar na mesa";
   else if (near.kind === "lareira") label = "descansar no fogo";
+  else if (near.kind === "morador") label = "conversar com o morador";
   else if (near.kind === "station") label = `abrir ${near.obj.label}`;
   else if (near.kind === "waystone") label = `viajar de ${near.obj.name}`;
   else if (near.kind === "npc") {

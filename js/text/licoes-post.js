@@ -1158,6 +1158,17 @@ export const LICOES_POST = {
       "Reescreva a mesma cena em primeira e em terceira pessoa e marque o que o leitor perdeu em cada versão. A diferença é o efeito da voz.",
   },
   poetry: {
+    oque:
+      "Poema organiza som, imagem e corte de linha para produzir sentido. Métrica conta sílabas poéticas, rima reforça o fim do verso, e o verso livre troca o metro fixo por outra cadência, sem perder a estrutura.",
+    como: [
+      "Escande o verso contando sílabas poéticas, sem contar a última tônica além dela.",
+      "Marque as rimas e veja se elas reforçam ou contrariam o sentido.",
+      "Leia em voz alta e marque onde o verso respira.",
+      "Troque uma palavra e observe o que muda no ritmo e na imagem.",
+      "Compare um poema metrificado com um verso livre e diga o que cada forma ganha.",
+    ],
+    quebra:
+      "Contar sílaba e achar que a contagem explica o poema. Também erra quem exige rima de todo poema, e quem lê verso livre como texto sem forma: a cadência continua ali, só não é regular.",
     limite:
       "Métrica e rima são estrutura, e o limite é o verso livre: poema sem metro continua poema, e a análise que só conta sílaba perde o que o texto faz. A forma sustenta o sentido, não o substitui.",
     pergunta: {
@@ -1170,6 +1181,17 @@ export const LICOES_POST = {
       "Escande um verso contando sílabas poéticas e leia em voz alta. Depois mude uma palavra e diga o que aconteceu com o ritmo e com o sentido.",
   },
   networks: {
+    oque:
+      "Rede é um conjunto de camadas que transporta dados de um ponto a outro. Cada camada resolve um problema próprio e esconde o detalhe da de baixo, e o pacote atravessa todas até virar sinal no cabo ou no ar.",
+    como: [
+      "Escolha uma aplicação e siga o pedido dela até o cabo.",
+      "Liste o que cada camada acrescenta ao dado.",
+      "Marque onde há endereço, porta e confirmação.",
+      "Localize o atraso maior medindo cada trecho.",
+      "Troque uma camada e veja o que as outras precisam saber.",
+    ],
+    quebra:
+      "Achar que as camadas são independentes de verdade: desempenho, segurança e falha atravessam todas. Também erra quem otimiza uma camada e piora outra sem medir, e quem confunde endereço de máquina com porta de serviço.",
     limite:
       "Rede organiza em camadas e cada camada resolve um problema sem saber das outras. O limite é o vazamento: desempenho, segurança e confiabilidade atravessam camadas, e otimizar uma pode piorar outra.",
     pergunta: {
@@ -1182,6 +1204,17 @@ export const LICOES_POST = {
       "Siga um pedido de página da aplicação até o cabo e escreva o que cada camada acrescenta. Depois diga onde um atraso maior apareceria.",
   },
   protocols: {
+    oque:
+      "Protocolo é o acordo de como duas partes conversam: formato da mensagem, ordem das trocas e o que fazer quando algo se perde. TCP, UDP e DNS resolvem problemas diferentes e trocam garantia por custo. O nome do protocolo não diz tudo: a versão e a configuração mudam o comportamento.",
+    como: [
+      "Defina o que a aplicação precisa: ordem, confirmação ou velocidade.",
+      "Escolha o protocolo pela garantia que ele oferece.",
+      "Desenhe a troca de mensagens e marque o que acontece na perda.",
+      "Meça o custo de cada garantia em tempo e em pacote extra.",
+      "Teste o mesmo cenário com e sem confirmação.",
+    ],
+    quebra:
+      "Usar TCP onde a perda é aceitável e pagar latência sem ganho. Também erra quem acha que UDP é sempre mais rápido em qualquer condição, e quem esquece que DNS é protocolo com cache e tempo de vida.",
     limite:
       "TCP entrega em ordem e confirma, UDP não confirma, e DNS traduz nome. O limite é a escolha: cada protocolo troca garantia por custo, e usar TCP onde a perda é aceitável paga latência sem ganho.",
     pergunta: {
@@ -1194,6 +1227,17 @@ export const LICOES_POST = {
       "Compare o caminho de um pacote TCP e um UDP numa perda de rede e diga o que o usuário sente em cada caso.",
   },
   heat: {
+    oque:
+      "Calor é energia em trânsito por diferença de temperatura, e temperatura mede a agitação média das partículas. Calor não se guarda: ele flui enquanto houver diferença e para quando os dois corpos se igualam. A unidade de calor é energia, não grau.",
+    como: [
+      "Meça a temperatura inicial dos dois corpos e a massa de cada um.",
+      "Misture e acompanhe a temperatura até estabilizar.",
+      "Calcule a energia trocada pela massa e pelo calor específico.",
+      "Compare a previsão com a medida e explique a diferença.",
+      "Repita com massas diferentes e veja a média simples falhar.",
+    ],
+    quebra:
+      "Confundir calor com temperatura e achar que um corpo pequeno e quente guarda mais energia. Também erra quem ignora o calor específico, e quem soma temperaturas em vez de energias na mistura. A mistura iguala temperatura, não energia por igual. O equilíbrio térmico é o fim do trânsito, não o fim da agitação.",
     limite:
       "Calor é energia em trânsito por diferença de temperatura, e temperatura não é a mesma coisa que energia total. O limite é o corpo pequeno: um objeto pode ter temperatura alta e pouca energia, e o contrário também.",
     pergunta: {
@@ -1206,6 +1250,17 @@ export const LICOES_POST = {
       "Misture água quente e fria em quantidades diferentes e calcule a temperatura final. Depois explique por que a média simples não funciona quando as massas mudam.",
   },
   entropy: {
+    oque:
+      "Entropia mede a dispersão de energia e o número de arranjos que produzem o mesmo estado. A segunda lei diz que, num sistema isolado, a configuração mais provável é a que tem mais arranjos, e é por isso que a desordem tende a crescer. Em sistema pequeno, a flutuação pode contrariar a tendência por um instante.",
+    como: [
+      "Liste os estados possíveis e conte quantos arranjos cada um tem.",
+      "Identifique a configuração com mais arranjos.",
+      "Mostre que o sistema caminha para ela por probabilidade.",
+      "Calcule a variação de entropia do sistema e da vizinhança.",
+      "Verifique se a soma dos dois não diminui.",
+    ],
+    quebra:
+      "Achar que entropia sempre aumenta em qualquer pedaço: ela pode cair localmente se a vizinhança pagar. Também erra quem trata a segunda lei como proibição absoluta, quando ela é estatística, e quem confunde desordem visual com número de arranjos. Contar arranjos é o que transforma desordem em número.",
     limite:
       "Entropia mede dispersão de energia, e o limite é a contagem: em sistema pequeno, flutuação importa e a seta do tempo perde força. A segunda lei é estatística, não proibição absoluta.",
     pergunta: {
@@ -1218,6 +1273,18 @@ export const LICOES_POST = {
       "Conte as formas de organizar quatro moedas em cara e coroa e veja qual configuração tem mais arranjos. Depois relacione com a entropia subindo.",
   },
   analysis: {
+    oque:
+      "Química analítica separa e mede: identifica o que está na amostra e em que quantidade. O resultado vale para a porção colhida, e por isso o plano de amostragem é parte da medida, não preparação.",
+    como: [
+      "Defina o que medir e qual erro a decisão tolera.",
+      "Escolha o método pela faixa de concentração e pela matriz.",
+      "Colha pontos que representem o lote, não só o lugar fácil.",
+      "Prepare a amostra sem contaminar e registre o branco.",
+      "Compare o resultado com o padrão e declare a incerteza.",
+      "Repita a medida em outra porção e compare a dispersão.",
+    ],
+    quebra:
+      "Confiar no instrumento e esquecer a amostra: erro de colheita costuma ser maior que erro de medida. Também erra quem mede sem branco, e quem trata o resultado de uma porção como se valesse para o lote inteiro. Precisão não conserta amostra que não representa.",
     limite:
       "A química analítica separa e mede, e o limite é a amostra: resultado bom de amostra mal colhida não vale. O erro de amostragem costuma ser maior que o erro do instrumento.",
     pergunta: {
@@ -1230,6 +1297,18 @@ export const LICOES_POST = {
       "Escreva o plano de amostragem de um lote e justifique o número de pontos e a posição de cada um. Depois diga o que aconteceria se você colhesse só do topo.",
   },
   spectrum: {
+    oque:
+      "Espectro é o conjunto de frequências que uma substância absorve ou emite, e cada arranjo de átomos e ligações tem o seu. As linhas funcionam como impressão digital da estrutura, e não da cor que o olho vê. A posição da banda depende do meio e da temperatura, e a comparação precisa das mesmas condições.",
+    como: [
+      "Registre o espectro da amostra e do branco.",
+      "Localize as bandas e anote a posição e a intensidade.",
+      "Compare o padrão com a biblioteca de referência.",
+      "Verifique se duas substâncias sobrepõem banda na mesma região.",
+      "Confirme a identificação com uma segunda técnica.",
+      "Meça a mesma amostra duas vezes e veja o quanto a linha se desloca.",
+    ],
+    quebra:
+      "Identificar pela cor visível e ignorar o padrão de linhas. Também erra quem confia em uma banda só, quando a mistura sobrepõe e esconde componentes, e quem compara espectros medidos em condições diferentes sem corrigir. Espectro bom exige amostra e aparelho calibrados. A banda larga esconde detalhe que a linha fina mostra.",
     limite:
       "Espectro identifica por padrão de absorção e emissão, e o limite é a mistura: dois componentes podem sobrepor banda e esconder um ao outro. A identificação precisa de mais de uma técnica quando a amostra é complexa.",
     pergunta: {
@@ -1334,6 +1413,17 @@ export const LICOES_POST = {
       "Monte dois conjuntos com a mesma média e variâncias diferentes e faça o gráfico. Depois diga qual dos dois sustenta uma previsão mais segura.",
   },
   tokens: {
+    oque:
+      "Token é a unidade que o modelo lê: um pedaço de texto que o tokenizador escolhe, que pode ser palavra, sílaba ou parte de palavra. O número de tokens não coincide com o de palavras, e a diferença muda custo e resultado. O vocabulário é fixo e vem do treino, e por isso idiomas com pouca presença gastam mais tokens para dizer o mesmo.",
+    como: [
+      "Tokenize uma frase e compare com a contagem de palavras.",
+      "Marque onde o tokenizador parte palavra no meio.",
+      "Conte quantos tokens um mesmo texto gasta em dois idiomas.",
+      "Relacione token com custo e com o limite da janela.",
+      "Corte um texto pelo token e veja o efeito de uma divisão ruim.",
+    ],
+    quebra:
+      "Achar que token é palavra e calcular custo por palavra. Também erra quem corta texto no meio de um token sem perceber, e quem supõe que o corte acontece sempre no espaço entre palavras.",
     limite:
       "Token é a unidade que o modelo processa, e o limite é a fronteira: token não coincide com palavra nem com sílaba, e cortar texto por token pode partir palavra no meio. A escolha do tokenizador muda o custo e o resultado.",
     pergunta: {
@@ -1346,6 +1436,18 @@ export const LICOES_POST = {
       "Tokenize uma frase curta na mão, separando por regra de pedaço comum, e conte os tokens. Depois compare com a contagem de palavras e explique a diferença.",
   },
   context: {
+    oque:
+      "Janela de contexto é a quantidade de texto que o modelo consegue considerar de uma vez. O que fica fora não influencia a resposta, e por isso conversa longa depende de resumo ou de busca que traga o trecho certo de volta. A janela é medida em tokens, e o custo cresce com ela.",
+    como: [
+      "Meça quantos tokens a conversa já gastou.",
+      "Marque o ponto em que a janela cortaria o início.",
+      "Resuma o trecho antigo e guarde o que precisa sobreviver.",
+      "Recupere por busca o detalhe que ficou fora.",
+      "Teste a resposta com e sem o trecho recuperado.",
+      "Anote no resumo a decisão e o motivo, não só o fato.",
+    ],
+    quebra:
+      "Achar que o modelo lembra de tudo que já foi dito. Também erra quem resume demais e perde o detalhe que decide, e quem confia na recuperação sem conferir se o trecho trazido é o certo. Resumo é escolha, e escolha errada vira esquecimento.",
     limite:
       "A janela de contexto é o que o modelo vê de uma vez, e o limite é o esquecimento: o que sai da janela não influencia a resposta. Resumir e reenviar é a estratégia, e ela perde detalhe.",
     pergunta: {
@@ -1358,6 +1460,17 @@ export const LICOES_POST = {
       "Pegue um diálogo longo e marque o ponto em que a janela cortaria. Depois escreva o resumo que você mandaria no lugar do trecho perdido.",
   },
   meaning: {
+    oque:
+      "Sentido é o modo de apresentar um objeto; referência é o objeto apontado. Duas expressões podem apontar a mesma coisa e dizer coisas diferentes, e é essa diferença que explica por que a substituição nem sempre preserva a frase. A distinção aparece em crença e em contexto, onde trocar o termo muda o que a frase afirma.",
+    como: [
+      "Separe a expressão do objeto a que ela se refere.",
+      "Ache duas expressões com a mesma referência.",
+      "Compare o que cada uma diz sobre o objeto.",
+      "Teste a substituição numa frase e veja se o sentido se mantém.",
+      "Explique a diferença pelo modo de apresentação.",
+    ],
+    quebra:
+      "Tratar sentido e referência como a mesma coisa. Também erra quem acha que substituir termos de mesma referência preserva sempre a verdade, e quem procura o sentido só no dicionário, sem olhar o uso. O mundo não decide sozinho o que a frase quer dizer.",
     limite:
       "Sentido liga expressão e mundo, e o limite é a referência: duas expressões podem apontar o mesmo objeto e não significar a mesma coisa. Significado não é só o que está no mundo.",
     pergunta: {
@@ -1370,6 +1483,18 @@ export const LICOES_POST = {
       "Ache duas expressões com a mesma referência e sentidos diferentes e explique a diferença com um exemplo de frase em que só uma soa adequada.",
   },
   pragmatics: {
+    oque:
+      "Pragmática estuda o que a fala faz além de dizer: pedir, prometer, ironizar, ameaçar. O sentido literal é o ponto de partida, e o contexto e a intenção completam o efeito da frase. A mesma sequência de palavras pode ser pergunta, ordem ou piada, e só o uso decide.",
+    como: [
+      "Escolha uma frase e liste três efeitos que ela pode ter.",
+      "Descreva o contexto que produz cada efeito.",
+      "Marque a pista que o ouvinte usa: tom, ordem, conhecimento prévio.",
+      "Teste a mesma frase em outro contexto e veja o efeito mudar.",
+      "Separe o que foi dito do que foi implicado.",
+      "Explique por que o ouvinte entendeu algo que não foi dito.",
+    ],
+    quebra:
+      "Analisar a frase fora do contexto e concluir o efeito. Também erra quem confunde implicatura com mentira, e quem acha que o literal é sempre o sentido verdadeiro. O contexto não é enfeite: sem ele a análise fica incompleta por definição.",
     limite:
       "Pragmática estuda o que a frase faz além de dizer, e o limite é o contexto: a mesma frase pode ser pedido, ameaça ou piada. Sem contexto, a análise fica incompleta por definição.",
     pergunta: {
@@ -1382,6 +1507,17 @@ export const LICOES_POST = {
       "Pegue uma frase e escreva três contextos em que ela muda de efeito. Depois diga que pista do contexto o ouvinte usa em cada um.",
   },
   lenses: {
+    oque:
+      "Lente é superfície que refracta a luz e forma imagem por convergência ou divergência dos raios. A distância focal diz onde a luz paralela se encontra, e ela junto com a distância do objeto decide posição e aumento da imagem.",
+    como: [
+      "Desenhe o raio paralelo, o que passa pelo centro e o que passa pelo foco.",
+      "Meça a distância focal projetando a imagem do sol numa parede.",
+      "Mova o objeto e compare a posição e o tamanho da imagem.",
+      "Calcule o aumento pela razão entre as distâncias.",
+      "Compare a lente real com o desenho ideal e aponte a aberração.",
+    ],
+    quebra:
+      "Usar a fórmula paraxial com objeto muito longe do eixo e esperar imagem perfeita. Também erra quem confunde distância focal com distância da imagem, e quem ignora o sinal na lente divergente. A aproximação vale perto do eixo, e a lente real cobra o resto.",
     limite:
       "Lente forma imagem por refração, e o limite é a aproximação paraxial: perto do eixo a conta é simples, longe dele aparece aberração. A lente real nunca é o desenho ideal.",
     pergunta: {
@@ -1440,6 +1576,18 @@ export const LICOES_POST = {
       "Liste cinco dados de um login e diga qual propriedade da segurança cada um precisa. Depois aponte o elo humano de cada proteção.",
   },
   crypto: {
+    oque:
+      "Criptografia protege conteúdo com chave: cifra embaralha, assinatura prova autoria e integridade, e função de hash resume sem voltar. O segredo mora na chave, não no algoritmo, e é por isso que guardar a chave é a parte difícil. Algoritmo público é vantagem: qualquer um pode conferir, e o segredo continua na chave.",
+    como: [
+      "Defina o que proteger: sigilo, integridade ou autoria.",
+      "Escolha a ferramenta para cada objetivo.",
+      "Assine o conteúdo com a chave privada e verifique com a pública.",
+      "Altere um caractere e confirme que a verificação falha.",
+      "Guarde a chave fora do código e teste a rotação.",
+      "Escreva o plano do que fazer se a chave vazar.",
+    ],
+    quebra:
+      "Achar que o algoritmo secreto é a proteção, quando a segurança está na chave. Também erra quem reutiliza nonce ou chave, e quem confunde hash com cifra: hash não volta, cifra volta com a chave. Chave vazada derruba qualquer algoritmo, e rotação de chave reduz o estrago de um vazamento.",
     limite:
       "Assinatura digital prova autoria e integridade com chave privada, e o limite é a chave: quem tem a chave assina como você. Guardar a chave é a parte difícil, e ela não se resolve com algoritmo.",
     pergunta: {

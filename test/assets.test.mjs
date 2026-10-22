@@ -37,6 +37,18 @@ for (const grupo of ["solo", "vegetacao", "construcao", "fogo", "agua", "props"]
 }
 check(assets.temAsset("arvore") && assets.temAsset("casa") && assets.temAsset("fogueira"), "faltou asset central");
 
+// ---- animação própria de cada grupo (etapa 3 dos assets) ----
+// fogo e água vivem de quadro; props tem a gaivota; solo tem o tufo; vegetação
+// verga com o vento no render; construção é rígida por regra e não pode ganhar
+// quadro nem inclinação.
+const animados = (grupo) => assets.tiposDoGrupo(grupo).filter((tipo) => assets.assetDe(tipo)?.quadros > 1);
+check(animados("fogo").length === assets.tiposDoGrupo("fogo").length, `fogo: só ${animados("fogo").length} de ${assets.tiposDoGrupo("fogo").length} animam`);
+check(animados("agua").length >= 3, `água: só ${animados("agua").length} tipos animam`);
+check(animados("solo").includes("tufo"), "solo: tufo sem quadro");
+check(animados("props").includes("gaivota"), "props: gaivota sem quadro");
+check(animados("construcao").length === 0, "construção não pode animar por quadro");
+check(animados("vegetacao").length === 0, "vegetação anima pelo vento, não por quadro");
+
 // ---- paleta: muda com o bioma e é estável ----
 const p1 = nucleo.paletaDaArea(BIOMES["math-fundamentos"]);
 const p2 = nucleo.paletaDaArea(BIOMES["chem-organic"]);

@@ -5,20 +5,21 @@ O objetivo é melhorar absolutamente tudo no jogo, peça por peça, em três eta
 Este documento é o estado durável da revisão: o que já passou, o que está em
 andamento e o que falta.
 
-## As cinco frentes
+## As seis frentes
 
 | frente | o que entra | etapa 1 | etapa 2 | etapa 3 |
 |---|---|---|---|---|
-| arte por peça | 38 assets ambientais, 26 bichos + chefe, 538 itens, 194 NPCs, 7 pets | auditoria e variantes | detalhe e volume | animação própria |
+| arte por peça | 41 assets ambientais, 26 bichos + chefe, 538 itens, 194 NPCs, 7 pets | auditoria e variantes | detalhe e volume | animação própria |
 | mapa | 86 ilhas, pontes, transições, cada bioma | auditoria de densidade | detalhe e unicidade | animação do lugar |
 | interfaces | HUD, diário, ficha, mochila, bestiário, wiki, duelo, loja | auditoria de layout | densidade e leitura | microinteração |
 | movimento | colisão, passos, câmera, animações | auditoria de área de choque | correção de fantasma | resposta ao toque |
 | masmorras e batalha | 93 cavernas, monstros, duelos | auditoria de variedade | tema por sala e bicho | ritmo de combate |
+| pedidos já feitos | tudo o que o diário dava como pronto | auditoria na fonte viva | correção do parcial | prova de navegador |
 
 ## Inventário auditado
 
-- **Assets ambientais**: 38 peças em 6 grupos (solo 8, vegetação 8, construção
-  8, fogo 5, água 4, props 5). Antes: 2 variantes por peça fora fogo e props.
+- **Assets ambientais**: 41 peças em 6 grupos (solo 8, vegetação 8, construção
+  8, fogo 5, água 4, props 8). Antes: 2 variantes por peça fora fogo e props.
 - **Bichos**: 26 formas + chefe; `drawCreatureArt` com contorno e luz no mapa,
   duelo, bestiário e wiki.
 - **Itens**: 538 ícones, 277 silhuetas, 38 famílias, contorno e luz gravados no
@@ -26,7 +27,7 @@ andamento e o que falta.
 - **Pessoas e pets**: jogador, 194 NPCs e 7 pets com contorno e luz; NPC tem
   papel (guardião, monitor, morador) e objeto do assunto na mão.
 - **Mundo**: 86 áreas (70 de catálogo e 16 antigas), 454 estações, 94 faróis,
-  93 cavernas e clareiras, 3.854 peças de ambiente, 72 casas com porta e
+  93 cavernas e clareiras, 3.816 peças de ambiente, 72 casas com porta e
   interior.
 - **Masmorras**: 93 plantas diferentes em 6 modelos, 4 acabamentos de piso,
   entrada embaixo, cidade no alto, chefe longe da boca e uma sala temática por
@@ -36,14 +37,14 @@ andamento e o que falta.
 
 | grupo | etapa 1 | etapa 2 | etapa 3 |
 |---|---|---|---|
-| vegetação | **feito**: 3 variantes por peça (24 silhuetas) | pendente | pendente |
-| solo | **feito**: 3 variantes por peça (24) | pendente | pendente |
-| construção | **feito**: 3 variantes por peça (24), com oca redonda, casa com ala, torre com balcão, ruína em arco, galpão com alpendre, poço com balde, cerca com portão e doca em T | pendente | pendente |
-| fogo | **feito**: 2 variantes por peça, cova de brasa, braseiro pendurado, tocha de arandela, lanterna de poste e fumaça fina | pendente | pendente |
-| água | **feito**: 3 variantes nas três peças quietas e a espuma com 6 quadros | pendente | pendente |
-| props | **feito**: 3 variantes nas quatro peças quietas, com barril deitado, saco aberto, caixote aberto e fardo redondo | pendente | pendente |
+| vegetação | **feito**: 3 variantes por peça (24 silhuetas) | **feito**: espelho por instância | **feito**: verga com o vento (`swayAt`); sem quadro próprio |
+| solo | **feito**: 3 variantes por peça (24) | **feito**: decalque espelhado | **feito**: `tufo` com 2 quadros |
+| construção | **feito**: 3 variantes por peça (24), com oca redonda, casa com ala, torre com balcão, ruína em arco, galpão com alpendre, poço com balde, cerca com portão e doca em T | não espelha (porta e placa têm lado) | **feito**: rígida por regra, zero quadro e zero inclinação |
+| fogo | **feito**: 2 variantes por peça, cova de brasa, braseiro pendurado, tocha de arandela, lanterna de poste e fumaça fina | **feito**: variantes por instância | **feito**: 5 de 5 tipos animam (4 a 8 quadros) |
+| água | **feito**: 3 variantes nas três peças quietas e a espuma com 6 quadros | **feito**: espelho por instância | **feito**: espuma 6 quadros, junco e lírio 2 quadros |
+| props | **feito**: 3 variantes nas quatro peças quietas, com barril deitado, saco aberto, caixote aberto e fardo redondo | **feito**: espelho nas peças de decoração | **feito**: gaivota com 4 quadros; mobília é estática de propósito |
 
-Silhuetas do grupo: 24 + 24 + 24 + 10 + 10 + 13 = **105** (antes 69).
+Silhuetas do grupo: 24 + 24 + 24 + 10 + 10 + 19 = **111** (antes 69).
 
 ### Etapa 2 (mais única): espelho por instância
 
@@ -75,3 +76,30 @@ A árvore já vergava com a rajada e o fogo já tinha 4 a 8 quadros.
 | 2026-10-21 | mapa, floresta | árvore em bosque com teto por ilha, copa livre de caminho, totem, NPC e caçada; metrópole com 4 árvores só na beirada; 1.365 para 582 árvores | teste de floresta, 25/25 suítes, 19/19 no navegador, 60,3 fps |
 | 2026-10-21 | assets, etapa 2 e 3 | espelho por instância nas peças de vegetação, props, água e solo; três peças pequenas ganharam dois quadros de animação; bicho da caverna ganhou porte próprio (0,90 a 1,06) | 24/24 suítes, 19/19 no navegador, 60,4 fps |
 | 2026-10-21 | assets, etapa 1 | vegetação, solo, construção, água, props e fogo com 2 ou 3 variantes: 69 para 105 silhuetas; três variantes fracas foram refeitas depois da auditoria da folha de contato (doca em T, braseiro pendurado e palmeira curta) | folha de contato das 105, 24/24 suítes, 19/19 no navegador, 60,6 fps |
+| 2026-10-21 | páginas antigas, levas 4 a 9 | as 69 páginas escritas à mão fecharam curso de seis partes e 460+ palavras; o teste deixou de ter conjunto de exceção e cobra todas | `test/licoes.test.mjs`, `cdp-pagina.mjs`, 54/54 suítes, 19/19 no navegador |
+| 2026-10-22 | chefes | fase 2 ganhou habilidade própria e estável para os 93 chefes: couraça, seiva, ímpeto e espelho, com nome na tela e aviso da fase | `test/chefe-habilidades.test.mjs`, `cdp-chefe-habilidade.mjs`, 54/54 suítes, 19/19 no navegador |
+| 2026-10-22 | revisão externa | PRs #1 a #4 auditadas no diff inteiro: 53 suítes, matriz 19/19, contraste 0 falha, 2.413 alvos de caverna, 72 casas; README alinhado e fórmula de dano duplicada removida | `docs/design/33-REVISAO-EXTERNA.md`, `npm test`, sondas de contraste e fonte |
+| 2026-10-22 | assets, etapa 3 fechada | 41 assets e 111 silhuetas medidos; guarda de animação por grupo (fogo 5/5, água 3/4, solo, props, vegetação pelo vento, construção rígida) no teste de assets | `test/assets.test.mjs`, 54/54 suítes |
+| 2026-10-22 | soleira das casas | as 72 portas ganharam degrau de pedra com três runas na cor da área, na fila do cenário; teste falha se a soleira sair ou perder a cor | `test/casas.test.mjs`, `cdp-soleira.mjs`, captura `soleira-casa-*` |
+| 2026-10-22 | plantas das casas | cada tipo ganhou duas plantas (8 salas em bolsão de mar) e a semente da casa escolhe; as 72 casas usam as duas plantas do tipo | `test/casas.test.mjs`, `cdp-casa-planta.mjs`, captura `casa-planta-*` |
+| 2026-10-22 | morador das casas | uma pessoa por casa, com roupa da área, canto livre perto do fogo e três falas (área, mesa/fogo, a pedra lá fora); interação por F e sem colisão | `test/casas.test.mjs`, `cdp-morador.mjs`, captura `morador-casa-*` |
+
+## Fecho da revisão (2026-10-22)
+
+As seis frentes passaram pelas três etapas com prova medida. O estado abaixo é
+o que os testes e sondas desta data mostram, não o que o diário prometeu.
+
+| frente | etapa 1 | etapa 2 | etapa 3 | prova |
+|---|---|---|---|---|
+| arte por peça | 41 assets, 111 silhuetas, 538 itens, 464 fichas, 194 NPCs e 7 pets com contorno e luz | espelho por instância, detalhe de meio pixel, portes e escalas | fogo 5/5, água 3/4, solo `tufo`, props `gaivota`, vegetação pelo vento, construção rígida; NPC olha/cabeceia e pet pisca | `test/assets.test.mjs`, `test/itens.test.mjs`, `test/bestiary.test.mjs`, `test/animacao-idle.test.mjs`, `cdp-anim-idle.mjs` (cabeça 46 px, corpo 0, cauda 60, olho 13) |
+| mapa | 3.816 peças em 86 áreas, 454 estações e 94 faróis | 54 ligações (31 istmos, 23 pontes), floresta com teto, 72 casas com 8 plantas, soleira e morador | vento, mar com crista, clima por bioma; câmera e minimapa | `test/passagens.test.mjs`, `test/floresta.test.mjs`, `test/espaco.test.mjs`, `test/casas.test.mjs`, `cdp-soleira.mjs`, `cdp-casa-planta.mjs`, `cdp-morador.mjs` |
+| interfaces | 9 painéis em 1280 e 390 | wiki 2.246 entradas, bestiário 464 fichas, ficha com atualização sem perder foco | foco/inert, teclado nas abas e no duelo A-E, busca com limpar e contagem, avisos acima da tela ativa | `test/interfaces.test.mjs`, `test/ui.test.mjs`, `test/wiki.test.mjs`, `cdp-ui-audit.mjs` (18 painéis, 0 estouro, 0 alvo < 28 px), `cdp-contraste.mjs` (108 textos, 0 falha), `cdp-fonte-ui.mjs` |
+| movimento | 1.040 caixas em 12 tipos | zero fantasma em barril, árvore, móvel sorteado e interior; 2.413 alvos de caverna | oito direções, passo, câmera, turbo e toque | `test/fantasmas.test.mjs`, `test/interior-collision.test.mjs`, `test/dungeon-reachability.test.mjs`, `test/movement.test.mjs`, `cdp-fantasma.mjs` |
+| masmorras e batalha | 93 cavernas em 6 modelos e 4 pisos | sala temática por disciplina com 279 peças sólidas; 93 chefes | ritmo +1/+2, leitura de turno, fases 2 e 3, habilidade própria por chefe, turnos de PvP | `test/masmorras.test.mjs`, `test/salas.test.mjs`, `test/duelo-ritmo.test.mjs`, `test/chefe-habilidades.test.mjs`, `test/pvp-turnos.test.mjs`, `cdp-chefe-habilidade.mjs`, `cdp-sala-tema.mjs` |
+| pedidos já feitos | auditoria dos 38 pedidos na fonte viva | correção de resposta vazia, frase repetida, seis alternativas e páginas curtas | 69 páginas com curso completo, revisão das PRs externas e documentos alinhados | `docs/design/20-AUDITORIA-PEDIDOS.md`, `docs/design/33-REVISAO-EXTERNA.md`, `test/licoes.test.mjs`, `cdp-pagina.mjs` |
+
+Prova de conjunto desta data: `npm test` com **54 arquivos, 54 passaram**;
+matriz de navegador **19/19** (60 fps, 0 erro de console, 0 estouro em 390 px);
+contraste **0 falha**; fonte e transbordo **0 fora**. Sondas e capturas em
+`temporarios/2026-10-20-mundo-song-pedido/`; site publicado conferido com cache
+bust para os arquivos alterados.

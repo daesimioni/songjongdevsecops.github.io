@@ -68,12 +68,11 @@ for (const s of LEGACY_CONTENT.sites) {
 check(geradas === GERADAS_LEGADAS, `páginas geradas: ${geradas}, esperado ${GERADAS_LEGADAS}`);
 
 // as 69 páginas escritas à mão (as estações antigas) recebem o fecho de curso:
-// limite, pergunta, para levar e com as mãos, sem perder o corpo original
+// limite, pergunta, para levar e com as mãos, sem perder o corpo original.
+// O curso completo (O que é, Como se usa, Onde quebra) e o piso de 460 valem
+// para todas: a última onda fechou as que faltavam.
 const POSTS_ESCRITOS = 69;
 check(Object.keys(LICOES_POST).length === POSTS_ESCRITOS, `páginas antigas com lição: ${Object.keys(LICOES_POST).length}, esperado ${POSTS_ESCRITOS}`);
-// as páginas que já receberam as três partes que faltavam (O que é,
-// Como se usa, Onde quebra) e o piso de 460; as demais entram nas próximas ondas
-const ENRIQUECIDAS = new Set(["generative", "harmony", "ethics", "scales", "motion", "rhythm", "state", "learning", "thermo", "balance", "induction", "pipeline", "neural", "vision", "geometry", "language", "rainbow", "periodic", "concord", "registers", "security", "statistics", "bonds", "energy", "timbre", "chance", "counterpoint", "probability", "form", "genres", "gravity", "optics", "welcome", "echo", "logic", "adder", "cpu", "history", "infinity", "calculus", "fractal", "waves", "titration", "words", "accents", "crase", "maxwell", "limits", "series", "carbon", "polymers", "acoustics", "instruments", "convolution", "detection", "narrative"]);
 let antigas = 0;
 for (const [id, licao] of Object.entries(LICOES_POST)) {
   const post = POSTS[id];
@@ -84,12 +83,10 @@ for (const [id, licao] of Object.entries(LICOES_POST)) {
   for (const parte of ["O limite", "O que perguntam", "Para levar", "Com as mãos"]) {
     check(post.body.includes(parte), `${id}: página antiga sem "${parte}"`);
   }
-  if (ENRIQUECIDAS.has(id)) {
-    for (const parte of ["O que é", "Como se usa", "Onde quebra"]) {
-      check(post.body.includes(parte), `${id}: curso completo sem "${parte}"`);
-    }
-    check(palavras(post.body) >= 460, `${id}: ${palavras(post.body)} palavras, esperado 460`);
+  for (const parte of ["O que é", "Como se usa", "Onde quebra"]) {
+    check(post.body.includes(parte), `${id}: curso completo sem "${parte}"`);
   }
+  check(palavras(post.body) >= 460, `${id}: ${palavras(post.body)} palavras, esperado 460`);
   check(!post.body.includes("undefined"), `${id}: página antiga com undefined`);
 }
 
@@ -108,4 +105,4 @@ for (const continente of Object.values(QUESTIONS)) {
 check(perguntas >= 800, `baralho: ${perguntas} perguntas, esperado 800+`);
 
 assert.equal(problemas.length, 0, `lições com ${problemas.length} problema(s):\n- ${problemas.slice(0, 12).join("\n- ")}`);
-console.log(`ok lições: ${areas.length} áreas, ${paginas} páginas com seis partes, ${geradas} páginas geradas antigas e ${antigas} escritas à mão (${ENRIQUECIDAS.size} com curso completo e 460+ palavras)`);
+console.log(`ok lições: ${areas.length} áreas, ${paginas} páginas com seis partes, ${geradas} páginas geradas antigas e ${antigas} escritas à mão (todas com curso completo e 460+ palavras)`);

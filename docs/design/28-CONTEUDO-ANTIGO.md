@@ -25,7 +25,7 @@ Quando os campos existem, o bloco monta as três seções **antes** de "O limite
 mantendo a ordem do catálogo. Página sem os campos continua como antes, então a
 mudança não duplica seção em página que já tinha o texto.
 
-## 3. As levas já feitas (40 de 69)
+## 3. As levas já feitas (69 de 69)
 
 | página | tema | palavras |
 |---|---|---|
@@ -69,18 +69,32 @@ mudança não duplica seção em página que já tinha o texto.
 | history | ideia sem oficina não muda nada | 470 |
 | infinity | parte do todo no hotel infinito | 468 |
 | calculus | a taxa e o acúmulo | 473 |
+| poetry | o verso é uma unidade de respiração | 482 |
+| networks | camadas que escondem o detalhe | 465 |
+| protocols | o acordo de como conversar | 463 |
+| heat | energia em trânsito, não coisa guardada | 468 |
+| entropy | a seta do tempo é probabilidade | 469 |
+| analysis | o resultado vale para a amostra | 466 |
+| spectrum | impressão digital da estrutura | 470 |
+| tokens | a unidade que o modelo lê | 476 |
+| context | o que fica fora não existe | 462 |
+| meaning | sentido não é referência | 465 |
+| pragmatics | a frase também faz coisas | 465 |
+| lenses | onde a luz paralela se encontra | 469 |
+| crypto | a chave prova sem se mostrar | 467 |
 
-As quarenta agora têm as seis partes, passam de 460 palavras e não têm
+As sessenta e nove agora têm as seis partes, passam de 460 palavras e não têm
 resposta vazia, `undefined` ou frase repetida. No navegador, `generative`
 mostrou 464 palavras, `ethics` 466, `thermo` 464, `geometry` 470, `statistics`
-466, `rainbow` 482, `timbre` 470, `optics` 472, `cpu` 467 e `infinity` 467,
-todas com as seis seções.
+466, `rainbow` 482, `timbre` 470, `optics` 472, `cpu` 467, `infinity` 467,
+`convolution` 489, `narrative` 477, `crypto` 466 e `poetry` 481, todas com as
+seis seções.
 
 ## 4. Prova
 
-- `test/licoes.test.mjs`: as quarenta estão no conjunto `ENRIQUECIDAS` e o teste
-  cobra as três partes novas e o piso de 460; as outras 29 continuam só com o
-  fecho antigo, sem cobrança falsa.
+- `test/licoes.test.mjs`: todas as 69 são cobradas nas três partes novas e no
+  piso de 460. O conjunto `ENRIQUECIDAS` foi removido quando a última onda
+  fechou: não existe mais página antiga sem cobrança.
 - `test/content.test.mjs` verde: nenhuma resposta vazia, nenhuma frase
   repetida, nenhum texto quebrado.
 - Sonda `cdp-pagina.mjs`: abre a página pelo painel, mede palavras e as seis
@@ -92,8 +106,8 @@ todas com as seis seções.
 
 ## 5. O que continua em aberto
 
-1. **29 páginas** ainda estão com quatro partes e entre 255 e 469 palavras.
-   A próxima leva deve seguir o mesmo método, oito por onda.
+1. As 69 páginas estão fechadas: curso de seis partes, 460+ palavras e sonda de
+   navegador. Não há leva pendente.
 2. A ordem das seções novas é fixa; páginas em que "Como se usa" pede mais de
    três passos ainda não têm um formato próprio.
 3. O texto novo não foi revisado por leitura humana; a sonda mede estrutura e

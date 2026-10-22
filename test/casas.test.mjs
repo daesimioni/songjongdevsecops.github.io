@@ -3,6 +3,7 @@
 // era um enfeite do tamanho do boneco e não servia para nada.
 // Roda sem navegador: node test/casas.test.mjs
 import assert from "node:assert/strict";
+import fs from "node:fs";
 
 globalThis.localStorage = { getItem: () => null, setItem: () => {}, removeItem: () => {}, clear: () => {} };
 
@@ -38,9 +39,16 @@ for (const casa of world.casas) {
   check(world.boxCollides(casa.x, casa.y - 0.6, PLAYER_W, PLAYER_H), `casa atravessável em ${casa.bioma}`);
 }
 
+// ---- soleira desenhada: degrau com as runas da área na frente de cada porta ----
+const render = fs.readFileSync(new URL("../js/render.js", import.meta.url), "utf8");
+check(/function drawSoleira\(casa\)/.test(render), "render sem soleira da casa");
+check(/for \(const casa of world\.casas\)[\s\S]{0,200}drawSoleira\(casa\)/.test(render), "soleira fora da fila das casas");
+check(/BIOMES\[casa\.bioma\]\?\.accent/.test(render), "soleira não usa a cor da área");
+
 // ---- quatro salas fechadas, cada uma com a sua porta ----
-const salas = Object.values(world.interiores);
-check(salas.length === 4, `salas: ${salas.length}, esperado 4`);
+const salas = world.salas;
+check(salas.length === 8, `salas: ${salas.length}, esperado 8 (duas plantas por tipo)`);
+check(salas.every((s) => s.mar), "sala cavada fora do mar: abriria buraco na ilha");
 for (const sala of salas) {
   let paredes = 0, furos = 0;
   const portaX = Math.floor(sala.door.x), portaY = sala.y + sala.h - 1;
@@ -71,10 +79,20 @@ for (const sala of salas) {
   }
 }
 
+// ---- duas plantas por tipo: cada casa escolhe uma, e as duas aparecem ----
+const usadas = {};
+for (const casa of world.casas) {
+  const sala = world.prepararInterior(casa);
+  (usadas[casa.tipo] ||= new Set()).add(sala);
+}
+for (const [tipo, conjunto] of Object.entries(usadas)) {
+  check(conjunto.size === 2, `${tipo}: só uma planta usada pelas casas`);
+}
+
 // mesa, fogo e cama ficam parados na sala e barram o corpo; a mobília
-// sorteada (barril, caixote, fardo) continua decorativa
+// sorteada também virou sólida (ver test/interior-collision.test.mjs)
 const moveisFixos = world.props.filter((p) => String(p.tipo || "").startsWith("movel:"));
-check(moveisFixos.length === 11, `móveis fixos com caixa: ${moveisFixos.length}, esperado 11`);
+check(moveisFixos.length === 22, `móveis fixos com caixa: ${moveisFixos.length}, esperado 22`);
 for (const sala of salas) {
   check(world.boxCollides(sala.mesa.x, sala.mesa.y - 0.3, PLAYER_W, PLAYER_H), "mesa atravessável");
   check(world.boxCollides(sala.lareira.x, sala.lareira.y - 0.3, PLAYER_W, PLAYER_H), "fogo atravessável");
@@ -91,7 +109,7 @@ check(guardar() === layoutA, "a mesma casa muda de mobília ao entrar de novo");
 world.prepararInterior(casaB);
 const layoutB = guardar();
 check(layoutA !== layoutB || !casaB, "duas casas do mesmo tipo têm a mesma mobília");
-const salaA = world.interiores[casaA.tipo];
+const salaA = world.prepararInterior(casaA);
 world.prepararInterior(casaA);
 const tiposMoveis = world.interiorProps.map((m) => m.tipo);
 check(tiposMoveis.includes("mesa"), "sala sem mesa de estudo");
@@ -103,5 +121,21 @@ for (const m of world.interiorProps) {
   check(m.y > salaA.y + 0.4 && m.y < salaA.y + salaA.h - 0.4, `móvel ${m.tipo} encostado na parede y`);
 }
 
+// ---- morador: uma pessoa por casa, com roupa própria e longe dos móveis ----
+const morador = world.interiorProps.find((m) => m.tipo === "morador");
+check(!!morador, "casa sem morador");
+if (morador) {
+  check(morador.x > salaA.x + 1 && morador.x < salaA.x + salaA.w - 1, "morador na parede x");
+  check(morador.y > salaA.y + 1 && morador.y < salaA.y + salaA.h - 1, "morador na parede y");
+  check(morador.colors?.shirt && morador.look?.hair, "morador sem roupa ou cabelo");
+  check(morador.scale > 0.5 && morador.scale < 1.2, "morador com escala estranha");
+  for (const m of world.interiorProps.filter((p) => p.tipo !== "morador")) {
+    check(Math.hypot(m.x - morador.x, m.y - morador.y) >= 0.9, `morador em cima de ${m.tipo}`);
+  }
+}
+const app = fs.readFileSync(new URL("../js/app.js", import.meta.url), "utf8");
+check(/kind === "morador"/.test(app) && /falarComMorador/.test(app), "app não conversa com o morador");
+check(/a\.tipo === "morador"/.test(render) && /drawHuman\(ctx, px, py/.test(render), "render não desenha o morador");
+
 assert.equal(problemas.length, 0, `casas com ${problemas.length} problema(s):\n- ${problemas.slice(0, 12).join("\n- ")}`);
-console.log(`ok casas: ${world.casas.length} fachadas com porta, 4 salas fechadas, ${world.interiorProps.length} móveis na casa de ${casaA.bioma}`);
+console.log(`ok casas: ${world.casas.length} fachadas com porta e soleira, ${salas.length} plantas fechadas, morador com ${morador?.colors?.shirt || "?"}`);

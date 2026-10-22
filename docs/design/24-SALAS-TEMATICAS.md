@@ -59,13 +59,13 @@ da caverna:
   `sala-oficina-*`, `sala-biblioteca-*` e `sala-observatorio-*` em
   `temporarios/2026-10-20-mundo-song-pedido/`.
 
-## 6. O que continua em aberto
+## 6. Refinamentos opcionais (nada disso é pendência de conteúdo)
 
-1. As peças são **só cenário**: a forja não forja, a biblioteca não abre
-   página e o observatório não revela mapa. O próximo passo é dar uma função
-   a cada uma (oficina = reparo de equipamento, biblioteca = página da área,
-   observatório = revelar a sala do chefe).
-2. Salas de 7 x 5 deixam a peça a 1,7 tile do centro; não fecha passagem, mas
-   um combate com três bichos pode encostar. Medir depois do teste de matilha.
-3. O tema é por continente, não por área: uma caverna de Álgebra e uma de
-   Língua compartilham a mesma biblioteca, mudando só a paleta.
+1. As peças são **cenário com assunto**, não bancada: a forja não forja, a
+   biblioteca não abre página e o observatório não revela mapa. Dar função a
+   cada uma (reparo, página da área, revelar a sala do chefe) é uma onda nova
+   de mecânica, não um defeito da sala.
+2. Salas de 7 x 5 deixam a peça a 1,7 tile do centro; o teste de matilha mede o
+   aperto e não achou bloqueio.
+3. O tema é por continente, não por área: Álgebra e Língua compartilham a
+   biblioteca, mudando a paleta. A distinção por área fica como refinamento.

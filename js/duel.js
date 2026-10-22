@@ -166,6 +166,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
     meta.appendChild(el("span", "duel-round", `rodada ${(d.deckIndex || 0) + 1}`));
     const ritmo = leituraDeRitmo(d.seguidos || 0);
     if (ritmo) meta.appendChild(el("em", "duel-combo", ritmo));
+    if (d.boss && d.habilidade) meta.appendChild(el("span", "duel-ability", `chefe: ${d.habilidade.nome}`));
     drawSprite();
 
     const body = $("duel-body");
