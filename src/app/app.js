@@ -4091,3 +4091,5 @@ $("update-btn")?.addEventListener("click", aplicarAtualizacao);
 })();
 
 // verificação do fluxo de versão publicada
+
+// segunda marca para o CI publicar a versao
