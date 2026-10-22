@@ -1,0 +1,22 @@
+import assert from 'node:assert/strict';
+import {makeDocument} from './ui-dom.mjs';
+import {createUiScope,availableFocusTargets} from '../js/ui-scope.js';
+const {document,Node}=makeDocument();
+const root=new Node(), hud=new Node(), splash=new Node(), intro=new Node(), modal=new Node(), toast=new Node();
+const behind=new Node('button'),first=new Node('button'),last=new Node('button');
+hud.append(behind);splash.append(first,last);root.append(hud,splash,intro,modal,toast);
+let active=splash;
+const scope=createUiScope({root,getActive:()=>active,exceptions:[toast]});scope.sync();
+assert.equal(hud.inert,true);assert.equal(intro.inert,true);assert.equal(splash.inert,false);assert.equal(toast.inert,false);
+first.focus();let prevented=false;
+scope.trap({shiftKey:true,preventDefault(){prevented=true;}});
+assert.equal(prevented,true);assert.equal(document.activeElement,last,'Shift+Tab fica no título');
+scope.trap({shiftKey:false,preventDefault(){}});assert.equal(document.activeElement,first);
+// Alvo fixo continua elegível: offsetParent null não significa oculto.
+first.offsetParent=null;assert.equal(availableFocusTargets(splash).length,2);
+last.tabIndex=-1;assert.equal(availableFocusTargets(splash).length,1,'aba fora da sequência não conta no ciclo');
+last.tabIndex=0;last.hidden=true;assert.equal(availableFocusTargets(splash).length,1);
+active=modal;scope.sync();assert.equal(splash.inert,true);assert.equal(modal.inert,false);
+active=intro;scope.sync();assert.equal(intro.inert,false,'fechar wiki antes de jogar devolve a entrada');
+active=null;scope.sync();assert.equal(hud.inert,false,'fechar tela libera o mundo');
+console.log('ok escopo: entrada, modal, aviso acessível, ciclo Tab e alvo fixo');

@@ -18,6 +18,7 @@ function swatchRow(label, list, value, onPick) {
   list.forEach((color, index) => {
     const button = el("button", `look-swatch${index === value ? " on" : ""}`);
     button.type = "button";
+    button.dataset.lookKey = `${label}:${index}`;
     button.style.background = color;
     button.setAttribute("aria-label", `${label} ${index + 1}`);
     button.setAttribute("aria-pressed", index === value ? "true" : "false");
@@ -30,6 +31,7 @@ function swatchRow(label, list, value, onPick) {
 
 export function renderCharacterEditor(mount, { look, colors, outfits = [], outfit = "", vocations = [], vocation = "", onVocation = null, isHairLocked = () => false, isOutfitLocked = () => false, lockHint = () => "", onlyUnlocked = false, onChange, onOutfit }) {
   const current = normalizeAvatar(look);
+  const focusedKey = mount.contains(document.activeElement) ? document.activeElement?.dataset?.lookKey : null;
   mount.textContent = "";
 
   const wrap = el("div", "look-editor");
@@ -50,6 +52,8 @@ export function renderCharacterEditor(mount, { look, colors, outfits = [], outfi
   for (const gender of GENDERS) {
     const button = el("button", `look-chip${current.gender === gender.id ? " on" : ""}`, gender.name);
     button.type = "button";
+    button.dataset.lookKey = `gender:${gender.id}`;
+    button.setAttribute("aria-pressed", String(current.gender === gender.id));
     button.addEventListener("click", () => onChange({ gender: gender.id }));
     genderButtons.appendChild(button);
   }
@@ -67,6 +71,8 @@ export function renderCharacterEditor(mount, { look, colors, outfits = [], outfi
     const button = el("button", `look-hair${current.hair === hair.id ? " on" : ""}${locked ? " locked" : ""}`, hair.name);
     button.type = "button";
     button.disabled = locked;
+    button.dataset.lookKey = `hair:${hair.id}`;
+    button.setAttribute("aria-pressed", String(current.hair === hair.id));
     if (locked) button.title = lockHint(hair);
     button.addEventListener("click", () => onChange({ hair: hair.id }));
     hairGrid.appendChild(button);
@@ -81,6 +87,7 @@ export function renderCharacterEditor(mount, { look, colors, outfits = [], outfi
     for (const v of vocations) {
       const card = el("button", `look-vocation${vocation === v.id ? " on" : ""}`);
       card.type = "button";
+      card.dataset.lookKey = `vocation:${v.id}`;
       card.setAttribute("aria-pressed", vocation === v.id ? "true" : "false");
       card.setAttribute("aria-label", `${v.name}: ${v.forca}; fraqueza: ${v.fraqueza}`);
       card.append(
@@ -105,6 +112,8 @@ export function renderCharacterEditor(mount, { look, colors, outfits = [], outfi
       const button = el("button", `look-chip${outfit === item.id ? " on" : ""}${locked ? " locked" : ""}`, item.name);
       button.type = "button";
       button.disabled = locked;
+      button.dataset.lookKey = `outfit:${item.id}`;
+      button.setAttribute("aria-pressed", String(outfit === item.id));
       if (locked) button.title = lockHint(item);
       button.addEventListener("click", () => onOutfit(item.id));
       outfitChips.appendChild(button);
@@ -130,5 +139,7 @@ export function renderCharacterEditor(mount, { look, colors, outfits = [], outfi
   ctx.fill();
   drawHuman(ctx, canvas.width / 2, canvas.height - 20, 0, false, 0, { ...colors, hair: HAIR_TONES[current.hairColor], skin: SKINS[current.skin], eyes: EYES[current.eyes] }, 4.2, current);
 
+  if (focusedKey) [...mount.querySelectorAll("[data-look-key]")]
+    .find(node => node.dataset.lookKey === focusedKey)?.focus({ preventScroll: true });
   return current;
 }

@@ -3856,3 +3856,49 @@ body.na-casa .minimap { display: none; }
   /* a largura de 94vw + padding do card estourava 3 px no celular */
   .shop-card { width: 100%; }
 }
+
+/* UI/UX: avisos sobre a tela ativa, fechamento visível e leitura sem recortes. */
+:root { --text: var(--ink); --body: var(--sans); }
+.toast { z-index: 110; overflow-wrap: anywhere; line-height: 1.5; }
+.modal-head h2 { min-width: 0; overflow-wrap: anywhere; }
+.modal-head > button { flex-shrink: 0; }
+.hud-btn:disabled { opacity: .55; cursor: not-allowed; }
+.search-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+.search-row .travel-filter { flex: 1; min-width: 0; margin-bottom: 0; }
+.search-row > button { flex-shrink: 0; }
+.search-status { font: 12px/1.5 var(--mono); color: var(--muted); margin: 8px 0; }
+.search-empty { padding: 18px 12px; border: 1px dashed var(--line); border-radius: 8px; line-height: 1.6; }
+.travel-item b, .travel-item span, .wiki-item b, .wiki-detail dd { overflow-wrap: anywhere; }
+.wiki-card { display: flex; flex-direction: column; height: min(900px, 90dvh); }
+.wiki-card > .modal-head, .wiki-tools, .wiki-resumo, .wiki-more, .wiki-card > .inv-hint { flex-shrink: 0; }
+.wiki-list, .wiki-detail { flex: 1 1 auto; min-height: 0; max-height: none; }
+.wiki-list { align-content: start; }
+.wiki-more { align-self: center; margin-top: 10px; min-height: 40px; }
+.wiki-tab { min-height: 36px; white-space: nowrap; }
+.wiki-item b { font-size: 11px; line-height: 1.5; }
+.wiki-item span { font-size: 12px; }
+.wiki-item:focus-visible { outline: 2px solid var(--amber); outline-offset: -2px; }
+.intro-note { font-size: 13px; line-height: 1.6; }
+.intro-controls { font-size: 11px; line-height: 1.7; }
+.intro-form-stack label, #intro-form label, .look-label { font-size: 11px; line-height: 1.5; letter-spacing: .06em; }
+.intro-link { display: inline-flex; align-items: center; min-height: 40px; margin-right: 12px; }
+@media (min-width: 721px) {
+  .modal-card > .modal-head {
+    position: sticky; top: -24px; z-index: 4;
+    margin: -24px -26px 16px; padding: 18px 26px 14px;
+    background: #0b1024; border-bottom: 1px solid var(--line);
+  }
+}
+@media (max-width: 760px) {
+  .wiki-tabs { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 8px; }
+  .wiki-tab { flex: none; }
+  .search-row { flex-wrap: wrap; }
+  .search-row .travel-filter { flex-basis: 65%; }
+}
+@media (pointer: coarse) {
+  .modal button, .intro button, .hud button, .mini-btn, .dg-exit, .dg-fold { min-height: 44px; }
+  .mini-btn, .dg-fold, .steps-min, .look-swatch { min-width: 44px; min-height: 44px; }
+  .look-swatch { width: 44px; height: 44px; }
+  .mini-tools { flex-wrap: wrap; }
+  .modal input, .modal select, .modal textarea { font-size: 16px; }
+}

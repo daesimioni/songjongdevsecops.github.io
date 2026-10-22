@@ -1,3 +1,5 @@
+import { filterGroupedList } from "./search-ui.js";
+import { createUiScope, availableFocusTargets } from "./ui-scope.js";
 import { createInstrumentLoader } from "./instrument-loader.js";
 import { isTextEntry, nativeActivation } from "./input.js";
 import { moveWithCollision, advancePath, directionVector } from "./movement.js";
@@ -168,6 +170,17 @@ const state = {
   casaVolta: null,
   casaCooldownUntil: 0,
 };
+
+function activeUiLayer() {
+  if (state.modal) return $(state.modal);
+  if (state.panelOpen) return $("panel");
+  for (const id of ["enter-screen", "splash", "intro", "dungeon"]) {
+    const node = $(id);
+    if (node && !node.hidden) return node;
+  }
+  return null;
+}
+const uiScope = createUiScope({ root: $("app"), getActive: activeUiLayer, exceptions: [$("toast"), $("scrim")] });
 
 const NOME_CASA = { casa: "casa", cabana: "cabana", torre: "torre", galpao: "galpão" };
 const nomeDaArea = (id) => AREAS.find((a) => a.id === id)?.name || "ilha";
@@ -1737,6 +1750,7 @@ function openTravel(mode = "stones") {
   buildTravel();
   wireTravelFilter();
   openModal("travel");
+  $("travel-filter")?.focus();
   audio.open();
 }
 
@@ -1746,16 +1760,16 @@ function wireTravelFilter() {
   const list = $("travel-list");
   if (!input || !list) return;
   input.value = "";
-  input.oninput = () => {
-    const query = input.value.trim().toLowerCase();
-    for (const node of list.children) {
-      if (node.classList.contains("travel-group")) {
-        node.hidden = false;
-        continue;
-      }
-      node.hidden = !!query && !node.textContent.toLowerCase().includes(query);
-    }
+  const clear = $("travel-clear");
+  const apply = () => {
+    const count = filterGroupedList(list, input.value);
+    $("travel-empty").hidden = count !== 0;
+    $("travel-status").textContent = `${count} ${count === 1 ? "destino encontrado" : "destinos encontrados"}`;
+    clear.disabled = !input.value;
   };
+  input.oninput = apply;
+  clear.onclick = () => { input.value = ""; apply(); input.focus(); };
+  apply();
 }
 
 function travelDot(color) {
@@ -1951,10 +1965,6 @@ function travelTo(cid) {
   toast(`viajando para ${nomeDestino}`, 2200);
 }
 
-const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
-function focusablesIn(container) {
-  return Array.from(container.querySelectorAll(FOCUSABLE)).filter((node) => node.offsetParent !== null || node === document.activeElement);
-}
 const MODAL_FOCUS_BACK = {
   journal: "btn-journal",
   bestiary: "btn-bestiary",
@@ -1964,15 +1974,18 @@ const MODAL_FOCUS_BACK = {
   pvp: "btn-rede",
   outfits: "btn-sheet",
   inventory: "btn-inventory",
+  wiki: "btn-wiki",
 };
 function restoreFocus(modalName) {
   const back = state.lastFocus;
   state.lastFocus = null;
-  if (back?.isConnected && back.offsetParent !== null) {
+  if (back?.isConnected && !back.disabled && !back.closest("[inert]") && back.getClientRects().length) {
     back.focus({ preventScroll: true });
     return;
   }
-  const hudId = MODAL_FOCUS_BACK[modalName];
+  const hudId = dungeon?.isOpen()
+    ? ({ inventory: "dg-inventory", sheet: "dg-sheet", wiki: "dg-wiki" }[modalName] || "dg-exit")
+    : MODAL_FOCUS_BACK[modalName];
   if (hudId) $(hudId)?.focus({ preventScroll: true });
 }
 function openModal(name) {
@@ -1985,7 +1998,8 @@ function openModal(name) {
   state.modal = name;
   $(name).hidden = false;
   $("scrim").hidden = false;
-  const focusable = $(name).querySelector(FOCUSABLE) || $(name).querySelector("button, input");
+  uiScope.sync();
+  const focusable = availableFocusTargets($(name))[0];
   focusable?.focus();
 }
 function closeModal(name) {
@@ -2000,22 +2014,11 @@ function closeModal(name) {
   } catch (e) {
     console.error("[modal]", e);
   } finally {
+    uiScope.sync();
     if (!state.modal && !state.panelOpen) restoreFocus(name);
   }
 }
-function trapFocus(e) {
-  const container = state.modal ? $(state.modal) : state.panelOpen ? $("panel") : null;
-  if (!container) return false;
-  const list = focusablesIn(container);
-  if (!list.length) { e.preventDefault(); return true; }
-  const first = list[0];
-  const last = list[list.length - 1];
-  const active = document.activeElement;
-  if (!container.contains(active)) { e.preventDefault(); (e.shiftKey ? last : first).focus(); return true; }
-  if (e.shiftKey && active === first) { e.preventDefault(); last.focus(); return true; }
-  if (!e.shiftKey && active === last) { e.preventDefault(); first.focus(); return true; }
-  return false;
-}
+function trapFocus(e) { return uiScope.trap(e); }
 
 async function openPost(id, site) {
   stopSprint();
@@ -2050,6 +2053,7 @@ async function openPost(id, site) {
   $("panel").hidden = false;
   $("scrim").hidden = false;
   document.querySelector(".panel-scroll").scrollTop = 0;
+  uiScope.sync();
   $("panel-close").focus();
   audio.open();
 
@@ -2081,6 +2085,7 @@ function closePanel() {
   if (!state.modal) $("scrim").hidden = true;
   $("panel-live").textContent = "";
   audio.close();
+  uiScope.sync();
   restoreFocus();
 }
 
@@ -3253,6 +3258,9 @@ function showIntroStep(step) {
   // a partir da chave o título encolhe: a tela é do personagem, não do cartaz
   document.querySelector(".intro-card")?.classList.toggle("compact", step !== "key");
   if (step === "look") renderIntroLook();
+  uiScope.sync();
+  const focus = step === "look" ? $("intro-name") : step === "new" ? $("intro-copy-key") : $("intro-key");
+  focus?.focus({ preventScroll: true });
 }
 
 // a vocação é a última decisão da criação: sem ela não entra
@@ -3479,6 +3487,7 @@ window.addEventListener("beforeunload", () => {
       splash.classList.remove("saindo");
       $("intro").inert = false;
       stopTitle();
+      uiScope.sync();
       const alvo = !$("intro-saved").hidden ? $("intro-continue") : $("intro-create");
       alvo?.focus({ preventScroll: true });
     }, 520);
@@ -3496,6 +3505,11 @@ window.addEventListener("beforeunload", () => {
   if (new URLSearchParams(location.search).has("debug")) {
     window.__mundo = { player, state, world, renderer, audio, quests, rede, backup, rpg, sheetUi, duelUi, dungeon, pvpUi, knockDown, findPath, assets: { cache: cacheDeAssets, total: totalDeAssets }, openPost: (id) => openPost(id), openTravel: (mode) => openTravel(mode), openShop: () => openShop(), openDuel: (mon, ground, boss, partner) => openDuel(mon, ground, boss, partner), openVocacoes: () => openVocacoes(), openWiki: (opcoes) => openWiki(opcoes), catalog: CATALOG_CONTENT, catalogStones: [...CATALOG_STONES], waystones: WAYSTONES, get social() { return social; } };
   }
+
+  uiScope.sync();
+  new MutationObserver(() => uiScope.sync()).observe($("app"), {
+    subtree: true, attributes: true, attributeFilter: ["hidden"],
+  });
 
   // link direto: ?wiki=termo abre a wiki por cima da entrada, sem personagem
   const wikiParam = new URLSearchParams(location.search).get("wiki");
