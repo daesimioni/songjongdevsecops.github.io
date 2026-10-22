@@ -18,6 +18,7 @@ import { Net } from "../platform/net.js";
 import { Rede } from "../platform/nostr.js";
 import { Quests, QUESTS } from "../gameplay/quests.js";
 import { createSocial } from "../ui/social.js";
+import { eNoite } from "../rendering/dia-noite.js";
 import { createBackup } from "../platform/backup.js";
 import { createPvp } from "../ui/pvp.js";
 import { OUTFITS, outfitById, outfitColors } from "../content/outfits.js";
@@ -2367,6 +2368,12 @@ function loop(now) {
     rpg.tick();
     // o relógio do clima anda sempre, inclusive dentro da caverna e no modo leve
     renderer.ambiente.tick(now);
+    // troca de dia para noite avisa uma vez, sem repetir a cada quadro
+    const agoraNoite = eNoite(now);
+    if (loop.noite !== undefined && loop.noite !== agoraNoite && state.started && !state.casa && !state.modal && !state.panelOpen) {
+      toast(agoraNoite ? "A noite caiu no vale." : "O dia voltou ao vale.", 2600);
+    }
+    loop.noite = agoraNoite;
     if (!state.manaAt || now - state.manaAt > 1000) {
       state.manaAt = now;
       rpg.pulse();

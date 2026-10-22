@@ -9,7 +9,7 @@ de ele existir, com números que o código já superou.
 Auditoria read-only de 2026-10-22 cruzou os documentos 00 a 38 com `src/`,
 `test/` e `tools/`. Números do código: 86 áreas, 454 estações, 93 cavernas, 560
 itens, 464 fichas, 284 missões, 194 NPCs, 2.298 entradas de wiki, 887 perguntas
-de duelo, 128 módulos e 89 testes node. `npm run validate` passa (lint,
+de duelo, 128 módulos e 90 testes node. `npm run validate` passa (lint,
 contrato de módulos, testes e build) e a matriz de navegador dá 19/19.
 
 Esforço: **P** até um dia, **M** de dois a cinco dias, **G** mais de uma semana.
@@ -54,7 +54,7 @@ Estado: **feito**, **parcial**, **ausente**, **decisão** (produto, não código
 | acessibilidade: voz, escala, daltonismo | **feito** | teclado, foco e aria-live; **voz** (ouvir/parar, pt-BR); **resultado sem cor** (✓ e ✗, letras A-E no toque); **texto maior** nos painéis de leitura (15% no desktop, salvo no save, sem zoom no celular). Provas: `test/voz-duelo`, `test/duel-acessivel`, `test/fonte`, `cdp-voz`, `cdp-duelo-a11y`, `cdp-fonte-maior` (parágrafo 46 → 53 px, zero estouro) | M |
 | save versionado, migração e exportar/importar | **feito** | backup carrega `v: 1` e só aplica as chaves conhecidas com valor JSON válido; a Rede ganhou `baixar arquivo` (JSON legível, sem a chave da conta) e `carregar arquivo` (recusa lixo, aplica e recarrega); `test/save-arquivo.test.mjs` e `cdp-save-arquivo.mjs` (7 partes, v1, nome trocado pelo arquivo) | M |
 | linter de conteúdo | ausente | validação só em teste; falta revisor e versão por pergunta | M |
-| ferries, elevadores, ciclo dia/noite, mapa grande, pontes por missão | ausente | skiff, túnel e 54 travessias fixas existem | M cada |
+| ferries, elevadores, ciclo dia/noite, mapa grande, pontes por missão | parcial | **ciclo dia/noite feito**: 8 minutos por volta, véu de até 0,42 na meia-noite e 0 no meio-dia, com aviso na troca; `test/dia-noite.test.mjs` e `cdp-dia-noite.mjs` (noite 31% mais escura). Skiff, túnel e 54 travessias fixas existem; faltam ferries, elevadores, mapa grande e pontes por missão | M cada |
 | arcos de NPC, murais e bilhetes | **feito** | **bilhetes**: 93 cavernas com nota na parede da cidade, da lição da área (70), da relíquia (16) ou do lugar (7), lida no F (`test/bilhetes.test.mjs`, `cdp-bilhete.mjs`). **Arco do guardião**: a missão do chefe de cada área virou segundo capítulo, trancada até a trilha fechar, com aviso no cartão; 86 pares medidos (`test/arcos.test.mjs`, `cdp-arcos-npc.mjs`: só a trilha e o aviso, depois o chefe) | M |
 | presets de build na ficha | **feito** | a ficha guarda até três retratos do equipamento: `salvar a atual`, `usar` (troca o conjunto inteiro e avisa peça que faltou) e `remover`; save valida slot e sobrevive à recarga; `test/builds.test.mjs` e `cdp-builds.mjs` | P |
 

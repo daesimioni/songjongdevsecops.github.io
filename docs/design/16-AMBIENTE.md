@@ -98,3 +98,16 @@ Prova: `test/cacada-clima.test.mjs` (rodízio, chuva, neblina, rajada, fallback 
 volta do índice) e sonda `cdp-cacada-clima.mjs`: chuva forçada mudou os 6 bichos
 da caverna de computação, todos de espécie molhada, contra 7 no clima limpo; ao
 encerrar, o estado voltou a `limpo`. Zero erro de console.
+
+## Ciclo dia/noite (2026-10-22)
+
+O vale agora tem hora: uma volta completa leva 8 minutos. O meio-dia fica no
+meio da curva (luz 1, sem véu) e a meia-noite no começo (luz 0, véu de 0,42 em
+`rgb(8,12,34)`). O véu é desenhado por cima do mundo, em coordenadas de tela,
+então não entra em colisão, lógica, minimapa nem HUD; a troca de dia para noite
+avisa uma vez no canto.
+
+Prova: `test/dia-noite.test.mjs` (curva, periodicidade, entrada inválida, hora
+forçada para sonda e aviso no laço) e sonda `cdp-dia-noite.mjs`: brilho médio do
+canvas caiu de 64,6 no dia para 44,3 na noite (31% mais escuro), zero erro.
+Capturas `dia-noite-dia-*.png` e `dia-noite-noite-*.png`.

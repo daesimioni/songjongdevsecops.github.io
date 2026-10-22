@@ -1,6 +1,7 @@
 import { createTerrainRenderer } from "./terrain-renderer.js";
 import { spritePose } from "./sprite-cache.js";
 import { artTick, artTime } from "./art-style.js";
+import { faseDoDia } from "./dia-noite.js";
 import { directionAngle } from "../core/movement.js";
 import { outfitById } from "../content/outfits.js";
 import { avatarColors } from "../content/avatar.js";
@@ -1411,6 +1412,15 @@ export function createRenderer(canvas, world) {
     }
 
     if (!modoLeve) drawAmbient(areaJogador, time, camX, camY, viewW, viewH, cena);
+    // véu da noite: por cima do mundo, abaixo do HUD (que é DOM)
+    const faseDia = faseDoDia(time);
+    if (faseDia.alpha > 0.02) {
+      ctx.save();
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.fillStyle = faseDia.cor;
+      ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+      ctx.restore();
+    }
     // casa por dentro: o mar em volta não aparece, a sala fica como um recorte
     // iluminado no escuro, com a parede comendo a luz nas bordas
     if (cena?.interior) {
