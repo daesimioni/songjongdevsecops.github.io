@@ -175,7 +175,12 @@
         <button type="button" class="hud-btn" data-close="travel">fechar <kbd>Esc</kbd></button>
       </div>
       <p class="travel-lead" id="travel-lead">Os faróis que você já acendeu podem ser alcançados num piscar. Os outros continuam escondidos na névoa.</p>
-      <input id="travel-filter" class="travel-filter" type="text" placeholder="filtrar por nome ou continente" autocomplete="off" aria-label="filtrar destinos">
+      <div class="search-row">
+        <input id="travel-filter" class="travel-filter" type="search" placeholder="filtrar por nome ou continente" autocomplete="off" aria-label="filtrar destinos">
+        <button type="button" id="travel-clear" class="hud-btn" disabled>limpar busca</button>
+      </div>
+      <p id="travel-status" class="search-status" role="status"></p>
+      <p id="travel-empty" class="search-empty" hidden>Nenhum destino encontrado. Tente outro nome ou limpe a busca.</p>
       <div id="travel-list" class="travel-list"></div>
     </div>
   </div>
@@ -278,7 +283,8 @@
         <div id="wiki-tabs" class="wiki-tabs" role="tablist" aria-label="categorias da wiki"></div>
       </div>
       <p id="wiki-resumo" class="wiki-resumo" aria-live="polite"></p>
-      <div id="wiki-list" class="wiki-list"></div>
+      <div id="wiki-list" class="wiki-list" role="tabpanel"></div>
+      <button type="button" id="wiki-more" class="hud-btn wiki-more" aria-controls="wiki-list" hidden>mostrar mais</button>
       <div id="wiki-detail" class="wiki-detail" hidden></div>
       <p class="inv-hint">a wiki nasce dos mesmos dados do jogo: área, caverna, bicho, item, missão, NPC, vocação e página. o que entra no jogo entra aqui. <kbd>H</kbd> abre e fecha.</p>
     </div>
@@ -454,7 +460,7 @@
     </div>
   </div>
 
-  <div id="splash" class="splash" aria-label="The Learning Valley">
+  <div id="splash" class="splash" role="dialog" aria-modal="true" aria-label="The Learning Valley">
     <canvas id="splash-canvas" aria-hidden="true"></canvas>
     <div class="splash-vignette" aria-hidden="true"></div>
     <div class="splash-card">

@@ -421,6 +421,8 @@ export function separarConsulta(consulta = "") {
 // ---- interface ------------------------------------------------------------
 
 let ligado = false;
+let limiteVisivel = 80;
+let origemDetalhe = null;
 let categoriaAtual = "tudo";
 let abrirPost = null;
 let fecharModal = null;
@@ -442,13 +444,33 @@ function montarAbas() {
     const tab = el("button", "wiki-tab", c.id === "tudo" ? `${c.nome} ${c.total}` : `${c.nome} ${c.total}`);
     tab.type = "button";
     tab.dataset.cat = c.id;
+    tab.id = `wiki-tab-${c.id}`;
+    tab.tabIndex = c.id === categoriaAtual ? 0 : -1;
+    tab.setAttribute("aria-controls", "wiki-list");
     tab.setAttribute("role", "tab");
     tab.setAttribute("aria-selected", String(c.id === categoriaAtual));
-    tab.addEventListener("click", () => {
-      categoriaAtual = c.id;
+    const escolher = (id) => {
+      categoriaAtual = id;
+      limiteVisivel = 80;
       mostrarDetalhe(null);
       montarAbas();
       renderizarLista();
+      const selected = [...box.querySelectorAll(".wiki-tab")].find(node => node.dataset.cat === id);
+      selected?.focus({ preventScroll: true });
+      selected?.scrollIntoView({ block: "nearest", inline: "nearest" });
+    };
+    tab.addEventListener("click", () => escolher(c.id));
+    tab.addEventListener("keydown", (event) => {
+      const categorias = categoriasDaWiki();
+      const index = categorias.findIndex(item => item.id === c.id);
+      let next;
+      if (event.key === "ArrowRight") next = (index + 1) % categorias.length;
+      else if (event.key === "ArrowLeft") next = (index - 1 + categorias.length) % categorias.length;
+      else if (event.key === "Home") next = 0;
+      else if (event.key === "End") next = categorias.length - 1;
+      else return;
+      event.preventDefault();
+      escolher(categorias[next].id);
     });
     box.appendChild(tab);
   }
@@ -462,20 +484,27 @@ function renderizarLista() {
   lista.hidden = false;
   if (detalhe) detalhe.hidden = true;
   const consulta = $("wiki-search")?.value || "";
-  const achados = buscarNaWiki(consulta, categoriaAtual);
+  const achados = buscarNaWiki(consulta, categoriaAtual, Infinity);
+  const more = $("wiki-more");
+  if (more) {
+    more.dataset.remaining = String(achados.length > limiteVisivel);
+    more.hidden = achados.length <= limiteVisivel;
+    more.textContent = `mostrar mais ${Math.min(80, Math.max(0, achados.length - limiteVisivel))}`;
+  }
+  lista.setAttribute("aria-labelledby", `wiki-tab-${categoriaAtual}`);
   const total = indiceDaWiki().filter((e) => categoriaAtual === "tudo" || e.cat === categoriaAtual).length;
   if (resumo) {
     const cat = categoriasDaWiki().find((c) => c.id === categoriaAtual);
     resumo.textContent = consulta
-      ? `${achados.length} de ${total} em ${cat?.nome || "tudo"} para "${consulta}"`
-      : `${total} ${total === 1 ? "entrada" : "entradas"} em ${cat?.nome || "tudo"}`;
+      ? `${achados.length} resultados em ${cat?.nome || "tudo"} para "${consulta}" · mostrando ${Math.min(limiteVisivel, achados.length)}`
+      : `${total} ${total === 1 ? "entrada" : "entradas"} em ${cat?.nome || "tudo"} · mostrando ${Math.min(limiteVisivel, achados.length)}`;
   }
   lista.textContent = "";
   if (!achados.length) {
     lista.appendChild(el("p", "wiki-vazio", "nada encontrado. tente outro termo ou outra categoria."));
     return;
   }
-  for (const entrada of achados) {
+  for (const entrada of achados.slice(0, limiteVisivel)) {
     const cat = CATEGORIAS.find((c) => c.id === entrada.cat)?.nome || entrada.cat;
     const botao = el("button", "wiki-item");
     botao.type = "button";
@@ -484,7 +513,7 @@ function renderizarLista() {
       el("b", "", entrada.nome),
       el("span", "", entrada.resumo || ""),
     );
-    botao.addEventListener("click", () => mostrarDetalhe(entrada));
+    botao.addEventListener("click", () => { origemDetalhe = botao; mostrarDetalhe(entrada); });
     lista.appendChild(botao);
   }
 }
@@ -611,6 +640,7 @@ function mostrarDetalhe(entrada) {
     return;
   }
   if (lista) lista.hidden = true;
+  if ($("wiki-more")) $("wiki-more").hidden = true;
   detalhe.hidden = false;
   detalhe.textContent = "";
   const cat = CATEGORIAS.find((c) => c.id === entrada.cat)?.nome || entrada.cat;
@@ -632,7 +662,9 @@ function mostrarDetalhe(entrada) {
   voltar.addEventListener("click", () => {
     detalhe.hidden = true;
     if (lista) lista.hidden = false;
-    $("wiki-search")?.focus();
+    if ($("wiki-more")) $("wiki-more").hidden = $("wiki-more").dataset.remaining !== "true";
+    if (origemDetalhe && lista?.contains(origemDetalhe)) origemDetalhe.focus({ preventScroll: true });
+    else $("wiki-search")?.focus();
   });
   acoes.appendChild(voltar);
   const link = el("button", "hud-btn", "copiar link");
@@ -678,10 +710,20 @@ export function configurarWiki({ abrirPost: abrir, fechar } = {}) {
 export function abrirWiki(consulta = "") {
   if (!ligado) {
     ligado = true;
-    $("wiki-search")?.addEventListener("input", () => renderizarLista());
+    $("wiki-search")?.addEventListener("input", () => { limiteVisivel = 80; renderizarLista(); });
+    $("wiki-more")?.addEventListener("click", () => {
+      const previous = limiteVisivel;
+      limiteVisivel += 80;
+      renderizarLista();
+      const next = $("wiki-list")?.querySelectorAll(".wiki-item")[previous];
+      next?.focus({ preventScroll: true });
+      next?.scrollIntoView({ block: "nearest" });
+    });
   }
   const alvo = separarConsulta(consulta);
   categoriaAtual = alvo.categoria;
+  limiteVisivel = 80;
+  origemDetalhe = null;
   const busca = $("wiki-search");
   if (busca) busca.value = alvo.termo;
   mostrarDetalhe(null);

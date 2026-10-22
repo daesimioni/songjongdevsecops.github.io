@@ -1,0 +1,22 @@
+import assert from 'node:assert/strict';
+import {makeDocument} from './ui-dom.mjs';
+const {document}=makeDocument(['wiki-search','wiki-tabs','wiki-list','wiki-detail','wiki-resumo','wiki-more']);
+globalThis.document=document;
+const {abrirWiki,indiceDaWiki}=await import('../js/wiki.js');
+const $=id=>document.getElementById(id);
+abrirWiki();
+assert.equal($('wiki-list').children.length,80);assert.equal($('wiki-more').hidden,false);
+assert.match($('wiki-resumo').textContent,/mostrando 80/);
+$('wiki-more').handlers.click();assert.equal($('wiki-list').children.length,160);assert.equal(document.activeElement,$('wiki-list').children[80]);
+const origin=$('wiki-list').children[100];origin.handlers.click();assert.equal($('wiki-list').hidden,true);assert.equal($('wiki-more').hidden,true);
+$('wiki-detail').querySelectorAll('button').find(b=>b.textContent==='voltar').handlers.click();
+assert.equal(document.activeElement,origin);assert.equal($('wiki-more').hidden,false);
+// Toda entrada fica alcançável, não apenas as primeiras oitenta.
+while(!$('wiki-more').hidden)$('wiki-more').handlers.click();
+assert.equal($('wiki-list').children.length,indiceDaWiki().length);
+const tab=$('wiki-tabs').children[0];tab.handlers.keydown({key:'ArrowRight',preventDefault(){}});
+assert.equal(document.activeElement.dataset.cat,'mundo');
+assert.equal($('wiki-tabs').children.filter(n=>n.tabIndex===0).length,1);
+$('wiki-search').value='xxxxxxxx-inexistente';$('wiki-search').handlers.input();
+assert.equal($('wiki-list').children.length,1);assert.equal($('wiki-more').hidden,true);assert.match($('wiki-resumo').textContent,/0 resultados/);
+console.log('ok wiki: paginação completa, contagem, foco de retorno, abas e vazio');

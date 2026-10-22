@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';
+import {makeDocument} from './ui-dom.mjs';
+import {filterGroupedList} from '../js/search-ui.js';
+const {Node}=makeDocument();const list=new Node();
+const row=(text,group=false)=>{const n=new Node();n.textContent=text;n.className=group?'travel-group':'travel-item';list.append(n);return n;};
+const a=row('Física',true),b=row('Óptica · Física'),c=row('Matemática',true),d=row('Álgebra · Matemática');
+assert.equal(filterGroupedList(list,'fisica optica'),1);assert.equal(b.hidden,false);assert.equal(a.hidden,false);assert.equal(c.hidden,true);assert.equal(d.hidden,true);
+assert.equal(filterGroupedList(list,'inexistente'),0);assert.equal(a.hidden,true);assert.equal(c.hidden,true);
+assert.equal(filterGroupedList(list,''),2);assert.equal(a.hidden,false);assert.equal(c.hidden,false);
+console.log('ok busca: acentos, múltiplos termos, grupos vazios e limpeza');
