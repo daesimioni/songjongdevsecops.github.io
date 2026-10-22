@@ -9,7 +9,7 @@ de ele existir, com números que o código já superou.
 Auditoria read-only de 2026-10-22 cruzou os documentos 00 a 38 com `src/`,
 `test/` e `tools/`. Números do código: 86 áreas, 454 estações, 93 cavernas, 561
 itens, 464 fichas, 284 missões, 194 NPCs, 2.300 entradas de wiki, 887 perguntas
-de duelo, 133 módulos e 98 testes node. `npm run validate` passa (lint,
+de duelo, 133 módulos e 99 testes node. `npm run validate` passa (lint,
 contrato de módulos, testes e build) e a matriz de navegador dá 19/19.
 
 Esforço: **P** até um dia, **M** de dois a cinco dias, **G** mais de uma semana.
@@ -29,7 +29,7 @@ Estado: **feito**, **parcial**, **ausente**, **decisão** (produto, não código
 | capa e conjuntos de 3 peças | **feito** | slot `cloak`, duas capas craftáveis, bônus de conjunto (+2 vida e +1 dano) em `equipmentBonus`, desenho atrás do corpo e aviso na ficha; `test/gear.test.mjs` e `cdp-capa.mjs` | P a M |
 | ponto fraco do chefe após 2 acertos | **feito** | terceiro acerto seguido soma +1, com nota no feedback e teste no duelo real | P |
 | recarga de runa no altar | **feito** | altar cura e devolve uma carga da runa aprendida mais vazia, com teste | P |
-| documentos que mentem | **feito** | todos os documentos de conceito (00 a 13) estão congelados com aviso apontando o README e este backlog; os de engenharia (14 a 38) trazem medição; a pasta `README.md` separa as duas metades. 14 §AB fecha com a prova e remete a este mapa | P |
+| documentos que mentem | **feito** | os 14 documentos de conceito (00 a 13) estão congelados com aviso apontando o README e este backlog, inclusive o retrato `11-ESTADO-2026-10-20.md`; os de engenharia (14 a 19) trazem medição e as auditorias (20 a 38) são histórico datado. O `docs/design/README.md` separa as três camadas, manda para este mapa e não tem mais as listas antigas "o que ainda precisa do dono" e "o que vem depois do aval"; `test/documentos.test.mjs` cobra os 14 banners, o índice e as decisões | P |
 
 ## Onda 2: sistemas que já têm casa
 
