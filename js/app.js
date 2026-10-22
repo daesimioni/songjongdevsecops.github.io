@@ -1,3 +1,6 @@
+import { createInstrumentLoader } from "./instrument-loader.js";
+import { isTextEntry, nativeActivation } from "./input.js";
+import { moveWithCollision, advancePath, directionVector } from "./movement.js";
 import { cacheDeAssets, totalDeAssets } from "./assets/index.js";
 import {
   AREAS, CONTINENTS, CONTINENT_ORDER, SITES, WAYSTONES, SPAWN,
@@ -24,7 +27,7 @@ import { CATALOG } from "./catalog.js";
 
 // as 82 seções do catálogo têm farol próprio e são a porta do arquipélago
 const CATALOG_STONES = new Set(CATALOG.map((area) => area.existing || area.id));
-import { findPath, nearestWalkable } from "./path.js";
+import { findPath, nearestWalkable, findInteractionPath, tileWalkable } from "./path.js";
 import { feedPeer, peerRenderPosition } from "./interp.js";
 import { startTitle } from "./title.js";
 import { RPG } from "./rpg.js";
@@ -42,6 +45,7 @@ import { CONURBATION, DUNGEONS, dungeonById } from "./dungeon-data.js";
 
 const $ = (id) => document.getElementById(id);
 let dungeon = null;
+const instrumentLoader = createInstrumentLoader({ document, onError: (e) => console.error("[mundo]", e) });
 
 const LIVE = {
   logic: () => import("./zones/logic.js"),
@@ -175,16 +179,18 @@ for (const cid of CONTINENT_ORDER) {
 const rede = new Rede({ name: player.name });
 const backup = createBackup({ rede });
 let social = null;
+let rpg = null;
 const quests = new Quests({
   getCards: () => state.cards,
   getDocks: () => state.docks,
+  getBosses: () => rpg?.data.bosses || {},
   gainXp,
   toast,
   onReady: () => { audio.blip(); renderer.kick(0.35); },
   onChange: () => { if (state.modal === "journal") buildJournal(); },
 });
 
-const rpg = new RPG({
+rpg = new RPG({
   gainXp,
   toast,
   audio,
@@ -303,7 +309,7 @@ duelUi = createDuel({
   toast,
   audio,
   onClose: () => closeModal("duel"),
-  onVictory: () => { quests.report("hunts"); markStep("duel"); },
+  onVictory: (result) => { quests.report("hunts", result?.defeated || 1); markStep("duel"); },
 });
 
 const gatherUi = createGather({
@@ -1587,6 +1593,9 @@ function setSprintAtivo(on, som = true) {
 
 function stopSprint() {
   setSprintAtivo(false, false);
+  state.keys.clear();
+  state.touch.up = state.touch.down = state.touch.left = state.touch.right = false;
+  player.moving = false;
   clearPath();
 }
 
@@ -1968,6 +1977,8 @@ function restoreFocus(modalName) {
 }
 function openModal(name) {
   stopSprint();
+  pararSeguir();
+  dungeon?.stopControls();
   const opener = document.activeElement?.closest?.("button, a, input, [tabindex]") || document.activeElement;
   if (state.modal !== name) closeModal(state.modal);
   state.lastFocus = opener && opener !== document.body ? opener : null;
@@ -2008,6 +2019,8 @@ function trapFocus(e) {
 
 async function openPost(id, site) {
   stopSprint();
+  pararSeguir();
+  dungeon?.stopControls();
   const post = POSTS[id];
   if (!post) {
     toast("Esta pedra ainda está em silêncio.");
@@ -2044,41 +2057,15 @@ async function openPost(id, site) {
     const entry = LIVE[post.lab];
     const loader = typeof entry === "function" ? entry : entry.load;
     const variant = typeof entry === "function" ? null : entry.variant;
-    const loading = document.createElement("div");
-    loading.className = "widget-loading";
-    loading.textContent = "acendendo os instrumentos...";
-    live.appendChild(loading);
-    try {
-      const mod = await loader();
-      if (!state.panelOpen || state.currentPost !== id) return;
-      live.textContent = "";
-      const cleanup = await mod.mount(live, {
-        audio,
-        toast,
-        reducedMotion,
-        enableSound: () => setSound(true),
-        onOpenZone: (zoneId) => {
-          const c = CONTINENTS[zoneId];
-          if (c) toast(`${c.name}: ${c.sub}`, 2600);
-        },
-      }, variant);
-      // Fechar o painel durante o import do instrumento não pode deixar
-      // animação, canvas ou listener rodando escondido.
-      if (!state.panelOpen || state.currentPost !== id) {
-        if (typeof cleanup === "function") {
-          try { cleanup(); } catch { /* limpeza best-effort */ }
-        }
-        return;
-      }
-      state.panelCleanup = typeof cleanup === "function" ? cleanup : null;
-    } catch (e) {
-      live.textContent = "";
-      const err = document.createElement("p");
-      err.className = "widget-fail";
-      err.textContent = "O instrumento não carregou agora. O texto continua aqui; recarregue e tente de novo.";
-      live.appendChild(err);
-      console.error("[mundo]", e);
-    }
+    state.panelCleanup = () => instrumentLoader.clear();
+    await instrumentLoader.load(live, loader, {
+      audio, toast, reducedMotion,
+      enableSound: () => setSound(true),
+      onOpenZone: (zoneId) => {
+        const c = CONTINENTS[zoneId];
+        if (c) toast(`${c.name}: ${c.sub}`, 2600);
+      },
+    }, variant);
   }
 }
 
@@ -2286,14 +2273,8 @@ function walkStep(dx, dy, dt) {
   const oldX = player.x, oldY = player.y;
   // Em velocidade de nave o passo do quadro passa de um tile e atravessaria
   // parede fina. Divide o movimento em pedaços que a colisão consegue ver.
-  const chunks = Math.max(1, Math.ceil(step / 0.24));
-  const part = step / chunks;
-  for (let i = 0; i < chunks; i++) {
-    const nx = player.x + dx * part;
-    if (!world.boxCollides(nx, player.y, PLAYER_W, PLAYER_H)) player.x = nx;
-    const ny = player.y + dy * part;
-    if (!world.boxCollides(player.x, ny, PLAYER_W, PLAYER_H)) player.y = ny;
-  }
+  moveWithCollision(player, dx * step, dy * step,
+    (x, y) => !world.boxCollides(x, y, PLAYER_W, PLAYER_H));
   player.x = Math.max(0.5, Math.min(MAP_W - 0.5, player.x));
   player.y = Math.max(0.5, Math.min(MAP_H - 0.5, player.y));
   const moved = player.x !== oldX || player.y !== oldY;
@@ -2303,12 +2284,16 @@ function walkStep(dx, dy, dt) {
   else player.dir = dy > 0 ? 0 : 3;
   player.moving = moved;
   if (!moved) return false;
-  const now = performance.now();
-  if (now - state.footstepAt > (sprinting ? 155 : 340)) {
-    state.footstepAt = now;
-    if (sprinting) audio.hover(); else audio.footstep();
-  }
+  movementSound();
   return true;
+}
+
+function movementSound() {
+  const now = performance.now();
+  if (now - state.footstepAt > (state.sprint ? 155 : 340)) {
+    state.footstepAt = now;
+    if (state.sprint) audio.hover(); else audio.footstep();
+  }
 }
 
 function updateMovement(dt) {
@@ -2329,10 +2314,18 @@ function clearPath() {
   player.pathGoal = null;
 }
 
+function interactionRadius(kind) {
+  return { item: 1.4, gather: 2.2, cave: 1.8, casa: 1.8, porta: 1.5, mesa: 1.7, lareira: 1.7 }[kind] || INTERACT_RADIUS;
+}
+
 function setPathTo(x, y, pending = null, silencioso = false) {
   // acha o caminho antes de limpar: arrastar por cima da água não pode
   // interromper a caminhada que já estava em curso
-  const path = findPath(world, { x: player.x, y: player.y }, { x, y });
+  const target = pending?.kind === "cave" ? pending.obj.exit : pending?.obj;
+  const path = target
+    ? findInteractionPath(MAP_W, MAP_H, (tx, ty, pad) => tileWalkable(world, tx, ty, pad), player, target,
+      { radius: interactionRadius(pending.kind) })
+    : findPath(world, { x: player.x, y: player.y }, { x, y });
   if (!path || !path.length) {
     if (!silencioso) toast("Não achei um caminho até aí.", 2800);
     return false;
@@ -2350,32 +2343,21 @@ function updateAutoWalk(dt) {
   const path = state.path;
   if (!path || !path.length) return false;
   const stepLen = PLAYER_SPEED * (state.sprint ? SPRINT_MULT : 1) * rpg.speedMult() * (dungeon?.isOpen() ? 1 : rpg.mountSpeedMult()) * dt;
-  let target = path[0];
-  let dx = target.x - player.x;
-  let dy = target.y - player.y;
-  let dist = Math.hypot(dx, dy);
-  if (dist <= stepLen + 0.09) {
-    player.x = target.x;
-    player.y = target.y;
-    player.moving = true;
-    if (dx !== 0 && dy !== 0) player.dir = dy > 0 ? (dx < 0 ? 4 : 5) : (dx < 0 ? 6 : 7);
-    else if (dx !== 0) player.dir = dx > 0 ? 2 : 1;
-    else player.dir = dy > 0 ? 0 : 3;
-    path.shift();
-    if (!path.length) {
-      const pending = state.pending;
-      clearPath();
-      if (pending) {
-        const d = Math.hypot(pending.obj.x - player.x, pending.obj.y - player.y);
-        if (d <= INTERACT_RADIUS + 1.2) interactTarget(pending);
-        else toast("Não cheguei perto o bastante. Clique de novo.", 2800);
-      }
-    }
-    return true;
-  }
-  if (!walkStep(dx, dy, dt)) {
+  const result = advancePath(player, path, stepLen,
+    (x, y) => !world.boxCollides(x, y, PLAYER_W, PLAYER_H));
+  if (result.moved) movementSound();
+  if (result.blocked) {
     clearPath();
     toast("O caminho travou. Clique de novo.", 2600);
+  } else if (result.finished) {
+    const pending = state.pending;
+    clearPath();
+    if (pending) {
+      const point = pending.kind === "cave" ? pending.obj.exit : pending.obj;
+      const d = Math.hypot(point.x - player.x, point.y - player.y);
+      if (d <= interactionRadius(pending.kind)) interactTarget(pending);
+      else toast("Não cheguei perto o bastante. Clique de novo.", 2800);
+    }
   }
   return true;
 }
@@ -2413,7 +2395,8 @@ function updateCat(dt) {
     cat.moving = false;
     return;
   }
-  const behind = [[0, -0.9], [0.9, 0], [-0.9, 0], [0, 0.9]][player.dir] || [0, -0.9];
+  const vector = directionVector(player.dir);
+  const behind = [-vector.x * 0.9, -vector.y * 0.9];
   const behindX = player.x + behind[0];
   const behindY = player.y + behind[1];
   const d = Math.hypot(behindX - cat.x, behindY - cat.y);
@@ -2697,8 +2680,7 @@ function saveFog() {
 // ---------- eventos ----------
 window.addEventListener("keydown", (e) => {
   if (e.key === "Tab" && trapFocus(e)) return;
-  const tag = (e.target.tagName || "").toLowerCase();
-  if (tag === "input" || tag === "textarea") {
+  if (isTextEntry(e.target)) {
     // Esc dentro de um campo fecha o modal que o contém, não só a conversa
     if (e.key === "Escape") {
       if (state.modal) closeModal(state.modal);
@@ -2706,13 +2688,14 @@ window.addEventListener("keydown", (e) => {
     }
     return;
   }
+  if (nativeActivation(e)) return;
   const k = e.key.toLowerCase();
   const gameActive = state.started && !state.panelOpen && !state.modal && !state.chatOpen && !dungeon?.isOpen();
   if (gameActive && ["arrowup", "arrowdown", "arrowleft", "arrowright", " "].includes(k)) e.preventDefault();
   if (!state.started) return;
   if (state.modal === "duel" && duelUi) {
     const letter = /^[a-e]$/.test(k) ? k.charCodeAt(0) - 97 : -1;
-    if (/^[1-6]$/.test(k)) { e.preventDefault(); duelUi.answer(Number(k) - 1); return; }
+    if (/^[1-5]$/.test(k)) { e.preventDefault(); duelUi.answer(Number(k) - 1); return; }
     if (letter >= 0) { e.preventDefault(); duelUi.answer(letter); return; }
     if (k === "enter" || k === " ") { e.preventDefault(); duelUi.advance(); return; }
   }
@@ -2772,9 +2755,7 @@ window.addEventListener("keyup", (e) => {
   state.keys.delete(e.key.toLowerCase());
 });
 window.addEventListener("blur", () => {
-  state.keys.clear();
-  setSprintAtivo(false, false);
-  state.touch.up = state.touch.down = state.touch.left = state.touch.right = false;
+  stopSprint();
 });
 
 for (const btn of document.querySelectorAll(".dpad button")) {
@@ -3121,7 +3102,7 @@ window.addEventListener("pointerup", (e) => {
   if (!miniArraste || e.pointerId !== miniArraste.id) return;
   const arraste = miniArraste;
   miniArraste = null;
-  if (arraste.movido) return;
+  if (arraste.movido || !state.started || state.modal || state.panelOpen || dungeon?.isOpen()) return;
   const rect = $("minimap-canvas").getBoundingClientRect();
   const fx = (e.clientX - rect.left) / rect.width;
   const fy = (e.clientY - rect.top) / rect.height;
@@ -3138,6 +3119,9 @@ window.addEventListener("pointerup", (e) => {
   }
   setPathTo(goal.x, goal.y, null);
 });
+
+window.addEventListener("pointercancel", () => { miniArraste = null; });
+window.addEventListener("blur", () => { miniArraste = null; });
 
 function trocarZoomMini(delta) {
   const res = renderer.miniZoom(delta);
