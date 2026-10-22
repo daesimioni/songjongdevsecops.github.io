@@ -418,8 +418,16 @@ export function createSocial({ rede, backup, quests, player, getPeers, getNet, g
     return (members || []).map((m) => m.name || m.id).join(", ");
   }
 
+  // mensagem de party assinada: quem recebe só aceita se a chave do remetente
+  // bater com a prova. Sem assinador (teste/stub), o envio continua direto.
   function sendParty(payload) {
-    return !!myNet()?.sendParty?.(payload);
+    const net = myNet();
+    if (!net?.sendParty) return false;
+    if (!rede?.signText) return !!net.sendParty(payload);
+    const texto = `mundo-song:party:v1|${payload.act}|${payload.to || ""}|${payload.party || ""}|${payload.leader || ""}|${Date.now()}`;
+    const enviar = (proof) => net.sendParty({ ...payload, proof: proof || null, proofText: proof ? texto : "" });
+    Promise.resolve().then(() => rede.signText(texto)).then(enviar).catch(() => enviar(null));
+    return true;
   }
 
   function inviteToParty(peer) {
@@ -481,6 +489,18 @@ export function createSocial({ rede, backup, quests, player, getPeers, getNet, g
 
   function partyEvent(peer, msg) {
     if (!peer?.id || !msg || typeof msg.party !== "string" || !/^[a-z0-9_-]{1,40}$/i.test(msg.party)) return;
+    // com a chave pública do peer conhecida, a mensagem precisa vir assinada
+    if (peer.pubkey) {
+      if (!rede?.verifyText || !msg.proof || !msg.proofText || msg.proof.pubkey !== peer.pubkey) return;
+      Promise.resolve().then(() => rede.verifyText(msg.proof, msg.proofText))
+        .then((ok) => { if (ok) processarParty(peer, msg); })
+        .catch(() => {});
+      return;
+    }
+    processarParty(peer, msg);
+  }
+
+  function processarParty(peer, msg) {
     if (msg.act === "invite") {
       if (msg.leader !== peer.id) return;
       if (ui.party) { sendParty({ act: "leave", to: peer.id, party: msg.party }); return; }
@@ -813,5 +833,5 @@ export function createSocial({ rede, backup, quests, player, getPeers, getNet, g
 
   bind();
   updateBadge();
-  return { open, close, connect, updateBadge, partyEvent, inviteParty: inviteToParty, acceptParty: acceptPartyInvite, leaveParty, get thread() { return ui.thread; }, get party() { return ui.party; } };
+  return { open, close, connect, updateBadge, partyEvent, inviteParty: inviteToParty, acceptParty: acceptPartyInvite, leaveParty, get thread() { return ui.thread; }, get party() { return ui.party; }, get partyInvite() { return ui.partyInvite; } };
 }
