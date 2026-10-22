@@ -51,6 +51,7 @@ export function createInventoryUI({ rpg, toast, audio, onUse, onChange, getAvata
       const equipado = rpg.data.equipped?.[item.slot] === item.id;
       const botao = el("button", "inv-action", equipado ? "tirar" : "equipar");
       botao.type = "button";
+      botao.dataset.invFocus = `equipment:${item.id}`;
       botao.addEventListener("click", () => {
         const res = equipado ? rpg.unequip(item.slot) : rpg.equip(item.id);
         if (!res.ok) { toast(res.reason, 2600); return; }
@@ -66,6 +67,7 @@ export function createInventoryUI({ rpg, toast, audio, onUse, onChange, getAvata
     if (consumivel) {
       const usar = el("button", "inv-action usar", ehRuna ? "conjurar" : "usar");
       usar.type = "button";
+      usar.dataset.invFocus = `use:${item.id}`;
       usar.addEventListener("click", () => {
         if (ehRuna) {
           const res = rpg.castWorldSpell(item.id);
@@ -103,7 +105,10 @@ export function createInventoryUI({ rpg, toast, audio, onUse, onChange, getAvata
   function botaoSlot(item, origem, slotNome) {
     const slot = el("button", `inv-slot ${origem === "equip" ? "equip-slot" : "bag-slot"}${item ? " tem-item" : ""}`);
     slot.type = "button";
-    if (origem === "equip") slot.dataset.slot = slotNome;
+    if (origem === "equip") {
+      slot.dataset.slot = slotNome;
+      slot.dataset.invFocus = `slot:${slotNome}`;
+    } else if (item) slot.dataset.invFocus = `item:${item.id}`;
     if (item) {
       slot.style.setProperty("--c", itemAccent(item));
       slot.title = item.name;
@@ -166,6 +171,10 @@ export function createInventoryUI({ rpg, toast, audio, onUse, onChange, getAvata
     const grid = document.getElementById("inv-grid");
     const count = document.getElementById("inv-count");
     if (!equipBox || !grid) return;
+    const detail = document.getElementById("inv-detail");
+    const focused = document.activeElement;
+    const restore = focused && [equipBox, grid, detail].some((node) => node?.contains(focused));
+    const focusKey = focused?.dataset?.invFocus;
     equipBox.textContent = "";
     equipBox.appendChild(el("h3", "inv-sec", "equipado"));
     // o boneco com o que está vestido: a peça muda o desenho na hora
@@ -197,6 +206,7 @@ export function createInventoryUI({ rpg, toast, audio, onUse, onChange, getAvata
         const acoes = el("div", "equip-acoes");
         const off = el("button", "inv-mini", "tirar");
         off.type = "button";
+        off.dataset.invFocus = `slot:${slotInfo.slot}`;
         off.addEventListener("click", () => {
           rpg.unequip(slotInfo.slot);
           audio.blip();
@@ -245,6 +255,12 @@ export function createInventoryUI({ rpg, toast, audio, onUse, onChange, getAvata
     }
     const atual = ultimo ? rpg.inventoryList().find((i) => i.id === ultimo.id) : null;
     abrirDetalhe(atual);
+    if (restore) {
+      const nodes = [equipBox, grid, detail].flatMap((node) => [...(node?.querySelectorAll("[data-inv-focus]") || [])]);
+      const next = nodes.find((node) => focusKey && node.dataset.invFocus === focusKey)
+        || grid.querySelector("button");
+      next?.focus({ preventScroll: true });
+    }
   }
 
   return {

@@ -155,3 +155,25 @@ export function findPath(world, from, to, maxNodes = 16000) {
     maxNodes,
   });
 }
+
+// Objetos sólidos não são destinos caminháveis. Escolhe um ponto de ação
+// alcançável, dentro do raio e com visão livre, em vez de parar atrás da parede.
+export function findInteractionPath(width, height, walkable, from, target, {
+  radius = 1.7, goalPad = PATH_PAD, canInteract = () => true,
+} = {}) {
+  const goals = [];
+  for (let y = Math.max(0, Math.floor(target.y - radius)); y <= Math.min(height - 1, Math.ceil(target.y + radius)); y++) {
+    for (let x = Math.max(0, Math.floor(target.x - radius)); x <= Math.min(width - 1, Math.ceil(target.x + radius)); x++) {
+      const point = { x: x + 0.5, y: y + 0.5 };
+      if (Math.hypot(point.x - target.x, point.y - target.y) > radius) continue;
+      if (!walkable(x, y, goalPad) || !canInteract(point, target)) continue;
+      goals.push(point);
+    }
+  }
+  goals.sort((a, b) => Math.hypot(a.x - from.x, a.y - from.y) - Math.hypot(b.x - from.x, b.y - from.y));
+  for (const goal of goals) {
+    const path = findPathIn(width, height, walkable, from, goal, { goalPad });
+    if (path) return path;
+  }
+  return null;
+}

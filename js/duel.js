@@ -297,7 +297,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
           if (res.correct) audio.blip(); else audio.error?.();
           if (rpg.duel.phase === "victory") {
             audio.chime();
-            if (!rpg.duel.training) onVictory?.();
+            if (!rpg.duel.training) onVictory?.(rpg.duel.result);
           }
           render();
         });
@@ -367,7 +367,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
     if (res.healed) toast(`A runa curou ${res.healed} de vida.`, 2400);
     if (rpg.duel.phase === "victory") {
       audio.chime();
-      if (!rpg.duel.training) onVictory?.();
+      if (!rpg.duel.training) onVictory?.(rpg.duel.result);
     }
     render();
     return true;
@@ -396,7 +396,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
     else audio.error?.();
     if (rpg.duel.phase === "victory") {
       audio.chime();
-      if (!rpg.duel.training) onVictory?.();
+      if (!rpg.duel.training) onVictory?.(rpg.duel.result);
     }
     render();
   }

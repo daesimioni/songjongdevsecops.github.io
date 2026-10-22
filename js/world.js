@@ -751,9 +751,12 @@ export function createWorld() {
     sala.cama = { x: sala.x + 2.6, y: sala.y + 5.1 };
   }
   const interiorProps = [];
+  const interiorSolids = [];
   const assentosDaSala = (sala) => {
     const out = [];
-    const perto = (x, y) => Math.hypot(x - sala.mesa.x, y - sala.mesa.y) < 1.9 ||
+    const perto = (x, y) => Math.hypot(x - sala.spawn.x, y - sala.spawn.y) < 1.8 ||
+      Math.hypot(x - sala.door.x, y - sala.door.y) < 1.8 ||
+      Math.hypot(x - sala.mesa.x, y - sala.mesa.y) < 1.9 ||
       Math.hypot(x - sala.lareira.x, y - sala.lareira.y) < 1.9 ||
       Math.hypot(x - sala.cama.x, y - sala.cama.y) < 2.1;
     for (let x = sala.x + 1.7; x <= sala.x + sala.w - 1.5; x += 2.4) {
@@ -774,6 +777,7 @@ export function createWorld() {
     const sala = INTERIORES[house.tipo];
     if (!sala) return null;
     interiorProps.length = 0;
+    interiorSolids.length = 0;
     const lista = MOVEIS[house.tipo] || MOVEIS.casa;
     const assentos = assentosDaSala(sala);
     const rnd = mulberry32(Math.floor(house.x * 977 + house.y * 331 + 13));
@@ -790,6 +794,13 @@ export function createWorld() {
     interiorProps.push({ tipo: "mesa", x: sala.mesa.x, y: sala.mesa.y, bioma: house.bioma });
     interiorProps.push({ tipo: "fogueira", x: sala.lareira.x, y: sala.lareira.y, bioma: house.bioma });
     if (house.tipo !== "galpao") interiorProps.push({ tipo: "cama", x: sala.cama.x, y: sala.cama.y, bioma: house.bioma });
+    for (const item of interiorProps) {
+      const box = CAIXA_CENARIO[item.tipo] || (item.tipo === "estante" ? [0.5, 0.3, 0.3] : null);
+      // Os móveis fixos já têm caixas permanentes; só a mobília da casa
+      // atual entra aqui, sem deixar colisões invisíveis na próxima casa.
+      if (!box || item.tipo === "fogueira") continue;
+      interiorSolids.push({ x: item.x, y: item.y - box[2], hw: box[0], hh: box[1] });
+    }
     return sala;
   }
   const casas = [];
@@ -993,6 +1004,9 @@ export function createWorld() {
     }
     const hw = w / 2;
     const hh = h / 2;
+    for (const p of interiorSolids) {
+      if (Math.abs(x - p.x) < hw + p.hw && Math.abs(y - p.y) < hh + p.hh) return true;
+    }
     const bx0 = Math.floor((x - hw) / PROP_CELL);
     const bx1 = Math.floor((x + hw) / PROP_CELL);
     const by0 = Math.floor((y - hh) / PROP_CELL);
@@ -1184,8 +1198,8 @@ export function createWorld() {
   }
 
   // os três móveis fixos da sala (mesa, fogo e cama) também barram o corpo.
-  // A mobília sorteada (barril, caixote, fardo) continua decorativa; estas
-  // caixas ficam no bolsão da casa, longe das ilhas, e valem para as 4 salas.
+  // A mobília sorteada tem caixas trocadas em prepararInterior; estas
+  // caixas fixas ficam no bolsão da casa, longe das ilhas, e valem para as 4 salas.
   for (const [tipo, sala] of Object.entries(INTERIORES)) {
     const mesa = addProp(sala.mesa.x, sala.mesa.y - 0.3, 0.7, 0.3);
     if (mesa) mesa.tipo = `movel:mesa:${tipo}`;

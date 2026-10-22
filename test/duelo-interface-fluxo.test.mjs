@@ -23,8 +23,8 @@ globalThis.localStorage = { getItem: k => store.get(k) ?? null, setItem: (k,v) =
 const { RPG } = await import('../js/rpg.js');
 const { GROUNDS } = await import('../js/rpg-data.js');
 const { createDuel } = await import('../js/duel.js');
-const rpg = new RPG(); let wins = 0;
-const ui = createDuel({ rpg, audio: { blip() {}, chime() {} }, toast() {}, onVictory: () => wins++ });
+const rpg = new RPG(); let wins = 0, defeated = 0;
+const ui = createDuel({ rpg, audio: { blip() {}, chime() {} }, toast() {}, onVictory: result => { wins++; defeated = result.defeated; } });
 const ground = GROUNDS.find(g => g.id === 'cs');
 try {
   ui.open({id:'ui-main',name:'Principal',kind:'slime',tier:1}, ground, false,
@@ -45,6 +45,7 @@ try {
     else nodes.filter(e => e.className === 'duel-option')[rpg.duel.partner.question.answer].handlers.click();
   }
   assert.equal(wins, 1, 'último parceiro dispara evento de vitória e missão uma vez');
+  assert.equal(defeated, 2, 'vitória informa dois monstros para a missão');
   assert.match(elements.get('duel-body').textContent, /voltar ao mapa/);
 } finally { ui.close(); }
 console.log('ok controlador do duelo: mana, principal primeiro, matilha e evento de vitória');

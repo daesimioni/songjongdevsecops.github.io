@@ -1,3 +1,4 @@
+import { directionAngle } from "./movement.js";
 import { outfitById } from "./outfits.js";
 import { avatarColors } from "./avatar.js";
 import { drawHuman } from "./human.js";
@@ -2362,7 +2363,7 @@ export function createRenderer(canvas, world) {
     mctx.save();
     mctx.translate(px, py);
     // a seta aponta para onde o boneco olha; a base do triângulo é o norte
-    mctx.rotate([Math.PI, Math.PI * 1.5, Math.PI * 0.5, 0][dir] || 0);
+    mctx.rotate(directionAngle(dir) + Math.PI / 2);
     mctx.beginPath();
     mctx.moveTo(0, -11);
     mctx.lineTo(-7, 8);
