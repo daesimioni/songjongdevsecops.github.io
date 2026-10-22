@@ -108,6 +108,7 @@ A árvore já vergava com a rajada e o fogo já tinha 4 a 8 quadros.
 | 2026-10-22 | Foco do botão | botão usado com o mouse perde o foco depois do clique e modal aberto no mouse devolve o foco ao jogo, então o Espaço liga a nave em vez de repetir o botão; a ativação por teclado continua igual | `test/interfaces.test.mjs`, `cdp-foco.mjs` (11/11), 112/112 suítes, 19/19 no navegador |
 | 2026-10-22 | Malha P2P entre jogadores | o broker apresenta as pessoas e cada par abre um canal WebRTC direto; posição vai por canal não confiável a 10 Hz e eventos por canal confiável, com repasse ttl 2, dedupe por uid e broker de reserva; a espera de peer subiu para 12 s; o teste de duas abas derruba o broker de um lado e a posição continua chegando pelo canal direto | `test/malha.test.mjs`, `cdp-malha.mjs` (10/10), 113/113 suítes, 19/19 no navegador |
 | 2026-10-22 | Vida e mana dos pares | vida, mana e máximos viajam no mesmo pacote da posição; cada par desenha a placa do outro no fim do quadro, com as mesmas barras e transparência, então todo mundo vê a vida e a mana de todo mundo | `test/vitais.test.mjs`, `cdp-malha.mjs` (12/12), 113/113 suítes, 19/19 no navegador |
+| 2026-10-22 | Rosa dos ventos do mapa | o mapa grande ganhou uma rosa de nove pontos: oito direções andam uma tela e o centro volta a seguir o personagem; no mapa inteiro a rosa aproxima antes de andar | `test/interfaces.test.mjs`, `cdp-mapa-tela.mjs` (rosa, leste e centro), 113/113 suítes, 19/19 no navegador |
 
 ## Fecho da revisão (2026-10-22)
 

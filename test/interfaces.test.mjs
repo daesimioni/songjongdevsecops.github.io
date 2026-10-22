@@ -46,6 +46,14 @@ check(/\.shop-card \{ width: 100%; \}/.test(css), "card da loja ainda com largur
 check(/openShop: \(\) => openShop\(\)/.test(app), "gancho openShop da sonda sumiu");
 check(/openDuel: \(mon, ground, boss, partner\) => openDuel\(/.test(app), "gancho openDuel da sonda sumiu");
 
+// rosa dos ventos do mapa grande: oito pontas e o centro
+check((html.match(/data-rosa="/g) || []).length === 9, "a rosa do mapa não tem nove pontos");
+check(/id="rosa"/.test(html), "a rosa não existe no HTML");
+check(/\.minimap\.grande \.rosa \{ display: grid; \}/.test(css), "a rosa não aparece no mapa grande");
+check(/function andarPelaRosa\(/.test(app), "o app não navega pela rosa");
+check(/renderer\.miniPanBy\(dx, dy\)/.test(app), "a rosa não move o mapa");
+check(/renderer\.miniRecenter\(\)/.test(app), "a rosa não volta ao personagem");
+
 // botão usado com o ponteiro solta o foco: o próximo Espaço é da nave, não do botão
 check(/let ultimoGesto = "teclado"/.test(app), "sem rastreio do último gesto");
 check(/botao\.blur\(\)/.test(app), "botão clicado continua selecionado");

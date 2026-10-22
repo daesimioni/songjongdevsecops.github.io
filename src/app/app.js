@@ -3726,6 +3726,35 @@ window.addEventListener("keydown", (e) => {
   pintarMapaGrande(false);
 }, true);
 
+// rosa dos ventos do mapa grande: cada ponta anda uma tela na direção, e o
+// centro volta a seguir o personagem (o clique no mapa continua indo até o ponto)
+function andarPelaRosa(direcao) {
+  if (!mapaGrande) return;
+  if (direcao === "centro") {
+    renderer.miniRecenter();
+    pintarZoomMini(renderer.miniScale ? `${renderer.miniScale}×` : "1×");
+    audio.blip();
+    return;
+  }
+  // no mapa inteiro não há o que arrastar: aproxima antes de andar
+  if (renderer.miniScale === 0) renderer.miniZoom(1);
+  const rect = $("minimap-canvas")?.getBoundingClientRect();
+  if (!rect) return;
+  const passo = Math.max(120, Math.round(Math.min(rect.width, rect.height) * 0.55));
+  const meio = Math.round(passo * 0.7);
+  const dx = { l: -passo, o: passo, ne: -meio, se: -meio, no: meio, so: meio }[direcao] || 0;
+  const dy = { n: passo, s: -passo, ne: meio, no: meio, se: -meio, so: -meio }[direcao] || 0;
+  if (!renderer.miniPanBy(dx, dy)) return;
+  pintarZoomMini(`${renderer.miniScale}×`);
+  audio.blip();
+}
+$("rosa")?.addEventListener("click", (e) => {
+  const botao = e.target.closest?.("[data-rosa]");
+  if (!botao) return;
+  e.preventDefault();
+  andarPelaRosa(botao.dataset.rosa);
+});
+
 $("mini-in").addEventListener("click", () => trocarZoomMini(1));
 $("mini-out").addEventListener("click", () => trocarZoomMini(-1));
 $("mini-fit").addEventListener("click", () => {

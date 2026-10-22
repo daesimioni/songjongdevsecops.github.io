@@ -648,6 +648,17 @@
       <button type="button" id="mini-toggle" class="mini-btn mini-fold" aria-expanded="true" aria-controls="minimap-canvas mini-tools" aria-label="minimizar o minimapa">–</button>
     </div>
     <canvas id="minimap-canvas" width="600" height="400" role="img" aria-label="Minimapa do arquipélago, centrado no personagem. Use os botões ou a roda do mouse para o zoom, arraste para espiar outro canto, e clique num ponto revelado para andar até lá."></canvas>
+    <div class="rosa" id="rosa" role="group" aria-label="navegação do mapa em oito direções">
+      <button type="button" data-rosa="no" aria-label="ir para noroeste">↖</button>
+      <button type="button" data-rosa="n" aria-label="ir para norte">↑</button>
+      <button type="button" data-rosa="ne" aria-label="ir para nordeste">↗</button>
+      <button type="button" data-rosa="o" aria-label="ir para oeste">←</button>
+      <button type="button" data-rosa="centro" aria-label="voltar ao personagem" title="voltar ao personagem">⌖</button>
+      <button type="button" data-rosa="l" aria-label="ir para leste">→</button>
+      <button type="button" data-rosa="so" aria-label="ir para sudoeste">↙</button>
+      <button type="button" data-rosa="s" aria-label="ir para sul">↓</button>
+      <button type="button" data-rosa="se" aria-label="ir para sudeste">↘</button>
+    </div>
     <div class="mini-tools" id="mini-tools">
       <button type="button" id="mini-out" class="mini-btn" aria-label="diminuir o zoom do minimapa">−</button>
       <span id="mini-zoom" class="mini-zoom" aria-live="polite">3×</span>
