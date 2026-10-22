@@ -1876,6 +1876,10 @@ body.na-casa .minimap { display: none; }
 .item-text span { display: block; font-family: var(--mono); font-size: 10px; line-height: 1.45; color: var(--muted); }
 .item-use {
   flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28px;
   padding: 6px 9px;
   border: 1px solid rgba(97, 244, 192, 0.45);
   border-radius: 6px;
@@ -3794,6 +3798,7 @@ body.na-casa .minimap { display: none; }
 .wiki-tabs { display: flex; flex-wrap: wrap; gap: 6px; }
 .wiki-tab {
   font-family: var(--mono); font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase;
+  display: inline-flex; align-items: center; min-height: 28px;
   padding: 5px 10px; border: 1px solid var(--line); border-radius: 999px;
   background: rgba(9, 12, 22, .72); color: var(--muted); cursor: pointer;
 }
@@ -3837,4 +3842,13 @@ body.na-casa .minimap { display: none; }
     -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 12%, #000 88%, transparent 100%);
     mask-image: linear-gradient(180deg, transparent 0, #000 12%, #000 88%, transparent 100%);
   }
+}
+
+/* no celular a wiki vira uma coluna: duas colunas de 170 px espremiam o título
+   e a categoria da ficha */
+@media (max-width: 560px) {
+  .wiki-list { grid-template-columns: 1fr; }
+  .wiki-tab { font-size: 11px; }
+  /* a largura de 94vw + padding do card estourava 3 px no celular */
+  .shop-card { width: 100%; }
 }

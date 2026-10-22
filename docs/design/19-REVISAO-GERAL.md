@@ -62,6 +62,7 @@ A árvore já vergava com a rajada e o fogo já tinha 4 a 8 quadros.
 
 | data | onda | o que mudou | prova |
 |---|---|---|---|
+| 2026-10-21 | passada de interfaces | 9 painéis medidos em 1280 e 390, zero estouro horizontal e zero alvo abaixo de 28 px; abas da wiki e botões de ação cresceram; wiki de 1 coluna no celular; loja sem estouro | `test/interfaces.test.mjs`, `cdp-ui-audit.mjs`, 32/32 suítes, 19/19 no navegador |
 | 2026-10-21 | animação de NPC e pet | cabeça parada olha em volta e cabeceia (46 px na cabeça, 0 no corpo); gato pisca e mexe a cauda (60 px na cauda, 13 no olho); passo do NPC confirmado | `test/animacao-idle.test.mjs`, `cdp-anim-idle.mjs`, 31/31 suítes, 19/19 no navegador |
 | 2026-10-21 | salas temáticas | 93 cavernas com sala de assinatura: oficina (35), biblioteca (36) e observatório (22), três peças de cenário encostadas na parede e sólidas; miolo livre para o combate | `test/salas.test.mjs`, 30/30 suítes, 19/19 no navegador, sonda `cdp-sala-tema.mjs` |
 | 2026-10-21 | contraste | sonda de contraste corrigida para fundo em gradiente e elemento coberto/fora da tela; 218 textos únicos em 10 estados e no 390 px, zero falha | `cdp-contraste.mjs`, autoteste do medidor, 0 falha |

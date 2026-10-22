@@ -3510,7 +3510,7 @@ window.addEventListener("beforeunload", () => {
   }, { capture: true });
 
   if (new URLSearchParams(location.search).has("debug")) {
-    window.__mundo = { player, state, world, renderer, audio, quests, rede, backup, rpg, sheetUi, duelUi, dungeon, pvpUi, knockDown, findPath, assets: { cache: cacheDeAssets, total: totalDeAssets }, openPost: (id) => openPost(id), openTravel: (mode) => openTravel(mode), openVocacoes: () => openVocacoes(), openWiki: (opcoes) => openWiki(opcoes), catalog: CATALOG_CONTENT, catalogStones: [...CATALOG_STONES], waystones: WAYSTONES, get social() { return social; } };
+    window.__mundo = { player, state, world, renderer, audio, quests, rede, backup, rpg, sheetUi, duelUi, dungeon, pvpUi, knockDown, findPath, assets: { cache: cacheDeAssets, total: totalDeAssets }, openPost: (id) => openPost(id), openTravel: (mode) => openTravel(mode), openShop: () => openShop(), openDuel: (mon, ground, boss, partner) => openDuel(mon, ground, boss, partner), openVocacoes: () => openVocacoes(), openWiki: (opcoes) => openWiki(opcoes), catalog: CATALOG_CONTENT, catalogStones: [...CATALOG_STONES], waystones: WAYSTONES, get social() { return social; } };
   }
 
   // link direto: ?wiki=termo abre a wiki por cima da entrada, sem personagem
