@@ -1,3 +1,5 @@
+import { isTextEntry, nativeActivation } from "./input.js";
+import { moveWithCollision, advancePath, directionVector, directionAngle } from "./movement.js";
 // A caverna: um mapa próprio, em tela cheia, com salas e túneis que se cruzam.
 // O bicho que vê você começa a batalha sozinho, como nos jogos de bolso: anda
 // pelo corredor, entra no campo de visão, exclama e chama o duelo de perguntas.
@@ -7,7 +9,7 @@ import { GROUNDS, ITEMS, RELICS, TIERS } from "./rpg-data.js";
 import { PET_BY_CONTINENT, PETS } from "./pets.js";
 import { drawCreatureArt } from "./creature.js";
 import { drawHuman } from "./human.js";
-import { findPathIn } from "./path.js";
+import { findPathIn, findInteractionPath } from "./path.js";
 import { hash2 } from "./world.js";
 import { drawPetSprite } from "./pet-art.js";
 import { drawSkiff } from "./skiff.js";
@@ -191,8 +193,7 @@ export function dungeonCanSeePlayer(map, monster, player) {
   const dx = player.x - monster.x, dy = player.y - monster.y;
   const distance = Math.hypot(dx, dy);
   if (distance > monster.vision) return false;
-  const directions = [[0, 1], [-1, 0], [1, 0], [0, -1], [-1, 1], [1, 1], [-1, -1], [1, -1]];
-  const [vx, vy] = directions[monster.dir] || directions[0];
+  const { x: vx, y: vy } = directionVector(monster.dir);
   const facing = distance > 0.001 ? (vx * dx + vy * dy) / (distance * Math.hypot(vx, vy)) : 1;
   if (facing < Math.cos(monster.fov ?? 1.2)) return false;
   return dungeonLineOfSight(map, monster.x, monster.y, player.x, player.y);
@@ -1040,7 +1041,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
         props.push({
           kind: "vocacao",
           x: room.x + room.w * 0.5,
-          y: room.y + 5.6,
+          y: room.y + Math.min(5.6, room.h - 1.4),
           label: "mesa de vocação",
           interact: true,
         });
@@ -1404,7 +1405,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     g.stroke();
     g.save();
     g.translate(px, py);
-    g.rotate([Math.PI, Math.PI * 1.5, Math.PI * 0.5, 0][state.player.dir] || 0);
+    g.rotate(directionAngle(state.player.dir) + Math.PI / 2);
     g.beginPath();
     g.moveTo(0, -7);
     g.lineTo(-5, 5);
@@ -1437,12 +1438,8 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     const ox = p.x;
     const oy = p.y;
     // A nave anda rápido demais para a colisão de um passo só.
-    const chunks = Math.max(1, Math.ceil(step / 0.24));
-    const part = step / chunks;
-    for (let i = 0; i < chunks; i++) {
-      if (boxFree(state.map, p.x + dx * part, p.y, 0, state.solids)) p.x += dx * part;
-      if (boxFree(state.map, p.x, p.y + dy * part, 0, state.solids)) p.y += dy * part;
-    }
+    moveWithCollision(p, dx * step, dy * step,
+      (x, y) => boxFree(state.map, x, y, 0, state.solids));
     p.x = clamp(p.x, 0.6, state.map.W - 0.6);
     p.y = clamp(p.y, 0.6, state.map.H - 0.6);
     const moved = p.x !== ox || p.y !== oy;
@@ -1456,14 +1453,12 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
   function setPathTo(x, y, pending = null, silencioso = false) {
     // acha antes de limpar: arrastar por cima da parede não pode parar a
     // caminhada que já estava em curso
-    const path = findPathIn(
-      state.map.W,
-      state.map.H,
-      walkable,
-      { x: state.player.x, y: state.player.y },
-      { x, y },
-      { goalPad: PATH_PAD },
-    );
+    const path = pending
+      ? findInteractionPath(state.map.W, state.map.H, walkable, state.player, pending, {
+        goalPad: PATH_PAD,
+        canInteract: (from, target) => dungeonLineOfSight(state.map, from.x, from.y, target.x, target.y),
+      })
+      : findPathIn(state.map.W, state.map.H, walkable, state.player, { x, y }, { goalPad: PATH_PAD });
     if (!path || !path.length) {
       if (!silencioso) say("Não há passagem por ali.", 2200);
       return false;
@@ -1479,30 +1474,20 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
       state.path = null;
       return;
     }
-    const stepLen = SPEED * (state.sprint ? SPRINT : 1) * rpg.speedMult() * dt * 1.05;
-    const target = path[0];
-    const dx = target.x - state.player.x;
-    const dy = target.y - state.player.y;
-    const dist = Math.hypot(dx, dy);
-    if (dist <= stepLen + 0.08) {
-      state.player.x = target.x;
-      state.player.y = target.y;
-      state.player.moving = true;
-      path.shift();
-      if (!path.length) {
-        state.path = null;
-        const pending = state.pending;
-        state.pending = null;
-        if (pending) {
-          const d = Math.hypot(pending.x - state.player.x, pending.y - state.player.y);
-          if (d <= 1.8) act(pending);
-        }
-      }
-      return;
-    }
-    if (!walkStep(dx, dy, dt)) {
+    const stepLen = SPEED * (state.sprint ? SPRINT : 1) * rpg.speedMult() * dt;
+    const result = advancePath(state.player, path, stepLen,
+      (x, y) => boxFree(state.map, x, y, 0, state.solids));
+    if (result.blocked) {
       state.path = null;
       state.pending = null;
+    } else if (result.finished) {
+      state.path = null;
+      const pending = state.pending;
+      state.pending = null;
+      if (pending) {
+        const d = Math.hypot(pending.x - state.player.x, pending.y - state.player.y);
+        if (d <= 1.8 && dungeonLineOfSight(state.map, state.player.x, state.player.y, pending.x, pending.y)) act(pending);
+      }
     }
   }
 
@@ -1612,7 +1597,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
       return;
     }
     if (obj.kind === "altar") {
-      if (clock() - state.altarAt < 45000) {
+      if (state.altarAt > 0 && clock() - state.altarAt < 45000) {
         say("O altar ainda está esfriando. Espere um pouco.");
         return;
       }
@@ -2444,8 +2429,8 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     const y = m.y * TILE;
     const d = Math.hypot(state.player.x - m.x, state.player.y - m.y);
     if (d < m.vision + 3) {
-      const ang = [Math.PI / 2, Math.PI, 0, -Math.PI / 2][m.dir] || 0;
-      const fov = m.fov || 1.2;
+      const ang = directionAngle(m.dir);
+      const fov = m.fov ?? 1.2;
       ctx.save();
       ctx.globalAlpha = 0.1;
       ctx.fillStyle = m.accent;
@@ -2521,8 +2506,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
 
   function onKeyDown(e) {
     if (!state.open || blocked()) return;
-    const tag = (e.target.tagName || "").toLowerCase();
-    if (tag === "input" || tag === "textarea") return;
+    if (isTextEntry(e.target) || nativeActivation(e)) return;
     // A caverna consome a tecla: sem isso, o F que sobe pela escada também
     // seria lido pelo mapa da superfície no mesmo evento e abriria outra coisa.
     e.stopImmediatePropagation();
@@ -2568,6 +2552,9 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
   function onBlur() {
     pararSeguir();
     state.keys.clear();
+    state.path = null;
+    state.pending = null;
+    state.player.moving = false;
     setSprint(false);
   }
 
@@ -2687,6 +2674,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     enterCity,
     isOpen: () => state.open,
     onDuelClosed,
+    stopControls: onBlur,
     useTorch(ms = 120000) {
       state.torchUntil = Math.max(state.torchUntil, clock() + ms);
       say("A tocha acende. A caverna fica menor.", 2600);
@@ -2718,3 +2706,6 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     get state() { return state; },
   };
 }
+
+// A auditoria usa a mesma colisão do controlador, incluindo os sólidos vivos.
+export { boxFree as dungeonBoxFree };
