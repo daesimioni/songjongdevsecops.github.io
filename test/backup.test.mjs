@@ -111,3 +111,30 @@ assert.equal(kept.restored, undefined, "conta com progresso não é trocada no b
 assert.equal(store.get(STORAGE.xp), JSON.stringify(100), "progresso local continua");
 
 console.log("ok backup da conta na DM: envelope, whitelist, dedupe e restauração");
+
+// A rede demora; uma descoberta durante a espera não pode ser apagada.
+store.clear();
+let release;
+const delayed = { ...fakeRede, selfSavesRecent: () => new Promise(resolve => { release = resolve; }) };
+const pending = backup.createBackup({ rede: delayed }).restoreIfEmpty();
+store.set(STORAGE.xp, JSON.stringify(7));
+release([{ text: sent[0] }]);
+assert.equal((await pending).ok, false);
+assert.equal(store.get(STORAGE.xp), '7', 'progresso durante a busca do backup é preservado');
+for (const progress of [{ skills: { cs: 1 } }, { pets: { gato: { bond: 1 } } }, { spells: { 'runa-cura': true } }]) {
+  store.clear(); store.set(STORAGE.rpg, JSON.stringify(progress));
+  assert.equal(backup.localIsEmpty(), false, 'perícia, pet e magia são progresso mesmo sem XP');
+}
+store.clear();
+store.set(STORAGE.xp, '91');
+store.set(STORAGE.cards, '["local"]');
+const originalSet = localStorage.setItem;
+let blocked = false;
+localStorage.setItem = (key, value) => {
+  if (key === STORAGE.xp && !blocked) { blocked = true; throw new Error('quota'); }
+  originalSet(key, value);
+};
+assert.equal(backup.restore(round).ok, false, 'falha parcial não anuncia sucesso');
+localStorage.setItem = originalSet;
+assert.equal(store.get(STORAGE.xp), '91');
+assert.equal(store.get(STORAGE.cards), '["local"]', 'falha desfaz chave que já tinha sido restaurada');
