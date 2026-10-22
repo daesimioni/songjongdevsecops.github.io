@@ -9,7 +9,7 @@ de ele existir, com números que o código já superou.
 Auditoria read-only de 2026-10-22 cruzou os documentos 00 a 38 com `src/`,
 `test/` e `tools/`. Números do código: 86 áreas, 454 estações, 93 cavernas, 541
 itens, 464 fichas, 284 missões, 194 NPCs, 2.251 entradas de wiki, 887 perguntas
-de duelo, 120 módulos e 82 testes node. `npm run validate` passa (lint,
+de duelo, 120 módulos e 83 testes node. `npm run validate` passa (lint,
 contrato de módulos, testes e build) e a matriz de navegador dá 19/19.
 
 Esforço: **P** até um dia, **M** de dois a cinco dias, **G** mais de uma semana.
@@ -41,7 +41,7 @@ Estado: **feito**, **parcial**, **ausente**, **decisão** (produto, não código
 | formatos de pergunta e prova de transferência | ausente | hoje só A-E; decidir com o dono a colisão com "não há prova final" | G |
 | ofícios por continente e mercador de troca | parcial | **mercador de troca feito**: quatro ofertas material por material no guardião de qualquer cidade, sempre com perda e sem leilão (`test/mercador.test.mjs`, `cdp-mercador.mjs`: 5 madeiras → 1 madeira e 1 ferro); falta separar o ofício (receita) por continente | M |
 | magias, encantos e consumíveis no alvo do desenho | parcial | 6 runas, 3 encantos, 18 receitas, 10 consumíveis; alvo era 12 magias, 12 encantos, 9 poções e 15 comidas | M |
-| famílias, variantes e fraqueza numérica | parcial | **famílias feitas**: as 25 formas caem em 5 famílias, o bestiário mostra conhecidos/total por família e completar rende +50% de dano contra ela (previsão e dano reais), avisado uma vez e salvo (`test/familias.test.mjs`, `cdp-familias.mjs`: previsão 1,1 → 1,7); faltam as variantes elite/antiga/eco | M |
+| famílias, variantes e fraqueza numérica | **feito** | 25 formas em 5 famílias, faixa no bestiário e +50% contra a família completa (`test/familias.test.mjs`, previsão 1,1 → 1,7). **Variantes**: eco (10%), elite (5%) e antiga (3%) decididas por caverna e sala, trocando vida, dano, XP, material, cor e nome, com linha no duelo (`test/variantes.test.mjs`, `cdp-variantes-criatura.mjs`: "Sílaba Antiga" com vida 6) | M |
 | clima afetando spawn | **feito** | chuva, neblina e rajada trocam o elenco do subsolo pelo clima (`nomeDaCacada`), sem mexer em sala, posto ou tier; o relógio do clima passou a andar no laço (não só no desenho) e o `forcarEvento` emite os ganchos; `test/cacada-clima.test.mjs` e `cdp-cacada-clima.mjs` (6 de 6 bichos molhados na chuva, 7 no limpo) | M |
 | audição, alerta, patrulha e perseguição | parcial | **audição e sono feitos**: correr perto (6,5 tiles) de quem não vê vira o rosto para o som com `?` por 2,2 s, sem duelo; andar não faz barulho; um quinto dos bichos nasce dormindo (`z`), e só acorda com passo a menos de 2,6 tiles ou corrida no raio; provas `test/audicao.test.mjs`, `cdp-audicao.mjs` e `cdp-sono.mjs` (2/2/1 dormindo por caverna, longe a 5,2 tiles não acorda); faltam patrulha e isca | M |
 | escudo que barra erro e resistência por tipo | parcial | **escudo equipado feito**: segura o primeiro erro de cada duelo, gasta a carga, avisa na leitura e na ficha, não gasta com runa/espelho e recarrega no duelo seguinte (`test/escudo-equip.test.mjs`, `cdp-escudo.mjs`: vida 28 no primeiro erro, 25 no segundo); falta resistência por tipo (qual tipo: espécie, trait ou disciplina, decisão) | M |

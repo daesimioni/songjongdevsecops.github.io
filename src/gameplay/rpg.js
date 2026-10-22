@@ -900,7 +900,7 @@ export class RPG {
     if (monster === d?.monster && espelhoDoChefe(d?.habilidade?.id, bossPhase, d?.espelhoUsado)) return 0;
     const base = TIERS[tier]?.damage || 0;
     const extra = monster === d?.monster ? extraDoErro(d?.habilidade?.id, bossPhase) : 0;
-    return this.danoSofrido(base + Math.max(0, (bossPhase || 1) - 1) * 2 + extra)
+    return this.danoSofrido(base + Math.max(0, (bossPhase || 1) - 1) * 2 + extra + (Number(monster?.danoExtra) || 0))
       + (MONSTER_TRAITS[monster?.kind]?.id === "haste" ? Math.ceil(base / 2) : 0);
   }
 
@@ -1410,7 +1410,9 @@ export class RPG {
       .slice(0, 3);
     const deck = this.duelDeck(ground.continent, boss ? 3 : monster.tier, monster?.theme || ground.theme);
     if (!deck.length) return { ok: false, reason: "As perguntas deste continente ainda não foram escritas." };
-    const hp = boss ? TIERS[4].hp : TIERS[monster.tier].hp;
+    const hp = boss
+      ? TIERS[4].hp
+      : Math.round(TIERS[monster.tier].hp * (Number(monster.hpMult) || 1));
     this.duel = {
       monster,
       ground,
@@ -1783,8 +1785,8 @@ export class RPG {
     const monster = d.monster;
     const tier = d.boss ? 4 : monster.tier;
     const itemId = d.boss ? ground.bossLoot : ground.loot[Math.min(2, Math.max(0, tier - 1))];
-    const loot = [{ id: itemId || ground.loot[0], qty: 1 }];
-    if (ground.material) loot.push({ id: ground.material, qty: d.boss ? 3 : 1 });
+    const loot = [{ id: itemId || ground.loot[0], qty: Math.max(1, Number(monster?.lootMult) || 1) }];
+    if (ground.material) loot.push({ id: ground.material, qty: (d.boss ? 3 : 1) * (Number(monster?.lootMult) || 1) });
     if (d.boss) loot.push({ id: "pocao", qty: 1 });
     else if (Math.random() < 0.28) loot.push({ id: "pocao", qty: 1 });
     // caçador de recompensa: a caçada rende uma peça a mais
@@ -1797,7 +1799,7 @@ export class RPG {
         this.addItem(accessory, 1);
       }
     }
-    let xp = TIERS[tier].xp;
+    let xp = Math.round(TIERS[tier].xp * (Number(monster?.xpMult) || 1));
     for (const p of (d.partners || []).filter((x) => x.done)) {
       const ptier = p.tier;
       const pItem = ground.loot[Math.min(2, Math.max(0, ptier - 1))];

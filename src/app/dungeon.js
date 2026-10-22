@@ -21,6 +21,7 @@ import { fracoesDeVida } from "../core/vitais.js";
 import { propsDaSala } from "../content/salas-tematicas.js";
 import { nomeDaCacada } from "../content/cacada-clima.js";
 import { ouveOPassoS, direcaoPara, acordaComOPasso } from "../world/audicao.js";
+import { varianteDe } from "../world/variantes.js";
 
 const $ = (id) => document.getElementById(id);
 const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
@@ -263,6 +264,17 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
       let h = 0;
       for (const ch of `${def.id}:${plano.room.id}`) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
       if (h % 5 === 0) m.dorme = true;
+      // variante rara: mesma espécie do bestiário, com tempero próprio
+      const variante = varianteDe(`${def.id}:${plano.room.id}`);
+      if (variante) {
+        m.variante = variante.id;
+        m.name = `${variante.prefixo ? `${variante.prefixo} ` : ""}${m.name}${variante.sufixo ? ` ${variante.sufixo}` : ""}`.slice(0, 32);
+        m.hpMult = variante.hpMult;
+        m.danoExtra = variante.danoExtra;
+        m.xpMult = variante.xpMult;
+        m.lootMult = variante.lootMult;
+        if (variante.accent) m.accent = variante.accent;
+      }
       out.push(m);
     }
     return out;

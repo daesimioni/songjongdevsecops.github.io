@@ -5,6 +5,7 @@ import { drawCreatureArt } from "../rendering/creature.js";
 import { petAbilityNeedsDuel } from "../gameplay/rpg.js";
 import { leituraDeRitmo } from "../gameplay/duelo-ritmo.js";
 import { lerPergunta, pararVoz, vozDisponivel } from "./voz.js";
+import { VARIANTE_POR_ID } from "../world/variantes.js";
 import { marcaDaOpcao } from "./duel-marcas.js";
 
 const $ = (id) => document.getElementById(id);
@@ -177,6 +178,8 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
     const ritmo = leituraDeRitmo(d.seguidos || 0);
     if (ritmo) meta.appendChild(el("em", "duel-combo", ritmo));
     if (d.boss && d.habilidade) meta.appendChild(el("span", "duel-ability", `chefe: ${d.habilidade.nome}`));
+    const variante = VARIANTE_POR_ID.get(d.monster?.variante);
+    if (variante) meta.appendChild(el("em", "duel-variant", `variante ${variante.nome}: ${variante.desc}`));
     // o chefe telegrafa o assunto da próxima pergunta: tema e cor da área
     if (d.boss) {
       const proxima = d.deck?.[(d.deckIndex ?? 0) + 1];

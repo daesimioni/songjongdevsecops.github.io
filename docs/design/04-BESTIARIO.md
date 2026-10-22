@@ -252,3 +252,19 @@ glyph, prism). O chefe não entra em família.
 Prova: `test/familias.test.mjs` (cobertura das 25 formas, complemento, aviso
 único, dano, save) e sonda `cdp-familias.mjs` (5 chips, 4/4 com +50%, previsão
 de 1,1 para 1,7 contra a família completa).
+
+## Variantes: eco, elite e antiga (2026-10-22)
+
+Além da família, cada sala pode nascer com uma variante rara, decidida pelo id
+da caverna e da sala (estável para todo mundo):
+
+| variante | chance | efeito |
+|---|---|---|
+| eco | 10% | nome "Eco de ...", dobra o material |
+| elite | 5% | sufixo "Elite", vida 50% maior, +1 de dano e 50% mais XP |
+| antiga | 3% | sufixo "Antiga", vida dobrada, +1 de dano, XP e material em dobro |
+
+A variante é da criatura, não do bestiário: a ficha continua a mesma espécie.
+No duelo, a linha "variante Elite: ..." explica o que mudou. Prova:
+`test/variantes.test.mjs` (chance medida em 20 mil chaves, efeitos no RPG) e
+sonda `cdp-variantes-criatura.mjs` ("Sílaba Antiga", vida 6, linha na tela).
