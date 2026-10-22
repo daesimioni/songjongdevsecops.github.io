@@ -50,8 +50,9 @@ com a linha do diário dizendo que foi feito.
 | **Habilidade única de chefe** | `test/chefe-habilidades.test.mjs`: quatro habilidades estáveis em 93 chefes, com couraça, seiva, ímpeto e espelho medidas no RPG real; sonda `cdp-chefe-habilidade.mjs` mostra o nome na tela e o aviso da fase 2 |
 | **Etapa 2 e 3 dos assets** | `test/assets.test.mjs` mede 41 assets, 111 silhuetas e a animação de cada grupo: fogo 5 de 5, água 3 de 4, solo `tufo`, props `gaivota`, vegetação pelo vento e construção rígida; guarda falha se um grupo perder a animação |
 
-## O que continua em aberto
+## Fechamento
 
-Nada nesta auditoria. As pendências de casas que não são de conteúdo estão em
-`22-CASAS.md` §7 (geometria única por tipo, morador e soleira da porta), e
-seguem como ondas próprias.
+Nada nesta auditoria. As dívidas de casas (`22-CASAS.md` §7) fecharam: mobília
+sólida, morador e soleira em 2026-10-22, e a segunda planta por tipo na mesma
+data. O que resta nos documentos são refinamentos opcionais, sem defeito
+conhecido.

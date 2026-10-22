@@ -56,7 +56,10 @@ em `idle-humano-0.png`, `idle-humano-2992.png`, `idle-gato-0.png` e
 - 31 suítes node verdes; matriz de navegador 19/19; zero exceção.
 - Sonda `cdp-anim-idle.mjs` com as contagens acima.
 
-## 4. O que continua em aberto
+## 4. Refinamentos opcionais (sem defeito conhecido)
+
+Nada aqui é pendência: a animação existe e é medida; estes itens são desenhos
+de profundidade para ondas futuras.
 
 1. **Passo de pet**: o gato balança o corpo ao andar, mas não tem ciclo de
    pernas; um bicho de quatro patas com passo alternado é o próximo desenho.

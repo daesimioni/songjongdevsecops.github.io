@@ -63,12 +63,16 @@ estoura na horizontal. O foco do teclado entra no painel em todos os nove.
   `temporarios/2026-10-20-mundo-song-pedido/`.
 - 32 suítes node verdes; matriz de navegador 19/19; zero exceção.
 
-## 6. O que continua em aberto
+## 6. Refinamentos opcionais (sem defeito conhecido)
+
+Nada aqui é pendência de layout: a auditoria de 18 painéis em 1280 e 390 não
+achou estouro, alvo pequeno nem foco perdido. São melhorias de leitura.
 
 1. **Densidade tipográfica** não foi julgada: a sonda mede estouro e alvo, não
    se o texto de 10 px cansa. Uma régua de leitura por painel ainda falta.
-2. **Navegação por teclado** só garante foco inicial; Tab/Shift+Tab circulam,
-   mas não há atalho para pular direto ao primeiro item da lista.
+2. **Navegação por teclado** só garante foco inicial; Tab/Shift+Tab circulam e
+   as abas da wiki respondem a setas, mas não há atalho para pular direto ao
+   primeiro item da lista.
 3. **Estado vazio** da mochila e do diário aparece, mas não foi desenhado para
    ensinar o próximo passo; só diz que não há nada.
 4. **Loja e duelo** dependem de caverna aberta; a sonda usa gancho de depuração.

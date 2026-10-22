@@ -296,8 +296,9 @@ faltavam. A ideia central continua: um blog jogável em pixel art, com 86 áreas
 - [x] custo medido: terreno de 0,60 para 0,66 ms por quadro na área de grama,
       com fps dentro do ruído da máquina (45,1 com vento, 48,7 sem, e 45,3 na
       segunda medida sem vento)
-- [ ] falta fauna e NPC com respiração e passo parado, e clima por bioma
-      (chuva, neblina, poeira)
+- [x] fauna, NPC e pet com respiração e passo parado, e clima por bioma
+      (chuva, neblina, rajada e poeira); prova em `test/animacao-idle.test.mjs`,
+      `test/wind.test.mjs` e nos eventos de ambiente do renderer
 
 ### X. Contraste medido
 

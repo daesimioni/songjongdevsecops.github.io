@@ -50,11 +50,12 @@ vida aparece como 1 e não como 0 vivo.
   Captura `duelo-ritmo-*.png`.
 - 33 suítes node verdes; matriz de navegador 19/19; zero exceção.
 
-## 5. O que continua em aberto
+## 5. Refinamentos opcionais (sem defeito conhecido)
 
-1. **Habilidade única de chefe**: hoje o chefe endurece por fase (dano +2,
-   pergunta difícil), mas não tem um golpe próprio, como curar uma vez ou
-   trocar o baralho. A fase é genérica para os 93 chefes.
+1. **Habilidade única de chefe: fechada em 2026-10-22.** Cada um dos 93 chefes
+   revela uma habilidade estável na fase 2 (couraça, seiva, ímpeto ou espelho),
+   com nome na tela e aviso da fase; ver `34-HABILIDADES-CHEFE.md`,
+   `test/chefe-habilidades.test.mjs` e `cdp-chefe-habilidade.mjs`.
 2. **Ritmo no parceiro**: o bônus vale para o jogador; o parceiro da matilha
    responde no próprio baralho e não entra na sequência.
 3. **Leitura do acerto**: a tela mostra o dano do erro, não o dano que o

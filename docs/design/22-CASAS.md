@@ -93,7 +93,10 @@ decorativa (a dívida está no fim deste documento).
   `cdp-casa-planta.mjs` (segunda planta) e `cdp-morador.mjs` (conversa dentro
   de casa) em `temporarios/2026-10-20-mundo-song-pedido/`.
 
-## 7. O que continua em aberto
+## 7. Fechado e refinamentos opcionais
+
+Nada aqui é pendência: os três itens que eram dívida fecharam em 2026-10-22, e
+a planta por disciplina é profundidade, não defeito.
 
 1. **Reduzido em 2026-10-22:** cada tipo ganhou **duas plantas** (8 salas ao
    todo), e a semente da casa escolhe a sua; as 72 casas usam as duas plantas

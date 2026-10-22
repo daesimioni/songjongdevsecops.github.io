@@ -5,20 +5,21 @@ O objetivo é melhorar absolutamente tudo no jogo, peça por peça, em três eta
 Este documento é o estado durável da revisão: o que já passou, o que está em
 andamento e o que falta.
 
-## As cinco frentes
+## As seis frentes
 
 | frente | o que entra | etapa 1 | etapa 2 | etapa 3 |
 |---|---|---|---|---|
-| arte por peça | 38 assets ambientais, 26 bichos + chefe, 538 itens, 194 NPCs, 7 pets | auditoria e variantes | detalhe e volume | animação própria |
+| arte por peça | 41 assets ambientais, 26 bichos + chefe, 538 itens, 194 NPCs, 7 pets | auditoria e variantes | detalhe e volume | animação própria |
 | mapa | 86 ilhas, pontes, transições, cada bioma | auditoria de densidade | detalhe e unicidade | animação do lugar |
 | interfaces | HUD, diário, ficha, mochila, bestiário, wiki, duelo, loja | auditoria de layout | densidade e leitura | microinteração |
 | movimento | colisão, passos, câmera, animações | auditoria de área de choque | correção de fantasma | resposta ao toque |
 | masmorras e batalha | 93 cavernas, monstros, duelos | auditoria de variedade | tema por sala e bicho | ritmo de combate |
+| pedidos já feitos | tudo o que o diário dava como pronto | auditoria na fonte viva | correção do parcial | prova de navegador |
 
 ## Inventário auditado
 
-- **Assets ambientais**: 38 peças em 6 grupos (solo 8, vegetação 8, construção
-  8, fogo 5, água 4, props 5). Antes: 2 variantes por peça fora fogo e props.
+- **Assets ambientais**: 41 peças em 6 grupos (solo 8, vegetação 8, construção
+  8, fogo 5, água 4, props 8). Antes: 2 variantes por peça fora fogo e props.
 - **Bichos**: 26 formas + chefe; `drawCreatureArt` com contorno e luz no mapa,
   duelo, bestiário e wiki.
 - **Itens**: 538 ícones, 277 silhuetas, 38 famílias, contorno e luz gravados no
@@ -82,3 +83,23 @@ A árvore já vergava com a rajada e o fogo já tinha 4 a 8 quadros.
 | 2026-10-22 | soleira das casas | as 72 portas ganharam degrau de pedra com três runas na cor da área, na fila do cenário; teste falha se a soleira sair ou perder a cor | `test/casas.test.mjs`, `cdp-soleira.mjs`, captura `soleira-casa-*` |
 | 2026-10-22 | plantas das casas | cada tipo ganhou duas plantas (8 salas em bolsão de mar) e a semente da casa escolhe; as 72 casas usam as duas plantas do tipo | `test/casas.test.mjs`, `cdp-casa-planta.mjs`, captura `casa-planta-*` |
 | 2026-10-22 | morador das casas | uma pessoa por casa, com roupa da área, canto livre perto do fogo e três falas (área, mesa/fogo, a pedra lá fora); interação por F e sem colisão | `test/casas.test.mjs`, `cdp-morador.mjs`, captura `morador-casa-*` |
+
+## Fecho da revisão (2026-10-22)
+
+As seis frentes passaram pelas três etapas com prova medida. O estado abaixo é
+o que os testes e sondas desta data mostram, não o que o diário prometeu.
+
+| frente | etapa 1 | etapa 2 | etapa 3 | prova |
+|---|---|---|---|---|
+| arte por peça | 41 assets, 111 silhuetas, 538 itens, 464 fichas, 194 NPCs e 7 pets com contorno e luz | espelho por instância, detalhe de meio pixel, portes e escalas | fogo 5/5, água 3/4, solo `tufo`, props `gaivota`, vegetação pelo vento, construção rígida; NPC olha/cabeceia e pet pisca | `test/assets.test.mjs`, `test/itens.test.mjs`, `test/bestiary.test.mjs`, `test/animacao-idle.test.mjs`, `cdp-anim-idle.mjs` (cabeça 46 px, corpo 0, cauda 60, olho 13) |
+| mapa | 3.816 peças em 86 áreas, 454 estações e 94 faróis | 54 ligações (31 istmos, 23 pontes), floresta com teto, 72 casas com 8 plantas, soleira e morador | vento, mar com crista, clima por bioma; câmera e minimapa | `test/passagens.test.mjs`, `test/floresta.test.mjs`, `test/espaco.test.mjs`, `test/casas.test.mjs`, `cdp-soleira.mjs`, `cdp-casa-planta.mjs`, `cdp-morador.mjs` |
+| interfaces | 9 painéis em 1280 e 390 | wiki 2.246 entradas, bestiário 464 fichas, ficha com atualização sem perder foco | foco/inert, teclado nas abas e no duelo A-E, busca com limpar e contagem, avisos acima da tela ativa | `test/interfaces.test.mjs`, `test/ui.test.mjs`, `test/wiki.test.mjs`, `cdp-ui-audit.mjs` (18 painéis, 0 estouro, 0 alvo < 28 px), `cdp-contraste.mjs` (108 textos, 0 falha), `cdp-fonte-ui.mjs` |
+| movimento | 1.040 caixas em 12 tipos | zero fantasma em barril, árvore, móvel sorteado e interior; 2.413 alvos de caverna | oito direções, passo, câmera, turbo e toque | `test/fantasmas.test.mjs`, `test/interior-collision.test.mjs`, `test/dungeon-reachability.test.mjs`, `test/movement.test.mjs`, `cdp-fantasma.mjs` |
+| masmorras e batalha | 93 cavernas em 6 modelos e 4 pisos | sala temática por disciplina com 279 peças sólidas; 93 chefes | ritmo +1/+2, leitura de turno, fases 2 e 3, habilidade própria por chefe, turnos de PvP | `test/masmorras.test.mjs`, `test/salas.test.mjs`, `test/duelo-ritmo.test.mjs`, `test/chefe-habilidades.test.mjs`, `test/pvp-turnos.test.mjs`, `cdp-chefe-habilidade.mjs`, `cdp-sala-tema.mjs` |
+| pedidos já feitos | auditoria dos 38 pedidos na fonte viva | correção de resposta vazia, frase repetida, seis alternativas e páginas curtas | 69 páginas com curso completo, revisão das PRs externas e documentos alinhados | `docs/design/20-AUDITORIA-PEDIDOS.md`, `docs/design/33-REVISAO-EXTERNA.md`, `test/licoes.test.mjs`, `cdp-pagina.mjs` |
+
+Prova de conjunto desta data: `npm test` com **54 arquivos, 54 passaram**;
+matriz de navegador **19/19** (60 fps, 0 erro de console, 0 estouro em 390 px);
+contraste **0 falha**; fonte e transbordo **0 fora**. Sondas e capturas em
+`temporarios/2026-10-20-mundo-song-pedido/`; site publicado conferido com cache
+bust para os arquivos alterados.
