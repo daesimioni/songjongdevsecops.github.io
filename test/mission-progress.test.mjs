@@ -7,7 +7,9 @@ const rpg=new RPG();
 const make=()=>new Quests({getBosses:()=>rpg.data.bosses});
 let q=make();
 const quest=QUESTS.find(q=>q.id==='chefe-math-algebra');
-q.accept(quest.id);
+// o chefe é o segundo capítulo do arco: a trilha da área precisa fechar antes
+q.data.done['trilha-math-algebra']=Date.now(); q.save();
+assert.equal(q.accept(quest.id), true, 'com a trilha fechada, o chefe é aceitável');
 assert.equal(q.ready(quest),false);
 rpg.data.bosses['dungeon-math-algebra']=Date.now(); rpg.save();
 assert.equal(q.ready(quest),true,'chefe da caverna satisfaz a missão de área');

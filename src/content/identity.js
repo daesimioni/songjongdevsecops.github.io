@@ -485,6 +485,8 @@ export function questsForArea(area, keeper, giver) {
       id: `chefe-${area.id}`,
       npc: keeper,
       giver,
+      // segundo capítulo do arco do guardião: só abre depois da trilha da área
+      depois: `trilha-${area.id}`,
       title: `O Chefe ${articleOf(area.name).article} ${articleOf(area.name).noun}`,
       brief: `Desça até ${fauna[2]?.name || "o guardião"}, no fundo da caverna ${article} ${noun}. Responda e volte.`,
       goal: { type: "bosses", count: 1, area: area.id },

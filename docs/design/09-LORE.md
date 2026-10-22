@@ -221,3 +221,16 @@ explicar tudo no tutorial.
 - Nenhuma cultura é "burra" ou "atrasada"; todas ensinam algo.
 - O erro é parte da história, não vergonha.
 - O final não pune a curiosidade.
+
+## O arco do guardião (2026-10-22)
+
+Cada área tem um guardião com dois capítulos: a **trilha** (abrir três estações)
+e o **chefe** (descer e vencer o guardião da caverna). O segundo capítulo só
+aparece depois que o primeiro fecha, e o cartão do NPC avisa: "Segundo capítulo:
+depois de <trilha>, ele tem outra missão." Antes de fechar, tentar aceitar o
+chefe é recusado; o save guarda o capítulo fechado.
+
+São 86 pares trilha → chefe. Prova: `test/arcos.test.mjs` (paridade, trava,
+liberação, save e missão sem `depois` intacta) e sonda `cdp-arcos-npc.mjs` (o
+guardião Gauss mostrou só a trilha e o aviso; depois de fechar, "O Chefe dos
+Fundamentos" entrou no cartão).

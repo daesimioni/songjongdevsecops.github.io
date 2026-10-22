@@ -715,8 +715,20 @@ export class Quests {
   isDone(id) { return !!this.data.done[id]; }
   isAccepted(id) { return !!this.data.accepted[id]; }
 
+  // Arco do NPC: uma missão pode exigir a anterior fechada. Enquanto isso, ela
+  // não aparece na lista do guardião; o cartão avisa que há mais história.
   offersFor(npc) {
-    return QUESTS.filter((q) => q.npc === npc);
+    return QUESTS.filter((q) => {
+      if (q.npc !== npc) return false;
+      if (!q.depois) return true;
+      return this.isDone(q.depois) || this.isAccepted(q.id);
+    });
+  }
+
+  lockedFor(npc) {
+    return QUESTS
+      .filter((q) => q.npc === npc && q.depois && !this.isDone(q.depois) && !this.isAccepted(q.id))
+      .map((q) => ({ ...q, depoisTitulo: QUESTS.find((x) => x.id === q.depois)?.title || "a primeira missão" }));
   }
 
   markFor(npc) {
@@ -774,6 +786,7 @@ export class Quests {
   accept(id) {
     const q = QUEST_BY_ID.get(id);
     if (!q || this.isDone(id) || this.isAccepted(id)) return false;
+    if (q.depois && !this.isDone(q.depois)) return false;
     this.data.accepted[id] = Date.now();
     this.save();
     this.changed();

@@ -1188,12 +1188,18 @@ function buildNpc(npc) {
     }
   }
   const offers = quests.offersFor(npc.id);
+  const trancadas = quests.lockedFor(npc.id);
   if (!offers.length) {
-    body.appendChild(el("p", "npc-muted", "Este viajante só tem histórias por enquanto."));
+    body.appendChild(el("p", "npc-muted", trancadas.length
+      ? `Há mais história: depois de "${trancadas[0].depoisTitulo}", ele tem outra missão.`
+      : "Este viajante só tem histórias por enquanto."));
     return;
   }
   body.appendChild(el("h3", "npc-sec", "missões"));
   for (const q of offers) body.appendChild(questCard(q, npc));
+  if (trancadas.length) {
+    body.appendChild(el("p", "npc-muted", `Segundo capítulo: depois de "${trancadas[0].depoisTitulo}", ele tem outra missão.`));
+  }
 }
 
 function openNpc(npc) {
