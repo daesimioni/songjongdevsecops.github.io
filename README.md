@@ -22,6 +22,12 @@ O **Bestiário** abre com <kbd>B</kbd> ou pelo botão escrito no menu. São as 9
 
 O **minimapa** tem coordenada `x y z` (z 0 superfície, -1 subsolo, -2 Porto Submerso), zoom de 1× a 6× pela roda do mouse ou pelos botões, o botão **mapa** para ver o arquipélago inteiro e clique num ponto revelado para andar até lá. O personagem é uma seta branca com anel, apontando para onde olha; a caverna tem a mesma coordenada e profundidade no minimapa dela, que ficou maior. A névoa guardada leva a assinatura do mundo: quando o mapa ganha áreas novas, o save antigo revela a terra dessas áreas na primeira abertura, em vez de deixar o mapa preso no mundo velho.
 
+## O endgame
+
+Depois das missões do vale, a história fecha em cinco sistemas que leem o mesmo save. A **Biblioteca Afogada** é uma corrente de sete missões que abre o acervo: 454 conceitos, as 179 páginas de lore e os 7 treinos, com busca sem acento e página de leitura. A **Grande Prova** é o evento final opcional: o guardião do acervo tem três fases, e a vitória abre três desfechos (guardar, devolver ou abrir a voz), sem exame e sem reprovação.
+
+O **fio da Iara** dá ordem à história em sete capítulos, do Porto às seis disciplinas; cada capítulo pede a missão maior do continente e a leitura do anterior, e o Diário mostra o lido, o aberto e o que falta. As **facções** são três forças com memória: Concílio do Silêncio, União das Minas e Porto Submerso vão de -3 a +3, mudam com as missões e com o desfecho da Grande Prova, alteram o preço da loja, e o Concílio abre a estante reservada do acervo. A **guilda** é local: nome, brasão, quadro de até oito membros com cargos, missões próprias e diário; quem entra é a party, que usa o convite assinado da Rede.
+
 ## O arquipélago
 
 | continente | estações |
