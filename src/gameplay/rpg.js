@@ -1448,10 +1448,16 @@ export class RPG {
         deck.push(item);
       }
     }
-    // conceito vencido volta antes: revisão espaçada dentro do tier
+    // conceito vencido volta antes (revisão espaçada) e, dentro do mesmo grupo,
+    // a área mais fraca vem primeiro: o duelo começa onde o domínio é menor.
     const agora = now();
     const due = (item) => (item.area && vencido(this.data.conceitos?.[item.area], agora) ? 1 : 0);
-    return deck.sort((a, b) => due(b) - due(a));
+    const dominio = (item) => {
+      if (!item.area) return 3;
+      const n = Number(this.data.conceitos?.[item.area]?.n);
+      return Number.isFinite(n) ? n : 0;
+    };
+    return deck.sort((a, b) => due(b) - due(a) || dominio(a) - dominio(b));
   }
 
   startDuel(monster, ground, boss = false, partner = null) {

@@ -549,3 +549,13 @@ O que ainda falta de desempenho vive em `39-BACKLOG-VERIFICADO.md`, não aqui.
 | 2026-10-20 | A | nome The Learning Valley, metadados, tela de título com vale animado e entrada em etapas | navegador: título com foco no botão, Enter entra, formulário seguinte recebe foco, sem erro de console |
 | 2026-10-20 | C | 172 itens no chão (um equipamento e um consumível por área), com brilho, coleta por F ou botão direito e persistência; menu de contexto com olhar, falar, abrir, descer, viajar, pegar e andar; poção de mana, barra de magias e conjuração fora do duelo | navegador: item no chão pego, localStorage com o id, recarga sem respawn; menu de estação com abrir e olhar; menu de item com pegar e olhar; magia curou 10 com 3 de mana; 172 itens, 171 depois de pegar; sem erro de console |
 | 2026-10-20 | B | barras de vida e mana, mochila em grade com 40 espaços, ícones em canvas, arrastar e soltar, detalhe do item e equipamento desenhado no boneco | navegador: 40 espaços, 8 espaços de equipamento, item equipado pelo detalhe, barras em 53,8% e 40%, equipamento aplicado ao boneco, sem erro de console; node verde |
+
+## Escolha adaptativa no baralho (2026-10-22)
+
+O baralho do duelo passou a olhar o domínio da área, não só a revisão vencida:
+dentro do grupo devido, a pergunta da área de **menor domínio** vem primeiro, e
+área nunca respondida conta como domínio zero. Quem está em dia revisa a
+fraqueza antes da força.
+
+Prova: `test/adaptativo.test.mjs` (domínio 0 antes de 3 antes de 5, área nova
+primeiro, vencida antes de tudo e baralho inteiro sem domínio medido).
