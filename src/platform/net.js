@@ -61,6 +61,11 @@ export class Net {
     this.seq = 0;
     this.ultimoBroker = 0;
     this.vistos = new Map();
+    // uma conta é uma pessoa só: a sessão mais nova fica e as outras emudecem
+    this.inicio = Date.now();
+    this.contaTomada = false;
+    this.contaVistaEm = 0;
+    this.contaRivais = new Map();
     this.malha = new Malha({
       id: this.id,
       enviarSinal: (para, tipo, dados) => this.publishSignal(para, tipo, dados),
@@ -114,7 +119,39 @@ export class Net {
     if (!msg || typeof msg !== "object" || typeof msg.id !== "string") return;
     if (msg.id === this.id) return;
     this.handle(this.topic("state"), msg);
-    this.malha.garantir(msg.id);
+    if (!this.mesmaConta(msg)) this.malha.garantir(msg.id);
+  }
+
+  // duas abas ou dois aparelhos com a mesma chave. Sem servidor não existe
+  // autoridade: a ordem é (inicio, id), que os dois lados calculam igual.
+  mesmaConta(msg) {
+    return !!this.pubkey && typeof msg.k === "string" && msg.k.toLowerCase() === this.pubkey;
+  }
+
+  // a mais nova fica; a mais velha emudece e volta quando a outra sumir
+  avaliarConta(msg) {
+    const inicioRival = Number(msg.ini) || 0;
+    const souMaisNovo = this.inicio > inicioRival
+      || (this.inicio === inicioRival && this.id > msg.id);
+    if (this.peers.delete(msg.id)) this.emitPeers();
+    if (souMaisNovo) {
+      this.contaRivais.set(msg.id, Date.now());
+      return;
+    }
+    this.contaVistaEm = Date.now();
+    this.contaRivais.delete(msg.id);
+    if (!this.contaTomada) {
+      this.contaTomada = true;
+      // avisa quem estava vendo esta sessão para sumir com o avatar agora,
+      // em vez de esperar o tempo limite
+      this.publicarSaida();
+      this.onStatus?.({ state: "duplicado", count: this.peers.size + 1 });
+    }
+  }
+
+  publicarSaida() {
+    if (!this.client || !this.connected) return;
+    try { this.client.publish(this.topic("bye"), JSON.stringify({ id: this.id })); } catch { /* já foi */ }
   }
 
   topic(kind) { return `${NET.prefix}/${this.room}/${kind}`; }
@@ -200,6 +237,11 @@ export class Net {
     if (msg.id === this.id) return;
     if (msg.uid && this.jaVisto(msg.uid)) return;
     const now = Date.now();
+    if (this.contaRivais.has(msg.id)) {
+      // sessão antiga da minha conta: some do mundo e não fala comigo
+      if (topic.endsWith("/state")) this.contaRivais.set(msg.id, now);
+      return;
+    }
 
     if (topic.endsWith("/bye")) {
       if (this.peers.delete(msg.id)) this.emitPeers();
@@ -214,6 +256,7 @@ export class Net {
     }
 
     if (topic.endsWith("/state")) {
+      if (this.mesmaConta(msg)) { this.avaliarConta(msg); return; }
       if (!this.peers.has(msg.id) && this.peers.size >= 40) return;
       const x = Number(msg.x), y = Number(msg.y);
       if (!Number.isFinite(x) || !Number.isFinite(y)) return;
@@ -314,9 +357,18 @@ export class Net {
         changed = true;
       }
     }
+    for (const [id, t] of this.contaRivais) {
+      if (now - t > NET.peerTimeout) this.contaRivais.delete(id);
+    }
+    // a sessão que mandou nesta aba saiu: ela volta a publicar sozinha
+    if (this.contaTomada && now - this.contaVistaEm > NET.peerTimeout) {
+      this.contaTomada = false;
+      this.contaRivais.clear();
+      this.publishState(true);
+    }
     if (changed) this.emitPeers();
     this.onStatus?.({
-      state: this.connected ? "online" : "offline",
+      state: this.contaTomada ? "duplicado" : this.connected ? "online" : "offline",
       count: this.peers.size + 1,
     });
   }
@@ -364,6 +416,7 @@ export class Net {
   }
 
   publishState(force) {
+    if (this.contaTomada) return;
     this.seq = (this.seq + 1) % 1000000000;
     const msg = {
       id: this.id, n: this.name, c: this.color,
@@ -371,6 +424,7 @@ export class Net {
       y: Number(this.state.y.toFixed(2)),
       d: this.state.dir,
       s: this.seq,
+      ini: this.inicio,
       m: this.state.m || undefined,
       k: this.pubkey || undefined,
       o: this.outfit || undefined,
@@ -393,6 +447,7 @@ export class Net {
   }
 
   sendPvp(payload) {
+    if (this.contaTomada) return false;
     if (!payload || typeof payload !== "object") return false;
     const kind = payload.kind;
     if (!["challenge", "accept", "decline", "attack", "defend", "end"].includes(kind)) return false;
@@ -408,6 +463,7 @@ export class Net {
   }
 
   sendParty(payload) {
+    if (this.contaTomada) return false;
     if (!payload || typeof payload !== "object") return false;
     if (!["invite", "accept", "leave", "sync"].includes(payload.act)) return false;
     const now = Date.now();
@@ -420,6 +476,7 @@ export class Net {
   }
 
   sendChat(text) {
+    if (this.contaTomada) return false;
     const now = Date.now();
     if (now - this.lastChat < 900) return false;
     const cleanText = clean(text, 120);
@@ -438,9 +495,7 @@ export class Net {
     clearInterval(this.sendEvery);
     clearInterval(this.pruneEvery);
     if (this.client) {
-      if (this.connected) {
-        try { this.client.publish(this.topic("bye"), JSON.stringify({ id: this.id })); } catch { /* já foi */ }
-      }
+      if (this.connected) this.publicarSaida();
       // Mesmo offline, o cliente tem um laço de reconexão que precisa parar.
       try { this.client.end(true); } catch { /* já foi */ }
     }

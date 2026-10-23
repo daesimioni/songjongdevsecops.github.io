@@ -1600,6 +1600,7 @@ function aplicarFonte(valor) {
   }
 }
 
+let estadoRedeAnterior = "";
 function setNetStatus({ state: s, count }) {
   const pill = $("net-pill");
   const label = $("online");
@@ -1613,10 +1614,20 @@ function setNetStatus({ state: s, count }) {
   } else if (s === "offline") {
     label.textContent = "sem sinal";
     pill.title = "Sem sinal agora; o mundo segue sozinho";
+  } else if (s === "duplicado") {
+    label.textContent = "em espera";
+    pill.title = "Sua conta está aberta em outra aba ou aparelho. Esta ficou em espera.";
   } else {
     label.textContent = "solo";
     pill.title = "Modo solo. Recarregue para tentar a praça compartilhada.";
   }
+  // a conta vale uma pessoa só: avisa quando outra sessão assume e quando volta
+  if (s === "duplicado" && estadoRedeAnterior !== "duplicado") {
+    toast("sua conta está aberta em outra aba ou aparelho. esta ficou em espera e volta sozinha quando a outra sair.", 6200);
+  } else if (s === "online" && estadoRedeAnterior === "duplicado") {
+    toast("a outra sessão saiu. esta aba voltou ao mundo.", 4200);
+  }
+  estadoRedeAnterior = s;
 }
 function updateOnlineCount() {
   if (!state.net) return;

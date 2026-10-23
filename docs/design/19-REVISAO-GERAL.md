@@ -108,6 +108,7 @@ A árvore já vergava com a rajada e o fogo já tinha 4 a 8 quadros.
 | 2026-10-22 | Foco do botão | botão usado com o mouse perde o foco depois do clique e modal aberto no mouse devolve o foco ao jogo, então o Espaço liga a nave em vez de repetir o botão; a ativação por teclado continua igual | `test/interfaces.test.mjs`, `cdp-foco.mjs` (11/11), 112/112 suítes, 19/19 no navegador |
 | 2026-10-22 | Malha P2P entre jogadores | o broker apresenta as pessoas e cada par abre um canal WebRTC direto; posição vai por canal não confiável a 10 Hz e eventos por canal confiável, com repasse ttl 2, dedupe por uid e broker de reserva; a espera de peer subiu para 12 s; o teste de duas abas derruba o broker de um lado e a posição continua chegando pelo canal direto | `test/malha.test.mjs`, `cdp-malha.mjs` (10/10), 113/113 suítes, 19/19 no navegador |
 | 2026-10-22 | Vida e mana dos pares | vida, mana e máximos viajam no mesmo pacote da posição; cada par desenha a placa do outro no fim do quadro, com as mesmas barras e transparência, então todo mundo vê a vida e a mana de todo mundo | `test/vitais.test.mjs`, `cdp-malha.mjs` (12/12), 113/113 suítes, 19/19 no navegador |
+| 2026-10-22 | Uma conta, uma pessoa | a mesma chave em duas abas ou aparelhos não vira dois viajantes: a sessão mais nova fica e as outras entram em espera, sem publicar estado, chat, party nem duelo; a espera volta sozinha quando a outra sessão some; a disputa é decidida por (início, id), igual dos dois lados, e a sessão que sai avisa com bye | `test/conta.test.mjs`, `cdp-conta-unica.mjs` (14/14), 126/126 suítes, 19/19 no navegador |
 | 2026-10-22 | Rosa dos ventos do mapa | o mapa grande ganhou uma rosa de nove pontos: oito direções andam uma tela e o centro volta a seguir o personagem; no mapa inteiro a rosa aproxima antes de andar | `test/interfaces.test.mjs`, `cdp-mapa-tela.mjs` (rosa, leste e centro), 113/113 suítes, 19/19 no navegador |
 
 ## Fecho da revisão (2026-10-22)
@@ -124,7 +125,7 @@ o que os testes e sondas desta data mostram, não o que o diário prometeu.
 | masmorras e batalha | 93 cavernas em 6 modelos e 4 pisos | sala temática por disciplina com 279 peças sólidas; 93 chefes | ritmo +1/+2, leitura de turno, fases 2 e 3, habilidade própria por chefe, turnos de PvP | `test/masmorras.test.mjs`, `test/salas.test.mjs`, `test/duelo-ritmo.test.mjs`, `test/chefe-habilidades.test.mjs`, `test/pvp-turnos.test.mjs`, `cdp-chefe-habilidade.mjs`, `cdp-sala-tema.mjs` |
 | pedidos já feitos | auditoria dos 38 pedidos na fonte viva | correção de resposta vazia, frase repetida, seis alternativas e páginas curtas | 69 páginas com curso completo, revisão das PRs externas e documentos alinhados | `docs/design/20-AUDITORIA-PEDIDOS.md`, `docs/design/33-REVISAO-EXTERNA.md`, `test/licoes.test.mjs`, `cdp-pagina.mjs` |
 
-Prova de conjunto desta data: `npm test` com **113 testes em 116 arquivos, 113 passaram**;
+Prova de conjunto desta data: `npm test` com **126 testes em 119 arquivos, 126 passaram**;
 matriz de navegador **19/19** remedida em 2026-10-22 depois de clima, sono, famílias,
 texto maior, marcas do duelo, variantes, bilhetes, arcos, patrulha e perseguição e do desacoplamento
 mundo→rendering (`cdp-regressao.mjs`: HUD, mochila 40, bestiário
