@@ -1,5 +1,5 @@
 {
- "versao": "23541526a3cf175e",
+ "versao": "7c796c4434a423a8",
  "arquivos": [
   "assets/favicon.svg",
   "assets/fonts/OFL.txt",
@@ -13,6 +13,7 @@
   "assets/og.png",
   "css/base.css",
   "css/bestiary.css",
+  "css/caderno.css",
   "css/character.css",
   "css/chat.css",
   "css/combat.css",
@@ -172,6 +173,7 @@
   "src/rendering/terrain-renderer.js",
   "src/rendering/wind.js",
   "src/ui/bestiary.js",
+  "src/ui/caderno.js",
   "src/ui/character.js",
   "src/ui/duel-marcas.js",
   "src/ui/duel.js",
