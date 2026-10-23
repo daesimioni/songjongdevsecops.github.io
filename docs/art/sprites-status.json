@@ -97,6 +97,17 @@
         "runtime item/spell mapping"
       ],
       "output": "assets/magic/paladin-familiar.png"
+    },
+    {
+      "id": "arte/magias/7d74f5405b468974ec02",
+      "archive": "magias.zip",
+      "member": "Magias/Paladin/Cure Poison.png",
+      "status": "integration",
+      "location": "feat/arte-autoral-cure-poison: assets/magic/cure-poison.png",
+      "missing": [
+        "runtime item/spell mapping"
+      ],
+      "output": "assets/magic/cure-poison.png"
     }
   ],
   "archives": [
