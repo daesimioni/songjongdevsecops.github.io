@@ -15,7 +15,7 @@ export function arquivosDaVersao(raiz = process.cwd()) {
     encoding: "buffer",
     maxBuffer: 16 * 1024 * 1024,
   });
-  return saida.toString("utf8").split("\0").filter(Boolean).sort();
+  return saida.toString("utf8").split("\0").filter(Boolean).filter(file=>!file.startsWith("assets/reference-art/")||file.endsWith("/manifest.json")).sort();
 }
 
 export function versaoDosArquivos(raiz, arquivos) {
