@@ -1,0 +1,16 @@
+{
+  "id": "arte/magias/7d74f5405b468974ec02",
+  "archive": "magias.zip",
+  "sourceMember": "Magias/Paladin/Cure Poison.png",
+  "sourceDimensions": [32, 32],
+  "output": "assets/magic/cure-poison.png",
+  "outputSha256": "6b09582cfd747ad551843e0a9d03137ecad532ff45febc29bfc208dde6720203",
+  "outputDimensions": [128, 128],
+  "style": "autoral-pixel-spell",
+  "transparentBackground": true,
+  "review": {
+    "visualInspection": "passed",
+    "runtimeMapping": "pending: reference has no current item or spell id in the game catalog"
+  },
+  "status": "integration"
+}
