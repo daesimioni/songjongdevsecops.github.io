@@ -1,0 +1,16 @@
+{
+  "id": "arte/magias/a1d7fecdb7c871ca7606",
+  "archive": "magias.zip",
+  "sourceMember": "Magias/Paladin/Disintegrate Rune.png",
+  "sourceDimensions": [32, 32],
+  "output": "assets/magic/disintegrate-rune.png",
+  "outputSha256": "071f36cc86d7d9142815d6545b9ce9fe8953361432ced8e8ba69360bd4ea981c",
+  "outputDimensions": [128, 128],
+  "style": "autoral-pixel-rune",
+  "transparentBackground": true,
+  "review": {
+    "visualInspection": "passed",
+    "runtimeMapping": "pending: reference has no current item or spell id in the game catalog"
+  },
+  "status": "integration"
+}

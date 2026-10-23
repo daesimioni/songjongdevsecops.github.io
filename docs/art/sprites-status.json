@@ -108,6 +108,17 @@
         "runtime item/spell mapping"
       ],
       "output": "assets/magic/swift-foot.png"
+    },
+    {
+      "id": "arte/magias/a1d7fecdb7c871ca7606",
+      "archive": "magias.zip",
+      "member": "Magias/Paladin/Disintegrate Rune.png",
+      "status": "integration",
+      "location": "feat/arte-autoral-disintegrate-rune: assets/magic/disintegrate-rune.png",
+      "missing": [
+        "runtime item/spell mapping"
+      ],
+      "output": "assets/magic/disintegrate-rune.png"
     }
   ],
   "archives": [
