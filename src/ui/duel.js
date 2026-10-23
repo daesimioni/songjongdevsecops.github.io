@@ -1,3 +1,4 @@
+// Legado: o app não monta mais esta arena. Fluxo ativo: ui/combate-mundo.js.
 // A tela do combate: arena, vida, J ataque, K defesa, L esquiva e as runas.
 // O modelo vive em gameplay/combate.js; aqui só desenha e traduz teclas.
 import { CONTINENTS } from "../content/config.js";

@@ -4,7 +4,7 @@ import { PLAYER_SPEED, SPRINT_MULT, PLAYER_W, PLAYER_H, MAP_W, MAP_H, INTERACT_R
 import { findInteractionPath, findPath, tileWalkable } from "../core/path.js";
 
 // Dependências da cena são explícitas; sem DOM, rede ou armazenamento.
-export function createSurfaceMovement({ player, state, world, rpg, audio, toast, interactTarget, isDungeonOpen = () => false }) {
+export function createSurfaceMovement({ player, state, world, rpg, audio, toast, interactTarget, canCombatStand = () => true, isDungeonOpen = () => false }) {
 function updateBoost(dt, active) {
   const target = active && state.sprint ? 1 : 0;
   player.boost += (target - player.boost) * Math.min(1, dt * 8);
@@ -21,7 +21,7 @@ function walkStep(dx, dy, dt) {
   // Em velocidade de nave o passo do quadro passa de um tile e atravessaria
   // parede fina. Divide o movimento em pedaços que a colisão consegue ver.
   moveWithCollision(player, dx * step, dy * step,
-    (x, y) => !world.boxCollides(x, y, PLAYER_W, PLAYER_H));
+    (x, y) => !world.boxCollides(x, y, PLAYER_W, PLAYER_H) && canCombatStand(x, y));
   player.x = Math.max(0.5, Math.min(MAP_W - 0.5, player.x));
   player.y = Math.max(0.5, Math.min(MAP_H - 0.5, player.y));
   const moved = player.x !== oldX || player.y !== oldY;
@@ -88,7 +88,7 @@ function updateAutoWalk(dt) {
   if (!path || !path.length) return false;
   const stepLen = PLAYER_SPEED * (state.sprint ? SPRINT_MULT : 1) * rpg.speedMult() * (isDungeonOpen() ? 1 : rpg.mountSpeedMult()) * dt;
   const result = advancePath(player, path, stepLen,
-    (x, y) => !world.boxCollides(x, y, PLAYER_W, PLAYER_H));
+    (x, y) => !world.boxCollides(x, y, PLAYER_W, PLAYER_H) && canCombatStand(x, y));
   if (result.moved) movementSound();
   if (result.blocked) {
     clearPath();
@@ -151,7 +151,7 @@ function updateCat(dt) {
   function empurrar(dx, dy) {
     if (!Number.isFinite(dx) || !Number.isFinite(dy)) return;
     const oldX = player.x, oldY = player.y;
-    moveWithCollision(player, dx, dy, (x, y) => !world.boxCollides(x, y, PLAYER_W, PLAYER_H));
+    moveWithCollision(player, dx, dy, (x, y) => !world.boxCollides(x, y, PLAYER_W, PLAYER_H) && canCombatStand(x, y));
     player.x = Math.max(0.5, Math.min(MAP_W - 0.5, player.x));
     player.y = Math.max(0.5, Math.min(MAP_H - 0.5, player.y));
     player.dir = facingDirection(player.x - oldX, player.y - oldY, player.dir);

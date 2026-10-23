@@ -8,7 +8,7 @@ import { createUiScope, availableFocusTargets } from "../ui/ui-scope.js";
 import { createInstrumentLoader } from "../learning/instrument-loader.js";
 import { isTextEntry, nativeActivation } from "../platform/input.js";
 import { cacheDeAssets, totalDeAssets } from "../rendering/assets/index.js";
-import { PLAYER_SPEED, SPRINT_MULT, INTERACT_RADIUS, STORAGE, NET, MAP_W, MAP_H, TILE_KIND as K } from "../core/runtime-config.js";
+import { PLAYER_SPEED, PLAYER_W, PLAYER_H, SPRINT_MULT, INTERACT_RADIUS, STORAGE, NET, MAP_W, MAP_H, TILE_KIND as K } from "../core/runtime-config.js";
 import { AREAS, CONTINENTS, CONTINENT_ORDER, SITES, WAYSTONES, SPAWN } from "../content/config.js";
 import { createWorld } from "../world/world.js";
 import { createRenderer } from "../rendering/render.js";
@@ -49,7 +49,9 @@ import { BRASOES, LIMITE_MEMBROS, guildaDe, fundarGuilda, recrutar as recrutarGu
 import { VOCACOES } from "../content/vocations.js";
 import { ITEMS, QUESTIONS } from "../content/rpg-data.js";
 import { createSheet } from "../ui/sheet.js";
-import { createDuel } from "../ui/duel.js";
+import { createWorldCombat, combatSpawn } from "../gameplay/combate-mundo.js";
+import { createWorldCombatHud } from "../ui/combate-mundo.js";
+import { segmentFree } from "../core/collision.js";
 import { createGather, rollGather } from "../ui/gather.js";
 import { createInventoryUI } from "../ui/inventory-ui.js";
 import { createBestiary } from "../ui/bestiary.js";
@@ -337,26 +339,35 @@ const bestiaryUi = createBestiary({
   getAreaId: () => world.areaAt(player.x, player.y)?.id || "",
 });
 
-let duelUi = null;
-duelUi = createDuel({
-  rpg,
-  toast,
-  audio,
-  getAvatar: () => ({ colors: player.colors, look: player.look, gear: gearAtual() }),
-  onClose: () => {
-    closeModal("duel");
-    if (state.desfechoPendente) {
-      state.desfechoPendente = false;
-      state.duelEvento = null;
-      abrirDesfecho();
-    }
-  },
-  onVictory: (result) => {
-    if (state.duelEvento === "grande-prova") { state.desfechoPendente = true; return; }
-    quests.report("hunts", result?.defeated || 1);
+function onWorldCombatFinished(event) {
+  if (!event.training && event.result.defeated) {
+    quests.report("hunts", event.result.defeated);
     markStep("duel");
+  }
+  if (state.duelEvento === "grande-prova" || event.boss && event.ground?.id === GROUND_ACERVO.id) {
+    state.duelEvento = null;
+    if (event.reason === "victory") abrirDesfecho();
+  }
+  if (event.reason === "victory") toast(event.training ? "Treino encerrado no mapa." : `+${event.result.xp} XP · ${event.result.defeated} criatura(s).`, 3200);
+  updateSpellbar();
+}
+const surfaceCombat = createWorldCombat({
+  rpg, player,
+  canOccupy: (x, y) => !world.boxCollides(x, y, PLAYER_W, PLAYER_H),
+  chase(from, to, enemy) {
+    if (segmentFree(from, to, (x, y) => !world.boxCollides(x, y, PLAYER_W, PLAYER_H))) return to;
+    if (!enemy.routeAt || surfaceCombat.model.agora >= enemy.routeAt) {
+      enemy.routeAt = surfaceCombat.model.agora + 600;
+      enemy.route = findPath(world, from, to) || [];
+    }
+    while (enemy.route?.length && Math.hypot(from.x - enemy.route[0].x, from.y - enemy.route[0].y) < 0.12) enemy.route.shift();
+    return enemy.route?.[0] || from;
   },
+  onFinish: onWorldCombatFinished,
 });
+const combatHud = createWorldCombatHud({ rpg, toast, getHost: () => dungeon?.isOpen() ? $("dungeon") : $("app"), getCombat: () => state.modal || state.panelOpen || state.chatOpen ? null : dungeon?.combat?.active ? dungeon.combat : surfaceCombat });
+// Compatibilidade da API de depuração; não abre a antiga arena.
+const duelUi = { close: () => surfaceCombat.stop("escape") };
 
 const gatherUi = createGather({
   rpg,
@@ -384,10 +395,8 @@ dungeon = createDungeon({
   rpg,
   audio,
   isBlocked: () => state.panelOpen || !!state.modal || state.chatOpen,
-  onEncounter: (monster, ground, boss, partner) => {
-    openDuel(monster, ground, boss, partner);
-    return !!rpg.duel;
-  },
+  onCombatFinished: onWorldCombatFinished,
+  onCombatKey: (key) => combatHud.action(key),
   onSheet: () => openSheet(),
   onInventory: () => openInventory(),
   onWiki: () => openWiki(),
@@ -880,6 +889,13 @@ function updateSpellbar() {
 }
 
 function usarMagia(id) {
+  const battle = dungeon?.combat?.active ? dungeon.combat : surfaceCombat;
+  if (battle.active) {
+    const result = battle.spell(id);
+    if (result?.reason) toast(result.reason, 2400);
+    updateSpellbar();
+    return;
+  }
   const res = rpg.castWorldSpell(id);
   if (!res.ok) { toast(res.reason, 3000); return; }
   if (res.healed) toast(`${res.name} curou ${res.healed} de vida.`, 2800);
@@ -910,9 +926,13 @@ function gearAtual() {
 }
 
 function openDuel(monster, ground, boss = false, partner = null) {
-  if (!duelUi.open(monster, ground, boss, partner)) return;
-  openModal("duel");
-  audio.open();
+  if (dungeon?.isOpen()) return dungeon.startEncounter(monster, ground, boss);
+  if (surfaceCombat.active || rpg.duel || state.casa) return false;
+  const point = combatSpawn(player, (x, y) => !world.boxCollides(x, y, PLAYER_W, PLAYER_H));
+  if (!point) { toast("Não há espaço livre para o combate aqui.", 2600); return false; }
+  stopSprint(); clearPath();
+  const actor = { ...monster, ...point, alive: true, boss, dir: 0 };
+  return surfaceCombat.start(actor, ground, boss, partner ? (Array.isArray(partner) ? partner : [partner]) : []);
 }
 
 function openTraining(npc) {
@@ -927,7 +947,7 @@ function openTraining(npc) {
 
 function startTraining(tier) {
   const npc = state.trainingNpc;
-  if (!npc || !duelUi) return;
+  if (!npc || surfaceCombat.active || dungeon?.combat?.active) return;
   const def = dungeonById(`dungeon-${npc.continent}`);
   const names = def?.monsters || ["Bicho de Treino"];
   const rooms = (def?.rooms || []).filter((r) => r.kind !== "entrance" && r.kind !== "city");
@@ -938,14 +958,20 @@ function startTraining(tier) {
     tier,
     level: tier * 3,
   };
-  if (!duelUi.openTraining(npc.continent, tier, theme, monster)) return;
-  openModal("duel");
-  audio.open();
+  const point = combatSpawn(player, (x, y) => !world.boxCollides(x, y, PLAYER_W, PLAYER_H));
+  if (!point) { toast("Falta espaço livre perto do instrutor.", 2400); return; }
+  const prepared = rpg.startTraining(npc.continent, tier, theme, monster);
+  if (!prepared.ok) return;
+  closeModal("training");
+  stopSprint(); clearPath();
+  const actor = { ...prepared.duel.monster, ...point, alive: true, dir: 0 };
+  surfaceCombat.start(actor, prepared.duel.ground, false, [], prepared);
 }
 
 
 function enterCave(cave) {
   if (!state.started) return;
+  surfaceCombat.stop("escape");
   stopSprint();
   clearPath();
   closeChat();
@@ -1049,6 +1075,7 @@ function openGather(kind, extra = {}) {
 // ---- casas: a fachada é a porta ----
 function entrarNaCasa(house) {
   if (!house || state.casa || performance.now() < state.casaCooldownUntil) return;
+  surfaceCombat.stop("escape");
   const cena = world.prepararInterior(house);
   if (!cena) return;
   state.casaVolta = { x: player.x, y: player.y, dir: player.dir };
@@ -1472,6 +1499,7 @@ function buildGod() {
 }
 
 function godTravel(id) {
+  surfaceCombat.stop("escape");
   const stone = WAYSTONES.find((w) => w.id === id);
   if (!stone) return;
   if (dungeon?.isOpen()) dungeon.close("god");
@@ -1811,6 +1839,7 @@ function knockDown(ms) {
 }
 
 function setSprintAtivo(on, som = true) {
+  if (on && surfaceCombat.active) return;
   state.sprint = on;
   const botao = $("touch-sprint");
   botao?.classList.toggle("active", on);
@@ -2684,6 +2713,7 @@ function buildTravel() {
 }
 
 function enterUnderworld({ semEntrada = false } = {}) {
+  surfaceCombat.stop("escape");
   const current = dungeon?.state?.def?.id;
   // o ferry chega de fora da caverna: sem entrada antiga, a saída usa a boca
   // do continente da conurbação em vez da última caverna visitada
@@ -2695,6 +2725,7 @@ function enterUnderworld({ semEntrada = false } = {}) {
 }
 
 function portalToCity(defId) {
+  surfaceCombat.stop("escape");
   const target = DUNGEONS.find((def) => def.id === defId);
   if (!target) return;
   const cave = world.caves.find((c) => c.defId === defId && c.mouth === "entrance");
@@ -2707,6 +2738,7 @@ function portalToCity(defId) {
 }
 
 function travelConurbation(defId) {
+  surfaceCombat.stop("escape");
   const target = DUNGEONS.find((def) => def.id === defId);
   if (!target) return;
   const cave = world.caves.find((c) => c.defId === defId && c.mouth === "entrance");
@@ -2720,6 +2752,7 @@ function travelConurbation(defId) {
 }
 
 function travelTo(cid) {
+  surfaceCombat.stop("escape");
   const stone = WAYSTONES.find((w) => w.id === cid) || WAYSTONES.find((w) => w.continent === cid);
   if (!stone) return;
   // o destino pode ser uma área do catálogo: o continente e o nome vêm dela
@@ -3053,6 +3086,7 @@ function updatePrompt() {
 }
 
 const { updateBoost, updateMovement, clearPath, interactionRadius, setPathTo, updateAutoWalk, updateCat, empurrar } = createSurfaceMovement({
+  canCombatStand: (x, y) => surfaceCombat.canStand(x, y),
   player, state, world, rpg, audio, toast, interactTarget, isDungeonOpen: () => !!dungeon?.isOpen(),
 });
 
@@ -3106,7 +3140,7 @@ function loop(now) {
   try {
     const dt = Math.min(0.05, (now - (loop.last || now)) / 1000);
     loop.last = now;
-    const active = state.started && !state.panelOpen && !state.modal && !state.chatOpen && now >= state.pvpDownUntil;
+    const active = state.started && !document.hidden && !state.panelOpen && !state.modal && !state.chatOpen && now >= state.pvpDownUntil;
     updateBoost(dt, active);
     rpg.tick();
     // o relógio do clima anda sempre, inclusive dentro da caverna e no modo leve
@@ -3123,6 +3157,8 @@ function loop(now) {
       rpg.pulse();
       if (state.modal === "sheet") sheetUi.refresh();
     }
+    if (!active) surfaceCombat.defend(false);
+    combatHud.update(now);
     if (dungeon?.isOpen()) {
       $("prompt").hidden = true;
       return;
@@ -3133,8 +3169,11 @@ function loop(now) {
         const forca = 0.55 * dt * (1 + renderer.ambiente.intensidade() * 0.8);
         empurrar(Math.cos(giro) * forca, Math.sin(giro) * forca);
       }
-      if (state.path) updateAutoWalk(dt);
-      else updateMovement(dt);
+      if (!surfaceCombat.dodging) {
+        if (state.path) updateAutoWalk(dt * surfaceCombat.speedFactor);
+        else updateMovement(dt * surfaceCombat.speedFactor);
+      }
+      surfaceCombat.tick(dt);
       if (!state.casa) updateZone();
       updateQuestTrack(now);
       if (now % 2000 < 20) syncAdmin();
@@ -3212,7 +3251,7 @@ function loop(now) {
     // desfoque do modal, e a mochila aberta derrubava o quadro para 8 fps.
     const coberto = !!(state.panelOpen || state.modal || state.chatOpen || now < state.pvpDownUntil);
     if (!coberto || coberto !== cobertoAntes) {
-      renderer.draw(now, player, state.peers, world.npcs, world.cat, player.moving, rpg.data.sub === "rastreador", { hp: rpg.hp(), hpMax: rpg.hpMax(), mana: rpg.mana(), manaMax: rpg.manaMax() }, state.casa ? { interior: state.casa.cena } : null);
+      renderer.draw(now, player, state.peers, world.npcs, world.cat, player.moving, rpg.data.sub === "rastreador", { hp: rpg.hp(), hpMax: rpg.hpMax(), mana: rpg.mana(), manaMax: rpg.manaMax() }, { interior: state.casa?.cena || null, combat: surfaceCombat.model });
     }
     cobertoAntes = coberto;
     updatePrompt();
@@ -3361,11 +3400,6 @@ window.addEventListener("keydown", (e) => {
     }
     return;
   }
-  // o combate é uma janela de ação: J, K, L, WASD e 1-6 são dele, não do HUD
-  if (state.modal === "duel" && duelUi && e.key !== "Escape" && e.key !== "Tab") {
-    if (duelUi.tecla(e)) e.preventDefault();
-    return;
-  }
   if (nativeActivation(e)) return;
   const k = e.key.toLowerCase();
   const gameActive = state.started && !state.panelOpen && !state.modal && !state.chatOpen && !dungeon?.isOpen();
@@ -3391,6 +3425,7 @@ window.addEventListener("keydown", (e) => {
   if (k === "h" && !state.modal && !state.panelOpen) { openWiki(); return; }
   if (state.panelOpen || state.modal) return;
   if (dungeon?.isOpen()) return;
+  if (combatHud.action(k)) { e.preventDefault(); return; }
   if (k === " " || e.code === "Space") {
     e.preventDefault();
     if (e.repeat) return;

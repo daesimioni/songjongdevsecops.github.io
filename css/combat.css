@@ -416,3 +416,19 @@
   font-size: 9.5px;
 }
 .duel-ability[hidden] { display: none; }
+
+/* Controles de ação; o mapa continua visível e recebe movimento. */
+#world-combat { position:fixed; z-index:1900; right:12px; bottom:12px; max-width:min(560px,calc(100vw - 24px)); padding:10px; background:#162029eb; color:#fff3d1; border:1px solid #789080; border-radius:8px; pointer-events:auto; }
+#world-combat[hidden] { display:none; }
+#world-combat p { margin:0 0 6px; font-size:13px; }
+#world-combat>div { display:flex; flex-wrap:wrap; gap:5px; }
+#world-combat button { min-height:44px; padding:8px; touch-action:none; }
+#world-combat small { display:block; max-width:480px; margin-top:6px; }
+@media(max-width:650px) { #world-combat { bottom:10px; left:110px; right:8px; max-width:none; } #world-combat small { display:none; } #world-combat button { font-size:11px; padding:5px; } }
+#world-combat button { background:#263b48; color:#fff3d1; border:1px solid #8c9a85; border-radius:4px; font:inherit; }
+#world-combat button:hover, #world-combat button[aria-pressed="true"] { background:#36545a; border-color:#61f4c0; }
+#world-combat button:focus-visible { outline:2px solid #ffc857; outline-offset:2px; }
+#world-combat button:disabled { opacity:.5; cursor:wait; }
+@media(min-width:900px) { #dungeon #world-combat { right:250px; } }
+#dungeon:has(#world-combat:not([hidden])) .dg-help { display:none; }
+@media(max-width:720px) { #dungeon:has(#world-combat:not([hidden])) .dg-fold { display:none; } }

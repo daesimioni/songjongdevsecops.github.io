@@ -1,3 +1,4 @@
+import { drawWorldEnemy, drawWorldCombat } from "./combate-mundo.js";
 import { drawCollisionOverlay } from "./collision-overlay.js";
 import { createTerrainRenderer } from "./terrain-renderer.js";
 import { spritePose } from "./sprite-cache.js";
@@ -1419,8 +1420,12 @@ export function createRenderer(canvas, world, {collisionDebug=false} = {}) {
         }
       },
     });
+    for (const enemy of cena?.combat?.vivos() || []) {
+      if (onScreen(enemy.x / 48, enemy.y / 48, 48)) drawables.push({ y: enemy.y / 3, fn: () => drawWorldEnemy(ctx, enemy, time) });
+    }
     jogadorAtual = player;
     drawables.sort((a, b) => a.y - b.y).forEach((d) => d.fn());
+    drawWorldCombat(ctx, cena?.combat);
     if(collisionDebug)drawCollisionOverlay(ctx,world.collisionBoxes(),player,{x:camX,y:camY,w:viewW,h:viewH},world.isSolidTile);
     stats.assets = assetsVisiveis;
 
