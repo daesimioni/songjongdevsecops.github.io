@@ -1,5 +1,5 @@
 {
- "versao": "3ff658eefc0f5900",
+ "versao": "ab33d9df5cf69f90",
  "arquivos": [
   "assets/favicon.svg",
   "assets/fonts/OFL.txt",
@@ -12,6 +12,8 @@
   "assets/fonts/silkscreen-700-latino.woff2",
   "assets/og.png",
   "assets/reference-art/manifest.json",
+  "assets/wiki/combate-desktop.png",
+  "assets/wiki/combate-mobile.png",
   "css/base.css",
   "css/bestiary.css",
   "css/caderno.css",
@@ -26,6 +28,7 @@
   "css/social.css",
   "css/style.css",
   "css/touch.css",
+  "css/wiki-encyclopedia.css",
   "css/wiki.css",
   "index.html",
   "src/app/app.js",

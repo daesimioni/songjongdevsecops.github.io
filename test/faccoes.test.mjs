@@ -136,7 +136,8 @@ assert.match(app, /atoPorMissao\(q\.id\)/, "a missão não move a facção");
 assert.match(app, /atosPorDesfecho\(d\.id\)/, "o desfecho não move as facções");
 assert.match(app, /A estante reservada/, "a porta do Concílio não existe");
 assert.match(app, /O Porto trata você como/, "a loja não fala a reputação");
-assert.match(html, /2\.312 fichas/, "a ajuda não tem a contagem nova");
+const { indiceDaWiki } = await import("../src/ui/wiki.js");
+assert.ok(html.includes(`${indiceDaWiki().length.toLocaleString("pt-BR")} fichas`), "a ajuda não acompanha a contagem da wiki");
 assert.match(wiki, /Facções e reputação/, "a wiki não ganhou a ficha das facções");
 
 console.log(`ok facções: ${FACCOES.length} forças, ${ATOS.length} atos, teto ${LIMITE_REPUTACAO}, save, loja e diário`);
