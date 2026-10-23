@@ -25,12 +25,15 @@ export function geometriaDaPlaca(cabecaY) {
   return { alturaBarras, nomeTopo, barrasTopo };
 }
 
-export function desenharPlacaDoJogador(ctx, { nome, cor, vitais, x, cabecaY } = {}) {
+export function desenharPlacaDoJogador(ctx, { nome, cor, vitais, x, cabecaY, dpr = 1 } = {}) {
   if (!ctx || !nome) return;
   const p = PLACA;
+  const densidade = Number.isFinite(dpr) && dpr > 0 ? dpr : 1;
   ctx.save();
-  // a placa vive na tela: nada de escala, câmera, noite ou vinheta por cima
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  // a placa vive na tela: nada de escala, câmera, noite ou vinheta por cima.
+  // A densidade converte o CSS da cena para o pixel do canvas; sem ela, mudar
+  // a resolução adaptativa deslocava a placa do jogador.
+  ctx.setTransform(densidade, 0, 0, densidade, 0, 0);
   ctx.font = p.fonte;
   ctx.textAlign = "center";
   const larguraNome = Math.ceil(ctx.measureText(String(nome)).width) + p.paddingNome * 2;

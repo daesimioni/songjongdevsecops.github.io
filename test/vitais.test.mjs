@@ -44,7 +44,9 @@ check(/from "\.\/name-plate\.js"/.test(render), "o vale não usa a placa compart
 check(/desenharPlacaDoJogador\(ctx, \{/.test(render), "o vale não desenha a placa do jogador");
 check(render.indexOf("drawMinimap(player") < render.indexOf("desenharPlacaDoJogador(ctx"), "a placa não fica depois do mundo e da noite");
 check(!/drawNameTag\(player\.name[^)]*vitais\)/.test(render), "o nome do jogador ainda é desenhado no meio do mundo");
-check(/setTransform\(1, 0, 0, 1, 0, 0\)/.test(placa), "a placa não é desenhada em pixels de tela");
+check(/setTransform\(densidade, 0, 0, densidade, 0, 0\)/.test(placa), "a placa não é desenhada em pixels de tela com a densidade");
+check(/dpr: state\.dpr/.test(dungeon), "a caverna não entrega a densidade da tela para a placa");
+check(/rawMs <= 250/.test(dungeon), "a caverna conta o retorno de aba na média de qualidade");
 check(/nome: player\.name,\n\s+cor: player\.color/.test(render), "a placa do vale não recebe nome e cor");
 check(/placa: \(\) => \(\{ nome: player\.name, cor: player\.color \}\)/.test(app), "app.js não entrega a placa para a caverna");
 check(/from "\.\.\/rendering\/name-plate\.js"/.test(dungeon), "a caverna não usa a placa compartilhada");
@@ -56,6 +58,7 @@ check(/setVitals\(hp, hpMax, mana, manaMax\)/.test(net), "a rede não guarda os 
 check(/hp: Math\.round\(this\.vitals\.hp\)/.test(net), "a rede não publica a vida");
 check(/peer\.vitais = hp === null/.test(net), "a rede não lê a vida do outro");
 check(/for \(const p of peers\)[\s\S]*desenharPlacaDoJogador\(ctx, \{[\s\S]*vitais: p\.vitais/.test(render), "o par não mostra a própria vida e mana");
+check(/dpr,\n\s+\}\);/.test(render), "o vale não entrega a densidade da tela para a placa");
 check(/vitais: \(\) => \(\{ hp: rpg\.hp\(\)/.test(app), "app.js não passa os vitais para a caverna");
 check(/#ff5a86/.test(placa) && /#6bd5ff/.test(placa), "cores de vida e mana diferentes do HUD");
 check(/Math\.round\(bw \* f\.vida\)/.test(placa), "a barra não usa a fração da vida");
