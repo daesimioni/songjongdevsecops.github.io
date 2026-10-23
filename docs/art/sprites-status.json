@@ -1,0 +1,100 @@
+{
+  "version": 1,
+  "task": "adaptacao-autoral-integral-dos-sprites",
+  "status": "pending",
+  "updated": "2026-10-23",
+  "instructions": "docs/art/SPRITES-PENDENTES.md",
+  "capabilityRouting": {
+    "requestedModel": "GPT 6.1 Sol",
+    "requestedMode": "leve",
+    "requires": [
+      "image_generation",
+      "visual_inspection",
+      "repository_write"
+    ],
+    "doNotAssignImageProductionTo": [
+      "DeepSeek"
+    ],
+    "withoutImageGeneration": "leave visual production pending; no procedural substitution",
+    "automaticModelSelection": false
+  },
+  "baseline": {
+    "mainCommit": "182d20be91e8ada0fdfa8d467a6dd74e1996ade5",
+    "inventoryPR": 12,
+    "draftPR": 13,
+    "draftBranch": "feat/curadoria-autoral-integral",
+    "draftCommit": "4df7756d002df506e5ebf9549a8ddba5ab842da5",
+    "draftPRMergedAtCheckpoint": false
+  },
+  "scope": {
+    "references": 264075,
+    "recipes": 218769,
+    "aliases": 45306,
+    "index": "docs/art/referencias/cobertura-{0000..0032}.ndjson.gz.txt",
+    "format": "base64(gzip(NDJSON)); [archive, exactMember, recipeID, width, height, frames]",
+    "defaultStatusForEverySource": "pending",
+    "categories": {
+      "alimentos": 176,
+      "armas": 879,
+      "cartografia": 196,
+      "componentes": 170249,
+      "construcoes": 887,
+      "criaturas": 2736,
+      "documentos": 181,
+      "efeitos": 218,
+      "equipamentos": 724,
+      "interface": 1467,
+      "magias": 176,
+      "mobilia": 1515,
+      "projeteis": 54,
+      "recipientes": 181,
+      "recursos": 30077,
+      "terrenos": 8871,
+      "vazios": 2,
+      "vegetacao": 180
+    }
+  },
+  "completion": {
+    "fullyAdaptedAndReviewedReferences": 0,
+    "fullyAdaptedAndReviewedRecipes": 0,
+    "doneEntries": [],
+    "note": "No completed individual art entries. Inventory/render checks are not artistic completion."
+  },
+  "drafts": [
+    {
+      "id": "arte/criaturas/d6162e2326bb7c61840d",
+      "archive": "criaturas.zip",
+      "member": "Criaturas/Mam├¡feros/Wolf.gif",
+      "status": "draft",
+      "location": "PR #13: docs/art/referencias/curadoria.json",
+      "missing": [
+        "walk/attack/hit/death cycles in all 8 directions",
+        "atlas alignment and anchors",
+        "scale/palette/camera in scenes",
+        "collision",
+        "runtime integration",
+        "visual review"
+      ]
+    }
+  ],
+  "archives": [
+    {
+      "name": "magias.zip",
+      "sha256": "e7a6446a99fc4e9c6d5f3ab74815a6b0b9ae2b9a02452b805afd50e7255e0be1"
+    },
+    {
+      "name": "criaturas.zip",
+      "sha256": "72df67f1036ff828a70cd4e6a087841789894632f7d23eea679d2cc46a3a9fcb"
+    },
+    {
+      "name": "sprites-completos.zip",
+      "sha256": "db353357ddd2821657e265b42cbb04d0f3b39fcdd1b86d60b8e2e7140ed7d06e"
+    }
+  ],
+  "nextActions": [
+    "Check current main and PR #13 without overwriting user work",
+    "Recover all three original ZIPs; confirm hashes",
+    "Complete wolf end-to-end with image generation, animation, integration and real visual review",
+    "Record exact source IDs, evidence and remaining work for every batch; cover entire index"
+  ]
+}

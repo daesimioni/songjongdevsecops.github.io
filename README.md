@@ -1,5 +1,11 @@
 # The Learning Valley
 
+> **Continuidade das artes — tarefa ainda pendente:** consulte
+> [SPRITES-PENDENTES](docs/art/SPRITES-PENDENTES.md) e [AGENTS.md](AGENTS.md).
+> A adaptação autoral de todas as referências não está concluída. Produção de
+> imagens destinada ao GPT 6.1 Sol leve com geração de imagens; **não atribuir
+> essa etapa ao DeepSeek**. O catálogo procedural não comprova conclusão.
+
 No ar em <https://songjongdevsecops.github.io/>.
 
 The Learning Valley é um vale em pixel art que se atravessa a pé. Você entra
