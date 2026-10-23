@@ -80,7 +80,7 @@ Estado: **feito**, **medido** e **decisão** (respondida em 2026-10-22). Não h�
 | item | estado | o que falta | esforço |
 |---|---|---|---|
 | mundo sem rendering | **feito** | `world.js` não importa mais `rendering/`: a colocação do ambiente foi para `src/world/povoado.js` e o tamanho das construções para `src/content/asset-meta.js`, fonte única entre desenho e mapa; `test/arquitetura.test.mjs` cobra os quatro pontos e a matriz de navegador deu 19/19 com 60,1 fps depois | P |
-| arquivos grandes (app 3,4 mil, dungeon 2,2 mil, rpg 1,9 mil linhas) | decisão | cada um é coeso por domínio e o contrato de módulos está sem ciclos (166 módulos, 374 dependências). Separar agora é risco sem ganho medido; reavaliar quando uma mudança precisar tocar o mesmo trecho por três frentes | G |
+| arquivos grandes (app 3,4 mil, dungeon 2,2 mil, rpg 1,9 mil linhas) | decisão | cada um é coeso por domínio e o contrato de módulos está sem ciclos (175 módulos, 414 dependências). Separar agora é risco sem ganho medido; reavaliar quando uma mudança precisar tocar o mesmo trecho por três frentes | G |
 | sondas CDP fora do repositório | decisão | ver pergunta 10: trazer todas engorda o repositório público com dependência de Chrome | — |
 
 ## Onda 3: conteúdo grande e endgame
