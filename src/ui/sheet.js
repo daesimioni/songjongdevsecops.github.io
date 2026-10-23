@@ -61,6 +61,18 @@ export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onOu
       abasFicha.appendChild(botao);
       botoesAba.set(id, botao);
     }
+    abasFicha.addEventListener("keydown", (event) => {
+      const keys = ["ArrowRight", "ArrowLeft", "Home", "End"];
+      if (!keys.includes(event.key)) return;
+      const buttons = [...botoesAba.values()];
+      const index = buttons.indexOf(document.activeElement);
+      if (index < 0) return;
+      event.preventDefault();
+      const next = event.key === "Home" ? 0 : event.key === "End" ? buttons.length - 1
+        : (index + (event.key === "ArrowRight" ? 1 : -1) + buttons.length) % buttons.length;
+      buttons[next].click();
+      buttons[next].focus({ preventScroll: true });
+    });
     body.appendChild(abasFicha);
     for (const [id, pagina] of Object.entries(paginas)) {
       pagina.id = `sheet-page-${id}`;

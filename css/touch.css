@@ -28,7 +28,7 @@
     padding: calc(8px + env(safe-area-inset-top)) calc(10px + env(safe-area-inset-right)) 8px calc(10px + env(safe-area-inset-left));
     gap: 6px;
   }
-  .brand-title { font-size: 10px; }
+  .brand-title { font-size: 12px; }
   .admin-badge {
   display: inline-flex;
   align-items: center;
@@ -38,16 +38,16 @@
   background: rgba(255, 200, 87, 0.14);
   color: var(--amber);
   font-family: var(--pixel);
-  font-size: 6.5px;
+  font-size: 12px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 .hud-actions { flex-wrap: nowrap; gap: 4px; }
-  .hud-btn { min-height: 38px; padding: 0 7px; font-size: 11px; white-space: nowrap; }
+  .hud-btn { min-height: 38px; padding: 0 7px; font-size: 12px; white-space: nowrap; }
   .hud-btn-icon { width: 36px; padding: 0; }
   #btn-sound { width: 38px; padding: 0; justify-content: center; font-size: 0; }
   #btn-sound::before { content: "♪"; font-size: 16px; }
-  #net-pill { flex: 0 1 96px; min-width: 0; padding: 0 8px; font-size: 10px; }
+  #net-pill { flex: 0 1 96px; min-width: 0; padding: 0 8px; font-size: 12px; }
   #net-pill b { max-width: 64px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
   .touch {
@@ -79,7 +79,7 @@
     background: #0b1024;
     border-bottom: 1px solid var(--line);
   }
-  .modal-head h2 { font-size: 11px; }
+  .modal-head h2 { font-size: 12px; }
   .modal-head .hud-btn { min-height: 40px; padding: 0 10px; }
   .duel-card, .pvp-card { width: 100%; }
   #duel-name { font-size: clamp(14px, 4.4vw, 18px); }
@@ -105,10 +105,10 @@
   .dg-actions { flex-wrap: wrap; justify-content: flex-end; }
   #dg-title { max-width: 100%; overflow-wrap: anywhere; }
   #dg-title { font-size: clamp(13px, 4.4vw, 18px); }
-  .dg-stats { font-size: 10px; gap: 4px; }
+  .dg-stats { font-size: 12px; gap: 4px; }
   .dg-stats span { padding: 4px 6px; }
   .dg-exit { min-height: 40px; padding: 0 10px; }
-  .dg-msg { font-size: 11.5px; max-width: 88vw; }
+  .dg-msg { font-size: 12px; max-width: 88vw; }
   #dg-map {
     display: block;
     width: 88px;
@@ -125,12 +125,12 @@
     right: 108px;
     bottom: calc(10px + env(safe-area-inset-bottom));
     text-align: left;
-    font-size: 9.5px;
+    font-size: 12px;
   }
 }
 
 @media (max-width: 380px) {
-  .hud-btn { font-size: 10.5px; padding: 0 6px; }
+  .hud-btn { font-size: 12px; padding: 0 6px; }
   .touch .dpad { grid-template-columns: repeat(3, 48px); grid-template-rows: repeat(3, 48px); gap: 5px; }
   .touch-action { width: 62px; height: 62px; }
   .touch-sprint { width: 52px; height: 52px; }
@@ -148,10 +148,10 @@
   .touch-sprint { width: 46px; height: 46px; }
   .prompt { bottom: calc(150px + env(safe-area-inset-bottom)); }
   .toast { bottom: auto; top: calc(54px + env(safe-area-inset-top)); }
-  .hud-btn { min-height: 38px; padding: 0 7px; font-size: 11px; }
+  .hud-btn { min-height: 38px; padding: 0 7px; font-size: 12px; }
   #btn-sound { width: 38px; padding: 0; justify-content: center; font-size: 0; }
   #btn-sound::before { content: "♪"; font-size: 16px; }
-  #net-pill { flex: 0 1 96px; min-width: 0; padding: 0 8px; font-size: 10px; }
+  #net-pill { flex: 0 1 96px; min-width: 0; padding: 0 8px; font-size: 12px; }
   #net-pill b { max-width: 64px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .minimap { display: none; }
   .modal-card { max-height: 94dvh; }

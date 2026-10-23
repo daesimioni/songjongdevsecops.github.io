@@ -53,7 +53,7 @@
   --bg-soft: #0b1024;
   --panel: #0a0f21;
   --ink: #ece8ff;
-  --muted: #9c96b8;
+  --muted: #b9b3cf;
   --line: rgba(172, 142, 255, 0.28);
   --line-strong: rgba(172, 142, 255, 0.55);
   --mint: #61f4c0;
@@ -111,12 +111,12 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-button, input { font: inherit; color: inherit; }
+button, input, select, textarea { font: inherit; color: inherit; }
 button { cursor: pointer; }
 a { color: var(--cyan); }
 kbd {
   font-family: var(--pixel);
-  font-size: 8px;
+  font-size: 10px;
   letter-spacing: 0.02em;
   padding: 3px 5px;
   border: 1px solid var(--line-strong);
@@ -190,7 +190,7 @@ kbd {
 }
 .brand-sub {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 12px;
   color: var(--muted);
   letter-spacing: 0.08em;
   text-transform: lowercase;
@@ -205,7 +205,7 @@ kbd {
   background: rgba(255, 200, 87, 0.14);
   color: var(--amber);
   font-family: var(--pixel);
-  font-size: 6.5px;
+  font-size: 12px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -222,7 +222,7 @@ kbd {
 }
 .god-text { display: grid; gap: 3px; }
 .god-text b { font-family: var(--mono); font-size: 13px; color: var(--ink); }
-.god-text span { font-family: var(--mono); font-size: 11.5px; color: var(--muted); }
+.god-text span { font-family: var(--mono); font-size: 12px; color: var(--muted); }
 .god-btn {
   padding: 8px 14px;
   border: 1px solid rgba(255, 200, 87, 0.5);
@@ -230,7 +230,7 @@ kbd {
   background: rgba(255, 200, 87, 0.12);
   color: var(--amber);
   font-family: var(--pixel);
-  font-size: 8px;
+  font-size: 12px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   cursor: pointer;
@@ -252,7 +252,7 @@ body.god-mode .brand-title::after {
   content: "modo imortal";
   display: block;
   font-family: var(--pixel);
-  font-size: 7px;
+  font-size: 10px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--amber);
@@ -272,7 +272,7 @@ body.god-mode .brand-title::after {
   background: rgba(8, 12, 28, 0.72);
   backdrop-filter: blur(8px);
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 12px;
   color: var(--muted);
 }
 .pill i {
@@ -333,7 +333,7 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
 .zone-card p { margin: 0; }
 #zone-eyebrow {
   font-family: var(--pixel);
-  font-size: 8px;
+  font-size: 12px;
   line-height: 2;
   letter-spacing: 0.18em;
   color: color-mix(in srgb, var(--zone, var(--mint)) 72%, white);
@@ -401,16 +401,16 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
 }
 .calendario[hidden] { display: none; }
 .calendario-linha { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
-#calendario-data { font-family: var(--pixel); font-size: 8px; color: var(--amber); letter-spacing: 0.03em; }
+#calendario-data { font-family: var(--pixel); font-size: 12px; color: var(--amber); letter-spacing: 0.03em; }
 #calendario-hora { font-family: var(--pixel); font-size: 12px; color: #fff3d1; letter-spacing: 0.06em; }
-.calendario-baixo { margin-top: 5px; font-family: var(--mono); font-size: 10px; color: var(--muted); text-transform: lowercase; align-items: center; }
+.calendario-baixo { margin-top: 5px; font-family: var(--mono); font-size: 12px; color: var(--muted); text-transform: lowercase; align-items: center; }
 #calendario-estacao { color: #b8d8ff; }
 #calendario-fase { font-style: normal; color: #9ecbff; }
 .calendario-barra { flex: 1; height: 3px; border-radius: 2px; background: rgba(255, 255, 255, 0.09); overflow: hidden; }
 .calendario-barra i { display: block; height: 100%; width: 0; border-radius: 2px; background: linear-gradient(90deg, #ffd479, #9ecbff); transition: width 0.6s linear; }
 @media (max-width: 980px) {
   .calendario { top: 108px; min-width: 250px; max-width: 88vw; padding: 6px 10px 8px; }
-  #calendario-data { font-size: 7px; }
+  #calendario-data { font-size: 12px; }
 }
 
 .update-banner {
@@ -474,7 +474,7 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
   background: rgba(8, 12, 28, 0.96);
   box-shadow: var(--shadow);
 }
-.chatbar label { font-family: var(--pixel); font-size: 7px; color: var(--amber); text-transform: uppercase; }
+.chatbar label { font-family: var(--pixel); font-size: 12px; color: var(--amber); text-transform: uppercase; }
 .chatbar input {
   flex: 1;
   min-width: 0;
@@ -492,7 +492,7 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
   background: rgba(255, 255, 255, 0.06);
   padding: 6px 10px;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 12px;
 }
 .chatbar button[type="submit"] { background: var(--amber); color: #1a1405; border-color: #b98d2d; font-weight: 700; }
 #chat-cancel { color: var(--muted); }
@@ -535,7 +535,7 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
 }
 #panel-kicker {
   font-family: var(--pixel);
-  font-size: 8px;
+  font-size: 12px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--accent-ink);
@@ -550,7 +550,7 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
 }
 .panel-meta {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.02em;
   color: var(--muted);
   margin: 0 0 26px;
@@ -620,16 +620,6 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
   backdrop-filter: blur(6px);
 }
 .modal[hidden] { display: none; }
-/* texto maior: o cartão cresce sem estourar a tela; a largura é reduzida na
-   mesma proporção do zoom para o resultado continuar dentro do viewport */
-@media (min-width: 560px) {
-  html[data-fonte="grande"] .modal-card {
-    width: min(539px, 81.7vw);
-    max-height: min(69vh, 626px);
-    zoom: 1.15;
-  }
-}
-
 .help-ajustes {
   display: flex;
   align-items: center;
@@ -639,7 +629,7 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
 }
 .help-ajustes span {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.45;
   color: var(--muted);
 }
@@ -679,8 +669,8 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
 .journal-item:hover:not(:disabled) { border-color: var(--line-strong); background: rgba(180, 140, 255, 0.07); }
 .journal-item:disabled { opacity: 0.45; cursor: default; }
 .journal-item b { display: block; font-family: var(--mono); font-size: 13.5px; color: var(--ink); margin-bottom: 4px; }
-.journal-item span { font-family: var(--mono); font-size: 11px; color: var(--muted); }
-.journal-item em { font-family: var(--pixel); font-size: 8px; color: var(--mint); font-style: normal; white-space: nowrap; }
+.journal-item span { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.journal-item em { font-family: var(--pixel); font-size: 12px; color: var(--mint); font-style: normal; white-space: nowrap; }
 
 .help-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 20px; }
 .help-grid div { display: flex; align-items: center; gap: 10px; font-family: var(--mono); font-size: 12px; color: var(--muted); }
@@ -716,7 +706,7 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
 .intro-card::after { bottom: 8px; right: 8px; border-left: 0; border-top: 0; }
 .intro-eyebrow {
   font-family: var(--pixel);
-  font-size: 7px;
+  font-size: 12px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--mint);
@@ -732,9 +722,9 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
   letter-spacing: 0.02em;
 }
 .intro-lead { font-size: 15px; line-height: 1.7; color: #cfc9e6; margin: 0 0 22px; max-width: 54ch; }
-.intro-lead kbd { font-size: 7px; }
+.intro-lead kbd { font-size: 10px; }
 #intro-form { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 14px; align-items: end; margin-bottom: 16px; }
-#intro-form label { font-family: var(--pixel); font-size: 7px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+#intro-form label { font-family: var(--pixel); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
 #intro-form label[for="intro-name"], #intro-form #intro-name { grid-column: 1 / -1; }
 #intro-form input[type="text"], #intro-form input:not([type]) {
   width: 100%;
@@ -769,7 +759,7 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
   background: linear-gradient(180deg, #ffd479, var(--amber));
   color: #1b1404;
   font-family: var(--pixel);
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   box-shadow: 0 10px 30px rgba(255, 200, 87, 0.18);
@@ -780,13 +770,13 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
 .intro-card.compact .intro-lead, .intro-card.compact .intro-eyebrow { display: none; }
 .intro-card.compact #intro-title { font-size: 22px; margin: 0 0 16px; letter-spacing: 0.08em; }
 .intro-step { margin-bottom: 16px; }
-.intro-sub { font-family: var(--pixel); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--amber); margin: 0 0 12px; }
+.intro-sub { font-family: var(--pixel); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--amber); margin: 0 0 12px; }
 .intro-saved { margin: 0 0 14px; padding: 14px 16px; border: 1px solid rgba(97, 244, 192, 0.32); border-radius: 8px; background: rgba(97, 244, 192, 0.06); }
 .intro-saved p { margin: 0 0 12px; font-family: var(--mono); font-size: 12.5px; line-height: 1.6; color: #cfc9e6; }
 .intro-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 12px; }
 .intro-row .start { grid-column: auto; margin-top: 0; width: auto; }
 .intro-form-stack { display: grid; gap: 8px; margin-bottom: 14px; }
-.intro-form-stack label { font-family: var(--pixel); font-size: 7px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.intro-form-stack label { font-family: var(--pixel); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
 .intro-form-stack input {
   width: 100%;
   padding: 12px;
@@ -829,7 +819,7 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
   border-radius: 6px;
   background: rgba(0, 0, 0, 0.28);
   font-family: var(--mono);
-  font-size: 11.5px;
+  font-size: 12px;
   line-height: 1.5;
   color: var(--mint);
   word-break: break-all;
@@ -850,7 +840,7 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
 .look-label {
   padding-top: 6px;
   font-family: var(--pixel);
-  font-size: 7px;
+  font-size: 12px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--muted);
@@ -881,12 +871,12 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
 .look-card .look-editor { grid-template-columns: 190px 1fr; }
 .sheet-look-row { display: flex; flex-wrap: wrap; gap: 10px; }
 #intro-look { grid-column: 1 / -1; margin: 10px 0 4px; }
-.intro-hint { grid-column: 1 / -1; margin: 0 0 8px; font-family: var(--mono); font-size: 11.5px; line-height: 1.55; color: var(--muted); }
+.intro-hint { grid-column: 1 / -1; margin: 0 0 8px; font-family: var(--mono); font-size: 12px; line-height: 1.55; color: var(--muted); }
 #intro-look .look-editor { grid-template-columns: 150px 1fr; }
 #intro-look .look-preview canvas { width: 132px; height: 148px; }
-.intro-note { font-family: var(--mono); font-size: 11.5px; line-height: 1.6; color: var(--muted); margin: 0 0 14px; }
-.intro-controls { font-family: var(--mono); font-size: 11px; color: var(--muted); margin: 0; padding-top: 14px; border-top: 1px dashed var(--line); }
-.intro-controls kbd { font-size: 7px; }
+.intro-note { font-family: var(--mono); font-size: 12px; line-height: 1.6; color: var(--muted); margin: 0 0 14px; }
+.intro-controls { font-family: var(--mono); font-size: 12px; color: var(--muted); margin: 0; padding-top: 14px; border-top: 1px dashed var(--line); }
+.intro-controls kbd { font-size: 10px; }
 
 .touch {
   position: absolute;
@@ -944,7 +934,7 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
   pointer-events: auto;
   color: var(--cyan);
   font-family: var(--pixel);
-  font-size: 7px;
+  font-size: 12px;
   letter-spacing: 0.04em;
   border-color: rgba(107, 213, 255, 0.55);
   box-shadow: 0 0 18px rgba(107, 213, 255, 0.12);
@@ -983,7 +973,7 @@ body.na-casa .minimap { display: none; }
   border: 1px solid rgba(255, 200, 87, 0.35);
   border-radius: 99px;
   font-family: var(--mono);
-  font-size: 8.5px;
+  font-size: 10px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--amber);
@@ -1081,9 +1071,9 @@ body.mapa-grande #prompt { display: none; }
   line-height: 1;
 }
 .mini-btn:hover { border-color: var(--line-strong); color: var(--mint); }
-.mini-fit { width: auto; padding: 0 6px; font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase; }
+.mini-fit { width: auto; padding: 0 6px; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; }
 .mini-zoom { min-width: 26px; text-align: center; font-family: var(--mono); font-size: 10.5px; color: var(--mint); }
-#room-label { margin-left: auto; font-family: var(--mono); font-size: 9.5px; color: var(--muted); }
+#room-label { margin-left: auto; font-family: var(--mono); font-size: 12px; color: var(--muted); }
 
 .noscript {
   position: absolute;
@@ -1108,12 +1098,12 @@ body.mapa-grande #prompt { display: none; }
   background: rgba(255, 200, 87, 0.14);
   color: var(--amber);
   font-family: var(--pixel);
-  font-size: 6.5px;
+  font-size: 12px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 .hud-actions { width: 100%; justify-content: flex-end; }
-  .hud-btn { font-size: 11px; padding: 6px 8px; }
+  .hud-btn { font-size: 12px; padding: 6px 8px; }
   .hud-btn kbd { display: none; }
   .pill-progress { display: none; }
 }
@@ -1128,7 +1118,7 @@ body.mapa-grande #prompt { display: none; }
   .pill-progress { display: none; }
   .brand { flex: 1 1 100%; }
   .brand-sub { display: none; }
-  .brand-title { font-size: 10px; white-space: nowrap; }
+  .brand-title { font-size: 12px; white-space: nowrap; }
   .admin-badge {
   display: inline-flex;
   align-items: center;
@@ -1138,15 +1128,15 @@ body.mapa-grande #prompt { display: none; }
   background: rgba(255, 200, 87, 0.14);
   color: var(--amber);
   font-family: var(--pixel);
-  font-size: 6.5px;
+  font-size: 12px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 .hud-actions { width: 100%; justify-content: flex-end; gap: 5px; }
   #net-pill { margin-right: auto; }
-  .hud-btn { font-size: 11px; padding: 6px 8px; }
+  .hud-btn { font-size: 12px; padding: 6px 8px; }
   .hud-btn kbd { display: none; }
-  .pill { font-size: 10px; padding: 6px 9px; }
+  .pill { font-size: 12px; padding: 6px 9px; }
   .minimap { display: none; }
   .panel { width: 100%; border-left: 0; }
   .panel-scroll { padding: 18px 18px 40px; }

@@ -1,0 +1,228 @@
+/* Contrato visual compartilhado: leitura, foco, janelas e tamanhos de tela.
+   Pixel art nos títulos; textos e ações usam as fontes de leitura do sistema. */
+:root { --text-small: 0.8125rem; --text-body: 0.9375rem; --target: 44px; color-scheme: dark; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+button, input, select, textarea, summary { touch-action: manipulation; }
+button:disabled { cursor: not-allowed; }
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 3px solid var(--amber); outline-offset: 3px;
+}
+:where(input, textarea)::placeholder { color: var(--muted); opacity: 1; }
+:where(.modal-card, .panel) { overflow-wrap: anywhere; }
+:where(.modal-card, .panel) :where(input:not([type=range]):not([type=checkbox]):not([type=radio]), select, textarea) {
+  min-height: var(--target); max-width: 100%; font-size: 16px;
+}
+.modal { padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left)); }
+.modal-card {
+  max-width: 100%; max-height: min(900px, calc(100dvh - 32px));
+  overscroll-behavior: contain; scrollbar-gutter: stable;
+  scroll-padding-block: 80px 24px;
+}
+.modal-head { flex-shrink: 0; align-items: center; }
+.modal-head h2 { font-size: 16px; min-width: 0; }
+.modal-head [data-close], .panel-head [data-close] { flex: 0 0 auto; min-height: var(--target); }
+.modal-card :is(p, li, dd, dt, label) { line-height: 1.6; }
+.modal-card :is(p, li) { font-size: max(13px, 1em); }
+.modal-card :is(button:not(.inv-slot):not(.look-swatch), summary) { min-height: var(--target); }
+.modal-card :is(button, summary) { line-height: 1.4; }
+.modal-card :is(.quest-brief, .help-note, .npc-text, .training-sub, .wiki-detail, .intro-note, .intro-warn, .intro-saved p) { font-family: var(--sans); font-size: 15px; line-height: 1.65; }
+.modal-card :is(.inv-hint, .best-trait, .best-weak, .quest-foot, .journal-progress, .sheet-bag-text span) { font-size: 13px; }
+.modal-card :is(.inv-sec, .journal-sec, .shop-sec, .look-label) { font-size: 12px; letter-spacing: 0.04em; }
+.modal-card :is(.quest-head, .quest-foot, .shop-troca, .gear-row, .build-row, .sheet-bag-resumo) { flex-wrap: wrap; }
+.modal-card :is(.quest-head b, .gear-row b, .sheet-bag-text) { min-width: 0; }
+.quest-giver { white-space: normal; }
+.book-card { width: min(1280px, 100%); height: min(900px, calc(100dvh - 32px)); max-height: calc(100dvh - 32px); }
+.book-main { min-height: 0; scroll-padding-block: 84px 24px; }
+.book-nav { min-height: 0; overflow-y: auto; }
+.book-main .modal-head h2 { font-size: 16px; }
+.book-txt b { font-size: 14px; }
+.book-txt small { font-size: 12px; line-height: 1.5; }
+.book-link { min-height: 56px; }
+.book-tabs { flex-wrap: wrap; width: 100%; }
+.book-tab { flex: 1 1 auto; white-space: normal; }
+.inventory-card .inv-layout { grid-template-columns: minmax(160px, .8fr) minmax(0, 1.6fr); }
+.inv-layout > * { min-width: 0; }
+.inv-detail { grid-column: 1 / -1; }
+.inv-grid { grid-template-columns: repeat(auto-fit, minmax(44px, 1fr)); }
+.inv-grid .inv-slot { min-height: 44px; }
+.inv-slot .item-art { max-width: 90%; max-height: 90%; }
+.wiki-list { max-height: none; overflow: visible; }
+.wiki-detail pre, .panel-body pre { max-width: 100%; overflow-x: auto; }
+.wiki-detail dd { min-width: 0; margin-left: 0; }
+.rede-modal { max-height: calc(100dvh - 32px); }
+.rede-body { overscroll-behavior: contain; }
+.ctx-menu { max-width: calc(100vw - 16px); max-height: calc(100dvh - 16px); overflow-y: auto; }
+.ctx-menu button { min-height: 44px; grid-template-columns: 20px minmax(0, 1fr); }
+.ctx-menu button em { grid-column: 2; }
+.minimap.grande { inset: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left)); overflow: hidden; }
+.minimap.grande #minimap-canvas { max-width: 100%; min-height: 0; object-fit: contain; }
+.minimap.grande .mini-btn, .minimap.grande .rosa button { min-width: 36px; min-height: 36px; }
+.prompt { width: max-content; max-width: min(560px, calc(100vw - 32px)); }
+.toast { width: max-content; max-width: min(560px, calc(100vw - 32px)); line-height: 1.5; }
+.splash { padding: 0; overflow-y: auto; }
+.splash-card { min-height: 100dvh; max-width: min(920px, 100%); padding: max(24px, env(safe-area-inset-top)) 20px max(24px, env(safe-area-inset-bottom)); }
+.splash-kicker { font-size: 12px; letter-spacing: .12em; }
+.splash-logo { font-size: clamp(20px, 4vw, 38px); overflow-wrap: anywhere; }
+.splash-tag { font-size: 15px; }
+.splash-foot { color: #c6bfdc; font-size: 12px; letter-spacing: .04em; }
+.splash-enter { min-height: 52px; }
+.enter-inner { padding: 24px; max-width: 100%; }
+/* O aumento atua nas letras, sem zoom geométrico nem redução da janela. */
+html[data-fonte="grande"] :is(.modal-card, .panel) { --text-body: 1.0625rem; }
+html[data-fonte="grande"] :is(.modal-card, .panel) :is(p, li, dd, dt, label, button, input, select, textarea, summary, .wiki-detail, .panel-body) { font-size: max(16px, 1em); }
+html[data-fonte="grande"] .modal-head h2 { font-size: 19px; }
+@media (max-width: 1280px) and (min-width: 901px) {
+  .hud.hud-top { grid-template-columns: minmax(0, 1fr) auto; }
+  .hud-calendar { grid-column: 1; grid-row: 2; justify-self: start; }
+  .hud-calendar .calendario { max-width: none; }
+  .hud-left { flex-wrap: wrap; }
+  .hud-left .brand { display: none; }
+  .quest-track { grid-column: 2; grid-row: 2; }
+}
+@media (max-width: 900px) {
+  .modal { padding: 8px; }
+  .modal-card { max-height: calc(100dvh - 16px); padding: 16px 14px 24px; }
+  .book-card { padding: 0; height: calc(100dvh - 16px); max-height: calc(100dvh - 16px); }
+  .book-nav { display: block; overflow-x: auto; overflow-y: hidden; padding: 8px; }
+  .book-nav-list { display: flex; width: max-content; min-width: 100%; }
+  .book-link { display: flex; flex-direction: column; gap: 5px; width: auto; min-width: 76px; min-height: 60px; padding: 6px 10px; }
+  .book-link .book-txt { display: block; }
+  .book-link .book-txt b { font-family: var(--sans); font-size: 12px; }
+  .book-link .book-txt small, .book-nav-foot { display: none; }
+  .book-main { padding: 16px 14px 24px; }
+  .inventory-card .inv-layout { grid-template-columns: minmax(0, 1fr); }
+  .inv-detail { grid-column: auto; }
+  .hud.hud-top { padding: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) 8px max(8px, env(safe-area-inset-left)); grid-template-columns: minmax(0, 1fr); gap: 6px; }
+  .hud-left .brand { display: none; }
+  .hud-right { grid-column: 1; grid-row: 1; justify-content: space-between; width: 100%; }
+  .hud-dock { flex: 1; justify-content: space-around; }
+  .dock-btn { width: auto; min-width: 44px; height: 44px; padding: 4px 8px; flex-direction: column; gap: 3px; }
+  .dock-btn > span { display: inline; font-family: var(--sans); font-size: 12px; }
+  .dock-btn.dock-icon { display: inline-flex; width: 44px; }
+  .hud-right #net-pill { width: 44px; height: 44px; flex: 0 0 44px; }
+  .hud-left .hud-vitals { grid-row: 2; }
+  .hud-calendar { grid-row: 3; }
+  .hud-calendar .calendario { padding: 5px 9px; }
+  .hud-calendar #calendario-data { font-family: var(--mono); font-size: 12px; }
+  .hud-calendar #calendario-hora { font-family: var(--mono); font-size: 13px; }
+  .calendario-baixo { display: none; }
+  .quest-track { grid-column: 1; grid-row: 4; max-height: 100px; overflow-y: auto; }
+  .qt-title { white-space: normal; }
+  #wiki .book-main { display: block; }
+  .rede-modal { height: calc(100dvh - 16px); max-height: calc(100dvh - 16px); }
+  .chatbar { width: auto; bottom: max(8px, env(safe-area-inset-bottom)); }
+  .chatbar input { font-size: 16px; }
+  .panel-scroll { min-height: 0; padding-bottom: max(32px, env(safe-area-inset-bottom)); }
+  .best-cards { grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); }
+}
+@media (pointer: coarse) {
+  .mini-btn, .mini-fold { min-width: 44px; min-height: 44px; }
+  .look-swatch { width: 44px; height: 44px; }
+  .spellbar { max-width: calc(100vw - 16px); gap: 4px; padding: 4px; bottom: calc(198px + env(safe-area-inset-bottom)); }
+  .spell-slot { flex: 0 0 44px; width: 44px; height: 44px; }
+  .prompt { bottom: calc(252px + env(safe-area-inset-bottom)); }
+  .toast { bottom: calc(306px + env(safe-area-inset-bottom)); }
+}
+@media (max-width: 380px) {
+  .hud-right { gap: 3px; }
+  .hud-dock { gap: 0; padding: 2px; }
+  .dock-btn { padding-inline: 3px; }
+  .hud-right #net-pill { display: none; }
+  .help-grid, .voc-grid, .voc-subs { grid-template-columns: minmax(0, 1fr); }
+  .intro-card, .intro-card.compact { padding: 20px 14px; }
+  .spellbar { gap: 2px; }
+}
+@media (max-height: 520px) and (orientation: landscape) {
+  .modal-card { max-height: calc(100dvh - 16px); }
+  .book-card { height: calc(100dvh - 16px); }
+  .book-nav { padding: 4px; }
+  .book-link { min-height: 44px; flex-direction: row; }
+  .hud.hud-top { width: min(440px, 60vw); grid-template-columns: 1fr; }
+  .hud-calendar, .quest-track { display: none; }
+  .hud-left .hud-vitals { padding-block: 4px; }
+  .spellbar { bottom: 8px; }
+  .prompt { bottom: 64px; }
+  .splash-card { min-height: 100dvh; padding-block: 16px; }
+  .splash-logo { font-size: 20px; margin-bottom: 12px; }
+  .splash-tag { margin-top: 12px; padding: 6px 12px; }
+  .splash-foot { margin-top: 12px; }
+}
+/* Instrumentos preservam sua geometria e rolam dentro da área de leitura. */
+.periodic-grid { grid-template-columns: repeat(18, minmax(44px, 1fr)); grid-auto-rows: 48px; }
+.panel-live { min-width: 0; }
+.panel-live canvas { max-width: 100%; }
+.panel-live :is(button, summary) { min-height: 44px; }
+.panel-live :is(input:not([type=range]), select) { min-height: 44px; font-size: 16px; max-width: 100%; }
+@media (max-width: 560px) {
+  .scale-cents { grid-template-columns: 1fr; }
+  .seq-grid { overflow-x: auto; }
+  .periodic-card { flex-wrap: wrap; }
+}
+/* As linhas crescem com o conteúdo; a rolagem pertence à página, não às fichas. */
+#wiki .book-main { grid-template-rows: auto auto auto auto auto; }
+#wiki .wiki-list { min-height: auto; grid-auto-rows: max-content; }
+#wiki .wiki-item { min-height: max-content; }
+#wiki .wiki-detail { max-height: none; overflow: visible; }
+@media (max-width: 900px) {
+  .book-nav-list { width: 100%; }
+  .book-link { flex: 1 1 0; min-width: 0; padding-inline: 2px; }
+  .book-link .book-txt b { font-size: 11px; }
+}
+/* O cartão de produto não herda a largura da janela da loja. */
+.shop-grid > .shop-card { width: auto; min-width: 0; }
+@media (max-width: 900px) {
+  .dg-head { flex-direction: column; gap: 8px; }
+  .dg-actions { width: 100%; flex-wrap: wrap; justify-content: flex-start; gap: 4px; }
+  .dg-exit { min-height: 44px; font-size: 12px; }
+  .dg-exit kbd { display: none; }
+}
+.help-section { margin-block: 12px; border: 1px solid var(--line); border-radius: 8px; background: rgba(255, 255, 255, .025); }
+.help-section > summary { padding: 12px; font: 600 15px/1.5 var(--sans); color: var(--amber); cursor: pointer; }
+.help-section[open] > summary { border-bottom: 1px solid var(--line); margin-bottom: 12px; }
+.help-section .help-note { margin: 12px; }
+.equip-name { font-family: var(--sans); font-size: 12px; letter-spacing: .02em; text-transform: none; }
+@media (max-width: 900px) {
+  .book-nav-list { gap: 0; }
+  .modal-card .book-link { min-height: 60px; height: auto; }
+  .book-link .book-txt b { font-size: 12px; white-space: nowrap; overflow-wrap: normal; }
+  html[data-fonte="grande"] .book-nav-list { flex-wrap: wrap; }
+  html[data-fonte="grande"] .book-link { flex-basis: 30%; }
+  html[data-fonte="grande"] .book-link .book-txt b { font-size: 16px; }
+}
+@media (max-width: 380px) {
+  .book-nav-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px; }
+  .modal-card .book-link { min-height: 44px; }
+}
+.duel-sem-runa { grid-column: 1 / -1; }
+.sheet-vocation { display: grid; gap: 6px; line-height: 1.6; }
+.sheet-vocation b { font-size: 16px; }
+.modal-card button:disabled, .look-hair.locked, .look-chip.locked { opacity: .7; }
+@media (max-height: 520px) and (orientation: landscape) {
+  .modal-card .book-link { min-height: 44px; }
+}
+.best-continente-tab { max-width: 100%; white-space: normal; }
+/* Ações da batalha no próprio mapa, integradas à atualização da main. */
+#world-combat { font: 14px/1.5 var(--sans); overflow-wrap: anywhere; max-height: calc(100dvh - 32px); overflow-y: auto; overscroll-behavior: contain; }
+#world-combat p { font-size: 14px; }
+#world-combat button { min-height: 44px; font-size: 14px; padding: 8px 10px; max-width: 100%; }
+#world-combat small { font-size: 13px; }
+#app:has(#world-combat:not([hidden])) > :is(.spellbar, .prompt, .steps),
+#app:has(#world-combat:not([hidden])) .quest-track { display: none; }
+@media (min-width: 901px) {
+  #app > #world-combat { right: 276px; bottom: 16px; width: min(560px, calc(100vw - 304px)); }
+}
+@media (max-width: 900px) {
+  #world-combat, #dungeon #world-combat { left: max(8px, env(safe-area-inset-left)); right: max(8px, env(safe-area-inset-right)); bottom: calc(198px + env(safe-area-inset-bottom)); max-width: none; max-height: max(100px, calc(100dvh - 350px)); padding: 8px; }
+  #world-combat button { flex: 1 1 auto; font-size: 13px; }
+}
+@media (max-height: 520px) and (orientation: landscape) {
+  #world-combat, #dungeon #world-combat { left: 170px; right: 84px; bottom: 8px; max-height: 150px; }
+}
+@media (min-width: 721px) and (max-width: 900px) and (min-height: 521px) {
+  #app > #world-combat { right: 276px; }
+  #dungeon #world-combat { right: 154px; }
+}
+.minimap:not(.grande):not(.mini) { width: 250px; min-width: 0; max-width: calc(100vw - 32px); }
+.minimap:not(.grande) .mini-head { flex-wrap: wrap; }
+.minimap:not(.grande) #minimap-canvas { max-width: 100%; }
+#btn-sound.dock-icon::before { content: none; }

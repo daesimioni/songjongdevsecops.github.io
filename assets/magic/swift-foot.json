@@ -1,0 +1,16 @@
+{
+  "id": "arte/magias/3ca2eb6c2644fd9aafc3",
+  "archive": "magias.zip",
+  "sourceMember": "Magias/Paladin/Swift Foot.png",
+  "sourceDimensions": [32, 32],
+  "output": "assets/magic/swift-foot.png",
+  "outputSha256": "fb0b181d1c973deed0eaecb16a3f8f21c250dd80d2cb68b895391d755cd1e7ce",
+  "outputDimensions": [128, 128],
+  "style": "autoral-pixel-spell",
+  "transparentBackground": true,
+  "review": {
+    "visualInspection": "passed",
+    "runtimeMapping": "pending: reference has no current item or spell id in the game catalog"
+  },
+  "status": "integration"
+}

@@ -1,0 +1,16 @@
+{
+  "id": "arte/magias/6b9d8a879b3d33cad374",
+  "archive": "magias.zip",
+  "sourceMember": "Magias/Paladin/Paladin familiar.png",
+  "sourceDimensions": [32, 32],
+  "output": "assets/magic/paladin-familiar.png",
+  "outputSha256": "437cf274e497b11467a8523230158b0701c7107d22a281aa1416a30d201c9df0",
+  "outputDimensions": [128, 128],
+  "style": "autoral-pixel-spirit",
+  "transparentBackground": true,
+  "review": {
+    "visualInspection": "passed",
+    "runtimeMapping": "pending: reference has no current item or spell id in the game catalog"
+  },
+  "status": "integration"
+}

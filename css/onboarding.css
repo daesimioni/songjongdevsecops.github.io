@@ -46,7 +46,7 @@
 }
 .splash-kicker {
   font-family: var(--pixel);
-  font-size: 8px;
+  font-size: 12px;
   letter-spacing: 0.3em;
   text-transform: uppercase;
   color: #bfffe3;
@@ -89,7 +89,7 @@
   /* o botão fica no pé, depois da faixa de texto */
   margin-top: 0;
   font-family: var(--pixel);
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 0.08em;
   color: #0a0c18;
   background: linear-gradient(180deg, #fff3d1, #ffc857 65%, #f0b83c);
@@ -103,7 +103,7 @@
 .splash-enter:hover { transform: translateY(-2px); box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.45), 0 20px 54px rgba(255, 200, 87, 0.36), inset 0 1px 0 rgba(255, 255, 255, 0.8); }
 .splash-enter:focus-visible { outline: 2px solid var(--mint); outline-offset: 5px; }
 .splash-enter kbd {
-  font-size: 7px;
+  font-size: 10px;
   margin-left: 8px;
   opacity: 0.85;
   /* dentro do botão claro, o kbd não pode usar a cor clara do jogo */
@@ -113,7 +113,7 @@
 }
 .splash-foot {
   font-family: var(--mono);
-  font-size: 10.5px;
+  font-size: 12px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: rgba(206, 201, 230, 0.55);
@@ -144,7 +144,7 @@
   .splash-card { padding: 16px; }
   .splash-logo { font-size: 20px; }
   .splash-tag { font-size: 12px; margin-bottom: 24px; }
-  .splash-enter { padding: 15px 20px; font-size: 9px; }
+  .splash-enter { padding: 15px 20px; font-size: 12px; }
 }
 
 /* ---- vida e mana no HUD ---- */
@@ -166,12 +166,12 @@
   align-items: baseline;
   justify-content: space-between;
   font-family: var(--pixel);
-  font-size: 7px;
+  font-size: 12px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--muted);
 }
-.vital-head b { font-family: var(--mono); font-size: 11px; letter-spacing: 0; color: var(--ink); }
+.vital-head b { font-family: var(--mono); font-size: 12px; letter-spacing: 0; color: var(--ink); }
 .vital-bar {
   height: 8px;
   border: 1px solid rgba(0, 0, 0, 0.6);
