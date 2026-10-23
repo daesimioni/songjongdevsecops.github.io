@@ -39,7 +39,7 @@ def category(path, archive):
   for needle, group in [('atlas/', 'componentes'), ('interface/', 'interface'), ('mapas/', 'cartografia'), ('projeteis/', 'projeteis'), ('efeitos/', 'efeitos')]:
     if needle in name:
       return group
-  for pattern, group in [('plant|flower|tree|grass|veget|natureza', 'vegetacao'), ('armor|helmet|shield|boots|equipment|armadura|capacete|escudo', 'equipamentos'), ('sword|axe|bow|weapon|arma|espada', 'armas'), ('wall|roof|door|architecture|parede|construc|porta|piso|chao', 'construcoes'), ('furniture|chair|table|bed|mobil|cadeira|mesa|cama', 'mobilia'), ('food|fruit|meal|alimento|comida|fruta', 'alimentos'), ('book|scroll|document|livro', 'documentos'), ('bottle|flask|container|recipiente|frasco|bau', 'recipientes')]:
+  for pattern, group in [(r'plant|flower|(?<![a-z])tree|grass|veget|natureza', 'vegetacao'), ('armor|helmet|shield|boots|equipment|armadura|capacete|escudo', 'equipamentos'), ('sword|axe|bow|weapon|arma|espada', 'armas'), ('wall|roof|door|architecture|parede|construc|porta|piso|chao', 'construcoes'), ('furniture|chair|table|bed|mobil|cadeira|mesa|cama', 'mobilia'), ('food|fruit|meal|alimento|comida|fruta', 'alimentos'), ('book|scroll|document|livro', 'documentos'), ('bottle|flask|container|recipiente|frasco|bau', 'recipientes')]:
     if re.search(pattern, name):
       return group
   return 'recursos'
@@ -67,13 +67,88 @@ def material(rgba):
   return 12
 
 
+NATIVE_RIGS = {}
+for family, names in {
+  'quadruped': 'dog wolf fox bear boar deer horse cow goat sheep rabbit rat',
+  'bird': 'eagle owl raven gull chicken duck',
+  'reptile': 'fish shark turtle frog crocodile lizard',
+  'invertebrate': 'bee wasp butterfly dragonfly mantis snail',
+  'humanoid': 'skeleton zombie orc goblin knight mage',
+  'mythical': 'dragon wyvern griffin phoenix hydra mimic',
+}.items():
+  for species in names.split():
+    NATIVE_RIGS[species] = family
+LEGACY_RIGS = [
+  (r'spider|aranh|arachn', 'spider'),
+  (r'scorpion|escorp', 'scorpion'),
+  (r'beetle|scarab|besouro', 'beetle'),
+  (r'\bant\b|formig', 'ant'),
+  (r'\bbat\b|morceg', 'bat'),
+  (r'crab|caranguej', 'crab'),
+  (r'jelly', 'jelly'),
+  (r'slime|blob|gelatin|ameba', 'slime'),
+  (r'ghost|wisp|spectre|phantom|fantasma', 'wisp'),
+  (r'golem|construct|gargoyle|gargula', 'golem'),
+  (r'crystal|prism|cristal', 'crystal'),
+  (r'gear|clockwork', 'gear'),
+]
+
+
+def creature_rig(name, species, family):
+  for pattern, kind in LEGACY_RIGS:
+    if re.search(pattern, name):
+      return 'legacy:'+kind, 'legacy'
+  for candidate, group in NATIVE_RIGS.items():
+    if re.search(r'(?<![a-z])'+candidate+r'(?![a-z])',name):
+      return candidate, group
+  for pattern, candidate, group in [
+    (r'sorcer|wizard|witch|druid|necromancer', 'mage', 'humanoid'),
+    (r'warrior|barbarian|paladin|soldier', 'knight', 'humanoid'),
+    (r'\bdemon\b|devil|\bimp\b', 'legacy:imp', 'legacy'),
+    (r'drake|draken|dragoes', 'dragon', 'mythical'),
+    (r'crocodil', 'crocodile', 'reptile'),
+    (r'tartarug', 'turtle', 'reptile'),
+    (r'maripos|\bmoth\b', 'legacy:moth', 'legacy'),
+    (r'borbolet', 'butterfly', 'invertebrate'),
+    (r'elementa.*fire|fire.*elementa', 'fire', 'elemental'),
+    (r'elementa.*ice|ice.*elementa', 'ice', 'elemental'),
+    (r'elementa.*earth|earth.*elementa', 'earth', 'elemental'),
+    (r'elementa.*water|water.*elementa', 'water', 'elemental'),
+    (r'elementa.*energy|energy.*elementa', 'energy', 'elemental'),
+    (r'elementa.*death|death.*elementa', 'death', 'elemental'),
+  ]:
+    if re.search(pattern,name):
+      return candidate, group
+  if species=='treant' and not re.search(r'plant|tree|\bent\b|flora',name):
+    return 'wolf', 'quadruped'
+  return species, family
+
+
 def traits(path, cat, seed):
   name = normalized(path)
-  element = next((v for k, v in [('fire|flam|burn|dragon', 'fogo'), ('ice|frost|snow', 'gelo'), ('death|undead|soul|ghost', 'morte'), ('earth|terra|stone', 'terra'), ('energy|elect|lightning', 'energia'), ('water|aqua|sea|fish', 'agua'), ('wind|air', 'vento'), ('poison|venom', 'veneno'), ('holy|light|divine', 'luz')] if re.search(k, name)), 'fisico')
+  element = next((v for k, v in [('fire|flam|burn', 'fogo'), ('ice|frost|snow', 'gelo'), ('death|undead|soul|ghost', 'morte'), ('earth|terra|stone', 'terra'), ('energy|elect|lightning', 'energia'), ('water|aqua|sea|fish', 'agua'), (r'wind|\bair\b', 'vento'), ('poison|venom', 'veneno'), ('holy|light|divine', 'luz')] if re.search(k, name)), 'fisico')
   species = next((v for k, v in [('dragon|drake|wyvern', 'dragon'), ('bird|eagle|owl|parrot', 'owl'), ('fish|shark', 'fish'), ('wolf|hound|dog', 'wolf'), ('cat|tiger|lion', 'lynx'), ('bear', 'bear'), ('horse|deer|stag', 'deer'), ('snake|worm|serpent', 'serpent'), ('plant|tree|ent|flora', 'treant'), ('human|orc|elf|dwarf|goblin|demon|skeleton|undead', 'goblin')] if re.search(k, name)), 'wolf')
   # Families follow the native rigs; no photographs are rotated as actors.
   family = {'dragon':'dragon', 'owl':'bird', 'fish':'aquatic', 'serpent':'serpent', 'treant':'humanoid', 'goblin':'humanoid'}.get(species, 'quadruped')
-  motif = next((v for k, v in [('chair|cadeira', 'cadeira'), ('table|mesa', 'mesa-jantar'), ('bed|cama', 'cama-solteiro'), ('shelf|estante', 'estante-livros'), ('wardrobe|armario', 'armario'), ('barrel|barril', 'barril-medio'), ('chest|crate|bau|caix', 'caixote-medio'), ('tree|arvore', 'carvalho'), ('plant|flower|planta|flor', 'samambaia'), ('wall|parede', 'parede-pedra'), ('door|porta', 'porta-madeira'), ('roof|telha', 'telhado-telha'), ('book|livro', 'pilha-livros') ] if re.search(k, name)), '')
+  motif = next((v for k, v in [('chair|cadeira', 'cadeira'), ('table|mesa', 'mesa-jantar'), ('bed|cama', 'cama-solteiro'), ('shelf|estante', 'estante-livros'), ('wardrobe|armario', 'armario'), ('barrel|barril', 'barril-medio'), ('chest|crate|bau|caixa|caixote', 'caixote-medio'), ('tree|arvore', 'carvalho'), ('plant|flower|planta|flor', 'samambaia'), ('wall|parede', 'parede-pedra'), ('door|porta', 'porta-madeira'), ('roof|telha', 'telhado-telha'), ('book|livro', 'pilha-livros') ] if re.search(r"(?<![a-z])(?:"+k+r")(?:s)?(?![a-z])", name)), '')
+  if cat == 'vegetacao':
+    for pattern, plant in [
+      (r'cactus|cacto','cacto'),(r'sunflower|girassol','girassol'),
+      (r'lavend|lavanda','lavanda'),(r'rose|rosa','rosa'),
+      (r'mushroom|fung|cogum','cogumelos'),(r'bamboo|bambu','bambu'),
+      (r'palm|palmeira','palmeira'),(r'pine|\bfir\b|pinheiro','pinheiro'),
+      (r'water lily|nenufar|loto|lotus','nenufar'),(r'vine|vinha','vinha'),
+      (r'dead tree|arvore morta','arvore-morta'),
+      (r'grass|capim|grama','capim'),
+      (r'blue flower|flor azul','flor-azul'),
+      (r'pink flower|flor rosa','flor-rosa'),
+      (r'flower|flor','flor-amarela'),
+    ]:
+      if re.search(pattern,name):
+        motif=plant
+        break
+  if cat == "criaturas":
+    species, family = creature_rig(name, species, family)
   return [element, species, family, motif]
 
 

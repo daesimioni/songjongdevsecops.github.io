@@ -22,7 +22,7 @@ O primeiro quadro visível é usado quando uma animação começa transparente.
 Semântica, proporções e regiões de materiais em grade 16×16 orientam desenhos
 novos com a paleta e os volumes do jogo. Atores usam rigs articulados em oito
 direções com repouso, caminhada, ataque, impacto e morte. Objetos reconhecidos
-usam modelos do kit nativo; formas desconhecidas viram relevos de volumes e
+usam modelos do kit nativo com oito rotações; formas desconhecidas viram relevos de volumes e
 materiais para composição. Magias oferecem ícone e efeito; projéteis e efeitos
 seguem as oito direções do movimento. Pisos são interpretados como planos do
 chão. Plantas conhecidas usam os ciclos de animação do kit.
@@ -50,7 +50,8 @@ if (definition) drawReference(ctx, definition, x, y, {
 ```
 
 Escolha direções entre `definition.orientations` e poses em `definition.states`,
-quando houver. Morte e impacto param no último quadro. Para magias, escolha
+quando houver. Morte e impacto param no último quadro. Em poses de ação, `tempo` é o tempo
+decorrido desde o início da pose; ciclos podem receber um relógio contínuo. Para magias, escolha
 `mode: 'icon'` ou `mode: 'effect'`. `referenceBodies` fornece corpos dos atores
 e partes sólidas de móveis conhecidos, nas mesmas unidades em tiles do jogo.
 Fragmentos e objetos não reconhecidos exigem montagem e corpo definidos pela

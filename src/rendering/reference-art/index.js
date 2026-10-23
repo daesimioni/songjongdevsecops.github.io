@@ -1,12 +1,17 @@
 import {
+  referencePoint,
+  referenceModelBounds,
+} from "../../content/reference-art/bodies.js";
+import { drawCreatureModel } from "../creature-models.js";
+import {
   MATERIALS,
   BASES,
   referenceFrame,
 } from "../../content/reference-art/recipes.js";
-import { paintKit } from "../sprite-kit/index.js";
+import { paintKitParts } from "../sprite-kit/index.js";
 import { paintKitCreature } from "../sprite-kit/creatures.js";
 import { paintKitEffect } from "../sprite-kit/effects.js";
-import { kitAsset, kitBounds } from "../../content/sprite-kit/catalog.js";
+import { kitAsset, kitParts } from "../../content/sprite-kit/catalog.js";
 import { directionVector } from "../../core/movement.js";
 import { volumePainter } from "../actor-volume.js";
 import { criarCache } from "../assets/nucleo.js";
@@ -47,19 +52,7 @@ export function referenceBounds(a, { mode = "icon" } = {}) {
     (a.category === "magias" && mode === "effect")
   )
     return { x: -72, y: -96, w: 144, h: 176 };
-  if (base(a)) {
-    const boxes = a.orientations.map((direction) =>
-        kitBounds(BASES[a.motif], { direction }),
-      ),
-      x = Math.min(...boxes.map((b) => b.x)) - 4,
-      y = Math.min(...boxes.map((b) => b.y)) - 4;
-    return {
-      x,
-      y,
-      w: Math.max(...boxes.map((b) => b.x + b.w)) - x + 4,
-      h: Math.max(...boxes.map((b) => b.y + b.h)) - y + 4,
-    };
-  }
+  if (base(a)) return referenceModelBounds(a.motif);
   return { x: -32, y: -48, w: 64, h: 64 };
 }
 function poly(g, points, color) {
@@ -147,6 +140,36 @@ function actor(g, a, direction, state, frame) {
   const dominant = [...counts].sort((x, y) => y[1] - x[1])[0]?.[0] || 1,
     color = MATERIALS[dominant],
     family = { dragon: "mythical", aquatic: "reptile" }[a.family] || a.family;
+  if (family === "legacy") {
+    const forward = directionVector(direction),
+      strike = state === "attack" ? Math.sin((Math.PI * frame) / 7) : 0;
+    g.save();
+    try {
+      if (state === "death") g.scale(1, 1 - frame / 10);
+      if (state === "hit")
+        g.translate(Math.sin((frame * Math.PI) / 2) * 1.2, 0);
+      g.translate(forward.x * strike * 2, forward.y * strike * 1.04);
+      const time =
+        state === "walk"
+          ? frame * 100
+          : state === "idle"
+            ? frame * 400
+            : state === "attack"
+              ? strike * 200
+              : 0;
+      drawCreatureModel(
+        g,
+        a.species.slice(7),
+        color,
+        time,
+        direction,
+        state === "walk" || state === "attack",
+      );
+    } finally {
+      g.restore();
+    }
+    return;
+  }
   if (family === "serpent") {
     const p = volumePainter(g, direction),
       collapse = state === "death" ? 1 - frame / 9 : 1;
@@ -262,7 +285,11 @@ export function paintReference(
         }
     } else if (base(a)) {
       const model = base(a);
-      paintKit(g, model.id, { direction, frame: frame % model.frames });
+      paintKitParts(g, kitParts(model.id), {
+        direction,
+        frame: frame % model.frames,
+        projectPoint: (x, y, z) => referencePoint(x, y, z, direction),
+      });
       g.save();
       g.translate(0, -5);
       g.scale(0.18, 0.18);

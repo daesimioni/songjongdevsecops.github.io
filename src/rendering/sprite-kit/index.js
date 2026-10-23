@@ -146,7 +146,14 @@ export function paintKit(g, id, { direction = 0, state, frame = 0 } = {}) {
     else paintKitWeather(g, definition, options);
     return;
   }
-  const parts = kitParts(id, state).map((p) =>
+  paintKitParts(g, kitParts(id, state), { direction, frame });
+}
+export function paintKitParts(
+  g,
+  sourceParts,
+  { direction = 0, frame = 0, projectPoint = null } = {},
+) {
+  const parts = sourceParts.map((p) =>
     !p.solid &&
     [
       "leaf",
@@ -161,7 +168,7 @@ export function paintKit(g, id, { direction = 0, state, frame = 0 } = {}) {
       ? { ...p, x: p.x + Math.sin((frame * Math.PI) / 4) * 0.8 }
       : p,
   );
-  const project = (x, y, z) => kitPoint(x, y, z, direction);
+  const project = projectPoint || ((x, y, z) => kitPoint(x, y, z, direction));
   const depth = (p) => project(p.x, p.y, 0)[1] + p.z + p.h * 0.5;
   [...parts]
     .sort((a, b) => depth(a) - depth(b))

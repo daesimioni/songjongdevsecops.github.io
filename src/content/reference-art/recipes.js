@@ -39,6 +39,21 @@ export const CATEGORIES = Object.freeze([
 export const STATES = Object.freeze(["idle", "walk", "attack", "hit", "death"]);
 export const BASES = Object.freeze({
   cadeira: "kit/mobiliario/cadeira",
+  "flor-amarela": "kit/natureza/flor-amarela",
+  "flor-azul": "kit/natureza/flor-azul",
+  "flor-rosa": "kit/natureza/flor-rosa",
+  lavanda: "kit/natureza/lavanda",
+  rosa: "kit/natureza/rosa",
+  girassol: "kit/natureza/girassol",
+  cacto: "kit/natureza/cacto",
+  cogumelos: "kit/natureza/cogumelos",
+  capim: "kit/natureza/capim",
+  bambu: "kit/natureza/bambu",
+  pinheiro: "kit/natureza/pinheiro",
+  palmeira: "kit/natureza/palmeira-coqueiro",
+  nenufar: "kit/natureza/nenufar",
+  vinha: "kit/natureza/vinha",
+  "arvore-morta": "kit/natureza/arvore-morta",
   "mesa-jantar": "kit/mobiliario/mesa-jantar",
   "cama-solteiro": "kit/mobiliario/cama-solteiro",
   "estante-livros": "kit/mobiliario/estante-livros",
@@ -157,9 +172,9 @@ export function referenceRecipe(category, row) {
         "vazios",
       ].includes(category)
         ? [0]
-        : actor || effect || ["armas", "equipamentos"].includes(category)
-          ? [0, 1, 2, 3, 4, 5, 6, 7]
-          : [0, 1, 2, 3],
+        : category === "terrenos"
+          ? [0, 1, 2, 3]
+          : [0, 1, 2, 3, 4, 5, 6, 7],
     ),
   });
 }
