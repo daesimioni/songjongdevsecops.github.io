@@ -1,3 +1,4 @@
+import { combatPose } from "./combat-vfx.js";
 import { drawWorldEnemy, drawWorldCombat } from "./combate-mundo.js";
 import { drawCollisionOverlay } from "./collision-overlay.js";
 import { createTerrainRenderer } from "./terrain-renderer.js";
@@ -1403,6 +1404,8 @@ export function createRenderer(canvas, world, {collisionDebug=false} = {}) {
     drawables.push({
       y: player.y * TILE,
       fn: () => {
+        const pose = combatPose(cena?.combat?.phase === "combat" ? cena.combat.jogador : null, cena?.combat?.agora, true);
+        ctx.save(); ctx.translate(pose.x, pose.y); ctx.globalAlpha *= pose.alpha;
         const lift = 5 * player.boost;
         const bob = Math.sin(time * 0.007) * 1.1 * player.boost;
         const onShip = player.boost > 0.35;
@@ -1415,13 +1418,14 @@ export function createRenderer(canvas, world, {collisionDebug=false} = {}) {
           drawHuman(ctx, player.x * TILE, player.y * TILE - lift + bob, player.dir, onShip ? false : moving, time,
             player.colors || PLAYER_COLORS[0], 1, player.look, player.gear || null);
         }
+        ctx.restore();
         if (player.bubble && player.bubble.until > now) {
           drawBubble(player.bubble.text, player.x * TILE, player.y * TILE - lift, player.color);
         }
       },
     });
     for (const enemy of cena?.combat?.vivos() || []) {
-      if (onScreen(enemy.x / 48, enemy.y / 48, 48)) drawables.push({ y: enemy.y / 3, fn: () => drawWorldEnemy(ctx, enemy, time) });
+      if (onScreen(enemy.x / 48, enemy.y / 48, 48)) drawables.push({ y: enemy.y / 3, fn: () => drawWorldEnemy(ctx, enemy, time, cena.combat.agora) });
     }
     jogadorAtual = player;
     drawables.sort((a, b) => a.y - b.y).forEach((d) => d.fn());

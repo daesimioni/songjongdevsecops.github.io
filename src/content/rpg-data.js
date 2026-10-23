@@ -9,6 +9,22 @@ import { CATALOG, DISCIPLINES } from "./catalog.js";
 import { AREA_ITEMS, BIOMES, FAUNA } from "./identity.js";
 import { LEGACY_CONTENT } from "./config.js";
 
+// Custos compartilhados entre a barra de magias e a enciclopédia.
+export const SPELL_MANA = {
+  "runa-faisca": 2,
+  "runa-trovao": 3,
+  "runa-fogo": 4,
+  "runa-gelo": 3,
+  "runa-cura": 3,
+  "runa-espelho": 2,
+  "runa-bencao": 4,
+  "runa-mente": 1,
+  "runa-eco": 3,
+  "runa-punhal": 2,
+  "runa-corrente": 3,
+  "runa-lente": 4,
+};
+
 export const SKILLS = {
   cs: { name: "Lógica", desc: "fios, portas, algoritmos e máquinas", color: "#61f4c0" },
   math: { name: "Abstração", desc: "formas, provas, limites e acaso", color: "#b48cff" },

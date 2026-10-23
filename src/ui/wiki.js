@@ -1,13 +1,17 @@
-// A wiki do vale. Ela não tem texto próprio: o índice é montado dos mesmos
-// módulos que o jogo usa (área, caverna, bicho, item, missão, NPC, vocação e
-// página), então o que entra no jogo entra na wiki. A busca e as categorias
-// são só uma vista sobre esse índice.
-import { AREAS, WAYSTONES, CONTINENTS } from "../content/config.js";
+// Enciclopédia do vale: catálogos do jogo, guias editoriais e relações
+// verificáveis entre verbetes. Ilustrações reutilizam os renderizadores do jogo;
+// atlas e plantas são diagramas dos dados, não novos sprites.
+import { AREAS, WAYSTONES, CONTINENTS, NPC_SPAWNS, SITES, MAP_W, MAP_H } from "../content/config.js";
 import { DISCIPLINES } from "../content/catalog.js";
 
 import { DUNGEONS } from "../content/dungeon-data.js";
+import { CAPITULOS } from "../gameplay/arcos.js";
+import { FACCOES, ATOS, LIMITE_REPUTACAO } from "../gameplay/faccoes.js";
+import { DESFECHOS, GUARDIAO } from "../gameplay/grande-prova.js";
+import { FAMILIAS, familiaDeKind } from "../content/familias.js";
+import { COMBATE } from "../gameplay/combate.js";
 import { focusFirstVisible } from "./search-ui.js";
-import { ITEMS, MONSTER_LABELS, MONSTER_WEAKNESS, RELICS, RECIPES, ENCHANTS, SKILLS, TIERS } from "../content/rpg-data.js";
+import { SPELL_MANA, ITEMS, MONSTER_TRAITS, MONSTER_LABELS, MONSTER_WEAKNESS, RELICS, RECIPES, ENCHANTS, SKILLS, TIERS } from "../content/rpg-data.js";
 import { QUESTS } from "../gameplay/quests.js";
 import { POSTS, NPCS } from "../content/content.js";
 import { FAUNA, BIOMES } from "../content/identity.js";
@@ -16,6 +20,8 @@ import { PETS, MOUNTS } from "../content/pets.js";
 import { OUTFITS } from "../content/outfits.js";
 import { itemIconCanvas } from "../rendering/item-art.js";
 import { drawCreatureArt } from "../rendering/creature.js";
+import { drawHuman } from "../rendering/human.js";
+import { drawNpcKit } from "../rendering/npc-art.js";
 import { drawPetSprite } from "../rendering/pet-art.js";
 
 const CATEGORIAS = [
@@ -33,7 +39,8 @@ const CATEGORIAS = [
   { id: "paginas", nome: "Páginas" },
   { id: "trajes", nome: "Trajes" },
   { id: "vocacoes", nome: "Vocações" },
-  { id: "sistemas", nome: "Sistemas" },
+  { id: "sistemas", nome: "Guias e sistemas" },
+  { id: "historia", nome: "História e facções" },
 ];
 
 const CAVERNA_POR_AREA = new Map(DUNGEONS.map((d) => [d.id.replace(/^dungeon-/, ""), d]));
@@ -50,6 +57,11 @@ const OBJETIVO = {
   dungeon: "descer numa caverna",
   explore: "explorar lugares",
   fish: "pescar",
+  docks: "visitar regiões",
+  labs: "usar instrumentos diferentes",
+  hunts: "vencer guardiões",
+  social: "participar da Rede pública e privada",
+  quiz: "responder à pergunta do personagem",
 };
 
 function normalizar(texto) {
@@ -59,12 +71,11 @@ function normalizar(texto) {
     .toLowerCase();
 }
 
-// Resumos dos sistemas que não saem de uma tabela. Ficam aqui curtos de
-// propósito: a wiki aponta o comando e a regra, não escreve um manual.
+// Guias editoriais complementam as fichas extraídas dos catálogos do jogo.
 export const COMO_JOGAR = [
   {
     nome: "A Grande Prova",
-    resumo: "o evento de três fases que abre o acervo; a escolha fica no save",
+    resumo: "o encontro final do acervo; a escolha fica no save",
     campos: [
       ["Abertura", "a corrente das sete missões da Biblioteca Afogada"],
       ["Fases", "três; a fase 2 revela a habilidade e a 3 muda o ritmo do chefe"],
@@ -128,22 +139,23 @@ export const COMO_JOGAR = [
   },
   {
     nome: "Combate",
-    resumo: "arena de ação: espere o bote, defenda e contra-ataque",
+    resumo: "ação no próprio mapa: mova, defenda e contra-ataque",
     campos: [
-      ["Atacar", "J baixa a arma no bicho mais perto; o combo sobe a cada acerto seguido"],
-      ["Defender", "K segura a guarda: corta 22% do dano, e o parry no instante do golpe zera"],
-      ["Esquivar", "L rola para longe, fica invulnerável e recarrega em 1,1s"],
+      ["Cenário", "O combate acontece onde você está: sem mudar de tela. Os monstros perseguem no mapa, e paredes e objetos bloqueiam o caminho e a linha de visão."],
+      ["Atacar", "J ataca o inimigo ao alcance; o combo sobe com acertos seguidos. Também há botões de toque para as ações."],
+      ["Defender", `K segura a guarda: reduz ${COMBATE.defesaReducao * 100}% do dano; defender nos primeiros ${COMBATE.defesaParryMs} ms faz parry`],
+      ["Esquivar", `L esquiva por ${COMBATE.esquivaMs} ms; recarga de ${COMBATE.esquivaRecarga / 1000} s`],
       ["Magia", "1 a 6 usam as runas aprendidas e gastam mana; P chama o pet"],
-      ["Chefe", "duas fases extras: a habilidade muda e o golpe forte cobre a arena"],
-      ["Fuga", "sair do cone de visão evita o encontro"],
+      ["Chefe", "fases adicionais mudam habilidades e o ritmo; observe os avisos de área no chão"],
+      ["Fuga", "afaste-se dos inimigos ou alcance uma saída. Esc não encerra instantaneamente o combate; derrotar um inimigo já garante a recompensa dele"],
     ],
   },
   {
     nome: "Itens e equipamento",
-    resumo: "mochila de 40 espaços, oito peças de equipamento e forja",
+    resumo: "mochila, equipamento, consumíveis e forja",
     campos: [
       ["Mochila", "I abre; clicar no item mostra usar, equipar e descartar"],
-      ["Equipamento", "arma, armadura, elmo, escudo, anel, colar, pernas e botas"],
+      ["Equipamento", "arma, armadura, elmo, escudo, anel, colar, pernas, botas e capa"],
       ["Forja", "a cidade subterrânea funde runas, encantos e receitas"],
     ],
   },
@@ -153,7 +165,7 @@ export const COMO_JOGAR = [
     campos: [
       ["Entrada", "F na boca da caverna; a boca do fundo tem outra saída"],
       ["Tocha", "acende por tempo e aumenta o alcance da luz"],
-      ["Saída", "Esc sobe pela escada, sem perder o que achou"],
+      ["Saída", "fora de combate, Esc permite sair. Durante a luta, afaste-se dos inimigos ou alcance uma saída; não há fuga instantânea por Esc"],
     ],
   },
   {
@@ -180,7 +192,7 @@ export const COMO_JOGAR = [
     resumo: "domar um bicho, dar ração e montar na cidade",
     campos: [
       ["Pet", "segue, entra no combate com P e tem passivo próprio"],
-      ["Montaria", "comprada na cidade; acelera e não entra em caverna"],
+      ["Montaria", "comprada no cais; acelera e não entra em caverna"],
       ["Troca", "a mesa da cidade troca vocação e subcategoria"],
     ],
   },
@@ -220,7 +232,90 @@ export const COMO_JOGAR = [
       ["Sem storage", "a sessão vale só até fechar a aba"],
     ],
   },
+  {
+    nome: "Runas e magia",
+    resumo: "forjar uma carga, aprender a runa e voltar a usá-la com mana",
+    campos: [
+      ["Aprender", "Forje uma runa e use a carga. Ela passa a fazer parte das magias aprendidas."],
+      ["Carga ou mana", "Uma carga guardada é consumida antes da mana. Sem carga, é preciso ter aprendido a runa e ter mana suficiente."],
+      ["Barra de combate", "As teclas 1 a 6 acionam os espaços da barra. Confira a magia disponível e o custo antes de usar."],
+      ["Fora do combate", "Cura e bênção recuperam vida; runas ofensivas precisam de um alvo de combate para causar dano."],
+      ["Fabricação", "Busque o nome da runa em Receitas para ver os ingredientes e abra o item produzido."],
+    ],
+  },
+  {
+    nome: "Lendo o bestiário",
+    resumo: "espécies, famílias, descobertas e fraquezas",
+    campos: [
+      ["Abrir", "B abre o Bestiário. A Wiki é uma referência completa e não exige descobrir as criaturas."],
+      ["Descoberta", "O primeiro encontro revela a ficha no Bestiário; vencer registra a vitória."],
+      ["Famílias", FAMILIAS.map(f => `${f.nome}: ${f.kinds.map(k => MONSTER_LABELS[k] || k).join(", ")}`).join("\n")],
+      ["Como consultar", "Procure uma criatura e veja comportamento, fraqueza e área. Os links da ficha levam à ilha e à caverna associadas."],
+    ],
+  },
+  {
+    nome: "Planejando a primeira expedição",
+    resumo: "um roteiro para sair do Porto com objetivo e suprimentos",
+    campos: [
+      ["1 · Conheça o porto", "Procure Dona Zefa e aceite Três pedras. Abra as páginas próximas e experimente os instrumentos."],
+      ["2 · Escolha seu estilo", "Compare força, fraqueza e multiplicadores das cinco vocações antes de decidir como lutar."],
+      ["3 · Prepare a mochila", "Confira equipamento, vida e mana. Consulte as receitas de poções, tochas e chaves antes de gastar materiais."],
+      ["4 · Escolha o destino", "Abra uma área no Mundo: veja coordenadas, fauna e caverna. Na ficha da caverna, examine a planta e o equipamento listado."],
+      ["5 · Acompanhe o retorno", "O Diário mostra as missões e a progressão. Faça backup do save antes de trocar de navegador ou limpar os dados do site."],
+    ],
+  },
+  {
+    nome: "Forja e planejamento de materiais",
+    resumo: "descubra o que fabricar e para que serve cada ingrediente",
+    campos: [
+      ["Receitas", "Cada ficha informa quantidade produzida e ingredientes exatos. Os links abrem tanto o resultado quanto os materiais."],
+      ["Consulta inversa", "Abra um material em Itens para encontrar receitas e encantos que o consomem."],
+      ["Equipamento", "Compare dano e vida máxima na ficha do item; nem todo equipamento possui os mesmos bônus."],
+      ["Encantos", "Os requisitos de cada encanto estão na categoria Encantos. Confira o efeito antes de usar seus materiais."],
+      ["Pets", "Ração também usa materiais da forja. Reserve três rações para domar o companheiro da cidade."],
+    ],
+  },
+  {
+    nome: "Backup e recuperação",
+    resumo: "proteja o personagem e sua chave antes de mudar de dispositivo",
+    campos: [
+      ["Save", "O progresso fica no armazenamento local do navegador. Outro navegador ou perfil não recebe esse save automaticamente."],
+      ["Antes de sair", "Exporte o backup no menu de salvamento e guarde o arquivo. Importe pelo mesmo menu no navegador de destino."],
+      ["Chave", "A chave da Rede identifica a conta; o arquivo de progresso e a chave têm funções diferentes. Guarde ambos com cuidado."],
+      ["Sessão temporária", "Se o navegador bloquear o armazenamento, o progresso pode durar só até fechar a aba."],
+      ["Troca de versão", "O aviso de atualização permite aplicar a versão nova mantendo a sessão; faça backups regularmente."],
+    ],
+  },
+  {
+    nome: "Como consultar esta wiki",
+    resumo: "busca, verbetes relacionados, mapas e respostas protegidas",
+    campos: [
+      ["Busca", "Digite palavras sem se preocupar com acentos ou maiúsculas. Todas as palavras são consideradas; selecione uma categoria para restringir."],
+      ["Navegação", "Use as setas esquerda/direita nas categorias. Na busca, seta para baixo leva ao primeiro resultado. Mostrar mais revela as próximas fichas."],
+      ["Verbetes", "Continue explorando conecta lugares, criaturas, missões e itens. Voltar percorre as fichas visitadas e depois retorna à lista."],
+      ["Mapas", "Atlas e plantas são esquemas dos dados do mundo. Não exibem sua posição, baús coletados ou inimigos vivos."],
+      ["Spoilers", "A wiki lista nomes e recompensas de todo o jogo. Respostas de perguntas, capítulos e desfechos exigem abrir uma seção de spoiler."],
+      ["Compartilhar", "Copiar link cria um endereço para a ficha exata, inclusive quando duas entradas têm o mesmo nome."],
+    ],
+  },
 ];
+
+const ROTULOS = {
+  weapon: "Arma", armor: "Armadura", helmet: "Elmo", shield: "Escudo", ring: "Anel",
+  necklace: "Colar", legs: "Pernas", boots: "Botas", cloak: "Capa", damage: "Dano",
+  hp: "Vida máxima", manaMax: "Mana máxima", sight: "Visão", manaHit: "Mana por acerto",
+  vida: "Vida", mana: "Mana", dano: "Dano causado", sofrido: "Dano recebido",
+  alcance: "Alcance", furtividade: "Furtividade", coleta: "Coleta", pet: "Força do pet",
+};
+function atributosItem(item) {
+  return [
+    ["Dano", item.damage !== undefined ? `${item.damage > 0 ? "+" : ""}${item.damage}` : ""],
+    ["Vida máxima", item.hp !== undefined ? `+${item.hp}` : ""],
+    ["Recupera vida", item.heal !== undefined ? String(item.heal) : ""],
+    ["Recupera mana", item.mana !== undefined ? String(item.mana) : ""],
+    ["Duração do efeito", item.buff?.ms ? `${item.buff.ms / 1000} segundos` : ""],
+  ];
+}
 
 function nomeItem(id) {
   return ITEMS[id]?.name || id || "";
@@ -249,8 +344,10 @@ export function construirIndice() {
       ["Pedra", pedra ? (pedra.label || pedra.name || "farol da área") : ""],
       ["Caverna", cave ? cave.name : ""],
       ["Chefe da caverna", cave?.boss || ""],
+      ["Coordenadas", area.land ? `x ${area.land.cx} · y ${area.land.cy} · superfície (z 0)` : ""],
+      ["Fauna", (FAUNA[area.id] || []).map(b => b.name).join(", ")],
     ];
-    add("mundo", area.name, bio.name || area.sub || "", campos, { tags: [area.id, bio.material || ""], icone: { tipo: "bioma", bioma: bio } });
+    add("mundo", area.name, bio.name || area.sub || "", campos, { fonte: `area:${area.id}`, vinculos: [cave && `caverna:${cave.id}`, ...((FAUNA[area.id] || []).map((_, i) => `fauna:${area.id}:${i}`)), RELICS[area.id] && `reliquia:${area.id}`].filter(Boolean), tags: [area.id, bio.material || ""], mapa: { tipo: "atlas", areaId: area.id }, icone: { tipo: "bioma", bioma: bio } });
   }
 
   // Cavernas: uma entrada por caverna, com salas, chefe e equipamento.
@@ -263,20 +360,24 @@ export function construirIndice() {
       ["Salas", d.rooms?.length ? String(d.rooms.length) : ""],
       ["Chefe", d.boss || ""],
       ["Equipamento", (d.equipment || []).map(nomeItem).join(", ")],
+      ["Salas e dificuldade", (d.rooms || []).map(r => `${r.name || r.id}${TIERS[r.tier] ? ` (${TIERS[r.tier].name})` : ""}`).join(" · ")],
+      ["Habitantes", (d.monsters || []).join(", ")],
     ];
-    add("cavernas", d.name, d.sub || "", campos, { tags: [areaId, d.id], icone: { tipo: "caverna", accent: d.accent || BIOMES[areaId]?.accent || "#ffc857" } });
+    add("cavernas", d.name, d.sub || "", campos, { fonte: `caverna:${d.id}`, vinculos: [`area:${areaId}`, `chefe:${d.id}`, ...((d.equipment || []).map(id => `item:${id}`)), RELICS[areaId] && `reliquia:${areaId}`].filter(Boolean), mapa: { tipo: "caverna", dungeon: d }, tags: [areaId, d.id], icone: { tipo: "caverna", accent: d.accent || BIOMES[areaId]?.accent || "#ffc857" } });
   }
 
   // Criaturas: a fauna de cada área, mais os chefes das cavernas.
   for (const [areaId, lista] of Object.entries(FAUNA)) {
     const areaNome = NOME_POR_ID.get(areaId) || BIOMES[areaId]?.name || areaId;
-    for (const bicho of lista) {
+    for (const [i, bicho] of lista.entries()) {
       const tipo = MONSTER_LABELS[bicho.kind] || bicho.kind || "";
       add("criaturas", bicho.name, `${tipo} de ${areaNome}`, [
         ["Área", areaNome],
         ["Tipo", tipo],
         ["Fraqueza", MONSTER_WEAKNESS[bicho.kind] || ""],
-      ], { tags: ["bicho", bicho.kind], icone: { tipo: "bicho", kind: bicho.kind, accent: bicho.accent || BIOMES[areaId]?.accent || "#61f4c0" } });
+        ["Comportamento", MONSTER_TRAITS[bicho.kind]?.label || ""],
+        ["Família", familiaDeKind(bicho.kind)?.nome || ""],
+      ], { fonte: `fauna:${areaId}:${i}`, vinculos: [`area:${areaId}`, CAVERNA_POR_AREA.has(areaId) && `caverna:${CAVERNA_POR_AREA.get(areaId).id}`].filter(Boolean), tags: ["bicho", bicho.kind], icone: { tipo: "bicho", kind: bicho.kind, accent: bicho.accent || BIOMES[areaId]?.accent || "#61f4c0" } });
     }
   }
   for (const d of DUNGEONS) {
@@ -284,17 +385,19 @@ export function construirIndice() {
     add("criaturas", d.boss, `chefe de ${d.name}`, [
       ["Caverna", d.name],
       ["Papel", "chefe do fundo"],
-    ], { tags: ["chefe", d.id] });
+    ], { fonte: `chefe:${d.id}`, vinculos: [`caverna:${d.id}`], tags: ["chefe", d.id], icone: { tipo: "bicho", kind: "boss", accent: d.palette?.accent || "#ffc857" } });
   }
 
   // Itens: o catálogo inteiro, com o tipo e a origem.
   for (const item of Object.values(ITEMS)) {
     if (!item?.name) continue;
     add("itens", item.name, item.desc || "", [
-      ["Tipo", item.slot || item.weapon || ""],
+      ["Tipo", ROTULOS[item.slot] || (SPELL_MANA[item.id] ? "Runa" : item.relic ? "Relíquia" : item.heal || item.mana || item.buff ? "Consumível" : item.use ? "Utilitário" : "Material ou objeto")],
+      ["Custo da magia aprendida", SPELL_MANA[item.id] ? `${SPELL_MANA[item.id]} de mana; uma carga guardada é consumida antes da mana` : ""],
+      ...atributosItem(item),
       ["Origem", CONTINENTS[item.continent]?.name || item.continent || ""],
       ["Descrição", item.desc || ""],
-    ], { tags: [item.id || "", item.slot || ""], icone: { tipo: "item", item } });
+    ], { fonte: `item:${item.id}`, vinculos: [...RECIPES.filter(r => r.out === item.id || r.need?.[item.id]).map(r => `receita:${r.id}`), ...ENCHANTS.filter(e => e.need?.[item.id]).map(e => `encanto:${e.id}`), ...DUNGEONS.filter(d => d.equipment?.includes(item.id)).map(d => `caverna:${d.id}`), ...QUESTS.filter(q => q.reward?.item === item.id).map(q => `missao:${q.id}`)], tags: [item.id || "", item.slot || ""], icone: { tipo: "item", item } });
   }
 
   // Missões: quem pede, o que fazer e o que paga.
@@ -309,8 +412,12 @@ export function construirIndice() {
       ["Quem pede", q.giver || q.npc || ""],
       ["Objetivo", q.goal ? `${objetivo}${q.goal.count ? ` (${q.goal.count})` : ""}` : ""],
       ["Recompensa", pagamento],
-      ["Brief", q.brief || ""],
-    ], { tags: [q.npc || "", q.goal?.type || ""] });
+      ["Pedido", q.brief || ""],
+      ["Pré-requisito", q.depois ? QUESTS.find(p => p.id === q.depois)?.title || q.depois : "Sem missão anterior exigida"],
+      ["Região do objetivo", CONTINENTS[q.goal?.continent]?.name || ""],
+      ["Área do objetivo", NOME_POR_ID.get(q.goal?.area) || BIOMES[q.goal?.area]?.name || ""],
+      ["Pergunta", q.quiz?.question || ""],
+    ], { fonte: `missao:${q.id}`, vinculos: [`npc:${q.npc}`, q.depois && `missao:${q.depois}`, q.reward?.item && `item:${q.reward.item}`, q.goal?.area && `area:${q.goal.area}`, q.goal?.area && CAVERNA_POR_AREA.has(q.goal.area) && `caverna:${CAVERNA_POR_AREA.get(q.goal.area).id}`].filter(Boolean), solucao: q.quiz ? `${q.quiz.options[q.quiz.answer]} — ${q.quiz.why || ""}` : null, tags: [q.npc || "", q.goal?.type || ""] });
   }
 
   // NPCs: nome, primeira fala e quantas falas tem.
@@ -318,8 +425,9 @@ export function construirIndice() {
     const linhas = Array.isArray(npc.lines) ? npc.lines : [];
     add("npcs", npc.name || id, linhas[0] || "", [
       ["Fala", linhas[0] || ""],
-      ["Falas", linhas.length ? String(linhas.length) : ""],
-    ], { tags: [id] });
+      ["Conversas", linhas.join("\n\n")],
+      ["Localização", NPC_SPAWNS.filter(n => n.id === id).map(n => `${CONTINENTS[n.continent]?.name || n.continent} · x ${n.x}, y ${n.y}`).join(" · ")],
+    ], { fonte: `npc:${id}`, icone: NPC_SPAWNS.some(n => n.id === id) ? { tipo: "npc", npc: NPC_SPAWNS.find(n => n.id === id) } : null, vinculos: QUESTS.filter(q => q.npc === id).map(q => `missao:${q.id}`), tags: [id] });
   }
 
   // Páginas: as 454 pedras, com atalho para abrir a página.
@@ -330,7 +438,7 @@ export function construirIndice() {
       ["Data", post.date || ""],
       ["Marcas", (post.tags || []).join(", ")],
       ["Continente", CONTINENTS[post.continent]?.name || post.continent || ""],
-    ], { tags: post.tags || [], abrir: id });
+    ], { fonte: `pagina:${id}`, tags: post.tags || [], abrir: id });
   }
 
   // Vocações: força, fraqueza e subcategorias.
@@ -339,8 +447,9 @@ export function construirIndice() {
     add("vocacoes", v.name, v.forca || "", [
       ["Força", v.forca || ""],
       ["Fraqueza", v.fraqueza || ""],
+      ...Object.entries(v.mult || {}).map(([k, n]) => [ROTULOS[k] || k, `${n.toLocaleString("pt-BR")}× o valor base`]),
       ["Subcategorias", subs.join(" · ")],
-    ], { tags: ["vocacao", ...(v.subs || []).map((s) => s.id)] });
+    ], { fonte: `vocacao:${v.id}`, tags: ["vocacao", ...(v.subs || []).map((s) => s.id)] });
   }
 
   // Receitas: o que sai, quanto sai e o que gasta.
@@ -353,7 +462,7 @@ export function construirIndice() {
       ["Produz", `${receita.qty || 1}x ${saidaItem}`],
       ["Ingredientes", precisa],
       ["Onde", "forja da cidade"],
-    ], { tags: ["receita", receita.out] });
+    ], { fonte: `receita:${receita.id}`, vinculos: [receita.out, ...Object.keys(receita.need || {})].map(id => `item:${id}`), icone: { tipo: "item", item: ITEMS[receita.out] }, tags: ["receita", receita.out] });
   }
 
   // Encantamentos de equipamento.
@@ -364,7 +473,7 @@ export function construirIndice() {
     add("encantamentos", enc.name, enc.desc || "", [
       ["Efeito", enc.desc || ""],
       ["Ingredientes", precisa],
-    ], { tags: ["encanto", enc.id] });
+    ], { fonte: `encanto:${enc.id}`, vinculos: Object.keys(enc.need || {}).map(id => `item:${id}`), tags: ["encanto", enc.id] });
   }
 
   // Relíquias: uma por área, guardada no fundo da caverna.
@@ -375,18 +484,20 @@ export function construirIndice() {
       ["Área", NOME_POR_ID.get(areaId) || areaId],
       ["Caverna", cave?.name || ""],
       ["Efeito", rel.desc || ""],
-    ], { tags: ["reliquia", areaId], icone: { tipo: "gema", accent: rel.accent || "#ffc857" } });
+    ], { fonte: `reliquia:${areaId}`, vinculos: [`area:${areaId}`, cave && `caverna:${cave.id}`, `item:${rel.id}`].filter(Boolean), tags: ["reliquia", areaId], icone: { tipo: "gema", accent: rel.accent || "#ffc857" } });
   }
 
   // Pets e montarias: como se consegue e o que cada um faz.
   for (const [id, pet] of Object.entries(PETS)) {
-    const passivo = Object.entries(pet.passive || {}).map(([k, v]) => `${k} +${v}`).join(", ");
+    const passivo = Object.entries(pet.passive || {}).map(([k, v]) => `${ROTULOS[k] || k} +${v}`).join(", ");
     add("pets", pet.name, `pet de ${CONTINENTS[pet.continent]?.name || pet.continent || ""}`, [
       ["Tipo", "pet"],
       ["Origem", pet.where || ""],
       ["Passivo", passivo],
+      ["Domar", "Três rações na cidade de origem"],
+      ["Recarga da habilidade", pet.ability?.cd ? `${pet.ability.cd / 1000} segundos` : ""],
       ["Habilidade", pet.ability ? `${pet.ability.name}: ${pet.ability.desc}${pet.ability.mana ? ` (mana ${pet.ability.mana})` : ""}` : ""],
-    ], { tags: ["pet", id], icone: { tipo: "pet", kind: pet.kind } });
+    ], { fonte: `pet:${id}`, vinculos: ["item:racao"], tags: ["pet", id], icone: { tipo: "pet", kind: pet.kind } });
   }
   for (const [id, mont] of Object.entries(MOUNTS)) {
     const preco = Object.entries(mont.price || {})
@@ -397,7 +508,7 @@ export function construirIndice() {
       ["Velocidade", mont.speed ? `${mont.speed}x` : ""],
       ["Preço", preco],
       ["Efeito", mont.desc || ""],
-    ], { tags: ["montaria", id] });
+    ], { fonte: `montaria:${id}`, vinculos: Object.keys(mont.price || {}).map(k => `item:${k}`), tags: ["montaria", id] });
   }
 
   // Trajes: o que muda é a cor, não o atributo.
@@ -405,7 +516,9 @@ export function construirIndice() {
     add("trajes", traje.name, traje.desc || "", [
       ["Continente", CONTINENTS[traje.continent]?.name || traje.continent || ""],
       ["Descrição", traje.desc || ""],
-    ], { tags: ["traje", traje.id], icone: { tipo: "traje", traje } });
+      ["Missão de desbloqueio", traje.quest ? QUESTS.find(q => q.id === traje.quest)?.title || traje.quest : ""],
+      ["Atributos", "Cosmético: não altera os atributos de combate"],
+    ], { fonte: `traje:${traje.id}`, vinculos: traje.quest ? [`missao:${traje.quest}`] : [], tags: ["traje", traje.id], icone: { tipo: "traje", traje } });
   }
 
   // Sistemas: o que não é item nem lugar, mas decide o jogo.
@@ -414,19 +527,78 @@ export function construirIndice() {
       ["Estrelas", tier.stars || ""],
       ["Vida do bicho", String(tier.hp)],
       ["XP", String(tier.xp)],
-      ["Dano por erro", String(tier.damage)],
-    ], { tags: ["dificuldade", "combate", num] });
+      ["Dano base do inimigo", String(tier.damage)],
+    ], { fonte: `dificuldade:${num}`, tags: ["dificuldade", "combate", num] });
   }
   for (const [id, skill] of Object.entries(SKILLS)) {
     add("sistemas", skill.name, skill.desc || "", [
       ["Disciplina", CONTINENTS[id]?.name || id],
       ["Descrição", skill.desc || ""],
-    ], { tags: ["habilidade", id] });
+    ], { fonte: `habilidade:${id}`, tags: ["habilidade", id] });
   }
   for (const sistema of COMO_JOGAR) {
-    add("sistemas", sistema.nome, sistema.resumo, sistema.campos, { tags: ["como jogar", "sistema"] });
+    add("sistemas", sistema.nome, sistema.resumo, sistema.campos, { fonte: `guia:${normalizar(sistema.nome).replace(/[^a-z0-9]+/g, "-")}`, tags: ["como jogar", "sistema"], imagem: sistema.nome === "Combate" ? { desktop: "assets/wiki/combate-desktop.png", mobile: "assets/wiki/combate-mobile.png", alt: "Captura do jogo: personagem e inimigos lutando no chão da caverna, com barras de vida e controles de ação.", legenda: "Combate na própria caverna. Ataque, guarda, esquiva e magias ficam na cena; os controles se adaptam ao celular." } : null });
   }
 
+  for (const cap of CAPITULOS) {
+    add("historia", `${cap.n}. ${cap.titulo}`, `O fio da Iara · ${CONTINENTS[cap.continente]?.name || cap.continente}`, [
+      ["Capítulo", String(cap.n)],
+      ["Missão necessária", QUESTS.find(q => q.id === cap.missao)?.title || cap.missao],
+      ["Ordem", cap.n === 1 ? "Primeiro capítulo" : "Leia o capítulo anterior no Diário"],
+    ], { fonte: `capitulo:${cap.id}`, vinculos: [`missao:${cap.missao}`, cap.n > 1 && `capitulo:${CAPITULOS[cap.n - 2].id}`].filter(Boolean), solucao: cap.lore });
+  }
+  for (const f of FACCOES) {
+    add("historia", f.nome, f.resumo, [
+      ["Interesse", f.quer], ["Título de aliado", f.titulo],
+      ["Reputação", `De -${LIMITE_REPUTACAO} a +${LIMITE_REPUTACAO}`],
+      ["Atos e consequências", ATOS.filter(a => a.faccao === f.id).map(a => `${a.delta > 0 ? "+" : ""}${a.delta}: ${a.rotulo}`).join("\n")],
+    ], { fonte: `faccao:${f.id}`, vinculos: ATOS.filter(a => a.faccao === f.id && a.missao).map(a => `missao:${a.missao}`) });
+  }
+  for (const d of DESFECHOS) {
+    add("historia", d.nome, "Desfecho da Grande Prova · decisão permanente no save", [
+      ["Título", d.titulo], ["Decisão", "Disponível depois de vencer o Guardião do Acervo. Só pode ser registrada uma vez."],
+    ], { fonte: `desfecho:${d.id}`, solucao: d.texto, vinculos: ["historia:guardiao", ...ATOS.filter(a => a.desfecho === d.id).map(a => `faccao:${a.faccao}`)] });
+  }
+  add("historia", GUARDIAO.name, "Encontro final da Biblioteca Afogada", [
+    ["Acesso", "Conclua a corrente de sete missões da Biblioteca Afogada"],
+    ["Fases", "Três fases de combate; a vitória permite escolher um desfecho"],
+  ], { fonte: "historia:guardiao", icone: { tipo: "bicho", kind: GUARDIAO.kind, accent: "#b48cff" }, vinculos: ["missao:biblioteca-7", ...DESFECHOS.map(d => `desfecho:${d.id}`)] });
+
+  // Estações conectam página e ilha por posição real, sem depender do título.
+  for (const site of SITES) {
+    if (!site.post) continue;
+    const area = AREAS.find(a => a.rect && site.x >= a.rect.x && site.y >= a.rect.y && site.x < a.rect.x + a.rect.w && site.y < a.rect.y + a.rect.h);
+    const pagina = saida.find(e => e.fonte === `pagina:${site.post}`);
+    if (area && pagina) pagina.vinculos = [...(pagina.vinculos || []), `area:${area.id}`];
+  }
+  const guias = {
+    "Começando": ["missao:tres-passos", "npc:guia", ...VOCACOES.map(v => `vocacao:${v.id}`)],
+    "A Grande Prova": ["historia:guardiao", "missao:biblioteca-7"],
+    "O fio da Iara": CAPITULOS.map(c => `capitulo:${c.id}`),
+    "Facções e reputação": FACCOES.map(f => `faccao:${f.id}`),
+    "Combate": ["item:pocao", "item:runa-cura", ...VOCACOES.map(v => `vocacao:${v.id}`)],
+    "Runas e magia": Object.keys(SPELL_MANA).map(id => `item:${id}`),
+    "Pets e montarias": [...Object.keys(PETS).map(id => `pet:${id}`), ...Object.keys(MOUNTS).map(id => `montaria:${id}`)],
+    "Forja e planejamento de materiais": ["item:erva", "item:veio", "item:ferro", "item:madeira", "receita:pocao", "receita:tocha", "receita:racao"],
+    "Planejando a primeira expedição": ["missao:tres-passos", "npc:guia", "item:pocao", "item:tocha", "item:chave"],
+  };
+  for (const entrada of saida) {
+    if (entrada.cat === "sistemas" && guias[entrada.nome]) entrada.vinculos = guias[entrada.nome];
+  }
+  const porFonte = new Map();
+  for (const [i, entrada] of saida.entries()) {
+    entrada.id = entrada.fonte || `${entrada.cat}:${i}`;
+    porFonte.set(entrada.id, entrada);
+    entrada.vinculos ||= [];
+    entrada.busca = normalizar(`${entrada.busca} ${(entrada.tags || []).join(" ")}`);
+  }
+  for (const entrada of saida) {
+    entrada.vinculos = [...new Set(entrada.vinculos)].filter(id => porFonte.has(id) && id !== entrada.id);
+    for (const id of entrada.vinculos) {
+      const alvo = porFonte.get(id);
+      if (!alvo.vinculos.includes(entrada.id)) alvo.vinculos.push(entrada.id);
+    }
+  }
   return saida;
 }
 
@@ -462,6 +634,14 @@ export function buscarNaWiki(consulta = "", categoria = "tudo", limite = 80) {
 
 // Link direto: `itens:Espada da Prova` abre a categoria e busca o nome; um
 // termo solto continua sendo busca em tudo.
+export function linkDaEntrada(entrada, base = location.href) {
+  const url = new URL(base);
+  url.search = "";
+  url.hash = "";
+  url.searchParams.set("wiki", `id:${entrada.id}`);
+  return url.href;
+}
+
 export function separarConsulta(consulta = "") {
   const texto = String(consulta || "");
   const m = /^([a-z]+):(.+)$/.exec(texto);
@@ -474,6 +654,7 @@ export function separarConsulta(consulta = "") {
 let ligado = false;
 let limiteVisivel = 80;
 let origemDetalhe = null;
+let historico = [];
 let categoriaAtual = "tudo";
 let abrirPost = null;
 let fecharModal = null;
@@ -527,6 +708,26 @@ function montarAbas() {
   }
 }
 
+const SIGILOS = { missoes: "!", npcs: "♟", paginas: "▤", vocacoes: "⚔", sistemas: "✦", encantamentos: "✧", historia: "⌛", pets: "♞" };
+function montarInicio() {
+  const host = $("wiki-intro");
+  if (!host) return;
+  host.textContent = "";
+  host.appendChild(el("p", "wiki-intro-label", "O compêndio do aventureiro"));
+  host.appendChild(el("h3", "", "Conheça o vale. Prepare sua próxima jornada."));
+  host.appendChild(el("p", "", `${indiceDaWiki().length.toLocaleString("pt-BR")} verbetes conectados: dos primeiros passos à Biblioteca Afogada. Mapas, equipamentos, criaturas e histórias para consultar a qualquer momento.`));
+  const nav = el("nav", "wiki-atalhos");
+  nav.setAttribute("aria-label", "Leituras recomendadas");
+  for (const nome of ["Planejando a primeira expedição", "Combate", "Forja e planejamento de materiais", "Como consultar esta wiki"]) {
+    const entrada = indiceDaWiki().find(e => e.cat === "sistemas" && e.nome === nome);
+    if (!entrada) continue;
+    const b = el("button", "hud-btn", nome);
+    b.type = "button";
+    b.addEventListener("click", () => { origemDetalhe = b; historico = []; mostrarDetalhe(entrada); });
+    nav.appendChild(b);
+  }
+  host.appendChild(nav);
+}
 function renderizarLista() {
   const lista = $("wiki-list");
   const detalhe = $("wiki-detail");
@@ -534,7 +735,10 @@ function renderizarLista() {
   if (!lista) return;
   lista.hidden = false;
   if (detalhe) detalhe.hidden = true;
+  if (resumo) resumo.hidden = false;
   const consulta = $("wiki-search")?.value || "";
+  const intro = $("wiki-intro");
+  if (intro) intro.hidden = categoriaAtual !== "tudo" || !!consulta;
   const achados = buscarNaWiki(consulta, categoriaAtual, Infinity);
   const more = $("wiki-more");
   if (more) {
@@ -559,12 +763,23 @@ function renderizarLista() {
     const cat = CATEGORIAS.find((c) => c.id === entrada.cat)?.nome || entrada.cat;
     const botao = el("button", "wiki-item");
     botao.type = "button";
-    botao.append(
+    const texto = el("div", "wiki-item-texto");
+    if (entrada.icone) {
+      const icon = iconeDaEntrada(entrada.icone);
+      icon.setAttribute("aria-hidden", "true");
+      botao.appendChild(icon);
+    } else {
+      const badge = el("span", "wiki-selo", SIGILOS[entrada.cat] || "◇");
+      badge.setAttribute("aria-hidden", "true");
+      botao.appendChild(badge);
+    }
+    texto.append(
       el("em", "", cat),
       el("b", "", entrada.nome),
       el("span", "", entrada.resumo || ""),
     );
-    botao.addEventListener("click", () => { origemDetalhe = botao; mostrarDetalhe(entrada); });
+    botao.appendChild(texto);
+    botao.addEventListener("click", () => { origemDetalhe = botao; historico = []; mostrarDetalhe(entrada); });
     lista.appendChild(botao);
   }
 }
@@ -577,7 +792,14 @@ function iconeDaEntrada(icone) {
   const g = cv.getContext("2d");
   if (!g) return cv;
   g.imageSmoothingEnabled = false;
-  if (icone.tipo === "item") {
+  if (icone.tipo === "npc") {
+    const npc = icone.npc;
+    const colors = npc.colors || { skin: "#d9b08c", hair: "#4a3a55", shirt: npc.accent || "#ffc857", pants: "#2f2c45" };
+    g.save(); g.translate(32, 55); g.scale(2, 2);
+    drawHuman(g, 0, 0, 0, false, 0, colors, npc.scale || .9, npc.look || null, null, npc.role || null);
+    drawNpcKit(g, npc, 0, 0, 0, 0, colors);
+    g.restore();
+  } else if (icone.tipo === "item") {
     const base = itemIconCanvas(icone.item);
     g.drawImage(base, 0, 0, 64, 64);
   } else if (icone.tipo === "bicho") {
@@ -680,12 +902,65 @@ function iconeDaEntrada(icone) {
   return cv;
 }
 
+function mapaDaEntrada(mapa) {
+  const figure = el("figure", "wiki-mapa");
+  const cv = el("canvas");
+  cv.width = 720;
+  cv.height = 360;
+  cv.setAttribute("role", "img");
+  const cave = mapa.tipo === "caverna" ? mapa.dungeon : null;
+  cv.setAttribute("aria-label", cave ? `Planta de ${cave.name}: salas e corredores. Os nomes estão na ficha.` : "Atlas das áreas. A área desta ficha está destacada; coordenadas na ficha.");
+  const g = cv.getContext("2d");
+  if (g) {
+    g.fillStyle = "#0b1421"; g.fillRect(0, 0, 720, 360);
+    if (cave) {
+      const rooms = cave.rooms || [];
+      const layout = cave.layout || {};
+      const sx = 680 / (layout.width || 64), sy = 320 / (layout.height || 48);
+      const point = r => [20 + (r.x + r.w / 2) * sx, 20 + (r.y + r.h / 2) * sy];
+      g.strokeStyle = "#7b899f"; g.lineWidth = 4;
+      for (const [a, b] of layout.corridors || []) {
+        const from = rooms.find(r => r.id === a), to = rooms.find(r => r.id === b);
+        if (!from || !to) continue;
+        g.beginPath(); g.moveTo(...point(from)); g.lineTo(...point(to)); g.stroke();
+      }
+      rooms.forEach((r, i) => {
+        g.fillStyle = r.id === layout.bossRoom ? "#e8a165" : r.kind === "city" ? "#8cd9bd" : "#405779";
+        g.fillRect(20 + r.x * sx, 20 + r.y * sy, r.w * sx, r.h * sy);
+        g.fillStyle = "#fff"; g.font = "bold 14px sans-serif"; g.textAlign = "center";
+        const [x, y] = point(r); g.fillText(String(i + 1), x, y + 5);
+      });
+    } else {
+      for (const area of AREAS) {
+        if (!area.land) continue;
+        const l = area.land, selected = area.id === mapa.areaId;
+        g.fillStyle = selected ? "#ffe1a0" : BIOMES[area.id]?.accent || "#7188a0";
+        g.globalAlpha = selected ? 1 : 0.45;
+        g.beginPath(); g.ellipse(12 + l.cx * (696 / MAP_W), 12 + l.cy * (336 / MAP_H), Math.max(3, l.rx * (696 / MAP_W)), Math.max(3, l.ry * (336 / MAP_H)), 0, 0, Math.PI * 2); g.fill();
+        if (selected) { g.strokeStyle = "#fff"; g.lineWidth = 3; g.stroke(); }
+      }
+      g.globalAlpha = 1;
+    }
+  }
+  figure.appendChild(cv);
+  figure.appendChild(el("figcaption", "", cave ? "Planta esquemática • números correspondem às salas abaixo; laranja: chefe; verde: cidade. Não representa a posição atual de criaturas." : "Atlas esquemático • dourado: área selecionada. Consulte as coordenadas para se orientar no mundo."));
+  if (cave) {
+    const legend = el("ol", "wiki-legenda");
+    for (const r of cave.rooms || []) legend.appendChild(el("li", "", r.name || r.id));
+    figure.appendChild(legend);
+  }
+  return figure;
+}
+
 function mostrarDetalhe(entrada) {
   const lista = $("wiki-list");
   const detalhe = $("wiki-detail");
   if (!detalhe) return;
+  const intro = $("wiki-intro");
+  if (intro) intro.hidden = !!entrada || categoriaAtual !== "tudo" || !!$("wiki-search")?.value;
   if (!entrada) {
     detalhe.hidden = true;
+    if ($("wiki-resumo")) $("wiki-resumo").hidden = false;
     detalhe.textContent = "";
     if (lista) lista.hidden = false;
     return;
@@ -693,13 +968,38 @@ function mostrarDetalhe(entrada) {
   if (lista) lista.hidden = true;
   if ($("wiki-more")) $("wiki-more").hidden = true;
   detalhe.hidden = false;
+  if ($("wiki-resumo")) $("wiki-resumo").hidden = true;
   detalhe.textContent = "";
+  detalhe.scrollTop = 0;
   const cat = CATEGORIAS.find((c) => c.id === entrada.cat)?.nome || entrada.cat;
-  detalhe.append(
-    el("p", "wiki-cat", cat),
-    el("h3", "", entrada.nome),
-  );
-  if (entrada.icone) detalhe.appendChild(iconeDaEntrada(entrada.icone));
+  const titulo = el("h3", "", entrada.nome);
+  titulo.id = "wiki-entry-title";
+  titulo.tabIndex = -1;
+  detalhe.setAttribute("role", "article");
+  detalhe.setAttribute("aria-labelledby", titulo.id);
+  detalhe.append(el("p", "wiki-cat", cat), titulo);
+  if (entrada.icone) {
+    const icon = iconeDaEntrada(entrada.icone);
+    icon.setAttribute("aria-hidden", "true");
+    detalhe.appendChild(icon);
+  }
+  detalhe.appendChild(el("p", "wiki-lead", entrada.resumo));
+  if (entrada.mapa) detalhe.appendChild(mapaDaEntrada(entrada.mapa));
+  if (entrada.imagem) {
+    const figure = el("figure", "wiki-captura");
+    const picture = el("picture");
+    const source = el("source");
+    source.setAttribute("media", "(max-width: 520px)");
+    source.setAttribute("srcset", entrada.imagem.mobile);
+    const img = el("img");
+    img.src = entrada.imagem.desktop;
+    img.alt = entrada.imagem.alt;
+    img.loading = "lazy";
+    img.decoding = "async";
+    picture.append(source, img);
+    figure.append(picture, el("figcaption", "", entrada.imagem.legenda));
+    detalhe.appendChild(figure);
+  }
   if (entrada.campos.length) {
     const dl = el("dl");
     for (const [rotulo, valor] of entrada.campos) {
@@ -707,21 +1007,42 @@ function mostrarDetalhe(entrada) {
     }
     detalhe.appendChild(dl);
   }
+  if (entrada.solucao) {
+    const spoiler = el("details", "wiki-spoiler");
+    spoiler.append(el("summary", "", entrada.cat === "historia" ? "Revelar história (spoiler)" : "Revelar resposta e explicação (spoiler)"), el("p", "", entrada.solucao));
+    detalhe.appendChild(spoiler);
+  }
+  const relacionados = (entrada.vinculos || []).map(id => indiceDaWiki().find(e => e.id === id)).filter(Boolean);
+  if (relacionados.length) {
+    const section = el("section", "wiki-relacionados");
+    section.appendChild(el("h4", "", "Continue explorando"));
+    for (const e of relacionados) {
+      const b = el("button", "hud-btn", `${CATEGORIAS.find(c => c.id === e.cat)?.nome} · ${e.nome}`);
+      b.type = "button";
+      b.addEventListener("click", () => { historico.push(entrada); mostrarDetalhe(e); });
+      section.appendChild(b);
+    }
+    detalhe.appendChild(section);
+  }
   const acoes = el("div", "wiki-acoes");
   const voltar = el("button", "hud-btn", "voltar");
   voltar.type = "button";
   voltar.addEventListener("click", () => {
+    if (historico.length) { mostrarDetalhe(historico.pop()); return; }
     detalhe.hidden = true;
+    if ($("wiki-resumo")) $("wiki-resumo").hidden = false;
+    if ($("wiki-intro")) $("wiki-intro").hidden = categoriaAtual !== "tudo" || !!$("wiki-search")?.value;
     if (lista) lista.hidden = false;
     if ($("wiki-more")) $("wiki-more").hidden = $("wiki-more").dataset.remaining !== "true";
     if (origemDetalhe && lista?.contains(origemDetalhe)) origemDetalhe.focus({ preventScroll: true });
+    else if (origemDetalhe && $("wiki-intro")?.contains(origemDetalhe)) origemDetalhe.focus({ preventScroll: true });
     else $("wiki-search")?.focus();
   });
   acoes.appendChild(voltar);
   const link = el("button", "hud-btn", "copiar link");
   link.type = "button";
   link.addEventListener("click", async () => {
-    const url = `${location.origin}${location.pathname}?wiki=${encodeURIComponent(`${entrada.cat}:${entrada.nome}`)}`;
+    const url = linkDaEntrada(entrada);
     try {
       await navigator.clipboard.writeText(url);
       link.textContent = "link copiado";
@@ -742,7 +1063,10 @@ function mostrarDetalhe(entrada) {
     acoes.appendChild(abrir);
   }
   detalhe.appendChild(acoes);
-  voltar.focus();
+  titulo.focus({ preventScroll: true });
+  detalhe.scrollTop = 0;
+  const main = detalhe.closest(".book-main");
+  if (main && typeof window !== "undefined" && window.matchMedia?.("(max-width: 900px)").matches) main.scrollTop = 0;
 }
 
 function fecharWiki() {
@@ -761,7 +1085,8 @@ export function configurarWiki({ abrirPost: abrir, fechar } = {}) {
 export function abrirWiki(consulta = "") {
   if (!ligado) {
     ligado = true;
-    $("wiki-search")?.addEventListener("input", () => { limiteVisivel = 80; renderizarLista(); });
+    $("wiki-search")?.addEventListener("input", () => { historico = []; limiteVisivel = 80; renderizarLista(); });
+    $("wiki-clear")?.addEventListener("click", () => { $("wiki-search").value = ""; historico = []; limiteVisivel = 80; renderizarLista(); $("wiki-search").focus(); });
     // seta para baixo sai da busca e entra no primeiro resultado visível
     $("wiki-search")?.addEventListener("keydown", (event) => {
       if (event.key !== "ArrowDown") return;
@@ -781,12 +1106,22 @@ export function abrirWiki(consulta = "") {
   categoriaAtual = alvo.categoria;
   limiteVisivel = 80;
   origemDetalhe = null;
+  historico = [];
   const busca = $("wiki-search");
   if (busca) busca.value = alvo.termo;
   mostrarDetalhe(null);
+  montarInicio();
   montarAbas();
   renderizarLista();
   busca?.focus();
+  if (String(consulta).startsWith("id:")) {
+    const entrada = indiceDaWiki().find(e => e.id === String(consulta).slice(3));
+    if (entrada) {
+      categoriaAtual = entrada.cat;
+      if (busca) busca.value = "";
+      montarAbas(); renderizarLista(); mostrarDetalhe(entrada);
+    }
+  }
 }
 
 export const wikiUi = { abrir: abrirWiki, fechar: fecharWiki, configurar: configurarWiki, indice: indiceDaWiki, categorias: categoriasDaWiki, buscar: buscarNaWiki };

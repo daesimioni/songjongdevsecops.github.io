@@ -32,6 +32,21 @@ O **Bestiário** abre com <kbd>B</kbd> ou pelo botão escrito no menu. São as 9
 O **minimapa** tem coordenada `x y z` (z 0 superfície, -1 subsolo, -2 Porto Submerso), zoom de 1× a 6× pela roda do mouse ou pelos botões, o botão **mapa** para ver o arquipélago inteiro e clique num ponto revelado para andar até lá. No mapa grande, uma rosa dos
 ventos de nove pontos navega em oito direções e o centro volta ao personagem. O personagem é uma seta branca com anel, apontando para onde olha; a caverna tem a mesma coordenada e profundidade no minimapa dela, que ficou maior. A névoa guardada leva a assinatura do mundo: quando o mapa ganha áreas novas, o save antigo revela a terra dessas áreas na primeira abertura, em vez de deixar o mapa preso no mundo velho.
 
+## A Wiki do Vale
+
+A [Wiki do Vale](https://songjongdevsecops.github.io/?wiki=1) abre com **H**,
+pelo menu e antes de criar personagem. O compêndio reúne 2.332 verbetes em 16
+abas: áreas, cavernas, criaturas, itens, receitas, encantos, relíquias,
+companheiros, missões, personagens, páginas, trajes, vocações, guias e história.
+
+Os cartões mostram as ilustrações do jogo; áreas têm atlas de localização e
+cavernas têm plantas com salas numeradas. Os verbetes conectam ingredientes às
+receitas, itens às cavernas, missões aos personagens e capítulos aos requisitos.
+Há atributos, custos de mana, recompensas e respostas com aviso de spoiler.
+**Copiar link** compartilha a ficha exata. A busca ignora acentos, e a navegação
+funciona por teclado e no celular. Consulte o [guia da wiki](docs/design/16-WIKI.md)
+para cobertura e funcionamento.
+
 ## O endgame
 
 Depois das missões do vale, a história fecha em cinco sistemas que leem o mesmo save. O jogo avisa quando o site muda e um botão aplica a versão nova sem sair da sessão: o save e a chave ficam, e você volta no mesmo lugar.
@@ -174,6 +189,9 @@ afaste-se pelo mapa ou alcance uma escada: não há recuo automático nem dano
 aleatório de fuga. O monstro sobrevivente conserva a vida nesta visita.
 
 [Capturas e contratos do combate no mapa](docs/design/COMBATE-NO-MAPA.md).
+
+Cortes, impactos, escudo, esquiva e runas têm sprites animados, com direção
+e sinais de dano, aparo e recarga. [Atlas e capturas dos efeitos](docs/design/EFEITOS-COMBATE.md).
 
 No celular, os botões de ataque, guarda, esquiva, companheiro e runas ficam sobre
 o mapa, junto aos controles da cena ativa. Treinos e a Grande Prova também

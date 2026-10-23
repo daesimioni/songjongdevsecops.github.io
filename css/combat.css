@@ -418,17 +418,37 @@
 .duel-ability[hidden] { display: none; }
 
 /* Controles de ação; o mapa continua visível e recebe movimento. */
-#world-combat { position:fixed; z-index:1900; right:12px; bottom:12px; max-width:min(560px,calc(100vw - 24px)); padding:10px; background:#162029eb; color:#fff3d1; border:1px solid #789080; border-radius:8px; pointer-events:auto; }
-#world-combat[hidden] { display:none; }
-#world-combat p { margin:0 0 6px; font-size:13px; }
-#world-combat>div { display:flex; flex-wrap:wrap; gap:5px; }
-#world-combat button { min-height:44px; padding:8px; touch-action:none; }
-#world-combat small { display:block; max-width:480px; margin-top:6px; }
-@media(max-width:650px) { #world-combat { bottom:10px; left:110px; right:8px; max-width:none; } #world-combat small { display:none; } #world-combat button { font-size:11px; padding:5px; } }
-#world-combat button { background:#263b48; color:#fff3d1; border:1px solid #8c9a85; border-radius:4px; font:inherit; }
-#world-combat button:hover, #world-combat button[aria-pressed="true"] { background:#36545a; border-color:#61f4c0; }
+/* HUD de ação: o mapa permanece visível e as quatro ações ficam no mesmo lugar. */
+#world-combat { position:fixed; z-index:1900; right:12px; bottom:12px; width:360px; max-width:calc(100vw - 24px); box-sizing:border-box; padding:10px; background:#101b29f5; color:#f1ead6; border:1px solid #5a797b; border-radius:10px; box-shadow:0 5px 20px #0007; pointer-events:auto; font:13px/1.35 system-ui,sans-serif; }
+#world-combat[hidden], #world-combat [hidden] { display:none; }
+#world-combat p { margin:0 0 5px; font:600 13px/1.3 system-ui,sans-serif; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+#world-combat progress { display:block; appearance:none; width:100%; height:5px; margin:0 0 9px; border:0; border-radius:2px; background:#293244; }
+#world-combat progress::-webkit-progress-bar { background:#293244; }
+#world-combat progress::-webkit-progress-value { background:#efb85c; border-radius:2px; }
+#world-combat progress::-moz-progress-bar { background:#efb85c; }
+#world-combat .combat-actions { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; }
+#world-combat button { position:relative; isolation:isolate; overflow:hidden; min-width:0; min-height:64px; padding:4px 3px 6px; border:1px solid #496471; border-radius:6px; background:#203343; color:#fff3d1; font:600 12px/1.25 system-ui,sans-serif; touch-action:none; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; cursor:pointer; }
+#world-combat button::after { content:""; position:absolute; left:0; bottom:0; width:var(--cooldown,0%); height:3px; background:#eab766; pointer-events:none; }
+#world-combat .combat-icon { display:block; width:32px; height:32px; flex:none; background-size:256px 256px; image-rendering:pixelated; }
+#world-combat kbd { position:absolute; right:4px; top:3px; font:10px/1 monospace; color:#cfdfdf; background:#101b29; border:0; border-radius:2px; padding:2px; }
+#world-combat button:hover, #world-combat button[aria-pressed="true"] { background:#305360; border-color:#91e7d4; }
+#world-combat button[aria-pressed="true"] { box-shadow:inset 0 0 0 1px #91e7d4; }
 #world-combat button:focus-visible { outline:2px solid #ffc857; outline-offset:2px; }
-#world-combat button:disabled { opacity:.5; cursor:wait; }
+#world-combat button:disabled { color:#a8babd; background:#1b2835; cursor:wait; }
+#world-combat button:disabled .combat-icon { opacity:.55; }
+#world-combat .combat-runes { display:flex; gap:5px; overflow-x:auto; padding-top:7px; }
+#world-combat .combat-runes button { min-width:76px; min-height:44px; flex:1 0 76px; padding:5px; font-size:11px; touch-action:pan-x; }
+#world-combat .combat-runes .combat-icon { display:none; }
+#world-combat .combat-runes kbd { position:static; }
+#world-combat small { display:block; margin-top:7px; color:#b6c8cd; font:11px/1.4 system-ui,sans-serif; }
 @media(min-width:900px) { #dungeon #world-combat { right:250px; } }
 #dungeon:has(#world-combat:not([hidden])) .dg-help { display:none; }
-@media(max-width:720px) { #dungeon:has(#world-combat:not([hidden])) .dg-fold { display:none; } }
+@media(max-width:720px) {
+  #world-combat { bottom:max(8px,env(safe-area-inset-bottom)); left:auto; right:8px; width:260px; max-width:calc(100vw - 112px); padding:8px; }
+  #world-combat .combat-actions { gap:4px; }
+  #world-combat button { font-size:11px; min-height:62px; }
+  #world-combat kbd { display:none; }
+  #world-combat small { display:none; }
+  #world-combat .combat-runes button { min-width:62px; flex-basis:62px; }
+  #dungeon:has(#world-combat:not([hidden])) .dg-fold { display:none; }
+}

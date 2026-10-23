@@ -382,14 +382,15 @@
         <button type="button" class="hud-btn" data-close="wiki">fechar <kbd>Esc</kbd></button>
       </div>
       <div class="wiki-tools">
-        <input id="wiki-search" class="travel-filter" type="search" placeholder="buscar área, bicho, item, missão, página..." autocomplete="off" aria-label="buscar na wiki">
+        <div class="wiki-search-row"><input id="wiki-search" class="travel-filter" type="search" placeholder="Buscar no compêndio…" autocomplete="off" aria-label="Buscar na wiki" aria-controls="wiki-list"><button id="wiki-clear" class="hud-btn" type="button" aria-label="Limpar busca">Limpar</button></div>
         <div id="wiki-tabs" class="wiki-tabs" role="tablist" aria-label="categorias da wiki"></div>
       </div>
+      <section id="wiki-intro" class="wiki-intro" aria-label="Bem-vindo à Wiki do Vale"></section>
       <p id="wiki-resumo" class="wiki-resumo" aria-live="polite"></p>
       <div id="wiki-list" class="wiki-list" role="tabpanel"></div>
       <button type="button" id="wiki-more" class="hud-btn wiki-more" aria-controls="wiki-list" hidden>mostrar mais</button>
       <div id="wiki-detail" class="wiki-detail" hidden></div>
-      <p class="inv-hint">a wiki nasce dos mesmos dados do jogo: área, caverna, bicho, item, missão, NPC, vocação e página. o que entra no jogo entra aqui. <kbd>H</kbd> abre e fecha.</p>
+      <p class="inv-hint">Referência completa do vale. Inclui nomes de chefes e recompensas; respostas e capítulos têm aviso de spoiler. <kbd>H</kbd> abre e fecha.</p>
     </div>
   </div>
 
@@ -587,7 +588,7 @@
       </details>
       <details class="help-section"><summary>Missões, Caderno e Wiki</summary>
         <p class="help-note">Os NPCs têm missões. Aperte <kbd>F</kbd> perto deles para aceitar, responder e entregar. O Diário (<kbd>Z</kbd>) guarda o que está em andamento e quanto falta.</p>
-        <p class="help-note">A <strong>Wiki</strong> (<kbd>H</kbd>) reúne tudo sobre o jogo: 2.312 fichas em 15 categorias, das 86 áreas e 93 cavernas aos 351 bichos e chefes, 561 itens, 40 receitas, encantos, 86 relíquias, pets e montarias, 291 missões, 194 NPCs, 454 páginas de curso, 102 trajes, 5 vocações e 27 fichas de sistema. A busca ignora acento, a ficha mostra o ícone e o que entra no jogo entra na wiki sozinho; ela abre até antes de criar personagem.</p>
+        <p class="help-note">A <strong>Wiki</strong> (<kbd>H</kbd>) reúne tudo sobre o jogo: 2.332 fichas em 16 abas, das 86 áreas e 93 cavernas aos 351 bichos e chefes, 561 itens, 40 receitas, encantos, 86 relíquias, pets e montarias, 291 missões, 194 NPCs, 454 páginas de curso, 102 trajes, 5 vocações, 33 fichas de sistema e 14 verbetes de história e facções. A busca ignora acento, a ficha mostra o ícone e o que entra no jogo entra na wiki sozinho; ela abre até antes de criar personagem.</p>
         <p class="help-note">A <strong>Ficha</strong> (<kbd>C</kbd>) tem <strong>equipamento</strong> de arma, elmo, armadura, pernas, botas, escudo, anel e colar, e o editor de <strong>trajes</strong>. Complete as cinco estações de uma região para abrir o traje dela. A roupa é a mesma na superfície e na caverna.</p>
         <p class="help-note">O vale tem <strong>86 lugares</strong>: dezesseis antigos e um para cada seção de Matemática, Física, Química, Computação, Língua Portuguesa e das interseções entre elas, cada um com estação, caverna, caçada e missão. Lugares vizinhos se ligam por <strong>ponte</strong>; as interseções descem pelo <strong>túnel da conurbação</strong>, que também leva a qualquer capital descoberta e ao <strong>Porto Submerso</strong>, na camada -2.</p>
       </details>

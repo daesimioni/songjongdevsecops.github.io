@@ -4,7 +4,7 @@ import { THEME_WORDS, shuffle, OPTION_COUNT, looksNumeric, numericDistractors, v
 // posição e conversa.
 import { backupCorrupt } from "../platform/storage.js";
 import { STORAGE } from "../core/runtime-config.js";
-import { SKILLS, TIERS, ITEMS, RECIPES, TROCAS, ENCHANTS, MONSTER_TRAITS, MONSTER_LABELS, MONSTER_WEAKNESS } from "../content/rpg-data.js";
+import { SPELL_MANA, SKILLS, TIERS, ITEMS, RECIPES, TROCAS, ENCHANTS, MONSTER_TRAITS, MONSTER_LABELS, MONSTER_WEAKNESS } from "../content/rpg-data.js";
 import { BOND_MAX, MANA_MS, PETS, MOUNTS, petById, mountById } from "../content/pets.js";
 import { VOCACAO_PADRAO, VOC_POR_ID, subcategoriaDe, vocacaoDe, multDe } from "../content/vocations.js";
 import { Combate } from "./combate.js";
@@ -25,20 +25,7 @@ const BUFF_NAMES = { speed: "passos rápidos", damage: "dano extra", maxhp: "vid
 // a ordem dos espaços de equipamento, do corpo para os acessórios
 const SLOT_NAMES = { weapon: "arma", helmet: "elmo", armor: "armadura", legs: "pernas", boots: "botas", shield: "escudo", cloak: "capa", ring: "anel", necklace: "colar" };
 // custo em mana de cada runa aprendida; sem carga guardada, é por aqui que ela sai
-const SPELL_MANA = {
-  "runa-faisca": 2,
-  "runa-trovao": 3,
-  "runa-fogo": 4,
-  "runa-gelo": 3,
-  "runa-cura": 3,
-  "runa-espelho": 2,
-  "runa-bencao": 4,
-  "runa-mente": 1,
-  "runa-eco": 3,
-  "runa-punhal": 2,
-  "runa-corrente": 3,
-  "runa-lente": 4,
-};
+
 export const petAbilityNeedsDuel = (id) => ["faro", "tagarela", "sabedoria", "aviso"].includes(id);
 const PET_ABILITY_IDS = new Set(Object.values(PETS).map((pet) => pet.ability.id));
 

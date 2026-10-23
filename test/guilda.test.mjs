@@ -135,7 +135,8 @@ assert.match(app, /recrutarGuilda\(rpg\.data/, "o app não recruta a party");
 assert.match(app, /resgatarMissao\(rpg\.data/, "o app não resgata a missão da sede");
 assert.match(app, /A guilda \$\{guilda\.nome\}/, "o diário não mostra a sede");
 assert.match(html, /id="guilda"/, "o modal da guilda não existe");
-assert.match(html, /2\.312 fichas/, "a ajuda não tem a contagem nova");
+const { indiceDaWiki } = await import("../src/ui/wiki.js");
+assert.ok(html.includes(`${indiceDaWiki().length.toLocaleString("pt-BR")} fichas`), "a ajuda não acompanha a contagem da wiki");
 assert.match(wiki, /Guilda e party/, "a wiki não ganhou a ficha da guilda");
 
 console.log(`ok guilda: ${BRASOES.length} brasões, ${LIMITE_MEMBROS} lugares, ${MISSOES_GUILDA.length} missões, save e party`);

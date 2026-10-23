@@ -78,6 +78,9 @@ export class Combate {
     this.agora = 0;
     this.phase = "combat";
     this.eventos = [];
+    // Histórico visual independente da fila consumida pelo áudio/UI. As posições
+    // são fotografadas na emissão: um impacto não segue o alvo que se afastou.
+    this.efeitos = [];
     this.jogador = {
       x: ARENA.w * 0.24,
       y: ARENA.h * 0.7,
@@ -144,6 +147,14 @@ export class Combate {
 
   emitir(evento) {
     this.eventos.push(evento);
+    const j = this.jogador, alvo = evento.inimigo || evento.alvo;
+    this.efeitos.push({
+      tipo: evento.tipo, valor: evento.valor, magia: evento.magia,
+      vazio: evento.vazio, bloqueado: evento.bloqueado,
+      em: this.agora, x: j.x, y: j.y, dir: j.dir,
+      alvoX: alvo?.x, alvoY: alvo?.y, alvoDir: alvo?.dir,
+    });
+    if (this.efeitos.length > 96) this.efeitos.splice(0, this.efeitos.length - 96);
     return evento;
   }
 
@@ -173,7 +184,8 @@ export class Combate {
     if (this.phase !== "combat" || j.defendendo || this.agora < j.esquivaAte) return false;
     if (this.agora < j.ataquePronto) return false;
     j.ataquePronto = this.agora + COMBATE.ataqueRecarga;
-    j.ataqueVisualAte = this.agora + 150;
+    j.ataqueVisualAte = this.agora + 260;
+    j.ataqueDir = j.dir;
     j.ataques++;
     const alvo = this.inimigoAoAlcance();
     if (!alvo) {
@@ -182,6 +194,7 @@ export class Combate {
       return true;
     }
     j.dir = direcaoDe(alvo.x - j.x, alvo.y - j.y);
+    j.ataqueDir = j.dir;
     j.combo++;
     const dano = this.danoNoInimigo(alvo, false);
     this.emitir({ tipo: "ataque", alvo, valor: dano, x: alvo.x, y: alvo.y });
@@ -193,7 +206,10 @@ export class Combate {
     if (this.phase !== "combat") return false;
     const antes = j.defendendo;
     j.defendendo = !!ativo;
-    if (j.defendendo && !antes) j.defesaDesde = this.agora;
+    if (j.defendendo && !antes) {
+      j.defesaDesde = this.agora;
+      this.emitir({ tipo: "guarda" });
+    }
     return true;
   }
 
@@ -226,6 +242,7 @@ export class Combate {
     }
     const ms = clamp(Number(dt) * 1000 || 0, 0, 60);
     this.agora += ms;
+    this.efeitos = this.efeitos.filter(e => this.agora - e.em < 1000);
     this.moverJogador(ms, entrada);
     for (const inimigo of this.inimigos) {
       if (this.phase !== "combat") break;
@@ -332,6 +349,8 @@ export class Combate {
   resolverGolpe(inimigo) {
     inimigo.vento = false;
     const j = this.jogador;
+    inimigo.dir = direcaoDe(j.x - inimigo.x, j.y - inimigo.y);
+    this.emitir({ tipo: "golpeInimigo", inimigo });
     const dist = Math.hypot(j.x - inimigo.x, j.y - inimigo.y);
     const trait = MONSTER_TRAITS[inimigo.kind]?.id;
     const cooldown = (inimigo.boss ? 1550 : 2150 - inimigo.tier * 130) * (inimigo.phase > 1 ? 0.82 : 1) * (trait === "haste" ? 0.78 : 1);

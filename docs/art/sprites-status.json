@@ -65,16 +65,16 @@
       "id": "arte/criaturas/d6162e2326bb7c61840d",
       "archive": "criaturas.zip",
       "member": "Criaturas/Mam├¡feros/Wolf.gif",
-      "status": "draft",
-      "location": "PR #13: docs/art/referencias/curadoria.json",
+      "status": "animation",
+      "location": "feat/arte-autoral-lobo: assets/creatures/wolf-atlas.png",
       "missing": [
-        "walk/attack/hit/death cycles in all 8 directions",
-        "atlas alignment and anchors",
-        "scale/palette/camera in scenes",
-        "collision",
-        "runtime integration",
+        "multi-frame idle/walk/attack/hit/death cycles in all 8 directions",
+        "combat state selection, scale/palette/camera in scenes",
+        "manual browser scene review",
         "visual review"
-      ]
+      ],
+      "sourceSha256": "b121f27c8de5f07f8a8359b107f61916836a7f33d390cf10f120686a12ac1e40",
+      "output": "assets/creatures/wolf-atlas.png"
     }
   ],
   "archives": [

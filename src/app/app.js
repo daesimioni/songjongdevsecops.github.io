@@ -3255,7 +3255,7 @@ function loop(now) {
     // desfoque do modal, e a mochila aberta derrubava o quadro para 8 fps.
     const coberto = !!(state.panelOpen || state.modal || state.chatOpen || now < state.pvpDownUntil);
     if (!coberto || coberto !== cobertoAntes) {
-      renderer.draw(now, player, state.peers, world.npcs, world.cat, player.moving, rpg.data.sub === "rastreador", { hp: rpg.hp(), hpMax: rpg.hpMax(), mana: rpg.mana(), manaMax: rpg.manaMax() }, { interior: state.casa?.cena || null, combat: surfaceCombat.model });
+      renderer.draw(now, player, state.peers, world.npcs, world.cat, player.moving, rpg.data.sub === "rastreador", { hp: rpg.hp(), hpMax: rpg.hpMax(), mana: rpg.mana(), manaMax: rpg.manaMax() }, { interior: state.casa?.cena || null, combat: surfaceCombat.visual });
     }
     cobertoAntes = coberto;
     updatePrompt();
