@@ -1,5 +1,5 @@
 {
- "versao": "5748f53c0784bac4",
+ "versao": "84f889bd417e65ca",
  "arquivos": [
   "assets/combat/action-vfx-v1.json",
   "assets/combat/action-vfx-v1.png",
@@ -14,8 +14,12 @@
   "assets/fonts/silkscreen-400-latino.woff2",
   "assets/fonts/silkscreen-700-latino-ext.woff2",
   "assets/fonts/silkscreen-700-latino.woff2",
+  "assets/magic/holy-missile-rune.json",
+  "assets/magic/holy-missile-rune.png",
   "assets/magic/paladin-familiar.json",
   "assets/magic/paladin-familiar.png",
+  "assets/magic/swift-foot.json",
+  "assets/magic/swift-foot.png",
   "assets/og.png",
   "assets/reference-art/manifest.json",
   "assets/wiki/combate-desktop.png",

@@ -99,6 +99,28 @@
       "output": "assets/magic/paladin-familiar.png"
     },
     {
+      "id": "arte/magias/3ca2eb6c2644fd9aafc3",
+      "archive": "magias.zip",
+      "member": "Magias/Paladin/Swift Foot.png",
+      "status": "integration",
+      "location": "feat/arte-autoral-swift-foot: assets/magic/swift-foot.png",
+      "missing": [
+        "runtime item/spell mapping"
+      ],
+      "output": "assets/magic/swift-foot.png"
+    },
+    {
+      "id": "arte/magias/a1d7fecdb7c871ca7606",
+      "archive": "magias.zip",
+      "member": "Magias/Paladin/Disintegrate Rune.png",
+      "status": "integration",
+      "location": "feat/arte-autoral-disintegrate-rune: assets/magic/disintegrate-rune.png",
+      "missing": [
+        "runtime item/spell mapping"
+      ],
+      "output": "assets/magic/disintegrate-rune.png"
+    },
+    {
       "id": "arte/magias/7d74f5405b468974ec02",
       "archive": "magias.zip",
       "member": "Magias/Paladin/Cure Poison.png",
