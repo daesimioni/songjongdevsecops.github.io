@@ -1,5 +1,5 @@
 {
- "versao": "e1ad05e3760a5842",
+ "versao": "3759fbb7fb690fce",
  "arquivos": [
   "assets/combat/action-vfx-v1.json",
   "assets/combat/action-vfx-v1.png",
@@ -25,6 +25,7 @@
   "css/chat.css",
   "css/combat.css",
   "css/dungeon.css",
+  "css/interface.css",
   "css/inventory.css",
   "css/learning.css",
   "css/menus.css",
