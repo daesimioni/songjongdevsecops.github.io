@@ -16,6 +16,9 @@ const { OUTFITS } = await import("../src/content/outfits.js");
 const { QUESTS } = await import("../src/gameplay/quests.js");
 const { NPCS, POSTS } = await import("../src/content/content.js");
 const { FAUNA } = await import("../src/content/identity.js");
+const { CAPITULOS } = await import("../src/gameplay/arcos.js");
+const { FACCOES } = await import("../src/gameplay/faccoes.js");
+const { DESFECHOS } = await import("../src/gameplay/grande-prova.js");
 const { VOCACOES } = await import("../src/content/vocations.js");
 
 const problemas = [];
@@ -42,6 +45,7 @@ check(contagem.reliquias === Object.keys(RELICS).length, `relíquias: ${contagem
 check(contagem.pets === Object.keys(PETS).length + Object.keys(MOUNTS).length, `pets: ${contagem.pets}, esperado ${Object.keys(PETS).length + Object.keys(MOUNTS).length}`);
 check(contagem.trajes === OUTFITS.length, `trajes: ${contagem.trajes}, esperado ${OUTFITS.length}`);
 check(contagem.sistemas === Object.keys(TIERS).length + Object.keys(SKILLS).length + wiki.COMO_JOGAR.length, `sistemas: ${contagem.sistemas}, esperado ${Object.keys(TIERS).length + Object.keys(SKILLS).length + wiki.COMO_JOGAR.length}`);
+check(contagem.historia === CAPITULOS.length + FACCOES.length + DESFECHOS.length + 1, "história incompleta");
 check(contagem.tudo === undefined, "categoria tudo não é uma entrada do índice");
 
 const cats = wiki.categoriasDaWiki(indice);
@@ -65,7 +69,7 @@ for (const e of indice) {
 const comIcone = indice.filter((e) => e.icone);
 check(comIcone.length >= 1100, `só ${comIcone.length} fichas com ícone, esperado ao menos 1100`);
 for (const e of comIcone) {
-  check(["item", "bicho", "pet", "gema", "bioma", "caverna", "traje"].includes(e.icone.tipo), `ícone de tipo inválido em ${e.nome}: ${e.icone.tipo}`);
+  check(["item", "bicho", "pet", "gema", "bioma", "caverna", "traje", "npc"].includes(e.icone.tipo), `ícone de tipo inválido em ${e.nome}: ${e.icone.tipo}`);
 }
 check(indice.some((e) => e.icone?.tipo === "item"), "nenhum item com ícone");
 check(indice.some((e) => e.icone?.tipo === "bicho"), "nenhum bicho com icon");
