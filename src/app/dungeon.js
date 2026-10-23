@@ -23,7 +23,7 @@ import { hash2 } from "../core/random.js";
 import { drawPetSprite } from "../rendering/pet-art.js";
 import { drawSkiff } from "../rendering/skiff.js";
 import { escalaDaCamera, tilesNaVista, dentroDaVista, caixaNaVista } from "../core/camera.js";
-import { propsDaSala } from "../content/salas-tematicas.js";
+import { propsDaSala, salasDosVeios } from "../content/salas-tematicas.js";
 import { nomeDaCacada } from "../content/cacada-clima.js";
 import { ouveOPassoS, direcaoPara, acordaComOPasso } from "../world/audicao.js";
 import { rotaDePatrulha, pontoDaRota } from "../world/patrulha.js";
@@ -194,7 +194,9 @@ export function createDungeon({ rpg, audio, onSheet, onInventory, onWiki, onGath
         const x = room.x + 1 + ((i + 0.5) / (passos + 1)) * (room.w - 2);
         const y = room.y + 1 + ((j + 0.5) / (passos + 1)) * (room.h - 2);
         const folga = folgaDeVisao(x, y, plano.vision, postos);
-        if (folga > melhorFolga) { melhorFolga = folga; melhor = { x, y }; }
+        if (folga > melhorFolga && (!state.solids || boxFree(state.map, x, y, PATH_PAD, state.solids))) {
+          melhorFolga = folga; melhor = { x, y };
+        }
       }
     }
     return melhorFolga >= 0 ? melhor : null;
@@ -367,10 +369,11 @@ export function createDungeon({ rpg, audio, onSheet, onInventory, onWiki, onGath
         id: `dg-${def.continent}-${room.id}-chest`,
         x: room.x + 1.6,
         y: room.y + room.h - 1.9,
-        locked: (room.tier || 0) >= 3,
+        // a praça é porto seguro: o baú da cidade não cobra chave
+        locked: room.kind !== "city" && (room.tier || 0) >= 3,
         opened: false,
         roomId: room.id,
-        label: (room.tier || 0) >= 3 ? "abrir o baú selado" : "abrir o baú",
+        label: room.kind !== "city" && (room.tier || 0) >= 3 ? "abrir o baú selado" : "abrir o baú",
       }));
   }
 
@@ -458,8 +461,9 @@ export function createDungeon({ rpg, audio, onSheet, onInventory, onWiki, onGath
         });
       }
     }
-    // veios de cristal: mineração de verdade, com picareta
-    for (const id of ["a", "c", "e"]) {
+    // veios de cristal: mineração de verdade, com picareta, longe da peça
+    // temática e da arena do chefe
+    for (const id of salasDosVeios(def)) {
       const room = def.rooms.find((r) => r.id === id);
       if (!room) continue;
       props.push({
@@ -506,10 +510,14 @@ export function createDungeon({ rpg, audio, onSheet, onInventory, onWiki, onGath
     state.seen = new Uint8Array(state.map.W * state.map.H);
     state.minimapAt = 0;
     state.ground = groundFor(def);
-    state.monsters = spawnMonsters(def);
-    state.boss = rpg.bossAlive(state.ground) ? spawnBoss(def) : null;
     state.chests = makeChests(def);
     state.props = makeProps(def);
+    // Base física compartilhada com a auditoria: cada tipo tem política explícita.
+    state.solids = [...state.props,...state.chests].flatMap(dungeonPropColliders);
+    // Bichos nascem depois do cenário: o posto agora pode recusar a cadeira,
+    // o baú e a peça temática que já ocupam o chão.
+    state.monsters = spawnMonsters(def);
+    state.boss = rpg.bossAlive(state.ground) ? spawnBoss(def) : null;
     // A horta é do jogador: o que foi plantado continua plantado na próxima
     // descida, e só colhe quando o tempo real passou.
     for (const prop of state.props) {
@@ -544,8 +552,6 @@ export function createDungeon({ rpg, audio, onSheet, onInventory, onWiki, onGath
         prop.label = `subir para ${target.name}`;
       }
     }
-    // Base física compartilhada com a auditoria: cada tipo tem política explícita.
-    state.solids = [...state.props,...state.chests].flatMap(dungeonPropColliders);
     state.path = null;
     state.pending = null;
     state.keys.clear();
