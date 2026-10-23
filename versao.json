@@ -1,8 +1,10 @@
 {
- "versao": "40d7247991d87ecc",
+ "versao": "e1ad05e3760a5842",
  "arquivos": [
   "assets/combat/action-vfx-v1.json",
   "assets/combat/action-vfx-v1.png",
+  "assets/creatures/wolf-atlas.json",
+  "assets/creatures/wolf-atlas.png",
   "assets/favicon.svg",
   "assets/fonts/OFL.txt",
   "assets/fonts/README.md",
@@ -170,6 +172,7 @@
   "src/rendering/dungeon-art.js",
   "src/rendering/fixture-detail.js",
   "src/rendering/gear-art.js",
+  "src/rendering/generated-creature.js",
   "src/rendering/human.js",
   "src/rendering/item-art.js",
   "src/rendering/item-detail.js",
