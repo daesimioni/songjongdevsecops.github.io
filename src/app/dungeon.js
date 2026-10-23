@@ -1,3 +1,5 @@
+import { createWorldCombat, combatSpawn } from "../gameplay/combate-mundo.js";
+import { drawWorldCombat } from "../rendering/combate-mundo.js";
 import { drawCollisionOverlay } from "../rendering/collision-overlay.js";
 import { segmentFree } from "../core/collision.js";
 import { dungeonPropColliders } from "../content/collision-bodies.js";
@@ -8,11 +10,10 @@ import { pracaDaCaverna } from "../gameplay/dungeon-plaza.js";
 import { isTextEntry, nativeActivation } from "../platform/input.js";
 import { moveWithCollision, advancePath, directionAngle, facingDirection } from "../core/movement.js";
 // A caverna: um mapa próprio, em tela cheia, com salas e túneis que se cruzam.
-// O bicho que vê você começa a batalha sozinho, como nos jogos de bolso: anda
-// pelo corredor, entra no campo de visão, exclama e chama o combate.
+// Os bichos que veem você perseguem e lutam no próprio corredor, sem trocar de tela.
 import { TILE } from "../core/runtime-config.js";
 import { dungeonById, creatureId, creatureKind, creatureAccent } from "../content/dungeon-data.js";
-import { GROUNDS, ITEMS, RELICS, TIERS } from "../content/rpg-data.js";
+import { GROUNDS, ITEMS, RELICS } from "../content/rpg-data.js";
 import { PETS } from "../content/pets.js";
 import { drawCreatureArt } from "../rendering/creature.js";
 import { desenharPlacaDoJogador } from "../rendering/name-plate.js";
@@ -57,7 +58,7 @@ function torchGlowSprite() {
 
 // ---------- a caverna em si ----------
 
-export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, onWiki, onGather, onFarm, onExit, onKeeper, onConurbation, onElevador, onPortal, onVocacao, isBlocked, vitais = null, placa = null, avatar = {}, look = null, gear = null, getClima = null, collisionDebug = false }) {
+export function createDungeon({ rpg, audio, onSheet, onInventory, onWiki, onGather, onFarm, onExit, onKeeper, onConurbation, onElevador, onPortal, onVocacao, isBlocked, onCombatFinished, onCombatKey, vitais = null, placa = null, avatar = {}, look = null, gear = null, getClima = null, collisionDebug = false }) {
   const canvas = $("dungeon-canvas");
   const ctx = canvas?.getContext("2d", { alpha: false }) || null;
 
@@ -112,6 +113,36 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     perfMs: 0,
     perfN: 0,
   };
+
+  const combat = createWorldCombat({
+    rpg, player: state.player,
+    canOccupy: (x, y) => boxFree(state.map, x, y, 0, state.solids),
+    chase(from, to, enemy) {
+      if (segmentFree(from, to, (x, y) => boxFree(state.map, x, y, 0, state.solids))) return to;
+      if (!enemy.routeAt || combat.model.agora >= enemy.routeAt) {
+        enemy.routeAt = combat.model.agora + 600;
+        enemy.route = findPathIn(state.map.W, state.map.H, walkable, from, to, {
+          goalPad: 0, canTraverse: (a, b) => segmentFree(a, b, (x, y) => boxFree(state.map, x, y, 0, state.solids)),
+        }) || [];
+      }
+      while (enemy.route?.length && Math.hypot(from.x - enemy.route[0].x, from.y - enemy.route[0].y) < 0.12) enemy.route.shift();
+      return enemy.route?.[0] || from;
+    },
+    onFinish(event) {
+      state.paused = false;
+      state.encounterLockUntil = clock() + (event.reason === "escape" ? 2500 : 400);
+      if (event.reason === "victory") {
+        say(`Combate encerrado: +${event.result.xp} XP.`, 3200);
+        audio.chime?.();
+      }
+      onCombatFinished?.(event);
+      updateHud();
+    },
+    onEvent(event) {
+      if (event.tipo === "ataque") audio.blip?.();
+      if (event.tipo === "dano") audio.error?.();
+    },
+  });
 
   // ---- construção de uma visita ----
   function groundFor(def) {
@@ -464,6 +495,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     const def = typeof id === "string" ? dungeonById(id) : id;
     if (!def || !canvas || !ctx) return false;
     state.def = def;
+    combat.stop("escape");
     state.entryCave = entryCave || null;
     state.pack = [];
     state.map = buildDungeonMap(def);
@@ -571,6 +603,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
 
   function close(kind = "stairs", targetCave = null) {
     if (!state.open) return;
+    if (kind !== "death") combat.stop("escape");
     state.open = false;
     cancelAnimationFrame(state.raf);
     state.raf = 0;
@@ -741,13 +774,13 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     }
     dx /= len;
     dy /= len;
-    const step = SPEED * (state.sprint ? SPRINT : 1) * rpg.speedMult() * dt;
+    const step = SPEED * (state.sprint && !combat.active ? SPRINT : 1) * combat.speedFactor * rpg.speedMult() * dt;
     const p = state.player;
     const ox = p.x;
     const oy = p.y;
     // A nave anda rápido demais para a colisão de um passo só.
     moveWithCollision(p, dx * step, dy * step,
-      (x, y) => boxFree(state.map, x, y, 0, state.solids));
+      (x, y) => boxFree(state.map, x, y, 0, state.solids) && combat.canStand(x, y));
     p.x = clamp(p.x, 0.6, state.map.W - 0.6);
     p.y = clamp(p.y, 0.6, state.map.H - 0.6);
     const moved = p.x !== ox || p.y !== oy;
@@ -781,9 +814,9 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
       state.path = null;
       return;
     }
-    const stepLen = SPEED * (state.sprint ? SPRINT : 1) * rpg.speedMult() * dt;
+    const stepLen = SPEED * (state.sprint && !combat.active ? SPRINT : 1) * combat.speedFactor * rpg.speedMult() * dt;
     const result = advancePath(state.player, path, stepLen,
-      (x, y) => boxFree(state.map, x, y, 0, state.solids));
+      (x, y) => boxFree(state.map, x, y, 0, state.solids) && combat.canStand(x, y));
     if (result.blocked) {
       state.path = null;
       state.pending = null;
@@ -1177,7 +1210,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
   function updateMonsters(dt, t) {
     const list = state.boss ? [...state.monsters, state.boss] : state.monsters;
     for (const m of list) {
-      if (!m.alive) continue;
+      if (!m.alive || m.combat) continue;
       {
         // isca no chão: por alguns segundos o bicho larga o posto e vai até o
         // cheiro; quando acaba, volta para casa
@@ -1287,105 +1320,21 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
   }
 
   function startAlert(m, t) {
+    if (m.combat || !m.alive) return;
     rpg.noteMonster?.(m);
-    state.pack = state.monsters
-      .filter((o) => o !== m && o.alive && !o.boss && canSeePlayer(o) && Math.hypot(o.x - state.player.x, o.y - state.player.y) < 3.6)
-      .slice(0, 3);
-    if (state.pack.length) say(`Matilha: ${state.pack.length} bicho(s) entram junto com este.`, 3200);
-    state.paused = true;
-    state.path = null;
-    state.pending = null;
-    state.alert = { monster: m, at: t + 320 };
-    audio.error?.();
-    const hist = state.history;
-    const back = hist.find((h) => t - h.t >= 480) || hist[0] || { x: state.player.x, y: state.player.y };
-    state.escapeSpot = { x: back.x, y: back.y };
-  }
-
-  function launchEncounter() {
-    const m = state.alert?.monster;
-    state.alert = null;
-    if (!m) {
-      state.paused = false;
-      return;
-    }
-    // até três bichos da matilha entram juntos com o primeiro; o resto vira fila
-    const extras = m.boss ? [] : state.pack.splice(0, 3);
-    state.partnerMonsters = extras;
-    state.duelMonster = m;
-    const ok = onEncounter?.(m, state.ground, !!m.boss, extras);
-    if (!ok) {
-      state.pendingMonster = null;
-      state.paused = false;
-      state.encounterLockUntil = clock() + 2500;
+    m.dorme = false;
+    if (combat.active) { combat.join(m); return; }
+    if (t < state.encounterLockUntil) return;
+    setSprint(false);
+    const extras = m.boss ? [] : state.monsters.filter(o => o !== m && o.alive && !o.boss && canSeePlayer(o) && Math.hypot(o.x - state.player.x, o.y - state.player.y) < 3.6).slice(0, 3);
+    if (combat.start(m, m.encounterGround || state.ground, !!m.boss, extras)) {
+      say(`${m.name}: J atacar · K defender · L esquivar.`, 3200);
+      audio.error?.();
     }
   }
 
-  function onDuelClosed() {
-    if (!state.open) return;
-    // reserva: se o pending foi limpo por outro caminho, o duelo ainda sabe
-    // quem era o bicho da frente
-    const m = state.pendingMonster || state.duelMonster;
-    state.pendingMonster = null;
-    state.duelMonster = null;
-    state.paused = false;
-    // respiro depois da briga: o vizinho não pode puxar duelo no mesmo passo
-    state.encounterLockUntil = clock() + 6000;
-    const partners = state.partnerMonsters || [];
-    state.partnerMonsters = [];
-    for (const partner of partners) {
-      if (!rpg.monsterAlive(partner.id)) {
-        partner.alive = false;
-        say(`${partner.name} também caiu na mesma rodada.`, 2800);
-      }
-    }
-    if (m) {
-      const dead = m.boss ? !rpg.bossAlive(state.ground) : !rpg.monsterAlive(m.id);
-      if (dead) {
-        m.alive = false;
-        if (m.boss) {
-          state.boss = null;
-          say(`${m.name} caiu. A cidade logo acima pode respirar.`, 5200);
-          audio.chime();
-        } else {
-          say(`${m.name} virou pó. A passagem segue.`, 2200);
-        }
-        if (!m.boss && state.pack.length) {
-          const next = state.pack.shift();
-          if (next?.alive) {
-            state.paused = true;
-            state.pendingMonster = next;
-            state.duelMonster = next;
-            setTimeout(() => {
-              if (!state.open || !state.paused) return;
-              state.encounterLockUntil = 0;
-              const ok = onEncounter?.(next, state.ground, false);
-              if (!ok) { state.pendingMonster = null; state.paused = false; }
-            }, 700);
-          }
-          updateHud();
-        }
-      } else {
-        state.pack = [];
-        // fugir custa: a chance de levar um golpe cresce com a dificuldade
-        const risk = rpg.fleeRisk(m);
-        if (Math.random() < risk) {
-          const tier = m.boss ? 4 : m.tier;
-          const res = rpg.takeDamage(TIERS[tier]?.damage || 2);
-          if (!state.open) return;
-          say(`${m.name} te alcançou na fuga: -${res.lost} de vida.`, 3800);
-          audio.error?.();
-          updateHud();
-        } else {
-          say("Você escapou sem um arranhão desta vez.", 2400);
-        }
-        state.player.x = state.escapeSpot?.x ?? state.player.x;
-        state.player.y = state.escapeSpot?.y ?? state.player.y;
-        state.encounterLockUntil = clock() + 2600;
-      }
-    }
-    updateHud();
-  }
+  // Compatibilidade com o fechamento de painéis antigos; não há recuo/teleporte.
+  function onDuelClosed() { updateHud(); }
 
   // ---- ciclo ----
   function update(dt, t) {
@@ -1396,8 +1345,10 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     const beforeX = p.x;
     const beforeY = p.y;
     if (!state.paused && !blocked()) {
-      if (state.path) updateAutoWalk(dt);
-      else updateMovement(dt);
+      if (!combat.dodging) {
+        if (state.path) updateAutoWalk(dt);
+        else updateMovement(dt);
+      }
       state.history.push({ x: p.x, y: p.y, dir: p.dir, moving: p.moving, t });
       while (state.history.length > 40) state.history.shift();
       if (p.moving && Math.hypot(p.x - beforeX, p.y - beforeY) > 0.001) {
@@ -1407,12 +1358,9 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
         }
       }
       if (!state.paused) updateMonsters(dt, t);
-    } else if (state.alert && t >= state.alert.at && !blocked()) {
-      const m = state.alert.monster;
-      state.pendingMonster = m;
-      launchEncounter();
-      return;
-    }
+      combat.tick(dt);
+      if (!state.open) return;
+    } else combat.defend(false);
 
     markSeen(t);
 
@@ -1843,6 +1791,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     });
     drawables.sort((a, b) => a.y - b.y);
     for (const d of drawables) d.draw();
+    drawWorldCombat(ctx, combat.model);
     if(collisionDebug)drawCollisionOverlay(ctx,state.solids,state.player,{x:camX,y:camY,w:viewW,h:viewH},(x,y)=>dungeonSolid(state.map,x,y));
 
     ctx.restore();
@@ -1900,7 +1849,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     const x = m.x * TILE;
     const y = m.y * TILE;
     const d = Math.hypot(state.player.x - m.x, state.player.y - m.y);
-    if (d < m.vision + 3) {
+    if (!m.combat && d < m.vision + 3) {
       const ang = directionAngle(m.dir);
       const fov = m.fov ?? 1.2;
       ctx.save();
@@ -1989,7 +1938,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
 
   // ---- eventos ----
   function blocked() {
-    return !!isBlocked?.();
+    return document.hidden || !!isBlocked?.();
   }
 
   function onKeyDown(e) {
@@ -2001,10 +1950,12 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     const k = e.key.toLowerCase();
     if (["arrowup", "arrowdown", "arrowleft", "arrowright", " "].includes(k)) e.preventDefault();
     if (k === "escape") {
+      if (combat.active) { say("Afaste-se dos monstros ou alcance uma escada para sair.", 2600); return; }
       close("stairs");
       return;
     }
     if (state.paused) return;
+    if (onCombatKey?.(k)) { e.preventDefault(); return; }
     if (k === " " || e.code === "Space") {
       if (e.repeat) return;
       toggleSprint();
@@ -2035,9 +1986,11 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
   function onKeyUp(e) {
     if (!state.open) return;
     state.keys.delete(e.key.toLowerCase());
+    if (e.key.toLowerCase() === "k") combat.defend(false);
   }
 
   function onBlur() {
+    combat.defend(false);
     pararSeguir();
     state.keys.clear();
     state.path = null;
@@ -2092,6 +2045,13 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     const { scale, camX, camY } = state.view;
     const wx = ((e.clientX - rect.left) / scale + camX) / TILE;
     const wy = ((e.clientY - rect.top) / scale + camY) / TILE;
+    const enemy = [...state.monsters, state.boss].filter(m => m?.alive).find(m => Math.hypot(m.x - wx, m.y - wy) < 1);
+    if (enemy) {
+      startAlert(enemy, clock());
+      combat.target(enemy);
+      combat.attack();
+      return;
+    }
     const hit = nearestInteractable(wx, wy, 1.5);
     if (hit) {
       const d = Math.hypot(hit.x - state.player.x, hit.y - state.player.y);
@@ -2141,11 +2101,15 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     audio.blip?.();
   });
   try { aplicarMapa(localStorage.getItem(CHAVE_MAPA) === "1"); } catch { aplicarMapa(false); }
-  $("dg-exit")?.addEventListener("click", () => close("stairs", state.entryCave));
+  $("dg-exit")?.addEventListener("click", () => {
+    if (combat.active) { say("Afaste-se dos monstros ou alcance uma escada para sair.", 2600); return; }
+    close("stairs", state.entryCave);
+  });
   $("dg-sheet")?.addEventListener("click", () => onSheet?.());
   $("dg-inventory")?.addEventListener("click", () => onInventory?.());
   const sprintBtn = $("dg-sprint");
   const setSprint = (on) => {
+    if (on && combat.active) return;
     state.sprint = on;
     sprintBtn?.classList.toggle("active", on);
     sprintBtn?.setAttribute("aria-pressed", String(on));
@@ -2161,6 +2125,17 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     close,
     enterCity,
     isOpen: () => state.open,
+    combat,
+    startEncounter(monster, ground, boss = false, prepared = null) {
+      if (!state.open || combat.active) return false;
+      const point = combatSpawn(state.player, (x, y) => boxFree(state.map, x, y, 0, state.solids));
+      if (!point) return false;
+      const actor = { ...monster, ...point, hx: point.x, hy: point.y, tx: point.x, ty: point.y, waitUntil: 0, speed: 1.9, alive: true, boss, dir: 0, vision: 5, encounterGround: ground, accent: monster.accent || "#e99a45" };
+      if (!combat.start(actor, ground, boss, [], prepared)) return false;
+      state.monsters.push(actor);
+      setSprint(false);
+      return true;
+    },
     onDuelClosed,
     stopControls: onBlur,
     useTorch(ms = 120000) {

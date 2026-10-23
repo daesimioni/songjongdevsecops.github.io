@@ -1,5 +1,5 @@
-// Texto maior: o cartão de leitura dos painéis cresce 15% no desktop, a escolha
-// fica no save e no celular nada muda (o toque já usa letra maior).
+// Texto maior: amplia as letras dos painéis sem alterar a geometria das janelas.
+// A escolha fica no save e também vale no celular.
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import { STORAGE } from "../src/core/runtime-config.js";

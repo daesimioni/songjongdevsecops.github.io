@@ -1,6 +1,7 @@
 // Combate de ação: o duelo de monstros deixou de ser pergunta. O jogador
 // anda, ataca com J, defende com K, esquiva com L e usa as runas com 1-6.
 // O modelo não toca no DOM: a tela lê o estado e desenha.
+import { facingDirection } from "../core/movement.js";
 import { TIERS, MONSTER_TRAITS } from "../content/rpg-data.js";
 import { bonusDeRitmo } from "./duelo-ritmo.js";
 import { danoDoJogador, curaDoChefe, espelhoDoChefe, extraDoErro } from "./chefe-habilidades.js";
@@ -28,10 +29,7 @@ function normalizar(x, y) {
   return { x: x / d, y: y / d, d };
 }
 
-function direcaoDe(x, y) {
-  if (Math.abs(x) > Math.abs(y) * 0.6) return x < 0 ? 1 : 2;
-  return y < 0 ? 3 : 0;
-}
+const direcaoDe = (x, y) => facingDirection(x, y, 0);
 
 function criarInimigo(entrada, indice, { rpg, boss, random }) {
   const monster = entrada.monster || entrada;
@@ -117,6 +115,29 @@ export class Combate {
     this.rpg.duel.monsterHpMax = this.inimigos[0].hpMax;
   }
 
+  visivel(a, b) { return !this.space?.visible || this.space.visible(a, b); }
+
+  posicionar(actor, antes, x, y) {
+    if (this.space?.move) {
+      actor.x = antes.x; actor.y = antes.y;
+      this.space.move(actor, x - antes.x, y - antes.y);
+      return;
+    }
+    actor.x = clamp(x, ARENA.margem, ARENA.w - ARENA.margem);
+    actor.y = clamp(y, ARENA.margem, ARENA.h - ARENA.margem);
+  }
+
+  adicionar(monster) {
+    if (!this.space || this.phase !== "combat" || this.training || monster.boss ||
+        this.inimigos.length >= 12 || this.inimigos.some(e => e.monster.id === monster.id)) return null;
+    const indice = this.inimigos.length;
+    const inimigo = criarInimigo(monster, indice, { rpg: this.rpg, boss: false, random: this.random });
+    inimigo.proximoAtaque += this.agora;
+    this.inimigos.push(inimigo);
+    this.rpg.duel.partners.push({ monster, tier: inimigo.tier, hp: inimigo.hp, hpMax: inimigo.hpMax, done: false });
+    return inimigo;
+  }
+
   get principal() {
     return this.inimigos[0];
   }
@@ -131,11 +152,15 @@ export class Combate {
   }
 
   inimigoAoAlcance(alcance = COMBATE.ataqueAlcance) {
+    if (this.target && !this.target.morte) {
+      const distance = Math.hypot(this.target.x - this.jogador.x, this.target.y - this.jogador.y) - this.target.raio;
+      return distance <= alcance && this.visivel(this.jogador, this.target) ? this.target : null;
+    }
     let melhor = null;
     let menor = Infinity;
     for (const inimigo of this.vivos()) {
       const d = Math.hypot(inimigo.x - this.jogador.x, inimigo.y - this.jogador.y) - inimigo.raio;
-      if (d <= alcance && d < menor) {
+      if (d <= alcance && d < menor && this.visivel(this.jogador, inimigo)) {
         menor = d;
         melhor = inimigo;
       }
@@ -202,7 +227,10 @@ export class Combate {
     const ms = clamp(Number(dt) * 1000 || 0, 0, 60);
     this.agora += ms;
     this.moverJogador(ms, entrada);
-    for (const inimigo of this.inimigos) this.atualizarInimigo(inimigo, ms);
+    for (const inimigo of this.inimigos) {
+      if (this.phase !== "combat") break;
+      this.atualizarInimigo(inimigo, ms);
+    }
     this.atualizarVeneno(ms);
     this.sincronizar();
     return this.eventos.splice(0);
@@ -211,6 +239,7 @@ export class Combate {
   moverJogador(ms, entrada) {
     const j = this.jogador;
     const dt = ms / 1000;
+    const antes = { x: j.x, y: j.y };
     let x = 0;
     let y = 0;
     j.movendo = false;
@@ -218,7 +247,7 @@ export class Combate {
       j.x += j.esquivaX * COMBATE.esquivaVelocidade * dt;
       j.y += j.esquivaY * COMBATE.esquivaVelocidade * dt;
       j.movendo = true;
-    } else {
+    } else if (!this.space?.externalPlayer) {
       if (Number.isFinite(entrada.mx) || Number.isFinite(entrada.my)) {
         ({ x, y } = normalizar(Number(entrada.mx) || 0, Number(entrada.my) || 0));
       }
@@ -235,8 +264,7 @@ export class Combate {
         j.movendo = true;
       }
     }
-    j.x = clamp(j.x, ARENA.margem, ARENA.w - ARENA.margem);
-    j.y = clamp(j.y, ARENA.margem, ARENA.h - ARENA.margem);
+    this.posicionar(j, antes, j.x, j.y);
   }
 
   atualizarInimigo(inimigo, ms) {
@@ -264,8 +292,9 @@ export class Combate {
       return;
     }
     const dist = Math.hypot(j.x - inimigo.x, j.y - inimigo.y);
-    if (dist > 74 + inimigo.raio) {
-      const passo = normalizar(j.x - inimigo.x, j.y - inimigo.y);
+    if (dist > 74 + inimigo.raio || !this.visivel(inimigo, j)) {
+      const destino = this.space?.chase?.(inimigo, j) || j;
+      const passo = normalizar(destino.x - inimigo.x, destino.y - inimigo.y);
       const velocidade = (82 + inimigo.tier * 20 + (inimigo.boss ? 10 : 0) + (inimigo.phase - 1) * 9) * dt;
       // separa um pouco os bichos da matilha para não virarem um bloco só
       let sx = 0;
@@ -280,10 +309,9 @@ export class Combate {
           sy += (dy / d) * (1 - d / 64);
         }
       }
-      inimigo.x += passo.x * velocidade + sx * 26 * dt;
-      inimigo.y += passo.y * velocidade + sy * 26 * dt;
-      inimigo.x = clamp(inimigo.x, ARENA.margem, ARENA.w - ARENA.margem);
-      inimigo.y = clamp(inimigo.y, ARENA.margem, ARENA.h - ARENA.margem);
+      this.posicionar(inimigo, { x: inimigo.x, y: inimigo.y },
+        inimigo.x + passo.x * velocidade + sx * 26 * dt,
+        inimigo.y + passo.y * velocidade + sy * 26 * dt);
       inimigo.dir = direcaoDe(passo.x, passo.y);
     } else if (this.agora >= inimigo.proximoAtaque) {
       inimigo.vento = true;
@@ -308,7 +336,7 @@ export class Combate {
     const trait = MONSTER_TRAITS[inimigo.kind]?.id;
     const cooldown = (inimigo.boss ? 1550 : 2150 - inimigo.tier * 130) * (inimigo.phase > 1 ? 0.82 : 1) * (trait === "haste" ? 0.78 : 1);
     inimigo.proximoAtaque = this.agora + cooldown;
-    if (dist > 82 + inimigo.raio) {
+    if (dist > 82 + inimigo.raio || !this.visivel(inimigo, j)) {
       this.emitir({ tipo: "errou", inimigo });
       return;
     }
@@ -353,7 +381,7 @@ export class Combate {
   areaDoChefe(inimigo) {
     const j = this.jogador;
     const dist = Math.hypot(j.x - inimigo.x, j.y - inimigo.y);
-    if (dist > 150 || this.agora < j.invulneravelAte) {
+    if (dist > 150 || !this.visivel(inimigo, j) || this.agora < j.invulneravelAte) {
       this.emitir({ tipo: "esquiva", inimigo, especial: true });
       return;
     }
@@ -500,6 +528,14 @@ export class Combate {
       if (parceiro) parceiro.done = true;
       if (inimigo.monster?.id) this.rpg.data.monsters[inimigo.monster.id] = Date.now();
     }
+    if (this.space?.rewardOne) {
+      const resultado = this.space.rewardOne(inimigo);
+      this.worldResult ||= { xp: 0, loot: [], defeated: 0 };
+      this.worldResult.xp += resultado.xp || 0;
+      this.worldResult.loot.push(...(resultado.loot || []));
+      this.worldResult.defeated++;
+      this.rpg.save();
+    }
     this.emitir({ tipo: "matou", inimigo });
     if (!this.vivos().length) this.vitoria();
   }
@@ -527,7 +563,7 @@ export class Combate {
     d.phase = "victory";
     d.monsterHp = 0;
     try {
-      d.result = this.rpg.victory(d);
+      d.result = this.space?.rewardOne ? this.worldResult : this.rpg.victory(d);
     } catch (err) {
       d.result = { xp: 0, loot: [], error: err?.message || "erro" };
     }
@@ -542,7 +578,7 @@ export class Combate {
     d.phase = "defeat";
     this.rpg.data.hp = this.rpg.hpMax();
     this.rpg.save();
-    this.rpg.onRespawn?.();
+    // takeDamage já executou o respawn; não teleportar duas vezes.
     this.emitir({ tipo: "derrota" });
   }
 
@@ -569,7 +605,7 @@ export class Combate {
     this.magias.set(id, this.agora + COMBATE.magiaRecarga);
     const eventos = [];
     const ferir = (inimigo, dano) => {
-      if (!inimigo) return;
+      if (!inimigo || (this.space && (Math.hypot(inimigo.x - this.jogador.x, inimigo.y - this.jogador.y) - inimigo.raio > 150 || !this.visivel(this.jogador, inimigo)))) return;
       const antes = inimigo.hp;
       this.danoMagia(inimigo, dano);
       const real = Math.round((antes - inimigo.hp) * 10) / 10;
@@ -621,7 +657,9 @@ export class Combate {
     if (res.lente) this.jogador.lente = true;
     // a coruja lê a fraqueza: além do golpe certeiro, soma 1 no mesmo acerto
     if (res.effect === "sabedoria") this.jogador.eco += 1;
-    if (res.effect === "tagarela") for (const inimigo of this.vivos()) inimigo.atordoadoAte = this.agora + 1700;
+    if (res.effect === "tagarela") for (const inimigo of this.vivos()) {
+      if (!this.space || this.visivel(this.jogador, inimigo) && Math.hypot(inimigo.x - this.jogador.x, inimigo.y - this.jogador.y) - inimigo.raio <= 150) inimigo.atordoadoAte = this.agora + 1700;
+    }
     if (res.effect === "aviso") this.jogador.escudo = true;
     if (res.healed) this.emitir({ tipo: "curaJogador", valor: res.healed });
     if (res.mana) this.jogador.mana = this.rpg.mana();

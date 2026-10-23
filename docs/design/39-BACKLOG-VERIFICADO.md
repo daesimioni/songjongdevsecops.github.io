@@ -12,6 +12,13 @@ itens, 464 fichas, 291 missões, 194 NPCs, 2.311 entradas de wiki, 887 perguntas
 de coleta, 166 módulos e 127 testes node. `npm run validate` passa (lint,
 contrato de módulos, testes e build) e a matriz de navegador dá 19/19.
 
+**Combate no mapa, 2026-10-23:** os encontros normais, treinos e Grande Prova
+usam agora as posições e colisões da cena atual. Não abrem o modal de arena.
+Há perseguição com rotas, alcance/linha de visão, oito direções, dano e recompensa
+por morte, retirada sem teletransporte e HUD acessível ao teclado/toque. Ver
+`src/gameplay/combate-mundo.js` e `test/combate-mundo.test.mjs`. A descrição abaixo
+da arena é registro histórico da versão anterior, não o fluxo atual.
+
 **Atualização de 2026-10-23: o combate deixou de ser pergunta.** O dono tirou a
 pergunta do monstro e manteve a pergunta onde ela é a mecânica. Todas as 464
 criaturas e 93 chefes, a matilha, o treino e a Grande Prova usam a arena de ação

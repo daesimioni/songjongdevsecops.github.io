@@ -47,7 +47,7 @@ O script usa uma sessão local descartável, sem entrar na praça compartilhada 
 
 A matriz usa 1440×900, 1024×768, 768×1024, 390×844, 320×568 e 844×390.
 Abre os fluxos reais de Diário, Ficha, Mochila, Bestiário, Wiki, Ajuda, Rede, Loja,
-Viagem, Vocações, Biblioteca, Guilda, NPC, Coleta, Treino, Trajes, Personagem e Combate.
+Viagem, Vocações, Biblioteca, Guilda, NPC, Coleta, Treino, Trajes, Personagem e Combate no mapa.
 Mede os limites das janelas, transbordamento horizontal e botões com conteúdo cortado;
 confere foco contido e navegação da Ficha; grava JSON e capturas de tela.
 Durante a medição, congela somente o loop de animação do jogo. Isso verifica layout,
@@ -68,3 +68,9 @@ compartilhados foram revisados, sem simular aprovação ou experiência nesses e
 - Distribuição estática gerada pelo build.
 
 As capturas são amostras; não se declara revisão manual de cada uma das milhares de fichas geradas nem homologação de navegadores que não foram executados.
+
+## Integração com o combate no mapa
+
+Durante a revisão, a main recebeu o combate no próprio mundo (PR #16). Essa atualização foi integrada, preservando seus módulos e comportamentos. A auditoria foi adaptada para verificar o HUD real de combate e confirmar que a arena modal não abre. Os controles têm fonte de leitura, limites de altura e posicionamento que evita o direcional no celular e o minimapa no desktop. A barra antiga de runas e os lembretes de exploração cedem espaço aos controles da batalha enquanto ela está ativa.
+
+Após a integração: a suíte completa terminou com **139 testes aprovados, zero falhas**. A matriz foi repetida na versão integrada, com **108 combinações em texto normal e 108 em texto grande**, sem erros de JavaScript, transbordamentos ou botões cortados. A conferência adicional do HUD de batalha inclui interseção com direcional, botões de movimento e minimapa; o minimapa recebeu largura limitada e ferramentas com quebra de linha para não disputar espaço com o combate em tablets.

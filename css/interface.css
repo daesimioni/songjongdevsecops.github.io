@@ -201,3 +201,28 @@ html[data-fonte="grande"] .modal-head h2 { font-size: 19px; }
   .modal-card .book-link { min-height: 44px; }
 }
 .best-continente-tab { max-width: 100%; white-space: normal; }
+/* Ações da batalha no próprio mapa, integradas à atualização da main. */
+#world-combat { font: 14px/1.5 var(--sans); overflow-wrap: anywhere; max-height: calc(100dvh - 32px); overflow-y: auto; overscroll-behavior: contain; }
+#world-combat p { font-size: 14px; }
+#world-combat button { min-height: 44px; font-size: 14px; padding: 8px 10px; max-width: 100%; }
+#world-combat small { font-size: 13px; }
+#app:has(#world-combat:not([hidden])) > :is(.spellbar, .prompt, .steps),
+#app:has(#world-combat:not([hidden])) .quest-track { display: none; }
+@media (min-width: 901px) {
+  #app > #world-combat { right: 276px; bottom: 16px; width: min(560px, calc(100vw - 304px)); }
+}
+@media (max-width: 900px) {
+  #world-combat, #dungeon #world-combat { left: max(8px, env(safe-area-inset-left)); right: max(8px, env(safe-area-inset-right)); bottom: calc(198px + env(safe-area-inset-bottom)); max-width: none; max-height: max(100px, calc(100dvh - 350px)); padding: 8px; }
+  #world-combat button { flex: 1 1 auto; font-size: 13px; }
+}
+@media (max-height: 520px) and (orientation: landscape) {
+  #world-combat, #dungeon #world-combat { left: 170px; right: 84px; bottom: 8px; max-height: 150px; }
+}
+@media (min-width: 721px) and (max-width: 900px) and (min-height: 521px) {
+  #app > #world-combat { right: 276px; }
+  #dungeon #world-combat { right: 154px; }
+}
+.minimap:not(.grande):not(.mini) { width: 250px; min-width: 0; max-width: calc(100vw - 32px); }
+.minimap:not(.grande) .mini-head { flex-wrap: wrap; }
+.minimap:not(.grande) #minimap-canvas { max-width: 100%; }
+#btn-sound.dock-icon::before { content: none; }

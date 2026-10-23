@@ -1,5 +1,5 @@
 {
- "versao": "8a82a97976f038e5",
+ "versao": "3ff658eefc0f5900",
  "arquivos": [
   "assets/favicon.svg",
   "assets/fonts/OFL.txt",
@@ -97,6 +97,7 @@
   "src/gameplay/acervo.js",
   "src/gameplay/arcos.js",
   "src/gameplay/chefe-habilidades.js",
+  "src/gameplay/combate-mundo.js",
   "src/gameplay/combate.js",
   "src/gameplay/conceitos.js",
   "src/gameplay/distratores.js",
@@ -156,6 +157,7 @@
   "src/rendering/assets/vegetacao.js",
   "src/rendering/cave-art.js",
   "src/rendering/collision-overlay.js",
+  "src/rendering/combate-mundo.js",
   "src/rendering/creature-models.js",
   "src/rendering/creature.js",
   "src/rendering/dia-noite.js",
@@ -181,6 +183,7 @@
   "src/ui/bestiary.js",
   "src/ui/caderno.js",
   "src/ui/character.js",
+  "src/ui/combate-mundo.js",
   "src/ui/duel.js",
   "src/ui/gather.js",
   "src/ui/inventory-ui.js",
