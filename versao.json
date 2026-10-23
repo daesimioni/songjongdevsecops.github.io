@@ -1,5 +1,5 @@
 {
- "versao": "3759fbb7fb690fce",
+ "versao": "5748f53c0784bac4",
  "arquivos": [
   "assets/combat/action-vfx-v1.json",
   "assets/combat/action-vfx-v1.png",
@@ -14,6 +14,8 @@
   "assets/fonts/silkscreen-400-latino.woff2",
   "assets/fonts/silkscreen-700-latino-ext.woff2",
   "assets/fonts/silkscreen-700-latino.woff2",
+  "assets/magic/paladin-familiar.json",
+  "assets/magic/paladin-familiar.png",
   "assets/og.png",
   "assets/reference-art/manifest.json",
   "assets/wiki/combate-desktop.png",
