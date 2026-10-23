@@ -1,0 +1,679 @@
+/* ============================================================
+   HUD, caderno e painéis: a camada que organiza a tela do jogo.
+   Carregada por último para dar a forma final sem espalhar regra.
+   ============================================================ */
+
+/* ---------- HUD: três colunas, tudo que é estado mora à esquerda ---------- */
+.hud.hud-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  align-items: start;
+  gap: 8px 18px;
+  padding: 12px 16px;
+}
+.hud-left,
+.hud-right {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+}
+.hud-right { justify-content: flex-end; align-items: center; }
+.hud-left .brand { flex: 0 0 auto; padding: 7px 10px 6px; }
+.hud-left .brand-title { font-size: 11px; }
+.hud-left .brand-sub { font-size: 10px; }
+.hud-left .hud-vitals { width: min(205px, 21vw); padding: 7px 9px 8px; }
+.hud-progress {
+  align-self: center;
+  padding: 6px 9px;
+  font-size: 10.5px;
+  white-space: nowrap;
+}
+.hud-progress .sep { opacity: 0.55; }
+.hud-calendar { justify-self: center; }
+.hud-calendar .calendario {
+  position: static;
+  transform: none;
+  min-width: 236px;
+  max-width: 30vw;
+  padding: 6px 11px 7px;
+}
+.hud-calendar #calendario-data { font-size: 7px; }
+.hud-calendar #calendario-hora { font-size: 11px; }
+
+/* ---------- dock: três menus, dois utilitários ---------- */
+.hud-dock {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgba(7, 10, 24, 0.78);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(8px);
+}
+.dock-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  height: 34px;
+  padding: 0 10px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 11.5px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.dock-btn svg { flex: 0 0 auto; color: var(--muted); }
+.dock-btn:hover { background: rgba(255, 255, 255, 0.055); border-color: var(--line); }
+.dock-btn:hover svg { color: var(--mint); }
+.dock-btn:active { transform: translateY(1px); }
+.dock-btn kbd {
+  padding: 2px 4px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  font-family: var(--pixel);
+  font-size: 6px;
+  color: var(--muted);
+  opacity: 0.9;
+}
+.dock-btn.dock-icon { width: 34px; padding: 0; }
+.dock-btn.dock-icon svg { color: var(--muted); }
+.dock-caderno {
+  border-color: rgba(255, 200, 87, 0.32);
+  background: linear-gradient(180deg, rgba(255, 200, 87, 0.15), rgba(255, 200, 87, 0.05));
+  color: #ffe6a8;
+}
+.dock-caderno svg { color: var(--amber); }
+.dock-caderno kbd { color: var(--amber); border-color: rgba(255, 200, 87, 0.35); }
+.hud-dock .admin-badge { align-self: center; }
+
+/* esconde os atalhos antigos: o caderno abre as mesmas páginas */
+.atalhos-ocultos[hidden] { display: none; }
+
+/* ---------- missões em andamento: card no canto, clicável ---------- */
+.quest-track {
+  position: static;
+  left: auto;
+  top: auto;
+  grid-column: 3;
+  grid-row: 2;
+  justify-self: end;
+  width: min(310px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 11px 12px 12px;
+  border: 1px solid var(--line);
+  border-left: 2px solid rgba(97, 244, 192, 0.6);
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(9, 13, 30, 0.94), rgba(6, 9, 20, 0.9));
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.4);
+  pointer-events: auto;
+  font-family: var(--mono);
+}
+.quest-track[hidden] { display: none; }
+.qt-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.qt-head b {
+  font-family: var(--pixel);
+  font-size: 6.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--mint);
+}
+.qt-all {
+  border: 0;
+  padding: 2px 0;
+  background: none;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 10px;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.qt-all:hover { color: var(--ink); }
+.qt-list { display: grid; gap: 5px; }
+.qt-quest {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2px 8px;
+  width: 100%;
+  padding: 6px 7px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.025);
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+.qt-quest:hover { border-color: var(--line); background: rgba(97, 244, 192, 0.06); }
+.qt-title { font-size: 11.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.qt-count { font-size: 10px; color: var(--mint); white-space: nowrap; }
+.qt-giver { grid-column: 1 / -1; font-size: 9.5px; color: var(--muted); }
+.qt-bar { grid-column: 1 / -1; height: 4px; margin-top: 4px; border-radius: 2px; background: rgba(255, 255, 255, 0.08); overflow: hidden; }
+.qt-bar i { display: block; height: 100%; border-radius: 2px; background: linear-gradient(90deg, var(--violet), var(--mint)); }
+.qt-empty { font-size: 10.5px; color: var(--muted); margin: 0; }
+
+/* ---------- primeiros passos: uma linha discreta, abre quando quer ---------- */
+.steps {
+  left: 16px;
+  top: auto;
+  bottom: 16px;
+  width: min(250px, 44vw);
+  padding: 8px 10px;
+  background: rgba(7, 11, 24, 0.86);
+}
+.steps-head b { font-size: 6.5px; }
+.steps.min { width: auto; min-width: 176px; }
+.steps.min .steps-head { margin-bottom: 0; }
+body.chatting .steps { display: none; }
+
+/* ---------- falar: conversa ancorada, com histórico curto ---------- */
+.chatbar {
+  left: 16px;
+  bottom: 16px;
+  transform: none;
+  width: min(430px, calc(100vw - 32px));
+  padding: 10px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(10, 14, 32, 0.96), rgba(7, 10, 24, 0.96));
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.55);
+}
+.chat-log { max-height: 168px; }
+.chatbar label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.chatbar form { margin-top: 8px; }
+.chatbar input { min-width: 0; }
+
+/* ============================================================
+   Caderno: uma capa, cinco páginas
+   ============================================================ */
+.book-card {
+  display: grid;
+  grid-template-columns: 228px minmax(0, 1fr);
+  width: min(1120px, 96vw);
+  height: min(88vh, 840px);
+  max-height: min(88vh, 840px);
+  padding: 0;
+  overflow: hidden;
+}
+.book-main {
+  min-width: 0;
+  overflow-y: auto;
+  padding: 24px 28px 30px;
+  scrollbar-gutter: stable;
+}
+.book-main .modal-head { margin-bottom: 14px; }
+.book-main .modal-head h2 { font-size: 14px; }
+.book-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px 12px 14px;
+  border-right: 1px solid var(--line);
+  background:
+    radial-gradient(120% 60% at 20% 0%, rgba(97, 244, 192, 0.07), transparent 60%),
+    linear-gradient(180deg, #0b1024, #070a17 70%);
+}
+.book-nav-title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0 8px 10px;
+  border-bottom: 1px dashed var(--line);
+}
+.book-nav-title b {
+  font-family: var(--pixel);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--amber);
+}
+.book-nav-title span {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--muted);
+}
+.book-nav-list { display: flex; flex-direction: column; gap: 4px; }
+.book-link {
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 9px 8px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.book-link:hover:not(:disabled) { background: rgba(255, 255, 255, 0.045); border-color: var(--line); }
+.book-link:disabled { opacity: 0.42; cursor: not-allowed; }
+.book-link.on {
+  border-color: rgba(97, 244, 192, 0.38);
+  background: linear-gradient(90deg, rgba(97, 244, 192, 0.14), rgba(97, 244, 192, 0.02));
+}
+.book-ic { color: var(--muted); justify-self: center; }
+.book-link.on .book-ic, .book-link:hover .book-ic { color: var(--mint); }
+.book-txt { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.book-txt b { font-family: var(--mono); font-size: 12.5px; font-weight: 600; }
+.book-txt small {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  line-height: 1.3;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.book-link kbd {
+  padding: 3px 4px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  font-family: var(--pixel);
+  font-size: 6px;
+  color: var(--muted);
+}
+.book-link.on kbd { color: var(--mint); border-color: rgba(97, 244, 192, 0.35); }
+.book-nav-foot {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px dashed var(--line);
+}
+.book-tool {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--muted);
+  cursor: pointer;
+}
+.book-tool:hover { color: var(--ink); border-color: var(--line-strong); }
+.book-nav-dica { margin-left: auto; font-family: var(--mono); font-size: 9.5px; color: var(--muted); }
+
+/* abas dentro de uma página do caderno */
+.book-tabs {
+  display: flex;
+  gap: 4px;
+  width: max-content;
+  max-width: 100%;
+  margin: 0 0 16px;
+  padding: 3px;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(4, 7, 16, 0.55);
+}
+.book-tab {
+  padding: 7px 14px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: none;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 12px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.book-tab:hover { color: var(--ink); }
+.book-tab.on {
+  border-color: rgba(255, 200, 87, 0.35);
+  background: rgba(255, 200, 87, 0.12);
+  color: var(--amber);
+}
+
+/* ---------- diário: missões em cards, registro em blocos ---------- */
+.journal-page[hidden] { display: none; }
+.journal-quests { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 12px; }
+.journal-page .quest-card {
+  padding: 14px 15px;
+  border-left: 2px solid rgba(255, 200, 87, 0.55);
+  background: linear-gradient(180deg, rgba(14, 18, 42, 0.7), rgba(7, 10, 24, 0.7));
+}
+.journal-page .quest-card.done { border-left-color: rgba(97, 244, 192, 0.35); }
+.journal-page .quest-empty {
+  grid-column: 1 / -1;
+  padding: 28px 22px;
+  border: 1px dashed var(--line);
+  border-radius: 10px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.02);
+}
+.journal-page .bestiary-list { margin-bottom: 18px; }
+.journal-list { display: grid; gap: 10px; }
+.journal-area-group {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  padding: 0 14px 10px;
+}
+.journal-area-group > summary {
+  padding: 12px 0;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--ink);
+  cursor: pointer;
+  list-style: none;
+}
+.journal-area-group > summary::-webkit-details-marker { display: none; }
+.journal-area-group > summary::before { content: "▸ "; color: var(--amber); }
+.journal-area-group[open] > summary::before { content: "▾ "; }
+.journal-conceito { padding: 5px 0; border-top: 1px dashed rgba(151, 140, 190, 0.18); font-size: 11.5px; color: var(--muted); }
+.journal-conceito:first-of-type { border-top: 0; }
+.journal-area-group .quest-btn { margin: 8px 0 10px; }
+
+/* ---------- ficha: páginas e blocos de leitura ---------- */
+.sheet-page[hidden] { display: none; }
+.sheet-page-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; align-items: start; }
+.sheet-sec { margin-top: 20px; }
+.sheet-page .sheet-top { margin-bottom: 4px; }
+.sheet-page .company { display: grid; gap: 10px; }
+.pet-roster { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px; }
+.mount-list { display: grid; gap: 6px; }
+.sheet-skills { grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
+.sheet-gear { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 6px; }
+.sheet-recipes { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px; }
+
+/* ---------- mochila: ocupa a página inteira ---------- */
+.inventory-card { width: 100%; }
+.inventory-card .inv-layout { grid-template-columns: minmax(210px, 0.8fr) minmax(340px, 1.5fr) minmax(260px, 1fr); }
+
+/* ---------- bestiário: caçadas em duas colunas, bichos em grade ---------- */
+.best-cacada summary { grid-template-columns: 8px minmax(0, 1fr) auto; }
+.best-cacada summary .best-lugar { grid-column: 2 / -1; grid-row: 2; }
+.best-cacada summary .best-contagem { grid-row: 1; grid-column: 3; }
+.best-cacada summary b { white-space: normal; line-height: 1.35; }
+.bestiary-card { width: min(1100px, 96vw); }
+.best-cacadas { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 10px; }
+.best-cards { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+.best-familias { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+
+/* ---------- wiki: índice de categorias + listagem larga ---------- */
+.wiki-card { width: min(1100px, 96vw); }
+.wiki-tools { position: sticky; top: -24px; z-index: 2; padding: 10px 0 8px; background: linear-gradient(180deg, #0c1126 70%, rgba(12, 17, 38, 0)); }
+.wiki-list { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+.wiki-detail { max-width: 760px; line-height: 1.7; }
+.wiki-more { display: block; width: 100%; margin-top: 12px; }
+.wiki-tabs { gap: 5px; }
+
+/* ---------- rede: janela de conversa com altura de janela ---------- */
+.rede-modal { width: min(940px, 96vw); height: min(84vh, 780px); max-height: min(84vh, 780px); display: flex; flex-direction: column; }
+.rede-modal .rede-body { flex: 1; min-height: 0; overflow-y: auto; }
+.rede-modal .rede-chat, .rede-modal .rede-messages { min-height: 0; }
+.rede-modal .rede-status { margin-top: 10px; }
+
+/* ============================================================
+   Celular: o caderno vira uma faixa de páginas no topo
+   ============================================================ */
+@media (max-width: 900px) {
+  .hud.hud-top {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto auto;
+    gap: 7px 10px;
+    padding: 9px 10px;
+  }
+  .hud-left { display: contents; }
+  .hud-left .brand { grid-column: 1; grid-row: 1; padding: 5px 7px; }
+  .hud-left .brand-title { font-size: 9px; white-space: nowrap; }
+  .hud-left .brand-sub { display: none; }
+  .hud-left .hud-vitals {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    width: 100%;
+    flex-direction: row;
+    gap: 10px;
+    padding: 6px 8px 7px;
+  }
+  .hud-left .vital { flex: 1; }
+  .hud-left .vital-head { font-size: 6px; }
+  .hud-left .vital-head b { font-size: 9px; }
+  .hud-left .vital-bar { height: 6px; }
+  .hud-left .hud-progress { display: none; }
+  .hud-right { grid-column: 2; grid-row: 1; gap: 6px; }
+  .hud-calendar { grid-column: 1 / -1; grid-row: 3; justify-self: stretch; }
+  .hud-calendar .calendario { max-width: none; min-width: 0; width: 100%; padding: 5px 9px 6px; }
+  .hud-dock { padding: 3px; gap: 2px; }
+  .dock-btn { width: 36px; height: 34px; padding: 0; }
+  .dock-btn > span, .dock-btn > kbd { display: none; }
+  .dock-btn.dock-icon { display: none; }
+  .hud-dock .admin-badge { display: inline-flex; }
+  .hud-right #net-pill { padding: 0; width: 34px; height: 34px; justify-content: center; }
+  .hud-right #net-pill b { display: none; }
+  .quest-track {
+    grid-column: 1 / -1;
+    grid-row: 4;
+    justify-self: stretch;
+    width: 100%;
+    padding: 8px 10px;
+    border-left-width: 2px;
+  }
+  .quest-track .qt-giver { display: none; }
+  .qt-quest { padding: 4px 6px; }
+  .journal-quests { grid-template-columns: 1fr; }
+  .book-card {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
+    width: 100%;
+    height: 94dvh;
+    max-height: 94dvh;
+    border-radius: 10px;
+  }
+  .book-nav {
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 8px;
+    overflow-x: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .book-nav-title, .book-nav-list small, .book-link kbd, .book-link .book-txt, .book-nav-dica { display: none; }
+  .book-nav-list { flex: 0 0 auto; flex-direction: row; gap: 4px; }
+  .book-link {
+    flex: 0 0 auto;
+    width: 40px;
+    height: 38px;
+    grid-template-columns: 20px;
+    justify-content: center;
+    gap: 0;
+    padding: 0;
+  }
+  .book-txt b { font-size: 11.5px; }
+  .book-nav-foot { margin: 0 0 0 auto; padding: 0; border: 0; }
+  .book-main { padding: 16px 14px 26px; }
+  .book-main .modal-head { position: sticky; top: -16px; z-index: 3; margin: 0 -14px 12px; padding: 10px 14px; background: #0c1126; border-bottom: 1px solid var(--line); }
+  .book-main .modal-head h2 { font-size: 12px; }
+  .inventory-card .inv-layout { grid-template-columns: 1fr; }
+  .best-cacadas { grid-template-columns: 1fr; }
+  .bestiary-card, .wiki-card { width: 100%; }
+  .wiki-tools { position: static; padding: 0 0 8px; background: none; }
+  .wiki-list { grid-template-columns: 1fr; }
+  .rede-modal { width: 100%; height: 92dvh; max-height: 92dvh; }
+  .chatbar { left: 8px; right: 8px; bottom: 8px; transform: none; width: auto; }
+  .steps { left: 8px; top: auto; bottom: 8px; }
+}
+
+@media (max-width: 560px) {
+  .journal-page .quest-empty { padding: 18px 14px; }
+  .sheet-skills, .sheet-gear, .sheet-recipes, .pet-roster { grid-template-columns: 1fr; }
+}
+
+/* ---------- rede: canais à esquerda, conversa à direita ---------- */
+.rede-pane:has(.rede-channels) {
+  display: grid;
+  grid-template-columns: 190px minmax(0, 1fr);
+  grid-template-rows: auto minmax(220px, 1fr) auto;
+  gap: 8px 16px;
+  height: 100%;
+  min-height: 0;
+}
+.rede-pane:has(.rede-channels) .rede-channels {
+  grid-column: 1;
+  grid-row: 1 / span 3;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-content: flex-start;
+  gap: 4px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.rede-pane:has(.rede-channels) .rede-chip { text-align: left; }
+.rede-pane:has(.rede-channels) .rede-hint { grid-column: 2; grid-row: 1; }
+.rede-pane:has(.rede-channels) .rede-msgs {
+  grid-column: 2;
+  grid-row: 2;
+  min-height: 220px;
+  max-height: none;
+}
+.rede-pane:has(.rede-channels) .rede-form { grid-column: 2; grid-row: 3; }
+.rede-modal #rede-body { padding-right: 2px; }
+.rede-modal #rede-status { flex: 0 0 auto; }
+
+@media (max-width: 720px) {
+  .rede-pane:has(.rede-channels) { display: flex; flex-direction: column; gap: 8px; }
+  .rede-pane:has(.rede-channels) .rede-channels { flex-direction: row; flex-wrap: wrap; overflow: visible; }
+  .rede-pane:has(.rede-channels) .rede-msgs { min-height: 190px; max-height: 38vh; }
+}
+
+/* uma barra de rolagem própria, sem sumir com o conteúdo */
+.book-main::-webkit-scrollbar, .rede-body::-webkit-scrollbar { width: 9px; }
+.book-main::-webkit-scrollbar-thumb, .rede-body::-webkit-scrollbar-thumb {
+  border-radius: 99px;
+  background: rgba(172, 142, 255, 0.32);
+}
+.book-main::-webkit-scrollbar-track, .rede-body::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.03); }
+
+/* ---------- wiki: categorias na coluna esquerda, leitura à direita ---------- */
+@media (min-width: 901px) {
+  #wiki .book-main {
+    display: grid;
+    grid-template-columns: 214px minmax(0, 1fr);
+    grid-template-rows: auto auto auto 1fr auto;
+    gap: 10px 20px;
+    align-content: start;
+  }
+  #wiki .book-main .modal-head { grid-column: 1 / -1; grid-row: 1; }
+  #wiki .wiki-tools {
+    grid-column: 1;
+    grid-row: 2 / span 4;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    position: sticky;
+    top: 0;
+    align-self: start;
+    padding: 0;
+    background: none;
+  }
+  #wiki .wiki-tools .travel-filter { width: 100%; flex: 0 0 auto; }
+  #wiki .wiki-tabs {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    max-height: 56vh;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+  #wiki .wiki-tab { text-align: left; border-radius: 6px; }
+  #wiki .wiki-resumo { grid-column: 2; grid-row: 2; margin: 0; }
+  #wiki .wiki-list { grid-column: 2; grid-row: 3; }
+  #wiki #wiki-more { grid-column: 2; grid-row: 4; align-self: start; }
+  #wiki .wiki-detail { grid-column: 2; grid-row: 2 / span 3; }
+  #wiki .inv-hint { grid-column: 1 / -1; grid-row: 5; margin-top: 6px; }
+}
+
+/* ---------- bestiário: atalho por continente ---------- */
+.best-continentes {
+  display: flex;
+  gap: 6px;
+  padding: 2px 0 4px;
+  overflow-x: auto;
+}
+.best-continente-tab {
+  flex: 0 0 auto;
+  padding: 7px 12px;
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  cursor: pointer;
+}
+.best-continente-tab:hover { color: var(--ink); border-color: var(--line-strong); }
+.best-continente-tab[aria-pressed="true"] {
+  border-color: rgba(97, 244, 192, 0.5);
+  background: rgba(97, 244, 192, 0.13);
+  color: var(--mint);
+}
+
+/* mochila vazia: um resumo curto no lugar do parágrafo solto */
+.inv-empty-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 2px 0 10px; }
+.inv-stat {
+  padding: 8px 9px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.03);
+}
+.inv-stat b { display: block; font-family: var(--mono); font-size: 14px; color: var(--mint); }
+.inv-stat span { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+
+/* tablet largo: o calendário e as missões descem para a segunda linha */
+@media (max-width: 1100px) and (min-width: 901px) {
+  .hud.hud-top { grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto auto; }
+  .hud-left { grid-column: 1; grid-row: 1; }
+  .hud-right { grid-column: 2; grid-row: 1; }
+  .hud-calendar { grid-column: 1; grid-row: 2; justify-self: start; }
+  .hud-calendar .calendario { min-width: 220px; }
+  .quest-track { grid-column: 2; grid-row: 2; }
+}
+
+/* som desligado: o ícone fica apagado, sem trocar o desenho */
+#btn-sound.som-off svg { opacity: 0.32; }
+
+/* a wiki tem mais espaço para o índice e para o campo de busca */
+#wiki .book-main { grid-template-columns: 240px minmax(0, 1fr); }
+#wiki .wiki-tools .travel-filter { width: 100%; }
+
+/* as abas de continente cabem em duas linhas em vez de sair do cartão */
+.best-continentes { flex-wrap: wrap; overflow: visible; }
+
+/* no celular as abas da página cabem inteiras, sem corte */
+@media (max-width: 900px) {
+  .book-tabs { width: 100%; gap: 2px; }
+  .book-tab { flex: 1 1 0; padding: 7px 4px; font-size: 11.5px; text-align: center; }
+  #inventory .inv-kicker { display: none; }
+}
+
+/* texto maior: o caderno largo cresce no zoom sem virar uma coluna estreita */
+@media (min-width: 560px) {
+  html[data-fonte="grande"] .book-card {
+    width: min(974px, 83.5vw);
+    height: min(730px, 76.5vh);
+    max-height: min(730px, 76.5vh);
+  }
+}

@@ -60,5 +60,28 @@ check(/botao\.blur\(\)/.test(app), "botão clicado continua selecionado");
 check(/state\.focoDePonteiro/.test(app), "modal aberto no mouse devolve o foco ao botão");
 check(/nativeActivation\(e\)/.test(app), "a ativação nativa do teclado sumiu");
 
+// ---- caderno do viajante: uma capa para os cinco painéis de leitura ----
+const caderno = fs.readFileSync(new URL("../src/ui/caderno.js", import.meta.url), "utf8");
+const sheet = fs.readFileSync(new URL("../src/ui/sheet.js", import.meta.url), "utf8");
+const bestiary = fs.readFileSync(new URL("../src/ui/bestiary.js", import.meta.url), "utf8");
+check(/from "\.\.\/ui\/caderno\.js"/.test(app) && /criarCaderno\s*\(/.test(app), "o app não monta o caderno");
+for (const painel of ["journal", "sheet", "inventory", "bestiary", "wiki"]) {
+  check(new RegExp(`id: "${painel}"`).test(caderno), `o caderno não conhece o painel ${painel}`);
+}
+check(/classList\.add\("book-card"\)/.test(caderno), "o caderno não dá a moldura ao painel");
+check(/class = "book-nav"/.test(caderno) || /className = "book-nav"/.test(caderno), "o caderno não injeta a navegação");
+check(/dataset\.page/.test(caderno) && /book-link/.test(caderno), "a navegação do caderno não tem páginas");
+// a missão tem um lugar só no HUD e ele é clicável
+check((html.match(/id="quest-track"/g) || []).length === 1, "o HUD tem mais de uma trilha de missões");
+check(/class="hud-dock"/.test(html), "o HUD não tem o dock de menus");
+for (const id of ["btn-chat", "btn-rede", "btn-journal"]) check(new RegExp(`id="${id}"`).test(html), `o dock não tem #${id}`);
+check(/data-journal-tab="missoes"/.test(html) && /data-journal-tab="registro"/.test(html), "o diário não tem as duas abas");
+check(/trocarAbaDiario/.test(app), "o diário não troca de aba");
+check(/sheet-page/.test(sheet) && /paginas\.forja/.test(sheet), "a ficha não tem páginas");
+check(/id="best-continentes"/.test(html) && /continenteAtual/.test(bestiary), "o bestiário não filtra por continente");
+check(/\.book-card \{[^}]*grid-template-columns: 228px/.test(css), "o caderno não tem a coluna do índice");
+// falar fica aberto: a conversa não pode fechar a cada mensagem
+check(/renderChatLog\(true\);\s*\$\("chat-input"\)\.focus\(\)/.test(app), "falar fecha depois de enviar");
+
 assert.equal(problemas.length, 0, `interfaces com ${problemas.length} problema(s):\n- ${problemas.join("\n- ")}`);
-console.log("ok interfaces: 9 painéis, alvo de 28 px, wiki de 1 coluna e loja sem estouro no celular");
+console.log("ok interfaces: caderno de cinco páginas, HUD com dock, missões com um lugar só e 28 px de alvo");

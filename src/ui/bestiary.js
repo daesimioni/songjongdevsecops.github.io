@@ -63,6 +63,7 @@ export function createBestiary({ rpg, getAreaId }) {
   const sprites = new Map();
   const abertos = new Set();
   let filtro = "todos";
+  let continenteAtual = "todos";
   let busca = "";
   let preparado = false;
 
@@ -191,6 +192,9 @@ export function createBestiary({ rpg, getAreaId }) {
         familias.appendChild(chip);
       }
     }
+    for (const botao of document.querySelectorAll("#best-continentes .best-continente-tab")) {
+      botao.setAttribute("aria-pressed", botao.dataset.continente === continenteAtual ? "true" : "false");
+    }
     for (const botao of document.querySelectorAll("#best-tabs .best-tab")) {
       const ativo = botao.dataset.filtro === filtro;
       botao.setAttribute("aria-pressed", ativo ? "true" : "false");
@@ -212,6 +216,7 @@ export function createBestiary({ rpg, getAreaId }) {
       return;
     }
     for (const grupo of modelo.continentes) {
+      if (continenteAtual !== "todos" && grupo.id !== continenteAtual) continue;
       const cacadas = grupo.cacadas.filter((cacada) => cacada.bichos.some((bicho) => combina(bicho, cacada, grupo)));
       if (!cacadas.length) continue;
       const secao = el("section", "best-continente");
@@ -263,6 +268,28 @@ export function createBestiary({ rpg, getAreaId }) {
           desenhar();
         });
         tabs.appendChild(botao);
+      }
+    }
+    const continentes = document.getElementById("best-continentes");
+    if (continentes) {
+      const opcoes = [
+        { id: "todos", nome: "Todos", total: modelo.total, achados: modelo.todos.filter(conhecido).length },
+        ...modelo.continentes.map((grupo) => {
+          const bichos = grupo.cacadas.flatMap((cacada) => cacada.bichos);
+          return { id: grupo.id, nome: grupo.nome, total: bichos.length, achados: bichos.filter(conhecido).length };
+        }),
+      ];
+      for (const opcao of opcoes) {
+        const botao = el("button", "best-continente-tab");
+        botao.type = "button";
+        botao.dataset.continente = opcao.id;
+        botao.setAttribute("aria-pressed", opcao.id === continenteAtual ? "true" : "false");
+        botao.textContent = `${opcao.nome} ${opcao.achados}/${opcao.total}`;
+        botao.addEventListener("click", () => {
+          continenteAtual = opcao.id;
+          desenhar();
+        });
+        continentes.appendChild(botao);
       }
     }
     const campo = document.getElementById("best-search");

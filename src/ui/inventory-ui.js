@@ -33,8 +33,17 @@ export function createInventoryUI({ rpg, toast, audio, onUse, onChange, getAvata
     box.textContent = "";
     if (!item) {
       const titulo = el("h3", "inv-detail-title", "sua mochila");
-      const texto = el("p", "inv-detail-text", "Arraste uma peça para o espaço de equipamento ou toque no item para ver o que ele faz. O que você veste aparece no boneco.");
-      box.append(titulo, texto);
+      const lista = rpg.inventoryList();
+      const total = lista.reduce((n, peca) => n + (peca.qty || 1), 0);
+      const equipados = Object.values(rpg.data.equipped || {}).filter(Boolean).length;
+      const stats = el("div", "inv-empty-stats");
+      for (const [valor, rotulo] of [[`${lista.length}/${SLOTS}`, "espaços"], [`${total}`, "itens"], [`${equipados}`, "equipados"]]) {
+        const celula = el("div", "inv-stat");
+        celula.append(el("b", "", valor), el("span", "", rotulo));
+        stats.appendChild(celula);
+      }
+      const texto = el("p", "inv-detail-text", "Toque num item para ver o que ele faz. Arraste uma peça para equipar: o que você veste aparece no boneco.");
+      box.append(titulo, stats, texto);
       return;
     }
     const head = el("div", "inv-detail-head");

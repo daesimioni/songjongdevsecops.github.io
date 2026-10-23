@@ -23,11 +23,54 @@ function passiveText(passive = {}) {
 
 export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onOutfits, onLook, onPetAbility, onInventory }) {
   let refresh = () => {};
+  let abaFicha = "resumo";
   function render() {
     const body = $("sheet-body");
     if (!body) return;
     body.textContent = "";
     refresh = () => {};
+    // quatro páginas curtas em vez de um rolo: resumo, equipamento, perícias e forja
+    const paginas = {
+      resumo: el("section", "sheet-page"),
+      equipamento: el("section", "sheet-page"),
+      pericias: el("section", "sheet-page"),
+      forja: el("section", "sheet-page"),
+    };
+    const rotulosFicha = { resumo: "Resumo", equipamento: "Equipamento", pericias: "Perícias", forja: "Forja" };
+    const botoesAba = new Map();
+    const abasFicha = el("div", "book-tabs");
+    abasFicha.setAttribute("role", "tablist");
+    abasFicha.setAttribute("aria-label", "seções da ficha");
+    function trocarAbaFicha(id) {
+      abaFicha = id;
+      for (const [chave, botao] of botoesAba) {
+        const on = chave === id;
+        botao.className = on ? "book-tab on" : "book-tab";
+        botao.setAttribute("aria-selected", on ? "true" : "false");
+        botao.tabIndex = on ? 0 : -1;
+      }
+      for (const [chave, pagina] of Object.entries(paginas)) pagina.hidden = chave !== id;
+    }
+    for (const [id, rotulo] of Object.entries(rotulosFicha)) {
+      const botao = el("button", "book-tab", rotulo);
+      botao.type = "button";
+      botao.id = `sheet-tab-${id}`;
+      botao.setAttribute("role", "tab");
+      botao.setAttribute("aria-controls", `sheet-page-${id}`);
+      botao.addEventListener("click", () => trocarAbaFicha(id));
+      abasFicha.appendChild(botao);
+      botoesAba.set(id, botao);
+    }
+    body.appendChild(abasFicha);
+    for (const [id, pagina] of Object.entries(paginas)) {
+      pagina.id = `sheet-page-${id}`;
+      pagina.dataset.sheetPage = id;
+      pagina.setAttribute("role", "tabpanel");
+      pagina.setAttribute("aria-labelledby", `sheet-tab-${id}`);
+      body.appendChild(pagina);
+    }
+    trocarAbaFicha(abaFicha);
+    let destino = paginas.resumo;
     const level = getLevel();
     const hp = rpg.hp();
     const hpMax = rpg.hpMax();
@@ -48,24 +91,24 @@ export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onOu
     hpBar.appendChild(hpFill);
     vitals.append(hpLabel, hpBar);
     top.append(id, vitals);
-    body.appendChild(top);
+    destino.appendChild(top);
 
     // ---------- vocação: o jeito de lutar, com força e fraqueza à vista ----
     const voc = rpg.vocacao();
     const sub = rpg.sub();
-    body.appendChild(el("h3", "sheet-sec", "Vocação"));
+    destino.appendChild(el("h3", "sheet-sec", "Vocação"));
     const vbox = el("div", "sheet-vocation");
     vbox.appendChild(el("b", "", voc.name));
     vbox.appendChild(el("span", "", sub ? `${sub.name}: ${sub.efeito}` : (level >= 10 ? "subcategoria aberta: escolha na mesa do subsolo" : "a subcategoria abre no nível 10")));
     vbox.appendChild(el("span", "sheet-vocation-weak", `força: ${voc.forca} · fraqueza: ${voc.fraqueza}`));
-    body.appendChild(vbox);
+    destino.appendChild(vbox);
 
     const buffs = rpg.buffView();
     if (buffs.length) {
-      body.appendChild(el("p", "sheet-buffs", `efeitos: ${buffs.map((b) => `${b.name} ${b.left}s`).join(" · ")}`));
+      destino.appendChild(el("p", "sheet-buffs", `efeitos: ${buffs.map((b) => `${b.name} ${b.left}s`).join(" · ")}`));
     }
     // ---------- companhia: bichos e montarias ----------
-    body.appendChild(el("h3", "sheet-sec", "Companhia"));
+    destino.appendChild(el("h3", "sheet-sec", "Companhia"));
     const mana = rpg.mana();
     const manaMax = rpg.manaMax();
     const manaLabel = el("div", "sheet-hp-label");
@@ -74,8 +117,8 @@ export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onOu
     const manaFill = el("i");
     manaFill.style.width = `${manaMax ? Math.round((mana / manaMax) * 100) : 0}%`;
     manaBar.appendChild(manaFill);
-    body.append(manaLabel, manaBar);
-    body.appendChild(el("p", "company-hint", "Mana paga habilidades e runas aprendidas. Cargas de runa são gastas antes da mana."));
+    destino.append(manaLabel, manaBar);
+    destino.appendChild(el("p", "company-hint", "Mana paga habilidades e runas aprendidas. Cargas de runa são gastas antes da mana."));
 
     let petUse = null;
     const company = el("div", "company");
@@ -169,7 +212,7 @@ export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onOu
       stable.appendChild(row);
     }
     company.appendChild(stable);
-    body.appendChild(company);
+    destino.appendChild(company);
 
     if (onOutfits || onLook) {
       const row = el("div", "sheet-look-row");
@@ -185,10 +228,11 @@ export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onOu
         look.addEventListener("click", () => onOutfits());
         row.appendChild(look);
       }
-      body.appendChild(row);
+      destino.appendChild(row);
     }
 
-    body.appendChild(el("h3", "sheet-sec", "Equipamento"));
+    destino = paginas.equipamento;
+    destino.appendChild(el("h3", "sheet-sec", "Equipamento"));
     const gear = el("div", "sheet-gear");
     for (const slot of rpg.equippedView()) {
       const row = el("div", "gear-row");
@@ -222,13 +266,13 @@ export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onOu
       row.appendChild(on);
       gear.appendChild(row);
     }
-    body.appendChild(gear);
+    destino.appendChild(gear);
     const bonusGear = rpg.equipmentBonus();
-    body.appendChild(el("p", "company-hint", `${bonusGear.conjunto
+    destino.appendChild(el("p", "company-hint", `${bonusGear.conjunto
       ? "Conjunto fechado: três peças do mesmo continente dão +2 de vida e +1 de dano."
       : "Três peças do mesmo continente fecham conjunto: +2 de vida e +1 de dano."}${bonusGear.shield ? " Escudo equipado segura o primeiro erro de cada duelo." : ""}`));
 
-    body.appendChild(el("h3", "sheet-sec", "Builds"));
+    destino.appendChild(el("h3", "sheet-sec", "Builds"));
     const builds = el("div", "sheet-builds");
     const listaBuilds = rpg.buildsView();
     if (!listaBuilds.length) {
@@ -276,10 +320,11 @@ export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onOu
     });
     salvarBuildRow.append(nomeBuild, salvarBuild);
     builds.appendChild(salvarBuildRow);
-    body.appendChild(builds);
-    body.appendChild(el("p", "company-hint", "A build guarda o retrato do que está vestido. Três é o limite; usar troca o conjunto inteiro."));
+    destino.appendChild(builds);
+    destino.appendChild(el("p", "company-hint", "A build guarda o retrato do que está vestido. Três é o limite; usar troca o conjunto inteiro."));
 
-    body.appendChild(el("h3", "sheet-sec", "Perícias"));
+    destino = paginas.pericias;
+    destino.appendChild(el("h3", "sheet-sec", "Perícias"));
     const grid = el("div", "sheet-skills");
     for (const s of rpg.skillsView()) {
       const card = el("div", "skill-card");
@@ -295,13 +340,14 @@ export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onOu
       card.append(head, bar, foot);
       grid.appendChild(card);
     }
-    body.appendChild(grid);
+    destino.appendChild(grid);
 
     // a mochila de verdade mora no painel em grade; aqui fica só o resumo
-    body.appendChild(el("h3", "sheet-sec", "Mochila"));
+    destino = paginas.equipamento;
+    destino.appendChild(el("h3", "sheet-sec", "Mochila"));
     const inv = rpg.inventoryList();
     if (!inv.length) {
-      body.appendChild(el("p", "sheet-empty", "A mochila está vazia. Explore o chão e as cavernas para encher."));
+      destino.appendChild(el("p", "sheet-empty", "A mochila está vazia. Explore o chão e as cavernas para encher."));
     } else {
       const resumo = el("div", "sheet-bag-resumo");
       const total = inv.reduce((n, item) => n + item.qty, 0);
@@ -311,10 +357,11 @@ export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onOu
       abrir.type = "button";
       abrir.addEventListener("click", () => onInventory?.());
       resumo.append(texto, abrir);
-      body.appendChild(resumo);
+      destino.appendChild(resumo);
     }
 
-    body.appendChild(el("h3", "sheet-sec", "Forja e alquimia"));
+    destino = paginas.forja;
+    destino.appendChild(el("h3", "sheet-sec", "Forja e alquimia"));
     const recipes = el("div", "sheet-recipes");
     for (const recipe of RECIPES) {
       const card = el("div", "recipe-card");
@@ -338,9 +385,9 @@ export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onOu
       card.appendChild(make);
       recipes.appendChild(card);
     }
-    body.appendChild(recipes);
+    destino.appendChild(recipes);
 
-    body.appendChild(el("h3", "sheet-sec", "Encantamentos"));
+    destino.appendChild(el("h3", "sheet-sec", "Encantamentos"));
     const enchants = el("div", "sheet-recipes");
     for (const enchant of rpg.enchantsView()) {
       const card = el("div", "recipe-card enchant-card");
@@ -368,11 +415,11 @@ export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onOu
       card.appendChild(make);
       enchants.appendChild(card);
     }
-    body.appendChild(enchants);
+    destino.appendChild(enchants);
 
     const note = el("p", "sheet-note");
     note.textContent = "Responder certo nas caçadas sobe a perícia da região, e a perícia aumenta o dano. A caverna dá ferro, erva, cristal e madeira. A forja transforma; a horta devolve; o bicho da cidade aprende a confiar. Encantamentos ficam.";
-    body.appendChild(note);
+    destino.appendChild(note);
   }
 
   return { render, refresh: () => refresh() };

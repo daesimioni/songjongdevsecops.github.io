@@ -18,6 +18,7 @@ import { Net } from "../platform/net.js";
 import { Rede } from "../platform/nostr.js";
 import { Quests, QUESTS } from "../gameplay/quests.js";
 import { createSocial } from "../ui/social.js";
+import { criarCaderno } from "../ui/caderno.js";
 import { eNoite } from "../rendering/dia-noite.js";
 import { createBackup } from "../platform/backup.js";
 import { createPvp } from "../ui/pvp.js";
@@ -486,6 +487,13 @@ function toast(message, ms = 2600) {
   if (toastQueue.length >= 3) toastQueue.shift();
   toastQueue.push({ message, ms });
   if (!toast._busy) pumpToast();
+}
+function limparToasts() {
+  toastQueue.length = 0;
+  clearTimeout(toast._t);
+  toast._busy = false;
+  const node = $("toast");
+  if (node) node.hidden = true;
 }
 function pumpToast() {
   const el = $("toast");
@@ -1453,22 +1461,51 @@ function godTravel(id) {
 }
 
 let questTrackAt = 0;
+let questTrackKey = "";
+function abrirDiarioMissoes() {
+  openJournal({ aba: "missoes" });
+}
 function updateQuestTrack(now = 0) {
   if (now && now - questTrackAt < 900) return;
   questTrackAt = now;
   const box = $("quest-track");
   if (!box) return;
   const active = state.started ? quests.active() : [];
-  if (!active.length) { box.hidden = true; return; }
+  if (!active.length) { box.hidden = true; questTrackKey = ""; return; }
   box.hidden = false;
+  const amostra = active.slice(0, 3);
+  const chave = amostra.map((q) => {
+    const { have, need } = quests.progress(q);
+    return `${q.id}:${have}/${need}:${q.title}:${quests.ready(q) ? 1 : 0}`;
+  }).join("|");
+  if (chave === questTrackKey) return;
+  questTrackKey = chave;
   box.textContent = "";
-  box.appendChild(el("b", "", "missões em andamento"));
-  for (const quest of active.slice(0, 3)) {
+  const head = el("div", "qt-head");
+  head.appendChild(el("b", "", "missões em andamento"));
+  const ver = el("button", "qt-all", "ver no diário");
+  ver.type = "button";
+  ver.addEventListener("click", abrirDiarioMissoes);
+  head.appendChild(ver);
+  box.appendChild(head);
+  const lista = el("div", "qt-list");
+  for (const quest of amostra) {
     const { have, need } = quests.progress(quest);
-    const line = el("span", "");
-    line.append(document.createTextNode(quest.title), el("i", "", ` ${have}/${need}`));
-    box.appendChild(line);
+    const pronto = quests.ready(quest);
+    const botao = el("button", "qt-quest");
+    botao.type = "button";
+    botao.setAttribute("aria-label", `${quest.title}, ${have} de ${need}${pronto ? ", pronto para entregar" : ""}`);
+    botao.append(el("span", "qt-title", quest.title), el("span", "qt-count", `${have}/${need}`));
+    botao.appendChild(el("span", "qt-giver", pronto ? `pronto: volte a ${quest.giver}` : `pedido de ${quest.giver}`));
+    const barra = el("span", "qt-bar");
+    const fill = el("i");
+    fill.style.width = `${need ? Math.round((have / need) * 100) : 0}%`;
+    barra.appendChild(fill);
+    botao.appendChild(barra);
+    botao.addEventListener("click", abrirDiarioMissoes);
+    lista.appendChild(botao);
   }
+  box.appendChild(lista);
 }
 
 function updateProgress() {
@@ -1533,6 +1570,8 @@ function renderSteps() {
     list.appendChild(li);
     if (!ok && !next) next = step.label;
   }
+  const titulo = $("steps-title");
+  if (titulo) titulo.textContent = `primeiros passos ${done}/${FIRST_STEPS.length}`;
   $("steps-next").textContent = next ? `agora: ${next}` : "tudo pronto, siga o mapa";
   card.classList.toggle("all-done", done === FIRST_STEPS.length);
   card.hidden = !(state.started && (state.stepsOpen || done < FIRST_STEPS.length));
@@ -1582,7 +1621,9 @@ function setSound(on) {
   writeJSON(STORAGE.sound, on);
   const btn = $("btn-sound");
   btn.setAttribute("aria-pressed", on ? "true" : "false");
-  btn.textContent = on ? "Som on" : "Som off";
+  btn.classList.toggle("som-off", !on);
+  btn.title = on ? "Som ligado (clique para desligar)" : "Som desligado (clique para ligar)";
+  btn.setAttribute("aria-label", btn.title);
   if (on) audio.unlock();
   return on;
 }
@@ -1754,13 +1795,43 @@ function stopSprint() {
   clearPath();
 }
 
-function openJournal() {
+function openJournal({ aba = abaDiario || "missoes" } = {}) {
   stopSprint();
   if (state.panelOpen) closePanel();
   closeChat();
+  trocarAbaDiario(aba);
   buildJournal();
   openModal("journal");
   audio.open();
+}
+
+// o diário tem duas páginas: as missões do momento e o registro do que já foi
+let abaDiario = "missoes";
+function trocarAbaDiario(nome = "missoes") {
+  abaDiario = nome;
+  for (const tab of document.querySelectorAll("[data-journal-tab]")) {
+    const on = tab.dataset.journalTab === nome;
+    tab.classList.toggle("on", on);
+    tab.setAttribute("aria-selected", on ? "true" : "false");
+    tab.tabIndex = on ? 0 : -1;
+  }
+  for (const page of document.querySelectorAll("[data-journal-page]")) {
+    const on = page.dataset.journalPage === nome;
+    page.classList.toggle("on", on);
+    page.hidden = !on;
+  }
+}
+for (const tab of document.querySelectorAll("[data-journal-tab]")) {
+  tab.addEventListener("click", () => { trocarAbaDiario(tab.dataset.journalTab); audio.blip(); });
+  tab.addEventListener("keydown", (e) => {
+    if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+    e.preventDefault();
+    const abas = [...document.querySelectorAll("[data-journal-tab]")];
+    const i = abas.indexOf(tab);
+    const next = abas[(i + (e.key === "ArrowRight" ? 1 : -1) + abas.length) % abas.length];
+    trocarAbaDiario(next.dataset.journalTab);
+    next.focus({ preventScroll: true });
+  });
 }
 
 function openBestiary() {
@@ -1775,11 +1846,14 @@ function openBestiary() {
 
 // A wiki é de todos: não depende de descoberta nem de nível. Abre por cima do
 // vale e da caverna, fecha com Esc ou com o mesmo atalho.
+const PAGINAS_CADERNO = new Set(["journal", "sheet", "inventory", "bestiary", "wiki"]);
+
 function openWiki({ consulta = "", livre = false } = {}) {
   // livre: abre por cima da tela de entrada, antes de criar personagem
   if (!livre && !state.started) return;
   if (state.modal === "wiki") { closeModal("wiki"); return; }
-  if (state.modal) return;
+  // outra página do caderno troca de página em vez de barrar
+  if (state.modal && !PAGINAS_CADERNO.has(state.modal)) return;
   if (!livre) {
     stopSprint();
     if (state.panelOpen) closePanel();
@@ -1790,6 +1864,30 @@ function openWiki({ consulta = "", livre = false } = {}) {
   if (!livre) audio.open();
 }
 wikiUi.configurar({ abrirPost: (id) => { closeModal("wiki"); openPost(id); }, fechar: () => closeModal("wiki") });
+
+// a capa única dos cinco painéis de leitura; o resto do jogo conversa com ela
+let caderno = null;
+caderno = criarCaderno({
+  abrir: (id) => {
+    if (state.modal === id) return;
+    if (id === "journal") openJournal();
+    else if (id === "sheet") openSheet();
+    else if (id === "inventory") openInventory();
+    else if (id === "bestiary") openBestiary();
+    else if (id === "wiki") openWiki();
+  },
+  podeAbrir: (id) => state.started || id === "wiki",
+  contagens: () => {
+    const missoes = quests.active().length;
+    const itens = rpg.inventoryList().length;
+    const bichos = bestiaryUi.summary();
+    return {
+      diario: missoes ? `${missoes} em andamento` : "",
+      mochila: itens ? `${itens} tipo${itens === 1 ? "" : "s"}` : "vazia",
+      bestiario: `${bichos.vistos}/${bichos.total}`,
+    };
+  },
+});
 
 function buildJournalBestiary() {
   const box = $("journal-bestiary");
@@ -1930,6 +2028,13 @@ function buildJournal() {
   });
   sede.appendChild(abrirSede);
   list.appendChild(sede);
+  // as 454 estações ficam recolhidas: o registro abre no que interessa
+  const estacoes = document.createElement("details");
+  estacoes.className = "journal-area-group";
+  const somaEstacoes = document.createElement("summary");
+  somaEstacoes.textContent = `Estações e faróis · ${found} de ${TOTAL} fragmentos`;
+  estacoes.appendChild(somaEstacoes);
+  list.appendChild(estacoes);
   for (const cid of CONTINENT_ORDER) {
     const continent = CONTINENTS[cid];
     const sites = sitesOf(cid);
@@ -1940,7 +2045,7 @@ function buildJournal() {
     head.className = "journal-continent";
     head.style.setProperty("--c", continent.accent);
     head.innerHTML = `<h3>${continent.name} <span class="${done ? "done" : ""}">${opened}/${sites.length}${done ? " · selo" : ""}</span></h3>`;
-    list.appendChild(head);
+    estacoes.appendChild(head);
     const groups = [
       { title: "", sites: sites.filter((site) => !world.areaAt(site.x, site.y)) },
       ...AREAS.filter((area) => area.continent === cid).map((area) => ({
@@ -1993,7 +2098,7 @@ function buildJournal() {
       }
         wrap.appendChild(btn);
       }
-      list.appendChild(wrap);
+      estacoes.appendChild(wrap);
     }
   }
   buildJournalQuests();
@@ -2607,14 +2712,14 @@ function travelTo(cid) {
 
 const MODAL_FOCUS_BACK = {
   journal: "btn-journal",
-  bestiary: "btn-bestiary",
-  sheet: "btn-sheet",
+  bestiary: "btn-journal",
+  sheet: "btn-journal",
+  inventory: "btn-journal",
+  wiki: "btn-journal",
   rede: "btn-rede",
   help: "btn-help",
   pvp: "btn-rede",
-  outfits: "btn-sheet",
-  inventory: "btn-inventory",
-  wiki: "btn-wiki",
+  outfits: "btn-journal",
 };
 function restoreFocus(modalName) {
   // fechado o que foi aberto pelo mouse, o foco volta ao jogo: nada de botão
@@ -2647,8 +2752,10 @@ function openModal(name) {
   state.lastFocus = opener && opener !== document.body ? opener : null;
   state.focoDePonteiro = ultimoGesto === "ponteiro";
   state.modal = name;
+  limparToasts();
   $(name).hidden = false;
   $("scrim").hidden = false;
+  if (PAGINAS_CADERNO.has(name)) caderno?.marcar(name);
   uiScope.sync();
   const focusable = availableFocusTargets($(name))[0];
   focusable?.focus();
@@ -3798,7 +3905,14 @@ $("btn-bestiary").addEventListener("click", openBestiary);
 $("btn-wiki").addEventListener("click", () => openWiki());
 $("intro-wiki")?.addEventListener("click", () => openWiki({ livre: true }));
 $("dg-wiki").addEventListener("click", () => openWiki());
-$("steps-min")?.addEventListener("click", () => $("steps").classList.toggle("min"));
+$("steps-min")?.addEventListener("click", () => {
+  const card = $("steps");
+  const aberto = card.classList.toggle("min") === false;
+  const botao = $("steps-min");
+  botao.textContent = aberto ? "–" : "+";
+  botao.setAttribute("aria-expanded", aberto ? "true" : "false");
+  botao.setAttribute("aria-label", aberto ? "recolher os primeiros passos" : "mostrar os primeiros passos");
+});
 
 $("btn-help").addEventListener("click", () => { openModal("help"); audio.open(); });
 $("btn-sound").addEventListener("click", () => setSound(!saved.sound));
@@ -3845,7 +3959,9 @@ $("chat-form").addEventListener("submit", (e) => {
     player.bubble = { text, until: performance.now() + 6500 };
     pushChatMessage(player.name, text, player.color, true);
     $("chat-input").value = "";
-    closeChat();
+    // a conversa fica aberta: mandar uma fala não pode fechar a janela
+    renderChatLog(true);
+    $("chat-input").focus();
   } else {
     toast("a mensagem não saiu. Veja se o sinal está de pé.");
   }
