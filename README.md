@@ -304,10 +304,9 @@ Silício`).
 
 `F` numa boca entra no mapa em tela cheia: salas ligadas por túneis, entrada
 embaixo, cidade no fundo. Cada bicho fica postado no miolo da sua sala e passeia
-só um pouco em volta; a distância entre dois postos é maior que a soma dos
-alcances de visão mais os dois passeios, então **dois bichos não podem ver o
-jogador ao mesmo tempo** e a matilha não se forma. A sala do chefe não tem bicho
-comum: o chefe espera sozinho. O bicho de cada sala nasce com a forma que o
+só um pouco em volta; o nascimento tenta manter os postos afastados, mas quem se
+aproxima no corredor entra na mesma luta. A sala do chefe não tem bicho comum: o
+chefe espera sozinho. O bicho de cada sala nasce com a forma que o
 nome pede: "Ácido" é frasco, "Acorde" é nota, "Autovalores e autovetores" é
 vetor; nome abstrato cai na forma da disciplina, como cristal na matemática. Seis temas, um por continente, com paleta, nomes e
 bichos próprios, e seis traçados de túnel diferentes: em cotovelo, desvio no

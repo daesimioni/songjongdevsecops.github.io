@@ -205,6 +205,9 @@ html[data-fonte="grande"] .modal-head h2 { font-size: 19px; }
 #world-combat { font: 14px/1.5 var(--sans); overflow-wrap: anywhere; max-height: calc(100dvh - 32px); overflow-y: auto; overscroll-behavior: contain; }
 #world-combat p { font-size: 14px; }
 #world-combat button { min-height: 44px; font-size: 14px; padding: 8px 10px; max-width: 100%; }
+#world-combat button > span:not(.combat-icon) { overflow-wrap: normal; white-space: nowrap; }
+/* o recado do jogo não pode cobrir os botões da batalha */
+body:has(#world-combat:not([hidden])) .toast { bottom: 230px; }
 #world-combat small { font-size: 13px; }
 #app:has(#world-combat:not([hidden])) > :is(.spellbar, .prompt, .steps),
 #app:has(#world-combat:not([hidden])) .quest-track { display: none; }
@@ -214,6 +217,13 @@ html[data-fonte="grande"] .modal-head h2 { font-size: 19px; }
 @media (max-width: 900px) {
   #world-combat, #dungeon #world-combat { left: max(8px, env(safe-area-inset-left)); right: max(8px, env(safe-area-inset-right)); bottom: calc(198px + env(safe-area-inset-bottom)); max-width: none; max-height: max(100px, calc(100dvh - 350px)); padding: 8px; }
   #world-combat button { flex: 1 1 auto; font-size: 13px; }
+}
+@media (max-width: 900px) {
+  body:has(#world-combat:not([hidden])) .toast { bottom: 410px; }
+}
+@media (max-width: 720px) {
+  /* duas colunas no celular: quatro botões de 60 px quebravam "Defender" no meio */
+  #world-combat .combat-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-height: 520px) and (orientation: landscape) {
   #world-combat, #dungeon #world-combat { left: 170px; right: 84px; bottom: 8px; max-height: 150px; }
