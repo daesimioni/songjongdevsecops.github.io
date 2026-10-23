@@ -1,10 +1,16 @@
 {
   "id": "arte/criaturas/d6162e2326bb7c61840d",
   "source": { "archive": "criaturas.zip", "member": "Criaturas/Mam├¡feros/Wolf.gif", "sha256": "pending-source-member-digest" },
-  "output": "assets/creatures/wolf-atlas.png",
-  "outputSha256": "c46a7bc1a9115355945658bb0b26d68c05abeaa67caa1c7c5f08615f912b9a0b",
-  "state": "animation",
-  "generated": { "tool": "built-in image_gen", "canvas": [1024, 640], "grid": [8, 5], "cell": [128, 128], "directions": ["south", "southeast", "east", "northeast", "north", "northwest", "west", "southwest"], "states": ["idle", "walk", "attack", "hit", "death"], "framesPerState": 1, "frameMs": null, "anchor": [64, 108], "collision": { "x": -22, "y": -10, "w": 44, "h": 20 } },
+  "output": "assets/creatures/wolf/{idle,walk,attack,hit,death}.png",
+  "outputSha256": {
+    "idle": "d4aef1c80761f79937314d1b1a0a7e74a2fd8888c36d07b4b0016510aafb0f4b",
+    "walk": "cc29b62a4f559ed2faa5ba98ee374905cf2292e7c98f700acddefcdc00152d45",
+    "attack": "ddf2ee311a477a5191eac4a527fb2838fb14302ce4f2f63f74f7a36ffebf7dc2",
+    "hit": "62c7ddc6e14d04998c20d6790f4609fd97461a3cecb38bc88a9b2c29a53fd43c",
+    "death": "ceecb2e8ee22937f5d490b5018fc4e1b4c0d5e981fb6925b4be0f72d3ac5de7c"
+  },
+  "state": "integration",
+  "generated": { "tool": "built-in image_gen", "canvas": [1024, 1024], "grid": [8, 8], "cell": [128, 128], "directions": ["south", "southeast", "east", "northeast", "north", "northwest", "west", "southwest"], "states": ["idle", "walk", "attack", "hit", "death"], "framesPerState": 8, "frameMs": 100, "anchor": [64, 108], "collision": { "x": -22, "y": -10, "w": 44, "h": 20 } },
   "integration": { "renderer": "src/rendering/generated-creature.js", "fallback": "src/rendering/creature-models.js", "usage": "kind wolf/lobo in authored scenes" },
-  "review": { "visual": "generated sheet and alpha channel inspected", "pending": ["author multi-frame cycles for every state", "wire attack/hit/death state selection from combat model", "manual browser scene review"], "next": "generate animation strips before marking done" }
+  "review": { "visual": "five generated sheets and alpha channels inspected", "pending": ["wire attack/hit/death state selection from combat model", "manual browser scene review"], "next": "connect combat states and review the wolf in browser scene" }
 }
