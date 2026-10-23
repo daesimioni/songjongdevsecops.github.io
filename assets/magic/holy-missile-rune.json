@@ -1,0 +1,19 @@
+{
+  "id": "arte/magias/13e80490343cf1c73b23",
+  "archive": "magias.zip",
+  "sourceMembers": [
+    "Magias/Paladin/Holy Missile Rune.png",
+    "Magias/_icones/Holy Missile Rune.png"
+  ],
+  "sourceDimensions": [32, 32],
+  "output": "assets/magic/holy-missile-rune.png",
+  "outputSha256": "4ca5653b1564577a2cc8492b21612ac491393e436d37784cae56f3a8c8de5e18",
+  "outputDimensions": [128, 128],
+  "style": "autoral-pixel-rune",
+  "transparentBackground": true,
+  "review": {
+    "visualInspection": "passed",
+    "runtimeMapping": "pending: reference has no current item or spell id in the game catalog"
+  },
+  "status": "integration"
+}
