@@ -1,0 +1,31 @@
+{
+  "tool": "image_gen.imagegen",
+  "source": "exec-511de1b5-d8eb-4f46-8d03-c6b6e3761a45.png",
+  "prompt": "Use case: stylized-concept. Asset type: production game VFX sprite atlas for a small top-down pixel-art fantasy RPG. Create ONE transparent PNG sprite sheet, exactly 1024 x 1024, strict 8 columns by 8 rows of 128x128 cells, no spacing or labels. Each row is one animation with exactly 8 sequential frames, left to right, anticipation through peak through dissipation; keep every frame inside its cell with 12px empty padding. Native low-resolution pixel art, crisp stepped edges, restrained palette, warm ivory/gold melee, cyan steel shield, jade dodge, no smooth airbrush, no text, no characters, no ground. Row1: clockwise sword crescent sweeping on the RIGHT side of cell center, from small curved bright blade trail into a broad crescent then fading flecks, empty center for character. Row2: a FRONT-FACING small steel shield with teal rim at cell center, materializing, firm shield, then blue sparks dissipating. Row3: gold and white starburst impact sparks at cell center, short energetic physical hit then fading. Row4: directional jade wind and dust dash trail extending to LEFT from cell center, no person. Row5: crimson and orange claw slash on RIGHT side of center then fading, creature attack. Row6: small orange fire burst at center, embers and fade. Row7: small cyan ice crystal burst at center then fragments and fade. Row8: violet electric arc burst at center then sparks and fade. Consistent scale and pixel clusters all 64 frames, orthographic top-down compatible, genuine transparent background, no checkerboard. Frames fill about 80x80 within each 128 cell; no contact sheet borders.",
+  "integration": {
+    "atlas": "assets/combat/action-vfx-v1.png",
+    "size": [
+      512,
+      512
+    ],
+    "grid": [
+      8,
+      8
+    ],
+    "cell": [
+      64,
+      64
+    ],
+    "processing": "Recorte por células e redução nearest-neighbor; alpha preservado.",
+    "rows": [
+      "corte",
+      "escudo",
+      "impacto",
+      "esquiva",
+      "garra",
+      "fogo",
+      "gelo",
+      "energia"
+    ]
+  }
+}

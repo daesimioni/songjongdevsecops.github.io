@@ -175,6 +175,9 @@ aleatório de fuga. O monstro sobrevivente conserva a vida nesta visita.
 
 [Capturas e contratos do combate no mapa](docs/design/COMBATE-NO-MAPA.md).
 
+Cortes, impactos, escudo, esquiva e runas têm sprites animados, com direção
+e sinais de dano, aparo e recarga. [Atlas e capturas dos efeitos](docs/design/EFEITOS-COMBATE.md).
+
 No celular, os botões de ataque, guarda, esquiva, companheiro e runas ficam sobre
 o mapa, junto aos controles da cena ativa. Treinos e a Grande Prova também
 acontecem na cena atual. Painéis e a aba oculta pausam a ação.

@@ -84,3 +84,39 @@ test("spawn de treino/evento exige chão livre e passagem até o jogador", () =>
   const p = combatSpawn({ x: 1, y: 1 }, (x, y) => x > 0 && y > 0);
   assert.ok(p && Math.hypot(p.x - 1, p.y - 1) >= 1.5);
 });
+
+test("efeitos fotografam o golpe, sobrevivem ao consumo de eventos e têm memória limitada", () => {
+  const s = scene(), model = s.battle.model;
+  s.battle.attack();
+  const hit = model.efeitos.find(e => e.tipo === "acertou");
+  assert.ok(hit);
+  const x = hit.alvoX;
+  model.principal.x += 100;
+  model.passo(0.016);
+  assert.equal(hit.alvoX, x, "impacto não pode acompanhar o alvo");
+  assert.equal(model.eventos.length, 0);
+  assert.ok(model.efeitos.includes(hit), "áudio consumir eventos não apaga sprites");
+  for (let i = 0; i < 200; i++) model.emitir({ tipo: "guarda" });
+  assert.equal(model.efeitos.length, 96);
+  model.principal.proximoAtaque = Infinity;
+  for (let i = 0; i < 20; i++) model.passo(0.06);
+  assert.equal(model.efeitos.length, 0);
+});
+
+test("impacto final permanece após a vitória, expira e não acompanha a troca de cena", () => {
+  const s = scene();
+  s.battle.model.aplicarDano(s.battle.model.principal, 1000);
+  s.battle.tick(0.016);
+  assert.equal(s.battle.active, false);
+  assert.equal(s.battle.model, null);
+  assert.ok(s.battle.visual.efeitos.some(e => e.tipo === "matou"));
+  const xp = s.xp();
+  for (let i = 0; i < 20; i++) s.battle.tick(0.06);
+  assert.equal(s.battle.visual, null);
+  assert.equal(s.xp(), xp);
+  const t = scene();
+  t.battle.model.aplicarDano(t.battle.model.principal, 1000);
+  t.battle.tick(0.016);
+  t.battle.stop("travel");
+  assert.equal(t.battle.visual, null);
+});
