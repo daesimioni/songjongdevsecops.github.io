@@ -9,7 +9,7 @@ de ele existir, com números que o código já superou.
 Auditoria read-only de 2026-10-22 cruzou os documentos 00 a 38 com `src/`,
 `test/` e `tools/`. Números do código: 86 áreas, 454 estações, 93 cavernas, 561
 itens, 464 fichas, 291 missões, 194 NPCs, 2.311 entradas de wiki, 887 perguntas
-de coleta, 166 módulos e 127 testes node. `npm run validate` passa (lint,
+de coleta, 175 módulos e 146 testes node. `npm run validate` passa (lint,
 contrato de módulos, testes e build) e a matriz de navegador dá 19/19.
 
 **Combate no mapa, 2026-10-23:** os encontros normais, treinos e Grande Prova
@@ -26,8 +26,8 @@ criaturas e 93 chefes, a matilha, o treino e a Grande Prova usam a arena de aç�
 esquiva e as duas fases extras do chefe. A coleta, a pesca, a mineração, a
 madeira, a fazenda e a cozinha continuam perguntando. Provas:
 `test/combate.test.mjs`, `test/combate-interface.test.mjs`,
-`cdp-combate-dungeon.mjs` e `cdp-combate-resto.mjs`. Contagem: 127 testes em
-117 arquivos, 376 dependências e build de 182 arquivos.
+`cdp-combate-dungeon.mjs` e `cdp-combate-resto.mjs`. Contagem: 146 testes em
+122 arquivos, 414 dependências e build de 438 arquivos.
 
 Esforço: **P** até um dia, **M** de dois a cinco dias, **G** mais de uma semana.
 Estado: **feito**, **medido** e **decisão** (respondida em 2026-10-22). Não há linha ausente nem parcial.

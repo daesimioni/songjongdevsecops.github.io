@@ -20,8 +20,8 @@ O endgame e a lore entram no próximo ciclo, nesta ordem.
 ## 2. O estado do ciclo, depois das cinco fases
 
 - 0 linhas ausente e 0 parciais no 39; o que resta são decisões respondidas.
-- 127 testes em 117 arquivos, 19/19 na matriz de navegador a 60,2 fps, 166
-  módulos, 376 dependências, build de 182 arquivos.
+- 146 testes em 122 arquivos, 19/19 na matriz de navegador a 60,2 fps, 175
+  módulos, 414 dependências, build de 438 arquivos.
 - O combate de ação substituiu a pergunta no monstro em 2026-10-23: 464
   criaturas e 93 chefes na arena J/K/L, treino sem morte e pergunta só na
   coleta, fazenda e cozinha (`test/combate.test.mjs`, `cdp-combate-resto.mjs`).

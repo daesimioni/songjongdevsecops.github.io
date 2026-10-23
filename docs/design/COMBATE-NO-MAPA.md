@@ -42,7 +42,7 @@ não montado pelo app e sem rota de abertura do modal no fluxo atual.
 
 ## Verificação
 
-`npm run validate`: 139 testes aprovados, contrato de módulos/conteúdo,
+`npm run validate`: 146 testes aprovados, contrato de módulos/conteúdo,
 verificação das artes existentes e build aprovados. Testes novos em
 `test/combate-mundo.test.mjs` cobrem posições fora da antiga arena, paredes,
 esquiva, fuga com vida preservada, recompensa parcial, vitória e respawn.
