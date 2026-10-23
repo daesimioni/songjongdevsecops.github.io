@@ -9,6 +9,11 @@ Leia [o plano de continuidade](docs/art/SPRITES-PENDENTES.md) e
 [o estado estruturado](docs/art/sprites-status.json) para saber o que falta.
 Não confunda o catálogo procedural já integrado com a conclusão dessa tarefa.
 
+Os três ZIPs originais agora estão públicos no GitHub, em armazenamento separado.
+Consulte [como recuperá-los](docs/art/ORIGINAIS-REFERENCIAS.md) antes de pedir
+anexos ao usuário. Não faça merge da branch `references/original-art-archives`
+em main nem use essa branch como base dos PRs de produção de artes.
+
 - Destino solicitado pelo usuário: **GPT 6.1 Sol, modo leve, COM ferramenta
   de geração de imagens disponível**. O nome do modelo sozinho não basta.
 - **DeepSeek NÃO deve assumir, receber por delegação, nem tentar executar a
