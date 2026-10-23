@@ -1487,8 +1487,9 @@ export function createRenderer(canvas, world, {collisionDebug=false} = {}) {
         nome: p.name,
         cor: p.color,
         vitais: p.vitais,
-        x: ((p.rx ?? p.x) * TILE - camX + shx) * scale,
-        cabecaY: ((p.ry ?? p.y) * TILE - camY + shy) * scale - 26 * scale,
+        x: ((p.rx ?? p.x) * TILE - camX + shx) * zoom,
+        cabecaY: ((p.ry ?? p.y) * TILE - camY + shy) * zoom - 26 * zoom,
+        dpr,
       });
     }
     // a placa do jogador fecha o quadro: fica por cima do véu da noite, da
@@ -1499,8 +1500,9 @@ export function createRenderer(canvas, world, {collisionDebug=false} = {}) {
       nome: player.name,
       cor: player.color,
       vitais,
-      x: (player.x * TILE - camX + shx) * scale,
-      cabecaY: (player.y * TILE - liftPlaca + bobPlaca - camY + shy) * scale - 26 * scale,
+      x: (player.x * TILE - camX + shx) * zoom,
+      cabecaY: (player.y * TILE - liftPlaca + bobPlaca - camY + shy) * zoom - 26 * zoom,
+      dpr,
     });
     const frameEnd = performance.now();
     if (stats._prev) {

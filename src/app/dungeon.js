@@ -1845,6 +1845,7 @@ export function createDungeon({ rpg, audio, onSheet, onInventory, onWiki, onGath
         vitais: vitais(),
         x: (state.player.x * TILE - camX) * scale,
         cabecaY: (state.player.y * TILE - camY) * scale - 26 * scale,
+        dpr: state.dpr,
       });
     }
   }
@@ -1921,8 +1922,12 @@ export function createDungeon({ rpg, audio, onSheet, onInventory, onWiki, onGath
     const rawMs = state.last ? t - state.last : 16;
     // resolução adaptativa também no subsolo: se o quadro passa de 26 ms por
     // muito tempo, o canvas reduz a resolução interna e o desenho esquenta menos.
-    state.perfMs += rawMs;
-    state.perfN++;
+    // Um retorno de aba chega com rawMs de segundos e não pode entrar na média:
+    // ele derrubava a qualidade e deixava a placa fora do lugar até recuperar.
+    if (rawMs <= 250) {
+      state.perfMs += rawMs;
+      state.perfN++;
+    }
     if (state.perfN >= 90) {
       const avg = state.perfMs / state.perfN;
       if (avg > 26 && state.quality > 0.65) {
