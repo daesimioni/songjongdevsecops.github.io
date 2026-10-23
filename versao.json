@@ -1,6 +1,8 @@
 {
- "versao": "ab33d9df5cf69f90",
+ "versao": "40d7247991d87ecc",
  "arquivos": [
+  "assets/combat/action-vfx-v1.json",
+  "assets/combat/action-vfx-v1.png",
   "assets/favicon.svg",
   "assets/fonts/OFL.txt",
   "assets/fonts/README.md",
@@ -160,6 +162,7 @@
   "src/rendering/assets/vegetacao.js",
   "src/rendering/cave-art.js",
   "src/rendering/collision-overlay.js",
+  "src/rendering/combat-vfx.js",
   "src/rendering/combate-mundo.js",
   "src/rendering/creature-models.js",
   "src/rendering/creature.js",
