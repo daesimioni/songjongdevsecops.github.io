@@ -10,15 +10,16 @@ const css = fs.readFileSync(new URL("../css/base.css", import.meta.url), "utf8")
 const html = fs.readFileSync(new URL("../index.html", import.meta.url), "utf8");
 const app = fs.readFileSync(new URL("../src/app/app.js", import.meta.url), "utf8");
 
-// a regra só vale em tela larga e reduz a largura na mesma proporção do zoom
-assert.match(css, /@media \(min-width: 560px\)/, "a regra do texto maior precisa de corte por largura");
-assert.match(css, /html\[data-fonte="grande"\] \.modal-card \{\s*width: min\(539px, 81\.7vw\);\s*max-height: min\(69vh, 626px\);\s*zoom: 1\.15;/, "a regra do texto maior não reduz a largura junto do zoom");
-assert.match(css, /\.help-ajustes/, "falta o estilo do ajuste na ajuda");
+// O tamanho aumenta as letras em todos os dispositivos, sem encolher janelas.
+const interfaceCss = fs.readFileSync(new URL("../css/interface.css", import.meta.url), "utf8");
+assert.ok(!/zoom:\s*1\.15/.test(css), "texto maior ainda usa zoom geométrico");
+assert.match(interfaceCss, /html\[data-fonte="grande"\] :is\(\.modal-card, \.panel\)/);
+assert.match(interfaceCss, /font-size: max\(16px, 1em\)/);
 
 // a ajuda explica e oferece o botão
 assert.match(html, /id="btn-fonte"/, "a ajuda não tem o botão de texto maior");
 assert.match(html, /texto maior: desligado/, "o botão nasce sem rótulo de estado");
-assert.match(html, /vale para os painéis de leitura/, "a ajuda não explica o alcance do texto maior");
+assert.match(html, /aumenta o texto dos painéis de leitura/, "a ajuda não explica o alcance do texto maior");
 
 // o app lê, aplica e guarda
 assert.match(app, /fonte: readJSON\(STORAGE\.fonte, "normal"\)/, "o app não lê a preferência");
@@ -29,4 +30,4 @@ assert.match(app, /aplicarFonte\(saved\.fonte\)/, "o app não aplica a preferên
 assert.match(app, /btn-fonte"\)\?\.addEventListener/, "o botão de texto maior não tem ação");
 assert.match(app, /aplicarFonte\(saved\.fonte === "grande" \? "normal" : "grande"\)/, "o botão não alterna o texto maior");
 
-console.log("ok fonte: regra com corte de largura, botão na ajuda, preferência lida, aplicada e salva");
+console.log("ok fonte: aumento sem redução da janela, botão na ajuda, preferência lida, aplicada e salva");

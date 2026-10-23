@@ -31,7 +31,7 @@ check(tags === 1, `splash com ${tags} faixas de texto, esperado 1`);
 check(/Cada pedra acende uma ideia, e a ideia continua funcionando quando você sai\./.test(html), "faixa com texto antigo");
 check(/margin: auto auto 12px/.test(css), "faixa não está presa no pé");
 check(/background: rgba\(6, 8, 18, 0\.66\)/.test(css), "faixa sem fundo legível");
-check(/font-size: 8px/.test(css), "kicker ainda com 7 px");
+check(/\.splash-kicker \{[^}]*font-size: 12px/.test(css), "kicker abaixo do piso de leitura de 12 px");
 
 assert.equal(problemas.length, 0, `entrada com ${problemas.length} problema(s):\n- ${problemas.join("\n- ")}`);
 console.log("ok entrada: sem pentagrama, sem sinais soltos, sem figuras, livro com capa e apoios, faixa de texto no pé e vinheta");
