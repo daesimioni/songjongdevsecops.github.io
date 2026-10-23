@@ -1,3 +1,4 @@
+import { combatPose } from "../rendering/combat-vfx.js";
 import { createWorldCombat, combatSpawn } from "../gameplay/combate-mundo.js";
 import { drawWorldCombat } from "../rendering/combate-mundo.js";
 import { drawCollisionOverlay } from "../rendering/collision-overlay.js";
@@ -1786,12 +1787,15 @@ export function createDungeon({ rpg, audio, onSheet, onInventory, onWiki, onGath
         const lift = 5 * state.boost;
         const bob = Math.sin(t * 0.007) * 1.1 * state.boost;
         if (state.boost > 0.01) drawSkiff(ctx, px, py, state.player.dir, t, state.boost, state.player.moving);
+        const pose = combatPose(combat.model?.jogador, combat.model?.agora, true);
+        ctx.save(); ctx.translate(pose.x, pose.y); ctx.globalAlpha *= pose.alpha;
         drawAdventurer(ctx, px, py - lift + bob, state.player.dir, state.player.moving && state.boost < 0.35, t, avatar, look, gear ? gear() : null);
+        ctx.restore();
       },
     });
     drawables.sort((a, b) => a.y - b.y);
     for (const d of drawables) d.draw();
-    drawWorldCombat(ctx, combat.model);
+    drawWorldCombat(ctx, combat.visual);
     if(collisionDebug)drawCollisionOverlay(ctx,state.solids,state.player,{x:camX,y:camY,w:viewW,h:viewH},(x,y)=>dungeonSolid(state.map,x,y));
 
     ctx.restore();
@@ -1881,7 +1885,8 @@ export function createDungeon({ rpg, audio, onSheet, onInventory, onWiki, onGath
       ctx.restore();
     }
     ctx.save();
-    ctx.translate(x, y);
+    const pose = combatPose(m.combat, combat.model?.agora);
+    ctx.translate(x + pose.x, y + pose.y);
     drawCreatureArt(ctx, m.kind, m.accent, t + m.x * 90, m.escala || (m.boss ? 1.15 : 0.95), m.dir, Boolean(m.moving));
     ctx.restore();
     if (state.alert?.monster === m) {

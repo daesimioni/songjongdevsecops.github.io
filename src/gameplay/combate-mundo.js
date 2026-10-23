@@ -13,6 +13,7 @@ export function combatSpawn(player, canOccupy) {
 }
 export function createWorldCombat({ rpg, player, canOccupy, chase, onFinish = () => {}, onEvent = () => {} }) {
   let model = null;
+  let aftermath = null;
   let actors = [];
   const tile = (a) => ({ x: a.x / COMBAT_TILE, y: a.y / COMBAT_TILE });
   function bind(enemy, actor) {
@@ -29,6 +30,7 @@ export function createWorldCombat({ rpg, player, canOccupy, chase, onFinish = ()
     const result = prepared || rpg.startDuel(monster, ground, boss, partners);
     if (!result.ok) return false;
     model = result.combate;
+    aftermath = null;
     actors = [];
     model.space = {
       externalPlayer: true,
@@ -56,6 +58,9 @@ export function createWorldCombat({ rpg, player, canOccupy, chase, onFinish = ()
   function finish(reason) {
     if (!model) return;
     const old = model;
+    // Só a vitória conserva os últimos impactos. Viagens, fuga e respawn
+    // não devem levar os efeitos para outra cena.
+    aftermath = old.phase === "victory" ? old : null;
     model = null;
     for (const actor of actors) {
       actor.combatHp = actor.combat.hp;
@@ -69,7 +74,14 @@ export function createWorldCombat({ rpg, player, canOccupy, chase, onFinish = ()
   }
   function tick(dt) {
     const current = model;
-    if (!current) return;
+    if (!current) {
+      if (aftermath) {
+        aftermath.agora += Math.min(60, Math.max(0, dt * 1000 || 0));
+        aftermath.efeitos = aftermath.efeitos.filter(e => aftermath.agora - e.em < 1000);
+        if (!aftermath.efeitos.length) aftermath = null;
+      }
+      return;
+    }
     syncPlayer();
     const events = current.passo(dt);
     if (model !== current) return;
@@ -97,8 +109,9 @@ export function createWorldCombat({ rpg, player, canOccupy, chase, onFinish = ()
     return true;
   }
   return {
-    start, tick, join, stop: finish,
+    start, tick, join, stop: reason => { finish(reason); aftermath = null; },
     get model() { return model; },
+    get visual() { return model || aftermath; },
     get active() { return !!model; },
     get dodging() { return !!model && model.agora < model.jogador.esquivaAte; },
     get speedFactor() { return model?.jogador.defendendo ? 0.45 : 1; },
