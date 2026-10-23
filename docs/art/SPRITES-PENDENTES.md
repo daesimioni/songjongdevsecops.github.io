@@ -62,11 +62,19 @@ nenhuma exceção de conclusão foi registrada. O lobo é só um rascunho.
 
 ## Fontes: como recuperar sem este chat
 
-Os ZIPs originais NÃO estão no git. Obtenha-os do usuário ou da conta que recebeu
-os anexos. Outra conta do GPT não herda o acesso à Library desta conta. Não
-presuma acesso aos anexos usando IDs privados, nem dependa de caminhos `/workspace`
-de uma sessão anterior. O usuário precisará disponibilizar os três ZIPs à sessão
-que produzirá as artes, caso não estejam no ambiente.
+Os ZIPs originais completos agora estão públicos no GitHub, na branch separada
+`references/original-art-archives`. Consulte [a recuperação verificada](ORIGINAIS-REFERENCIAS.md).
+Não é necessário obter anexos da conta original ou pedir que sejam reenviados.
+Todos os bytes foram preservados em 63 partes, com um script que entrega os três
+ZIPs originais e confere os hashes. Não faça merge dessa branch em main.
+
+```sh
+python3 tools/references/download-originals.py --destination ../original-art-references
+```
+
+Se este script ainda não estiver no checkout, use o endereço imutável e as
+instruções de recuperação do documento acima. O índice e os ZIPs públicos
+permitem retomar o trabalho em outra conta sem este chat.
 
 | Arquivo | Bytes | SHA-256 |
 |---|---:|---|

@@ -93,8 +93,22 @@
   ],
   "nextActions": [
     "Check current main and PR #13 without overwriting user work",
-    "Recover all three original ZIPs; confirm hashes",
+    "Download the three original ZIPs from the public GitHub reference branch using the documented script; verify all hashes",
     "Complete wolf end-to-end with image generation, animation, integration and real visual review",
     "Record exact source IDs, evidence and remaining work for every batch; cover entire index"
-  ]
+  ],
+  "originalReferenceSource": {
+    "availability": "public-github",
+    "branch": "references/original-art-archives",
+    "metadataCommit": "127bb12311545137a64e059fe7b816a289766517",
+    "dataCommit": "e5332631081372ce553cc78ef66500ee806cff49",
+    "parts": 63,
+    "totalOriginalBytes": 508301915,
+    "manifestSHA256": "dcd7473d016879a8612337eaa9244959596c065b5246c245ebc95d053d92ec06",
+    "instructions": "docs/art/ORIGINAIS-REFERENCIAS.md",
+    "downloader": "tools/references/download-originals.py",
+    "requiresChatAttachments": false,
+    "mergeStorageBranchIntoMain": false,
+    "releaseCreated": false
+  }
 }

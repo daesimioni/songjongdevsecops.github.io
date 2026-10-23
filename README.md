@@ -6,6 +6,9 @@
 > imagens destinada ao GPT 6.1 Sol leve com geração de imagens; **não atribuir
 > essa etapa ao DeepSeek**. O catálogo procedural não comprova conclusão.
 
+> **Referências originais disponíveis:** [recuperar os três ZIPs](docs/art/ORIGINAIS-REFERENCIAS.md).
+> [Prompt completo para continuar em outra conta](docs/art/PROMPT-CONTINUAR-SPRITES.md).
+
 No ar em <https://songjongdevsecops.github.io/>.
 
 The Learning Valley é um vale em pixel art que se atravessa a pé. Você entra
