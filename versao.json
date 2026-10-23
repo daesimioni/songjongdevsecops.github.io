@@ -1,10 +1,15 @@
 {
- "versao": "8027d969c12b212a",
+ "versao": "5ba5b463038ca071",
  "arquivos": [
   "assets/combat/action-vfx-v1.json",
   "assets/combat/action-vfx-v1.png",
   "assets/creatures/wolf-atlas.json",
   "assets/creatures/wolf-atlas.png",
+  "assets/creatures/wolf/attack.png",
+  "assets/creatures/wolf/death.png",
+  "assets/creatures/wolf/hit.png",
+  "assets/creatures/wolf/idle.png",
+  "assets/creatures/wolf/walk.png",
   "assets/favicon.svg",
   "assets/fonts/OFL.txt",
   "assets/fonts/README.md",
