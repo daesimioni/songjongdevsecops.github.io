@@ -1,21 +1,14 @@
-// A janela do duelo: monstro, vida, pergunta, consequência e recompensa.
-import { CONTINENTS, AREAS } from "../content/config.js";
+// A tela do combate: arena, vida, J ataque, K defesa, L esquiva e as runas.
+// O modelo vive em gameplay/combate.js; aqui só desenha e traduz teclas.
+import { CONTINENTS } from "../content/config.js";
 import { ITEMS, TIERS, MONSTER_TRAITS } from "../content/rpg-data.js";
 import { drawCreatureArt } from "../rendering/creature.js";
-import { petAbilityNeedsDuel } from "../gameplay/rpg.js";
-import { leituraDeRitmo } from "../gameplay/duelo-ritmo.js";
-import { lerPergunta, pararVoz, vozDisponivel } from "./voz.js";
+import { drawHuman } from "../rendering/human.js";
+import { ARENA } from "../gameplay/combate.js";
 import { VARIANTE_POR_ID } from "../world/variantes.js";
-import { marcaDaOpcao } from "./duel-marcas.js";
 
 const $ = (id) => document.getElementById(id);
-const LETTERS = "ABCDE";
-let lastPick = null;
-let sparked = [];
-let hinted = null;
-let petInfo = "";
-// true enquanto a leitura em voz alta da pergunta está no alto-falante
-let vozLida = false;
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 
 function el(tag, cls, text) {
   const node = document.createElement(tag);
@@ -24,68 +17,524 @@ function el(tag, cls, text) {
   return node;
 }
 
-export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
-  let timer = null;
+export function createDuel({ rpg, toast, audio, onClose, onVictory, getAvatar }) {
+  let combate = null;
+  let raf = 0;
+  let ultimo = 0;
+  let fimMostrado = false;
+  const flutuantes = [];
+  const teclas = { cima: false, baixo: false, esquerda: false, direita: false };
+  let ponteiro = null;
+  let skills = [];
 
-  function focusAction() {
-    const body = $("duel-body");
-    const next = body?.querySelector?.(".duel-next");
-    const answer = [...(body?.querySelectorAll?.(".duel-option") || [])].find((node) => !node.disabled);
-    (next && !next.disabled ? next : answer)?.focus?.();
+  const painel = () => $("duel");
+  const canvas = () => $("duel-arena");
+
+  function fundo(ctx) {
+    ctx.fillStyle = "#080c18";
+    ctx.fillRect(0, 0, ARENA.w, ARENA.h);
+    const t = 48;
+    for (let y = 0; y < ARENA.h; y += t) {
+      for (let x = 0; x < ARENA.w; x += t) {
+        const par = ((x / t) + (y / t)) % 2 === 0;
+        ctx.fillStyle = par ? "rgba(28, 34, 66, 0.45)" : "rgba(16, 22, 44, 0.45)";
+        ctx.fillRect(x + 1, y + 1, t - 2, t - 2);
+      }
+    }
+    ctx.strokeStyle = "rgba(97, 244, 192, 0.09)";
+    ctx.lineWidth = 1;
+    for (let x = 0; x <= ARENA.w; x += t) {
+      ctx.beginPath(); ctx.moveTo(x + 0.5, 0); ctx.lineTo(x + 0.5, ARENA.h); ctx.stroke();
+    }
+    for (let y = 0; y <= ARENA.h; y += t) {
+      ctx.beginPath(); ctx.moveTo(0, y + 0.5); ctx.lineTo(ARENA.w, y + 0.5); ctx.stroke();
+    }
+    const brilho = ctx.createRadialGradient(ARENA.w / 2, ARENA.h / 2, 80, ARENA.w / 2, ARENA.h / 2, ARENA.w * 0.7);
+    brilho.addColorStop(0, "rgba(97, 244, 192, 0.035)");
+    brilho.addColorStop(1, "rgba(3, 5, 14, 0.5)");
+    ctx.fillStyle = brilho;
+    ctx.fillRect(0, 0, ARENA.w, ARENA.h);
+    ctx.strokeStyle = "rgba(151, 140, 190, 0.28)";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(1, 1, ARENA.w - 2, ARENA.h - 2);
   }
 
-  function accent() {
-    return rpg.duel?.monster?.accent || CONTINENTS[rpg.duel?.ground.continent]?.accent || "#ffc857";
+  function desenharTelegramas(ctx) {
+    for (const inimigo of combate.inimigos) {
+      if (inimigo.morte) continue;
+      if (inimigo.especial) {
+        ctx.beginPath();
+        ctx.fillStyle = "rgba(255, 90, 134, 0.10)";
+        ctx.strokeStyle = "rgba(255, 90, 134, 0.75)";
+        ctx.lineWidth = 3;
+        ctx.arc(inimigo.x, inimigo.y, 150, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+      } else if (inimigo.vento) {
+        ctx.beginPath();
+        ctx.fillStyle = "rgba(255, 90, 134, 0.08)";
+        ctx.strokeStyle = "rgba(255, 90, 134, 0.55)";
+        ctx.lineWidth = 2;
+        ctx.arc(inimigo.x, inimigo.y, 82 + inimigo.raio, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+      }
+    }
   }
 
-  function drawSprite() {
-    const canvas = $("duel-sprite");
-    if (!canvas || !rpg.duel) return;
-    const ctx = canvas.getContext("2d");
-    const w = canvas.width;
-    const h = canvas.height;
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.clearRect(0, 0, w, h);
-    const glow = ctx.createRadialGradient(w / 2, h * 0.62, 4, w / 2, h * 0.62, w * 0.45);
-    glow.addColorStop(0, "rgba(180, 140, 255, 0.16)");
-    glow.addColorStop(1, "rgba(180, 140, 255, 0)");
-    ctx.fillStyle = glow;
-    ctx.fillRect(0, 0, w, h);
-    ctx.fillStyle = "rgba(5, 8, 20, 0.55)";
+  function desenharBarraInimigo(ctx, inimigo) {
+    const w = Math.max(46, Math.min(110, inimigo.nome.length * 5));
+    const x = inimigo.x - w / 2;
+    const y = inimigo.y - 66;
+    ctx.fillStyle = "rgba(4, 6, 14, 0.82)";
+    ctx.fillRect(x - 1, y - 1, w + 2, 7);
+    ctx.fillStyle = "rgba(255, 255, 255, 0.1)";
+    ctx.fillRect(x, y, w, 5);
+    ctx.fillStyle = inimigo.boss ? "#ffc857" : "#ff5a86";
+    ctx.fillRect(x, y, w * clamp(inimigo.hp / inimigo.hpMax, 0, 1), 5);
+  }
+
+  function desenharJogador(ctx, agora) {
+    const j = combate.jogador;
+    const avatar = getAvatar?.() || {};
+    if (agora < j.invulneravelAte) {
+      ctx.save();
+      ctx.globalAlpha = 0.45;
+      ctx.fillStyle = "rgba(97, 244, 192, 0.16)";
+      ctx.beginPath();
+      ctx.arc(j.x, j.y - 18, 26, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+    drawHuman(ctx, j.x, j.y, j.dir, j.movendo, agora, avatar.colors || {}, 2.7, avatar.look || null, avatar.gear || null);
+    if (j.defendendo) {
+      ctx.beginPath();
+      ctx.strokeStyle = "rgba(107, 213, 255, 0.75)";
+      ctx.lineWidth = 3;
+      ctx.arc(j.x, j.y - 18, 28, Math.PI * 0.15, Math.PI * 1.85);
+      ctx.stroke();
+    }
+  }
+
+  function desenharGolpe(ctx, agora) {
+    const j = combate.jogador;
+    if (agora >= j.ataqueVisualAte) return;
+    const angulos = { 0: Math.PI / 2, 1: Math.PI, 2: 0, 3: -Math.PI / 2 };
+    const centro = angulos[j.dir] ?? 0;
     ctx.beginPath();
-    ctx.ellipse(w / 2, h * 0.82, w * 0.3, 8, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.save();
-    ctx.translate(w / 2, h * 0.83);
-    const scale = rpg.duel.boss ? 4.3 : 5.2;
-    drawCreatureArt(ctx, rpg.duel.boss ? "boss" : rpg.duel.monster.kind, accent(), performance.now(), scale);
-    ctx.restore();
+    ctx.strokeStyle = "rgba(255, 243, 209, 0.9)";
+    ctx.lineWidth = 5;
+    ctx.arc(j.x, j.y - 16, 60, centro - Math.PI * 0.45, centro + Math.PI * 0.45);
+    ctx.stroke();
   }
 
-  function startSprite() {
-    stopSprite();
-    timer = setInterval(drawSprite, 90);
+  function desenharInimigos(ctx, agora) {
+    for (const inimigo of combate.inimigos) {
+      if (inimigo.morte) continue;
+      const accent = inimigo.monster?.accent || CONTINENTS[combate.ground?.continent]?.accent || "#ffc857";
+      ctx.save();
+      if (agora < inimigo.hitAte) ctx.globalAlpha = 0.55;
+      ctx.translate(inimigo.x, inimigo.y);
+      const escala = inimigo.boss ? 4.8 : 2.8 + inimigo.tier * 0.4;
+      drawCreatureArt(ctx, inimigo.boss ? "boss" : inimigo.kind, accent, agora, escala);
+      ctx.restore();
+      desenharBarraInimigo(ctx, inimigo);
+      if (inimigo.boss) {
+        ctx.fillStyle = "rgba(255, 200, 87, 0.9)";
+        ctx.font = "10px Silkscreen, monospace";
+        ctx.textAlign = "center";
+        ctx.fillText(`fase ${inimigo.phase}`, inimigo.x, inimigo.y - 74);
+      }
+    }
   }
 
-  function stopSprite() {
-    if (timer) clearInterval(timer);
-    timer = null;
+  function desenharFlutuantes(ctx, agora) {
+    for (let i = flutuantes.length - 1; i >= 0; i--) {
+      const f = flutuantes[i];
+      if (agora >= f.ate) { flutuantes.splice(i, 1); continue; }
+      const p = 1 - (f.ate - agora) / 700;
+      ctx.globalAlpha = Math.max(0, Math.min(1, (f.ate - agora) / 300));
+      ctx.fillStyle = f.cor;
+      ctx.font = "bold 15px Silkscreen, monospace";
+      ctx.textAlign = "center";
+      ctx.fillText(f.texto, f.x, f.y - 30 - p * 26);
+    }
+    ctx.globalAlpha = 1;
   }
 
-  const SPELL_LABELS = {
-    "runa-faisca": "faísca · risca uma alternativa",
-    "runa-trovao": "trovão · atinge o monstro da frente",
-    "runa-fogo": "fogo · atinge todos os bichos",
-    "runa-gelo": "gelo · passa a pergunta",
-    "runa-cura": "cura · recupera 12",
-    "runa-espelho": "espelho · o próximo erro não dói",
-    "runa-bencao": "bênção · cura 8 e arma o escudo",
-    "runa-mente": "mente · devolve 6 de mana",
-    "runa-eco": "eco · o próximo acerto soma 2",
-    "runa-punhal": "punhal · 1 agora e +1 no próximo acerto",
-    "runa-corrente": "corrente · 1 no bicho e nos parceiros",
-    "runa-lente": "lente · revela a certa",
-  };
+  function desenhar() {
+    const cv = canvas();
+    if (!cv || !combate) return;
+    const ctx = cv.getContext("2d");
+    if (!ctx) return;
+    const agora = combate.agora;
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    fundo(ctx);
+    desenharTelegramas(ctx);
+    desenharInimigos(ctx, agora);
+    desenharJogador(ctx, agora);
+    desenharGolpe(ctx, agora);
+    desenharFlutuantes(ctx, agora);
+  }
+
+  function barra(idTexto, idFill, valor, max, idBarra) {
+    const texto = $(idTexto);
+    if (texto) texto.textContent = `${Math.max(0, Math.ceil(valor))}/${Math.ceil(max)}`;
+    const fill = $(idFill);
+    if (fill) fill.style.width = `${max ? clamp(Math.round((valor / max) * 100), 0, 100) : 0}%`;
+    const barra = $(idBarra);
+    if (barra) {
+      barra.setAttribute("aria-valuemax", String(Math.ceil(max)));
+      barra.setAttribute("aria-valuenow", String(Math.max(0, Math.ceil(valor))));
+    }
+  }
+
+  function montarInimigos() {
+    const box = $("duel-enemies");
+    if (!box) return;
+    box.textContent = "";
+    for (const inimigo of combate.inimigos) {
+      const linha = el("div", "duel-enemy");
+      const head = el("div", "duel-enemy-head");
+      head.append(el("b", "", inimigo.nome), el("span", "", inimigo.boss ? "chefe" : TIERS[inimigo.tier]?.stars || ""));
+      const hp = el("em", "duel-enemy-hp", `${Math.ceil(inimigo.hp)}/${Math.ceil(inimigo.hpMax)}`);
+      head.appendChild(hp);
+      const trilha = el("div", "duel-bar-track");
+      trilha.appendChild(el("i"));
+      linha.append(head, trilha);
+      box.appendChild(linha);
+    }
+  }
+
+  function atualizarInimigos() {
+    const box = $("duel-enemies");
+    if (!box) return;
+    const linhas = box.querySelectorAll(".duel-enemy");
+    combate.inimigos.forEach((inimigo, i) => {
+      const linha = linhas[i];
+      if (!linha) return;
+      const fill = linha.querySelector(".duel-bar-track i");
+      if (fill) fill.style.width = `${clamp(Math.round((inimigo.hp / inimigo.hpMax) * 100), 0, 100)}%`;
+      const hp = linha.querySelector(".duel-enemy-hp");
+      if (hp) hp.textContent = `${Math.max(0, Math.ceil(inimigo.hp))}/${Math.ceil(inimigo.hpMax)}`;
+      linha.classList.toggle("morto", inimigo.morte);
+    });
+  }
+
+  function montarSkills() {
+    const box = $("duel-skills");
+    if (!box) return;
+    box.textContent = "";
+    skills = (rpg.spellbarView?.() || []).slice(0, 6);
+    if (!skills.length) {
+      box.appendChild(el("p", "duel-sem-runa", "Sem runas. A forja da cidade subterrânea ensina a primeira."));
+      return;
+    }
+    skills.forEach((magia, i) => {
+      const botao = el("button", "duel-skill");
+      botao.type = "button";
+      botao.dataset.magia = magia.id;
+      botao.append(el("kbd", "", String(i + 1)), el("span", "", magia.name));
+      botao.appendChild(el("em", "", magia.charges ? `×${magia.charges}` : `${magia.mana} mana`));
+      botao.addEventListener("click", () => usarMagia(magia.id));
+      box.appendChild(botao);
+    });
+  }
+
+  function atualizarSkills() {
+    const box = $("duel-skills");
+    if (!box) return;
+    const agora = combate?.agora || 0;
+    for (const botao of box.querySelectorAll(".duel-skill")) {
+      const magia = skills.find((m) => m.id === botao.dataset.magia);
+      if (!magia) continue;
+      const pronto = combate?.magias.get(magia.id) || 0;
+      const carga = rpg.itemCount?.(magia.id) || 0;
+      const semMana = !carga && rpg.mana() < magia.mana;
+      botao.disabled = !combate || combate.phase !== "combat" || agora < pronto || semMana;
+      const custo = botao.querySelector("em");
+      if (custo) custo.textContent = carga ? `×${carga}` : `${magia.mana} mana`;
+    }
+    const pet = rpg.activePet?.();
+    const bicho = $("duel-pet");
+    if (bicho) {
+      bicho.hidden = !pet;
+      if (pet) {
+        const cd = rpg.petCdLeft?.(pet.id) || 0;
+        bicho.disabled = !combate || combate.phase !== "combat" || cd > 0;
+        bicho.textContent = cd > 0 ? `${pet.ability.name} · ${Math.ceil(cd / 1000)}s` : `${pet.ability.name} (P)`;
+      }
+    }
+  }
+
+  function aviso(texto, ms = 1400) {
+    const node = $("duel-alert");
+    if (!node) return;
+    node.textContent = texto;
+    node.hidden = false;
+    node.dataset.ate = String(performance.now() + ms);
+  }
+
+  function flutuar(x, y, texto, cor) {
+    flutuantes.push({ x, y, texto, cor, ate: combate.agora + 700 });
+    if (flutuantes.length > 24) flutuantes.shift();
+  }
+
+  function processarEventos(eventos) {
+    for (const evento of eventos) {
+      if (evento.tipo === "ataque") {
+        if (evento.alvo) flutuar(evento.alvo.x, evento.alvo.y - 30, evento.valor > 0 ? `-${evento.valor}` : "errou", evento.valor > 0 ? "#fff3d1" : "#9c96b8");
+        if (evento.valor > 0) audio.blip?.();
+      } else if (evento.tipo === "dano") {
+        flutuar(combate.jogador.x, combate.jogador.y - 44, `-${evento.valor}`, evento.bloqueado ? "#6bd5ff" : "#ff5a86");
+        audio.error?.();
+      } else if (evento.tipo === "bloqueou") {
+        flutuar(combate.jogador.x, combate.jogador.y - 44, "defendeu", "#6bd5ff");
+        audio.click?.();
+      } else if (evento.tipo === "aparou") {
+        flutuar(combate.jogador.x, combate.jogador.y - 44, "aparou!", "#61f4c0");
+        audio.chime?.();
+      } else if (evento.tipo === "esquiva") {
+        flutuar(combate.jogador.x, combate.jogador.y - 44, "esquiva", "#9ecbff");
+      } else if (evento.tipo === "desviou") {
+        if (evento.inimigo) flutuar(evento.inimigo.x, evento.inimigo.y - 34, "desviou", "#9c96b8");
+      } else if (evento.tipo === "acertou") {
+        if (evento.inimigo) flutuar(evento.inimigo.x, evento.inimigo.y - 34, `-${evento.valor}`, "#ffc857");
+      } else if (evento.tipo === "magia") {
+        if (evento.inimigo) flutuar(evento.inimigo.x, evento.inimigo.y - 36, `-${evento.valor}`, "#b48cff");
+        audio.blip?.();
+      } else if (evento.tipo === "curaJogador") {
+        flutuar(combate.jogador.x, combate.jogador.y - 44, `+${evento.valor}`, "#61f4c0");
+        audio.chime?.();
+      } else if (evento.tipo === "cura") {
+        if (evento.inimigo) flutuar(evento.inimigo.x, evento.inimigo.y - 34, `+${evento.valor}`, "#61f4c0");
+      } else if (evento.tipo === "fase") {
+        aviso(`Fase ${evento.fase}: ele ficou mais forte.`);
+        audio.chime?.();
+      } else if (evento.tipo === "matou") {
+        aviso(`${evento.inimigo.nome} caiu.`);
+        audio.chime?.();
+      } else if (evento.tipo === "telegrafo" && evento.especial) {
+        aviso("O chão está tremendo: saia da área.");
+      } else if (evento.tipo === "area") {
+        aviso(evento.valor > 0 ? `-${evento.valor} de vida` : "Você saiu da área.", 1600);
+      }
+    }
+  }
+
+  function atualizarHud() {
+    if (!combate) return;
+    const j = combate.jogador;
+    barra("duel-hp-text", "duel-hp-fill", j.hp, j.hpMax, "duel-hp-bar");
+    barra("duel-mana-text", "duel-mana-fill", rpg.mana(), rpg.manaMax(), "duel-mana-bar");
+    atualizarInimigos();
+    const combo = $("duel-combo");
+    if (combo) {
+      combo.hidden = j.combo < 2;
+      combo.textContent = j.combo >= 2 ? `ritmo ${j.combo} · +${j.combo >= 5 ? 2 : 1} de dano` : "";
+    }
+    const fase = $("duel-phase");
+    if (fase) {
+      const principal = combate.principal;
+      fase.hidden = !principal?.boss || principal.phase < 2;
+      fase.textContent = principal?.boss ? `fase ${principal.phase}` : "";
+    }
+    const alerta = $("duel-alert");
+    if (alerta && alerta.dataset.ate && performance.now() > Number(alerta.dataset.ate)) {
+      alerta.hidden = true;
+      delete alerta.dataset.ate;
+    }
+    atualizarSkills();
+  }
+
+  function entradaAtual() {
+    return {
+      mx: (teclas.direita ? 1 : 0) - (teclas.esquerda ? 1 : 0),
+      my: (teclas.baixo ? 1 : 0) - (teclas.cima ? 1 : 0),
+    };
+  }
+
+  function loop(ts) {
+    if (!combate || !painel() || painel().hidden) return;
+    const dt = clamp((ts - (ultimo || ts)) / 1000, 0, 0.05);
+    ultimo = ts;
+    const eventos = combate.passo(dt, entradaAtual());
+    processarEventos(eventos);
+    desenhar();
+    atualizarHud();
+    if (combate.phase === "victory" || combate.phase === "defeat") {
+      if (!fimMostrado) mostrarFim();
+      return;
+    }
+    raf = requestAnimationFrame(loop);
+  }
+
+  function iniciarLoop() {
+    cancelAnimationFrame(raf);
+    ultimo = 0;
+    fimMostrado = false;
+    raf = requestAnimationFrame(loop);
+  }
+
+  function recolherPonteiro() {
+    ponteiro = null;
+    if (combate) combate.jogador.alvo = null;
+  }
+
+  function eventoTela(e) {
+    if (!combate || combate.phase !== "combat") return false;
+    const k = String(e.key || "").toLowerCase();
+    if (k === "j") { combate.atacar(); return true; }
+    if (k === "k") { combate.defender(true); return true; }
+    if (k === "l") { combate.esquivar(); return true; }
+    if (k === "p") { usarBicho(); return true; }
+    if (/^[1-6]$/.test(k)) {
+      const magia = skills[Number(k) - 1];
+      if (magia) usarMagia(magia.id);
+      return true;
+    }
+    if (k === "w" || k === "arrowup") teclas.cima = true;
+    else if (k === "s" || k === "arrowdown") teclas.baixo = true;
+    else if (k === "a" || k === "arrowleft") teclas.esquerda = true;
+    else if (k === "d" || k === "arrowright") teclas.direita = true;
+    else return false;
+    combate.jogador.alvo = null;
+    return true;
+  }
+
+  function soltarTecla(e) {
+    const k = String(e.key || "").toLowerCase();
+    if (k === "k") combate?.defender(false);
+    if (k === "w" || k === "arrowup") teclas.cima = false;
+    if (k === "s" || k === "arrowdown") teclas.baixo = false;
+    if (k === "a" || k === "arrowleft") teclas.esquerda = false;
+    if (k === "d" || k === "arrowright") teclas.direita = false;
+  }
+
+  function usarMagia(id) {
+    const res = combate?.usarMagia(id);
+    if (!res || !res.ok) {
+      if (res?.reason && res.reason !== "A runa ainda está esfriando.") toast(res.reason, 2400);
+      return false;
+    }
+    atualizarHud();
+    return true;
+  }
+
+  function usarBicho() {
+    const res = combate?.usarBicho();
+    if (!res || !res.ok) { if (res?.reason) toast(res.reason, 2400); return false; }
+    atualizarHud();
+    return true;
+  }
+
+  function textoDoResultado() {
+    const d = rpg.duel;
+    const r = d?.result || {};
+    if (d?.training) return { titulo: "Treino encerrado", texto: "Sem morte e sem saque. A perícia da região subiu um pouco; o bicho de verdade espera na caverna.", loot: [] };
+    if (r.error) return { titulo: "O bicho caiu", texto: "A recompensa não pôde ser gravada agora.", loot: [] };
+    return { titulo: "O bicho caiu", texto: `+${r.xp || 0} XP · a passagem segue.`, loot: r.loot || [] };
+  }
+
+  function mostrarFim() {
+    fimMostrado = true;
+    const d = rpg.duel;
+    const venceu = d?.phase === "victory";
+    const body = $("duel-body");
+    const controles = $("duel-controls");
+    const fugir = $("duel-flee");
+    if (controles) controles.hidden = true;
+    if (fugir) fugir.hidden = true;
+    if (!body) return;
+    body.hidden = false;
+    body.textContent = "";
+    body.classList.toggle("win", !!venceu);
+    body.classList.toggle("lose", !venceu);
+    if (venceu) {
+      const dados = textoDoResultado();
+      body.append(el("h3", "", dados.titulo), el("p", "", dados.texto));
+      if (dados.loot.length) {
+        const chips = el("div", "duel-loot");
+        for (const item of dados.loot) chips.appendChild(el("span", "loot-chip", `${ITEMS[item.id]?.name || item.id} ×${item.qty}`));
+        body.appendChild(chips);
+      }
+      audio.chime?.();
+      if (!d?.training) onVictory?.(d?.result);
+      const botao = el("button", "duel-next", "voltar ao mundo");
+      botao.type = "button";
+      botao.addEventListener("click", avancar);
+      body.appendChild(botao);
+      botao.focus?.();
+    } else {
+      body.append(
+        el("h3", "", "Você caiu"),
+        el("p", "", "O altar do porto devolveu sua vida. A caverna espera quando você voltar."),
+      );
+      audio.error?.();
+      const botao = el("button", "duel-next", "voltar ao mundo");
+      botao.type = "button";
+      botao.addEventListener("click", avancar);
+      body.appendChild(botao);
+      botao.focus?.();
+    }
+  }
+
+  function avancar() {
+    rpg.next();
+    cancelAnimationFrame(raf);
+    combate = null;
+    onClose?.();
+  }
+
+  function configurarAbertura() {
+    const d = rpg.duel;
+    if (!d) return;
+    const tier = TIERS[d.tier] || TIERS[1];
+    const continente = CONTINENTS[d.ground?.continent]?.name || d.ground?.name || "";
+    $("duel-kicker").textContent = d.training ? `treino · ${continente}` : `${d.ground?.name || "caverna"} · ${d.boss ? "chefe" : tier.name}`;
+    $("duel-name").textContent = d.monster?.name || "criatura";
+    const trait = MONSTER_TRAITS[d.monster?.kind]?.label || "";
+    const nivel = d.monster?.level ?? "?";
+    const base = d.training
+      ? `nível ${nivel} · ${tier.stars} · treino sem morte e sem saque`
+      : `nível ${nivel} · ${tier.stars} · combate`;
+    $("duel-sub").textContent = trait ? `${base} · ${trait}` : base;
+    const habilidade = $("duel-ability");
+    if (habilidade) {
+      habilidade.hidden = !(d.boss && d.habilidade?.nome);
+      habilidade.textContent = d.boss && d.habilidade?.nome ? `${d.habilidade.nome}: ${d.habilidade.nota}` : "";
+    }
+    const variante = VARIANTE_POR_ID.get(d.monster?.variante);
+    const chipVariante = $("duel-variant");
+    if (chipVariante) {
+      chipVariante.hidden = !variante;
+      chipVariante.textContent = variante ? `${variante.nome}: ${variante.desc}` : "";
+    }
+    $("duel-risk").textContent = d.training ? " · treino" : ` · risco de fuga ${Math.round(rpg.fleeRisk(d.monster) * 100)}%`;
+    $("duel-body").hidden = true;
+    $("duel-controls").hidden = false;
+    $("duel-flee").hidden = false;
+    $("duel-alert").textContent = "";
+    $("duel-alert").hidden = true;
+    montarInimigos();
+    montarSkills();
+    desenhar();
+    atualizarHud();
+  }
+
+  function abrir() {
+    combate = rpg.combate;
+    if (!combate) return false;
+    fimMostrado = false;
+    flutuantes.length = 0;
+    teclas.cima = teclas.baixo = teclas.esquerda = teclas.direita = false;
+    ponteiro = null;
+    configurarAbertura();
+    iniciarLoop();
+    requestAnimationFrame(() => $("duel-arena")?.focus?.({ preventScroll: true }));
+    return true;
+  }
 
   function open(monster, ground, boss = false, partner = null) {
     const res = rpg.startDuel(monster, ground, boss, partner);
@@ -93,24 +542,7 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
       toast(res.reason || "Este monstro não está mais aqui.", 3600);
       return false;
     }
-    lastPick = null;
-    sparked = [];
-    hinted = null;
-    petInfo = "";
-    pararVoz();
-    vozLida = false;
-    render();
-    startSprite();
-    return true;
-  }
-
-  function close() {
-    stopSprite();
-    pararVoz();
-    vozLida = false;
-    rpg.flee();
-    lastPick = null;
-    sparked = [];
+    return abrir();
   }
 
   function openTraining(continent, tier, theme, monster) {
@@ -119,426 +551,53 @@ export function createDuel({ rpg, toast, audio, onClose, onVictory }) {
       toast(res.reason || "O treino não abriu agora.", 3200);
       return false;
     }
-    lastPick = null;
-    sparked = [];
-    hinted = null;
-    petInfo = "";
-    pararVoz();
-    vozLida = false;
-    render();
-    startSprite();
-    return true;
+    return abrir();
   }
 
-  function bar(label, value, max, cls) {
-    const wrap = el("div", `duel-bar ${cls}`);
-    const head = el("div", "duel-bar-head");
-    // dano pode ter decimal (vocação, pet, equipamento); a vida mostra inteiro
-    // para não aparecer 94.70000000000002/99 na tela
-    head.append(el("span", "", label), el("b", "", `${Math.max(0, Math.ceil(value))}/${Math.ceil(max)}`));
-    const track = el("div", "duel-bar-track");
-    const fill = el("i");
-    fill.style.width = `${max ? Math.max(0, Math.min(100, Math.round((value / max) * 100))) : 0}%`;
-    track.appendChild(fill);
-    wrap.append(head, track);
-    return wrap;
+  function close() {
+    cancelAnimationFrame(raf);
+    recolherPonteiro();
+    if (rpg.duel) rpg.flee();
+    combate = null;
+    flutuantes.length = 0;
   }
 
-  function render() {
-    const d = rpg.duel;
-    const card = $("duel");
-    if (!d) {
-      if (card) card.hidden = true;
-      return;
-    }
-    // a runa da lente revela a certa até a pergunta mudar
-    if (d.revelada && d.question) hinted = d.question.answer;
-    const tier = TIERS[d.tier];
-    const continent = CONTINENTS[d.ground.continent]?.name || d.ground.name;
-    const phaseLabel = d.boss && (d.bossPhase || 1) > 1 ? ` · fase ${d.bossPhase}` : "";
-    $("duel-kicker").textContent = d.training
-      ? `TREINO · ${continent}`
-      : `${d.ground.name} · ${d.boss ? "chefe" : tier.name}${phaseLabel}`;
-    const risk = $("duel-risk");
-    if (risk) {
-      risk.textContent = d.training
-        ? " · treino, sem dano"
-        : ` · risco ${Math.round(rpg.fleeRisk(d.monster) * 100)}%`;
-    }
-    $("duel-name").textContent = d.monster.name;
-    const trait = MONSTER_TRAITS[d.monster?.kind]?.label || "";
-    const nivel = d.monster.level ?? "?";
-    const baseSub = d.training
-      ? `nível ${nivel} · ${tier.stars} · treino sem dano e sem loot`
-      : `nível ${nivel} · ${tier.stars} · ${d.boss ? "pergunta final" : "duelo de perguntas"}`;
-    $("duel-sub").textContent = trait ? `${baseSub} · ${trait}` : baseSub;
-    const meta = $("duel-meta");
-    meta.textContent = "";
-    const hpLabel = d.boss ? `vida do chefe · fase ${d.bossPhase || 1}` : "vida do monstro";
-    meta.append(
-      bar(hpLabel, d.monsterHp, d.monsterHpMax, "enemy"),
-      bar("sua vida", rpg.hp(), rpg.hpMax(), "self"),
-    );
-    rpg.pulse();
-    meta.appendChild(bar("mana", rpg.mana(), rpg.manaMax(), "mana"));
-    // leitura de turno: rodada e ritmo de acertos ficam à vista antes de escolher
-    meta.appendChild(el("span", "duel-round", `rodada ${(d.deckIndex || 0) + 1}`));
-    const ritmo = leituraDeRitmo(d.seguidos || 0);
-    if (ritmo) meta.appendChild(el("em", "duel-combo", ritmo));
-    if (d.boss && d.habilidade) meta.appendChild(el("span", "duel-ability", `chefe: ${d.habilidade.nome}`));
-    if (Number(d.eco) > 0) meta.appendChild(el("em", "duel-eco", `eco armado: +${d.eco} no próximo acerto`));
-    const variante = VARIANTE_POR_ID.get(d.monster?.variante);
-    if (variante) meta.appendChild(el("em", "duel-variant", `variante ${variante.nome}: ${variante.desc}`));
-    // o chefe telegrafa o assunto da próxima pergunta: tema e cor da área
-    if (d.boss) {
-      const proxima = d.deck?.[(d.deckIndex ?? 0) + 1];
-      const area = proxima?.area ? AREAS.find((a) => a.id === proxima.area) : null;
-      if (area) {
-        const tema = el("span", "duel-theme", `◆ próximo tema: ${area.name}`);
-        tema.style.setProperty("--tema", CONTINENTS[area.continent]?.accent || "#b48cff");
-        meta.appendChild(tema);
-      }
-    }
-    drawSprite();
+  const ataque = $("duel-attack");
+  if (ataque) ataque.addEventListener("click", () => { combate?.atacar(); atualizarHud(); });
+  const defesa = $("duel-guard");
+  if (defesa) {
+    const segurar = (e) => { e.preventDefault(); combate?.defender(true); };
+    const soltar = () => combate?.defender(false);
+    defesa.addEventListener("pointerdown", segurar);
+    defesa.addEventListener("pointerup", soltar);
+    defesa.addEventListener("pointerleave", soltar);
+    defesa.addEventListener("pointercancel", soltar);
+    defesa.addEventListener("keydown", (e) => { if (e.key === " " || e.key === "Enter") { e.preventDefault(); combate?.defender(true); } });
+    defesa.addEventListener("keyup", () => combate?.defender(false));
+  }
+  const esquiva = $("duel-dodge");
+  if (esquiva) esquiva.addEventListener("click", () => { combate?.esquivar(); });
+  const bicho = $("duel-pet");
+  if (bicho) bicho.addEventListener("click", usarBicho);
 
-    const body = $("duel-body");
-    body.textContent = "";
-    if (d.phase === "victory" || d.phase === "defeat") {
-      renderEnd(body, d);
-      return;
-    }
-    const q = d.question;
-    const live = (d.partners || []).filter((p) => !p.done);
-    const cols = el("div", `duel-cols${live.length ? " has-partners" : ""}`);
-    const main = el("div", "duel-col main");
-    cols.appendChild(main);
-    main.appendChild(el("p", "duel-question", q.q));
-    // o número que o erro vai custar, antes da escolha: fase de chefe e caráter
-    // do bicho entram na conta, e o espelho aparece como zero
-    const previsao = rpg.erroPrevisto();
-    const protecao = d.shield ? " (o espelho segura uma vez)" : d.escudo ? " (o escudo segura uma vez)" : "";
-    main.appendChild(el("p", "duel-read",
-      d.training
-        ? `Na caverna, esse erro tiraria ${previsao} de vida.${protecao}`
-        : `Se errar: ${previsao} de dano${protecao}.`));
-    // o próximo acerto também tem número, aproximado: desvio e subcategoria mudam
-    main.appendChild(el("p", "duel-read",
-      `Se acertar: ~${rpg.acertoPrevisto()} de dano.`));
-    const opts = el("div", "duel-options");
-    q.options.forEach((text, i) => {
-      const b = el("button", "duel-option");
-      b.type = "button";
-      b.appendChild(el("kbd", "", LETTERS[i] || String(i + 1)));
-      b.appendChild(el("span", "", text));
-      // marca de resultado: quem não distingue as cores vê ✓ e ✗ no lugar
-      const marca = marcaDaOpcao(d.phase, i, q.answer, lastPick);
-      if (marca) {
-        b.appendChild(el("span", `duel-mark ${marca === "✓" ? "right" : "wrong"}`, marca))
-          .setAttribute("aria-hidden", "true");
-      }
-      if (d.monsterHp <= 0) b.disabled = true;
-      if (hinted === i) b.classList.add("hinted");
-      if ((d.eliminadas || []).includes(i)) {
-        b.disabled = true;
-        b.classList.add("riscada");
-      } else if (sparked.includes(i)) {
-        b.disabled = true;
-        b.classList.add("sparked");
-      } else if (d.phase === "feedback") {
-        b.disabled = true;
-        if (i === q.answer) b.classList.add("right");
-        else if (i === lastPick) b.classList.add("wrong");
-      } else {
-        b.addEventListener("click", () => answer(i));
-      }
-      opts.appendChild(b);
-    });
-    main.appendChild(opts);
-    if (d.monsterHp <= 0) main.appendChild(el("p", "duel-hint", "Este monstro caiu. Vença os demais da matilha para concluir o duelo."));
-
-    if (d.phase === "feedback") {
-      const fb = d.feedback;
-      const box = el("div", `duel-feedback ${fb.correct ? "good" : "bad"}`);
-      box.setAttribute("role", "status");
-      const wrong = fb.training
-        ? `Errou. Na caverna isso tiraria ${fb.damage} de vida.`
-        : `Errou. Você levou ${fb.damage} de dano.`;
-      const label = fb.spell || (fb.escudo ? "O escudo segurou o golpe." : fb.blocked ? "A proteção segurou o golpe." : fb.correct ? "Acertou." : wrong);
-      box.appendChild(el("b", "", label));
-      box.appendChild(el("span", "", fb.why));
-      if (!fb.correct && Number.isInteger(fb.picked) && d.question?.options?.[fb.picked]) {
-        box.appendChild(el("span", "duel-picked", `Você marcou: ${d.question.options[fb.picked]}.`));
-      }
-      if (fb.note) box.appendChild(el("em", "duel-note", fb.note));
-      if (fb.phaseNote) box.appendChild(el("em", "duel-phase", fb.phaseNote));
-      main.appendChild(box);
-      const next = el("button", "duel-next", "continuar");
-      next.type = "button";
-      next.addEventListener("click", advance);
-      main.appendChild(next);
-    } else {
-      const pet = rpg.activePet();
-      if (pet) {
-        const cd = rpg.petCdLeft(pet.id);
-        const pb = el("button", "duel-pet", cd > 0
-          ? `${pet.name} · ${pet.ability.name} em ${Math.ceil(cd / 1000)}s`
-          : `${pet.name} · ${pet.ability.name} · ${pet.ability.mana} mana`);
-        pb.type = "button";
-        pb.disabled = (d.monsterHp <= 0 && petAbilityNeedsDuel(pet.ability.id)) || cd > 0 || (pet.ability.id !== "mana" && rpg.mana() < pet.ability.mana);
-        pb.addEventListener("click", usePet);
-        main.appendChild(pb);
-      }
-      const runes = rpg.spellbarView();
-      if (runes.length) {
-        const bar = el("div", "duel-spells");
-        for (const spell of runes) {
-          const label = SPELL_LABELS[spell.id] || spell.name;
-          const cost = spell.charges
-            ? `${spell.charges} carga${spell.charges > 1 ? "s" : ""}`
-            : `${spell.mana} mana`;
-          const rune = el("button", "duel-rune", `${label} · ${cost}`);
-          rune.type = "button";
-          if (spell.id === "runa-faisca" && (sparked.length > 0 || d.monsterHp <= 0)) rune.disabled = true;
-          rune.addEventListener("click", () => castSpell(spell.id));
-          bar.appendChild(rune);
-        }
-        main.appendChild(bar);
-      }
-      if (petInfo) main.appendChild(el("p", "duel-petinfo", petInfo));
-      const dicas = d.dicas || 0;
-      const db = el("button", "duel-dica", dicas >= 3
-        ? "dicas desta pergunta: 3 de 3"
-        : `pedir dica · ${dicas + 1} de 3 · 1 mana`);
-      db.type = "button";
-      db.disabled = dicas >= 3 || d.monsterHp <= 0 || rpg.mana() < 1;
-      db.addEventListener("click", useHint);
-      main.appendChild(db);
-      const vb = el("button", "duel-voz", vozLida ? "parar leitura" : "ouvir a pergunta");
-      vb.type = "button";
-      vb.disabled = d.monsterHp <= 0 || !vozDisponivel();
-      vb.setAttribute("aria-pressed", vozLida ? "true" : "false");
-      vb.addEventListener("click", useVoice);
-      main.appendChild(vb);
-      const foot = el("p", "duel-hint", "Toque numa alternativa (ou A a E no teclado). Errar tira vida; acertar tira vida do monstro.");
-      main.appendChild(foot);
-    }
-    if (live.length) {
-      const side = el("div", "duel-col extras");
-      side.appendChild(el("p", "duel-col-tag", `matilha · ${live.length} bicho${live.length > 1 ? "s" : ""} na mesma rodada`));
-      (d.partners || []).forEach((p, i) => {
-        if (!p.done) side.appendChild(partnerCard(p, i));
-      });
-      cols.appendChild(side);
-    }
-    body.appendChild(cols);
+  const tela = canvas();
+  if (tela) {
+    const mover = (e) => {
+      if (!combate || combate.phase !== "combat") return;
+      const r = tela.getBoundingClientRect();
+      const x = ((e.clientX - r.left) / r.width) * ARENA.w;
+      const y = ((e.clientY - r.top) / r.height) * ARENA.h;
+      ponteiro = { x, y };
+      combate.jogador.alvo = ponteiro;
+    };
+    tela.addEventListener("pointerdown", (e) => { e.preventDefault(); tela.setPointerCapture?.(e.pointerId); mover(e); });
+    tela.addEventListener("pointermove", (e) => { if (ponteiro) mover(e); });
+    tela.addEventListener("pointerup", recolherPonteiro);
+    tela.addEventListener("pointercancel", recolherPonteiro);
+    tela.addEventListener("pointerleave", recolherPonteiro);
   }
 
-  function dPhaseBloqueada() { return rpg.duel?.phase !== "question"; }
+  window.addEventListener("keyup", soltarTecla);
 
-  function partnerCard(p, who) {
-    const box = el("div", "duel-partner");
-    const head = el("div", "duel-partner-head");
-    head.append(el("span", "", "também está aqui"), el("b", "", p.monster.name));
-    box.appendChild(head);
-    box.appendChild(bar("vida do parceiro", p.hp, p.hpMax, "enemy"));
-    if (p.feedback) {
-      const fb = el("div", `duel-feedback ${p.feedback.correct ? "good" : "bad"}`);
-      fb.setAttribute("role", "status");
-      fb.appendChild(el("b", "", p.feedback.blocked ? "A proteção segurou o golpe." : p.feedback.correct ? "Acertou." : `Errou. Levou ${p.feedback.damage} de dano.`));
-      fb.appendChild(el("span", "", p.feedback.why));
-      if (!p.feedback.correct && Number.isInteger(p.feedback.picked) && p.question?.options?.[p.feedback.picked]) {
-        fb.appendChild(el("span", "duel-picked", `Você marcou: ${p.question.options[p.feedback.picked]}.`));
-      }
-      box.appendChild(fb);
-      const next = el("button", "duel-next small", "continuar com este bicho");
-      next.type = "button";
-      next.disabled = dPhaseBloqueada();
-      next.addEventListener("click", () => { rpg.partnerNext(who); render(); focusAction(); });
-      box.appendChild(next);
-    } else {
-      box.appendChild(el("p", "duel-question partner", p.question.q));
-      box.appendChild(el("p", "duel-read", `Se errar: ${rpg.erroPrevisto(p.monster, p.tier, 1)} de dano.`));
-      const ritmoParceiro = leituraDeRitmo(p.seguidos || 0);
-      box.appendChild(el("p", "duel-read",
-        `Se acertar: ~${rpg.acertoPrevistoParceiro(p)} de dano${ritmoParceiro ? ` · ${ritmoParceiro}` : ""}.`));
-      const opts = el("div", "duel-options partner-options");
-      p.question.options.forEach((text, i) => {
-        const b = el("button", "duel-option");
-        b.type = "button";
-        b.appendChild(el("kbd", "", LETTERS[i] || String(i + 1)));
-        b.appendChild(el("span", "", text));
-        b.disabled = dPhaseBloqueada();
-        b.addEventListener("click", () => {
-          const res = rpg.answerPartner(i, who);
-          if (!res?.ok) return;
-          if (res.correct) audio.blip(); else audio.error?.();
-          if (rpg.duel.phase === "victory") {
-            audio.chime();
-            if (!rpg.duel.training) onVictory?.(rpg.duel.result);
-          }
-          render();
-          focusAction();
-        });
-        opts.appendChild(b);
-      });
-      box.appendChild(opts);
-    }
-    return box;
-  }
-
-  function renderEnd(body, d) {
-    const win = d.phase === "victory";
-    const box = el("div", `duel-end ${win ? "win" : "lose"}`);
-    box.appendChild(el("h3", "", d.training ? (win ? "Treino concluído" : "Treino encerrado") : (win ? "O guardião caiu" : "O vale o devolveu")));
-    if (d.training) {
-      box.appendChild(el("p", "", win
-        ? "Sem sangue, sem saque. A perícia da região subiu; a pergunta volta quando você quiser."
-        : "Sem sangue. O treino existe para o erro não acontecer lá embaixo."));
-    } else if (win && d.result) {
-      box.appendChild(el("p", "", `+${d.result.xp} XP · perícia de ${CONTINENTS[d.ground.continent]?.name || "continente"} subiu.`));
-      const loot = el("div", "duel-loot");
-      for (const item of d.result.loot) {
-        loot.appendChild(el("span", "loot-chip", `${ITEMS[item.id]?.name || "Item"} ×${item.qty}`));
-      }
-      box.appendChild(loot);
-    } else {
-      box.appendChild(el("p", "", "Você acordou no Porto do Início, com a vida cheia. O vale não guardou o que aconteceu."));
-    }
-    body.appendChild(box);
-    const b = el("button", "duel-next", win ? "voltar ao mapa" : "levantar");
-    b.type = "button";
-    b.addEventListener("click", advance);
-    body.appendChild(b);
-  }
-
-  function useVoice() {
-    const d = rpg.duel;
-    if (!d || d.phase !== "question") return false;
-    if (vozLida) {
-      pararVoz();
-      vozLida = false;
-      render();
-      return false;
-    }
-    const question = d.question;
-    const ok = lerPergunta(question, {
-      onend: () => {
-        vozLida = false;
-        if (rpg.duel?.phase === "question" && rpg.duel.question === question) render();
-      },
-    });
-    if (!ok) {
-      toast("Este navegador não tem leitura em voz alta.", 2800);
-      return false;
-    }
-    vozLida = true;
-    render();
-    return true;
-  }
-
-  function useHint() {
-    const res = rpg.usarDica();
-    if (!res.ok) {
-      toast(res.reason, 3200);
-      audio.error?.();
-      render();
-      return false;
-    }
-    if (res.revelar != null) hinted = res.revelar;
-    audio.blip();
-    render();
-    focusAction();
-    return true;
-  }
-
-  function usePet() {
-    if (!rpg.duel || rpg.duel.phase !== "question") return false;
-    const res = rpg.usePetAbility({ duel: true, excluded: sparked });
-    if (!res.ok) {
-      toast(res.reason, 3200);
-      audio.error?.();
-      render();
-      return false;
-    }
-    if (res.sparks) sparked.push(...res.sparks);
-    else if (res.effect === "sabedoria") hinted = res.answer;
-    else if (res.effect === "aviso") {
-      petInfo = `${res.pet.name}: ${res.monster} é ${TIERS[res.tier]?.stars || ""} ${TIERS[res.tier]?.name || ""} e puxa ${res.theme || "o tema da sala"}.`;
-    } else if (res.effect === "cura") {
-      toast(`${res.pet.name} curou ${res.healed} de vida.`, 2800);
-    } else if (res.effect === "ritmo") {
-      toast(`${res.pet.name} marcou o ritmo: +1 de dano por dois minutos.`, 3000);
-    } else if (res.effect === "mana") {
-      toast(`${res.pet.name} devolveu 3 de mana.`, 2600);
-    }
-    audio.blip();
-    render();
-    return true;
-  }
-
-  function castSpell(id) {
-    if (!rpg.duel || rpg.duel.phase !== "question") return false;
-    if (id === "runa-faisca") return spark();
-    const res = rpg.castSpell(id);
-    if (!res.ok) { toast(res.reason, 2800); return false; }
-    audio.blip();
-    if (res.healed) toast(`A runa curou ${res.healed} de vida.`, 2400);
-    if (rpg.duel.phase === "victory") {
-      audio.chime();
-      if (!rpg.duel.training) onVictory?.(rpg.duel.result);
-    }
-    render();
-    return true;
-  }
-
-  function spark() {
-    if (!rpg.duel || rpg.duel.phase !== "question" || rpg.duel.monsterHp <= 0 || sparked.length) return false;
-    const res = rpg.castSpell("runa-faisca");
-    if (!res.ok) { toast(res.reason, 2800); return false; }
-    const q = rpg.duel.question;
-    const wrong = q.options.map((_, i) => i).filter((i) => i !== q.answer);
-    if (!wrong.length) return false;
-    sparked.push(wrong[Math.floor(Math.random() * wrong.length)]);
-    audio.blip();
-    render();
-    return true;
-  }
-
-  function answer(index) {
-    if (!rpg.duel || rpg.duel.phase !== "question") return;
-    pararVoz();
-    vozLida = false;
-    if (sparked.includes(index)) return;
-    lastPick = index;
-    const res = rpg.answer(index);
-    if (!res.ok) return;
-    if (res.correct) audio.blip();
-    else audio.error?.();
-    if (rpg.duel.phase === "victory") {
-      audio.chime();
-      if (!rpg.duel.training) onVictory?.(rpg.duel.result);
-    }
-    render();
-    focusAction();
-  }
-
-  function advance() {
-    if (!rpg.duel) return;
-    if (rpg.duel.phase === "victory" || rpg.duel.phase === "defeat") {
-      rpg.next();
-      lastPick = null;
-      stopSprite();
-      onClose?.();
-      return;
-    }
-    sparked = [];
-    hinted = null;
-    petInfo = "";
-    pararVoz();
-    vozLida = false;
-    const res = rpg.next();
-    if (res?.phase === "question") { render(); focusAction(); }
-  }
-
-  return { open, openTraining, close, answer, advance, render, drawSprite, spark, usePet };
+  return { open, openTraining, close, tecla: eventoTela, solta: soltarTecla, avancar, get combate() { return combate; } };
 }

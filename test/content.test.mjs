@@ -219,11 +219,11 @@ check(OUTFITS.filter((o) => o.quest).length === 91, `trajes de missão: ${OUTFIT
 check(OUTFITS.length === 102, `trajes: ${OUTFITS.length}, esperado 102`);
 check(OUTFITS.filter((o) => o.continent === "hub").length === 4, "trajes básicos livres mudaram de tamanho");
 
-// cada bicho desenhado tem um jeito de atrapalhar o duelo, e o chefe morre por fase
+// cada bicho desenhado tem um jeito de atrapalhar o combate, e o chefe muda de fase
 const creatureKinds = Object.keys(CREATURE_MODELS);
 for (const kind of creatureKinds) {
   if (kind === "boss") continue;
-  check(!!MONSTER_TRAITS[kind], `espécie ${kind} sem jeito de atrapalhar no duelo`);
+  check(!!MONSTER_TRAITS[kind], `espécie ${kind} sem jeito de atrapalhar no combate`);
 }
 const traitIds = new Set(Object.values(MONSTER_TRAITS).map((t) => t.id));
 for (const id of ["armor", "haste", "divide", "dodge"]) check(traitIds.has(id), `nenhuma espécie usa o jeito ${id}`);
@@ -231,26 +231,29 @@ for (const id of ["armor", "haste", "divide", "dodge"]) check(traitIds.has(id), 
 const duelRpg = new RPG({ getLevel: () => 1, gainXp: () => {}, toast: () => {}, audio: {} });
 const bossGround = GROUNDS.find((g) => g.dungeon === "dungeon-cs-arch");
 const bossDummy = { id: "dg-teste", name: "Teste", kind: "golem", tier: 3, level: 9 };
-check(!!duelRpg.startDuel(bossDummy, bossGround, true).ok, "chefe de teste não abriu duelo");
-duelRpg.data.hp = duelRpg.hpMax();
-duelRpg.duel.monsterHp = 12; // dois terços da vida do chefe
-let phaseRes = duelRpg.answer(duelRpg.duel.question.answer);
-check(phaseRes.feedback.phase === 2, `chefe não virou fase 2 ao passar de dois terços (${phaseRes.feedback.phase})`);
-duelRpg.next();
-duelRpg.duel.monsterHp = 6; // um terço
-phaseRes = duelRpg.answer(duelRpg.duel.question.answer);
-check(phaseRes.feedback.phase === 3, `chefe não virou fase 3 ao passar de um terço (${phaseRes.feedback.phase})`);
-check(duelRpg.duel.deck.every((item) => duelRpg.duel.deck.includes(item)), "baralho do chefe quebrou na fase 3");
+check(!!duelRpg.startDuel(bossDummy, bossGround, true).ok, "chefe de teste não abriu combate");
+const bossC = duelRpg.combate;
+const bossIni = bossC.inimigos[0];
+bossIni.hp = bossIni.hpMax * 0.6;
+bossC.atualizarFase(bossIni);
+check(duelRpg.duel.bossPhase === 2, `chefe não virou fase 2 a 60% da vida (${duelRpg.duel.bossPhase})`);
+bossIni.hp = bossIni.hpMax * 0.3;
+bossC.atualizarFase(bossIni);
+check(duelRpg.duel.bossPhase === 3, `chefe não virou fase 3 a 30% da vida (${duelRpg.duel.bossPhase})`);
 
-// slime se recompõe no erro e o dano do casco de pedra cai
+// slime se recompõe durante a luta
 const slimeRpg = new RPG({ getLevel: () => 1, gainXp: () => {}, toast: () => {}, audio: {} });
 slimeRpg.startDuel({ id: "dg-slime", name: "Gosma", kind: "slime", tier: 2, level: 6 }, bossGround, false);
-slimeRpg.data.hp = slimeRpg.hpMax();
-slimeRpg.duel.monsterHp = 4;
-const wrongIndex = slimeRpg.duel.question.options.map((_, i) => i).find((i) => i !== slimeRpg.duel.question.answer);
-const wrongRes = slimeRpg.answer(wrongIndex);
-check(slimeRpg.duel.monsterHp > 4, "gosma não se recompôs no erro");
-check(!!wrongRes.feedback.note, "erro sem explicação do jeito da espécie");
+const slimeC = slimeRpg.combate;
+const slimeIni = slimeC.inimigos[0];
+slimeIni.hp = 3;
+slimeIni.curaPronto = 0;
+slimeIni.proximoAtaque = 1e9;
+slimeC.agora = 6000;
+slimeC.eventos.length = 0;
+slimeC.atualizarInimigo(slimeIni, 16);
+check(slimeIni.hp > 3, "gosma não se recompôs durante a luta");
+check(slimeC.eventos.some((e) => e.tipo === "cura"), "cura da gosma sem aviso");
 
 // cavernas: seis, com entrada, cidade, monstros e chefe
 check(DUNGEONS.length === 23 + ready, `DUNGEONS tem ${DUNGEONS.length} cavernas, esperado ${23 + ready}`);
@@ -542,11 +545,11 @@ for (const q of CATALOG_CONTENT.quests) {
 }
 check(respostasQuiz.size >= 2, `quiz sempre na mesma letra: ${[...respostasQuiz].join(",")}`);
 
-// pergunta de duelo sempre com cinco alternativas na hora da luta
+// pergunta da coleta/PvP sempre com cinco alternativas na hora da luta
 const rpgOptions = new RPG({ getLevel: () => 1, gainXp: () => {}, toast: () => {}, audio: {} });
 for (const item of CATALOG_CONTENT.areas.slice(0, 8)) {
   const deck = rpgOptions.buildDeck(item.continent, [1], "");
-  check(deck.length > 0 && deck.every((q) => q.options.length === 5), `${item.id}: duelo sem 5 alternativas`);
+  check(deck.length > 0 && deck.every((q) => q.options.length === 5), `${item.id}: coleta sem 5 alternativas`);
 }
 
 // cobertura do catálogo: as 82 seções têm área, caverna, NPC e missão no jogo

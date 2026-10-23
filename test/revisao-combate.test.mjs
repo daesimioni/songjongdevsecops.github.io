@@ -27,16 +27,24 @@ try {
   rpg.pulse();
   assert.equal(rpg.mana(), rpg.manaMax() - 3, 'tempo com mana cheia não vira reserva invisível');
   const ground = GROUNDS.find(g => g.id === 'cs');
+  ground.dungeon = true;
   rpg.data.levers[ground.id] = true;
-  rpg.startDuel({id:'boss-rune',name:'Chefe',kind:'slime',tier:3}, ground, true);
+  rpg.startDuel({id:'boss-rune',name:'Chefe',kind:'boss',tier:3}, ground, true);
   const d = rpg.duel;
-  d.monsterHpMax = 10; d.monsterHp = 8;
-  rpg.addItem('runa-trovao', 3);
-  rpg.castSpell('runa-trovao');
-  assert.equal(d.bossPhase, 2, 'runa também provoca fase 2');
-  rpg.next(); rpg.castSpell('runa-trovao');
-  rpg.next(); rpg.castSpell('runa-trovao');
+  const c = rpg.combate;
+  const ini = c.inimigos[0];
+  d.habilidade = null;
+  ini.hpMax = 10;
+  ini.hp = 8;
+  ini.x = c.jogador.x + 20;
+  ini.y = c.jogador.y;
+  rpg.data.spells = { 'runa-trovao': true };
+  rpg.data.mana = rpg.manaMax();
+  for (let i = 0; i < 3; i++) {
+    c.magias.clear();
+    rpg.data.mana = rpg.manaMax();
+    assert.equal(c.usarMagia('runa-trovao').ok, true, `trovão ${i + 1} não saiu`);
+    if (i === 0) assert.equal(d.bossPhase, 2, 'runa também provoca fase 2');
+  }
   assert.equal(d.bossPhase, 3, 'runa também provoca fase 3');
-  assert.equal(d.feedback.phase, 3, 'interface recebe aviso de mudança de fase');
-  assert.equal(d.deckIndex, -1, 'próxima pergunta usa o baralho da nova fase');
 } finally { Date.now = originalNow; }

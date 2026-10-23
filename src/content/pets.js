@@ -17,7 +17,7 @@ export const PETS = {
     continent: "cs",
     where: "Cidade do Núcleo",
     passive: { hp: 5, sight: 1 },
-    ability: { id: "faro", name: "faro", mana: 2, cd: 60000, desc: "risca uma alternativa errada da pergunta" },
+    ability: { id: "faro", name: "faro", mana: 2, cd: 60000, desc: "mostra o ponto fraco: o próximo golpe acerta" },
   },
   coruja: {
     name: "Coruja do Lema",
@@ -25,7 +25,7 @@ export const PETS = {
     continent: "math",
     where: "Cidade do Cálculo",
     passive: { sight: 2 },
-    ability: { id: "sabedoria", name: "sabedoria", mana: 4, cd: 180000, desc: "aponta a alternativa certa, uma vez a cada três minutos" },
+    ability: { id: "sabedoria", name: "sabedoria", mana: 4, cd: 180000, desc: "lê a fraqueza: o próximo golpe soma 2 e não desvia" },
   },
   sapo: {
     name: "Sapo de Calcário",
@@ -57,7 +57,7 @@ export const PETS = {
     continent: "lingua",
     where: "Praça da Gramática",
     passive: { hp: 3, sight: 1 },
-    ability: { id: "tagarela", name: "tagarela", mana: 3, cd: 120000, desc: "risca duas alternativas erradas de uma vez" },
+    ability: { id: "tagarela", name: "tagarela", mana: 3, cd: 120000, desc: "distrai os bichos por dois segundos" },
   },
   sombra: {
     name: "Sombra da Caixa",
@@ -65,7 +65,7 @@ export const PETS = {
     continent: "ai",
     where: "Cidade das Máquinas",
     passive: { damage: 1 },
-    ability: { id: "aviso", name: "aviso", mana: 1, cd: 90000, desc: "mostra tema e fraqueza do monstro da frente" },
+    ability: { id: "aviso", name: "aviso", mana: 1, cd: 90000, desc: "arma um escudo contra o próximo golpe" },
   },
 };
 

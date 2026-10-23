@@ -22,9 +22,9 @@ export const VOCACOES = [
     fraqueza: "lento, visão curta e mana baixa",
     mult: { vida: 1.35, mana: 0.6, dano: 1.2, sofrido: 0.8, alcance: 0.85, furtividade: 0.9, coleta: 0.9, pet: 1 },
     subs: [
-      { id: "baluarte", name: "Baluarte", efeito: "cada erro tira 1 a menos", desc: "escudo: aguenta e volta" },
-      { id: "barbaro", name: "Bárbaro", efeito: "sem armadura o acerto vale +1, o erro tira +2", desc: "dano: sem casco, sem freio" },
-      { id: "campeao", name: "Campeão", efeito: "+20% de XP no duelo", desc: "provoca: briga que rende" },
+      { id: "baluarte", name: "Baluarte", efeito: "cada golpe sofrido tira 1 a menos", desc: "escudo: aguenta e volta" },
+      { id: "barbaro", name: "Bárbaro", efeito: "sem armadura o acerto vale +1 e o sofrido +2", desc: "dano: sem casco, sem freio" },
+      { id: "campeao", name: "Campeão", efeito: "+20% de XP no combate", desc: "provoca: briga que rende" },
     ],
   },
   {
@@ -35,7 +35,7 @@ export const VOCACOES = [
     mult: { vida: 0.85, mana: 1, dano: 1.15, sofrido: 1.1, alcance: 1.45, furtividade: 1.1, coleta: 1.05, pet: 1 },
     subs: [
       { id: "besteiro", name: "Besteiro", efeito: "acerto seguido de acerto soma +1", desc: "precisão: dois no mesmo lugar" },
-      { id: "cacador", name: "Caçador de recompensa", efeito: "a caçada rende um item extra", desc: "marca antes do duelo" },
+      { id: "cacador", name: "Caçador de recompensa", efeito: "a caçada rende um item extra", desc: "marca antes da luta" },
       { id: "alquimista", name: "Alquimista de campo", efeito: "frascos e bombas curam 1 a mais", desc: "troca mana por dano em área" },
     ],
   },
@@ -43,11 +43,11 @@ export const VOCACOES = [
     id: "assassino",
     name: "Assassino",
     forca: "furtividade alta e primeiro acerto forte",
-    fraqueza: "vida baixa e duelo longo é ruim",
+    fraqueza: "vida baixa e luta longa é ruim",
     mult: { vida: 0.85, mana: 1, dano: 1.1, sofrido: 1.1, alcance: 1, furtividade: 1.6, coleta: 1.1, pet: 1 },
     subs: [
       { id: "ladrao", name: "Ladrão", efeito: "abre baú selado sem gastar chave", desc: "chaves e baús: o cofre é seu" },
-      { id: "veneno", name: "Veneno", efeito: "o acerto deixa 1 de veneno por dois turnos", desc: "corrói devagar" },
+      { id: "veneno", name: "Veneno", efeito: "o acerto deixa 1 de veneno, que cai dois segundos depois", desc: "corrói devagar" },
       { id: "sombra", name: "Sombra", efeito: "primeiro acerto vale o dobro se o bicho não viu", desc: "o golpe que ninguém viu" },
     ],
   },

@@ -11,7 +11,7 @@ rpg.data.pets.papagaio = {bond:3}; rpg.data.petActive = 'papagaio';
 ui.render();
 let use = document.getElementById('sheet-body').querySelector('.company-pet').querySelectorAll('*').find(n=>n.tagName==='BUTTON');
 assert.equal(use.disabled,true);
-assert.match(use.textContent,/somente em duelo/);
+assert.match(use.textContent,/somente em combate/);
 rpg.data.pets.sapo = {bond:3}; rpg.data.petActive = 'sapo';
 rpg.data.petCd[rpg.activePet().ability.id] = Date.now()+10000;
 ui.render();

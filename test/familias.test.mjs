@@ -80,13 +80,14 @@ function novo() {
   const aberto = rpg.startDuel({ id: "familia-atom", name: "Átomo", kind: "atom", tier: 1 }, ground);
   assert.ok(aberto.ok, "duelo contra a família não abriu");
   const base = rpg.damageFor("cs");
-  const previsto = rpg.acertoPrevisto();
-  assert.equal(previsto, Math.round(base * 1.5 * 10) / 10, `previsão sem o +50%: ${previsto} (base ${base})`);
-  const antes = rpg.duel.monsterHp;
-  rpg.answer(rpg.duel.question.answer);
-  const levou = antes - rpg.duel.monsterHp;
+  const c = rpg.combate;
+  const ini = c.inimigos[0];
+  ini.hp = 99;
+  ini.hpMax = 99;
+  c.eventos.length = 0;
+  const levou = c.danoNoInimigo(ini, false);
   assert.equal(levou, Math.max(1, Math.round(base * 1.5)), `dano da família errado: ${levou} (base ${base})`);
-  assert.match(rpg.duel.feedback?.note || "", /Fraqueza da família estudada/, "o feedback não avisou a fraqueza");
+  assert.ok(c.eventos.some((e) => e.tipo === "familia"), "o combate não avisou a fraqueza da família");
 }
 
 // ---- sem a família completa, o dano é o de sempre ----
@@ -97,10 +98,12 @@ function novo() {
   rpg.data.hp = rpg.hpMax();
   assert.ok(rpg.startDuel({ id: "familia-sem", name: "Átomo", kind: "atom", tier: 1 }, ground).ok);
   const base = rpg.damageFor("cs");
-  const antes = rpg.duel.monsterHp;
-  rpg.answer(rpg.duel.question.answer);
-  assert.equal(antes - rpg.duel.monsterHp, base, "sem família completa não pode ter bônus");
-  assert.equal(rpg.acertoPrevisto(), base, "a previsão sem família precisa ser a base");
+  const c = rpg.combate;
+  const ini = c.inimigos[0];
+  ini.hp = 99;
+  ini.hpMax = 99;
+  const levou = c.danoNoInimigo(ini, false);
+  assert.equal(levou, base, "sem família completa não pode ter bônus");
 }
 
 // ---- o save guarda família válida e descarta o resto ----

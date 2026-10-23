@@ -21,7 +21,7 @@ function passiveText(passive = {}) {
   ].filter(Boolean).join(", ") || "sem passivo";
 }
 
-export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onOutfits, onLook, onPetAbility, onInventory }) {
+export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onOutfits, onLook, onPetAbility, onInventory, onCooking }) {
   let refresh = () => {};
   let abaFicha = "resumo";
   function render() {
@@ -155,7 +155,7 @@ export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onOu
       if (petUse && pet) {
         const onlyDuel = petAbilityNeedsDuel(pet.ability.id);
         const left = rpg.petCdLeft(pet.id);
-        petUse.textContent = onlyDuel ? `${pet.ability.name} · somente em duelo`
+        petUse.textContent = onlyDuel ? `${pet.ability.name} · somente em combate`
           : left > 0 ? `${pet.ability.name} · ${Math.ceil(left / 1000)}s`
             : `${pet.ability.name} · ${pet.ability.mana} mana`;
         petUse.disabled = onlyDuel || left > 0 || (pet.ability.id !== "mana" && currentMana < pet.ability.mana);
@@ -270,7 +270,7 @@ export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onOu
     const bonusGear = rpg.equipmentBonus();
     destino.appendChild(el("p", "company-hint", `${bonusGear.conjunto
       ? "Conjunto fechado: três peças do mesmo continente dão +2 de vida e +1 de dano."
-      : "Três peças do mesmo continente fecham conjunto: +2 de vida e +1 de dano."}${bonusGear.shield ? " Escudo equipado segura o primeiro erro de cada duelo." : ""}`));
+      : "Três peças do mesmo continente fecham conjunto: +2 de vida e +1 de dano."}${bonusGear.shield ? " Escudo equipado segura o primeiro golpe de cada combate." : ""}`));
 
     destino.appendChild(el("h3", "sheet-sec", "Builds"));
     const builds = el("div", "sheet-builds");
@@ -371,7 +371,12 @@ export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onOu
       card.append(el("b", "", recipe.name), el("span", "", need));
       const make = el("button", "item-use", "fazer");
       make.type = "button";
+      const pode = Object.entries(recipe.need).every(([id, n]) => rpg.itemCount(id) >= n);
       make.addEventListener("click", () => {
+        const produto = ITEMS[recipe.out];
+        // comida e poção passam pela pergunta da região antes de sair da forja
+        const comida = produto && (produto.heal || produto.mana || produto.buff);
+        if (comida && pode && onCooking?.(recipe)) return;
         const res = rpg.craft(recipe.id);
         if (!res.ok) {
           toast(res.reason, 3200);
@@ -418,7 +423,7 @@ export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onOu
     destino.appendChild(enchants);
 
     const note = el("p", "sheet-note");
-    note.textContent = "Responder certo nas caçadas sobe a perícia da região, e a perícia aumenta o dano. A caverna dá ferro, erva, cristal e madeira. A forja transforma; a horta devolve; o bicho da cidade aprende a confiar. Encantamentos ficam.";
+    note.textContent = "Responder certo nas caçadas sobe a perícia da região, e a perícia aumenta o dano. A caverna dá ferro, erva, cristal e madeira. A forja transforma; a horta devolve; a comida e a poção pedem uma pergunta da região; o bicho da cidade aprende a confiar. Encantamentos ficam.";
     destino.appendChild(note);
   }
 

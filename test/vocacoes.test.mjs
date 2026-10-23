@@ -118,41 +118,47 @@ assert.equal(subs.sub().id, "bruxo");
 subs.trocarVocacao("guerreiro");
 assert.equal(subs.sub(), null, "troca de vocação não zerou a subcategoria");
 
-// 8. mecânica de subcategoria no duelo: sombra dobra o primeiro acerto,
+// 8. mecânica de subcategoria no combate: sombra dobra o primeiro golpe,
 // besteiro soma no segundo, arcanista cura a cada três
-function dueloDe(vocation, sub) {
+const soloGround = { id: "voc-teste", continent: "math", name: "Sala", dungeon: true, loot: ["regua"] };
+function combateDe(vocation, sub) {
   localStorage.clear();
   const r = new RPG({ getLevel: () => 12, gainXp: () => {} });
   r.setVocation(vocation);
   if (sub) r.setSub(sub);
-  r.startTraining("math", 2);
-  // slime não desvia: o teste mede dano de subcategoria, não sorte de esquiva
-  r.duel.monster.kind = "slime";
-  return r;
+  r.startDuel({ id: `voc-${vocation}-${sub || "base"}`, name: "Alvo", kind: "slime", tier: 2 }, soloGround);
+  const c = r.combate;
+  const ini = c.inimigos[0];
+  ini.hp = 50;
+  ini.hpMax = 50;
+  ini.proximoAtaque = 1e9;
+  c.jogador.x = 100;
+  c.jogador.y = 100;
+  ini.x = 130;
+  ini.y = 100;
+  return { r, c, ini };
 }
-const sombra = dueloDe("assassino", "sombra");
-const hpInicial = sombra.duel.monsterHp;
-sombra.answer(sombra.duel.question.answer);
-const danoSombra = hpInicial - sombra.duel.monsterHp;
-assert.ok(danoSombra >= 2, `sombra deveria dobrar o primeiro acerto (tirou ${danoSombra})`);
-const referencia = dueloDe("assassino", null);
-const hpRef = referencia.duel.monsterHp;
-referencia.answer(referencia.duel.question.answer);
-assert.ok(danoSombra > hpRef - referencia.duel.monsterHp, "sombra não bateu mais que o normal");
+function golpe({ r, c, ini }) {
+  const antes = ini.hp;
+  c.atacar();
+  c.agora += 500;
+  return Math.round((antes - ini.hp) * 10) / 10;
+}
 
-const besteiro = dueloDe("atirador", "besteiro");
-const hpB = besteiro.duel.monsterHp;
-besteiro.answer(besteiro.duel.question.answer);
-const dano1 = hpB - besteiro.duel.monsterHp;
-besteiro.next();
-const hpB2 = besteiro.duel.monsterHp;
-besteiro.answer(besteiro.duel.question.answer);
-const dano2 = hpB2 - besteiro.duel.monsterHp;
-assert.ok(dano2 > dano1, `besteiro deveria somar no segundo acerto (${dano1} -> ${dano2})`);
+const sombra = combateDe("assassino", "sombra");
+const danoSombra = golpe(sombra);
+const referencia = combateDe("assassino", null);
+const danoRef = golpe(referencia);
+assert.ok(danoSombra > danoRef, `sombra não bateu mais que o normal (${danoSombra} x ${danoRef})`);
 
-const arcanista = dueloDe("mago", "arcanista");
-arcanista.data.hp = 10;
-for (let i = 0; i < 3; i++) { arcanista.answer(arcanista.duel.question.answer); arcanista.next(); }
-assert.ok(arcanista.data.hp > 10, "arcanista não curou a cada três acertos");
+const besteiro = combateDe("atirador", "besteiro");
+const dano1 = golpe(besteiro);
+const dano2 = golpe(besteiro);
+assert.ok(dano2 > dano1, `besteiro deveria somar no segundo golpe (${dano1} -> ${dano2})`);
 
-console.log("ok mesa de vocação: troca grátis no nível, custo depois, 15 subcategorias e três mecânicas conferidas no duelo");
+const arcanista = combateDe("mago", "arcanista");
+arcanista.r.data.hp = 10;
+for (let i = 0; i < 3; i++) golpe(arcanista);
+assert.ok(arcanista.r.data.hp > 10, "arcanista não curou a cada três golpes");
+
+console.log("ok mesa de vocação: troca grátis no nível, custo depois, 15 subcategorias e três mecânicas conferidas no combate");

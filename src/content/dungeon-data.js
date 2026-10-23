@@ -598,7 +598,7 @@ for (const d of DUNGEONS) {
 // diferente do que o jogador encontra lá embaixo.
 // A forma do bicho vem do nome, não de um sorteio: "Ácido" vira frasco,
 // "Acorde" vira nota, "Instrução" vira engrenagem. O nome carrega uma pista do
-// que se espera, e a arte do duelo, do mapa e do bestiário segue essa pista.
+// que se espera, e a arte do combate, do mapa e do bestiário segue essa pista.
 // A ordem importa: o que é específico vem antes do que é genérico.
 const FORMA_POR_PALAVRA = [
   [/\b(teorema|axioma|lema|prova|corolario|definicao|demonstracao|postulado|conjectura|paradoxo)(?:s|es)?\b/, "tome"],

@@ -106,38 +106,41 @@ conversa estiver aberta, o clique no mundo fecha a conversa e anda. WASD ou as
 setas cancelam o caminho.
 
 A superfície é sala de aula. Em cada clareira com bandeira fica um **instrutor**:
-`F` nele abre três treinos (fácil, médio, difícil) com o mesmo tema e o mesmo
-baralho da caverna daquele continente. No treino, errar **não tira vida**, a
-vitória **não dá loot** e a perícia do continente continua subindo.
+`F` nele abre três treinos (fácil, médio, difícil) com os bichos da caverna
+daquele continente. O treino é o mesmo combate de ação da caverna, mas o golpe
+**para em 1 de vida**: você não morre, a vitória **não dá loot** e a perícia do
+continente continua subindo.
 
-Quem paga é o bicho da caverna. Cada monstro abre uma prova de perguntas,
-sempre com **cinco alternativas, de A a E**, e a vida do bicho é o número de
-acertos que ele aguenta. As erradas são próximas de propósito: trocam uma
-palavra pela oposta ("ele nunca é maior", "um escalar que muda a direção", "se
-afasta da esperada"). Quando a pergunta não tem um par óbvio, entram primeiro
-alternativas da mesma área, escolhidas por semelhança com a resposta certa, e
-não um tópico aleatório de outro assunto. As perguntas geradas do catálogo já
-nascem com cinco opções escritas.
+Quem paga é o bicho da caverna, e a briga é de ação, numa arena dentro do
+modal. Você anda com WASD ou as setas (ou arrasta no celular), e o bicho
+telegrafa cada bote antes de bater:
 
-Os valores abaixo são a vida do monstro e o dano base do erro, antes dos
+- **J ataca** o bicho mais perto do alcance; três acertos seguidos somam +1 de
+  combo e cinco somam +2.
+- **K segura a guarda** e corta o dano; se a guarda sobe no instante do bote, o
+  parry zera o golpe e arma o contra-ataque (+2 no próximo acerto).
+- **L esquiva** para longe, fica invulnerável por um instante e recarrega em 1,1 s.
+- **1 a 6** usam as runas aprendidas, e **P** chama a habilidade do pet.
+- Vida zero: o boneco acorda no Porto com a vida cheia, sem perder item nem XP.
+
+Os valores abaixo são a vida do bicho e o dano base do golpe dele, antes dos
 modificadores de vocação, subcategoria, fase e proteção:
 
-- **fácil**: 3 de vida, erro com dano base 2.
-- **médio**: 7 de vida, erro com dano base 3.
-- **difícil**: 12 de vida, erro com dano base 4.
-- **chefe**: 18 de vida, erro com dano base 6.
+- **fácil**: 3 de vida, golpe com dano base 2.
+- **médio**: 7 de vida, golpe com dano base 3.
+- **difícil**: 12 de vida, golpe com dano base 4.
+- **chefe**: 18 de vida, golpe com dano base 6.
 
-O dano base do acerto tem teto de 4; subcategorias, caráter do monstro e ritmo
-podem alterar o resultado. Três acertos seguidos somam +1 e cinco somam +2.
-A quantidade de acertos necessária depende desses modificadores.
-O baralho do duelo começa pelas perguntas
-do andar do bicho e completa com as dos outros andares do continente, sem
-repetir pergunta no mesmo duelo.
+O dano do seu golpe tem teto de 4; subcategorias, equipamento, encantamento e
+combo podem alterar o resultado. O bicho tem um tempo próprio entre botes, e o
+chefe muda de fase em dois terços e um terço da vida: a habilidade dele troca e
+o golpe forte cobre o chão da arena. A pergunta saiu do combate e vive na
+coleta, na fazenda e na cozinha.
 
-Acertar também sobe a perícia do continente (Lógica, Abstração, Mecânica,
-Reação, Harmonia, Inferência). A perícia aumenta o dano. Cada vitória dá XP e
-item; os monstros voltam depois de cinco minutos, o chefe depois de vinte. O item
-do chefe é uma relíquia: cada uma soma 5 de vida máxima.
+Cada vitória dá XP e item; os monstros voltam depois de cinco minutos, o chefe
+depois de vinte. O item do chefe é uma relíquia: cada uma soma 5 de vida máxima.
+A perícia do continente (Lógica, Abstração, Mecânica, Reação, Harmonia,
+Inferência) sobe na coleta e aumenta o dano do golpe.
 
 **Fugir sempre arrisca.** A chance de levar um golpe na fuga cresce com o bicho:
 20% no andar de cima, 38% no meio, 55% no fundo e 72% no chefe. O café da horta
@@ -155,31 +158,30 @@ ou parede na frente do boneco cobre o corpo dele em vez de ficar sempre atrás.
 
 ## Matilha e magias
 
-Quando até quatro monstros veem você na mesma janela, todos perguntam **na
-mesma tela**, em duas colunas: o principal à esquerda e a matilha à direita,
-cada bicho com a própria pergunta e a própria vida. Cada um pode cair antes dos
-outros, e a vitória soma o XP e o loot de todos. Com mais de quatro na janela,
-três acompanham o principal e o resto entra na fila; o HUD mostra `matilha N`
-enquanto houver fila. Fugir limpa a fila; o risco é do bicho que
-está na frente. No celular as colunas empilham, mas as perguntas continuam
-juntas.
+Quando até quatro monstros veem você na mesma janela, todos entram na **mesma
+arena**: o principal no centro e os parceiros em volta, cada um com a própria
+vida. Cada um pode cair antes dos outros, e a vitória soma o XP e o loot de
+todos. Com mais de quatro na janela, três acompanham o principal e o resto entra
+na fila; o HUD mostra `matilha N` enquanto houver fila. Fugir limpa a fila; o
+risco é do bicho que está na frente. No celular a arena encolhe e o direcional e
+os botões J/K/L aparecem embaixo.
 
-A barra de **magias** do duelo tem seis runas forjáveis (forja da cidade):
+A barra de **magias** do combate tem seis runas forjáveis (forja da cidade):
 
 | runa | efeito | receita |
 |---|---|---|
-| faísca | risca uma alternativa errada da pergunta | veio 2, erva 1 |
-| trovão | 2 de dano no monstro da frente, sem responder | ferro 1, veio 2 |
-| fogo | 1 de dano em todos os monstros da tela | veio 2, ferro 2 |
-| gelo | passa a pergunta sem responder e sem dano | veio 2, madeira 1 |
+| faísca | 1 de dano no bicho à frente | veio 2, erva 1 |
+| trovão | 2 de dano no bicho à frente | ferro 1, veio 2 |
+| fogo | 1 de dano em todos os bichos da arena | veio 2, ferro 2 |
+| gelo | 1 de dano e congela o bicho por quase dois segundos | veio 2, madeira 1 |
 | cura | recupera 12 de vida | erva 2, veio 1 |
-| espelho | o próximo erro não tira vida | veio 3, erva 1 |
+| espelho | o próximo golpe não tira vida | veio 3, erva 1 |
 
 Cada uso gasta uma runa; a barra mostra quantas restam. A primeira carga de
 uma runa **ensina a magia**: quando as cargas acabam, ela continua saindo por
 mana (2 a 4), a mesma mana que alimenta as habilidades dos bichos. Runas
 aprendidas aparecem na barra com o custo em mana em vez da carga. Fora do
-duelo a runa volta para a mochila em vez de desaparecer.
+combate a runa volta para a mochila em vez de desaparecer.
 
 ## Nave, traje e equipamento
 
@@ -215,17 +217,17 @@ recarga, e um lugar próprio na aventura:
 
 | bicho | passivo | habilidade | mana | recarga |
 |---|---|---|---|---|
-| Gato do Porto | +5 vida, +1 luz | faro: risca uma alternativa errada | 2 | 60 s |
-| Coruja do Lema | +2 luz | sabedoria: aponta a alternativa certa | 4 | 180 s |
+| Gato do Porto | +5 vida, +1 luz | faro: o próximo golpe soma 1 e acerta o bicho que desvia | 2 | 60 s |
+| Coruja do Lema | +2 luz | sabedoria: o próximo golpe soma 2 e não desvia | 4 | 180 s |
 | Sapo de Calcário | +8 vida | cura: recupera 20 de vida | 3 | 120 s |
 | Vaga-lume de Vidro | +2 mana máxima | pulso: devolve 3 de mana | 0 | 90 s |
 | Grilo do Compasso | +1 mana por acerto | ritmo: +1 de dano por 2 min | 2 | 150 s |
-| Sombra da Caixa | +1 dano | aviso: tema e fraqueza do monstro | 1 | 90 s |
-| Papagaio do Vale | +3 vida, +1 luz | tagarela: risca duas alternativas | 3 | 120 s |
+| Sombra da Caixa | +1 dano | aviso: escudo contra o próximo golpe | 1 | 90 s |
+| Papagaio do Vale | +3 vida, +1 luz | tagarela: atordoa os bichos por quase dois segundos | 3 | 120 s |
 
 A **mana** começa em 10, volta 1 a cada 45 segundos e é o combustível das
-habilidades. A ficha mostra a mana e a recarga; no duelo, o botão do bicho fica
-na coluna da pergunta.
+habilidades. A ficha mostra a mana e a recarga; no combate, o botão do bicho
+fica ao lado da barra de magias.
 
 As **montarias** são compradas na ficha com material de caverna e só andam na
 superfície: entrar numa boca de caverna desmonta. O cavalo do cais corre 50%
@@ -284,22 +286,24 @@ laterais. O HUD marca a camada (`subsolo -1`).
 Lá embaixo valem as mesmas regras do mundo, com uma diferença: o bicho que vê
 você começa a batalha sozinho. Ele anda em volta do ninho, tem um raio de visão
 e precisa de linha reta até o aventureiro; quando isso acontece, aparece um `!`
-e o duelo de perguntas abre. Quanto mais fundo, mais forte: as salas perto da
+e a arena de combate abre. Quanto mais fundo, mais forte: as salas perto da
 entrada têm monstros de uma estrela, as do meio de duas, as do fundo de três, e
-o chefe fica no último beco, sem alavanca. Ele responde com perguntas médias e
-difíceis e deixa a relíquia do continente. Fugir de um encontro sempre pode custar
-vida, e o risco está escrito no botão de fuga.
+o chefe fica no último beco, sem alavanca. Ele luta com as duas fases extras e
+deixa a relíquia do continente. Fugir de um encontro sempre pode custar vida, e
+o risco está escrito no botão de fuga.
 
 Cada sala tem baú. Baú fundo é selado e pede uma **Chave de Caverna**, que se
 faz na forja. A caverna dá ferro, erva, cristal de veio e madeira; os **veios de
 cristal** presos nas salas só se abrem com uma **picareta**, que também se forja.
 
 **Coleta é pergunta.** Perto de uma árvore o `F` corta madeira, perto da água
-pesca e, no veio da caverna, minera. Cada achado tem uma raridade e uma
-dificuldade: comum pede pergunta fácil, incomum média, raro difícil. O
-**lendário** pede duas perguntas seguidas e só entrega o item se acertar as
-duas. Acertar dá o item e XP da perícia; errar deixa o recurso onde está e não
-gasta a carga do veio. Peixes são comida e sobem com a raridade: lagoa cura 10,
+pesca, no veio da caverna minera e no canteiro da fazenda colhe erva. Cada
+achado tem uma raridade e uma dificuldade: comum pede pergunta fácil, incomum
+média, raro difícil. O **lendário** pede duas perguntas seguidas e só entrega o
+item se acertar as duas. Acertar dá o item e XP da perícia; errar deixa o
+recurso onde está e não gasta a carga do veio. Na forja, a receita de comida e
+poção também pergunta antes de sair: o acerto entrega o prato e desconta os
+materiais. Peixes são comida e sobem com a raridade: lagoa cura 10,
 prateado 16, escama azul 24 (+6 de mana) e o Peixe do Espelho cura 40 (+12 de
 mana).
 
@@ -429,7 +433,7 @@ ou modal abre, o foco entra nele e fica preso até fechar; ao sair, o foco volta
 para o botão que abriu. O `Tab` não passeia por trás do diálogo.
 
 O que muda na tela é anunciado: o prompt do chão, o recado da caverna, o
-resultado da pergunta e o título do duelo são regiões `aria-live`. Os botões têm
+resultado da coleta e o desfecho do combate são regiões `aria-live`. Os botões têm
 `type`, as imagens têm `alt` e os diálogos apontam para o próprio título com
 `aria-labelledby`. Com `prefers-reduced-motion`, as animações de interface param.
 
@@ -523,17 +527,17 @@ node test/forms.test.mjs
 ```
 
 A primeira cobre o progresso e a persistência das missões, o filtro que mantém
-conteúdo de fora fora dos canais, o ciclo de duelo, dano e chefe, a interpolação
+conteúdo de fora fora dos canais, o ciclo de combate, dano e chefe, a interpolação
 dos outros jogadores, a superfície sem monstro e com um instrutor por clareira, o
-treino sem dano e sem loot, o risco de fuga por andar, o dano direto e o respawn,
+treino que para em 1 de vida e sem loot, o risco de fuga por andar, o dano direto e o respawn,
 e a caverna: salas com chão, ligação da entrada até a cidade, linha de visão,
 chefe sem alavanca, a forja, os encantamentos, a comida com efeito, o bicho e a
-pergunta que casa com o tema. O duelo entre jogadores entra pela mesma prova: as
+coleta com a pergunta que casa com o tema. O duelo entre jogadores entra pela mesma prova: as
 cinco cartas, a dificuldade que vira dano e a compostura.
 
 A segunda confere o conteúdo inteiro: as 454 estações e seus textos, falas de NPC,
 291 missões, 561 itens, equipamento, relíquias por continente, receitas, encantos, as
-887 perguntas de duelo (sem repetição e com resposta válida), as cinco cartas do PvP por
+887 perguntas de coleta (sem repetição e com resposta válida), as cinco cartas do PvP por
 continente, as 93 cavernas e o mundo montado (93 instrutores, 186 bocas, nenhum
 monstro na superfície). Confere também a cobertura das 82 seções do catálogo:
 cada uma precisa de área, caverna, NPC com missão e perguntas próprias; e a

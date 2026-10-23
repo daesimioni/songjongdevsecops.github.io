@@ -68,8 +68,8 @@ const base = () => comMateriais();
   const rpg = base();
   assert.equal(rpg.enchant("escudo").ok, true);
   assert.ok(rpg.startDuel({ id: "encanto-escudo", name: "Alvo", kind: "slime", tier: 1 }, ground).ok);
-  assert.equal(rpg.duel.escudo, true, "o encanto de escudo não armou a carga do duelo");
-  assert.equal(rpg.erroPrevisto(), 0, "com escudo armado a previsão de erro deveria ser zero");
+  assert.equal(rpg.duel.escudo, true, "o encanto de escudo não armou a carga do combate");
+  assert.equal(rpg.combate.jogador.escudo, true, "com escudo armado o primeiro golpe deveria ser zero");
   rpg.flee();
 }
 {

@@ -255,7 +255,7 @@ function usarItem(id, res) {
     }
     if (id.startsWith("runa-")) {
       rpg.addItem(id, 1);
-      toast("A runa é para a pergunta do duelo. Guardei de volta.", 2800);
+      toast("A runa é para o combate. Guardei de volta.", 2800);
       return false;
     }
     return true;
@@ -288,6 +288,7 @@ const sheetUi = createSheet({
     }
   },
   onInventory: () => openInventory(),
+  onCooking: (recipe) => openCooking(recipe),
 });
 // ---- ganchos do ambiente: o que acontece no céu chega no HUD e na coleta ----
 const AVISO_CLIMA = {
@@ -341,6 +342,7 @@ duelUi = createDuel({
   rpg,
   toast,
   audio,
+  getAvatar: () => ({ colors: player.colors, look: player.look, gear: gearAtual() }),
   onClose: () => {
     closeModal("duel");
     if (state.desfechoPendente) {
@@ -392,6 +394,7 @@ dungeon = createDungeon({
   vitais: () => ({ hp: rpg.hp(), hpMax: rpg.hpMax(), mana: rpg.mana(), manaMax: rpg.manaMax() }),
   placa: () => ({ nome: player.name, cor: player.color }),
   onGather: (ctx) => openGather(ctx.kind, ctx),
+  onFarm: (ctx) => openFarm(ctx),
   onKeeper: () => openShop(),
   onConurbation: () => openTravel("caves"),
   onElevador: () => dungeon?.close("elevador"),
@@ -917,7 +920,7 @@ function openTraining(npc) {
   const name = NPCS[npc.id]?.name || "o instrutor";
   const continent = CONTINENTS[npc.continent]?.name || "o continente";
   $("training-title").textContent = `Treino com ${name}`;
-  $("training-sub").textContent = `Aqui o erro não tira sangue. O bicho de verdade espera na caverna de ${continent}.`;
+  $("training-sub").textContent = `Aqui o bicho não mata e não deixa saque. O combate é o mesmo da caverna de ${continent}.`;
   openModal("training");
   audio.open();
 }
@@ -997,6 +1000,34 @@ function gatherContinent() {
     if (d < bestD) { bestD = d; best = a.continent; }
   }
   return best;
+}
+
+function openFarm(ctx) {
+  if (!ctx) return false;
+  const ok = gatherUi?.open({
+    kind: "farm",
+    continent: ctx.continent,
+    reward: { resource: "erva", qty: ctx.qty, tier: 1, grade: "comum" },
+    commit: () => ctx.commit(),
+  });
+  if (!ok) return false;
+  openModal("gather");
+  return true;
+}
+
+// prato pronto ou poção: a receita pergunta antes de a forja trabalhar
+function openCooking(recipe) {
+  if (!recipe?.out) return false;
+  const continente = player.continentId || "hub";
+  const ok = gatherUi?.open({
+    kind: "cook",
+    continent: continente,
+    reward: { resource: recipe.out, qty: recipe.qty || 1, tier: 1, grade: "comum" },
+    commit: () => rpg.craft(recipe.id).ok,
+  });
+  if (!ok) return false;
+  openModal("gather");
+  return true;
 }
 
 function openGather(kind, extra = {}) {
@@ -3330,17 +3361,16 @@ window.addEventListener("keydown", (e) => {
     }
     return;
   }
+  // o combate é uma janela de ação: J, K, L, WASD e 1-6 são dele, não do HUD
+  if (state.modal === "duel" && duelUi && e.key !== "Escape" && e.key !== "Tab") {
+    if (duelUi.tecla(e)) e.preventDefault();
+    return;
+  }
   if (nativeActivation(e)) return;
   const k = e.key.toLowerCase();
   const gameActive = state.started && !state.panelOpen && !state.modal && !state.chatOpen && !dungeon?.isOpen();
   if (gameActive && ["arrowup", "arrowdown", "arrowleft", "arrowright", " "].includes(k)) e.preventDefault();
   if (!state.started) return;
-  if (state.modal === "duel" && duelUi) {
-    const letter = /^[a-e]$/.test(k) ? k.charCodeAt(0) - 97 : -1;
-    if (/^[1-5]$/.test(k)) { e.preventDefault(); duelUi.answer(Number(k) - 1); return; }
-    if (letter >= 0) { e.preventDefault(); duelUi.answer(letter); return; }
-    if (k === "enter" || k === " ") { e.preventDefault(); duelUi.advance(); return; }
-  }
   if (state.modal === "gather" && gatherUi) {
     const letter = /^[a-e]$/.test(k) ? k.charCodeAt(0) - 97 : -1;
     if (letter >= 0) { e.preventDefault(); gatherUi.answer(letter); return; }

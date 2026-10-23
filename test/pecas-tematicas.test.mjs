@@ -46,47 +46,32 @@ for (const [continente, tipo] of Object.entries(TEMA_DA_SALA)) {
   assert.ok(["oficina", "biblioteca", "observatorio"].includes(tipo), `tema desconhecido em ${continente}`);
 }
 
-// ---- biblioteca: a próxima pergunta nasce com duas alternativas riscadas ----
+// ---- biblioteca: a próxima pergunta da coleta nasce com duas riscadas ----
 {
   store.clear();
   const rpg = new RPG(opcoes);
   rpg.data.buffs.dica = Date.now() + 60000;
-  const aberto = rpg.startDuel({ id: "tema-dica", name: "Alvo", kind: "slime", tier: 1 }, ground);
-  assert.ok(aberto.ok, "duelo com dica guardada não abriu");
-  assert.equal(rpg.duel.eliminadas.length, 2, "a dica guardada deveria riscar duas alternativas");
-  assert.ok(rpg.duel.eliminadas.every((i) => i !== rpg.duel.question.answer), "riscou a alternativa certa");
+  const pergunta = rpg.buildDeck("cs", [1])[0];
+  const eliminadas = rpg.dicaGuardadaNaPergunta(pergunta);
+  assert.equal(eliminadas.length, 2, "a dica guardada deveria riscar duas alternativas");
+  assert.ok(eliminadas.every((i) => i !== pergunta.answer), "riscou a alternativa certa");
   assert.equal(rpg.data.buffs.dica, undefined, "a dica guardada precisa sumir ao ser usada");
   assert.ok(!rpg.buffView().some((b) => b.id === "dica"), "a dica usada não pode continuar no HUD");
-  rpg.flee();
 }
 
 // sem o selo da biblioteca, a pergunta começa limpa
 {
   store.clear();
   const rpg = new RPG(opcoes);
-  assert.ok(rpg.startDuel({ id: "tema-sem-dica", name: "Alvo", kind: "slime", tier: 1 }, ground).ok);
-  assert.equal(rpg.duel.eliminadas.length, 0, "sem biblioteca não pode riscar alternativa");
-  rpg.flee();
+  assert.deepEqual(rpg.dicaGuardadaNaPergunta(rpg.buildDeck("cs", [1])[0]), [], "sem biblioteca não pode riscar alternativa");
 }
 
-// o selo também vale no treino
-{
-  store.clear();
-  const rpg = new RPG(opcoes);
-  rpg.data.buffs.dica = Date.now() + 60000;
-  assert.ok(rpg.startTraining("cs", 1).ok, "treino com dica guardada não abriu");
-  assert.equal(rpg.duel.eliminadas.length, 2, "o treino também consome a dica guardada");
-  rpg.flee();
-}
-
-// selo vencido não risca nada e não some do save sozinho
+// selo vencido não risca nada
 {
   store.clear();
   const rpg = new RPG(opcoes);
   rpg.data.buffs.dica = Date.now() - 1000;
-  assert.ok(rpg.startDuel({ id: "tema-dica-velha", name: "Alvo", kind: "slime", tier: 1 }, ground).ok);
-  assert.equal(rpg.duel.eliminadas.length, 0, "dica vencida não vale");
-  rpg.flee();
+  assert.deepEqual(rpg.dicaGuardadaNaPergunta(rpg.buildDeck("cs", [1])[0]), [], "dica vencida não vale");
 }
 
 // ---- oficina e observatório: fontes e efeitos ----
@@ -117,4 +102,4 @@ assert.match(dungeon, /state\.seen\[i\] = 1/, "o observatório não acende o map
 assert.match(dungeon, /Esta peça já rendeu o que tinha nesta descida/, "peça sem limite por descida");
 assert.match(sala, /interact: true/, "a peça temática nasce sem interação");
 
-console.log("ok peças: oficina afia, biblioteca guarda dica para o duelo e treino, observatório acende a sala do chefe");
+console.log("ok peças: oficina afia, biblioteca guarda dica para a coleta, observatório acende a sala do chefe");

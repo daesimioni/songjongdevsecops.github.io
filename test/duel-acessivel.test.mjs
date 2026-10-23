@@ -1,30 +1,29 @@
-// Resultado do duelo sem depender de cor: ✓ na certa, ✗ na errada escolhida, e
-// as letras A-E continuam visíveis no toque. Roda sem navegador.
+// Combate acessível: a arena tem rótulo, as barras têm número, as teclas J/K/L
+// estão escritas e o resultado sai em aria-live. Roda sem navegador.
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { marcaDaOpcao } from "../src/ui/duel-marcas.js";
 
-// ---- a marca certa em cada caso ----
-assert.equal(marcaDaOpcao("question", 2, 2, 4), "", "pergunta não pode mostrar resultado");
-assert.equal(marcaDaOpcao("feedback", 2, 2, 4), "✓", "a alternativa certa precisa de ✓");
-assert.equal(marcaDaOpcao("feedback", 4, 2, 4), "✗", "a errada escolhida precisa de ✗");
-assert.equal(marcaDaOpcao("feedback", 1, 2, 4), "", "alternativa não escolhida e errada não ganha marca");
-assert.equal(marcaDaOpcao("feedback", 2, 2, 2), "✓", "acerto não pode virar ✗");
-assert.equal(marcaDaOpcao("victory", 0, 0, 0), "", "fim de duelo não precisa de marca");
-assert.equal(marcaDaOpcao("feedback", 0, undefined, 0), "", "sem resposta não inventa marca");
-
-// ---- a tela usa a marca e não esconde as letras no toque ----
+const html = fs.readFileSync(new URL("../index.html", import.meta.url), "utf8");
 const duel = fs.readFileSync(new URL("../src/ui/duel.js", import.meta.url), "utf8");
-const combat = fs.readFileSync(new URL("../css/combat.css", import.meta.url), "utf8");
-const touch = fs.readFileSync(new URL("../css/touch.css", import.meta.url), "utf8");
-assert.match(duel, /marcaDaOpcao\(d\.phase, i, q\.answer, lastPick\)/, "o duelo não usa a marca de resultado");
-assert.match(duel, /duel-mark \$\{marca === "✓" \? "right" : "wrong"\}/, "a marca não troca de estilo");
-assert.match(duel, /aria-hidden", "true"/, "a marca precisa ser escondida do leitor de tela (o texto já diz)");
-assert.match(combat, /\.duel-mark\.right/, "falta o estilo da marca certa");
-assert.match(combat, /\.duel-mark\.wrong/, "falta o estilo da marca errada");
-const linhaToque = touch.split("\n").find((l) => l.includes(".duel-option kbd")) || "";
-assert.ok(linhaToque && !/display:\s*none/.test(linhaToque), "no toque a letra da alternativa não pode sumir");
-const linhaPvp = touch.split("\n").find((l) => l.includes(".pvp-option kbd")) || "";
-assert.match(linhaPvp, /display:\s*none/, "a letra do PvP pode continuar escondida no toque");
+const css = fs.readFileSync(new URL("../css/combat.css", import.meta.url), "utf8");
 
-console.log("ok acessível: ✓ e ✗ no resultado do duelo e letras A-E visíveis no toque");
+function check(cond, msg) { assert.ok(cond, msg); }
+check(/id="duel-arena"[^>]*role="img"/.test(html) || /role="img"[^>]*id="duel-arena"/.test(html), "a arena não tem papel de imagem");
+check(/id="duel-arena"[^>]*aria-label="[^"]+"/.test(html) || /aria-label="[^"]+"[^>]*id="duel-arena"/.test(html), "a arena não tem descrição");
+check(/id="duel-arena"[^>]*tabindex="0"/.test(html), "a arena não recebe foco de teclado");
+for (const id of ["duel-hp-bar", "duel-mana-bar"]) {
+  check(new RegExp(`id="${id}"[^>]*role="progressbar"`).test(html), `${id} não é barra de progresso`);
+  check(new RegExp(`id="${id}"[^>]*aria-valuenow`).test(html), `${id} não anuncia o valor`);
+}
+for (const [id, tecla] of [["duel-attack", "J"], ["duel-guard", "K"], ["duel-dodge", "L"]]) {
+  const bloco = html.match(new RegExp(`<button[^>]*id="${id}"[\\s\\S]*?</button>`))?.[0] || "";
+  check(bloco.includes(`<kbd>${tecla}</kbd>`), `o botão ${id} não mostra a tecla ${tecla}`);
+}
+check(/aria-valuenow/.test(duel), "a tela não atualiza o valor acessível das barras");
+check(/aria-valuemax/.test(duel), "a tela não atualiza o máximo acessível das barras");
+check(/aria-live="polite"/.test(html), "o combate não tem aviso ao leitor de tela");
+check(/duel-enemy-hp/.test(duel) && /\.duel-enemy-hp/.test(css), "a vida do bicho não tem número visível");
+check(/\.duel-btn \{[^}]*min-height: 34px/.test(css), "os botões do combate ficaram pequenos demais");
+check(/touch-action: none/.test(css), "a arena não bloqueia o gesto de rolagem");
+check(/teste|combate/i.test(duel), "a tela do combate sumiu");
+console.log("ok combate acessível: arena rotulada, barras com número, J/K/L escritos e resultado anunciado");

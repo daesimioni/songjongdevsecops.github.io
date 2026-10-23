@@ -19,47 +19,47 @@ export const SKILLS = {
 };
 
 export const TIERS = {
-  // hp é quantas perguntas certas o bicho aguenta; dano é o que ele tira
-  // quando você erra. Fácil pede 3, médio 7, difícil 12, chefe 18.
+  // hp é a vida do bicho no combate de ação; dano é o golpe que ele tira.
+  // Fácil pede 3, médio 7, difícil 12, chefe 18.
   1: { name: "fácil", stars: "★", hp: 3, xp: 10, damage: 2 },
   2: { name: "médio", stars: "★★", hp: 7, xp: 18, damage: 3 },
   3: { name: "difícil", stars: "★★★", hp: 12, xp: 30, damage: 4 },
   4: { name: "chefe", stars: "☠", hp: 18, xp: 60, damage: 6 },
 };
 
-// Cada espécie atrapalha o duelo de um jeito. A mesma frase aparece no
+// Cada espécie atrapalha o combate de um jeito. A mesma frase aparece no
 // bestiário, então o que o jogador lê lá é o que acontece aqui.
 export const MONSTER_TRAITS = {
-  slime: { id: "divide", label: "divide: cura um pouco a cada erro seu" },
-  eye: { id: "dodge", label: "vê longe: às vezes desvia do seu acerto" },
-  bat: { id: "haste", label: "voo errático: morde duas vezes quando você erra" },
-  spider: { id: "dodge", label: "teia: às vezes desvia do seu acerto" },
-  wisp: { id: "haste", label: "fogo-fátuo: queima de novo quando você erra" },
-  scorpion: { id: "armor", label: "casco: seu acerto tira um de dano a menos" },
-  golem: { id: "armor", label: "pedra: seu acerto tira um de dano a menos" },
-  ant: { id: "haste", label: "fila: a colônia morde junto quando você erra" },
+  slime: { id: "divide", label: "divide: se regenera durante a luta" },
+  eye: { id: "dodge", label: "vê longe: às vezes desvia do seu golpe" },
+  bat: { id: "haste", label: "voo errático: morde duas vezes" },
+  spider: { id: "dodge", label: "teia: às vezes desvia do seu golpe" },
+  wisp: { id: "haste", label: "fogo-fátuo: queima de novo" },
+  scorpion: { id: "armor", label: "casco: seu golpe tira um de dano a menos" },
+  golem: { id: "armor", label: "pedra: seu golpe tira um de dano a menos" },
+  ant: { id: "haste", label: "fila: a colônia morde junto" },
   moth: { id: "dodge", label: "asa: some no escuro e desvia" },
-  beetle: { id: "armor", label: "élitro: seu acerto tira um de dano a menos" },
-  crab: { id: "armor", label: "carapaça: seu acerto tira um de dano a menos" },
-  jelly: { id: "divide", label: "gelatina: se recompõe quando você erra" },
-  imp: { id: "haste", label: "trapaça: ataca de novo quando você erra" },
-  sentinel: { id: "armor", label: "placa: seu acerto tira um de dano a menos" },
-  serpent: { id: "divide", label: "troca de pele: cura quando você erra" },
+  beetle: { id: "armor", label: "élitro: seu golpe tira um de dano a menos" },
+  crab: { id: "armor", label: "carapaça: seu golpe tira um de dano a menos" },
+  jelly: { id: "divide", label: "gelatina: se regenera durante a luta" },
+  imp: { id: "haste", label: "trapaça: ataca mais rápido" },
+  sentinel: { id: "armor", label: "placa: seu golpe tira um de dano a menos" },
+  serpent: { id: "divide", label: "troca de pele: se regenera durante a luta" },
   // formas que vieram dos nomes: livro, símbolo, nota, átomo, cristal,
   // engrenagem, nó, prisma, vetor e frasco
-  tome: { id: "armor", label: "capa dura: seu acerto tira um de dano a menos" },
+  tome: { id: "armor", label: "capa dura: seu golpe tira um de dano a menos" },
   glyph: { id: "dodge", label: "símbolo: muda de forma e desvia" },
-  note: { id: "haste", label: "eco: ataca de novo quando você erra" },
-  atom: { id: "divide", label: "fissão: se divide quando você erra" },
-  crystal: { id: "armor", label: "aresta: seu acerto tira um de dano a menos" },
-  gear: { id: "armor", label: "engrenagem: seu acerto tira um de dano a menos" },
-  node: { id: "haste", label: "rede: ataca em paralelo quando você erra" },
-  prism: { id: "dodge", label: "refração: às vezes desvia do seu acerto" },
-  vector: { id: "haste", label: "direção: ataca de novo quando você erra" },
-  flask: { id: "divide", label: "reação: se recompõe quando você erra" },
+  note: { id: "haste", label: "eco: ataca mais rápido" },
+  atom: { id: "divide", label: "fissão: se regenera durante a luta" },
+  crystal: { id: "armor", label: "aresta: seu golpe tira um de dano a menos" },
+  gear: { id: "armor", label: "engrenagem: seu golpe tira um de dano a menos" },
+  node: { id: "haste", label: "rede: ataca em paralelo" },
+  prism: { id: "dodge", label: "refração: às vezes desvia do seu golpe" },
+  vector: { id: "haste", label: "direção: ataca mais rápido" },
+  flask: { id: "divide", label: "reação: se regenera durante a luta" },
 };
 
-// Nome de leitura e fraqueza de cada espécie. Ficam aqui para o duelo, o
+// Nome de leitura e fraqueza de cada espécie. Ficam aqui para o combate, o
 // diário e o bestiário contarem a mesma história sobre o mesmo bicho.
 export const MONSTER_LABELS = {
   slime: "gosma", eye: "olho", golem: "golem", bat: "morcego",
@@ -260,18 +260,18 @@ export const ITEMS = {
   "anel-contexto": { name: "Anel de Contexto", continent: "ai", slot: "ring", damage: 1, desc: "Lembra do último golpe e ajusta o próximo. A conversa tem memória curta." },
   "manto-tokens": { name: "Manto de Tokens", continent: "ai", slot: "armor", hp: 4, desc: "Costurado com pedaços de palavras. Cada rasgo vira uma nova frase." },
   "capuz-prompt": { name: "Capuz de Prompt", continent: "ai", slot: "helmet", hp: 3, desc: "Uma instrução bordada na aba. Quem veste pede antes de apanhar." },
-  "runa-faisca": { name: "Runa da Faísca", continent: "hub", use: "spark", desc: "Uma carga de magia: elimina uma alternativa errada na pergunta atual do duelo. Some ao usar." },
-  "runa-trovao": { name: "Runa do Trovão", continent: "hub", use: "thunder", desc: "Dá 2 de dano no monstro da frente sem responder pergunta. Some ao usar." },
-  "runa-fogo": { name: "Runa do Fogo", continent: "hub", use: "fire", desc: "Dá 1 de dano em todos os monstros da tela, inclusive a matilha. Some ao usar." },
-  "runa-gelo": { name: "Runa do Gelo", continent: "hub", use: "ice", desc: "Congela o tempo: passa a pergunta atual sem responder e sem levar dano. Some ao usar." },
-  "runa-cura": { name: "Runa da Cura", continent: "hub", use: "heal", desc: "Recupera 12 de vida durante o duelo. Some ao usar." },
-  "runa-espelho": { name: "Runa do Espelho", continent: "hub", use: "mirror", desc: "O próximo erro não tira vida sua. Some ao usar." },
-  "runa-bencao": { name: "Runa da Bênção", continent: "hub", use: "bless", desc: "Cura 8 e arma o escudo do próximo erro. Some ao usar." },
-  "runa-mente": { name: "Runa da Mente", continent: "hub", use: "mind", desc: "Devolve 6 de mana durante o duelo. Some ao usar." },
-  "runa-eco": { name: "Runa do Eco", continent: "hub", use: "echo", desc: "O próximo acerto soma 2 de dano. O eco espera a sua vez. Some ao usar." },
+  "runa-faisca": { name: "Runa da Faísca", continent: "hub", use: "spark", desc: "Uma carga de magia: 1 de dano no bicho à frente. Some ao usar." },
+  "runa-trovao": { name: "Runa do Trovão", continent: "hub", use: "thunder", desc: "Dá 2 de dano no bicho à frente; o alquimista soma 1. Some ao usar." },
+  "runa-fogo": { name: "Runa do Fogo", continent: "hub", use: "fire", desc: "Dá 1 de dano em todos os bichos da arena; o alquimista soma 1. Some ao usar." },
+  "runa-gelo": { name: "Runa do Gelo", continent: "hub", use: "ice", desc: "Dá 1 de dano e congela o bicho por quase dois segundos. Some ao usar." },
+  "runa-cura": { name: "Runa da Cura", continent: "hub", use: "heal", desc: "Recupera 12 de vida durante o combate. Some ao usar." },
+  "runa-espelho": { name: "Runa do Espelho", continent: "hub", use: "mirror", desc: "O próximo golpe não tira vida sua. Some ao usar." },
+  "runa-bencao": { name: "Runa da Bênção", continent: "hub", use: "bless", desc: "Cura 8 e arma o escudo do próximo golpe. Some ao usar." },
+  "runa-mente": { name: "Runa da Mente", continent: "hub", use: "mind", desc: "Devolve 6 de mana durante o combate. Some ao usar." },
+  "runa-eco": { name: "Runa do Eco", continent: "hub", use: "echo", desc: "O próximo acerto soma 2 de dano. Some ao usar." },
   "runa-punhal": { name: "Runa do Punhal", continent: "hub", use: "dagger", desc: "Tira 1 de vida agora e soma 1 no próximo acerto. Some ao usar." },
-  "runa-corrente": { name: "Runa da Corrente", continent: "hub", use: "chain", desc: "Tira 1 de vida do bicho da frente e de cada parceiro da matilha. Some ao usar." },
-  "runa-lente": { name: "Runa da Lente", continent: "hub", use: "lens", desc: "Revela a alternativa certa da pergunta atual. Some ao usar." },
+  "runa-corrente": { name: "Runa da Corrente", continent: "hub", use: "chain", desc: "Tira 1 de vida de cada bicho da arena. Some ao usar." },
+  "runa-lente": { name: "Runa da Lente", continent: "hub", use: "lens", desc: "O próximo golpe soma 1 e acerta o bicho que costuma desviar. Some ao usar." },
   "capa-vale": { name: "Capa do Vale", continent: "hub", slot: "cloak", hp: 2, accent: "#b48cff", desc: "Tecido leve que guarda o sereno do porto. Abre na ficha e balança no passo." },
   "capa-submersa": { name: "Capa Submersa", continent: "hub", slot: "cloak", hp: 2, accent: "#6bd5ff", desc: "Saiu do Porto Submerso com a barra molhada. A água escorre sem molhar o resto." },
   "colar-corrente": { name: "Colar de Corrente", continent: "cs", slot: "necklace", hp: 4, desc: "Uma corrente de elos pequenos que nunca emperra." },
@@ -416,15 +416,15 @@ export const RECIPES = [
 
 export const ENCHANTS = [
   { id: "vigor", name: "Encanto de Vigor", desc: "+10 de vida máxima.", need: { veio: 4, erva: 4 } },
-  { id: "furor", name: "Encanto de Furor", desc: "+1 de dano em cada resposta certa.", need: { veio: 5, ferro: 5 } },
+  { id: "furor", name: "Encanto de Furor", desc: "+1 de dano em cada golpe.", need: { veio: 5, ferro: 5 } },
   { id: "luz", name: "Encanto de Luz", desc: "A lanterna da caverna enxerga mais longe.", need: { veio: 3, madeira: 3 } },
   { id: "couro", name: "Encanto de Couro", desc: "+5 de vida máxima.", need: { erva: 5, madeira: 3 } },
   { id: "folego", name: "Encanto de Fôlego", desc: "+5 de mana máxima.", need: { veio: 4, erva: 2 } },
-  { id: "punho", name: "Encanto de Punho", desc: "+1 de dano em cada resposta certa.", need: { ferro: 4, madeira: 2 } },
+  { id: "punho", name: "Encanto de Punho", desc: "+1 de dano em cada golpe.", need: { ferro: 4, madeira: 2 } },
   { id: "couraca", name: "Encanto de Couraça", desc: "Sofre 10% menos dano, com piso de 1.", need: { ferro: 6, veio: 2 } },
   { id: "passo", name: "Encanto de Passo", desc: "Anda 10% mais rápido.", need: { madeira: 4, erva: 3 } },
   { id: "olho", name: "Encanto de Olho", desc: "+2 de alcance na luz da lanterna.", need: { veio: 4, frasco: 2 } },
-  { id: "escudo", name: "Encanto de Escudo", desc: "Segura o primeiro erro de cada duelo.", need: { ferro: 5, veio: 3 } },
+  { id: "escudo", name: "Encanto de Escudo", desc: "Segura o primeiro golpe de cada combate.", need: { ferro: 5, veio: 3 } },
   { id: "avo", name: "Encanto do Avô", desc: "+10% de XP nas vitórias.", need: { catalisador: 2, veio: 3 } },
   { id: "sorte", name: "Encanto de Sorte", desc: "Um material a mais em uma em cada quatro vitórias.", need: { frasco: 3, cristal: 2 } },
 ];
@@ -2150,7 +2150,7 @@ for (const [areaId, lista] of Object.entries(PERGUNTAS_LEGADO)) {
 }
 
 // O baralho é A-E. O banco escreve seis alternativas; o corte para cinco é
-// aqui, mantendo a resposta e sem deixar a letra F aparecer no duelo.
+// aqui, mantendo a resposta e sem deixar a letra F aparecer na coleta.
 function cortaCinco(q) {
   if (!Array.isArray(q.options) || q.options.length <= 5) return q;
   // tira a alternativa errada mais curta: a certa não pode ficar sendo a única

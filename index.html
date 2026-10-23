@@ -460,18 +460,18 @@
       <div class="training-grid">
         <button type="button" class="training-card" data-tier="1">
           <b>fácil</b>
-          <span>duas perguntas. O erro não tira sangue.</span>
+          <span>combate curto. O bicho não mata no treino.</span>
         </button>
         <button type="button" class="training-card" data-tier="2">
           <b>médio</b>
-          <span>três perguntas. O mesmo tema da caverna.</span>
+          <span>combate médio. O mesmo tema da caverna.</span>
         </button>
         <button type="button" class="training-card" data-tier="3">
           <b>difícil</b>
-          <span>três perguntas. Sem rede.</span>
+          <span>combate longo. Mais vida e mais dano.</span>
         </button>
       </div>
-      <p class="training-note">O treino não tira vida e não deixa saque. A perícia da região sobe; o bicho de verdade só cai na caverna.</p>
+      <p class="training-note">O treino usa o mesmo combate das cavernas, mas o bicho não mata e não deixa saque. A perícia da região sobe; o bicho de verdade espera na caverna.</p>
     </div>
   </div>
 
@@ -489,18 +489,47 @@
   <div id="duel" class="modal duel-modal" role="dialog" aria-modal="true" aria-labelledby="duel-name" hidden>
     <div class="modal-card duel-card">
       <div class="duel-head">
-        <span id="duel-kicker"></span>
-        <button type="button" id="duel-flee" class="hud-btn" data-close="duel">fugir <kbd>Esc</kbd><span id="duel-risk"></span></button>
-      </div>
-      <div class="duel-top">
-        <canvas id="duel-sprite" width="200" height="200" aria-hidden="true"></canvas>
-        <div class="duel-meta">
+        <div class="duel-id">
+          <span id="duel-kicker"></span>
           <h2 id="duel-name"></h2>
           <p id="duel-sub"></p>
-          <div id="duel-meta"></div>
+          <span id="duel-variant" class="duel-variant" hidden></span>
+          <span id="duel-ability" class="duel-ability" hidden></span>
+        </div>
+        <div class="duel-head-side">
+          <span id="duel-phase" class="duel-phase" hidden></span>
+          <button type="button" id="duel-flee" class="hud-btn" data-close="duel">fugir <kbd>Esc</kbd><span id="duel-risk"></span></button>
         </div>
       </div>
-      <div id="duel-body" aria-live="polite"></div>
+      <div class="duel-hud" aria-label="vida e mana no combate">
+        <div class="duel-bars">
+          <div class="duel-bar self">
+            <div class="duel-bar-head"><span>sua vida</span><b id="duel-hp-text"></b></div>
+            <div id="duel-hp-bar" class="duel-bar-track" role="progressbar" aria-label="sua vida" aria-valuemin="0" aria-valuemax="24" aria-valuenow="24"><i id="duel-hp-fill"></i></div>
+          </div>
+          <div class="duel-bar mana">
+            <div class="duel-bar-head"><span>mana</span><b id="duel-mana-text"></b></div>
+            <div id="duel-mana-bar" class="duel-bar-track" role="progressbar" aria-label="sua mana" aria-valuemin="0" aria-valuemax="10" aria-valuenow="10"><i id="duel-mana-fill"></i></div>
+          </div>
+        </div>
+        <div id="duel-enemies" class="duel-enemies"></div>
+      </div>
+      <div class="duel-arena-wrap">
+        <canvas id="duel-arena" width="960" height="420" tabindex="0" role="img" aria-label="Arena do combate. Ande com WASD ou setas, ataque com J, defenda com K e esquive com L."></canvas>
+        <p id="duel-alert" class="duel-alert" aria-live="polite"></p>
+      </div>
+      <p id="duel-combo" class="duel-combo" hidden></p>
+      <div id="duel-controls" class="duel-controls">
+        <div class="duel-buttons">
+          <button type="button" id="duel-attack" class="duel-btn ataque"><kbd>J</kbd> atacar</button>
+          <button type="button" id="duel-guard" class="duel-btn defesa"><kbd>K</kbd> defender</button>
+          <button type="button" id="duel-dodge" class="duel-btn esquiva"><kbd>L</kbd> esquivar</button>
+          <button type="button" id="duel-pet" class="duel-btn bicho" hidden></button>
+        </div>
+        <div id="duel-skills" class="duel-skills" aria-label="runas e habilidades"></div>
+        <p class="duel-help"><span class="kb-only">WASD ou setas anda · <kbd>J</kbd> ataca · <kbd>K</kbd> defende (segure) · <kbd>L</kbd> esquiva · <kbd>1</kbd> a <kbd>6</kbd> usam as runas</span><span class="touch-only">arraste na arena para andar · toque nos botões para atacar, defender e esquivar</span></p>
+      </div>
+      <div id="duel-body" class="duel-end" aria-live="polite" hidden></div>
     </div>
   </div>
 
@@ -532,6 +561,10 @@
         <div><kbd>setas</kbd><span>andar</span></div>
         <div><kbd>Espaço</kbd><span>acender a nave</span></div>
         <div><kbd>F</kbd><span>interagir</span></div>
+        <div><kbd>J</kbd><span>atacar no combate</span></div>
+        <div><kbd>K</kbd><span>segurar a guarda</span></div>
+        <div><kbd>L</kbd><span>esquivar</span></div>
+        <div><kbd>1 a 6</kbd><span>magia no combate</span></div>
         <div><kbd>Q</kbd><span>abrir a conversa</span></div>
         <div><kbd>E</kbd><span>abrir a Rede</span></div>
         <div><kbd>Z</kbd><span>diário</span></div>
@@ -553,12 +586,12 @@
       <p class="help-note">O <strong>minimapa</strong> mostra a coordenada <kbd>x y z</kbd>: z 0 é a superfície, z -1 o subsolo e z -2 o Porto Submerso. A roda do mouse e os botões <strong>−</strong> e <strong>+</strong> aproximam, arrastar solta o mapa do boneco para espiar outro canto e o botão <strong>mapa</strong> volta a seguir e abre o vale inteiro, um ponto já revelado leva o boneco até lá e o <strong>−</strong> do canto recolhe o mapa para uma fita fina. O botão <strong>⤢</strong> abre o mesmo mapa em tela cheia, e o <kbd>Esc</kbd> volta ao canto. Dentro da caverna o mapa é o da caverna, e recolhe do mesmo jeito.</p>
       <p class="help-note">A <strong>Wiki</strong> (<kbd>H</kbd>) reúne tudo sobre o jogo: 2.312 fichas em 15 categorias, das 86 áreas e 93 cavernas aos 351 bichos e chefes, 561 itens, 40 receitas, encantos, 86 relíquias, pets e montarias, 291 missões, 194 NPCs, 454 páginas de curso, 102 trajes, 5 vocações e 27 fichas de sistema. A busca ignora acento, a ficha mostra o ícone e o que entra no jogo entra na wiki sozinho; ela abre até antes de criar personagem.</p>
       <p class="help-note">Os NPCs têm missões. Aperte <kbd>F</kbd> perto deles para aceitar, responder e entregar. O Diário (<kbd>Z</kbd>) guarda o que está em andamento e quanto falta.</p>
-      <p class="help-note">Na superfície, as clareiras com bandeira têm um <strong>instrutor</strong>. Com ele você treina o tema da caverna em três dificuldades, <strong>sem perder vida e sem levar item</strong>. A <strong>Ficha</strong> (<kbd>C</kbd>) mostra vida, perícias e mochila; a <strong>mochila</strong> (<kbd>I</kbd>) abre direto, e na caverna também tem botão no topo.</p>
-      <p class="help-note">A <strong>caverna</strong> é que paga: acertar fere o bicho, errar fere você. Fugir não é de graça: a chance de levar um golpe cresce com a dificuldade do monstro, e o café da horta reduz esse risco por um tempo.</p>
+      <p class="help-note">Na superfície, as clareiras com bandeira têm um <strong>instrutor</strong>. Com ele você treina a luta da caverna em três dificuldades, <strong>sem perder vida e sem levar item</strong>. A <strong>Ficha</strong> (<kbd>C</kbd>) mostra vida, perícias e mochila; a <strong>mochila</strong> (<kbd>I</kbd>) abre direto, e na caverna também tem botão no topo.</p>
+      <p class="help-note">A <strong>caverna</strong> é que paga: o bicho ataca de verdade. Espere o bote, defenda com <kbd>K</kbd> ou esquive com <kbd>L</kbd>, e devolva com <kbd>J</kbd> quando ele abrir a guarda; o parry no instante do golpe zera o dano e arma o contra-ataque. Fugir não é de graça: a chance de levar um golpe cresce com a dificuldade do monstro, e o café da horta reduz esse risco por um tempo.</p>
       <p class="help-note">Na <strong>Rede</strong> você desafia outro jogador: escolhe uma pergunta de muito fácil a muito difícil e ele responde para se defender. Errar custa compostura, não vida nem item. Quem chega a zero fica dez segundos desativado.</p>
       <p class="help-note">Na cidade subterrânea, a forja abre a Ficha, a mesa grava encantos permanentes, a horta quer semente e o bicho quer ração. Os veios de cristal pedem picareta. A escada do fundo sai na outra boca do continente, e a mestra vende equipamento por material.</p>
-      <p class="help-note">A coleta é pergunta. Perto de uma <strong>árvore</strong> você corta madeira, perto da <strong>água</strong> você pesca e, no veio da caverna, você minera. O achado sorteia o recurso e a dificuldade: mineral raro pede pergunta difícil. Acertar leva o recurso e experiência de perícia; errar deixa o recurso onde está.</p>
-      <p class="help-note">Na caverna, dois ou três bichos que veem você viram <strong>matilha</strong>: o próximo ataca depois do primeiro. A <strong>Runa da Faísca</strong> apaga uma alternativa errada da pergunta.</p>
+      <p class="help-note">A coleta é pergunta. Perto de uma <strong>árvore</strong> você corta madeira, perto da <strong>água</strong> você pesca, no veio da caverna você minera e no canteiro da fazenda você colhe. O achado sorteia o recurso e a dificuldade: mineral raro pede pergunta difícil. Acertar leva o recurso e experiência de perícia; errar deixa o recurso onde está.</p>
+      <p class="help-note">Na caverna, dois ou três bichos que veem você viram <strong>matilha</strong> e cercam a arena. O chefe muda de fase duas vezes: a habilidade dele troca e o golpe forte cobre o chão. As <strong>runas</strong> (1 a 6) ferem, curam e armam escudo dentro do combate.</p>
       <p class="help-note">A <strong>Ficha</strong> (<kbd>C</kbd>) tem <strong>equipamento</strong> de arma, elmo, armadura, pernas, botas, escudo, anel e colar, e o editor de <strong>trajes</strong>. Complete as cinco estações de uma região para abrir o traje dela. A roupa é a mesma na superfície e na caverna.</p>
       <p class="help-note">Ao lado de cada clareira há uma <strong>boca de caverna</strong>. Lá dentro, o bicho que vê você começa a batalha sozinho, e quanto mais fundo, mais forte. O chão dá ferro, erva, cristal e madeira; a forja da cidade subterrânea faz ferramentas, comida, tocha, chave e bomba. Baú fundo pede chave. <kbd>Esc</kbd> sobe de volta.</p>
       <p class="help-note">A <strong>Rede</strong> é a conversa do vale: canais por região, DMs privadas e a lista de quem está por perto. Sua conta é uma chave Nostr criada e guardada neste navegador, sem cadastro e sem servidor central. Só conteúdo marcado pelo jogo aparece ali. Na aba <strong>Pessoas</strong>, monte uma <strong>party</strong> de até oito jogadores.</p>

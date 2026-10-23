@@ -1,6 +1,6 @@
 import { sourcePaths } from "./source-paths.mjs";
 // Acabamento da arte: todo bicho e todo ícone de item ganham contorno escuro
-// de um pixel e véu de luz, e o desenho é o mesmo em mapa, duelo, bestiário e
+// de um pixel e véu de luz, e o desenho é o mesmo em mapa, combate, bestiário e
 // wiki. Sem isso o sprite era uma mancha chapada e o ícone sumia no painel.
 // Roda sem navegador: node test/arte-acabamento.test.mjs
 import assert from "node:assert/strict";
@@ -21,7 +21,7 @@ check(/semSombra/.test(creature), "sombra do chão entrando no contorno");
 
 for (const [arquivo, alvo] of [
   ["dungeon.js", "drawCreatureArt(ctx, m.kind, m.accent"],
-  ["duel.js", "drawCreatureArt(ctx, rpg.duel.boss ? \"boss\""],
+  ["duel.js", "drawCreatureArt(ctx, inimigo.boss ? \"boss\""],
   ["bestiary.js", "drawCreatureArt(ctx, bicho.tipo"],
   ["wiki.js", "drawCreatureArt(g, icone.kind"],
 ]) {

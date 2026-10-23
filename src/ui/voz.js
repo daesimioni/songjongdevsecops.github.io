@@ -1,4 +1,4 @@
-// Leitura em voz alta da pergunta do duelo. Usa o speechSynthesis do navegador,
+// Leitura em voz alta da pergunta de coleta. Usa o speechSynthesis do navegador,
 // sem dependência e sem chave: voz pt-BR quando existe, e no-op quando a API
 // não existe (node, navegador antigo). Nada aqui altera o estado do jogo.
 const LIMITE = 1200;

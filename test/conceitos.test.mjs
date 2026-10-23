@@ -36,17 +36,18 @@ const { RPG } = await import("../src/gameplay/rpg.js");
 const { GROUNDS } = await import("../src/content/rpg-data.js");
 const ground = GROUNDS.find((g) => g.id === "cs");
 const rpg = new RPG();
-rpg.startDuel({ id: "conceito-monstro", name: "Alvo", kind: "eye", tier: 1 }, ground);
-const areaA = rpg.duel.question.area || "cs";
-rpg.answer((rpg.duel.question.answer + 1) % rpg.duel.question.options.length);
-assert.equal(rpg.data.conceitos[areaA]?.w, 1, "erro deveria registrar conceito");
-rpg.next();
-const areaB = rpg.duel.question.area || "cs";
-rpg.answer(rpg.duel.question.answer);
-assert.ok((rpg.data.conceitos[areaB]?.r || 0) >= 1, "acerto deveria registrar conceito");
+rpg.registrarConceito("logic", false, "cs");
+assert.equal(rpg.data.conceitos.logic?.w, 1, "erro deveria registrar conceito");
+rpg.registrarConceito("logic", true, "cs");
+assert.ok((rpg.data.conceitos.logic?.r || 0) >= 1, "acerto deveria registrar conceito");
 rpg.save();
 const rpg2 = new RPG();
-assert.ok(rpg2.data.conceitos[areaA] || rpg2.data.conceitos[areaB], "conceito não persistiu no save");
+assert.ok(rpg2.data.conceitos.logic, "conceito não persistiu no save");
+// a coleta é quem alimenta o caderno agora
+const gather = fs.readFileSync(new URL("../src/ui/gather.js", import.meta.url), "utf8");
+assert.match(gather, /registrarConceito\(q\.area, false, current\.continent\)/, "a coleta não registra o erro");
+assert.match(gather, /registrarConceito\(q\.area, true, current\.continent\)/, "a coleta não registra o acerto");
+assert.match(gather, /duelDeck\(continent, tier\)/, "a coleta não usa o baralho adaptativo");
 
 // baralho prioriza o conceito vencido
 const rpg3 = new RPG();

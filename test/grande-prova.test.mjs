@@ -40,18 +40,16 @@ assert.equal(d.boss, true);
 assert.equal(d.bossPhase, 1);
 assert.ok(d.habilidade, "o guardião precisa de habilidade");
 const max = d.monsterHpMax;
-d.feedback = { correct: true, why: "" };
-d.monsterHp = Math.floor(max * 0.5);
-rpg.atualizarFaseChefe(d);
+const c = rpg.combate;
+const ini = c.inimigos[0];
+ini.hp = Math.floor(max * 0.5);
+c.atualizarFase(ini);
 assert.equal(d.bossPhase, 2, "a metade da vida devia abrir a fase 2");
-d.monsterHp = Math.floor(max * 0.2);
-rpg.atualizarFaseChefe(d);
+ini.hp = Math.floor(max * 0.2);
+c.atualizarFase(ini);
 assert.equal(d.bossPhase, 3, "um quinto da vida devia abrir a fase 3");
-// a última pergunta derruba o guardião e a prova vira vitória
-d.monsterHp = 1;
-d.phase = "question";
-const fim = rpg.answer(d.question.answer);
-assert.equal(fim.ok, true);
+// o último golpe derruba o guardião e a prova vira vitória
+c.aplicarDano(ini, 99);
 assert.equal(rpg.duel.phase, "victory", "a prova não terminou em vitória");
 assert.ok(rpg.duel.result, "a vitória não deixou resultado");
 const feito = registrarDesfecho(rpg.data, "guardar", 789);

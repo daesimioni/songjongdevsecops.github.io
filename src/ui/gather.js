@@ -3,10 +3,11 @@
 import { ITEMS } from "../content/rpg-data.js";
 import { CONTINENTS } from "../content/config.js";
 import { itemIconElement } from "../rendering/item-art.js";
+import { lerPergunta, pararVoz, vozDisponivel } from "./voz.js";
 
 const $ = (id) => document.getElementById(id);
 const LETTERS = "ABCDE";
-const NOMES = { vein: "mineração", tree: "madeira", water: "pesca" };
+const NOMES = { vein: "mineração", tree: "madeira", water: "pesca", farm: "fazenda", cook: "culinária" };
 const RARIDADE = { comum: "comum", incomum: "incomum", raro: "raro", lendario: "lendário" };
 const DIFICULDADE = { 1: "fácil", 2: "média", 3: "difícil" };
 
@@ -54,6 +55,7 @@ export function createGather({ rpg, audio, toast, onClose }) {
   let pick = -1;
   let done = false;
   let resultado = "";
+  let vozLida = false;
 
   // A pergunta é do tier do achado. O baralho de cada tier é pedido sozinho:
   // juntar os tiers numa chamada só ordena por tema e poderia servir uma
@@ -61,8 +63,15 @@ export function createGather({ rpg, audio, toast, onClose }) {
   // pedido não tiver pergunta escrita para o continente.
   function perguntasPara(continent, tier, quantas) {
     const out = [];
-    const tentados = new Set();
-    for (const t of [tier, 2, 1, 3]) {
+    // o baralho adaptativo começa na área mais fraca e traz a revisão vencida
+    for (const q of rpg.duelDeck(continent, tier)) {
+      if (q.tier !== tier) continue;
+      if (out.some((o) => o.q === q.q)) continue;
+      out.push(q);
+      if (out.length >= quantas) return out;
+    }
+    const tentados = new Set([tier]);
+    for (const t of [2, 1, 3]) {
       if (tentados.has(t)) continue;
       tentados.add(t);
       for (const q of rpg.buildDeck(continent, [t])) {
@@ -81,6 +90,7 @@ export function createGather({ rpg, audio, toast, onClose }) {
       return false;
     }
     current = { ...ctx, questions };
+    current.eliminadas = rpg.dicaGuardadaNaPergunta(questions[0]);
     etapa = 0;
     pick = -1;
     done = false;
@@ -90,6 +100,8 @@ export function createGather({ rpg, audio, toast, onClose }) {
   }
 
   function close() {
+    pararVoz();
+    vozLida = false;
     current = null;
     onClose?.();
   }
@@ -107,11 +119,19 @@ export function createGather({ rpg, audio, toast, onClose }) {
     const q = current.questions[etapa];
     if (i !== q.answer) {
       resultado = "errou";
+      pararVoz();
+      vozLida = false;
+      rpg.registrarConceito(q.area, false, current.continent);
+      rpg.registrarDistrator(q, i);
+      rpg.save();
       audio.error?.();
       render();
       focusAction();
       return;
     }
+    pararVoz();
+    vozLida = false;
+    rpg.registrarConceito(q.area, true, current.continent);
     rpg.addSkillXp(current.continent, q.tier);
     rpg.save();
     if (etapa < current.questions.length - 1) {
@@ -179,13 +199,38 @@ export function createGather({ rpg, audio, toast, onClose }) {
     const body = $("gather-body");
     body.textContent = "";
     body.appendChild(el("p", "duel-question", q.q));
+    if (!done && vozDisponivel()) {
+      const ouvir = el("button", "duel-voz", vozLida ? "parar leitura" : "ouvir a pergunta");
+      ouvir.type = "button";
+      ouvir.setAttribute("aria-pressed", vozLida ? "true" : "false");
+      ouvir.addEventListener("click", () => {
+        if (vozLida) {
+          pararVoz();
+          vozLida = false;
+          ouvir.textContent = "ouvir a pergunta";
+          ouvir.setAttribute("aria-pressed", "false");
+          return;
+        }
+        const falou = lerPergunta(q, { onend: () => { vozLida = false; ouvir.textContent = "ouvir a pergunta"; ouvir.setAttribute("aria-pressed", "false"); } });
+        vozLida = falou;
+        if (falou) {
+          ouvir.textContent = "parar leitura";
+          ouvir.setAttribute("aria-pressed", "true");
+        }
+      });
+      body.appendChild(ouvir);
+    }
     const opts = el("div", "duel-options");
     q.options.forEach((text, i) => {
       const b = el("button", "duel-option");
       b.type = "button";
       b.appendChild(el("kbd", "", LETTERS[i] || String(i + 1)));
       b.appendChild(el("span", "", text));
-      if (done) {
+      if (!done && current.eliminadas?.includes(i)) {
+        b.classList.add("eliminada");
+        b.disabled = true;
+        b.appendChild(el("em", "duel-mark", "riscada"));
+      } else if (done) {
         b.disabled = true;
         if (i === q.answer) b.classList.add("right");
         else if (i === pick) b.classList.add("wrong");

@@ -1,4 +1,4 @@
-// Leitura em voz alta da pergunta do duelo: usa o speechSynthesis do navegador,
+// Leitura em voz alta da pergunta da coleta: usa o speechSynthesis do navegador,
 // com voz pt-BR quando existe e no-op quando a API não existe. Roda sem navegador.
 import assert from "node:assert/strict";
 import fs from "node:fs";
@@ -71,12 +71,12 @@ assert.equal(lerPergunta(pergunta), false, "sem a API a leitura não pode fingir
 assert.doesNotThrow(() => pararVoz(), "parar sem a API não pode quebrar");
 
 // ---- integração na fonte ----
-const duelFonte = fs.readFileSync(new URL("../src/ui/duel.js", import.meta.url), "utf8");
+const gatherFonte = fs.readFileSync(new URL("../src/ui/gather.js", import.meta.url), "utf8");
 const character = fs.readFileSync(new URL("../css/character.css", import.meta.url), "utf8");
-assert.match(duelFonte, /import \{ lerPergunta, pararVoz, vozDisponivel \} from "\.\/voz\.js"/, "o duelo não importa a voz");
-assert.match(duelFonte, /ouvir a pergunta/, "o duelo não mostra o botão de ouvir");
-assert.match(duelFonte, /pararVoz\(\)/, "o duelo não cala a leitura ao fechar ou responder");
-assert.match(duelFonte, /aria-pressed/, "o botão de voz não anuncia o estado");
+assert.match(gatherFonte, /import \{ lerPergunta, pararVoz, vozDisponivel \} from "\.\/voz\.js"/, "a coleta não importa a voz");
+assert.match(gatherFonte, /ouvir a pergunta/, "a coleta não mostra o botão de ouvir");
+assert.match(gatherFonte, /pararVoz\(\)/, "a coleta não cala a leitura ao fechar ou responder");
+assert.match(gatherFonte, /aria-pressed/, "o botão de voz não anuncia o estado");
 assert.match(character, /\.duel-voz\b/, "falta o estilo do botão de voz");
 
-console.log("ok voz: leitura pt-BR da pergunta e alternativas, fim avisa a tela, vazio e API ausente não quebram");
+console.log("ok voz: leitura pt-BR da pergunta da coleta, fim avisa a tela, vazio e API ausente não quebram");

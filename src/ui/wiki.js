@@ -67,7 +67,7 @@ export const COMO_JOGAR = [
     resumo: "o evento de três fases que abre o acervo; a escolha fica no save",
     campos: [
       ["Abertura", "a corrente das sete missões da Biblioteca Afogada"],
-      ["Fases", "três; a fase 2 revela a habilidade e a 3 aperta a pergunta"],
+      ["Fases", "três; a fase 2 revela a habilidade e a 3 muda o ritmo do chefe"],
       ["Desfecho", "guardar, devolver ou abrir; a escolha não pode ser refeita"],
     ],
   },
@@ -128,10 +128,13 @@ export const COMO_JOGAR = [
   },
   {
     nome: "Combate",
-    resumo: "cada bicho é uma pergunta de cinco alternativas",
+    resumo: "arena de ação: espere o bote, defenda e contra-ataque",
     campos: [
-      ["Regra", "acertar tira vida do bicho; errar custa vida sua"],
-      ["Magia", "teclas 1 a 6 usam as runas aprendidas e gastam mana"],
+      ["Atacar", "J baixa a arma no bicho mais perto; o combo sobe a cada acerto seguido"],
+      ["Defender", "K segura a guarda: corta 22% do dano, e o parry no instante do golpe zera"],
+      ["Esquivar", "L rola para longe, fica invulnerável e recarrega em 1,1s"],
+      ["Magia", "1 a 6 usam as runas aprendidas e gastam mana; P chama o pet"],
+      ["Chefe", "duas fases extras: a habilidade muda e o golpe forte cobre a arena"],
       ["Fuga", "sair do cone de visão evita o encontro"],
     ],
   },
@@ -154,11 +157,12 @@ export const COMO_JOGAR = [
     ],
   },
   {
-    nome: "Coleta e pesca",
-    resumo: "árvore, água e veio respondem com uma pergunta",
+    nome: "Coleta, fazenda e cozinha",
+    resumo: "árvore, água, veio e canteiro respondem com uma pergunta",
     campos: [
       ["Alvos", "árvore, água, veio e canteiro; F responde"],
       ["Raridade", "acertar rende material; peixe raro pede duas perguntas"],
+      ["Fazenda", "o canteiro colhe muda e semente; a receita sai na cozinha (Ficha)"],
       ["Clima", "chuva rende mais na coleta"],
     ],
   },
@@ -175,7 +179,7 @@ export const COMO_JOGAR = [
     nome: "Pets e montarias",
     resumo: "domar um bicho, dar ração e montar na cidade",
     campos: [
-      ["Pet", "segue, ajuda no duelo e tem passivo próprio"],
+      ["Pet", "segue, entra no combate com P e tem passivo próprio"],
       ["Montaria", "comprada na cidade; acelera e não entra em caverna"],
       ["Troca", "a mesa da cidade troca vocação e subcategoria"],
     ],

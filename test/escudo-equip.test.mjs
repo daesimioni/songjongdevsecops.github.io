@@ -1,5 +1,5 @@
-// Escudo equipado: segura o primeiro erro de cada duelo, avisa na tela e não
-// engole o erro que já era do espelho do chefe. Roda sem navegador.
+// Escudo equipado no combate de ação: segura o primeiro golpe, some ao gastar
+// e volta no combate seguinte. Roda sem navegador.
 import assert from "node:assert/strict";
 import fs from "node:fs";
 
@@ -10,101 +10,61 @@ globalThis.localStorage = {
   removeItem: (k) => store.delete(k),
   clear: () => store.clear(),
 };
-
 const { RPG } = await import("../src/gameplay/rpg.js");
-const { GROUNDS } = await import("../src/content/rpg-data.js");
-const ground = GROUNDS.find((g) => g.id === "cs");
-const opcoes = { getLevel: () => 1, gainXp: () => {}, toast: () => {}, audio: {} };
 
-function comEscudo(monstro = { id: "escudo-main", name: "Alvo", kind: "slime", tier: 1 }) {
+function novo({ escudo = false } = {}) {
   store.clear();
-  const rpg = new RPG(opcoes);
-  rpg.addItem("escudo-barramento", 1);
-  rpg.data.hp = rpg.hpMax();
-  const equipou = rpg.equip("escudo-barramento");
-  assert.ok(equipou.ok, `escudo não equipou: ${equipou.reason}`);
-  const aberto = rpg.startDuel(monstro, ground);
-  assert.ok(aberto.ok, `duelo não abriu: ${aberto.reason}`);
-  rpg.data.hp = rpg.hpMax();
+  const rpg = new RPG({ getLevel: () => 1, gainXp: () => {}, toast: () => {}, audio: {} });
+  if (escudo) {
+    rpg.addItem("escudo-barramento", 1);
+    rpg.equip("escudo-barramento");
+  }
   return rpg;
 }
+const ground = { id: "escudo-test", continent: "cs", name: "Escudo", dungeon: true, loot: ["chip"] };
+const monstro = { id: "escudo-bicho", name: "Bicho", kind: "golem", tier: 3 };
 
-// ---- o escudo entra na conta do equipamento ----
-{
-  const rpg = comEscudo();
-  assert.equal(rpg.equipmentBonus().shield, 1, "escudo equipado não entrou no bônus");
-  assert.equal(rpg.duel.escudo, true, "o duelo não nasceu com a carga do escudo");
-  assert.equal(rpg.erroPrevisto(), 0, "com escudo pronto a previsão de dano deveria ser zero");
-
-  const hpAntes = rpg.data.hp;
-  const resposta = rpg.answer((rpg.duel.question.answer + 1) % rpg.duel.question.options.length);
-  assert.ok(resposta.ok, "o erro não passou");
-  assert.equal(rpg.data.hp, hpAntes, "o escudo não segurou o dano");
-  assert.equal(resposta.feedback.blocked, true, "o retorno não disse que foi bloqueado");
-  assert.equal(resposta.feedback.escudo, true, "o retorno não marcou o escudo");
-  assert.equal(rpg.duel.escudo, false, "a carga do escudo não foi gasta");
-  assert.match(resposta.feedback.note, /escudo segurou/, "a nota do escudo não apareceu");
-
-  // segundo erro: agora dói
-  rpg.next();
-  const depois = rpg.answer((rpg.duel.question.answer + 1) % rpg.duel.question.options.length);
-  assert.ok(depois.ok, "o segundo erro não passou");
-  assert.ok(rpg.data.hp < hpAntes, "o segundo erro devia tirar vida");
-  assert.equal(depois.feedback.escudo, false, "o escudo não pode segurar duas vezes");
+function golpe(rpg) {
+  const c = rpg.combate;
+  const ini = c.inimigos[0];
+  ini.x = c.jogador.x + 20;
+  ini.y = c.jogador.y;
+  ini.proximoAtaque = 1e9;
+  c.agora += 1000;
+  ini.vento = false;
+  c.jogador.defendendo = false;
+  c.jogador.invulneravelAte = 0;
+  const antes = rpg.hp();
+  c.resolverGolpe(ini);
+  return antes - rpg.hp();
 }
 
-// ---- sem escudo equipado, nada muda ----
 {
-  store.clear();
-  const rpg = new RPG(opcoes);
-  assert.ok(rpg.startDuel({ id: "sem-escudo", name: "Alvo", kind: "slime", tier: 1 }, ground).ok);
-  rpg.data.hp = rpg.hpMax();
-  assert.equal(rpg.equipmentBonus().shield, 0, "sem escudo o bônus não pode existir");
-  assert.equal(rpg.duel.escudo, false, "duelo sem escudo não pode nascer protegido");
-  const hpAntes = rpg.data.hp;
-  rpg.answer((rpg.duel.question.answer + 1) % rpg.duel.question.options.length);
-  assert.ok(rpg.data.hp < hpAntes, "sem escudo o erro devia doer");
+  const rpg = novo({ escudo: true });
+  assert.equal(rpg.equipmentBonus().shield > 0, true, "o escudo equipado não entrou na conta");
+  assert.equal(rpg.startDuel(monstro, ground).ok, true);
+  assert.equal(rpg.combate.jogador.escudo, true, "o combate não nasceu com o escudo");
+  assert.equal(golpe(rpg), 0, "o escudo não segurou o primeiro golpe");
+  assert.equal(rpg.combate.jogador.escudo, false, "o escudo não foi gasto");
+  assert.ok(golpe(rpg) > 0, "o segundo golpe devia doer");
 }
-
-// ---- o espelho do chefe tem precedência e não gasta o escudo ----
 {
-  const rpg = comEscudo({ id: "escudo-chefe", name: "Chefe", kind: "slime", tier: 3 });
-  const d = rpg.duel;
-  d.boss = true;
-  d.bossPhase = 2;
-  d.habilidade = { id: "espelho", nome: "espelho partido", nota: "" };
-  d.espelhoUsado = false;
-  rpg.data.hp = rpg.hpMax();
-  const hpAntes = rpg.data.hp;
-  const res = rpg.answer((d.question.answer + 1) % d.question.options.length);
-  assert.ok(res.ok, "o erro no chefe não passou");
-  assert.equal(rpg.data.hp, hpAntes, "o espelho deveria segurar o dano");
-  assert.equal(d.escudo, true, "o espelho não pode gastar a carga do escudo");
-  assert.equal(res.feedback.escudo, false, "o retorno não pode culpar o escudo pelo bloqueio do espelho");
+  const rpg = novo();
+  assert.equal(rpg.startDuel(monstro, ground).ok, true);
+  assert.equal(rpg.combate.jogador.escudo, false, "sem escudo não pode nascer protegido");
+  assert.ok(golpe(rpg) > 0, "sem escudo o primeiro golpe já dói");
 }
-
-// ---- a carga volta no duelo seguinte ----
 {
-  const rpg = comEscudo();
-  const d = rpg.duel;
-  const idx = (d.question.answer + 1) % d.question.options.length;
-  d.shield = true; // runa já protegia: o escudo não deve ser gasto
-  rpg.answer(idx);
-  assert.equal(d.escudo, true, "a runa não pode gastar o escudo equipado");
-  rpg.next();
-  d.shield = false;
-  rpg.answer((d.question.answer + 1) % d.question.options.length);
-  assert.equal(d.escudo, false, "o escudo devia ter segurado o erro sem runa");
+  // a carga volta no combate seguinte
+  const rpg = novo({ escudo: true });
+  rpg.startDuel(monstro, ground);
+  golpe(rpg);
   rpg.flee();
-  assert.ok(rpg.startDuel({ id: "escudo-outro", name: "Outro", kind: "slime", tier: 1 }, ground).ok);
-  assert.equal(rpg.duel.escudo, true, "o escudo não recarregou no duelo seguinte");
+  rpg.startDuel(monstro, ground);
+  assert.equal(rpg.combate.jogador.escudo, true, "a carga do escudo não voltou");
 }
 
-// ---- a tela avisa ----
-const duel = fs.readFileSync(new URL("../src/ui/duel.js", import.meta.url), "utf8");
-const sheet = fs.readFileSync(new URL("../src/ui/sheet.js", import.meta.url), "utf8");
-assert.match(duel, /d\.escudo \? " \(o escudo segura uma vez\)"/, "o duelo não avisa que o escudo segura");
-assert.match(duel, /fb\.escudo \? "O escudo segurou o golpe\."/, "o feedback não diz que foi o escudo");
-assert.match(sheet, /Escudo equipado segura o primeiro erro/, "a ficha não explica o escudo");
-
-console.log("ok escudo: segura um erro por duelo, some ao gastar, não gasta com runa/espelho e recarrega no duelo novo");
+const combat = fs.readFileSync(new URL("../src/gameplay/combate.js", import.meta.url), "utf8");
+assert.match(combat, /j\.escudo/, "o combate não consulta o escudo");
+assert.match(combat, /escudo = false/, "o escudo não é gasto");
+console.log("ok escudo: o equipamento segura o primeiro golpe do combate e volta na próxima luta");

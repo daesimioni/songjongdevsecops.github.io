@@ -19,9 +19,9 @@ export const POSTS = {
       <p>No começo há uma pedra no porto. Ela não explica o vale. Apenas aquece a mão de quem chega.</p>
       <p>O vale foi erguido de fragmentos. Cada pedra no caminho guarda um: uma ideia que alguém deixou aqui para ser encontrada de novo. Aproxime-se e ela se abre. O instrumento ao lado espera as mãos, e nenhum dos dois cobra pressa. O que sai daqui não fica aqui: a ideia que você levanta de uma pedra continua funcionando do lado de fora, quando você menos espera.</p>
       <p>Cada pedra encontrada deixa uma marca no Diário e soma experiência. As missões dos viajantes pagam experiência e um título, e o Diário mostra quanto falta para o próximo. Não há ordem certa: o vale aceita quem chega por qualquer caminho.</p>
-      <p>Há quem more entre as pedras. Instrutores ensinam sem tirar vida. Viajantes pedem pequenos favores. Guardiões de caverna só devolvem o que sabem depois de uma pergunta, e cobram caro por erro. O Diário anota o que você já viu; a névoa cobre o que ainda não andou.</p>
+      <p>Há quem more entre as pedras. Instrutores ensinam sem tirar vida. Viajantes pedem pequenos favores. Guardiões de caverna não devolvem o que sabem sem luta, e cobram caro por cada bote perdido. O Diário anota o que você já viu; a névoa cobre o que ainda não andou.</p>
       <p>As regiões não se ligam todas por terra. Nas docas, as Pedras do Porto acendem para quem já chegou longe; o mar continua sendo mar. Pontes levam aos vizinhos. Abaixo do chão, o túnel da conurbação passa por baixo das fronteiras e desce ao Porto Submerso.</p>
-      <p>Nas clareiras, o instrutor ensina o mesmo tema da caverna sem cobrar vida. A caverna cobra: cada bicho é uma pergunta, cada erro é sangue. Entre os dois, você escolhe o quanto quer arriscar.</p>
+      <p>Nas clareiras, o instrutor ensina o mesmo tema da caverna sem cobrar vida. A caverna cobra: cada bicho é uma luta, cada bote perdido é sangue. Entre os dois, você escolhe o quanto quer arriscar.</p>
       <p>O vale também é habitado por outros viajantes. A Rede é a conversa deles: canais por região, mensagens privadas, uma praça onde os bonecos se veem. A chave que abre essa conversa é sua, feita neste navegador, sem cadastro. Quem não quer falar pode atravessar em silêncio; o vale não cobra companhia.</p>
       <blockquote>Não há mapa do vale inteiro. Há o que você já andou, e o próximo passo.</blockquote>
     `,
@@ -1120,7 +1120,7 @@ export const NPCS = {
       "Um somador é só uma frase feita de fios. Aprenda a ler a frase e o processador inteiro começa a fazer sentido.",
       "A memória do circuito é o que separa contar de lembrar.",
       "A boca de pedra ao lado do acampamento desce fundo. Lá embaixo o Bit não espera você apertar F: ele sente primeiro.",
-      "O baú da caverna às vezes guarda uma chave de fenda longa. Equipe na Ficha: a arma soma dano, não resolve a pergunta.",
+      "O baú da caverna às vezes guarda uma chave de fenda longa. Equipe na Ficha: a arma soma dano, mas não ganha a luta sozinha.",
       "O olho vê longe e estreito. Chegue por trás e ele continua olhando o corredor vazio.",
     ],
   },
@@ -1140,7 +1140,7 @@ export const NPCS = {
       "Mude a velocidade de lançamento e veja o corpo cair ou escapar. A órbita mora num intervalo muito estreito.",
       "Uma medida é sempre uma conversa entre o mundo e o instrumento. O instrumento nunca é mudo.",
       "A caverna mede o que a luz faz no escuro. Leve tocha, e desconfie do que ela ilumina.",
-      "O corredor largo é uma arena. O estreito é uma armadilha. Escolha a pergunta antes de escolher o caminho.",
+      "O corredor largo é uma arena. O estreito é uma armadilha. Escolha o ritmo antes de escolher o caminho.",
       "As lentes de prisma protegem os olhos e separam a luz. A física é isso: olhar de novo com outro instrumento.",
     ],
   },
@@ -1247,7 +1247,7 @@ export const NPCS = {
   "trainer-lingua": {
     name: "Mestre Camilo",
     lines: [
-      "Treinar aqui é de graça. Na grota, a mesma pergunta cobra vida e paga item.",
+      "Treinar aqui é de graça. Na grota, o mesmo bicho cobra vida e paga item.",
       "Comece pela concordância: acertar o plural do sujeito resolve metade das pegadinhas.",
       "A querida crase só é difícil quando a gente esquece de perguntar quem pede a preposição.",
     ],
@@ -1313,7 +1313,7 @@ export const NPCS = {
       "As seis ligações pi do anel não ficam alternando entre duas posições. Elas se espalham, e por isso o benzeno é simétrico.",
       "Isômero é fórmula igual, arranjo diferente. É como trocar as peças de lugar sem trocar o número de peças.",
       "Carbono com quatro grupos diferentes ganha duas versões que não se sobrepõem, como mão esquerda e direita. Isso é quiralidade.",
-      "A forja ao lado trabalha esse carbono quiral. Se a cadeia enrolar errado, ela acerta a pergunta.",
+      "A forja ao lado trabalha esse carbono quiral. Se a cadeia enrolar errado, o golpe sai torto.",
     ],
   },
   "trainer-chem-organic": {

@@ -59,9 +59,17 @@ function novo(opcoes = {}) {
   const rpg = novo();
   const base = TIERS[2].damage;
   assert.ok(rpg.startDuel({ id: "variante-dano", name: "Átomo", kind: "atom", tier: 2, danoExtra: 1 }, ground).ok);
-  const semExtra = rpg.erroPrevisto({ kind: "atom", tier: 2 }, 2, 1);
-  assert.equal(semExtra, rpg.danoSofrido(base), "a conta base mudou");
-  assert.equal(rpg.erroPrevisto(rpg.duel.monster, 2, 1), rpg.danoSofrido(base + 1), "+1 de dano da variante não entrou");
+  const c = rpg.combate;
+  const ini = c.inimigos[0];
+  ini.x = c.jogador.x + 20;
+  ini.y = c.jogador.y;
+  ini.proximoAtaque = 1e9;
+  c.agora = 1000;
+  c.jogador.defendendo = false;
+  c.jogador.invulneravelAte = 0;
+  const hp = rpg.hp();
+  c.resolverGolpe(ini);
+  assert.equal(hp - rpg.hp(), rpg.danoSofrido(base + 1), "+1 de dano da variante não entrou");
   rpg.flee();
 }
 {
@@ -87,7 +95,7 @@ function novo(opcoes = {}) {
   assert.equal(rpg.duel.monsterHpMax, TIERS[1].hp, "criatura comum não pode ter vida extra");
 }
 
-// ---- a caverna e o duelo usam a variante ----
+// ---- a caverna e o combate usam a variante ----
 const dungeon = fs.readFileSync(new URL("../src/app/dungeon.js", import.meta.url), "utf8");
 const duel = fs.readFileSync(new URL("../src/ui/duel.js", import.meta.url), "utf8");
 const css = fs.readFileSync(new URL("../css/combat.css", import.meta.url), "utf8");

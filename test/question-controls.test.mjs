@@ -1,48 +1,84 @@
-import assert from 'node:assert/strict';
-import {makeDocument} from './ui-dom.mjs';
-const ids=['gather-kicker','gather-title','gather-sub','gather-body','duel','duel-kicker','duel-name','duel-sub','duel-meta','duel-body'];
-const {document}=makeDocument(ids);globalThis.document=document;
-globalThis.localStorage={getItem:()=>null,setItem(){}};
-const {createGather}=await import('../src/ui/gather.js');
-let skills=0,items=0;
-const questions=[{q:'Primeira?',options:['A','B','C','D','E'],answer:0,tier:3,why:'Porque sim'},{q:'Segunda?',options:['A','B','C','D','E'],answer:1,tier:3,why:'Porque sim'}];
-const gather=createGather({rpg:{buildDeck:()=>questions,addSkillXp(){skills++;},addItem(){items++;},save(){}},toast(){},audio:{}});
-gather.open({kind:'vein',continent:'cs',reward:{resource:'ferro',qty:2,tier:3,grade:'lendario',rounds:2}});
-for(const invalid of [undefined,null,NaN,-1,5,'0',0.5])gather.answer(invalid);
-assert.equal(skills,0);assert.equal(items,0);
-assert.equal(document.getElementById('gather-body').querySelector('.duel-next'),null,'entrada inválida não encerra coleta');
+// Controles da pergunta que sobrou: a coleta. Entrada inválida, foco no
+// feedback, avanço e a segunda pergunta. Roda com DOM mínimo, sem browser.
+import assert from "node:assert/strict";
+import { makeDocument } from "./ui-dom.mjs";
+
+const ids = ["gather-kicker", "gather-title", "gather-sub", "gather-body"];
+const { document } = makeDocument(ids);
+globalThis.document = document;
+globalThis.localStorage = { getItem: () => null, setItem() {} };
+const { createGather } = await import("../src/ui/gather.js");
+
+let skills = 0;
+let itens = 0;
+const questions = [
+  { q: "Primeira?", options: ["A", "B", "C", "D", "E"], answer: 0, tier: 3, why: "Porque sim" },
+  { q: "Segunda?", options: ["A", "B", "C", "D", "E"], answer: 1, tier: 3, why: "Porque sim" },
+];
+const gather = createGather({
+  rpg: {
+    duelDeck: () => questions,
+    buildDeck: () => questions,
+    dicaGuardadaNaPergunta: () => [],
+    registrarConceito() {},
+    registrarDistrator() {},
+    addSkillXp() { skills++; },
+    addItem() { itens++; },
+    save() {},
+  },
+  toast() {},
+  audio: {},
+});
+gather.open({ kind: "vein", continent: "cs", reward: { resource: "ferro", qty: 2, tier: 3, grade: "lendario", rounds: 2 } });
+
+for (const invalido of [undefined, null, NaN, -1, 5, "0", 0.5]) gather.answer(invalido);
+assert.equal(skills, 0);
+assert.equal(itens, 0);
+assert.equal(document.getElementById("gather-body").querySelector(".duel-next"), null, "entrada inválida não encerra a coleta");
+
 gather.answer(0);
-assert.equal(skills,1,'pergunta válida ainda pode ser respondida');
-assert.equal(document.activeElement.className,'duel-next','feedback recebe foco');
+assert.equal(skills, 1, "pergunta válida ainda pode ser respondida");
+assert.equal(document.activeElement.className, "duel-next", "o feedback recebe foco");
 gather.advance();
-assert.equal(document.activeElement.className,'duel-option','segunda pergunta recebe foco');
-gather.answer(1);assert.equal(items,1);
-assert.equal(document.activeElement.className,'duel-next');
+assert.equal(document.activeElement.className, "duel-option", "a segunda pergunta recebe foco");
+gather.answer(1);
+assert.equal(itens, 1, "as duas certas entregam a recompensa");
+assert.equal(document.activeElement.className, "duel-next");
 gather.close();
-const {RPG}=await import('../src/gameplay/rpg.js');
-const {GROUNDS}=await import('../src/content/rpg-data.js');
-const {createDuel}=await import('../src/ui/duel.js');
-const rpg=new RPG();const ground=GROUNDS.find(g=>g.id==='cs');
-const ui=createDuel({rpg,toast(){},audio:{blip(){},chime(){}}});
-try {
-  ui.open({id:'control-main',kind:'slime',tier:3,name:'Principal'},ground,false,{id:'control-partner',kind:'slime',tier:1,name:'Parceiro'});
-  ui.answer(rpg.duel.question.answer);
-  assert.equal(document.activeElement.className,'duel-next');
-  ui.advance();assert.equal(document.activeElement.className,'duel-option');
-  rpg.data.pets.gato={bond:3};rpg.data.petActive='gato';
-  const q=rpg.duel.question;
-  const excluded=q.options.map((_,i)=>i).filter(i=>i!==q.answer);
-  const mana=rpg.mana();
-  assert.equal(rpg.usePetAbility({duel:true,excluded}).ok,false,'dica sem alternativas disponíveis não cobra mana');
-  assert.equal(rpg.mana(),mana);
-  const available=excluded.pop();
-  assert.deepEqual(rpg.usePetAbility({duel:true,excluded}).sparks,[available],'faro não risca alternativa já eliminada');
-  rpg.duel.monsterHp=0;
-  rpg.addItem('runa-faisca',1);
-  assert.equal(rpg.castSpell('runa-faisca').ok,false);
-  assert.equal(rpg.itemCount('runa-faisca'),1,'principal morto não consome carga de dica');
-  rpg.data.petCd.faro=0;
-  assert.equal(rpg.usePetAbility({duel:true}).ok,false,'principal morto não consome habilidade exclusiva de pergunta');
-  ui.render();
-  assert.equal(document.getElementById('duel-body').querySelector('.duel-pet').disabled,true);
-} finally {ui.close();}
+
+console.log("ok controles: a coleta valida entrada, foca o feedback e entrega depois das duas perguntas");
+
+// Fazenda e cozinha usam a mesma pergunta, mas cada uma commita o próprio
+// efeito: a horta colhe e a receita sai da forja só depois do acerto.
+let commits = 0;
+let itensAntes = itens;
+const gather2 = createGather({
+  rpg: {
+    duelDeck: () => questions,
+    buildDeck: () => questions,
+    dicaGuardadaNaPergunta: () => [],
+    registrarConceito() {},
+    registrarDistrator() {},
+    addSkillXp() {},
+    addItem() { itens++; },
+    save() {},
+  },
+  toast() {},
+  audio: {},
+});
+for (const [kind, recurso, rotulo] of [["farm", "erva", "fazenda"], ["cook", "caldo", "culinária"]]) {
+  commits = 0;
+  itensAntes = itens;
+  gather2.open({
+    kind,
+    continent: "hub",
+    reward: { resource: recurso, qty: 1, tier: 1, grade: "comum" },
+    commit: () => { commits++; return true; },
+  });
+  assert.match(document.getElementById("gather-kicker").textContent, new RegExp(rotulo), `a coleta de ${kind} não se identifica como ${rotulo}`);
+  gather2.answer(0);
+  assert.equal(commits, 1, `${kind}: o acerto não commitou o efeito`);
+  assert.equal(itens, itensAntes + 1, `${kind}: o acerto não guardou o recurso`);
+  gather2.advance();
+}
+console.log("ok fazenda e cozinha: a pergunta vem antes da colheita e da receita");

@@ -33,12 +33,13 @@ check(espelhoDoChefe("espelho", 2, false) === true, "espelho deveria segurar o p
 check(espelhoDoChefe("espelho", 2, true) === false, "espelho só segura uma vez");
 check(espelhoDoChefe("espelho", 1, false) === false, "espelho não vale na fase 1");
 
-// ---- integração com o RPG de verdade ----
+// ---- integração com o combate de verdade ----
 const store = new Map();
 globalThis.localStorage = { getItem: (k) => (store.has(k) ? store.get(k) : null), setItem: (k, v) => store.set(k, String(v)), removeItem: (k) => store.delete(k), clear: () => store.clear() };
 const { RPG } = await import("../src/gameplay/rpg.js");
 const { GROUNDS } = await import("../src/content/rpg-data.js");
 const ground = GROUNDS.find((g) => g.id === "cs");
+const hab = (id) => HABILIDADES.find((h) => h.id === id);
 
 function bossRpg() {
   store.clear();
@@ -49,95 +50,102 @@ function bossRpg() {
   assert.equal(rpg.startDuel(ground.boss, ground, true).ok, true);
   return rpg;
 }
-const errado = (d) => (d.question.answer + 1) % d.question.options.length;
-const hab = (id) => HABILIDADES.find((h) => h.id === id);
 
-// o chefe abre com a habilidade estável do id dele
+// o chefe abre com a habilidade estável do id dele e a fase 2 nasce do dano
 {
   const rpg = bossRpg();
   const d = rpg.duel;
-  check(d.habilidade?.id === habilidadeDoChefe(d.monster).id, "duelo não abriu com a habilidade do chefe");
-  d.bossPhase = 1;
-  d.monsterHp = Math.floor(d.monsterHpMax * 0.5);
-  rpg.answer(d.question.answer);
-  check(d.bossPhase === 2, "chefe não entrou na fase 2");
-  check((d.feedback.phaseNote || "").includes(d.habilidade.nome), "aviso da fase não nomeia a habilidade");
+  check(d.habilidade?.id === habilidadeDoChefe(d.monster).id, "o combate não abriu com a habilidade do chefe");
+  const ini = rpg.combate.inimigos[0];
+  ini.hp = ini.hpMax * 0.5;
+  rpg.combate.atualizarFase(ini);
+  check(d.bossPhase === 2 && ini.phase === 2, "o chefe não entrou na fase 2");
 }
 
-// ímpeto: o erro previsto soma 2 na fase 2
+// ímpeto: o golpe soma 2 na fase 2
 {
   const rpg = bossRpg();
+  const c = rpg.combate;
+  const ini = c.inimigos[0];
   const d = rpg.duel;
-  d.bossPhase = 2;
+  ini.phase = 2;
+  c.agora = 1000;
+  c.jogador.defendendo = false;
+  c.jogador.invulneravelAte = 0;
+  ini.x = c.jogador.x + 20;
+  ini.y = c.jogador.y;
   d.habilidade = hab("impeto");
-  const com = rpg.erroPrevisto();
+  const hp0 = rpg.hp();
+  c.resolverGolpe(ini);
+  const com = hp0 - rpg.hp();
+  rpg.data.hp = rpg.hpMax();
   d.habilidade = null;
-  const sem = rpg.erroPrevisto();
-  check(com - sem === 2, `ímpeto deveria somar 2, somou ${com - sem}`);
-  check(rpg.erroPrevisto(d.monster, d.tier, 2) === sem, "outra fase não pode herdar o ímpeto");
+  ini.vento = false;
+  c.agora += 1000;
+  const hp1 = rpg.hp();
+  c.resolverGolpe(ini);
+  const sem = hp1 - rpg.hp();
+  check(com - sem === 2, `ímpeto deveria somar 2: com ${com}, sem ${sem}`);
 }
 
-// couraça: o acerto rende 1 a menos
-{
-  const comRpg = bossRpg();
-  const com = comRpg.duel;
-  com.bossPhase = 2;
-  com.habilidade = hab("couraca");
-  const antesCom = com.monsterHp;
-  comRpg.answer(com.question.answer);
-  const golpeCom = antesCom - com.monsterHp;
-  const semRpg = bossRpg();
-  const semDuelo = semRpg.duel;
-  semDuelo.bossPhase = 2;
-  semDuelo.habilidade = null;
-  const antesSem = semDuelo.monsterHp;
-  semRpg.answer(semDuelo.question.answer);
-  const golpeSem = antesSem - semDuelo.monsterHp;
-  check(golpeSem - golpeCom === 1, `couraça deveria comer 1: com ${golpeCom}, sem ${golpeSem}`);
-  check((com.feedback.note || "").includes("couraça"), "feedback não avisa a couraça");
-}
-
-// seiva: cada erro devolve 2 de vida ao chefe
+// couraça: o golpe rende 1 a menos na fase 2
 {
   const rpg = bossRpg();
-  const d = rpg.duel;
-  d.bossPhase = 2;
-  d.habilidade = hab("seiva");
-  d.monsterHp = d.monsterHpMax - 10;
-  const antes = d.monsterHp;
-  rpg.data.hp = rpg.hpMax();
-  rpg.answer(errado(d));
-  check(d.monsterHp === antes + 2, `seiva deveria curar 2: ${antes} -> ${d.monsterHp}`);
-  check((d.feedback.note || "").includes("seiva"), "feedback não avisa a seiva");
+  const c = rpg.combate;
+  const ini = c.inimigos[0];
+  ini.phase = 2;
+  rpg.duel.habilidade = hab("couraca");
+  const antes = ini.hp;
+  c.danoNoInimigo(ini, false);
+  const com = antes - ini.hp;
+  ini.hp = antes;
+  rpg.duel.habilidade = null;
+  c.danoNoInimigo(ini, false);
+  const sem = antes - ini.hp;
+  check(sem - com === 1, `couraça deveria comer 1: com ${com}, sem ${sem}`);
 }
 
-// espelho: o primeiro erro da fase 2 é engolido, o segundo cobra
+// seiva: a fase 2 devolve 2 de vida ao chefe
 {
   const rpg = bossRpg();
-  const d = rpg.duel;
-  d.bossPhase = 2;
-  d.habilidade = hab("espelho");
-  d.espelhoUsado = false;
-  rpg.data.hp = rpg.hpMax();
-  const antes = rpg.hp();
-  rpg.answer(errado(d));
-  check(rpg.hp() === antes, "espelho deveria segurar o primeiro erro");
-  check(d.espelhoUsado === true && d.feedback.blocked === true, "espelho não foi consumido");
-  rpg.next();
-  const antes2 = rpg.hp();
-  rpg.answer(errado(d));
-  check(rpg.hp() < antes2, "depois do espelho o erro volta a cobrar");
+  const c = rpg.combate;
+  const ini = c.inimigos[0];
+  ini.phase = 2;
+  ini.hp = ini.hpMax - 10;
+  ini.curaPronto = 0;
+  ini.proximoAtaque = 1e9;
+  rpg.duel.habilidade = hab("seiva");
+  c.agora = 6000;
+  const antes = ini.hp;
+  c.atualizarInimigo(ini, 16);
+  check(ini.hp === antes + 2, `seiva deveria curar 2: ${antes} -> ${ini.hp}`);
+}
+
+// espelho: o primeiro golpe da fase 2 é engolido, o segundo cobra
+{
+  const rpg = bossRpg();
+  const c = rpg.combate;
+  const ini = c.inimigos[0];
+  ini.phase = 2;
+  rpg.duel.habilidade = hab("espelho");
+  rpg.duel.espelhoUsado = false;
+  const antes = ini.hp;
+  check(c.danoNoInimigo(ini, false) === 0, "o espelho deveria engolir o primeiro golpe");
+  check(rpg.duel.espelhoUsado === true, "o espelho não foi consumido");
+  check(c.danoNoInimigo(ini, false) > 0, "depois do espelho o golpe volta a cobrar");
+  check(ini.hp < antes, "o segundo golpe não feriu");
 }
 
 // ---- integração na fonte ----
 const rpgSrc = fs.readFileSync(new URL("../src/gameplay/rpg.js", import.meta.url), "utf8");
+const combateSrc = fs.readFileSync(new URL("../src/gameplay/combate.js", import.meta.url), "utf8");
 const duelSrc = fs.readFileSync(new URL("../src/ui/duel.js", import.meta.url), "utf8");
 const css = readStyles();
 check(/from "\.\/chefe-habilidades\.js"/.test(rpgSrc), "rpg não importa as habilidades");
-check(/danoDoJogador\(/.test(rpgSrc) && /extraDoErro\(/.test(rpgSrc), "rpg não aplica couraça/ímpeto");
-check(/curaDoChefe\(/.test(rpgSrc) && /espelhoDoChefe\(/.test(rpgSrc), "rpg não aplica seiva/espelho");
-check(/duel-ability/.test(duelSrc) && /d\.habilidade\.nome/.test(duelSrc), "duelo não mostra a habilidade");
+check(/danoDoJogador\(/.test(combateSrc) && /extraDoErro\(/.test(combateSrc), "o combate não aplica couraça/ímpeto");
+check(/curaDoChefe\(/.test(combateSrc) && /espelhoDoChefe\(/.test(combateSrc), "o combate não aplica seiva/espelho");
+check(/duel-ability/.test(duelSrc) && /d\.habilidade\.nome/.test(duelSrc), "o combate não mostra a habilidade do chefe");
 check(/\.duel-ability/.test(css), "css sem estilo da habilidade");
 
 assert.equal(problemas.length, 0, `chefes com ${problemas.length} problema(s):\n- ${problemas.join("\n- ")}`);
-console.log(`ok chefes: ${bossIds.length} chefes, 4 habilidades estáveis, couraça/ímpeto/seiva/espelho medidos no RPG real`);
+console.log(`ok chefes: ${bossIds.length} chefes, 4 habilidades estáveis, couraça/ímpeto/seiva/espelho medidos no combate real`);

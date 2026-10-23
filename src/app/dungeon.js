@@ -9,7 +9,7 @@ import { isTextEntry, nativeActivation } from "../platform/input.js";
 import { moveWithCollision, advancePath, directionAngle, facingDirection } from "../core/movement.js";
 // A caverna: um mapa próprio, em tela cheia, com salas e túneis que se cruzam.
 // O bicho que vê você começa a batalha sozinho, como nos jogos de bolso: anda
-// pelo corredor, entra no campo de visão, exclama e chama o duelo de perguntas.
+// pelo corredor, entra no campo de visão, exclama e chama o combate.
 import { TILE } from "../core/runtime-config.js";
 import { dungeonById, creatureId, creatureKind, creatureAccent } from "../content/dungeon-data.js";
 import { GROUNDS, ITEMS, RELICS, TIERS } from "../content/rpg-data.js";
@@ -57,7 +57,7 @@ function torchGlowSprite() {
 
 // ---------- a caverna em si ----------
 
-export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, onWiki, onGather, onExit, onKeeper, onConurbation, onElevador, onPortal, onVocacao, isBlocked, vitais = null, placa = null, avatar = {}, look = null, gear = null, getClima = null, collisionDebug = false }) {
+export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, onWiki, onGather, onFarm, onExit, onKeeper, onConurbation, onElevador, onPortal, onVocacao, isBlocked, vitais = null, placa = null, avatar = {}, look = null, gear = null, getClima = null, collisionDebug = false }) {
   const canvas = $("dungeon-canvas");
   const ctx = canvas?.getContext("2d", { alpha: false }) || null;
 
@@ -931,7 +931,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
     if (obj.kind === "keeper") {
       const lines = [
         "A cidade lá em cima não sabe que a gente vive aqui embaixo.",
-        "Todo bicho daqui é uma pergunta que ainda não foi respondida.",
+        "Todo bicho daqui morde antes de pensar. A guarda salva mais que a pressa.",
         "Baú fundo pede chave. Chave pede ferro e madeira. A mina dá os dois.",
         "Se a vida apertar, o altar do outro lado da praça escuta.",
         "Semente na horta, picareta no veio, ração para o bicho. A cidade cobra em trabalho.",
@@ -967,22 +967,27 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
         return;
       }
       const qty = 2 + Math.floor(Math.random() * 2);
-      rpg.addItem("erva", qty);
       // A primeira colheita sempre devolve uma semente: é o começo do ciclo.
       const seed = obj.gift || Math.random() < 0.5;
-      if (seed) rpg.addItem("semente", 1);
-      obj.planted = false;
-      obj.readyAt = 0;
-      if (rpg.data.plots) delete rpg.data.plots[obj.plotKey];
-      if (obj.gift) {
-        obj.gift = false;
-        rpg.data.plotGift = rpg.data.plotGift || {};
-        rpg.data.plotGift[state.def.id] = true;
-      }
-      rpg.save();
-      say(`Colheu ${qty} erva(s)${seed ? " e uma semente" : ""}. A terra devolve.`, 3400);
-      audio.blip();
-      updateHud();
+      const colher = () => {
+        rpg.addItem("erva", qty);
+        if (seed) rpg.addItem("semente", 1);
+        obj.planted = false;
+        obj.readyAt = 0;
+        if (rpg.data.plots) delete rpg.data.plots[obj.plotKey];
+        if (obj.gift) {
+          obj.gift = false;
+          rpg.data.plotGift = rpg.data.plotGift || {};
+          rpg.data.plotGift[state.def.id] = true;
+        }
+        rpg.save();
+        say(`Colheu ${qty} erva(s)${seed ? " e uma semente" : ""}. A terra devolve.`, 3400);
+        audio.blip();
+        updateHud();
+        return true;
+      };
+      if (onFarm?.({ continent: state.def.continent, qty, seed, commit: colher })) return;
+      colher();
       return;
     }
     if (obj.kind === "vein") {
@@ -1072,7 +1077,7 @@ export function createDungeon({ rpg, audio, onEncounter, onSheet, onInventory, o
       rpg.data.buffs.dica = Date.now() + 600000;
       rpg.save();
       obj.used = true;
-      say("A biblioteca abre uma página: a próxima pergunta do duelo vem com duas alternativas riscadas.", 4400);
+      say("A biblioteca abre uma página: a próxima pergunta de coleta vem com duas alternativas riscadas.", 4400);
       audio.blip();
       updateHud();
       return;

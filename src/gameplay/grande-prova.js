@@ -1,5 +1,5 @@
 // A Grande Prova: o evento de três fases que fecha a Biblioteca Afogada. O
-// duelo usa o chefe de três fases; depois da vitória o jogador escolhe o
+// combate usa o chefe de três fases; depois da vitória o jogador escolhe o
 // desfecho, e a escolha fica no save. Não há exame, nota nem reprovação.
 export const GUARDIAO = {
   id: "guardiao-acervo",
@@ -10,8 +10,8 @@ export const GUARDIAO = {
   theme: "biblioteca",
 };
 
-// O chão do evento: a biblioteca é de língua, e o duelo usa as perguntas dela.
-// `dungeon: true` libera o chefe sem depender de alavanca de caverna.
+// O chão do evento: a biblioteca é de língua, e o chefe luta na arena como
+// qualquer outro. `dungeon: true` libera o chefe sem depender de alavanca.
 export const GROUND_ACERVO = {
   id: "acervo",
   continent: "lingua",

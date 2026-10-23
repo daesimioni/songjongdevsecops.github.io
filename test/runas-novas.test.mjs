@@ -32,9 +32,13 @@ function dueloCom(runa, extras = {}) {
     { id: `runa-main-${runa}`, name: "Alvo", kind: "atom", tier: 1 },
     ground, false, parceiro,
   );
-  assert.ok(abriu.ok, `duelo de ${runa} não abriu`);
+  assert.ok(abriu.ok, `combate de ${runa} não abriu`);
   rpg.data.hp = rpg.hpMax();
+  rpg.data.mana = rpg.manaMax();
   rpg.addItem(runa, 1);
+  const c = rpg.combate;
+  c.inimigos[0].x = c.jogador.x + 20;
+  c.inimigos[0].y = c.jogador.y;
   return rpg;
 }
 
@@ -43,10 +47,10 @@ function dueloCom(runa, extras = {}) {
   const rpg = dueloCom("runa-bencao");
   rpg.data.hp = rpg.hpMax() - 10;
   const antes = rpg.data.hp;
-  const res = rpg.useItem("runa-bencao");
+  const res = rpg.combate.usarMagia("runa-bencao");
   assert.ok(res.ok, "bênção não usou");
   assert.equal(rpg.data.hp, Math.min(rpg.hpMax(), antes + 8), "bênção não curou 8");
-  assert.equal(rpg.duel.shield, true, "bênção não armou o escudo");
+  assert.equal(rpg.combate.jogador.escudo, true, "bênção não armou o escudo");
   assert.equal(rpg.itemCount("runa-bencao"), 0, "bênção devia sumir ao usar");
 }
 
@@ -54,69 +58,73 @@ function dueloCom(runa, extras = {}) {
 {
   const rpg = dueloCom("runa-mente");
   rpg.data.mana = 0;
-  const res = rpg.useItem("runa-mente");
+  const res = rpg.combate.usarMagia("runa-mente");
   assert.ok(res.ok, "mente não usou");
   assert.equal(rpg.mana(), Math.min(rpg.manaMax(), 6), "mente não devolveu 6 de mana");
-  assert.ok(res.mana > 0, "o retorno não disse quanta mana veio");
 }
 
-// ---- eco: o próximo acerto soma 2 ----
+// ---- eco: o próximo golpe soma 2 ----
 {
   const rpg = dueloCom("runa-eco");
-  assert.ok(rpg.useItem("runa-eco").ok, "eco não usou");
-  assert.equal(rpg.duel.eco, 2, "eco não armou 2");
-  rpg.duel.monsterHp = 50;
-  rpg.duel.monsterHpMax = 50;
+  assert.ok(rpg.combate.usarMagia("runa-eco").ok, "eco não usou");
+  assert.equal(rpg.combate.jogador.eco, 2, "eco não armou 2");
+  const alvo = rpg.combate.inimigos[0];
+  alvo.hp = 50;
+  alvo.hpMax = 50;
   const base = rpg.damageFor("cs");
-  const antes = rpg.duel.monsterHp;
-  rpg.answer(rpg.duel.question.answer);
-  assert.equal(antes - rpg.duel.monsterHp, base + 2, `eco não somou no acerto: ${antes - rpg.duel.monsterHp}`);
-  assert.equal(rpg.duel.eco, 0, "o eco devia ser consumido");
-  assert.match(rpg.duel.feedback?.note || "", /eco somou/, "o feedback não avisou o eco");
+  const antes = alvo.hp;
+  rpg.combate.atacar();
+  assert.equal(antes - alvo.hp, base + 2, `eco não somou no golpe: ${antes - alvo.hp}`);
+  assert.equal(rpg.combate.jogador.eco, 0, "o eco devia ser consumido");
 }
 
-// ---- punhal: 1 agora e +1 no próximo acerto ----
+// ---- punhal: 1 agora e +1 no próximo golpe ----
 {
   const rpg = dueloCom("runa-punhal");
-  rpg.duel.monsterHp = 50;
-  rpg.duel.monsterHpMax = 50;
-  const antes = rpg.duel.monsterHp;
-  const res = rpg.useItem("runa-punhal");
-  assert.ok(res.ok, "punhal não usou");
-  assert.equal(antes - rpg.duel.monsterHp, 1, "punhal não tirou 1 na hora");
-  assert.equal(rpg.duel.eco, 1, "punhal não deixou +1 para o próximo acerto");
+  const alvo = rpg.combate.inimigos[0];
+  alvo.hp = 50;
+  alvo.hpMax = 50;
+  const antes = alvo.hp;
+  assert.ok(rpg.combate.usarMagia("runa-punhal").ok, "punhal não usou");
+  assert.equal(antes - alvo.hp, 1, "punhal não tirou 1 na hora");
+  assert.equal(rpg.combate.jogador.eco, 1, "punhal não deixou +1 para o próximo golpe");
 }
 
 // ---- corrente: 1 no bicho e em cada parceiro ----
 {
   const rpg = dueloCom("runa-corrente", { parceiro: true });
-  rpg.duel.monsterHp = 50;
-  rpg.duel.monsterHpMax = 50;
-  const parceiro = rpg.duel.partner;
-  assert.ok(parceiro, "duelo sem parceiro");
-  const antesBicho = rpg.duel.monsterHp;
-  const antesParceiro = parceiro.hp;
-  const res = rpg.useItem("runa-corrente");
-  assert.ok(res.ok, "corrente não usou");
-  assert.equal(antesBicho - rpg.duel.monsterHp, 1, "corrente não atingiu o bicho");
-  assert.equal(antesParceiro - parceiro.hp, 1, "corrente não atingiu o parceiro");
+  const c = rpg.combate;
+  c.inimigos[0].hp = 50;
+  c.inimigos[0].hpMax = 50;
+  c.inimigos[1].hp = 3;
+  c.inimigos[1].hpMax = 3;
+  const antesBicho = c.inimigos[0].hp;
+  const antesParceiro = c.inimigos[1].hp;
+  assert.ok(c.usarMagia("runa-corrente").ok, "corrente não usou");
+  assert.equal(antesBicho - c.inimigos[0].hp, 1, "corrente não atingiu o bicho");
+  assert.equal(antesParceiro - c.inimigos[1].hp, 1, "corrente não atingiu o parceiro");
 }
 
-// ---- lente: revela a certa e zera na pergunta seguinte ----
+// ---- lente: o próximo golpe acerta e soma 1 ----
 {
   const rpg = dueloCom("runa-lente");
-  const res = rpg.useItem("runa-lente");
-  assert.ok(res.ok, "lente não usou");
-  assert.equal(rpg.duel.revelada, true, "lente não marcou a revelação");
-  rpg.answer(rpg.duel.question.answer);
-  rpg.next();
-  assert.equal(rpg.duel.revelada, false, "a revelação devia zerar na pergunta nova");
+  const c = rpg.combate;
+  assert.ok(c.usarMagia("runa-lente").ok, "lente não usou");
+  assert.equal(c.jogador.lente, true, "lente não armou o golpe certeiro");
+  const alvo = c.inimigos[0];
+  alvo.hp = 50;
+  alvo.hpMax = 50;
+  const base = rpg.damageFor("cs");
+  const antes = alvo.hp;
+  c.atacar();
+  assert.equal(antes - alvo.hp, base + 1, "lente não somou no golpe");
+  assert.equal(c.jogador.lente, false, "a lente devia ser consumida");
 }
 
 // ---- sem carga e sem aprender, a runa não sai ----
 {
   const rpg = dueloCom("runa-eco");
-  assert.equal(rpg.castSpell("runa-lente").ok, false, "runa não aprendida não pode sair por mana");
+  assert.equal(rpg.combate.usarMagia("runa-lente").ok, false, "runa não aprendida não pode sair por mana");
 }
 
 // ---- no mapa a bênção cura ----
@@ -133,10 +141,11 @@ function dueloCom(runa, extras = {}) {
 
 // ---- a tela conhece as seis ----
 const duel = fs.readFileSync(new URL("../src/ui/duel.js", import.meta.url), "utf8");
+const combate = fs.readFileSync(new URL("../src/gameplay/combate.js", import.meta.url), "utf8");
 const css = fs.readFileSync(new URL("../css/combat.css", import.meta.url), "utf8");
-for (const id of NOVAS) assert.ok(duel.includes(`"${id}"`), `duelo sem rótulo para ${id}`);
-assert.match(duel, /d\.revelada && d\.question\) hinted = d\.question\.answer/, "a lente não revela na tela");
-assert.match(duel, /duel-eco/, "o eco não aparece no duelo");
-assert.match(css, /\.duel-eco\b/, "falta o estilo do eco");
+assert.match(duel, /spellbarView/, "a tela do combate não lista as runas aprendidas");
+assert.match(duel, /duel-skill/, "a tela do combate não tem botão de runa");
+assert.match(combate, /usarMagia\(id\)/, "o motor do combate não usa runas");
+assert.match(css, /\.duel-skill\b/, "falta o estilo do botão de runa");
 
-console.log("ok runas novas: 12 magias, bênção/mente/eco/punhal/corrente/lente com efeito medido e sem carga não sai");
+console.log("ok runas novas: 12 magias, bênção/mente/eco/punhal/corrente/lente medidos no combate e sem carga não sai");

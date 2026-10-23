@@ -16,7 +16,7 @@ const { Quests, QUESTS } = await import("../src/gameplay/quests.js");
 const { Rede } = await import("../src/platform/nostr.js");
 const { NOSTR } = await import("../src/content/config.js");
 const { RPG } = await import("../src/gameplay/rpg.js");
-const { GROUNDS } = await import("../src/content/rpg-data.js");
+const { GROUNDS, TIERS } = await import("../src/content/rpg-data.js");
 const { DUNGEONS } = await import("../src/content/dungeon-data.js");
 const { buildDungeonMap, dungeonSolid, dungeonLineOfSight } = await import("../src/gameplay/dungeon-map.js");
 const { addPeerSample, feedPeer, peerRenderPosition } = await import("../src/platform/interp.js");
@@ -156,7 +156,7 @@ assert.equal(rede.channelEvents("geral").length, 1);
 
 assert.ok(titles > 0, "missão pronta avisa");
 
-// RPG: duelo, dano, vitória, alavanca e chefe
+// RPG: combate de ação, dano, vitória, alavanca e chefe
 store.clear();
 let xpGanho = 0;
 const rpg = new RPG({
@@ -169,11 +169,17 @@ const ground = GROUNDS.find((g) => g.id === "cs");
 const easy = ground.monsters[0];
 const hpAntesDoLoot = rpg.hpMax();
 assert.equal(rpg.startDuel(easy, ground).ok, true);
-assert.equal(rpg.duel.monsterHpMax, 3, "monstro fácil pede 3 acertos");
-assert.equal(rpg.duel.question.options.length, 5, "pergunta traz cinco alternativas");
-for (let i = 0; i < 20 && rpg.duel.phase !== "victory"; i++) {
-  if (rpg.duel.phase === "question") rpg.answer(rpg.duel.question.answer);
-  else rpg.next();
+assert.equal(rpg.duel.phase, "combat", "o duelo devia começar em combate");
+assert.equal(rpg.duel.monsterHpMax, 3, "monstro fácil tem 3 de vida");
+assert.equal(rpg.duel.question, undefined, "o duelo de monstro não tem mais pergunta");
+const combate = rpg.combate;
+const alvo = combate.inimigos[0];
+alvo.x = combate.jogador.x + 30;
+alvo.y = combate.jogador.y;
+alvo.proximoAtaque = 1e9;
+for (let i = 0; i < 20 && rpg.duel.phase === "combat"; i++) {
+  combate.atacar();
+  combate.agora += 500;
 }
 assert.equal(rpg.duel.phase, "victory");
 assert.equal(rpg.monsterAlive(easy.id), false);
@@ -183,7 +189,7 @@ assert.equal(xpGanho > 0, true);
 rpg.next();
 assert.equal(rpg.duel, null);
 
-// toda pergunta do duelo vem com cinco alternativas A-E, sem repetir
+// toda pergunta da coleta/PvP continua com cinco alternativas A-E
 for (const g of GROUNDS) {
   for (const tier of [1, 2, 3]) {
     for (const item of rpg.buildDeck(g.continent, [tier], "")) {
@@ -195,14 +201,21 @@ for (const g of GROUNDS) {
   }
 }
 
-// errar tira vida
+// o golpe do bicho tira a vida da vocação, e o golpe do jogador derruba
 const medium = ground.monsters[1];
+store.clear();
 rpg.startDuel(medium, ground);
+const c2 = rpg.combate;
+const ini2 = c2.inimigos[0];
+ini2.x = c2.jogador.x + 20;
+ini2.y = c2.jogador.y;
+ini2.proximoAtaque = 1e9;
+c2.agora = 1000;
+c2.jogador.defendendo = false;
+c2.jogador.invulneravelAte = 0;
 const hpBefore = rpg.hp();
-const wrong = (rpg.duel.question.answer + 1) % rpg.duel.question.options.length;
-rpg.answer(wrong);
-assert.equal(rpg.hp(), hpBefore - rpg.danoSofrido(3), "pergunta média tira o dano da vocação, 3 na base");
-assert.equal(rpg.duel.phase, "feedback");
+c2.resolverGolpe(ini2);
+assert.equal(hpBefore - rpg.hp(), rpg.danoSofrido(TIERS[2].damage), "golpe médio tira o dano da vocação");
 rpg.flee();
 
 // alavanca só abre com os três guardiões
@@ -213,10 +226,8 @@ assert.equal(rpg.pullLever(ground).ok, true);
 assert.equal(rpg.bossAlive(ground), true);
 const hpAntesDoChefe = rpg.hpMax();
 assert.equal(rpg.startDuel(ground.boss, ground, true).ok, true);
-for (let i = 0; i < 60 && rpg.duel.phase !== "victory"; i++) {
-  if (rpg.duel.phase === "question") rpg.answer(rpg.duel.question.answer);
-  else rpg.next();
-}
+const bc = rpg.combate;
+bc.aplicarDano(bc.inimigos[0], 99);
 assert.equal(rpg.duel.phase, "victory");
 rpg.next();
 assert.equal(rpg.bossAlive(ground), false, "chefe derrotado sai do mapa");
@@ -280,47 +291,41 @@ assert.equal(seen.find((s) => s.kind === "boss")?.tier, 4, "chefe entra no besti
 const beastAgain = new RPG({ getLevel: () => 1, gainXp: () => {}, toast: () => {}, audio: {} });
 assert.equal(beastAgain.seenView().find((s) => s.kind === "bat")?.count, 2, "bestiário persiste");
 
-// dupla: o segundo monstro pergunta junto e a vitória soma os dois
+// dupla: o segundo monstro entra no mesmo combate e a vitória soma os dois
 const duoRpg = new RPG({ getLevel: () => 1, gainXp: () => {}, toast: () => {}, audio: {} });
 const duoGround = { id: "duo-test", continent: "cs", name: "Dupla", dungeon: true, loot: ["parafuso", "chip", "fita"], bossLoot: "nucleo", material: "ferro" };
 const duoMain = { id: "duo-main", name: "Bit", kind: "slime", tier: 1, theme: "lógica" };
 const duoPartner = { id: "duo-partner", name: "Olho", kind: "eye", tier: 2, theme: "memória" };
 assert.equal(duoRpg.startDuel(duoMain, duoGround, false, duoPartner).ok, true);
-assert.equal(duoRpg.duel.partner?.monster.id, "duo-partner", "segundo monstro entra no duelo");
+assert.equal(duoRpg.duel.partner?.monster.id, "duo-partner", "segundo monstro entra no combate");
 assert.equal(duoRpg.duel.partner.hp, 7, "vida do segundo monstro");
-const partnerQuestion = duoRpg.duel.partner.question.q;
-duoRpg.answerPartner(duoRpg.duel.partner.question.answer);
-assert.equal(duoRpg.duel.partner.feedback?.correct, true, "acerto no segundo monstro");
-duoRpg.partnerNext();
-assert.equal(!!duoRpg.duel.partner.question, true, "segunda pergunta do parceiro");
-for (let i = 0; i < 40 && !duoRpg.duel.partner.done; i++) {
-  const p = duoRpg.duel.partner;
-  duoRpg.answerPartner(p.question.answer);
-  duoRpg.partnerNext();
-}
-assert.equal(duoRpg.duel.partner.done, true, "segundo monstro cai");
-assert.equal(duoRpg.monsterAlive("duo-partner"), false, "segundo monstro fica derrotado");
-for (let i = 0; i < 20 && duoRpg.duel.phase !== "victory"; i++) {
-  if (duoRpg.duel.phase === "question") duoRpg.answer(duoRpg.duel.question.answer);
-  else duoRpg.next();
-}
+const dc = duoRpg.combate;
+assert.equal(dc.inimigos.length, 2, "a tela do combate recebe os dois");
+dc.aplicarDano(dc.inimigos[0], 99);
+assert.equal(duoRpg.duel.phase, "combat", "o principal cair não encerra a dupla");
+dc.aplicarDano(dc.inimigos[1], 99);
 assert.equal(duoRpg.duel.phase, "victory", "vitória da dupla");
+assert.equal(duoRpg.duel.partner.done, true, "o segundo monstro fica derrotado");
+assert.equal(duoRpg.monsterAlive("duo-partner"), false, "o segundo monstro persiste morto");
 assert.ok(duoRpg.duel.result.xp >= 18 + 10, "XP soma o parceiro");
 assert.ok(duoRpg.duel.result.loot.length >= 3, "loot soma o parceiro");
 duoRpg.next();
 
-// parceiro pode derrubar o jogador
+// o golpe de um bicho da matilha pode derrubar o jogador
 const duoHp = new RPG({ getLevel: () => 1, gainXp: () => {}, toast: () => {}, audio: {} });
 duoHp.data.hp = 1;
 duoHp.save();
 duoHp.startDuel({ id: "duo2-main", name: "A", kind: "slime", tier: 1 }, duoGround, false, { id: "duo2-partner", name: "B", kind: "eye", tier: 2 });
-const p2 = duoHp.duel.partner;
-const wrong2 = (p2.question.answer + 1) % p2.question.options.length;
-duoHp.answerPartner(wrong2);
-assert.equal(duoHp.duel.phase, "defeat", "errar com o parceiro derruba");
+const dcHp = duoHp.combate;
+const iniHp = dcHp.inimigos[1];
+iniHp.x = dcHp.jogador.x + 20;
+iniHp.y = dcHp.jogador.y;
+dcHp.agora = 1000;
+dcHp.resolverGolpe(iniHp);
+assert.equal(duoHp.duel.phase, "defeat", "o golpe do parceiro derruba");
 assert.equal(duoHp.hp(), duoHp.hpMax(), "respawn devolve a vida");
 
-// matilha: dois parceiros na mesma tela, uma coluna para cada bicho
+// matilha: três parceiros no mesmo combate, todos precisam cair
 const trioRpg = new RPG({ getLevel: () => 1, gainXp: () => {}, toast: () => {}, audio: {} });
 const trioGround = { id: "trio-test", continent: "cs", name: "Matilha", dungeon: true, loot: ["parafuso", "chip", "fita"], bossLoot: "nucleo", material: "ferro" };
 const trio = trioRpg.startDuel(
@@ -329,21 +334,11 @@ const trio = trioRpg.startDuel(
   false,
   [{ id: "trio-p1", name: "Olho", kind: "eye", tier: 1 }, { id: "trio-p2", name: "Golem", kind: "golem", tier: 3 }],
 );
-assert.equal(trio.ok, true, "duelo com matilha abre");
+assert.equal(trio.ok, true, "combate com matilha abre");
 assert.equal(trioRpg.duel.partners.length, 2, "dois parceiros entram juntos");
 assert.equal(trioRpg.duel.partners[1].hpMax, 12, "vida do terceiro bicho");
-for (let who = 0; who < 2; who++) {
-  for (let i = 0; i < 60 && !trioRpg.duel.partners[who].done; i++) {
-    const p = trioRpg.duel.partners[who];
-    if (p.feedback) trioRpg.partnerNext(who);
-    else trioRpg.answerPartner(p.question.answer, who);
-  }
-  assert.equal(trioRpg.duel.partners[who].done, true, `parceiro ${who + 1} cai`);
-}
-for (let i = 0; i < 30 && trioRpg.duel.phase !== "victory"; i++) {
-  if (trioRpg.duel.phase === "question") trioRpg.answer(trioRpg.duel.question.answer);
-  else trioRpg.next();
-}
+const tc = trioRpg.combate;
+for (const ini of tc.inimigos) tc.aplicarDano(ini, 99);
 assert.equal(trioRpg.duel.phase, "victory", "matilha inteira cai");
 assert.ok(trioRpg.duel.result.xp >= 10 + 10 + 30, "XP soma os três monstros");
 assert.equal(trioRpg.duel.partners.every((p) => p.done), true, "os dois parceiros ficam derrotados");
@@ -361,20 +356,9 @@ const quad = quadRpg.startDuel(
     { id: "quad-p3", name: "Morcego", kind: "bat", tier: 3 },
   ],
 );
-assert.equal(quad.ok, true, "duelo com quatro bichos abre");
+assert.equal(quad.ok, true, "combate com quatro bichos abre");
 assert.equal(quadRpg.duel.partners.length, 3, "três parceiros entram juntos");
-for (let who = 0; who < 3; who++) {
-  for (let i = 0; i < 70 && !quadRpg.duel.partners[who].done; i++) {
-    const p = quadRpg.duel.partners[who];
-    if (p.feedback) quadRpg.partnerNext(who);
-    else quadRpg.answerPartner(p.question.answer, who);
-  }
-  assert.equal(quadRpg.duel.partners[who].done, true, `parceiro ${who + 1} de quatro cai`);
-}
-for (let i = 0; i < 40 && quadRpg.duel.phase !== "victory"; i++) {
-  if (quadRpg.duel.phase === "question") quadRpg.answer(quadRpg.duel.question.answer);
-  else quadRpg.next();
-}
+for (const ini of quadRpg.combate.inimigos) quadRpg.combate.aplicarDano(ini, 99);
 assert.equal(quadRpg.duel.phase, "victory", "os quatro caem");
 assert.ok(quadRpg.duel.result.xp >= 10 + 10 + 18 + 30, "XP soma os quatro monstros");
 quadRpg.next();
@@ -389,72 +373,59 @@ trioFilter.startDuel({ id: mainId, name: "A", kind: "slime", tier: 1 }, trioGrou
 assert.equal(trioFilter.duel.partners.length, 1, "monstro repetido não vira parceiro");
 trioFilter.next();
 
-// as seis runas do duelo, cada uma com efeito proprio
+// runas do combate: trovão, gelo, cura, espelho e fogo na matilha
 const spellRpg = new RPG({ getLevel: () => 1, gainXp: () => {}, toast: () => {}, audio: {} });
 const spellGround = { id: "runa-test", continent: "cs", name: "Runas", dungeon: true, loot: ["parafuso", "chip", "fita"], bossLoot: "nucleo", material: "ferro" };
 const spellMain = (id, tier = 1) => ({ id, name: id, kind: "slime", tier, theme: "lógica" });
 spellRpg.data.hp = 5;
 spellRpg.addItem("runa-trovao", 2);
 spellRpg.startDuel(spellMain("runa-main-1"), spellGround, false);
-const trovao1 = spellRpg.useItem("runa-trovao");
-assert.equal(trovao1.victory, false, "trovao sozinho nao derruba o facil");
-assert.equal(spellRpg.duel.monsterHp, 1, "trovao tira 2 do monstro de 3");
-spellRpg.next();
-assert.equal(spellRpg.useItem("runa-trovao").victory, true, "segundo trovao derruba o da frente");
-assert.equal(spellRpg.duel.phase, "victory", "trovao pode vencer o duelo");
-assert.equal(spellRpg.itemCount("runa-trovao"), 0, "trovao some ao usar");
+const sc = spellRpg.combate;
+sc.inimigos[0].x = sc.jogador.x + 20;
+sc.inimigos[0].y = sc.jogador.y;
+assert.equal(sc.usarMagia("runa-trovao").ok, true, "trovão usa");
+assert.equal(sc.inimigos[0].hp, 1, "trovão tira 2 do monstro de 3");
+sc.magias.clear();
+assert.equal(sc.usarMagia("runa-trovao").ok, true, "segundo trovão usa");
+assert.equal(spellRpg.duel.phase, "victory", "trovão pode vencer");
+assert.equal(spellRpg.itemCount("runa-trovao"), 0, "trovão some ao usar");
 spellRpg.next();
 
 spellRpg.addItem("runa-gelo", 1);
 spellRpg.startDuel(spellMain("runa-main-2", 2), spellGround, false);
-const geloHp = spellRpg.duel.monsterHp;
-const resGelo = spellRpg.useItem("runa-gelo");
+const sc2 = spellRpg.combate;
+sc2.inimigos[0].x = sc2.jogador.x + 20;
+sc2.inimigos[0].y = sc2.jogador.y;
+const geloHp = sc2.inimigos[0].hp;
+const resGelo = sc2.usarMagia("runa-gelo");
 assert.equal(resGelo.ok, true, "gelo usa");
-assert.equal(spellRpg.duel.phase, "feedback", "gelo vira feedback sem dano");
-assert.equal(spellRpg.duel.monsterHp, geloHp, "gelo nao machuca o monstro");
+assert.ok(sc2.inimigos[0].hp < geloHp, "gelo fere");
+assert.ok(sc2.inimigos[0].atordoadoAte > sc2.agora, "gelo atordoa");
 spellRpg.next();
-assert.equal(spellRpg.duel.phase, "question", "gelo passa a pergunta");
-spellRpg.next(); // fecha o duelo para os proximos testes
-spellRpg.duel = null;
 
 spellRpg.addItem("runa-cura", 1);
-spellRpg.startDuel(spellMain("runa-main-3"), spellGround, false);
-const cura = spellRpg.useItem("runa-cura");
-assert.equal(cura.healed, 12, "cura devolve 12");
-assert.equal(cura.healed, Math.min(12, spellRpg.hpMax() - 5), "cura respeita o teto");
-spellRpg.duel = null;
-
 spellRpg.data.hp = 5;
+spellRpg.startDuel(spellMain("runa-main-3"), spellGround, false);
+const cura = spellRpg.combate.usarMagia("runa-cura");
+assert.equal(cura.ok, true, "cura usa");
+assert.equal(spellRpg.hp(), 17, "cura devolve 12");
+spellRpg.next();
+
 spellRpg.addItem("runa-espelho", 1);
 spellRpg.startDuel(spellMain("runa-main-4"), spellGround, false);
-assert.equal(spellRpg.useItem("runa-espelho").shield, true, "espelho arma");
-const wrongSpell = (spellRpg.duel.question.answer + 1) % spellRpg.duel.question.options.length;
-spellRpg.answer(wrongSpell);
-assert.equal(spellRpg.data.hp, 5, "espelho segura o erro sem tirar vida");
-assert.equal(spellRpg.duel.feedback.blocked, true, "feedback marca o golpe bloqueado");
-spellRpg.duel = null;
+assert.equal(spellRpg.combate.usarMagia("runa-espelho").ok, true, "espelho usa");
+assert.equal(spellRpg.combate.jogador.escudo, true, "espelho arma o escudo");
+spellRpg.next();
 
-spellRpg.addItem("runa-faisca", 1);
-spellRpg.startDuel(spellMain("runa-main-5"), spellGround, false);
-assert.equal(spellRpg.useItem("runa-faisca").spark, true, "faisca avisa o duelo");
-assert.equal(spellRpg.itemCount("runa-faisca"), 0, "faisca some ao usar");
-spellRpg.duel = null;
-
-spellRpg.addItem("runa-fogo", 3);
+spellRpg.addItem("runa-fogo", 1);
 spellRpg.startDuel(spellMain("runa-main-6", 3), spellGround, false, [spellMain("runa-p1", 1), spellMain("runa-p2", 3)]);
-const fogo = spellRpg.useItem("runa-fogo");
+const fc = spellRpg.combate;
+const fogo = fc.usarMagia("runa-fogo");
 assert.equal(fogo.ok, true, "fogo usa");
-assert.equal(spellRpg.duel.monsterHp, 11, "fogo tira 1 do principal");
-assert.equal(spellRpg.duel.partners.every((p) => p.hp < p.hpMax), true, "fogo tira 1 da matilha");
-assert.equal(spellRpg.duel.partners[0].done, false, "parceiro de vida 3 aguenta o primeiro fogo");
+assert.equal(fc.inimigos[0].hp, 11, "fogo tira 1 do principal");
+assert.equal(fc.inimigos.every((i) => i.hp < i.hpMax), true, "fogo tira 1 da matilha");
+assert.equal(fc.inimigos[1].morte, false, "parceiro de vida 3 aguenta o primeiro fogo");
 spellRpg.next();
-spellRpg.useItem("runa-fogo");
-assert.equal(spellRpg.duel.partners[0].done, false, "parceiro de vida 3 aguenta o segundo fogo");
-spellRpg.next();
-spellRpg.useItem("runa-fogo");
-assert.equal(spellRpg.duel.partners[0].done, true, "terceiro fogo derruba o parceiro de vida 3");
-assert.equal(spellRpg.monsterAlive("runa-p1"), false, "parceiro queimado fica derrotado");
-spellRpg.duel = null;
 
 // a primeira carga ensina a runa; sem carga, ela sai por mana
 spellRpg.data.items = {};
@@ -462,30 +433,26 @@ spellRpg.data.spells = {};
 spellRpg.data.mana = 10;
 spellRpg.addItem("runa-gelo", 1);
 spellRpg.startDuel(spellMain("runa-main-7", 2), spellGround, false);
-const chargeCast = spellRpg.castSpell("runa-gelo");
+const cc = spellRpg.combate;
+cc.inimigos[0].x = cc.jogador.x + 20;
+cc.inimigos[0].y = cc.jogador.y;
+const chargeCast = cc.usarMagia("runa-gelo");
 assert.equal(chargeCast.ok, true, "carga da runa funciona");
 assert.equal(spellRpg.itemCount("runa-gelo"), 0, "cast com carga gasta o item");
 assert.equal(spellRpg.data.spells["runa-gelo"], true, "usar a carga aprende a magia");
 assert.equal(spellRpg.mana(), 10, "carga guardada não custa mana");
-spellRpg.next();
-const manaCast = spellRpg.castSpell("runa-gelo");
+cc.magias.clear();
+spellRpg.data.mana = 10;
+const manaCast = cc.usarMagia("runa-gelo");
 assert.equal(manaCast.ok, true, "sem carga, a runa sai por mana");
-assert.equal(manaCast.manaCost, 3, "gelo custa 3 de mana");
 assert.equal(spellRpg.mana(), 7, "mana foi descontada");
 spellRpg.next();
-spellRpg.data.mana = 1;
-const semMana = spellRpg.castSpell("runa-gelo");
-assert.equal(semMana.ok, false, "sem mana a runa não sai");
-assert.equal(spellRpg.itemCount("runa-cura"), 0, "runa não aprendida e sem carga não inventa item");
-const semAprender = spellRpg.castSpell("runa-cura");
-assert.equal(semAprender.ok, false, "runa não aprendida não sai por mana");
-spellRpg.duel = null;
 
-// runa fora do duelo volta para a mochila, nao some
+// runa fora do combate volta para a mochila, não some
 spellRpg.addItem("runa-gelo", 1);
 const fora = spellRpg.useItem("runa-gelo");
-assert.equal(fora.ok, false, "runa nao funciona fora do duelo");
-assert.equal(spellRpg.itemCount("runa-gelo"), 1, "runa fora do duelo nao e consumida");
+assert.equal(fora.ok, false, "runa não funciona fora do combate");
+assert.equal(spellRpg.itemCount("runa-gelo"), 1, "runa fora do combate não é consumida");
 
 // companhia: mana, bichos com habilidades e montarias
 const { MANA_MS } = await import("../src/content/pets.js");
@@ -505,13 +472,13 @@ assert.equal(comp.manaMax(), 10, "mana cheia por padrão");
 const compGround = GROUNDS.find((g) => g.id === "cs");
 comp.startDuel(compGround.monsters[0], compGround, false);
 const faro = comp.usePetAbility({ duel: true });
-assert.equal(faro.ok, true, "faro funciona no duelo");
-assert.equal(Array.isArray(faro.sparks) && faro.sparks.length === 1, true, "faro risca uma alternativa");
+assert.equal(faro.ok, true, "faro funciona no combate");
+assert.equal(faro.lente, true, "faro arma o próximo golpe certeiro");
 assert.equal(comp.mana(), 8, "faro custa 2 de mana");
 assert.ok(comp.petCdLeft("gato") > 0, "faro entra em recarga");
 const againFaro = comp.usePetAbility({ duel: true });
 assert.equal(againFaro.ok, false, "faro não repete durante a recarga");
-comp.duel = null;
+comp.flee();
 
 // mana volta com o tempo e para no teto
 comp.data.mana = 2;
@@ -530,9 +497,9 @@ comp.data.petCd = {};
 comp.startDuel(compGround.monsters[1], compGround, false);
 const owl = comp.usePetAbility({ duel: true });
 assert.equal(owl.ok, true, "sabedoria funciona");
-assert.equal(owl.answer, comp.duel.question.answer, "sabedoria aponta a alternativa certa");
+assert.equal(owl.lente, true, "sabedoria arma o próximo golpe certeiro");
 assert.equal(comp.mana(), 6, "sabedoria custa 4 de mana");
-comp.duel = null;
+comp.flee();
 
 // sapo cura
 comp.data.pets.sapo = { bond: 3 };
@@ -556,10 +523,13 @@ comp.data.petActive = "grilo";
 comp.data.mana = 1;
 comp.data.petCd = {};
 comp.startDuel(compGround.monsters[0], compGround, false);
-comp.data.monsters = {};
-comp.answer(comp.duel.question.answer);
+const gc = comp.combate;
+gc.inimigos[0].x = gc.jogador.x + 20;
+gc.inimigos[0].y = gc.jogador.y;
+gc.inimigos[0].proximoAtaque = 1e9;
+gc.atacar();
 assert.ok(comp.mana() >= 2, "grilo devolve mana quando acerta");
-comp.duel = null;
+comp.flee();
 
 // vaga-lume devolve mana de graça
 comp.data.pets.vaga = { bond: 3 };
@@ -578,10 +548,9 @@ comp.data.petCd = {};
 comp.startDuel(compGround.monsters[1], compGround, false);
 const papagaio = comp.usePetAbility({ duel: true });
 assert.equal(papagaio.ok, true, "tagarela funciona");
-assert.equal(papagaio.sparks.length, 2, "tagarela risca duas alternativas");
-assert.equal(new Set(papagaio.sparks).size, 2, "as duas riscadas são diferentes");
+assert.equal(papagaio.stun, 1700, "tagarela atordoa os bichos");
 assert.equal(comp.mana(), 7, "tagarela custa 3 de mana");
-comp.duel = null;
+comp.flee();
 
 // montarias: compra, acelera e o casco só vale na superfície
 comp.data.mounts = {};
@@ -840,14 +809,18 @@ assert.equal(rpg.hp(), rpg.hpMax(), "respawn devolve a vida");
 const train = new RPG({ getLevel: () => 1, gainXp: (n) => { xpGanho += n; }, toast: () => {}, audio: {} });
 assert.equal(train.startTraining("cs", 1, "fonte", { name: "Bicho de Treino" }).ok, true, "treino abre");
 const hpTrain = train.hp();
-const wrongTrain = (train.duel.question.answer + 1) % train.duel.question.options.length;
-train.answer(wrongTrain);
-assert.equal(train.hp(), hpTrain, "treino não tira vida");
-assert.equal(train.duel.feedback.training, true, "feedback avisa que é treino");
-for (let i = 0; i < 20 && train.duel?.phase !== "victory"; i++) {
-  if (train.duel.phase === "question") train.answer(train.duel.question.answer);
-  else train.next();
-}
+const trainC = train.combate;
+const iniTreino = trainC.inimigos[0];
+iniTreino.x = trainC.jogador.x + 20;
+iniTreino.y = trainC.jogador.y;
+trainC.agora = 1000;
+trainC.resolverGolpe(iniTreino);
+assert.equal(train.hp(), hpTrain, "treino não tira vida de verdade");
+assert.ok(trainC.jogador.hp >= 1, "o treino não mata");
+iniTreino.hp = 1;
+iniTreino.x = trainC.jogador.x + 20;
+iniTreino.y = trainC.jogador.y;
+trainC.atacar();
 assert.equal(train.duel.phase, "victory");
 const trainWin = train.next();
 assert.equal(trainWin.result.training, true, "treino não distribui vitória de caçada");

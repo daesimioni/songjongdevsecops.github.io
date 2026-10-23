@@ -66,12 +66,10 @@ const { RPG } = await import("../src/gameplay/rpg.js");
 const { GROUNDS } = await import("../src/content/rpg-data.js");
 const ground = GROUNDS.find((g) => g.id === "cs");
 const rpg = new RPG();
-rpg.startDuel({ id: "distrator-monstro", name: "Alvo", kind: "eye", tier: 1 }, ground);
-const q = rpg.duel.question;
+const q = rpg.buildDeck("cs", [1])[0];
 const errada = (q.answer + 1) % q.options.length;
-assert.match(q.version, /^[0-9a-f]{8}$/, "a pergunta do duelo precisa de versão");
-rpg.answer(errada);
-assert.equal(rpg.duel.feedback.picked, errada, "o feedback não guarda a marcada");
+assert.match(q.version, /^[0-9a-f]{8}$/, "a pergunta da coleta precisa de versão");
+rpg.registrarDistrator(q, errada);
 assert.equal(rpg.data.distratores[q.version]?.t, q.options[errada], "o save não guardou a alternativa");
 assert.equal(rpg.data.distratores[q.version]?.n, 1);
 const erros = rpg.errosRecentes(3);
@@ -93,8 +91,8 @@ const ordem = rpg3.duelDeck("cs", 1);
 assert.equal(ordem[0].version, escolhida.version, "a pergunta com erro recente deveria vir primeiro");
 
 // ---- a tela mostra a marcada e o caderno ----
-const duel = fs.readFileSync(new URL("../src/ui/duel.js", import.meta.url), "utf8");
-assert.match(duel, /Você marcou/, "o duelo não mostra a alternativa marcada");
+const gather = fs.readFileSync(new URL("../src/ui/gather.js", import.meta.url), "utf8");
+assert.match(gather, /registrarDistrator/, "a coleta não registra o distrator");
 const app = fs.readFileSync(new URL("../src/app/app.js", import.meta.url), "utf8");
 assert.match(app, /Erros recentes/, "o diário não lista os erros recentes");
 assert.match(app, /errosRecentes\(5\)/, "o diário não consulta o caderno de distratores");

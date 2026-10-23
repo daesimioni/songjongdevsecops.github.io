@@ -1,14 +1,14 @@
 import { THEME_WORDS, shuffle, OPTION_COUNT, looksNumeric, numericDistractors, variantesProximas, porSemelhanca, QUESTION_INDEX } from "./question-bank.js";
-// O estado de RPG: vida, perícias, itens, monstros derrotados e o duelo de
-// perguntas. Tudo vive no localStorage; o mundo compartilhado continua sendo
-// só posição e conversa.
+// O estado de RPG: vida, perícias, itens, monstros derrotados e o combate de
+// ação. Tudo vive no localStorage; o mundo compartilhado continua sendo só
+// posição e conversa.
 import { backupCorrupt } from "../platform/storage.js";
 import { STORAGE } from "../core/runtime-config.js";
 import { SKILLS, TIERS, ITEMS, RECIPES, TROCAS, ENCHANTS, MONSTER_TRAITS, MONSTER_LABELS, MONSTER_WEAKNESS } from "../content/rpg-data.js";
 import { BOND_MAX, MANA_MS, PETS, MOUNTS, petById, mountById } from "../content/pets.js";
 import { VOCACAO_PADRAO, VOC_POR_ID, subcategoriaDe, vocacaoDe, multDe } from "../content/vocations.js";
-import { bonusDeRitmo } from "./duelo-ritmo.js";
-import { habilidadeDoChefe, danoDoJogador, extraDoErro, curaDoChefe, espelhoDoChefe, notaDaHabilidade } from "./chefe-habilidades.js";
+import { Combate } from "./combate.js";
+import { habilidadeDoChefe } from "./chefe-habilidades.js";
 import { registrarResposta, vencido, resumoConceitos, conceitoDe } from "./conceitos.js";
 import { versaoDaPergunta, registrarDistrator as registrarErro, recentes as errosRecentesDoSave, erroRecente, purgar as purgarDistratores } from "./distratores.js";
 import { estadoDaProva } from "./grande-prova.js";
@@ -416,7 +416,7 @@ export class RPG {
       if (!item || item.slot !== slot || this.itemCount(id) <= 0) continue;
       hp += Number(item.hp) || 0;
       damage += Number(item.damage) || 0;
-      // escudo equipado segura o primeiro erro do duelo, uma vez por duelo
+      // escudo equipado segura o primeiro golpe do combate, uma vez por combate
       if (slot === "shield") shield = 1;
       if (item.continent) porContinente.set(item.continent, (porContinente.get(item.continent) || 0) + 1);
     }
@@ -714,36 +714,25 @@ export class RPG {
     this.save();
   }
 
-  usePetAbility({ duel = false, excluded = [] } = {}) {
+  usePetAbility({ duel = false } = {}) {
     const pet = this.activePet();
     if (!pet) return { ok: false, reason: "Nenhum bicho tamed está ativo." };
     const ab = pet.ability;
     const left = this.petCdLeft(pet.id);
     if (left > 0) return { ok: false, cooldown: left, reason: `${pet.name} ainda está descansando (${Math.ceil(left / 1000)}s).` };
-    const inDuel = duel && this.duel && this.duel.phase === "question" && this.duel.monsterHp > 0;
-    if (petAbilityNeedsDuel(ab.id) && !inDuel) {
-      return { ok: false, reason: "Essa habilidade só funciona na pergunta de um duelo." };
+    const emCombate = !!this.combate && this.combate.phase === "combat";
+    if (petAbilityNeedsDuel(ab.id) && !(duel && emCombate)) {
+      return { ok: false, reason: "Essa habilidade só funciona no combate." };
     }
     this.pulse();
     if (ab.id !== "mana" && this.mana() < ab.mana) {
       return { ok: false, reason: `Falta mana (${this.mana()}/${ab.mana}).` };
     }
     const out = { ok: true, pet: { id: pet.id, name: pet.name }, ability: ab, effect: ab.id };
-    if (ab.id === "faro" || ab.id === "tagarela") {
-      const wrong = this.duel.question.options.map((_, i) => i).filter((i) => i !== this.duel.question.answer && !excluded.includes(i));
-      if (!wrong.length) return { ok: false, reason: "Esta pergunta não tem alternativa para riscar." };
-      const howMany = ab.id === "tagarela" ? 2 : 1;
-      out.sparks = [];
-      for (let i = 0; i < howMany && wrong.length; i++) {
-        out.sparks.push(wrong.splice(Math.floor(Math.random() * wrong.length), 1)[0]);
-      }
-    }
-    if (ab.id === "sabedoria") out.answer = this.duel.question.answer;
-    if (ab.id === "aviso") {
-      out.theme = this.duel.question.theme || this.duel.ground.theme || "";
-      out.tier = this.duel.boss ? 4 : this.duel.monster.tier || 1;
-      out.monster = this.duel.monster.name || "o monstro";
-    }
+    if (ab.id === "faro") out.lente = true;
+    if (ab.id === "tagarela") out.stun = 1700;
+    if (ab.id === "sabedoria") out.lente = true;
+    if (ab.id === "aviso") out.shield = true;
     if (ab.id === "cura") out.healed = this.heal(20);
     if (ab.id === "mana") {
       out.mana = 3;
@@ -759,45 +748,15 @@ export class RPG {
     return out;
   }
 
-  // Consulta da biblioteca: a próxima pergunta já nasce com duas alternativas
-  // erradas riscadas. O selo vale uma vez e some do save ao ser gasto.
-  aplicarDicaGuardada(d) {
-    if (!d?.question || !this.buffActive("dica")) return 0;
-    const erradas = d.question.options.map((_, i) => i).filter((i) => i !== d.question.answer);
-    d.eliminadas = shuffle(erradas).slice(0, Math.min(2, erradas.length));
+  // Consulta da biblioteca: a próxima pergunta da coleta nasce com duas
+  // alternativas erradas riscadas. O selo vale uma vez e some do save ao gastar.
+  dicaGuardadaNaPergunta(q) {
+    if (!q || !Array.isArray(q.options) || !this.buffActive("dica")) return [];
+    const erradas = q.options.map((_, i) => i).filter((i) => i !== q.answer);
+    const eliminadas = shuffle(erradas).slice(0, Math.min(2, erradas.length));
     delete this.data.buffs.dica;
     this.save();
-    return d.eliminadas.length;
-  }
-
-  // Dica em escada: cada passo custa 1 de mana. O primeiro risca duas
-  // alternativas erradas, o segundo risca mais uma e o terceiro revela a
-  // correta. O estado vive no duelo e zera quando entra a próxima pergunta.
-  usarDica() {
-    const d = this.duel;
-    if (!d || d.phase !== "question" || d.monsterHp <= 0) {
-      return { ok: false, reason: "A dica só vale na pergunta de um duelo." };
-    }
-    const nivel = (d.dicas || 0) + 1;
-    if (nivel > 3) return { ok: false, reason: "As dicas desta pergunta acabaram." };
-    this.pulse();
-    if (this.mana() < 1) return { ok: false, reason: "Sem mana para a dica. Ela volta com o tempo." };
-    const q = d.question;
-    const eliminadas = d.eliminadas || (d.eliminadas = []);
-    this.addMana(-1);
-    d.dicas = nivel;
-    if (nivel === 3) {
-      this.save();
-      return { ok: true, nivel, revelar: q.answer };
-    }
-    const erradas = q.options.map((_, i) => i).filter((i) => i !== q.answer && !eliminadas.includes(i));
-    const novas = [];
-    for (let i = 0; i < (nivel === 1 ? 2 : 1) && erradas.length; i++) {
-      novas.push(erradas.splice(Math.floor(Math.random() * erradas.length), 1)[0]);
-    }
-    eliminadas.push(...novas);
-    this.save();
-    return { ok: true, nivel, eliminadas: novas };
+    return eliminadas;
   }
 
   mountsView() {
@@ -926,12 +885,12 @@ export class RPG {
     const mult = this.data.vocation === "atirador" ? (longe ? 1.15 : 0.75) : this.bonus().dano;
     damage *= mult;
     if (this.data.sub === "barbaro" && !this.data.equipped?.armor) damage += 1;
-    // teto de 4: sem teto o bicho difícil de 18 vira uma pergunta para quem
+    // teto de 4: sem teto o bicho difícil de 18 vira uma luta fácil para quem
     // juntou equipamento e encantamento
     return Math.min(4, Math.round(damage * 10) / 10);
   }
 
-  // o erro cobra por vocação, e duas subcategorias mexem na conta
+  // o golpe do bicho cobra por vocação, e duas subcategorias mexem na conta
   danoSofrido(base) {
     let dano = base * this.bonus().sofrido;
     if (this.data.enchants.couraca) dano *= 0.9;
@@ -940,72 +899,10 @@ export class RPG {
     return Math.max(1, Math.round(dano));
   }
 
-  erroPrevisto(monster = this.duel?.monster, tier = this.duel?.tier, bossPhase = this.duel?.boss ? this.duel.bossPhase : 1) {
-    const d = this.duel;
-    if (d?.shield || d?.escudo || (this.data.sub === "domador" && this.activePet() && !d?.petUsado)) return 0;
-    if (monster === d?.monster && espelhoDoChefe(d?.habilidade?.id, bossPhase, d?.espelhoUsado)) return 0;
-    const base = TIERS[tier]?.damage || 0;
-    const extra = monster === d?.monster ? extraDoErro(d?.habilidade?.id, bossPhase) : 0;
-    return this.danoSofrido(base + Math.max(0, (bossPhase || 1) - 1) * 2 + extra + (Number(monster?.danoExtra) || 0))
-      + (MONSTER_TRAITS[monster?.kind]?.id === "haste" ? Math.ceil(base / 2) : 0);
-  }
-
-  // quanto o próximo acerto deve tirar: perícia, equipamento, caráter do bicho,
-  // couraça do chefe e o ritmo que o acerto fecharia. Aproximado porque desvio
-  // e efeitos de subcategoria podem mudar o resultado.
-  acertoPrevisto() {
-    const d = this.duel;
-    if (!d) return 0;
-    let dano = this.damageFor(d.ground.continent);
-    if (MONSTER_TRAITS[d.monster?.kind]?.id === "armor") dano = Math.max(1, dano - 1);
-    dano = danoDoJogador(d.habilidade?.id, d.bossPhase, dano);
-    if (dano > 0) dano += bonusDeRitmo((d.seguidos || 0) + 1);
-    if (dano > 0 && this.familiaCompleta(d.monster?.kind)) dano = Math.round(dano * 1.5 * 10) / 10;
-    return Math.round(dano * 10) / 10;
-  }
-
-  acertoPrevistoParceiro(p) {
-    const d = this.duel;
-    if (!d || !p) return 0;
-    let dano = this.damageFor(d.ground.continent);
-    if (MONSTER_TRAITS[p.monster?.kind]?.id === "armor") dano = Math.max(1, dano - 1);
-    if (dano > 0) dano += bonusDeRitmo((p.seguidos || 0) + 1);
-    return Math.round(dano * 10) / 10;
-  }
-
-  atualizarFaseChefe(d) {
-    // Toda fonte de dano deve atualizar a fase, inclusive runas.
-    if (!d.boss || d.monsterHp <= 0) return;
-    const ratio = d.monsterHp / d.monsterHpMax;
-    const phase = ratio <= 0.33 ? 3 : ratio <= 0.66 ? 2 : 1;
-    if (phase <= (d.bossPhase || 1)) return;
-    d.bossPhase = phase;
-    d.habilidade = d.habilidade || habilidadeDoChefe(d.monster);
-    d.feedback.phase = phase;
-    const nota = notaDaHabilidade(d.habilidade);
-    d.feedback.phaseNote = phase === 3
-      ? `Fase 3: encurralado, ele só aceita pergunta difícil e o erro dói mais. ${nota}`
-      : `Fase 2: ferido, ele revela a habilidade. ${nota}`;
-    if (phase === 3) {
-      const harder = this.duelDeck(d.ground.continent, 3, d.monster?.theme || d.ground.theme);
-      if (harder.length) {
-        d.deck = harder;
-        d.deckIndex = -1;
-      }
-    }
-  }
-
-  concluirMatilha(d) {
-    if (d.phase === "victory" || d.monsterHp > 0 || d.partners.some((p) => !p.done)) return false;
-    d.phase = "victory";
-    d.result = this.victory(d);
-    return true;
-  }
-
   // ---------- caderno de conceitos ----------
-  registrarConceito(area, acertou) {
+  registrarConceito(area, acertou, continent = this.duel?.ground?.continent) {
     if (!this.data.conceitos || typeof this.data.conceitos !== "object") this.data.conceitos = {};
-    return registrarResposta(this.data.conceitos, conceitoDe(area, this.duel?.ground?.continent), acertou, now());
+    return registrarResposta(this.data.conceitos, conceitoDe(area, continent), acertou, now());
   }
 
   conceitosResumo() {
@@ -1073,117 +970,7 @@ export class RPG {
     return ITEMS[id].name;
   }
 
-  // efeito da runa, sem cobrar item nem mana: quem chama cuida do custo
-  applyRune(id) {
-    const item = ITEMS[id];
-    const d = this.duel;
-    if (id === "runa-faisca") return { ok: true, spark: true, name: item.name };
-    if (id === "runa-cura") {
-      const healed = this.heal(12);
-      return { ok: true, healed, name: item.name };
-    }
-    if (id === "runa-espelho") {
-      d.shield = true;
-      return { ok: true, shield: true, name: item.name };
-    }
-    if (id === "runa-bencao") {
-      const healed = this.heal(8);
-      d.shield = true;
-      return { ok: true, healed, shield: true, name: item.name };
-    }
-    if (id === "runa-mente") {
-      const mana = Math.min(6, this.manaMax() - this.mana());
-      this.addMana(6);
-      return { ok: true, mana, name: item.name };
-    }
-    if (id === "runa-eco") {
-      d.eco = (Number(d.eco) || 0) + 2;
-      return { ok: true, eco: d.eco, name: item.name };
-    }
-    if (id === "runa-lente") {
-      d.revelada = true;
-      return { ok: true, reveal: true, name: item.name };
-    }
-    if (id === "runa-punhal" || id === "runa-corrente") {
-      const dmg = danoDoJogador(d.habilidade?.id, d.bossPhase, 1);
-      d.monsterHp = Math.max(0, d.monsterHp - dmg);
-      if (id === "runa-punhal") d.eco = (Number(d.eco) || 0) + 1;
-      else {
-        for (const p of d.partners || []) {
-          if (p.done) continue;
-          p.hp = Math.max(0, p.hp - 1);
-          if (p.hp <= 0) { p.done = true; this.data.monsters[p.monster.id] = now(); }
-        }
-      }
-      d.feedback = {
-        correct: true,
-        spell: item.name,
-        damage: 0,
-        why: id === "runa-punhal"
-          ? "O punhal entrou primeiro; o eco dele espera o próximo acerto."
-          : "A corrente passou pelo bicho da frente e por cada parceiro.",
-      };
-      this.atualizarFaseChefe(d);
-      if (d.monsterHp <= 0) {
-        if (!this.concluirMatilha(d)) d.phase = "question";
-      } else {
-        d.phase = "feedback";
-      }
-      return { ok: true, name: item.name, victory: d.phase === "victory" };
-    }
-    if (id === "runa-gelo") {
-      d.feedback = { correct: true, spell: item.name, damage: 0, why: "O gelo segurou o tempo: a pergunta passou sem resposta e sem dano." };
-      d.phase = "feedback";
-      return { ok: true, name: item.name };
-    }
-    // trovão acerta o da frente; fogo passa por todos, matilha incluída
-    const dmg = (id === "runa-fogo" ? 1 : 2) + (this.data.sub === "alquimista" ? 1 : 0);
-    const mainDamage = danoDoJogador(d.habilidade?.id, d.bossPhase, dmg);
-    d.monsterHp = Math.max(0, d.monsterHp - mainDamage);
-    if (id === "runa-fogo") {
-      for (const p of d.partners || []) {
-        if (p.done) continue;
-        p.hp = Math.max(0, p.hp - dmg);
-        if (p.hp <= 0) {
-          p.done = true;
-          this.data.monsters[p.monster.id] = now();
-        }
-      }
-    }
-    d.feedback = {
-      correct: true,
-      spell: item.name,
-      damage: 0,
-      why: id === "runa-fogo" ? "O fogo passou por todos os bichos da tela." : "O trovão bateu no monstro da frente.",
-    };
-    this.atualizarFaseChefe(d);
-    if (d.monsterHp <= 0) {
-      if (!this.concluirMatilha(d)) d.phase = "question";
-    } else {
-      d.phase = "feedback";
-    }
-    return { ok: true, name: item.name, victory: d.phase === "victory" };
-  }
-
-  // sem carga, mas com a runa aprendida, a magia sai por mana
-  castSpell(id) {
-    if (!ITEMS[id] || !SPELL_MANA[id]) return { ok: false, reason: "Essa magia não existe." };
-    if (this.itemCount(id) > 0) return this.useItem(id);
-    if (!this.data.spells[id]) return { ok: false, reason: "Você ainda não aprendeu essa runa. Forje uma na forja." };
-    const d = this.duel;
-    if (!d || d.phase !== "question") return { ok: false, reason: "A runa só funciona na pergunta de um duelo." };
-    if (id === "runa-faisca" && d.monsterHp <= 0) return { ok: false, reason: "Este monstro já caiu. Vença os demais da matilha." };
-    if (id === "runa-espelho" && d.shield) return { ok: false, reason: "O espelho já está armado." };
-    this.pulse();
-    const cost = SPELL_MANA[id];
-    if (this.mana() < cost) return { ok: false, reason: `Falta mana (${this.mana()}/${cost}).` };
-    this.data.mana = clamp(this.mana() - cost, 0, this.manaMax());
-    const res = this.applyRune(id);
-    this.save();
-    return { ...res, manaCost: cost };
-  }
-
-  // magia no mapa, fora da pergunta do duelo: cura de verdade, o resto é
+  // magia no mapa, fora do combate: cura de verdade, o resto é
   // efeito de cena (luz, faísca, fogo) pago com mana ou carga
   castWorldSpell(id) {
     if (!ITEMS[id] || !SPELL_MANA[id]) return { ok: false, reason: "Essa magia não existe." };
@@ -1242,17 +1029,8 @@ export class RPG {
       return { ok: true, bait: true, name: item.name };
     }
     if (rune) {
-      const d = this.duel;
-      if (!d || d.phase !== "question") return { ok: false, reason: "A runa só funciona na pergunta de um duelo." };
-      if (id === "runa-faisca" && d.monsterHp <= 0) return { ok: false, reason: "Este monstro já caiu. Vença os demais da matilha." };
-      if (id === "runa-espelho" && d.shield) return { ok: false, reason: "O espelho já está armado." };
-      this.data.items[id]--;
-      if (this.data.items[id] <= 0) delete this.data.items[id];
-      // usar a carga também ensina a magia: depois dela, dá para repetir por mana
-      this.data.spells[id] = true;
-      const res = this.applyRune(id);
-      this.save();
-      return res;
+      // a runa se usa no combate, pela barra de magias (1-6)
+      return { ok: false, reason: "A runa se usa no combate, pela barra de magias." };
     }
     // comida com efeito pode ser usada de vida cheia: o buff ainda vale
     if (!item.buff && (item.heal || item.mana)
@@ -1385,20 +1163,6 @@ export class RPG {
   }
 
   // ---------- duelo ----------
-  prepQuestion(continent, tier) {
-    const bank = QUESTION_INDEX.get(continent)?.[tier] || [];
-    if (!bank.length) return null;
-    const q = bank[Math.floor(Math.random() * bank.length)];
-    const options = q.options.map((text, i) => ({ text, ok: i === q.a }));
-    const mixed = shuffle(options);
-    return {
-      q: q.q,
-      options: mixed.map((o) => o.text),
-      answer: mixed.findIndex((o) => o.ok),
-      why: q.why,
-    };
-  }
-
   // As salas têm tema. A pergunta que combina com o tema vai para a frente do
   // baralho; o resto continua no sorteio. Sem tema, é sorteio puro.
   optionPool(continent, tier, area = "", baseOnly = false) {
@@ -1555,68 +1319,46 @@ export class RPG {
         return true;
       })
       .slice(0, 3);
-    const deck = this.duelDeck(ground.continent, boss ? 3 : monster.tier, monster?.theme || ground.theme);
-    if (!deck.length) return { ok: false, reason: "As perguntas deste continente ainda não foram escritas." };
-    const hp = boss
-      ? TIERS[4].hp
-      : Math.round(TIERS[monster.tier].hp * (Number(monster.hpMult) || 1));
+    const tier = boss ? 4 : clamp(Number(monster.tier) || 1, 1, 3);
+    const hp = boss ? TIERS[4].hp : Math.round(TIERS[tier].hp * (Number(monster.hpMult) || 1));
+    // a matilha entra com a mesma vida que teria sozinha; o combate marca cada
+    // uma como derrotada quando ela cai
+    const parceiros = extras.map((p) => {
+      const ptier = clamp(Number(p.tier) || 1, 1, 3);
+      const php = TIERS[ptier].hp;
+      return { monster: p, tier: ptier, hp: php, hpMax: php, done: false };
+    });
     this.duel = {
       monster,
       ground,
       boss,
-      tier: boss ? 4 : monster.tier,
-      deck,
-      deckIndex: 0,
-      question: deck[0],
+      tier,
       monsterHp: hp,
       monsterHpMax: hp,
       bossPhase: 1,
       habilidade: boss ? habilidadeDoChefe(monster) : null,
       espelhoUsado: false,
-      shield: false,
-      // carga do escudo equipado: segura um erro por duelo e some ao gastar
       escudo: this.equipmentBonus().shield > 0 || !!this.data.enchants.escudo,
+      shield: false,
       eco: 0,
-      revelada: false,
-      partners: [],
+      partners: parceiros,
       get partner() { return this.partners[0] || null; },
-      phase: "question",
-      feedback: null,
+      phase: "combat",
+      training: false,
       result: null,
-      // marcadores das subcategorias: acertos, sequência, veneno e surpresa
-      acertos: 0,
-      seguidos: 0,
-      venenoTurnos: 0,
-      venenoPendente: false,
-      petUsado: false,
       surprise: !this.cave,
-      // escada de dica: passo usado e alternativas já riscadas nesta pergunta
-      dicas: 0,
-      eliminadas: [],
+      petUsado: false,
     };
-    for (const p of extras) {
-      const ptier = clamp(Number(p.tier) || 1, 1, 3);
-      const pdeck = this.duelDeck(ground.continent, ptier, p.theme || ground.theme);
-      if (!pdeck.length) continue;
-      this.duel.partners.push({
-        monster: p,
-        tier: ptier,
-        deck: pdeck,
-        deckIndex: 0,
-        question: pdeck[0],
-        hp: TIERS[ptier].hp,
-        hpMax: TIERS[ptier].hp,
-        seguidos: 0,
-        feedback: null,
-        done: false,
-      });
-    }
-    this.aplicarDicaGuardada(this.duel);
-    return { ok: true, duel: this.duel };
-  }
-
-  currentQuestion() {
-    return this.duel?.question || null;
+    this.combate = new Combate({
+      rpg: this,
+      monster: { monster, tier, hp, hpMax: hp },
+      partners: parceiros,
+      ground,
+      boss,
+      training: false,
+    });
+    this.combate.jogador.escudo = this.duel.escudo;
+    return { ok: true, duel: this.duel, combate: this.combate };
   }
 
   pvpQuestions(continent = "cs") {
@@ -1666,8 +1408,6 @@ export class RPG {
 
   startTraining(continent, tier, theme = "", monster = null) {
     const level = clamp(Number(tier) || 1, 1, 3);
-    const deck = this.buildDeck(continent, [level], theme);
-    if (!deck.length) return { ok: false, reason: "As perguntas deste continente ainda não foram escritas." };
     const hp = TIERS[level].hp;
     const dummy = {
       id: `training-${continent}-${level}`,
@@ -1690,252 +1430,29 @@ export class RPG {
       boss: false,
       training: true,
       tier: level,
-      deck,
-      deckIndex: 0,
-      question: deck[0],
       monsterHp: hp,
       monsterHpMax: hp,
       bossPhase: 1,
+      habilidade: null,
+      espelhoUsado: false,
+      escudo: false,
       shield: false,
-      // carga do escudo equipado: segura um erro por duelo e some ao gastar
-      escudo: this.equipmentBonus().shield > 0 || !!this.data.enchants.escudo,
       eco: 0,
-      revelada: false,
       partners: [],
-      get partner() { return this.partners[0] || null; },
-      phase: "question",
-      feedback: null,
+      get partner() { return null; },
+      phase: "combat",
       result: null,
-      // marcadores das subcategorias: acertos, sequência, veneno e surpresa
-      acertos: 0,
-      seguidos: 0,
-      venenoTurnos: 0,
-      venenoPendente: false,
+      surprise: false,
       petUsado: false,
-      surprise: !this.cave,
-      // escada de dica: passo usado e alternativas já riscadas nesta pergunta
-      dicas: 0,
-      eliminadas: [],
     };
-    this.aplicarDicaGuardada(this.duel);
-    return { ok: true, duel: this.duel };
-  }
-
-
-  answer(index) {
-    const d = this.duel;
-    if (!d || d.phase !== "question" || d.monsterHp <= 0 || !Number.isInteger(index) || index < 0 || index >= d.question.options.length) return { ok: false };
-    const trait = MONSTER_TRAITS[d.monster?.kind]?.id || "";
-    const correct = Number(index) === d.question.answer;
-    if (correct) {
-      this.addSkillXp(d.ground.continent, 1);
-      this.addMana(Number(this.activePet()?.passive.manaHit) || 0);
-      let damage = this.damageFor(d.ground.continent);
-      let note = "";
-      const sub = this.data.sub;
-      d.acertos = (d.acertos || 0) + 1;
-      d.seguidos = (d.seguidos || 0) + 1;
-      // veneno do assassino: dois acertos seguintes doem 1 a mais
-      if (d.venenoTurnos > 0) {
-        damage += 1;
-        d.venenoTurnos -= 1;
-        note = "O veneno ainda corrói.";
-      }
-      // bruxo: o acerto anterior envenenou o bicho
-      if (sub === "bruxo" && d.venenoPendente) {
-        damage += 1;
-        d.venenoPendente = false;
-        note = "O veneno do bruxo cobrou a conta.";
-      }
-      // besteiro: acerto em sequência soma 1
-      if (sub === "besteiro" && d.seguidos > 1) {
-        damage += 1;
-        note = "Na sequência, a pontaria soma.";
-      }
-      // sombra: o primeiro acerto vale o dobro se o bicho não viu
-      if (sub === "sombra" && d.acertos === 1 && d.surprise) {
-        damage *= 2;
-        note = "O bicho não viu de onde veio.";
-      }
-      // arcanista: cada três acertos curam 1
-      if (sub === "arcanista" && d.acertos % 3 === 0) {
-        this.heal(1);
-        note = "A magia devolveu 1 de vida.";
-      }
-      // bruxo e veneno deixam marca para o próximo acerto
-      if (sub === "bruxo") d.venenoPendente = true;
-      if (sub === "veneno") d.venenoTurnos = 2;
-      if (trait === "armor") {
-        damage = Math.max(1, damage - 1);
-        note = "O casco aguentou parte do golpe.";
-      }
-      if (trait === "dodge" && Math.random() < 0.18) {
-        damage = 0;
-        note = "Desviou. O golpe passou de raspão.";
-      }
-      // couraça da fase 2: o golpe rende 1 a menos, sem nunca zerar
-      if (damage > 0) {
-        const reduzido = danoDoJogador(d.habilidade?.id, d.bossPhase, damage);
-        if (reduzido !== damage) note = `${note ? note + " " : ""}A couraça viva comeu 1 de dano.`;
-        damage = reduzido;
-      }
-      // ritmo: acertos seguidos somam dano, com teto de +2. Desvio que zerou o
-      // golpe não ganha ritmo, e o casco já descontou antes de somar.
-      const ritmo = damage > 0 ? bonusDeRitmo(d.seguidos) : 0;
-      if (ritmo) {
-        damage += ritmo;
-        note = `${note ? note + " " : ""}Ritmo: ${d.seguidos} acertos, +${ritmo} de dano.`;
-      }
-      // chefe exposto: dois acertos seguidos abrem o ponto fraco
-      if (d.boss && d.seguidos >= 3) {
-        damage += 1;
-        note = `${note ? note + " " : ""}O ponto fraco está exposto: +1 de dano.`;
-      }
-      // eco da runa: o próximo acerto paga a espera
-      if (damage > 0 && Number(d.eco) > 0) {
-        damage += Number(d.eco);
-        note = `${note ? note + " " : ""}O eco somou ${d.eco} de dano.`;
-        d.eco = 0;
-      }
-      // família estudada: +50% contra ela, sem ressuscitar golpe que zerou
-      if (damage > 0 && this.familiaCompleta(d.monster?.kind)) {
-        damage = Math.max(1, Math.round(damage * 1.5));
-        note = `${note ? note + " " : ""}Fraqueza da família estudada: +50%.`;
-      }
-      d.monsterHp = Math.max(0, d.monsterHp - damage);
-      this.registrarConceito(d.question.area, true);
-      d.feedback = { correct: true, why: d.question.why, damage: 0, note };
-      this.atualizarFaseChefe(d);
-      if (d.monsterHp <= 0) {
-        if (!this.concluirMatilha(d)) d.phase = "question";
-        this.save();
-      } else {
-        d.phase = "feedback";
-        this.save();
-      }
-    } else {
-      d.seguidos = 0;
-      const previsto = this.erroPrevisto();
-      const espelho = espelhoDoChefe(d.habilidade?.id, d.bossPhase, d.espelhoUsado);
-      const petSegura = !espelho && !d.shield && !d.escudo && this.data.sub === "domador" && this.activePet() && !d.petUsado;
-      if (petSegura) d.petUsado = true;
-      if (espelho) d.espelhoUsado = true;
-      const escudoSegura = !espelho && !d.shield && !petSegura && !!d.escudo;
-      if (escudoSegura) d.escudo = false;
-      const blocked = !!d.shield || petSegura || espelho || escudoSegura;
-      if (!espelho && d.shield) d.shield = false;
-      let damage = previsto;
-      let note = "";
-      if (trait === "haste") {
-        note = "Ele bateu de novo, sem esperar.";
-      }
-      if (trait === "divide" && d.monsterHp > 0) {
-        const heal = Math.max(1, Math.round(d.monsterHpMax * 0.12));
-        const before = d.monsterHp;
-        d.monsterHp = Math.min(d.monsterHpMax, d.monsterHp + heal);
-        note = `O bicho se recompôs: +${d.monsterHp - before} de vida.`;
-      }
-      if (blocked) damage = 0;
-      if (espelho) note = `${note ? note + " " : ""}O espelho partido engoliu o golpe.`;
-      if (escudoSegura) note = `${note ? note + " " : ""}O escudo segurou o golpe inteiro.`;
-      if (d.training) {
-        d.feedback = { correct: false, why: d.question.why, damage, blocked, escudo: escudoSegura, note, training: true, picked: index };
-        d.phase = "feedback";
-        return { ok: true, correct, phase: d.phase, feedback: d.feedback, duel: d };
-      }
-      this.registrarConceito(d.question.area, false);
-      this.registrarDistrator(d.question, index);
-      this.data.hp = Math.max(0, this.hp() - damage);
-      const antesDaSeiva = d.monsterHp;
-      d.monsterHp = curaDoChefe(d.habilidade?.id, d.bossPhase, d.monsterHp, d.monsterHpMax);
-      if (d.monsterHp > antesDaSeiva) note = `${note ? note + " " : ""}A seiva amarga devolveu ${d.monsterHp - antesDaSeiva} de vida.`;
-      d.feedback = { correct: false, why: d.question.why, damage, blocked, escudo: escudoSegura, note, picked: index };
-      if (this.data.hp <= 0) {
-        this.data.hp = this.hpMax();
-        d.phase = "defeat";
-        this.save();
-        this.onRespawn?.();
-      } else {
-        d.phase = "feedback";
-        this.save();
-      }
-    }
-    return { ok: true, correct, phase: d.phase, feedback: d.feedback, duel: d };
-  }
-
-  answerPartner(index, who = 0) {
-    const d = this.duel;
-    const p = d?.partners?.[who];
-    if (!d || !p || p.done || p.feedback || d.phase !== "question" || !Number.isInteger(index) || index < 0 || index >= p.question.options.length) return { ok: false };
-    const correct = Number(index) === p.question.answer;
-    if (correct) {
-      this.addSkillXp(d.ground.continent, 1);
-      this.addMana(Number(this.activePet()?.passive.manaHit) || 0);
-      let damage = this.damageFor(d.ground.continent);
-      const trait = MONSTER_TRAITS[p.monster?.kind]?.id;
-      if (trait === "armor") damage = Math.max(1, damage - 1);
-      if (trait === "dodge" && Math.random() < 0.18) damage = 0;
-      // o parceiro tem a própria sequência de acertos e o próprio ritmo
-      p.seguidos = (p.seguidos || 0) + 1;
-      const ritmo = damage > 0 ? bonusDeRitmo(p.seguidos) : 0;
-      if (ritmo) damage += ritmo;
-      p.hp = Math.max(0, p.hp - damage);
-      this.registrarConceito(p.question.area, true);
-      p.feedback = {
-        correct: true,
-        why: p.question.why,
-        damage: 0,
-        note: ritmo ? `Ritmo do parceiro: ${p.seguidos} acertos, +${ritmo} de dano.` : "",
-      };
-      if (p.hp <= 0) {
-        p.done = true;
-        this.data.monsters[p.monster.id] = now();
-        this.concluirMatilha(d);
-      }
-      this.save();
-      return { ok: true, correct, partner: true, who, done: p.done };
-    }
-    if (MONSTER_TRAITS[p.monster?.kind]?.id === "divide") {
-      p.hp = Math.min(p.hpMax, p.hp + Math.max(1, Math.round(p.hpMax * 0.12)));
-    }
-    p.seguidos = 0;
-    this.registrarConceito(p.question.area, false);
-    this.registrarDistrator(p.question, index);
-    const damage = this.erroPrevisto(p.monster, p.tier, 1);
-    const petSegura = !d.shield && this.data.sub === "domador" && this.activePet() && !d.petUsado;
-    const blocked = !!d.shield || !!petSegura;
-    if (petSegura) d.petUsado = true;
-    if (d.shield) d.shield = false;
-    this.data.hp = Math.max(0, this.hp() - damage);
-    p.feedback = { correct: false, why: p.question.why, damage, blocked, picked: index };
-    if (this.data.hp <= 0) {
-      this.data.hp = this.hpMax();
-      d.phase = "defeat";
-      this.save();
-      this.onRespawn?.();
-    } else {
-      this.save();
-    }
-    return { ok: true, correct, partner: true, who, phase: d.phase };
-  }
-
-  partnerNext(who = 0) {
-    const d = this.duel;
-    const p = d?.partners?.[who];
-    if (!d || !p || p.done || d.phase !== "question") return null;
-    if (!p.feedback) return { phase: d.phase, partner: p };
-    p.feedback = null;
-    if (p.hp <= 0) { p.done = true; return { phase: d.phase, partner: p }; }
-    p.deckIndex++;
-    if (p.deckIndex >= p.deck.length) {
-      p.deck = shuffle(p.deck);
-      p.deckIndex = 0;
-      if (p.deck.length > 1 && p.question && p.deck[0].q === p.question.q) {
-        [p.deck[0], p.deck[1]] = [p.deck[1], p.deck[0]];
-      }
-    }
-    p.question = p.deck[p.deckIndex];
-    return { phase: d.phase, partner: p };
+    this.combate = new Combate({
+      rpg: this,
+      monster: { monster: dummy, tier: level, hp, hpMax: hp },
+      partners: [],
+      ground: this.duel.ground,
+      training: true,
+    });
+    return { ok: true, duel: this.duel, combate: this.combate };
   }
 
   victory(d) {
@@ -1988,6 +1505,7 @@ export class RPG {
     if (d.phase === "victory" || d.phase === "defeat") {
       const result = { phase: d.phase, result: d.result, boss: d.boss, monster: d.monster };
       this.duel = null;
+      this.combate = null;
       this.save();
       return result;
     }
@@ -2012,6 +1530,7 @@ export class RPG {
   flee() {
     if (!this.duel) return;
     this.duel = null;
+    this.combate = null;
     this.save();
   }
 

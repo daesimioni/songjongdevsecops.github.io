@@ -10,17 +10,17 @@ export const HABILIDADES = [
   {
     id: "seiva",
     nome: "seiva amarga",
-    nota: "Cada erro seu devolve 2 de vida a ele enquanto ele está ferido.",
+    nota: "Ferido, ele se cura 2 de vida a cada quatro segundos.",
   },
   {
     id: "impeto",
     nome: "ímpeto cego",
-    nota: "Ferido, ele bate mais forte: o erro dói 2 a mais.",
+    nota: "Ferido, ele bate mais forte: o golpe dele tira 2 a mais.",
   },
   {
     id: "espelho",
     nome: "espelho partido",
-    nota: "O primeiro erro da fase 2 é engolido pelo espelho.",
+    nota: "O primeiro golpe seu na fase 2 é engolido pelo espelho.",
   },
 ];
 
@@ -39,7 +39,7 @@ export function danoDoJogador(habilidadeId, fase, dano) {
   return dano;
 }
 
-// dano extra que o erro custa por causa do ímpeto
+// dano extra que o golpe do chefe custa por causa do ímpeto
 export function extraDoErro(habilidadeId, fase) {
   return habilidadeId === "impeto" && (fase || 1) >= 2 ? 2 : 0;
 }
@@ -50,7 +50,7 @@ export function curaDoChefe(habilidadeId, fase, atual, max) {
   return Math.min(max, atual + 2);
 }
 
-// o espelho segura um erro por duelo, só a partir da fase 2
+// o espelho segura um golpe por combate, só a partir da fase 2
 export function espelhoDoChefe(habilidadeId, fase, usado) {
   return habilidadeId === "espelho" && (fase || 1) >= 2 && !usado;
 }
