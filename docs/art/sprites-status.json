@@ -75,6 +75,17 @@
       ],
       "sourceSha256": "b121f27c8de5f07f8a8359b107f61916836a7f33d390cf10f120686a12ac1e40",
       "output": "assets/creatures/wolf-atlas.png"
+    },
+    {
+      "id": "arte/magias/a1d7fecdb7c871ca7606",
+      "archive": "magias.zip",
+      "member": "Magias/Paladin/Disintegrate Rune.png",
+      "status": "integration",
+      "location": "feat/arte-autoral-disintegrate-rune: assets/magic/disintegrate-rune.png",
+      "missing": [
+        "runtime item/spell mapping"
+      ],
+      "output": "assets/magic/disintegrate-rune.png"
     }
   ],
   "archives": [
