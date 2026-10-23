@@ -117,12 +117,12 @@ setas cancelam o caminho.
 A superfície é sala de aula. Em cada clareira com bandeira fica um **instrutor**:
 `F` nele abre três treinos (fácil, médio, difícil) com os bichos da caverna
 daquele continente. O treino é o mesmo combate de ação da caverna, mas o golpe
-**para em 1 de vida**: você não morre, a vitória **não dá loot** e a perícia do
-continente continua subindo.
+**para em 1 de vida**: você não morre e a vitória **não dá loot**.
 
-Quem paga é o bicho da caverna, e a briga é de ação, numa arena dentro do
-modal. Você anda com WASD ou as setas (ou arrasta no celular), e o bicho
-telegrafa cada bote antes de bater:
+Quem paga é o bicho da caverna. A briga acontece no próprio mapa: o monstro
+continua no corredor, sem arena separada, pausa de encontro ou teletransporte.
+Você anda com WASD ou as setas (ou toca o chão no celular), e o bicho
+telegrafa cada bote antes de bater. Paredes e objetos bloqueiam movimento e golpes:
 
 - **J ataca** o bicho mais perto do alcance; três acertos seguidos somam +1 de
   combo e cinco somam +2.
@@ -143,7 +143,7 @@ modificadores de vocação, subcategoria, fase e proteção:
 O dano do seu golpe tem teto de 4; subcategorias, equipamento, encantamento e
 combo podem alterar o resultado. O bicho tem um tempo próprio entre botes, e o
 chefe muda de fase em dois terços e um terço da vida: a habilidade dele troca e
-o golpe forte cobre o chão da arena. A pergunta saiu do combate e vive na
+o golpe forte marca sua área no chão do mapa. A pergunta saiu do combate e vive na
 coleta, na fazenda e na cozinha.
 
 Cada vitória dá XP e item; os monstros voltam depois de cinco minutos, o chefe
@@ -167,13 +167,17 @@ ou parede na frente do boneco cobre o corpo dele em vez de ficar sempre atrás.
 
 ## Matilha e magias
 
-Quando até quatro monstros veem você na mesma janela, todos entram na **mesma
-arena**: o principal no centro e os parceiros em volta, cada um com a própria
-vida. Cada um pode cair antes dos outros, e a vitória soma o XP e o loot de
-todos. Com mais de quatro na janela, três acompanham o principal e o resto entra
-na fila; o HUD mostra `matilha N` enquanto houver fila. Fugir limpa a fila; o
-risco é do bicho que está na frente. No celular a arena encolhe e o direcional e
-os botões J/K/L aparecem embaixo.
+Os monstros que veem você entram no combate mantendo as posições reais. Outros
+podem se juntar à perseguição (até 12 participantes), sem fila de arenas. Cada
+morte entrega seu XP e loot uma vez, mesmo se você recuar dos demais. Para fugir,
+afaste-se pelo mapa ou alcance uma escada: não há recuo automático nem dano
+aleatório de fuga. O monstro sobrevivente conserva a vida nesta visita.
+
+[Capturas e contratos do combate no mapa](docs/design/COMBATE-NO-MAPA.md).
+
+No celular, os botões de ataque, guarda, esquiva, companheiro e runas ficam sobre
+o mapa, junto aos controles da cena ativa. Treinos e a Grande Prova também
+acontecem na cena atual. Painéis e a aba oculta pausam a ação.
 
 A barra de **magias** do combate tem seis runas forjáveis (forja da cidade):
 
@@ -181,7 +185,7 @@ A barra de **magias** do combate tem seis runas forjáveis (forja da cidade):
 |---|---|---|
 | faísca | 1 de dano no bicho à frente | veio 2, erva 1 |
 | trovão | 2 de dano no bicho à frente | ferro 1, veio 2 |
-| fogo | 1 de dano em todos os bichos da arena | veio 2, ferro 2 |
+| fogo | 1 de dano nos bichos próximos e visíveis | veio 2, ferro 2 |
 | gelo | 1 de dano e congela o bicho por quase dois segundos | veio 2, madeira 1 |
 | cura | recupera 12 de vida | erva 2, veio 1 |
 | espelho | o próximo golpe não tira vida | veio 3, erva 1 |
@@ -295,10 +299,10 @@ laterais. O HUD marca a camada (`subsolo -1`).
 Lá embaixo valem as mesmas regras do mundo, com uma diferença: o bicho que vê
 você começa a batalha sozinho. Ele anda em volta do ninho, tem um raio de visão
 e precisa de linha reta até o aventureiro; quando isso acontece, aparece um `!`
-e a arena de combate abre. Quanto mais fundo, mais forte: as salas perto da
+e ele passa a perseguir e atacar no próprio corredor. Quanto mais fundo, mais forte: as salas perto da
 entrada têm monstros de uma estrela, as do meio de duas, as do fundo de três, e
 o chefe fica no último beco, sem alavanca. Ele luta com as duas fases extras e
-deixa a relíquia do continente. Fugir de um encontro sempre pode custar vida, e
+deixa a relíquia do continente. Os golpes continuam durante a retirada até você se afastar, e
 o risco está escrito no botão de fuga.
 
 Cada sala tem baú. Baú fundo é selado e pede uma **Chave de Caverna**, que se
