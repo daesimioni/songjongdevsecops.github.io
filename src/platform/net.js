@@ -391,7 +391,19 @@ export class Net {
   }
 
   setIdentity(pubkey) {
-    this.pubkey = typeof pubkey === "string" && /^[0-9a-f]{64}$/i.test(pubkey) ? pubkey.toLowerCase() : "";
+    const novo = typeof pubkey === "string" && /^[0-9a-f]{64}$/i.test(pubkey) ? pubkey.toLowerCase() : "";
+    // trocar de conta não pode herdar a espera da conta antiga: a sessão nova
+    // nasce livre e mais nova, e o estado passa a levar a chave nova. A
+    // sequência continua de propósito: quem já nos conhece descarta número menor.
+    if (novo !== this.pubkey) {
+      const esperando = this.contaTomada;
+      this.pubkey = novo;
+      this.contaTomada = false;
+      this.contaRivais.clear();
+      this.contaVistaEm = 0;
+      this.inicio = Date.now();
+      if (esperando) this.onStatus?.({ state: this.connected ? "online" : "offline", count: this.peers.size + 1 });
+    }
     this.publishState(true);
   }
 

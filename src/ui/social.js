@@ -779,6 +779,8 @@ export function createSocial({ rede, backup, quests, player, getPeers, getNet, g
       const res = await rede.importSecret(raw);
       impBtn.disabled = false;
       if (!res.ok) { toast(res.reason, 4200); return; }
+      // a sessão da praça também é a conta: a chave colada precisa valer nela
+      myNet()?.setIdentity?.(rede.pk);
       impInput.value = "";
       ui.thread = null;
       ui.unread.clear();
@@ -835,6 +837,8 @@ export function createSocial({ rede, backup, quests, player, getPeers, getNet, g
     reset.addEventListener("click", async () => {
       if (!confirm("Gerar uma chave nova? A identidade atual sai deste navegador.")) return;
       await rede.resetIdentity();
+      // a sessão da praça também é a conta: sem isto ela continua na chave antiga
+      myNet()?.setIdentity?.(rede.pk);
       ui.thread = null;
       ui.unread.clear();
       ui.secretShown = false;

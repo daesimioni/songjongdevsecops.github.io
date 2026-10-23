@@ -1625,7 +1625,7 @@ function setNetStatus({ state: s, count }) {
   if (s === "duplicado" && estadoRedeAnterior !== "duplicado") {
     toast("sua conta está aberta em outra aba ou aparelho. esta ficou em espera e volta sozinha quando a outra sair.", 6200);
   } else if (s === "online" && estadoRedeAnterior === "duplicado") {
-    toast("a outra sessão saiu. esta aba voltou ao mundo.", 4200);
+    toast("esta aba voltou ao mundo.", 4200);
   }
   estadoRedeAnterior = s;
 }

@@ -75,6 +75,22 @@ velha.net.prune();
 assert.equal(velha.net.contaTomada, false, "sem a outra sessão, a aba devia voltar");
 assert.ok(velha.publicados.at(-1).topico.endsWith("/state"), "ao voltar, devia publicar estado");
 
+// ---- trocar de conta não herda a espera da conta antiga ----
+const trocada = sessao({ id: "ms_trocada", inicio: 7000 });
+const rival = sessao({ id: "ms_rival", inicio: 9000 });
+trocada.net.handle(trocada.net.topic("state"), estado(rival.net));
+assert.equal(trocada.net.contaTomada, true, "a conta antiga devia estar em espera");
+trocada.net.seq = 500;
+trocada.net.setIdentity(OUTRA);
+assert.ok(trocada.net.seq > 500, "a sequência voltou ao zero e quem já conhece a sessão descarta o estado");
+assert.equal(trocada.net.pubkey, OUTRA, "a chave nova não entrou");
+assert.equal(trocada.net.contaTomada, false, "a conta nova não pode nascer em espera");
+assert.equal(trocada.net.contaRivais.size, 0, "a conta nova herdou a rival da antiga");
+trocada.net.publishState(true);
+const corpoNovo = JSON.parse(trocada.publicados.at(-1).corpo);
+assert.equal(corpoNovo.k, OUTRA, "o estado devia levar a chave nova");
+assert.equal(corpoNovo.ini, trocada.net.inicio, "a sessão nova devia ser a mais nova");
+
 // ---- sem identidade não existe conta para comparar ----
 const anon = sessao({ id: "ms_anon", inicio: 9, pubkey: "" });
 anon.net.handle(anon.net.topic("state"), { ...estado(anon.net), id: "ms_outro", k: CONTA });
@@ -85,5 +101,7 @@ assert.equal(anon.net.peers.size, 1, "sem identidade o outro é um viajante comu
 const app = fs.readFileSync(new URL("../src/app/app.js", import.meta.url), "utf8");
 assert.match(app, /s === "duplicado"/, "app.js não mostra o estado em espera");
 assert.match(app, /estadoRedeAnterior === "duplicado"/, "app.js não avisa quando a conta é assumida");
+const social = fs.readFileSync(new URL("../src/ui/social.js", import.meta.url), "utf8");
+assert.equal((social.match(/myNet\(\)\?\.setIdentity\?\.\(rede\.pk\)/g) || []).length, 2, "a Rede não avisa a praça da chave nova ao gerar e ao importar");
 
 console.log("ok conta: sessão antiga cede, a nova fica, e a conta não se multiplica");
