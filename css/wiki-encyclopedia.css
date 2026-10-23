@@ -88,3 +88,10 @@
 #wiki .wiki-captura { clear: both; margin: 20px 0; }
 #wiki .wiki-captura img { display: block; width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--line); }
 #wiki .wiki-captura figcaption { font: 12px/1.6 var(--sans); color: var(--muted); margin-top: 8px; }
+
+/* Integração com a moldura de UI: a lista deve encolher e o artigo rolar. */
+#wiki .wiki-list { min-height: 0; }
+@media (min-width: 901px) {
+  #wiki .wiki-detail { overflow-y: auto; }
+}
+html[data-fonte="grande"] #wiki :is(p, li, dd, dt, label, button, input, select, textarea, summary) { font-size: max(16px, 1em); }

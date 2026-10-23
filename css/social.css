@@ -10,7 +10,7 @@
 }
 .journal-sec {
   font-family: var(--pixel);
-  font-size: 8px;
+  font-size: 12px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--amber);
@@ -19,7 +19,7 @@
 .journal-quests { display: grid; gap: 8px; }
 .quest-empty, .npc-muted {
   font-family: var(--mono);
-  font-size: 11.5px;
+  font-size: 12px;
   line-height: 1.6;
   color: var(--muted);
   margin: 0;
@@ -35,16 +35,16 @@
 .quest-head b { font-family: var(--mono); font-size: 13px; color: var(--ink); }
 .quest-giver {
   font-family: var(--pixel);
-  font-size: 7px;
+  font-size: 12px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--amber);
   white-space: nowrap;
 }
-.quest-brief { font-family: var(--mono); font-size: 11.5px; line-height: 1.55; color: var(--muted); margin: 7px 0 10px; }
+.quest-brief { font-family: var(--mono); font-size: 12px; line-height: 1.55; color: var(--muted); margin: 7px 0 10px; }
 .quest-bar { height: 5px; border-radius: 3px; background: rgba(255, 255, 255, 0.07); overflow: hidden; }
 .quest-bar i { display: block; height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--violet), var(--mint)); transition: width 0.25s; }
-.quest-foot { display: flex; justify-content: space-between; gap: 8px; font-family: var(--mono); font-size: 10px; color: var(--muted); margin-top: 6px; }
+.quest-foot { display: flex; justify-content: space-between; gap: 8px; font-family: var(--mono); font-size: 12px; color: var(--muted); margin-top: 6px; }
 .quest-btn {
   width: 100%;
   margin-top: 10px;
@@ -69,11 +69,11 @@
   background: rgba(255, 255, 255, 0.03);
   color: #d9d3ee;
   font-family: var(--mono);
-  font-size: 11.5px;
+  font-size: 12px;
   text-align: left;
 }
 .quest-option:hover { border-color: var(--line-strong); }
-.quest-note { font-family: var(--mono); font-size: 11px; line-height: 1.55; color: var(--muted); margin: 8px 0 0; }
+.quest-note { font-family: var(--mono); font-size: 12px; line-height: 1.55; color: var(--muted); margin: 8px 0 0; }
 .quest-note.good { color: var(--mint); }
 .quest-note.bad { color: var(--rose); }
 .npc-line {
@@ -88,7 +88,7 @@
 }
 .npc-sec {
   font-family: var(--pixel);
-  font-size: 8px;
+  font-size: 12px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--muted);
@@ -117,7 +117,7 @@
 }
 .rede-id { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 .rede-id b { font-family: var(--mono); font-size: 14px; color: var(--ink); }
-.rede-id-meta { font-family: var(--mono); font-size: 10px; color: var(--muted); }
+.rede-id-meta { font-family: var(--mono); font-size: 12px; color: var(--muted); }
 .rede-key {
   max-width: 210px;
   overflow: hidden;
@@ -129,7 +129,7 @@
   background: rgba(107, 213, 255, 0.07);
   color: var(--cyan);
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 12px;
 }
 .rede-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
 .rede-tabs button {
@@ -139,7 +139,7 @@
   background: transparent;
   color: var(--muted);
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 12px;
 }
 .rede-tabs button.on { border-color: rgba(97, 244, 192, 0.5); background: rgba(97, 244, 192, 0.1); color: var(--mint); }
 .rede-tabs b {
@@ -150,7 +150,7 @@
   border-radius: 999px;
   background: var(--rose);
   color: #1b0a12;
-  font-size: 9px;
+  font-size: 12px;
 }
 .rede-body { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
 .rede-pane { display: flex; flex-direction: column; gap: 10px; min-height: 100%; }
@@ -162,10 +162,10 @@
   background: transparent;
   color: var(--muted);
   font-family: var(--mono);
-  font-size: 10.5px;
+  font-size: 12px;
 }
 .rede-chip.on { border-color: rgba(180, 140, 255, 0.55); background: rgba(180, 140, 255, 0.12); color: var(--ink); }
-.rede-hint { margin: 0; font-family: var(--mono); font-size: 10.5px; line-height: 1.55; color: var(--muted); }
+.rede-hint { margin: 0; font-family: var(--mono); font-size: 12px; line-height: 1.55; color: var(--muted); }
 .rede-msgs {
   flex: 1;
   min-height: 190px;
@@ -184,8 +184,8 @@
 .rede-msg.pending { opacity: 0.6; }
 .rede-msg.failed { border-left-color: var(--rose); background: rgba(255, 122, 168, 0.06); }
 .rede-msg-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 3px; }
-.rede-msg-head b { font-family: var(--mono); font-size: 11px; }
-.rede-msg-head span { font-family: var(--mono); font-size: 9px; color: var(--muted); }
+.rede-msg-head b { font-family: var(--mono); font-size: 12px; }
+.rede-msg-head span { font-family: var(--mono); font-size: 12px; color: var(--muted); }
 .rede-msg p { margin: 0; font-family: var(--mono); font-size: 12px; line-height: 1.55; color: #ded9f0; overflow-wrap: anywhere; }
 .rede-form { display: flex; gap: 7px; }
 .rede-form input, .rede-form textarea,
@@ -209,7 +209,7 @@
   background: rgba(97, 244, 192, 0.1);
   color: var(--mint);
   font-family: var(--mono);
-  font-size: 11.5px;
+  font-size: 12px;
 }
 .rede-send:disabled { opacity: 0.5; }
 .rede-dm-list { max-height: 36vh; }
@@ -228,9 +228,9 @@
 .rede-dm-row:hover { border-color: var(--line-strong); }
 .rede-dm-left { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 .rede-dm-left b { font-family: var(--mono); font-size: 12px; color: var(--ink); }
-.rede-dm-left span { max-width: 340px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: var(--mono); font-size: 10.5px; color: var(--muted); }
+.rede-dm-left span { max-width: 340px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: var(--mono); font-size: 12px; color: var(--muted); }
 .rede-dm-right { display: flex; align-items: center; gap: 6px; }
-.rede-dm-time { font-family: var(--mono); font-size: 9px; color: var(--muted); }
+.rede-dm-time { font-family: var(--mono); font-size: 12px; color: var(--muted); }
 .rede-unread {
   min-width: 17px;
   padding: 2px 5px;
@@ -238,12 +238,12 @@
   background: var(--rose);
   color: #1b0a12;
   font-family: var(--mono);
-  font-size: 9px;
+  font-size: 12px;
   font-style: normal;
   text-align: center;
 }
 .rede-add { display: flex; flex-direction: column; gap: 6px; }
-.rede-form-key input { font-size: 11px; }
+.rede-form-key input { font-size: 12px; }
 .rede-thread-head { display: flex; align-items: center; gap: 10px; }
 .rede-back {
   padding: 6px 10px;
@@ -252,14 +252,14 @@
   background: transparent;
   color: var(--muted);
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 12px;
 }
 .rede-thread-who { display: flex; flex-direction: column; gap: 2px; }
 .rede-thread-who b { font-family: var(--mono); font-size: 13px; color: var(--ink); }
 .rede-people { display: flex; flex-direction: column; gap: 8px; }
 .rede-sec {
   font-family: var(--pixel);
-  font-size: 8px;
+  font-size: 12px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--amber);
@@ -277,7 +277,7 @@
 }
 .rede-person-left { display: flex; flex-direction: column; gap: 2px; }
 .rede-person-left b { font-family: var(--mono); font-size: 12px; color: var(--ink); }
-.rede-person-left span { font-family: var(--mono); font-size: 10px; color: var(--muted); }
+.rede-person-left span { font-family: var(--mono); font-size: 12px; color: var(--muted); }
 .rede-mini {
   padding: 6px 10px;
   border: 1px solid var(--line);
@@ -285,7 +285,7 @@
   background: rgba(255, 255, 255, 0.03);
   color: var(--muted);
   font-family: var(--mono);
-  font-size: 10.5px;
+  font-size: 12px;
 }
 .rede-mini:hover:not(:disabled) { border-color: var(--line-strong); color: var(--ink); }
 .rede-mini:disabled { opacity: 0.4; }
@@ -305,16 +305,16 @@
   background: rgba(0, 0, 0, 0.25);
   color: var(--mint);
   font-family: var(--mono);
-  font-size: 10.5px;
+  font-size: 12px;
 }
-.rede-warn { margin: 6px 0 0; font-family: var(--mono); font-size: 10px; color: var(--rose); }
+.rede-warn { margin: 6px 0 0; font-family: var(--mono); font-size: 12px; color: var(--rose); }
 .rede-form-stack { display: flex; flex-direction: column; gap: 8px; }
 .rede-form-stack textarea { resize: vertical; }
-.rede-relay-list { margin: 6px 0 0; padding-left: 16px; font-family: var(--mono); font-size: 10.5px; line-height: 1.7; color: var(--muted); overflow-wrap: anywhere; }
-.rede-status { margin: 12px 0 0; font-family: var(--mono); font-size: 10px; color: var(--muted); }
+.rede-relay-list { margin: 6px 0 0; padding-left: 16px; font-family: var(--mono); font-size: 12px; line-height: 1.7; color: var(--muted); overflow-wrap: anywhere; }
+.rede-status { margin: 12px 0 0; font-family: var(--mono); font-size: 12px; color: var(--muted); }
 .rede-status[data-state="pronta"] { color: var(--mint); }
 .rede-status[data-state="sem rede"] { color: var(--rose); }
-.rede-empty { margin: auto; padding: 16px; font-family: var(--mono); font-size: 11px; line-height: 1.6; color: var(--muted); text-align: center; }
+.rede-empty { margin: auto; padding: 16px; font-family: var(--mono); font-size: 12px; line-height: 1.6; color: var(--muted); text-align: center; }
 
 @media (max-width: 720px) {
   .rede-modal { padding: 16px 14px 10px; }
@@ -332,7 +332,7 @@
   background: rgba(255, 200, 87, 0.14);
   color: var(--amber);
   font-family: var(--pixel);
-  font-size: 6.5px;
+  font-size: 12px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }

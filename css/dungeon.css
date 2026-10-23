@@ -38,7 +38,7 @@
 .dg-kicker {
   margin: 0 0 6px;
   font-family: var(--pixel);
-  font-size: 8px;
+  font-size: 12px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--muted);
@@ -57,7 +57,7 @@
   margin: 6px 0 0;
   max-width: 54ch;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 12px;
   color: var(--muted);
   text-shadow: 0 1px 2px #000;
 }
@@ -73,7 +73,7 @@
   flex: 0 0 auto;
   padding: 8px 10px;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 12px;
   color: var(--ink);
   background: rgba(5, 8, 20, 0.8);
   border: 1px solid var(--line-strong);
@@ -89,7 +89,7 @@
   flex-wrap: wrap;
   gap: 8px;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 12px;
 }
 .dg-stats span {
   padding: 5px 8px;
@@ -139,7 +139,7 @@
   margin: 0;
   text-align: center;
   font-family: var(--mono);
-  font-size: 10.5px;
+  font-size: 12px;
   color: var(--muted);
   text-shadow: 0 1px 2px #000;
 }
@@ -148,8 +148,8 @@
   .dungeon-hud { padding: 12px; gap: 7px; }
   .dg-sub { display: none; }
   .dg-help { display: none; }
-  .dg-msg { font-size: 11px; }
-  .dg-stats { font-size: 10px; gap: 5px; }
+  .dg-msg { font-size: 12px; }
+  .dg-stats { font-size: 12px; gap: 5px; }
   .dg-stats span { padding: 4px 6px; }
   .dg-prompt { bottom: 22px; }
 }
@@ -167,14 +167,14 @@
 .recipe-card b {
   flex: none;
   font-family: var(--pixel);
-  font-size: 8px;
+  font-size: 12px;
   line-height: 1.6;
   color: var(--amber);
 }
 .recipe-card span {
   flex: 1;
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.5;
   color: var(--muted);
 }
@@ -182,7 +182,7 @@
 .sheet-buffs, .sheet-pet {
   margin: 6px 0 0;
   font-family: var(--mono);
-  font-size: 10.5px;
+  font-size: 12px;
   line-height: 1.5;
   color: var(--cyan);
 }
@@ -230,14 +230,14 @@
 
 #duel-risk {
   margin-left: 4px;
-  font-size: 9px;
+  font-size: 12px;
   color: var(--muted);
 }
 
 .training-sub {
   margin: 0 0 16px;
   font-family: var(--mono);
-  font-size: 11.5px;
+  font-size: 12px;
   line-height: 1.6;
   color: var(--muted);
 }
@@ -260,12 +260,12 @@
 }
 .training-card b {
   font-family: var(--pixel);
-  font-size: 9px;
+  font-size: 12px;
   color: var(--amber);
 }
 .training-card span {
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.5;
   color: var(--muted);
 }
@@ -278,7 +278,7 @@
   padding-top: 12px;
   border-top: 1px dashed var(--line);
   font-family: var(--mono);
-  font-size: 10.5px;
+  font-size: 12px;
   line-height: 1.6;
   color: var(--muted);
 }
@@ -292,7 +292,7 @@
 .pvp-sub {
   margin: 0 0 14px;
   font-family: var(--mono);
-  font-size: 11.5px;
+  font-size: 12px;
   line-height: 1.6;
   color: var(--muted);
 }
@@ -308,7 +308,7 @@
   padding-top: 8px;
   border-top: 1px dashed var(--line);
   font-family: var(--mono);
-  font-size: 10.5px;
+  font-size: 12px;
   line-height: 1.6;
   color: var(--muted);
 }
@@ -320,7 +320,7 @@
   background: rgba(255, 255, 255, 0.04);
   color: var(--ink);
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 12px;
 }
 .pvp-action:hover, .pvp-action:focus-visible {
   border-color: var(--mint);
@@ -332,7 +332,7 @@
   display: flex;
   justify-content: space-between;
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 12px;
   color: var(--muted);
 }
 .pvp-bar {
@@ -356,8 +356,8 @@
   border-radius: 6px;
   color: var(--ink);
 }
-.pvp-question b { font-family: var(--mono); font-size: 11.5px; line-height: 1.5; font-weight: 500; }
-.pvp-question i { font-family: var(--mono); font-size: 10px; font-style: normal; color: var(--muted); }
+.pvp-question b { font-family: var(--mono); font-size: 12px; line-height: 1.5; font-weight: 500; }
+.pvp-question i { font-family: var(--mono); font-size: 12px; font-style: normal; color: var(--muted); }
 .pvp-question:hover, .pvp-question:focus-visible {
   border-color: var(--amber);
   background: rgba(255, 200, 87, 0.07);
@@ -367,7 +367,7 @@
   padding: 2px 6px;
   border-radius: 3px;
   font-family: var(--pixel);
-  font-size: 7.5px;
+  font-size: 12px;
   color: var(--bg);
   background: var(--mint);
 }
@@ -386,7 +386,7 @@
   border-radius: 6px;
   color: var(--ink);
   font-family: var(--mono);
-  font-size: 11.5px;
+  font-size: 12px;
 }
 .pvp-option:hover, .pvp-option:focus-visible { border-color: var(--mint); }
 .pvp-option kbd {
@@ -396,13 +396,13 @@
   border: 1px solid var(--line-strong);
   border-radius: 3px;
   font-family: var(--pixel);
-  font-size: 8px;
+  font-size: 10px;
   color: var(--muted);
 }
 .pvp-timer {
   margin: 0 0 10px;
   font-family: var(--mono);
-  font-size: 10.5px;
+  font-size: 12px;
   color: var(--amber);
 }
 .pvp-down #hud { opacity: 0.4; }
