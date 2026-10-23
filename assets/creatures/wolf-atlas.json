@@ -1,0 +1,10 @@
+{
+  "id": "arte/criaturas/d6162e2326bb7c61840d",
+  "source": { "archive": "criaturas.zip", "member": "Criaturas/Mam├¡feros/Wolf.gif", "sha256": "pending-source-member-digest" },
+  "output": "assets/creatures/wolf-atlas.png",
+  "outputSha256": "c46a7bc1a9115355945658bb0b26d68c05abeaa67caa1c7c5f08615f912b9a0b",
+  "state": "animation",
+  "generated": { "tool": "built-in image_gen", "canvas": [1024, 640], "grid": [8, 5], "cell": [128, 128], "directions": ["south", "southeast", "east", "northeast", "north", "northwest", "west", "southwest"], "states": ["idle", "walk", "attack", "hit", "death"], "framesPerState": 1, "frameMs": null, "anchor": [64, 108], "collision": { "x": -22, "y": -10, "w": 44, "h": 20 } },
+  "integration": { "renderer": "src/rendering/generated-creature.js", "fallback": "src/rendering/creature-models.js", "usage": "kind wolf/lobo in authored scenes" },
+  "review": { "visual": "generated sheet and alpha channel inspected", "pending": ["author multi-frame cycles for every state", "wire attack/hit/death state selection from combat model", "manual browser scene review"], "next": "generate animation strips before marking done" }
+}
