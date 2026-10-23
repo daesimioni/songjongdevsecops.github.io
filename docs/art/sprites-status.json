@@ -77,6 +77,39 @@
       "output": "assets/creatures/wolf-atlas.png"
     },
     {
+      "id": "arte/magias/13e80490343cf1c73b23",
+      "archive": "magias.zip",
+      "member": "Magias/Paladin/Holy Missile Rune.png; Magias/_icones/Holy Missile Rune.png",
+      "status": "integration",
+      "location": "feat/arte-autoral-holy-missile: assets/magic/holy-missile-rune.png",
+      "missing": [
+        "runtime item/spell mapping"
+      ],
+      "output": "assets/magic/holy-missile-rune.png"
+    },
+    {
+      "id": "arte/magias/6b9d8a879b3d33cad374",
+      "archive": "magias.zip",
+      "member": "Magias/Paladin/Paladin familiar.png",
+      "status": "integration",
+      "location": "feat/arte-autoral-paladin-familiar: assets/magic/paladin-familiar.png",
+      "missing": [
+        "runtime item/spell mapping"
+      ],
+      "output": "assets/magic/paladin-familiar.png"
+    },
+    {
+      "id": "arte/magias/3ca2eb6c2644fd9aafc3",
+      "archive": "magias.zip",
+      "member": "Magias/Paladin/Swift Foot.png",
+      "status": "integration",
+      "location": "feat/arte-autoral-swift-foot: assets/magic/swift-foot.png",
+      "missing": [
+        "runtime item/spell mapping"
+      ],
+      "output": "assets/magic/swift-foot.png"
+    },
+    {
       "id": "arte/magias/a1d7fecdb7c871ca7606",
       "archive": "magias.zip",
       "member": "Magias/Paladin/Disintegrate Rune.png",

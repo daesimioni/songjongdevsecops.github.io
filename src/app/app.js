@@ -782,6 +782,7 @@ function openShop() {
     body.appendChild(el("p", "shop-empty", "A mestra não tem peça desta caverna hoje."));
   }
   const grid = el("div", "shop-grid");
+  const nomesDosEspacos = Object.fromEntries(rpg.equippedView().map(({ slot, name }) => [slot, name]));
   for (const item of offers) {
     const owned = rpg.itemCount(item.id) > 0;
     const can = !owned && Object.entries(item.price || {}).every(([mat, qty]) => rpg.itemCount(mat) >= qty);
@@ -789,7 +790,7 @@ function openShop() {
     const bonus = [item.damage ? `+${item.damage} dano` : "", item.hp ? `+${item.hp} vida` : ""].filter(Boolean).join(" · ");
     card.append(
       el("b", "", item.name),
-      el("span", "", `${item.slot}${bonus ? ` · ${bonus}` : ""}`),
+      el("span", "", `${nomesDosEspacos[item.slot] || item.slot}${bonus ? ` · ${bonus}` : ""}`),
       el("i", "", Object.entries(item.price || {}).map(([mat, qty]) => `${ITEMS[mat]?.name || mat} ×${qty}`).join(" · ")),
     );
     if (owned) card.appendChild(el("em", "", "já é sua"));
@@ -1884,11 +1885,13 @@ function trocarAbaDiario(nome = "missoes") {
 for (const tab of document.querySelectorAll("[data-journal-tab]")) {
   tab.addEventListener("click", () => { trocarAbaDiario(tab.dataset.journalTab); audio.blip(); });
   tab.addEventListener("keydown", (e) => {
-    if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+    if (!["ArrowRight", "ArrowLeft", "Home", "End"].includes(e.key)) return;
     e.preventDefault();
     const abas = [...document.querySelectorAll("[data-journal-tab]")];
     const i = abas.indexOf(tab);
-    const next = abas[(i + (e.key === "ArrowRight" ? 1 : -1) + abas.length) % abas.length];
+    const indice = e.key === "Home" ? 0 : e.key === "End" ? abas.length - 1
+      : (i + (e.key === "ArrowRight" ? 1 : -1) + abas.length) % abas.length;
+    const next = abas[indice];
     trocarAbaDiario(next.dataset.journalTab);
     next.focus({ preventScroll: true });
   });
@@ -2821,7 +2824,8 @@ function openModal(name) {
   $("scrim").hidden = false;
   if (PAGINAS_CADERNO.has(name)) caderno?.marcar(name);
   uiScope.sync();
-  const focusable = availableFocusTargets($(name))[0];
+  const focusable = (PAGINAS_CADERNO.has(name) ? $(name).querySelector("[data-close]") : null)
+    || availableFocusTargets($(name))[0];
   focusable?.focus();
 }
 function closeModal(name) {
@@ -4343,7 +4347,7 @@ $("update-btn")?.addEventListener("click", aplicarAtualizacao);
   }, { capture: true });
 
   if (new URLSearchParams(location.search).has("debug")) {
-    window.__mundo = { player, state, world, renderer, audio, quests, rede, backup, rpg, sheetUi, duelUi, dungeon, pvpUi, knockDown, findPath, assets: { cache: cacheDeAssets, total: totalDeAssets }, openPost: (id) => openPost(id), openTravel: (mode) => openTravel(mode), openShop: () => openShop(), openDuel: (mon, ground, boss, partner) => openDuel(mon, ground, boss, partner), openVocacoes: () => openVocacoes(), openWiki: (opcoes) => openWiki(opcoes), openBiblioteca: () => openBiblioteca(), openGuilda: () => openGuilda(), catalog: CATALOG_CONTENT, catalogStones: [...CATALOG_STONES], waystones: WAYSTONES, get social() { return social; } };
+    window.__mundo = { ui: { openNpc, openGather, openTraining, openOutfits, openLook, refreshCombat: () => combatHud.update(performance.now()), renderFrame: () => loop(performance.now()), stopCombat: () => surfaceCombat.stop("escape") }, player, state, world, renderer, audio, quests, rede, backup, rpg, sheetUi, duelUi, dungeon, pvpUi, knockDown, findPath, assets: { cache: cacheDeAssets, total: totalDeAssets }, openPost: (id) => openPost(id), openTravel: (mode) => openTravel(mode), openShop: () => openShop(), openDuel: (mon, ground, boss, partner) => openDuel(mon, ground, boss, partner), openVocacoes: () => openVocacoes(), openWiki: (opcoes) => openWiki(opcoes), openBiblioteca: () => openBiblioteca(), openGuilda: () => openGuilda(), catalog: CATALOG_CONTENT, catalogStones: [...CATALOG_STONES], waystones: WAYSTONES, get social() { return social; } };
   }
 
   if (voltarAoJogo) {
