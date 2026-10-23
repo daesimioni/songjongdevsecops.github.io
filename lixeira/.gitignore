@@ -1,0 +1,6 @@
+# Conteúdo descartado não entra no git (o histórico das versões vivas já está lá).
+# O protocolo e o catálogo, sim.
+*
+!.gitignore
+!LEIA-ME.md
+!MANIFESTO.md
