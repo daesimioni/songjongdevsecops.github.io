@@ -112,3 +112,7 @@ sobrepõe os corpos físicos atuais ao desenho.
 A revisão de imagens usa Canvas nativo e não substitui teste manual de interação
 em navegador, teclado e toque. Essa interação não foi realizada neste ambiente;
 não se apresenta a suíte ou a revisão artística como garantia de perfeição.
+
+## Referências externas
+
+A [expansão de referências](referencias/README.md) documenta cobertura, categorias, método e integração.
