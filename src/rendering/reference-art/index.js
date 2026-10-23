@@ -1,5 +1,6 @@
 import {
   referencePoint,
+  referenceActorDimensions,
   referenceModelBounds,
 } from "../../content/reference-art/bodies.js";
 import { drawCreatureModel } from "../creature-models.js";
@@ -147,7 +148,7 @@ function actor(g, a, direction, state, frame) {
     try {
       if (state === "death") g.scale(1, 1 - frame / 10);
       if (state === "hit")
-        g.translate(Math.sin((frame * Math.PI) / 2) * 1.2, 0);
+        g.translate(Math.sin((frame * Math.PI) / 2) * 1.2 * (1 - frame / 7), 0);
       g.translate(forward.x * strike * 2, forward.y * strike * 1.04);
       const time =
         state === "walk"
@@ -171,32 +172,55 @@ function actor(g, a, direction, state, frame) {
     return;
   }
   if (family === "serpent") {
-    const p = volumePainter(g, direction),
-      collapse = state === "death" ? 1 - frame / 9 : 1;
-    for (let i = 10; i >= 0; i--)
+    const { width, length } = referenceActorDimensions(a),
+      xs = width / 5,
+      ys = length / 12,
+      p = volumePainter(g, direction),
+      collapse = state === "death" ? 1 - frame / 9 : 1,
+      strike = state === "attack" ? Math.sin((Math.PI * frame) / 7) : 0,
+      phase = state === "walk" ? (frame * Math.PI) / 4 : strike * 1.5,
+      breath = state === "idle" ? Math.sin((frame * Math.PI) / 4) * 0.15 : 0,
+      shake =
+        state === "hit"
+          ? Math.sin((frame * Math.PI) / 2) * 0.8 * (1 - frame / 7)
+          : 0;
+    const ball = (x, y, z, rx, ry, rz, c) =>
       p.ball(
-        Math.sin(i * 0.7 + (state === "walk" ? (frame * Math.PI) / 4 : 0)) * 2,
+        (x + shake) * xs,
+        y * ys,
+        z * collapse,
+        rx * xs,
+        ry * ys,
+        rz * collapse,
+        c,
+      );
+    for (let i = 10; i >= 0; i--)
+      ball(
+        Math.sin(i * 0.7 + phase) * 2,
         (i - 5) * 1.6,
-        3 * collapse,
+        2 + breath,
         2.5,
         2,
-        2 * collapse,
+        2 + breath,
         color,
       );
-    p.ball(0, 9, 5 * collapse, 3, 3, 3 * collapse, color);
-    p.ball(-1, 11, 6 * collapse, 0.5, 0.5, 0.5, "#e5d5ac");
-    p.ball(1, 11, 6 * collapse, 0.5, 0.5, 0.5, "#e5d5ac");
+    const head = 9 + strike * 3,
+      height = 5 + strike * 0.6 + breath;
+    ball(0, head, height, 3, 3, 3, color);
+    ball(-1, head + 2, height + 1, 0.5, 0.5, 0.5, "#e5d5ac");
+    ball(1, head + 2, height + 1, 0.5, 0.5, 0.5, "#e5d5ac");
+    ball(0, head + 2.5, height - 0.5, 1, 0.3, 0.3 + strike * 0.6, "#172534");
     p.flush();
     return;
   }
+
   paintKitCreature(
     g,
     {
       family,
       species: a.species,
       color,
-      width: Math.max(3, Math.min(10, Math.round(5 * Math.sqrt(a.ratio)))),
-      length: Math.max(4, Math.min(15, Math.round(8 / Math.sqrt(a.ratio)))),
+      ...referenceActorDimensions(a),
       element: a.element,
     },
     { direction, state, frame },

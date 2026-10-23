@@ -16,7 +16,7 @@ respeitada. O catálogo anterior continua em `/tools/sprite-library.html`.
 Cada arquivo visual tem uma correspondência no índice `cobertura-*.ndjson.gz.txt`:
 `[ZIP, membro exato, ID nativo, largura, altura, quadros]`. Arquivos estáticos
 iguais são deduplicados pelos pixels decodificados; animações são identificadas
-pelo arquivo completo, preservando animações diferentes com início igual.
+pelo arquivo completo, mantendo identidades distintas para arquivos animados com início igual.
 O primeiro quadro visível é usado quando uma animação começa transparente.
 
 Semântica, proporções e regiões de materiais em grade 16×16 orientam desenhos

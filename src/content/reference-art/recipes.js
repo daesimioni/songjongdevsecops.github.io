@@ -67,6 +67,26 @@ export const BASES = Object.freeze({
   "telhado-telha": "kit/arquitetura/telhado-telha",
   "pilha-livros": "kit/armazenamento/pilha-livros",
 });
+const LABELS = Object.freeze({
+  criaturas: "Habitante",
+  componentes: "Módulo",
+  magias: "Selo",
+  efeitos: "Manifestação",
+  projeteis: "Disparo",
+  terrenos: "Revestimento",
+  recursos: "Ornamento",
+  vegetacao: "Planta",
+  mobilia: "Móvel",
+  construcoes: "Estrutura",
+  equipamentos: "Proteção",
+  armas: "Armamento",
+  alimentos: "Provisão",
+  documentos: "Códice",
+  recipientes: "Recipiente",
+  cartografia: "Carta",
+  interface: "Elemento",
+  vazios: "Espaço transparente",
+});
 export function parseReferenceId(id) {
   const pieces = typeof id === "string" ? id.split("/") : [];
   if (
@@ -122,7 +142,7 @@ export function referenceRecipe(category, row) {
   );
   if (
     element === "fisico" &&
-    ["efeitos", "projeteis", "magias"].includes(category)
+    ["efeitos", "projeteis", "magias", "terrenos"].includes(category)
   ) {
     const counts = new Map();
     for (const m of grid) if (m) counts.set(m, (counts.get(m) || 0) + 1);
@@ -152,7 +172,7 @@ export function referenceRecipe(category, row) {
     species,
     family,
     motif,
-    label: `${motif ? motif.replaceAll("-", " ") : { criaturas: "Habitante", componentes: "Módulo", magias: "Selo", efeitos: "Manifestação", projeteis: "Disparo", terrenos: "Revestimento", recursos: "Ornamento", vegetacao: "Planta", mobilia: "Móvel", construcoes: "Estrutura", equipamentos: "Proteção", armas: "Armamento", alimentos: "Provisão", documentos: "Códice", recipientes: "Recipiente", cartografia: "Carta", interface: "Elemento", vazios: "Espaço transparente" }[category] || category} · ${element} · ${key.slice(0, 5)}`,
+    label: `${motif ? motif.replaceAll("-", " ") : LABELS[category] || category} · ${element} · ${key.slice(0, 5)}`,
     frames:
       actor ||
       effect ||

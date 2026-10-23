@@ -118,3 +118,42 @@ test("catálogo de atualização mantém manifesto e deixa pacotes sob demanda",
     ),
   );
 });
+test("pisos líquidos animam sem transformar pisos sólidos em ciclos", () => {
+  const water = referenceRecipe("terrenos", [
+    row[0],
+    Buffer.alloc(128, 0x66).toString("base64"),
+    ...row.slice(2),
+  ]);
+  assert.equal(water.element, "agua");
+  assert.equal(water.frames, 8);
+  assert.equal(referenceFrame(water, 850), 0);
+  assert.equal(referenceRecipe("terrenos", row).frames, 1);
+});
+test("serpentes têm ataques e impactos distintos nas oito vistas", async () => {
+  const { createCanvas } = await import("@napi-rs/canvas"),
+    { paintReference } = await import(
+      "../src/rendering/reference-art/index.js"
+    );
+  const a = referenceRecipe("criaturas", [
+    ...row.slice(0, 5),
+    "serpent",
+    "serpent",
+    "",
+  ]);
+  function pixels(direction, state, frame) {
+    const c = createCanvas(128, 128),
+      g = c.getContext("2d");
+    g.translate(64, 64);
+    paintReference(g, a, { direction, state, frame });
+    return createHash("sha256")
+      .update(g.getImageData(0, 0, 128, 128).data)
+      .digest("hex");
+  }
+  for (const direction of a.orientations) {
+    assert.notEqual(
+      pixels(direction, "attack", 3),
+      pixels(direction, "idle", 3),
+    );
+    assert.notEqual(pixels(direction, "hit", 1), pixels(direction, "idle", 1));
+  }
+});
