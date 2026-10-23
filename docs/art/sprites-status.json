@@ -75,6 +75,17 @@
       ],
       "sourceSha256": "b121f27c8de5f07f8a8359b107f61916836a7f33d390cf10f120686a12ac1e40",
       "output": "assets/creatures/wolf-atlas.png"
+    },
+    {
+      "id": "arte/magias/13e80490343cf1c73b23",
+      "archive": "magias.zip",
+      "member": "Magias/Paladin/Holy Missile Rune.png; Magias/_icones/Holy Missile Rune.png",
+      "status": "integration",
+      "location": "feat/arte-autoral-holy-missile: assets/magic/holy-missile-rune.png",
+      "missing": [
+        "runtime item/spell mapping"
+      ],
+      "output": "assets/magic/holy-missile-rune.png"
     }
   ],
   "archives": [
