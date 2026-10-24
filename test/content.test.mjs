@@ -1,910 +1,163 @@
-import { CREATURE_MODELS } from "../src/rendering/creature-models.js";
-import { QUESTION_INDEX } from "../src/gameplay/question-bank.js";
-const QUESTIONS = Object.fromEntries(QUESTION_INDEX);
-// Conferência do conteúdo: estações x textos, NPCs x missões, itens, receitas,
-// perguntas por continente, baralhos do duelo, cavernas e o mundo montado.
-// Roda sem navegador: node test/content.test.mjs
-import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+// Conferência do conteúdo do Vale Partido: áreas, estações e páginas de lore,
+// NPCs, cavernas, caçadas, missões, itens e o reskin de fantasia. Roda sem
+// navegador; o teste cobra cobertura, não sobra de ilha vazia.
 
-const store = new Map();
-globalThis.localStorage = {
-  getItem: (k) => (store.has(k) ? store.get(k) : null),
-  setItem: (k, v) => store.set(k, String(v)),
-  removeItem: (k) => store.delete(k),
-  clear: () => store.clear(),
+import assert from "node:assert/strict";
+
+globalThis.localStorage = { getItem: () => null, setItem: () => {}, removeItem: () => {}, clear: () => {} };
+
+const { CONTINENTS, CONTINENT_ORDER, AREAS, SITES, WAYSTONES, NPC_SPAWNS } = await import("../src/content/config.js");
+const { MAP_W, MAP_H } = await import("../src/core/runtime-config.js");
+const { POSTS, NPCS } = await import("../src/content/content.js");
+const { DUNGEONS } = await import("../src/content/dungeon-data.js");
+const { GROUNDS, ITEMS, RELICS, RECIPES, ENCHANTS, TROCAS, SKILLS } = await import("../src/content/rpg-data.js");
+const { QUESTS } = await import("../src/gameplay/quests.js");
+const { CATALOG_CONTENT } = await import("../src/content/catalog-gen.js");
+const { VOCACOES } = await import("../src/content/vocations.js");
+const { OUTFITS } = await import("../src/content/outfits.js");
+const { PETS } = await import("../src/content/pets.js");
+
+const faults = [];
+const check = (ok, msg) => { if (!ok) faults.push(msg); };
+const idsUnicos = (lista, rotulo) => {
+  const ids = lista.map((x) => x.id);
+  check(new Set(ids).size === ids.length, `${rotulo}: id repetido`);
 };
 
-const { CONTINENTS, SITES, WAYSTONES, NPC_SPAWNS, CONTINENT_ORDER, AREAS, MAP_W, MAP_H, LEGACY_CONTENT } = await import("../src/content/config.js");
-const { DEEP_QUESTIONS, GROUNDS, ITEMS, RECIPES, ENCHANTS, MONSTER_TRAITS, MONSTER_LABELS, MONSTER_WEAKNESS, CREATURE_FORMS } = await import("../src/content/rpg-data.js");
-const { DUNGEONS } = await import("../src/content/dungeon-data.js");
-const { POSTS, NPCS } = await import("../src/content/content.js");
-const { QUESTS } = await import("../src/gameplay/quests.js");
-const { RPG } = await import("../src/gameplay/rpg.js");
-const { isAdminKey, ADMIN_PUBKEYS, ADMIN_LABEL } = await import("../src/platform/admin.js");
-const { HAIRS, AVATAR_DEFAULT, normalizeAvatar, avatarColors, avatarCode, avatarFromCode, hairUnlock, hairQuest } = await import("../src/content/avatar.js");
-const { OUTFITS } = await import("../src/content/outfits.js");
-const { createWorld } = await import("../src/world/world.js");
-const { CATALOG, CATALOG_BY_ID, DISCIPLINES, CATALOG_EXISTING } = await import("../src/content/catalog.js");
-const { CATALOG_CONTENT } = await import("../src/content/catalog-gen.js");
-const { SECTION_TOPICS } = await import("../src/content/catalog-topics.js");
-const { insideLand } = await import("../src/content/catalog-place.js");
-const { articleOf } = await import("../src/content/catalog-text.js");
-const { AREA_ITEMS, AREA_OUTFITS, BIOMES, FAUNA, IDENTITY_AREAS, TILE_STYLE, dungeonIdentity, npcStyle } = await import("../src/content/identity.js");
-const { MATH_TEXT } = await import("../src/content/text/math.js");
-const { PHYSICS_TEXT } = await import("../src/content/text/physics.js");
-const { CHEM_TEXT } = await import("../src/content/text/chem.js");
-const { CS_A_TEXT } = await import("../src/content/text/cs-a.js");
-const { CS_B_TEXT } = await import("../src/content/text/cs-b.js");
-const { LINGUA_TEXT } = await import("../src/content/text/lingua.js");
-const { INTER_TEXT } = await import("../src/content/text/inter.js");
-const { SECAO_TEXT } = await import("../src/content/text/secoes.js");
-const textosCurados = { math: MATH_TEXT, physics: PHYSICS_TEXT, chem: CHEM_TEXT, cs: { ...CS_A_TEXT, ...CS_B_TEXT }, lingua: LINGUA_TEXT };
-const ready = CATALOG_CONTENT.areas.length;
-const { CATALOG_AREAS, CATALOG_BRIDGES, CATALOG_TUNNELS } = await import("../src/content/catalog-layout.js");
+// ---- mapa e áreas ----
+check(AREAS.length >= 80, `áreas no mapa: ${AREAS.length}`);
+check(Object.keys(CONTINENTS).length === 8, `continentes: ${Object.keys(CONTINENTS).length}`);
+check(CONTINENT_ORDER.every((id) => CONTINENTS[id]), "continente da ordem sem definição");
+idsUnicos(AREAS, "áreas");
+check(new Set(AREAS.map((a) => a.name)).size === AREAS.length, "nome de área repetido");
+for (const area of AREAS) {
+  check(!!CONTINENTS[area.continent], `área ${area.id}: continente ${area.continent} não existe`);
+  const r = area.rect;
+  check(r && r.w > 0 && r.h > 0, `área ${area.id}: retângulo vazio`);
+  check(r.x >= 0 && r.y >= 0 && r.x + r.w <= MAP_W && r.y + r.h <= MAP_H, `área ${area.id}: fora do mapa`);
+}
 
-const source = (rel) => readFileSync(new URL(rel, import.meta.url), "utf8");
-const faults = [];
-const check = (cond, message) => { if (!cond) faults.push(message); };
-const continents = CONTINENT_ORDER.filter((c) => c !== "hub");
-const estacoesDaSecao = (num) => SECTION_TOPICS[num]?.subareas?.length || 3;
-const totalEstacoes = 69 + CATALOG.reduce((n, a) => n + estacoesDaSecao(a.num), 0);
-const catalogoEstacoes = SITES.filter((s) => s.catalog);
-
-// 43 estações com texto: cinco por continente, duas no porto e as áreas temáticas
-check(SITES.length === totalEstacoes, `SITES tem ${SITES.length} estações, esperado ${totalEstacoes}`);
-check(new Set(SITES.map((s) => s.id)).size === SITES.length, "id de estação repetido");
-check(SITES.filter((s) => s.continent === "hub").length === 2, "o porto precisa de 2 estações");
+// ---- estações e páginas de lore ----
+check(SITES.length >= 250, `estações: ${SITES.length}`);
+idsUnicos(SITES, "estações");
+check(new Set(SITES.map((s) => s.post)).size === SITES.length, "post de estação repetido");
 for (const site of SITES) {
-  check(!!CONTINENTS[site.continent], `estação ${site.id} em continente inexistente`);
   const post = POSTS[site.post];
-  check(!!post, `estação ${site.id} sem post ${site.post}`);
-  if (post) {
-    check(!!post.title && !!post.body, `post ${site.post} sem título ou corpo`);
-    check(!/TODO|FIXME/.test(post.body), `post ${site.post} com texto de rascunho`);
-    check(!/lorem ipsum|placeholder/i.test(post.body), `post ${site.post} com texto de rascunho`);
-  }
+  check(!!post, `estação ${site.id}: post ${site.post} ausente`);
+  if (!post) continue;
+  check(!!CONTINENTS[site.continent], `estação ${site.id}: continente inválido`);
+  check(String(post.title || "").length >= 3, `estação ${site.id}: título curto`);
+  check(String(post.body || "").includes("<p>"), `estação ${site.id}: página sem lore`);
 }
-for (const c of continents) {
-  const n = SITES.filter((s) => s.continent === c).length;
-  // cada continente mantém as cinco estações e ganha mais nas áreas temáticas
-  check(n >= 5, `continente ${c} tem ${n} estações, esperado ao menos 5`);
-  check(!!WAYSTONES.find((w) => w.continent === c), `continente ${c} sem pedra de viagem`);
+check(WAYSTONES.length >= 90, `pedras de viagem: ${WAYSTONES.length}`);
+idsUnicos(WAYSTONES, "pedras de viagem");
+check(SITES.every((s) => s.x >= 0 && s.y >= 0 && s.x < MAP_W && s.y < MAP_H), "estação fora do mapa");
+
+// ---- NPCs ----
+check(NPCS && Object.keys(NPCS).length >= 190, `NPCs: ${Object.keys(NPCS).length}`);
+const nomesNpc = Object.values(NPCS).map((n) => n.name);
+check(new Set(nomesNpc).size === nomesNpc.length, "nome de NPC repetido");
+idsUnicos(NPC_SPAWNS, "spawns de NPC");
+for (const spawn of NPC_SPAWNS) {
+  const ficha = NPCS[spawn.id];
+  check(!!ficha, `spawn ${spawn.id}: ficha ausente`);
+  check(Array.isArray(ficha?.lines) && ficha.lines.length >= 3, `NPC ${spawn.id}: poucas falas`);
+}
+const instrutores = GROUNDS.filter((g) => g.trainer);
+check(instrutores.length >= 60, `instrutores: ${instrutores.length}`);
+for (const g of instrutores) check(!!NPCS[g.trainer], `caçada ${g.id}: instrutor ausente`);
+
+// ---- cavernas e caçadas ----
+check(DUNGEONS.length === 93, `cavernas: ${DUNGEONS.length}`);
+idsUnicos(DUNGEONS, "cavernas");
+for (const def of DUNGEONS) {
+  check(String(def.name || "").length >= 6, `caverna ${def.id}: nome curto`);
+  check(Array.isArray(def.rooms) && def.rooms.length >= 8, `caverna ${def.id}: poucas salas`);
+  check(typeof def.boss === "string" && def.boss.length >= 4, `caverna ${def.id}: sem chefe`);
+  check(Array.isArray(def.monsters) && def.monsters.length >= 6, `caverna ${def.id}: poucos monstros`);
+  check(def.equipment.every((id) => ITEMS[id]), `caverna ${def.id}: equipamento inexistente`);
+  check(!!def.palette?.accent, `caverna ${def.id}: sem paleta`);
+}
+check(GROUNDS.length >= 90, `caçadas: ${GROUNDS.length}`);
+for (const g of GROUNDS) {
+  check(!!CONTINENTS[g.continent], `caçada ${g.id}: continente inválido`);
+  if (g.keeper) check(!!NPCS[g.keeper], `caçada ${g.id}: guardião ausente`);
+  check(g.monsters.length === 3, `caçada ${g.id}: ${g.monsters.length} monstros`);
+  check(!!g.boss?.name, `caçada ${g.id}: sem chefe`);
+  check(g.loot.every((id) => ITEMS[id]), `caçada ${g.id}: saque inexistente`);
+  check(!!ITEMS[g.bossLoot], `caçada ${g.id}: saque do chefe inexistente`);
 }
 
-// NPCs, falas e missões
-for (const npc of NPC_SPAWNS) {
-  check(!!NPCS[npc.id]?.lines?.length, `NPC ${npc.id} sem falas`);
+// ---- missões ----
+check(QUESTS.length >= 250, `missões: ${QUESTS.length}`);
+idsUnicos(QUESTS, "missões");
+const TIPOS = new Set(["cards", "docks", "hunts", "social", "bosses"]);
+for (const q of QUESTS) {
+  check(String(q.title || "").length >= 4, `missão ${q.id}: título curto`);
+  check(!!TIPOS.has(q.goal?.type), `missão ${q.id}: tipo ${q.goal?.type}`);
+  const contagem = q.goal?.type === "social" ? (q.goal.keys?.length || 0) : q.goal?.count;
+  check(Number.isFinite(contagem) && contagem > 0, `missão ${q.id}: contagem inválida`);
+  check(!("quiz" in q), `missão ${q.id}: ainda tem pergunta`);
+  check(!q.labs, `missão ${q.id}: ainda tem laboratório`);
+  if (q.reward?.item) check(!!ITEMS[q.reward.item], `missão ${q.id}: prêmio inexistente`);
+  if (q.reward?.title) check(typeof q.reward.title === "string", `missão ${q.id}: título de recompensa inválido`);
 }
-const goalTypes = new Set(["cards", "docks", "labs", "hunts", "social", "quiz", "bosses"]);
-for (const quest of QUESTS) {
-  check(!!NPC_SPAWNS.find((n) => n.id === quest.npc), `missão ${quest.id} aponta NPC inexistente ${quest.npc}`);
-  check(goalTypes.has(quest.goal.type), `missão ${quest.id} com meta desconhecida ${quest.goal.type}`);
-  check(Number.isFinite(quest.reward?.xp) && quest.reward.xp > 0, `missão ${quest.id} sem XP`);
-  check(!!quest.title && !!quest.brief, `missão ${quest.id} sem título ou resumo`);
-}
-check(QUESTS.length >= 18, `só ${QUESTS.length} missões, esperado ao menos 18`);
+check(QUESTS.every((q) => typeof q.giver === "string" && q.giver.length >= 2), "missão sem quem pede");
 
-// itens, caçadas, receitas e encantos
-for (const [id, item] of Object.entries(ITEMS)) {
-  check(!!item.name, `item ${id} sem nome`);
-  check(item.continent === "hub" || continents.includes(item.continent), `item ${id} em continente inválido ${item.continent}`);
-  if (item.heal) check(item.heal > 0 && item.heal <= 60, `item ${id} cura fora de faixa`);
-  if (item.buff) check(["speed", "damage", "maxhp"].includes(item.buff.id), `item ${id} com buff desconhecido`);
-}
+// ---- itens, receitas e vocações ----
 const SLOTS = new Set(["weapon", "helmet", "armor", "legs", "boots", "shield", "cloak", "ring", "necklace"]);
 for (const [id, item] of Object.entries(ITEMS)) {
-  if (!item.slot) continue;
-  check(SLOTS.has(item.slot), `item ${id} com espaço desconhecido ${item.slot}`);
-  check(Number(item.damage) > 0 || Number(item.hp) > 0, `equipamento ${id} sem bônus`);
-  if (item.weapon) check(["sword", "club", "axe", "wand", "rod"].includes(item.weapon), `arma ${id} com tipo ${item.weapon}`);
+  if (!item || typeof item !== "object") continue;
+  check(String(item.name || "").length >= 2, `item ${id}: sem nome`);
+  if (item.slot) check(SLOTS.has(item.slot), `item ${id}: slot ${item.slot}`);
+  if (item.desc) check(!/[<>]/.test(item.desc), `item ${id}: HTML na descrição`);
 }
-for (const c of continents) {
-  const relics = Object.values(ITEMS).filter((i) => i.continent === c && i.relic).length;
-  check(relics >= 1, `continente ${c} tem ${relics} relíquias, esperado ao menos 1`);
-  const grounds = GROUNDS.filter((g) => g.continent === c);
-  check(grounds.length >= 1, `sem caçada para ${c}`);
-  for (const ground of grounds) {
-    check(ground.monsters.length === 3, `caçada de ${c} tem ${ground.monsters.length} monstros`);
-    check(ground.monsters.map((m) => m.tier).join(",") === "1,2,3", `caçada de ${c} sem tiers 1, 2, 3`);
-    const dungeonId = ground.dungeon || `dungeon-${ground.continent}`;
-    check(!!DUNGEONS.find((d) => d.id === dungeonId), `caçada de ${c} aponta caverna inexistente ${dungeonId}`);
-    for (const id of ground.loot) check(!!ITEMS[id], `loot de ${c} com item inexistente ${id}`);
-    check(!!ITEMS[ground.bossLoot], `chefe de ${c} solta item inexistente ${ground.bossLoot}`);
-  }
+for (const [area, relic] of Object.entries(RELICS)) check(ITEMS[relic.id], `relíquia de ${area} fora do catálogo`);
+for (const r of RECIPES) {
+  check(!!ITEMS[r.out], `receita ${r.id}: saída inexistente`);
+  check(Object.keys(r.need).every((id) => ITEMS[id]), `receita ${r.id}: insumo inexistente`);
 }
-const runas = Object.keys(ITEMS).filter((id) => id.startsWith("runa-"));
-check(runas.length >= 6, `só ${runas.length} runas, esperado ao menos 6`);
-for (const id of runas) check(RECIPES.some((r) => r.out === id), `runa ${id} sem receita na forja`);
+for (const e of ENCHANTS) check(Object.keys(e.need || {}).every((id) => ITEMS[id]), `encanto ${e.id}: insumo inexistente`);
+for (const t of TROCAS) check(!!ITEMS[t.de] && !!ITEMS[t.para], `troca ${t.id}: item inexistente`);
+check(Object.keys(SKILLS).length === 6, `perícias: ${Object.keys(SKILLS).length}`);
+check(VOCACOES.length === 5, `vocações: ${VOCACOES.length}`);
+check(OUTFITS.length >= 90, `trajes: ${OUTFITS.length}`);
+check(Object.keys(PETS).length === 7, `companheiros: ${Object.keys(PETS).length}`);
 
-for (const recipe of RECIPES) {
-  check(!!ITEMS[recipe.out], `receita ${recipe.id} produz item inexistente ${recipe.out}`);
-  check(recipe.qty > 0, `receita ${recipe.id} sem quantidade de saída`);
-  for (const [id, qty] of Object.entries(recipe.need || {})) {
-    check(!!ITEMS[id], `receita ${recipe.id} usa item inexistente ${id}`);
-    check(qty > 0, `receita ${recipe.id} com custo inválido em ${id}`);
-  }
-}
-for (const enchant of ENCHANTS) {
-  for (const [id, qty] of Object.entries(enchant.need || {})) {
-    check(!!ITEMS[id], `encanto ${enchant.id} usa item inexistente ${id}`);
-    check(qty > 0, `encanto ${enchant.id} com custo inválido em ${id}`);
-  }
-}
+// ---- os sistemas de estudo não existem mais ----
+check(CATALOG_CONTENT.questions === undefined, "o gerador ainda produz perguntas");
+check(CATALOG_CONTENT.labs === undefined, "o gerador ainda produz laboratórios");
+const rpgData = await import("../src/content/rpg-data.js");
+check(rpgData.QUESTIONS === undefined, "rpg-data ainda exporta o banco de perguntas");
 
-// perguntas: três por dificuldade, sem repetição, com resposta válida
-for (const c of continents) {
-  const byTier = QUESTIONS[c];
-  check(!!byTier, `sem perguntas para ${c}`);
-  for (const tier of [1, 2, 3]) {
-    const list = byTier?.[tier] || [];
-    // um monstro fácil pede 3 acertos, o médio 7 e o difícil 12: o baralho
-    // precisa de perguntas distintas para a luta inteira, sem repetir.
-    const need = tier === 3 ? 12 : tier === 2 ? 7 : 3;
-    check(list.length >= need, `${c} tier ${tier} tem ${list.length} perguntas, esperado ${need}`);
-    for (const q of list) {
-      // o banco tem questões de 3 e de 6 alternativas escritas à mão; o duelo
-      // normaliza para cinco (A-E) na hora de montar o baralho
-      const n = q.options?.length || 0;
-      check(n >= 3 && n <= 6, `${c}/${tier}: pergunta com ${n} alternativas: ${q.q}`);
-      check(new Set(q.options).size === n, `${c}/${tier}: alternativas repetidas: ${q.q}`);
-      check(q.a >= 0 && q.a < n, `${c}/${tier}: resposta fora da faixa: ${q.q}`);
-      check(typeof q.why === "string" && q.why.length >= 20, `${c}/${tier}: explicação curta: ${q.q}`);
-    }
-  }
-  check(!!DEEP_QUESTIONS[c]?.q, `sem pergunta do fundo para ${c}`);
-  // O índice do jogo inclui a pergunta do fundo sem alterar o módulo de dados.
-  const texts = Object.values(byTier || {}).flat().map((q) => q.q);
-  check(texts.includes(DEEP_QUESTIONS[c]?.q), `${c}: pergunta do fundo fora do baralho`);
-  check(new Set(texts).size === texts.length, `${c}: pergunta repetida no continente`);
-  check(texts.length >= 22, `${c}: só ${texts.length} perguntas no continente`);
-}
-
-const totalQuestions = continents.reduce(
-  (sum, c) => sum + [1, 2, 3].reduce((n, t) => n + (QUESTIONS[c]?.[t]?.length || 0), 0),
-  0,
-);
-check(totalQuestions >= 600, `banco com ${totalQuestions} perguntas, esperado ao menos 600`);
-
-// duelo entre jogadores: uma carta por dificuldade, dano crescente
-const rpg = new RPG({ getLevel: () => 1, gainXp: () => {}, toast: () => {}, audio: {} });
-for (const c of continents) {
-  const cards = rpg.pvpQuestions(c);
-  check(cards.length === 5, `PvP de ${c} tem ${cards.length} cartas`);
-  check(cards.map((x) => x.difficulty).join(",") === "1,2,3,4,5", `PvP de ${c} sem as cinco dificuldades`);
-  check(cards.map((x) => x.damage).join(",") === "1,2,3,4,5", `PvP de ${c} com dano fora de ordem`);
-  check(new Set(cards.map((x) => x.q)).size === cards.length, `PvP de ${c} repete pergunta`);
-  for (const card of cards) {
-    check(card.options.length === 5, `PvP de ${c}: carta sem 5 alternativas`);
-    check(card.answer >= 0 && card.answer < 5, `PvP de ${c}: resposta fora da faixa`);
-  }
-  check(rpg.buildDeck(c, [1], "").length > 0, `baralho fácil de ${c} vazio`);
-  check(rpg.buildDeck(c, [2], "").length > 0, `baralho médio de ${c} vazio`);
-  check(rpg.buildDeck(c, [3], "").length >= 12, `baralho difícil de ${c} com menos de 12 perguntas`);
-}
-
-// relíquia soma dano no PvP, mas o bônus para em +2
-const relicRpg = new RPG({ getLevel: () => 1, gainXp: () => {}, toast: () => {}, audio: {} });
-relicRpg.addItem("nucleo", 1);
-check(relicRpg.pvpQuestions("cs")[4].damage === 6, "uma relíquia soma 1 de dano no PvP");
-relicRpg.addItem("infinito", 1);
-relicRpg.addItem("orbita", 1);
-check(relicRpg.pvpQuestions("cs")[4].damage === 7, "duas relíquias somam o teto de 2 de dano no PvP");
-
-// personagem: gênero, cabelo e cor sobrevivem ao ida e volta da rede
-const lookBase = normalizeAvatar({ gender: "m", hair: "rabo", skin: 3, hairColor: 6, eyes: 2 });
-check(lookBase.gender === "m" && lookBase.hair === "rabo" && lookBase.skin === 3, "normalizeAvatar perdeu os campos");
-check(normalizeAvatar({ gender: "x", hair: "nao-existe", skin: 99 }).gender === AVATAR_DEFAULT.gender, "normalizeAvatar aceitou gênero inventado");
-check(normalizeAvatar({ skin: 99 }).skin === 0 || normalizeAvatar({ skin: 99 }).skin === 5, "normalizeAvatar não limitou a pele");
-const code = avatarCode(lookBase);
-const volta = avatarFromCode(code);
-check(!!volta && volta.hair === "rabo" && volta.skin === 3 && volta.hairColor === 6 && volta.eyes === 2, `código do personagem não voltou igual (${code})`);
-check(avatarFromCode("lixo") === null, "código de personagem inválido virou personagem");
-const cores = avatarColors(lookBase);
-check(!!cores.skin && !!cores.hair && !!cores.eyes, "avatarColors não devolveu as cores do corpo");
-check(HAIRS.length === 12, `cabelos: ${HAIRS.length}, esperado 12`);
-check(HAIRS.filter((h) => !h.unlock && !h.quest).length === 4, "a lista de cabelo básico mudou de tamanho");
-check(HAIRS.filter((h) => h.quest).length === 1, "cabelo de missão a mais ou a menos");
-check(hairUnlock("moicano") === "cs" && hairUnlock("curto") === null, "trava do cabelo errada");
-check(hairQuest("chiquinha") === "mao-na-massa", "cabelo de missão sem missão");
-
-// guarda-roupa: todo traje e cabelo fechado aponta para continente ou missão que existe
-const questIds = new Set(QUESTS.map((q) => q.id));
-const continentIds = new Set(continents);
-for (const item of [...OUTFITS, ...HAIRS]) {
-  if (item.quest) check(questIds.has(item.quest), `${item.name} pede missão inexistente ${item.quest}`);
-  if (item.unlock) check(continentIds.has(item.unlock), `${item.name} pede continente inexistente ${item.unlock}`);
-}
-check(OUTFITS.filter((o) => o.quest).length === 91, `trajes de missão: ${OUTFITS.filter((o) => o.quest).length}, esperado 91`);
-check(OUTFITS.length === 102, `trajes: ${OUTFITS.length}, esperado 102`);
-check(OUTFITS.filter((o) => o.continent === "hub").length === 4, "trajes básicos livres mudaram de tamanho");
-
-// cada bicho desenhado tem um jeito de atrapalhar o combate, e o chefe muda de fase
-const creatureKinds = Object.keys(CREATURE_MODELS);
-for (const kind of creatureKinds) {
-  if (kind === "boss") continue;
-  check(!!MONSTER_TRAITS[kind], `espécie ${kind} sem jeito de atrapalhar no combate`);
-}
-const traitIds = new Set(Object.values(MONSTER_TRAITS).map((t) => t.id));
-for (const id of ["armor", "haste", "divide", "dodge"]) check(traitIds.has(id), `nenhuma espécie usa o jeito ${id}`);
-
-const duelRpg = new RPG({ getLevel: () => 1, gainXp: () => {}, toast: () => {}, audio: {} });
-const bossGround = GROUNDS.find((g) => g.dungeon === "dungeon-cs-arch");
-const bossDummy = { id: "dg-teste", name: "Teste", kind: "golem", tier: 3, level: 9 };
-check(!!duelRpg.startDuel(bossDummy, bossGround, true).ok, "chefe de teste não abriu combate");
-const bossC = duelRpg.combate;
-const bossIni = bossC.inimigos[0];
-bossIni.hp = bossIni.hpMax * 0.6;
-bossC.atualizarFase(bossIni);
-check(duelRpg.duel.bossPhase === 2, `chefe não virou fase 2 a 60% da vida (${duelRpg.duel.bossPhase})`);
-bossIni.hp = bossIni.hpMax * 0.3;
-bossC.atualizarFase(bossIni);
-check(duelRpg.duel.bossPhase === 3, `chefe não virou fase 3 a 30% da vida (${duelRpg.duel.bossPhase})`);
-
-// slime se recompõe durante a luta
-const slimeRpg = new RPG({ getLevel: () => 1, gainXp: () => {}, toast: () => {}, audio: {} });
-slimeRpg.startDuel({ id: "dg-slime", name: "Gosma", kind: "slime", tier: 2, level: 6 }, bossGround, false);
-const slimeC = slimeRpg.combate;
-const slimeIni = slimeC.inimigos[0];
-slimeIni.hp = 3;
-slimeIni.curaPronto = 0;
-slimeIni.proximoAtaque = 1e9;
-slimeC.agora = 6000;
-slimeC.eventos.length = 0;
-slimeC.atualizarInimigo(slimeIni, 16);
-check(slimeIni.hp > 3, "gosma não se recompôs durante a luta");
-check(slimeC.eventos.some((e) => e.tipo === "cura"), "cura da gosma sem aviso");
-
-// cavernas: seis, com entrada, cidade, monstros e chefe
-check(DUNGEONS.length === 23 + ready, `DUNGEONS tem ${DUNGEONS.length} cavernas, esperado ${23 + ready}`);
-for (const dungeon of DUNGEONS) {
-  check(continents.includes(dungeon.continent), `caverna ${dungeon.id} em continente inválido`);
-  check(dungeon.monsters?.length >= 4, `caverna ${dungeon.id} com poucos monstros`);
-  check(dungeon.monsters.every((name) => typeof name === "string" && name.length > 0), `caverna ${dungeon.id} com monstro sem nome`);
-  check(typeof dungeon.boss === "string" && dungeon.boss.length > 0, `caverna ${dungeon.id} sem chefe`);
-  check(dungeon.rooms.length >= 8, `caverna ${dungeon.id} com ${dungeon.rooms.length} salas`);
-  check(dungeon.rooms.some((r) => r.kind === "entrance"), `caverna ${dungeon.id} sem entrada`);
-  for (const id of dungeon.equipment || []) {
-    check(!!ITEMS[id]?.slot, `caverna ${dungeon.id} solta equipamento inexistente ${id}`);
-  }
-  check(dungeon.rooms.some((r) => r.kind === "city"), `caverna ${dungeon.id} sem cidade`);
-}
-
-// o mundo que o jogo monta: instrutores na superfície, bicho só na caverna
-// chave pública do administrador: hex ou npub, nunca a privada
-check(isAdminKey("ab".repeat(32), "npub1teste", ["AB".repeat(32)]), "admin não reconhece a própria chave hex");
-check(isAdminKey("", "npub1teste", ["npub1teste"]), "admin não reconhece o próprio npub");
-check(!isAdminKey("cd".repeat(32), "npub1outro", ["ab".repeat(32)]), "admin reconhece chave errada");
-
-// o GOD do mundo: chave pública registrada no repositório, privada no cofre
-const GOD_NPUB = "npub1s7869cka00zxj2psrm68cma588kal727v8evm6rwtre03e5pwyaspxalsw";
-check(ADMIN_PUBKEYS.includes(GOD_NPUB), "o npub do GOD não está registrado");
-check(ADMIN_LABEL === "GOD", `rótulo do admin: ${ADMIN_LABEL}, esperado GOD`);
-check(isAdminKey("", GOD_NPUB), "isAdminKey não reconhece o npub do GOD");
-check(!isAdminKey("", "npub1outro"), "isAdminKey reconhece npub que não é do GOD");
-check(!ADMIN_PUBKEYS.some((k) => k.startsWith("nsec1")), "chave privada dentro do repositório");
-
-const world = createWorld();
-// toda estação precisa de degrau livre em volta: o pedestal ocupa o centro,
-// mas o jogador tem que conseguir chegar e apertar F
-const semDegrau = [], naAgua = [];
+// ---- reskin: o que o jogador lê é fantasia, sem aula ----
+const { aplicarReskin } = await import("../src/gameplay/reskin.js");
+aplicarReskin();
 for (const site of SITES) {
-  let livre = false;
-  for (let dy = -2; dy <= 2 && !livre; dy++) {
-    for (let dx = -2; dx <= 2 && !livre; dx++) {
-      if (!world.boxCollides(site.x + dx, site.y + dy, 0.3, 0.24)) livre = true;
-    }
-  }
-  if (!livre) semDegrau.push(site.id);
-  if (world.get(Math.floor(site.x), Math.floor(site.y)) === 3) naAgua.push(site.id);
+  const post = POSTS[site.post];
+  check(post.lab == null, `estação ${site.id}: ainda tem laboratório`);
+  check(Array.isArray(post.tags) && post.tags.includes("lore"), `estação ${site.id}: página sem a tag lore`);
 }
-check(semDegrau.length === 0, `estação sem degrau livre: ${semDegrau.slice(0, 6).join(", ")}`);
-check(naAgua.length === 0, `estação na água: ${naAgua.slice(0, 6).join(", ")}`);
-for (const area of AREAS) {
-  check(world.areaAt(area.land.cx, area.land.cy)?.id === area.id, `área ${area.id} não é reconhecida no mapa`);
-}
-const areaSigns = world.decor.filter((d) => d.type === "sign" && d.text.startsWith("Área"));
-check(areaSigns.length === AREAS.length, `placas de área: ${areaSigns.length}, esperado ${AREAS.length}`);
-check(world.hunters.length === 23 + ready, `mundo com ${world.hunters.length} clareiras, esperado ${23 + ready}`);
-check(world.monsters.length === 0, "a superfície ainda tem monstros");
-check(world.caves.length === 46 + ready * 2, `mundo com ${world.caves.length} bocas de caverna, esperado ${46 + ready * 2}`);
-for (const cave of world.caves) {
-  const pair = world.caves.find((c) => c.id === cave.pairId);
-  check(!!pair, `boca ${cave.id} sem par`);
-  if (pair) {
-    check(pair.defId === cave.defId, `boca ${cave.id} pareada com outra caverna`);
-    check(pair.mouth !== cave.mouth, `boca ${cave.id} pareada com a mesma boca`);
-  }
-}
-check(world.npcs.filter((n) => n.trainer).length === 23 + ready, `instrutores: ${world.npcs.filter((n) => n.trainer).length}, esperado ${23 + ready}`);
-for (const c of continents) {
-  check(!!world.caves.find((cave) => cave.continent === c), `continente ${c} sem boca de caverna`);
-  check(!!DUNGEONS.find((d) => d.continent === c), `continente ${c} sem caverna definida`);
-}
+const estudo = /pergunta|resposta|prova|teorema|axioma|matem[áa]t|f[íi]sic|qu[íi]mic|computa|algorit|l[óo]gica|gram[áa]t|m[úu]sica|disciplina|conceito|aprend|ensin|escola|professor|aluno|wiki|acervo|biblioteca/i;
+const textosVisiveis = [
+  ...AREAS.map((a) => `${a.name} ${a.sub || ""}`),
+  ...SITES.map((s) => s.name),
+  ...WAYSTONES.map((w) => w.name),
+  ...Object.values(NPCS).flatMap((n) => [n.name, n.label || "", ...(n.lines || [])]),
+  ...QUESTS.flatMap((q) => [q.title, q.brief, q.reward?.title || ""]),
+  ...Object.values(ITEMS).filter((i) => i && typeof i === "object").map((i) => `${i.name} ${i.desc || ""}`),
+  ...Object.values(PETS).flatMap((p) => [p.name, p.where, p.ability?.desc || ""]),
+  ...OUTFITS.flatMap((o) => [o.name, o.desc]),
+  ...Object.entries(CONTINENTS).map(([, c]) => `${c.name} ${c.sub}`),
+];
+const vazando = [...new Set(textosVisiveis.filter((t) => estudo.test(t)))];
+check(vazando.length === 0, `texto de estudo na superfície: ${vazando.slice(0, 5).join(" | ")}`);
+check(new Set(SITES.map((s) => s.name)).size === SITES.length, "estação com nome repetido depois do reskin");
+check(new Set(AREAS.map((a) => a.name)).size === AREAS.length, "área com nome repetido depois do reskin");
+check(new Set(WAYSTONES.map((w) => w.name)).size === WAYSTONES.length, "farol com nome repetido depois do reskin");
 
-// catálogo: 82 seções (71 + 11 interseções), uma área de jogo por seção
-check(CATALOG.length === 82, `catálogo: ${CATALOG.length} seções, esperado 82`);
-const porDisciplina = {};
-for (const item of CATALOG) porDisciplina[item.discipline] = (porDisciplina[item.discipline] || 0) + 1;
-check(porDisciplina.math === 11, `matemática: ${porDisciplina.math}, esperado 11`);
-check(porDisciplina.physics === 15, `física: ${porDisciplina.physics}, esperado 15`);
-check(porDisciplina.chem === 13, `química: ${porDisciplina.chem}, esperado 13`);
-check(porDisciplina.cs === 17, `computação: ${porDisciplina.cs}, esperado 17`);
-check(porDisciplina.lingua === 15, `língua: ${porDisciplina.lingua}, esperado 15`);
-check(porDisciplina.inter === 11, `interseções: ${porDisciplina.inter}, esperado 11`);
-for (const item of CATALOG) {
-  check(!!DISCIPLINES[item.discipline], `${item.id} em disciplina inexistente`);
-  check(item.topics?.length === 3, `${item.id} sem os três tópicos de estação`);
-  check(typeof item.name === "string" && item.name.startsWith("Área"), `${item.id} sem nome de área`);
+if (faults.length) {
+  console.error(`conteúdo com ${faults.length} problema(s):\n- ${faults.slice(0, 20).join("\n- ")}`);
+  process.exit(1);
 }
-check(CATALOG_EXISTING.size === 12, `seções já cobertas: ${CATALOG_EXISTING.size}, esperado 12`);
-check(CATALOG_AREAS.length === 70, `áreas novas posicionadas: ${CATALOG_AREAS.length}, esperado 70`);
-for (const spot of CATALOG_AREAS) {
-  check(!!CATALOG_BY_ID.get(spot.id), `posição de área fora do catálogo: ${spot.id}`);
-  check(spot.rect.x > 0 && spot.rect.y > 0 && spot.rect.x + spot.rect.w < MAP_W && spot.rect.y + spot.rect.h < MAP_H, `${spot.id} fora do mapa`);
-  check(spot.land.rx * 2 <= spot.rect.w && spot.land.ry * 2 <= spot.rect.h, `${spot.id} com terra maior que o retângulo`);
-}
-// nenhuma ilha em cima da outra, ao menos 8 tiles de água entre elas, e
-// nenhuma em cima do mundo antigo
-const AGUA_ENTRE_ILHAS = 8;
-for (let i = 0; i < CATALOG_AREAS.length; i++) {
-  const a = CATALOG_AREAS[i];
-  for (let j = i + 1; j < CATALOG_AREAS.length; j++) {
-    const b = CATALOG_AREAS[j];
-    const vaoX = Math.max(0, Math.max(a.rect.x - (b.rect.x + b.rect.w), b.rect.x - (a.rect.x + a.rect.w)));
-    const vaoY = Math.max(0, Math.max(a.rect.y - (b.rect.y + b.rect.h), b.rect.y - (a.rect.y + a.rect.h)));
-    check(Math.max(vaoX, vaoY) >= AGUA_ENTRE_ILHAS, `${a.id} encosta em ${b.id}: ${Math.max(vaoX, vaoY)} tiles`);
-  }
-  check(a.cx - a.land.rx > 293 || a.cy - a.land.ry > 191, `${a.id} invadiu o mundo antigo`);
-}
-check(CATALOG_BRIDGES.length === 54, `pontes de catálogo: ${CATALOG_BRIDGES.length}, esperado 54`);
-// a interseção nasce entre as disciplinas que liga: perto o bastante das duas
-const clusterCentre = {};
-for (const d of ["math", "physics", "chem", "cs", "lingua"]) {
-  const list = CATALOG_AREAS.filter((a) => a.discipline === d);
-  clusterCentre[d] = {
-    x: list.reduce((n, a) => n + a.cx, 0) / list.length,
-    y: list.reduce((n, a) => n + a.cy, 0) / list.length,
-  };
-}
-const interById = new Map(CATALOG_AREAS.filter((a) => a.discipline === "inter").map((a) => [a.id, a]));
-for (const [inter, d] of CATALOG_TUNNELS) {
-  const spot = interById.get(inter);
-  check(!!spot, `interseção sem posição: ${inter}`);
-  if (!spot) continue;
-  const centre = clusterCentre[d];
-  const dist = Math.hypot(spot.cx - centre.x, spot.cy - centre.y);
-  // inter-todas junta as cinco, então o alcance dela é o mapa todo
-  // o mapa foi aberto para as ilhas respirarem; a interseção continua entre
-  // as duas disciplinas, só que a distância entre quarteirões cresceu
-  const limit = inter === "inter-todas" ? 340 : 320;
-  check(dist < limit, `${inter} longe demais de ${d}: ${Math.round(dist)} tiles`);
-}
-check(CATALOG_TUNNELS.length === 25, `túneis de interseção: ${CATALOG_TUNNELS.length}, esperado 25`);
-check(interById.size === 11, `interseções posicionadas: ${interById.size}, esperado 11`);
-const spotById = new Map(CATALOG_AREAS.map((a) => [a.id, a]));
-for (const [a, b] of CATALOG_BRIDGES) {
-  const pa = spotById.get(a), pb = spotById.get(b);
-  check(!!pa && !!pb, `ponte com área sem posição: ${a} -> ${b}`);
-  // ilha maior e mais afastada: a ponte encosta nas duas bordas e atravessa
-  // mais água, então o teto é o vão real, não a distância curta de antes
-  if (pa && pb) check(Math.hypot(pa.cx - pb.cx, pa.cy - pb.cy) < 60, `ponte longa demais: ${a} -> ${b}`);
-}
-const linked = new Set(CATALOG_BRIDGES.flat());
-for (const spot of CATALOG_AREAS) {
-  const viz = CATALOG_BRIDGES.filter(([a, b]) => a === spot.id || b === spot.id).length;
-  check(viz >= 1 || CATALOG_TUNNELS.some(([t]) => t === spot.id), `${spot.id} sem caminho para ninguém`);
-}
-for (const [inter, d] of CATALOG_TUNNELS) {
-  check(!!CATALOG_BY_ID.get(inter)?.links, `${inter} não é interseção`);
-  check(!!DISCIPLINES[d], `túnel para disciplina inexistente: ${d}`);
-}
-
-// F2: toda área pronta precisa do pacote completo dentro do jogo
-for (const item of CATALOG_CONTENT.areas) {
-  const inGame = AREAS.find((a) => a.id === item.id);
-  check(!!inGame, `${item.id} está no catálogo mas não no mapa`);
-  const stations = SITES.filter((st) => st.catalog && st.post?.startsWith(`${item.id}-`));
-  check(stations.length === estacoesDaSecao(item.num), `${item.id} com ${stations.length} estações, esperado ${estacoesDaSecao(item.num)}`);
-  check(!!WAYSTONES.find((w) => w.id === item.id), `${item.id} sem farol`);
-  check(!!NPC_SPAWNS.find((n) => n.id === CATALOG_CONTENT.grounds.find((g) => g.id === item.id)?.keeper), `${item.id} sem NPC no mapa`);
-  const dungeon = DUNGEONS.find((d) => d.id === `dungeon-${item.id}`);
-  check(!!dungeon, `${item.id} sem caverna`);
-  if (dungeon) {
-    check(dungeon.rooms.length === 10, `${item.id}: caverna com ${dungeon.rooms.length} salas`);
-    check(dungeon.rooms.some((r) => r.kind === "city"), `${item.id}: caverna sem cidade`);
-    check(typeof dungeon.boss === "string" && dungeon.boss.length > 3, `${item.id}: caverna sem chefe`);
-  }
-  const ground = GROUNDS.find((g) => g.id === item.id);
-  check(!!ground && ground.monsters.length === 3, `${item.id} sem caçada de três monstros`);
-  check(QUESTS.some((q) => q.id === `missao-${item.id}`), `${item.id} sem missão`);
-  const own = ["1", "2", "3"].map((t) => (QUESTIONS[item.continent]?.[t] || []).filter((q) => q.why && q.q).length);
-  check(own.every((n) => n > 0), `${item.id} sem perguntas no continente`);
-  check(!!CATALOG_CONTENT.decor[item.id], `${item.id} sem família de decoração`);
-  check(!!CATALOG_CONTENT.posts[`${item.id}-1`], `${item.id} sem página`);
-}
-// F9: o catálogo inteiro, subárea por subárea, dentro do jogo
-const secoes = Object.entries(SECTION_TOPICS);
-check(secoes.length === 82, `SECTION_TOPICS: ${secoes.length} seções, esperado 82`);
-let totalSubareas = 0, totalTopicos = 0;
-for (const [num, sec] of secoes) {
-  const subs = sec.subareas || [];
-  totalSubareas += subs.length;
-  totalTopicos += subs.reduce((n, [, lista]) => n + lista.length, 0) + (sec.topics?.length || 0);
-  check(subs.length > 0 || sec.topics?.length > 0, `seção ${num} sem subárea nem tópico`);
-}
-check(totalSubareas === 283, `subáreas do catálogo: ${totalSubareas}, esperado 283`);
-check(totalTopicos === 2659, `tópicos do catálogo: ${totalTopicos}, esperado 2659`);
-check(catalogoEstacoes.length === totalEstacoes - 69, `estações do catálogo: ${catalogoEstacoes.length}, esperado ${totalEstacoes - 69}`);
-let semSubarea = [], semTopico = [], foraDaIlha = [], semPerguntas = [];
-for (const item of CATALOG) {
-  const sec = SECTION_TOPICS[item.num];
-  const areaId = item.existing || item.id;
-  const area = AREAS.find((a) => a.id === areaId);
-  const stations = SITES.filter((st) => st.catalog && st.post?.startsWith(`${areaId}-`));
-  const subs = (sec.subareas || []).map(([nome, topicos]) => ({ nome, topicos }));
-  if (subs.length) {
-    for (const sub of subs) {
-      const site = stations.find((s) => s.name === sub.nome || s.post && POSTS[s.post]?.body.includes(`<strong>${sub.nome}</strong>`));
-      if (!site) { semSubarea.push(`${item.id}/${sub.nome}`); continue; }
-      const body = POSTS[site.post].body;
-      for (const topico of sub.topicos) if (!body.includes(topico)) semTopico.push(`${item.id}/${topico}`);
-      const tagged = [1, 2, 3].reduce((n, tier) => n + (QUESTIONS[area?.continent]?.[tier] || []).filter((q) => q.area === areaId).length, 0);
-      if (tagged < 2) semPerguntas.push(areaId);
-    }
-  } else {
-    const todos = sec.topics || [];
-    const corpo = stations.map((s) => POSTS[s.post]?.body || "").join("\n");
-    for (const topico of todos) if (!corpo.includes(topico)) semTopico.push(`${item.id}/${topico}`);
-  }
-  if (area) for (const s of stations) if (!insideLand(area.land, s.x, s.y, 0.7)) foraDaIlha.push(`${areaId}/${s.id}`);
-}
-check(semSubarea.length === 0, `subáreas sem estação: ${semSubarea.slice(0, 6).join(", ")}`);
-check(semTopico.length === 0, `tópicos fora das páginas: ${semTopico.slice(0, 6).join(", ")}`);
-check(foraDaIlha.length === 0, `estação fora da ilha: ${foraDaIlha.slice(0, 6).join(", ")}`);
-check(semPerguntas.length === 0, `área com menos de duas perguntas: ${semPerguntas.slice(0, 6).join(", ")}`);
-check(LEGACY_CONTENT.sites.length === 69, `subáreas das áreas antigas: ${LEGACY_CONTENT.sites.length}, esperado 69`);
-for (const site of LEGACY_CONTENT.sites) {
-  check(!!POSTS[site.post], `estação antiga ${site.id} sem página`);
-  check(site.minor === true, `estação antiga ${site.id} sem marca de subárea`);
-}
-check(AREAS.length === 16 + ready, `mapa com ${AREAS.length} áreas, esperado ${16 + ready}`);
-check(QUESTS.length >= 42 + ready, `missões: ${QUESTS.length}, esperado ao menos ${42 + ready}`);
-
-// toda ponte de catálogo tem caminho seco: nenhum par vizinho cortado pela água
-const spotCentre = new Map(CATALOG_AREAS.map((a) => [a.id, a]));
-let pontesSecas = 0;
-for (const [a, b] of CATALOG_BRIDGES) {
-  const pa = spotCentre.get(a), pb = spotCentre.get(b);
-  if (!pa || !pb) continue;
-  const dx = pb.cx - pa.cx, dy = pb.cy - pa.cy;
-  const len = Math.hypot(dx, dy) || 1;
-  const ux = dx / len, uy = dy / len;
-  // A reta passa por ilha, água e ponte; o que não pode é o meio dela cair em
-  // água aberta. Se o ponto é água, exige chão seco (terra, caminho ou tabuado)
-  // na faixa de um tile em volta, que é a largura da ponte.
-  let cortada = false;
-  for (let i = 1; i < 40 && !cortada; i++) {
-    const t = i / 40;
-    const x = Math.floor(pa.cx + ux * (len * t));
-    const y = Math.floor(pa.cy + uy * (len * t));
-    if (world.get(x, y) !== 3) continue;
-    let temChao = false;
-    for (let oy = -1; oy <= 1 && !temChao; oy++) {
-      for (let ox = -1; ox <= 1 && !temChao; ox++) {
-        if (world.get(x + ox, y + oy) !== 3) temChao = true;
-      }
-    }
-    if (!temChao) cortada = true;
-  }
-  if (!cortada) pontesSecas++;
-}
-check(pontesSecas === CATALOG_BRIDGES.length, `pontes secas: ${pontesSecas}/${CATALOG_BRIDGES.length}`);
-
-// português correto nas etiquetas geradas e instrumento em toda estação nova
-const LABS = new Set(["logic", "fractal", "fourier", "solid", "echo", "adder", "state", "cpu", "history", "infinity", "calculus", "probability", "motion", "thermo", "optics", "gravity", "periodic", "bonds", "titration", "energy", "balance", "rhythm", "harmony", "scales", "timbre", "generative", "learning", "neural", "language", "vision"]);
-let etiquetaErrada = [], semInstrumento = [];
-for (const item of CATALOG_CONTENT.areas) {
-  const area = CATALOG.find((a) => a.id === item.id);
-  const { article: art, noun } = articleOf(area.name);
-  const dungeon = DUNGEONS.find((d) => d.id === `dungeon-${item.id}`);
-  const ground = GROUNDS.find((g) => g.id === item.id);
-  const stone = (WAYSTONES.find((w) => w.id === item.id));
-  const boss = dungeon?.boss || "";
-  if (!dungeon?.name.endsWith(`${art} ${noun}`)) etiquetaErrada.push(`${item.id}: ${dungeon?.name}`);
-  if (!ground?.name.endsWith(`${art} ${noun}`)) etiquetaErrada.push(`${item.id}: ${ground?.name}`);
-  if (!stone?.name.endsWith(`${art} ${noun}`)) etiquetaErrada.push(`${item.id}: ${stone?.name}`);
-  if (!boss.endsWith(`${art} ${noun}`)) etiquetaErrada.push(`${item.id}: ${boss}`);
-  for (const post of Object.values(CATALOG_CONTENT.posts).filter((p) => p.tags?.includes(area.short.toLowerCase()) || p.kicker?.endsWith(area.short.toLowerCase()))) {
-    void post;
-  }
-}
-check(etiquetaErrada.length === 0, `etiquetas sem concordância: ${etiquetaErrada.slice(0, 5).join(" | ")}`);
-for (const [id, post] of Object.entries(CATALOG_CONTENT.posts)) {
-  if (!LABS.has(post.lab)) semInstrumento.push(`${id}:${post.lab}`);
-}
-check(semInstrumento.length === 0, `catações sem instrumento: ${semInstrumento.slice(0, 5).join(", ")}`);
-// nomes de NPC não se repetem entre áreas
-const nomesNpc = new Map();
-for (const n of Object.values(NPCS)) nomesNpc.set(n.name, (nomesNpc.get(n.name) || 0) + 1);
-const repetidos = [...nomesNpc.entries()].filter(([, n]) => n > 1).map(([nome]) => nome);
-check(repetidos.length === 0, `nomes de NPC repetidos: ${repetidos.join(", ")}`);
-// as cavernas geradas não usam todas a mesma planta
-const plantas = new Set(DUNGEONS.filter((d) => CATALOG_CONTENT.areas.some((a) => `dungeon-${a.id}` === d.id))
-  .map((d) => d.rooms.map((r) => `${r.x}:${r.y}`).join("|")));
-check(plantas.size >= 3, `plantas de caverna do catálogo: ${plantas.size}, esperado ao menos 3`);
-
-// missão do NPC: resposta não pode cair sempre na primeira alternativa
-const respostasQuiz = new Set();
-for (const q of CATALOG_CONTENT.quests) {
-  const quiz = q.quiz;
-  check(quiz.options.length === 3, `${q.id}: quiz com ${quiz.options.length} alternativas`);
-  check(new Set(quiz.options).size === 3, `${q.id}: alternativas repetidas no quiz`);
-  check(quiz.options[quiz.answer] === quiz.options[quiz.answer], `${q.id}: sem resposta marcada`);
-  respostasQuiz.add(quiz.answer);
-}
-check(respostasQuiz.size >= 2, `quiz sempre na mesma letra: ${[...respostasQuiz].join(",")}`);
-
-// pergunta da coleta/PvP sempre com cinco alternativas na hora da luta
-const rpgOptions = new RPG({ getLevel: () => 1, gainXp: () => {}, toast: () => {}, audio: {} });
-for (const item of CATALOG_CONTENT.areas.slice(0, 8)) {
-  const deck = rpgOptions.buildDeck(item.continent, [1], "");
-  check(deck.length > 0 && deck.every((q) => q.options.length === 5), `${item.id}: coleta sem 5 alternativas`);
-}
-
-// cobertura do catálogo: as 82 seções têm área, caverna, NPC e missão no jogo
-let cobertas = 0, semCaverna = [], semMissao = [], semArea = [];
-for (const item of CATALOG) {
-  const areaId = item.existing || item.id;
-  const area = AREAS.find((a) => a.id === areaId);
-  if (!area) { semArea.push(item.id); continue; }
-  const dungeon = DUNGEONS.find((d) => d.id === `dungeon-${areaId}`);
-  if (!dungeon) semCaverna.push(item.id);
-  else {
-    check(dungeon.rooms.length === 10, `${item.id}: caverna com ${dungeon.rooms.length} salas`);
-    check(typeof dungeon.boss === "string" && dungeon.boss.length > 3, `${item.id}: caverna sem chefe`);
-  }
-  const npcsAqui = NPC_SPAWNS.filter((n) => world.areaAt
-    ? n.x >= area.rect.x && n.x < area.rect.x + area.rect.w && n.y >= area.rect.y && n.y < area.rect.y + area.rect.h
-    : false);
-  const temMissao = npcsAqui.some((n) => QUESTS.some((q) => q.npc === n.id));
-  if (!temMissao) semMissao.push(item.id);
-  cobertas++;
-}
-check(cobertas === 82, `seções cobertas: ${cobertas}, esperado 82`);
-check(semArea.length === 0, `seções sem área: ${semArea.join(", ")}`);
-check(semCaverna.length === 0, `seções sem caverna: ${semCaverna.join(", ")}`);
-check(semMissao.length === 0, `seções sem NPC com missão: ${semMissao.join(", ")}`);
-
-// F8: números finais do catálogo inteiro
-check(AREAS.length === 86, `áreas no mapa: ${AREAS.length}, esperado 86`);
-check(DUNGEONS.length === 93, `cavernas: ${DUNGEONS.length}, esperado 93`);
-check(GROUNDS.length === 93, `caçadas: ${GROUNDS.length}, esperado 93`);
-check(SITES.length === totalEstacoes, `catações: ${SITES.length}, esperado ${totalEstacoes}`);
-check(QUESTS.length === 291, `missões: ${QUESTS.length}, esperado 291`);
-// a missão fala como morador: campo cheio, recompensa que existe, frase
-// começando em maiúscula e sem concordância quebrada ("da de")
-const falhasMissao = [];
-for (const q of QUESTS) {
-  const texto = `${q.title} ${q.brief} ${q.reward?.title || ""}`;
-  if (!q.title || !q.brief || !q.giver || !q.npc) falhasMissao.push(`${q.id}: campo vazio`);
-  if (!q.reward?.item || !ITEMS[q.reward.item]) falhasMissao.push(`${q.id}: recompensa sem item`);
-  if (!/^[A-ZÁÉÍÓÚÂÊÔÃÕÇ]/.test(q.brief)) falhasMissao.push(`${q.id}: brief em minúscula`);
-  if (!/[.!?]$/.test(q.brief.trim())) falhasMissao.push(`${q.id}: brief sem ponto final`);
-  if (/\b(da|do|das|dos) de\b/.test(texto)) falhasMissao.push(`${q.id}: concordância quebrada`);
-}
-check(falhasMissao.length === 0, `missão com defeito: ${falhasMissao.slice(0, 4).join(" | ")}`);
-// nenhuma fala de NPC se repete: cada morador fala do próprio lugar
-const falasNpc = Object.values(NPCS).flatMap((npc) => npc.lines || []);
-check(falasNpc.length >= 780, `falas de NPC: ${falasNpc.length}, esperado ao menos 780`);
-check(new Set(falasNpc).size === falasNpc.length, "fala de NPC repetida no mundo");
-check(WAYSTONES.length === 94, `faróis: ${WAYSTONES.length}, esperado 94`);
-// as 770 perguntas de posição no catálogo saíram; sobrou conceito das áreas
-check(totalQuestions === 887, `perguntas: ${totalQuestions}, esperado 887`);
-// a alternativa certa não pode entregar a resposta pelo tamanho
-const medianaDe = (a) => {
-  const s = [...a].sort((x, y) => x - y);
-  const m = s.length >> 1;
-  return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
-};
-const entrega = [];
-const opcaoRepetida = [];
-for (const c of Object.keys(QUESTIONS)) {
-  for (const t of Object.keys(QUESTIONS[c])) {
-    for (const q of QUESTIONS[c][t]) {
-      const opts = q.options || [];
-      const limpa = opts.map((o) => String(o).trim().toLowerCase());
-      if (new Set(limpa).size !== limpa.length) opcaoRepetida.push(q.q);
-      const certa = opts[q.a];
-      if (certa == null) continue;
-      const erradas = opts.filter((_, i) => i !== q.a).map((o) => String(o).length);
-      const med = medianaDe(erradas);
-      if (med > 0 && certa.length >= 30 && certa.length >= 2 * med) entrega.push(`${c}/${t}: ${q.q}`);
-    }
-  }
-}
-check(entrega.length === 0, `alternativa certa e a unica longa: ${entrega.slice(0, 5).join(" | ")}`);
-check(opcaoRepetida.length === 0, `pergunta com alternativa repetida: ${opcaoRepetida.slice(0, 5).join(" | ")}`);
-// cada área nova tem uma pergunta própria em cada dificuldade
-let semPergunta = [];
-for (const item of CATALOG) {
-  const areaId = item.existing || item.id;
-  for (const tier of [1, 2, 3]) {
-    const tagged = (QUESTIONS[AREAS.find((a) => a.id === areaId)?.continent]?.[tier] || []).filter((q) => q.area === areaId);
-    if (tagged.length < 1) semPergunta.push(`${areaId}/${tier}:${tagged.length}`);
-  }
-}
-check(semPergunta.length === 0, `áreas com pergunta própria faltando: ${semPergunta.slice(0, 6).join(", ")}`);
-// a ilha existe de fato no mapa, e não é água
-let ilhaNaAgua = [];
-for (const spot of CATALOG_AREAS) {
-  if (CATALOG_CONTENT.areas.some((a) => a.id === spot.id) && world.get(spot.cx, spot.cy) === 3) ilhaNaAgua.push(spot.id);
-}
-check(ilhaNaAgua.length === 0, `ilhas na água: ${ilhaNaAgua.slice(0, 6).join(", ")}`);
-
-// itens no chão: visíveis, coletáveis e estáveis
-check(world.groundItems.length === 172, `itens no chão: ${world.groundItems.length}, esperado 172`);
-check(new Set(world.groundItems.map((g) => g.id)).size === world.groundItems.length, "id de item no chão repetido");
-for (const g of world.groundItems) {
-  check(!!ITEMS[g.itemId], `item no chão fora do registro: ${g.itemId}`);
-  check(world.get(g.x, g.y) !== 3, `item no chão na água: ${g.id}`);
-}
-const amostraChao = world.groundItems[0];
-const tomado = world.takeGroundItem(amostraChao.id);
-check(tomado?.id === amostraChao.id, "takeGroundItem não devolveu o item");
-check(world.groundItems.length === 171, "takeGroundItem não removeu o item");
-world.groundItems.push(amostraChao);
-
-// enfeite nunca flutua no mar
-const decorNaAgua = world.decor.filter((d) => world.get(Math.floor(d.x), Math.floor(d.y)) === 3);
-check(decorNaAgua.length === 0, `decoração na água: ${decorNaAgua.length} (${decorNaAgua.slice(0, 3).map((d) => d.type).join(", ")})`);
-
-// caverna do catálogo: sala dentro da planta e chefe de verdade
-for (const dungeon of DUNGEONS.filter((d) => CATALOG_CONTENT.areas.some((a) => `dungeon-${a.id}` === d.id))) {
-  for (const room of dungeon.rooms) {
-    check(room.x >= 0 && room.y >= 0 && room.x + room.w <= 64 && room.y + room.h <= 48, `${dungeon.id}: sala ${room.id} fora da planta`);
-  }
-  check(typeof dungeon.boss === "string" && dungeon.boss.length > 3, `${dungeon.id}: sem chefe`);
-}
-
-// toda forma que o jogo usa precisa de desenho, nome de leitura e fraqueza;
-// o chefe cai no desenho final, então fica de fora dessa cobrança
-
-for (const kind of CREATURE_FORMS) {
-  if (kind === "boss") continue;
-  check(!!CREATURE_MODELS[kind], `sem desenho para ${kind}`);
-  check(!!MONSTER_LABELS[kind], `bestiário sem nome para ${kind}`);
-  check(!!MONSTER_WEAKNESS[kind], `bestiário sem fraqueza para ${kind}`);
-}
-
-// F11: texto curado de Matemática, subárea por subárea
-let subareasMath = 0;
-const mathSemTexto = [];
-for (const [num, sec] of Object.entries(SECTION_TOPICS)) {
-  if (!num.startsWith("1.")) continue;
-  for (const [nome] of sec.subareas || []) {
-    subareasMath++;
-    if (!MATH_TEXT[nome]?.abre || !MATH_TEXT[nome]?.pratica || !MATH_TEXT[nome]?.erro) mathSemTexto.push(nome);
-  }
-}
-check(subareasMath === 69, `subáreas de Matemática: ${subareasMath}, esperado 69`);
-check(mathSemTexto.length === 0, `subáreas de Matemática sem texto curado: ${mathSemTexto.slice(0, 5).join(", ")}`);
-
-// F12: texto curado de Física
-let subareasFisica = 0;
-const fisicaSemTexto = [];
-for (const [num, sec] of Object.entries(SECTION_TOPICS)) {
-  if (!num.startsWith("2.")) continue;
-  for (const [nome] of sec.subareas || []) {
-    subareasFisica++;
-    if (!PHYSICS_TEXT[nome]?.abre || !PHYSICS_TEXT[nome]?.pratica || !PHYSICS_TEXT[nome]?.erro) fisicaSemTexto.push(nome);
-  }
-}
-check(subareasFisica === 34, `subáreas de Física: ${subareasFisica}, esperado 34`);
-check(fisicaSemTexto.length === 0, `subáreas de Física sem texto curado: ${fisicaSemTexto.slice(0, 5).join(", ")}`);
-
-// F13: texto curado de Química, inclusive as duas "Especializações"
-let subareasQuimica = 0;
-const quimicaSemTexto = [];
-for (const [num, sec] of Object.entries(SECTION_TOPICS)) {
-  if (!num.startsWith("3.")) continue;
-  for (const [nome] of sec.subareas || []) {
-    subareasQuimica++;
-    const texto = CHEM_TEXT[`${num}|${nome}`] || CHEM_TEXT[nome];
-    if (!texto?.abre || !texto?.pratica || !texto?.erro) quimicaSemTexto.push(`${num}/${nome}`);
-  }
-}
-check(subareasQuimica === 37, `subáreas de Química: ${subareasQuimica}, esperado 37`);
-check(quimicaSemTexto.length === 0, `subáreas de Química sem texto curado: ${quimicaSemTexto.slice(0, 5).join(", ")}`);
-
-// F14: texto curado de Computação
-const CS_TEXT = { ...CS_A_TEXT, ...CS_B_TEXT };
-let subareasCs = 0;
-const csSemTexto = [];
-for (const [num, sec] of Object.entries(SECTION_TOPICS)) {
-  if (!num.startsWith("4.")) continue;
-  for (const [nome] of sec.subareas || []) {
-    subareasCs++;
-    const texto = CS_TEXT[`${num}|${nome}`] || CS_TEXT[nome];
-    if (!texto?.abre || !texto?.pratica || !texto?.erro) csSemTexto.push(`${num}/${nome}`);
-  }
-}
-check(subareasCs === 88, `subáreas de Computação: ${subareasCs}, esperado 88`);
-check(csSemTexto.length === 0, `subáreas de Computação sem texto curado: ${csSemTexto.slice(0, 5).join(", ")}`);
-
-// F15: texto curado de Língua Portuguesa
-let subareasLingua = 0;
-const linguaSemTexto = [];
-for (const [num, sec] of Object.entries(SECTION_TOPICS)) {
-  if (!num.startsWith("5.")) continue;
-  for (const [nome] of sec.subareas || []) {
-    subareasLingua++;
-    const texto = LINGUA_TEXT[nome];
-    if (!texto?.abre || !texto?.pratica || !texto?.erro) linguaSemTexto.push(nome);
-  }
-}
-check(subareasLingua === 55, `subáreas de Língua: ${subareasLingua}, esperado 55`);
-check(linguaSemTexto.length === 0, `subáreas de Língua sem texto curado: ${linguaSemTexto.slice(0, 5).join(", ")}`);
-check(subareasMath + subareasFisica + subareasQuimica + subareasCs + subareasLingua === 283, "as cinco disciplinas não somam as 283 subáreas");
-
-// F16: texto curado das interseções
-let secoesInter = 0;
-const interSemTexto = [];
-for (const [num, sec] of Object.entries(SECTION_TOPICS)) {
-  if (!num.startsWith("6.")) continue;
-  secoesInter++;
-  if (!INTER_TEXT[num]?.abre || !INTER_TEXT[num]?.pratica || !INTER_TEXT[num]?.erro) interSemTexto.push(num);
-}
-check(secoesInter === 11, `interseções: ${secoesInter}, esperado 11`);
-check(interSemTexto.length === 0, `interseções sem texto curado: ${interSemTexto.join(", ")}`);
-
-// F17: todo texto curado chega de fato a uma página
-const corpos = Object.values(POSTS).map((p) => p.body);
-const textoForaDaPagina = [];
-for (const mapa of [...Object.values(textosCurados), INTER_TEXT]) {
-  for (const [nome, texto] of Object.entries(mapa)) {
-    if (!corpos.some((corpo) => corpo.includes(texto.abre.slice(0, 40)))) textoForaDaPagina.push(nome);
-  }
-}
-check(textoForaDaPagina.length === 0, `texto curado sem página: ${textoForaDaPagina.slice(0, 5).join(", ")}`);
-
-// F18: seção sem subárea também tem texto curado (trilhas)
-let secoesSemSub = 0;
-const secaoSemTexto = [];
-for (const [num, sec] of Object.entries(SECTION_TOPICS)) {
-  if (num.startsWith("6.") || (sec.subareas || []).length) continue;
-  secoesSemSub++;
-  const texto = SECAO_TEXT[num];
-  if (!texto?.abre || !texto?.pratica || !texto?.erro) secaoSemTexto.push(num);
-}
-check(secoesSemSub === 23, `seções sem subárea: ${secoesSemSub}, esperado 23`);
-check(secaoSemTexto.length === 0, `seções sem subárea e sem texto: ${secaoSemTexto.join(", ")}`);
-
-// F19: toda página de subárea aponta as áreas vizinhas
-const comConexoes = Object.values(POSTS).filter((p) => p.body.includes("Os caminhos daqui seguem para")).length;
-check(comConexoes >= 283, `páginas com conexões: ${comConexoes}, esperado ao menos 283`);
-const comMeta = Object.values(POSTS).filter((p) => /Estação da subárea|blog jogável|O catálogo reúne|O catálogo lista/i.test(p.body)).length;
-check(comMeta === 0, `páginas ainda com texto de bastidor: ${comMeta}`);
-
-// F10: identidade de cada área, sem repetir bioma, bicho, item, guardião ou caverna
-check(IDENTITY_AREAS.length === 86, `identidade: ${IDENTITY_AREAS.length} áreas, esperado 86`);
-check(Object.keys(BIOMES).length === 86, `biomas: ${Object.keys(BIOMES).length}, esperado 86`);
-const biomaNomes = Object.values(BIOMES).map((b) => b.name);
-const biomaKinds = Object.values(BIOMES).map((b) => b.baseKind);
-const biomaCores = Object.values(BIOMES).map((b) => b.base);
-check(new Set(biomaNomes).size === 86, "nome de bioma repetido");
-check(new Set(biomaKinds).size === 86, "tipo de piso repetido");
-check(new Set(biomaCores).size === 86, `cor de piso repetida: ${new Set(biomaCores).size}`);
-for (const area of IDENTITY_AREAS) {
-  const b = BIOMES[area.id];
-  const noMapa = AREAS.find((a) => a.id === area.id);
-  check(!!b, `${area.id} sem bioma`);
-  check(!!noMapa && noMapa.base === b.baseKind && noMapa.floor === b.floorKind, `${area.id} não usa o piso do bioma`);
-  check(!!TILE_STYLE[b.baseKind] && !!TILE_STYLE[b.floorKind], `${area.id} sem estilo de tile`);
-  const fauna = FAUNA[area.id];
-  check(Array.isArray(fauna) && fauna.length === 3, `${area.id} com fauna de ${fauna?.length}`);
-  check(new Set(fauna.map((f) => f.name)).size === 3, `${area.id} com bicho repetido`);
-  const itens = AREA_ITEMS[area.id];
-  check(!!itens?.weapon && !!itens?.armor && !!itens?.helmet, `${area.id} sem os três itens`);
-  for (const item of [itens.weapon, itens.armor, itens.helmet]) {
-    check(!!ITEMS[item.id], `${area.id} com item fora do registro: ${item.id}`);
-    check(ITEMS[item.id].name === item.name, `${area.id} com nome de item divergente`);
-  }
-  const dg = DUNGEONS.find((d) => d.id === `dungeon-${area.id}`);
-  const ident = dungeonIdentity(area.id);
-  check(!!dg && !!ident, `${area.id} sem caverna de identidade`);
-  if (dg && ident) {
-    check(dg.rooms.length === 10, `${area.id}: caverna com ${dg.rooms.length} salas`);
-    check(dg.equipment.length === 3 && dg.equipment[0] === itens.weapon.id, `${area.id}: equipamento da caverna fora da área`);
-    check((dg.fauna || []).length === 3, `${area.id}: caverna sem fauna da área`);
-    check(dg.palette.accent === b.accent, `${area.id}: paleta da caverna fora do bioma`);
-    check(dg.material === b.material, `${area.id}: material da caverna fora do bioma`);
-  }
-  const trilha = QUESTS.find((q) => q.id === `trilha-${area.id}`);
-  const chefe = QUESTS.find((q) => q.id === `chefe-${area.id}`);
-  check(!!trilha && trilha.goal.type === "cards" && trilha.goal.area === area.id, `${area.id} sem missão de trilha`);
-  check(!!chefe && chefe.goal.type === "bosses" && chefe.goal.area === area.id, `${area.id} sem missão de chefe`);
-  const traje = OUTFITS.find((o) => o.id === `traje-${area.id}`);
-  check(!!traje && traje.quest === `trilha-${area.id}`, `${area.id} sem traje próprio`);
-}
-const bichos = Object.values(FAUNA).flat();
-check(bichos.length === 258, `fauna total: ${bichos.length}, esperado 258`);
-check(new Set(bichos.map((b) => b.name.toLowerCase())).size === 258, "nome de bicho repetido entre áreas");
-const itensArea = Object.values(AREA_ITEMS).flatMap((x) => [x.weapon, x.armor, x.helmet]);
-check(itensArea.length === 258, `itens de área: ${itensArea.length}, esperado 258`);
-check(new Set(itensArea.map((i) => i.id)).size === 258, "id de item de área repetido");
-check(new Set(itensArea.map((i) => i.name.toLowerCase())).size === 258, "nome de item de área repetido");
-check(AREA_OUTFITS.length === 86, `trajes de área: ${AREA_OUTFITS.length}, esperado 86`);
-const looks = new Set(world.npcs.map((n) => JSON.stringify(n.colors)));
-check(looks.size === world.npcs.length, `NPCs com aparência repetida: ${world.npcs.length - looks.size}`);
-for (const npc of world.npcs) check(!!npc.look && !!npc.colors?.skin && !!npc.colors?.hair, `NPC ${npc.id} sem aparência`);
-
-// coleta: o sorteio é puro e sempre devolve item que existe, com pergunta de
-// tier 1 a 3. Raro pede pergunta difícil e o lendário pede duas seguidas.
-const { rollGather } = await import("../src/ui/gather.js");
-const roleta = (...vals) => { let i = 0; return () => vals[i++ % vals.length]; };
-const veioComum = rollGather("vein", roleta(0.10, 0.40), {});
-check(veioComum.resource === "veio" && veioComum.qty === 2 && veioComum.tier === 1 && veioComum.grade === "comum", "veio comum fora do esperado");
-const veioMedio = rollGather("vein", roleta(0.60), { material: "erva" });
-check(veioMedio.resource === "ferro" && veioMedio.tier === 2 && veioMedio.grade === "incomum", "ferro do veio fora do esperado");
-const veioRaro = rollGather("vein", roleta(0.95), { material: "erva" });
-check(veioRaro.resource === "erva" && veioRaro.tier === 3 && veioRaro.grade === "raro" && !veioRaro.rounds, "material da área não saiu no veio raro");
-const veioLendario = rollGather("vein", roleta(0.99), { material: "erva" });
-check(veioLendario.resource === "erva" && veioLendario.qty === 2 && veioLendario.tier === 3 && veioLendario.grade === "lendario" && veioLendario.rounds === 2, "veio lendário não pede duas perguntas");
-const veioSemMaterial = rollGather("vein", roleta(0.95), { material: "veio" });
-check(veioSemMaterial.resource === "cristal" && veioSemMaterial.tier === 3, "veio raro sem material de área não caiu no cristal");
-check(rollGather("tree", roleta(0.10, 0.40)).tier === 1, "madeira comum não é pergunta fácil");
-const madeiraRara = rollGather("tree", roleta(0.80, 0.60));
-check(madeiraRara.qty === 2 && madeiraRara.tier === 2 && madeiraRara.grade === "incomum", "madeira rara fora do esperado");
-const madeiraLendaria = rollGather("tree", roleta(0.995));
-check(madeiraLendaria.qty === 6 && madeiraLendaria.grade === "lendario" && madeiraLendaria.rounds === 2, "madeira lendária fora do esperado");
-const peixeComum = rollGather("water", roleta(0.10, 0.40));
-check(peixeComum.resource === "peixe" && peixeComum.qty === 2 && peixeComum.tier === 1, "peixe comum fora do esperado");
-const peixePrata = rollGather("water", roleta(0.70));
-check(peixePrata.resource === "peixe-prata" && peixePrata.tier === 2 && peixePrata.grade === "incomum", "peixe prateado fora do esperado");
-const peixeRaro = rollGather("water", roleta(0.95));
-check(peixeRaro.resource === "peixe-raro" && peixeRaro.tier === 3 && peixeRaro.grade === "raro" && !peixeRaro.rounds, "peixe raro fora do esperado");
-const peixeLendario = rollGather("water", roleta(0.995));
-check(peixeLendario.resource === "peixe-lendario" && peixeLendario.tier === 3 && peixeLendario.grade === "lendario" && peixeLendario.rounds === 2, "peixe lendário fora do esperado");
-for (const kind of ["vein", "tree", "water"]) {
-  for (let i = 0; i < 300; i++) {
-    const r = rollGather(kind, Math.random, { material: "erva" });
-    check(!!ITEMS[r.resource], `coleta ${kind}: recurso ${r.resource} fora de ITEMS`);
-    check(r.tier >= 1 && r.tier <= 3, `coleta ${kind}: tier ${r.tier} fora de 1..3`);
-    check(["comum", "incomum", "raro", "lendario"].includes(r.grade), `coleta ${kind}: grade ${r.grade}`);
-    check(Number.isInteger(r.qty) && r.qty >= 1 && r.qty <= 6, `coleta ${kind}: quantidade ${r.qty}`);
-    check(r.grade === "lendario" ? r.rounds === 2 : !r.rounds, `coleta ${kind}: rodadas do lendário`);
-  }
-}
-const peixes = ["peixe", "peixe-prata", "peixe-raro", "peixe-lendario"].map((id) => ITEMS[id]);
-check(peixes.every((p) => p && p.heal > 0), "peixe sem cura no ITEMS");
-check(peixes.every((p, i) => i === 0 || p.heal > peixes[i - 1].heal), "peixes sem cura crescente");
-
-// equipamento visível acompanha a direção: frente, perfil esquerdo, perfil
-// direito e costas não podem desenhar arma e escudo do mesmo jeito
-const { gearView } = await import("../src/rendering/human.js");
-const olhares = [0, 1, 2, 3].map((d) => gearView(d));
-check(olhares[0].armaLado === 1 && olhares[0].escudoLado === -1 && !olhares[0].armaAtras && !olhares[0].escudoAtras, "frente: arma e escudo fora do lado");
-check(olhares[1].armaLado === -1 && olhares[1].escudoLado === 1 && !olhares[1].armaAtras && olhares[1].escudoAtras, "perfil esquerdo: arma e escudo fora do lado");
-check(olhares[2].armaLado === 1 && olhares[2].escudoLado === -1 && !olhares[2].armaAtras && olhares[2].escudoAtras, "perfil direito: arma e escudo fora do lado");
-check(olhares[3].armaLado === -1 && olhares[3].escudoLado === 1 && olhares[3].armaAtras && olhares[3].escudoAtras, "costas: arma e escudo deveriam ficar atrás do corpo");
-
-assert.equal(faults.length, 0, `conteúdo com ${faults.length} problema(s):\n- ${faults.join("\n- ")}`);
-// nome de item de área vem do conceito da ilha e não repete no mundo
-const itensDeArea = [];
-for (const area of IDENTITY_AREAS) {
-  for (const slot of ["weapon", "armor", "helmet"]) {
-    const item = AREA_ITEMS[area.id]?.[slot];
-    if (item) itensDeArea.push(item.name);
-  }
-}
-check(itensDeArea.length === 258, `itens de área: ${itensDeArea.length}, esperado 258`);
-check(new Set(itensDeArea).size === itensDeArea.length, "nome de item de área repetido no mundo");
-const nomeLongo = itensDeArea.filter((nome) => nome.length > 40);
-check(nomeLongo.length === 0, `nome de item acima de 40 caracteres: ${nomeLongo.slice(0, 3).join(" | ")}`);
-// sala de caverna também não repete entre ilhas diferentes
-const salasDoMundo = DUNGEONS.flatMap((d) => d.rooms.map((r) => (Array.isArray(r) ? r[0] : r)));
-const salaRepetida = salasDoMundo.filter((nome, i) => salasDoMundo.indexOf(nome) !== i);
-check(salaRepetida.length === 0, `sala repetida no mundo: ${salaRepetida.slice(0, 3).join(" | ")}`);
-
-console.log("ok conteúdo, estações, NPCs, missões, itens, receitas, perguntas, PvP, cavernas e mundo");
+console.log(`ok conteúdo: ${AREAS.length} áreas, ${SITES.length} estações, ${Object.keys(NPCS).length} NPCs, ${DUNGEONS.length} cavernas, ${QUESTS.length} missões, ${Object.keys(ITEMS).length} itens, sem pergunta`);

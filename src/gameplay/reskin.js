@@ -2,12 +2,14 @@
 // ilhas partidas. O módulo troca os textos de superfície (continentes, áreas,
 // criaturas, itens, páginas e missões) sem tocar nos ids, no save nem na
 // geometria do mapa. A chamada acontece antes de createWorld().
-import { AREAS, CONTINENTS, SITES, NPC_SPAWNS } from "../content/config.js";
+import { AREAS, CONTINENTS, SITES, WAYSTONES, NPC_SPAWNS } from "../content/config.js";
 import { SKILLS, ITEMS, GROUNDS } from "../content/rpg-data.js";
 import { DUNGEONS } from "../content/dungeon-data.js";
 import { POSTS, NPCS } from "../content/content.js";
 import { QUESTS } from "./quests.js";
 import { CAPITULOS } from "./arcos.js";
+import { OUTFITS } from "../content/outfits.js";
+import { PETS } from "../content/pets.js";
 import { FACCOES, ATOS } from "./faccoes.js";
 
 export const JOGO = {
@@ -113,7 +115,7 @@ const REGIAO = {
   chem: { nome: "Bosque dos Frascos", sub: "ervas, vapores e alquimia", adj: "dos Frascos", prep: "do" },
   music: { nome: "Vale dos Ecos", sub: "ruínas que ainda cantam", adj: "dos Ecos", prep: "do" },
   ai: { nome: "Névoa de Vidro", sub: "olhos que observam no escuro", adj: "de Vidro", prep: "da" },
-  lingua: { nome: "Costa dos Contos", sub: "bibliotecas afogadas e histórias", adj: "dos Contos", prep: "da" },
+  lingua: { nome: "Costa dos Contos", sub: "arquivos afogados e histórias", adj: "dos Contos", prep: "da" },
 };
 const HABILIDADE = {
   cs: { name: "Engenho", desc: "armas, armaduras e máquinas antigas" },
@@ -303,6 +305,20 @@ export function nomeDeChefe(nomeOriginal, areaId = "") {
   return `${pick(CHEFE_ADJ, h)} ${pick(["de", "da", "do"], h >>> 7)} ${lugar}`.slice(0, 38);
 }
 
+// O título da missão nasce do tipo de trabalho, não do nome de um estudioso.
+function tituloDeMissao(q) {
+  const area = AREA_POR_ID.get(q?.goal?.area) || null;
+  const lugar = area ? ` de ${area.name}` : "";
+  const base = {
+    cards: ["Andarilho das Pedras", "Guia das Ruínas", "Batedor do Vale"],
+    docks: ["Faroleiro da Costa", "Marujo das Ilhas", "Vigia do Cais"],
+    hunts: ["Caçador dos Ossos", "Matador de Feras", "Batedor das Cavernas"],
+    social: ["Voz da Maré", "Ouvinte do Porto"],
+    bosses: ["Senhor das Ruínas", "Quebra-Guardiões", "Coroa Partida"],
+  }[q?.goal?.type] || ["Viajante do Vale"];
+  return pick(base, hash(q?.id)).replace(/ (d[aeo]s?|do) .*$/, "") + lugar;
+}
+
 export function nomeDeSala(room, indice = 0) {
   return SALA[indice % SALA.length];
 }
@@ -334,40 +350,58 @@ export function aplicarReskin() {
     const nome = nomeDeArea(area);
     area.name = nome;
     area.sub = pick(SUB_AREA, hash(area.id));
-    if (area.biome) area.biome.name = nome;
+    if (area.biome) { area.biome.name = nome; area.biome.short = area.sub; }
   }
+  const usadosSitio = new Set();
   for (const site of SITES) {
     const area = areaDaSite(site);
     const noun = SITE_NOUN[site.icon] || "Santuário";
-    const nome = `${noun} ${regiao(site.continent).adj}`;
+    const alvo = area ? area.name : regiao(site.continent).nome;
+    let nome = "";
+    for (let k = 0; k < EPITETOS.length && !nome; k++) {
+      const cand = `${noun} ${pick(EPITETOS, hash(`${site.post}|${k}`))} · ${alvo}`;
+      if (!usadosSitio.has(cand)) nome = cand;
+    }
+    if (!nome) nome = `${noun} · ${alvo} ${usadosSitio.size}`;
+    usadosSitio.add(nome);
     site.name = nome;
     site.label = nome;
     const post = POSTS[site.post];
     if (post) {
-      const alvo = area ? nomeDeArea(area) : regiao(site.continent).nome;
       post.kicker = regiao(post.continent || site.continent).nome;
-      post.title = `${noun} de ${alvo}`;
+      post.title = nome;
       post.meta = `fragmento de lore · ${alvo}`;
       post.tags = ["lore"];
       post.lab = null;
       post.body = loreHtml(area, post.id || site.id || site.post);
     }
   }
+  for (const way of WAYSTONES) {
+    const area = AREA_POR_ID.get(way.id);
+    way.name = `Farol de ${area ? area.name : regiao(way.continent).nome}`;
+  }
   const equipamento = { weapon: "Espada", club: "Malho", sword: "Espada", wand: "Cajado", rod: "Bastão",
     helmet: "Elmo", armor: "Peitoral", shield: "Escudo", ring: "Anel", necklace: "Colar",
     legs: "Perneiras", boots: "Botas", cloak: "Capa" };
   const material = ["Ferro", "Cobre", "Vidro", "Âmbar", "Cristal", "Obsidiana", "Ébano", "Latão", "Prata", "Ouro", "Pedra", "Gelo"];
-  const aindaAula = /matem|físic|químic|computa|álgebra|cálculo|teorema|axioma|átomo|molécula|neur|algorit|lógica|gramát|música|ciência|estud|aula|lição|curso|pergunta|wiki|acervo|bit|byte|cpu|chip|dados|software|código|programa|engenh|estatíst|probabil|geometr|função|vetor|matriz|derivada|integral|fóton|quânt|elétron|célula|proteína/i;
+  const aindaAula = /matem|físic|químic|computa|álgebra|cálculo|teorema|axioma|átomo|molécula|neur|algorit|lógica|gramát|música|ciência|estud|aula|lição|curso|pergunta|prova|resposta|aprend|pensar|provar|gêmeo|binári|sinápt|music|literat|bibliotec|fonema|sintaxe|semânt|pragmát|discurso|narrat|poes|gramát|wiki|acervo|bit|byte|cpu|chip|dados|software|código|programa|engenh|estatíst|probabil|geometr|função|vetor|matriz|derivada|integral|fóton|quânt|elétron|célula|proteína|quanta|órbita|orbita|newton|einstein|tema|fita|sintaxe|fonema|semântic|discurso|redação|gênero|oralidade|léxico|imã|prisma|régua|compasso|relatividade|entropia|plasma|nuclear|sensor|autômato|turing/i;
   for (const [id, item] of Object.entries(ITEMS)) {
     if (!item || typeof item !== "object") continue;
     if (item.slot) {
       const base = equipamento[item.slot] || "Peça";
       const tipo = item.weapon && equipamento[item.weapon] ? equipamento[item.weapon] : base;
       item.name = `${tipo} de ${pick(material, hash(id))} ${pick(EPITETO, hash(id) >>> 4)}`;
-      if (!item.desc || aindaAula.test(item.desc)) item.desc = "Uma peça de quem desce às ruínas e volta.";
+      item.desc = "Uma peça de quem desce às ruínas e volta.";
     } else {
       if (item.name) item.name = cap(limpar(item.name));
       if (item.desc) item.desc = limpar(item.desc);
+      if (aindaAula.test(`${item.name} ${item.desc || ""}`)) {
+        const h = hash(id);
+        item.name = `${pick(["Fragmento", "Ampola", "Pedra", "Selo", "Frasco", "Talismã", "Cristal", "Âmbar"], h)} de ${pick(material, h >>> 4)} ${pick(EPITETO, h >>> 8)}`;
+        item.desc = item.relic
+          ? "Uma relíquia tirada das ruínas. +5 de vida máxima."
+          : "Um achado de quem desce às ruínas e volta inteiro.";
+      }
     }
   }
   const TIPO_CAVERNA = ["Gruta", "Cripta", "Mina", "Ruína", "Catacumba", "Caverna"];
@@ -390,6 +424,7 @@ export function aplicarReskin() {
   }
   for (const ground of GROUNDS) {
     ground.name = `Caçada ${regiao(ground.continent).adj}`;
+    if (ground.boss?.name) ground.boss.name = nomeDeChefe(ground.boss.name, ground.id);
     for (const monster of ground.monsters || []) {
       monster.name = nomeDeCriatura(monster.name, monster.kind, ground.id);
     }
@@ -401,6 +436,7 @@ export function aplicarReskin() {
     const nome = `${PEOPLE[i % PEOPLE.length]} ${EPITETOS[hash(id) % EPITETOS.length]}`;
     npc.name = nome;
     NOME_ANTIGO_NPC.set(antigo, nome);
+    npc.label = pick(["guia da ilha", "gente da maré", "voz do porto", "morador das ruínas", "vigia da costa"], hash(`${id}|label`));
     npc.lines = [...Array(5)].map((_, k) => FALAS[(hash(`${id}|${k}`) + k) % FALAS.length]);
     i++;
   }
@@ -411,7 +447,7 @@ export function aplicarReskin() {
   for (const q of QUESTS) {
     const tipo = q.goal?.type;
     // sistemas que deixaram de existir na superfície: a missão vira caçada
-    if (tipo === "labs" || tipo === "quiz") q.goal = { ...q.goal, type: "hunts" };
+    if (tipo === "labs" || tipo === "quiz") q.goal = { ...q.goal, type: "hunts", count: q.goal.count || 3 };
     delete q.quiz; // não existe mais pergunta de missão na superfície
     const n = q.goal?.count || 1;
     q.title = {
@@ -424,12 +460,12 @@ export function aplicarReskin() {
     q.brief = {
       cards: `Abra ${n} pedras antigas. O vale não cobra ordem, cobra caminhada.`,
       docks: `Pise em ${n} marcos da costa. Um farol só acende quando você chega.`,
-      hunts: `Desça às ruínas e derrote ${n} criaturas. Volte com o que sobrar.`,
+      hunts: `Desça às ruínas e derrote ${n} criatura${n === 1 ? "" : "s"}. Volte com o que sobrar.`,
       social: "Fale com outro viajante no canal público e numa mensagem privada.",
       bosses: `Enfrente ${n} senhores das ruínas. Cada um guarda uma passagem.`,
     }[q.goal?.type] || "Alguém no porto precisa de uma mão.";
     if (q.giver && NOME_ANTIGO_NPC.has(q.giver)) q.giver = NOME_ANTIGO_NPC.get(q.giver);
-    if (q.reward?.title) q.reward.title = cap(limpar(q.reward.title));
+    if (q.reward?.title) q.reward.title = tituloDeMissao(q);
   }
   // o fio da Iara também perde a moldura de aula
   const AJUSTE_CAPITULO = [
@@ -448,8 +484,8 @@ export function aplicarReskin() {
     let lore = c.lore;
     for (const [re, troca] of AJUSTE_CAPITULO) { titulo = titulo.replace(re, troca); lore = lore.replace(re, troca); }
     c.titulo = limpar(titulo);
-    c.lore = limpar(lore);
-    c.fala = limpar(c.fala);
+    c.lore = limpar(lore).replace(/a engrenagens/g, "a engrenagem").replace(/A ecos/g, "O eco").replace(/a malha/g, "a malha");
+    c.fala = limpar(c.fala).replace(/A ecos/g, "O eco");
   }
   // as facções falam do vale, não de disciplina
   for (const f of FACCOES) {
@@ -473,5 +509,26 @@ export function aplicarReskin() {
     let r = a.rotulo;
     for (const [re, troca] of AJUSTE_ATO) r = r.replace(re, troca);
     a.rotulo = limpar(r);
+  }
+  // trajes: nome e descrição de fantasia, id e missão intactos
+  const AJUSTE_TRAJE = {
+    silicio: ["Traje de Vidro", "fios de cobre e vidro que brilham no escuro"],
+    geometra: ["Traje de Formas", "linhas exatas e pó de giz"],
+    luz: ["Traje de Luz", "lentes, marés e um cinto de ferramentas"],
+    alquimista: ["Traje de Alquimista", "vidro âmbar e mãos que não tremem"],
+    adivinho: ["Traje de Vidro", "sombras no bolso e um olho no futuro"],
+    cacador: ["Traje de Caçador", "couro gasto de quem já atravessou o escuro"],
+  };
+  for (const o of OUTFITS) {
+    if (AJUSTE_TRAJE[o.id]) [o.name, o.desc] = AJUSTE_TRAJE[o.id];
+    if (o.id.startsWith("traje-")) {
+      o.name = `Traje de ${pick(["Vidro", "Âmbar", "Cristal", "Ferro", "Obsidiana", "Sal"], hash(o.id))} ${pick(EPITETO, hash(o.id) >>> 4)}`;
+      o.desc = `a roupa de quem explorou cada canto de ${AREA_POR_ID.get(o.id.replace(/^traje-/, ""))?.name || "uma ilha"}`;
+    }
+    if (o.desc && /pergunta|estud|aula|prova|disciplina|matéria/i.test(o.desc)) o.desc = "pano de quem já atravessou o escuro e voltou";
+  }
+  for (const pet of Object.values(PETS)) {
+    pet.where = `Cidade ${regiao(pet.continent).adj}`;
+    pet.name = pet.name.replace(/do Lema$/, "da Vigília").replace(/da Caixa$/, "do Vidro");
   }
 }

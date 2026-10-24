@@ -1,4 +1,3 @@
-import { THEME_WORDS, shuffle, OPTION_COUNT, looksNumeric, numericDistractors, variantesProximas, porSemelhanca, QUESTION_INDEX } from "./question-bank.js";
 // O estado de RPG: vida, perícias, itens, monstros derrotados e o combate de
 // ação. Tudo vive no localStorage; o mundo compartilhado continua sendo só
 // posição e conversa.
@@ -9,9 +8,6 @@ import { BOND_MAX, MANA_MS, PETS, MOUNTS, petById, mountById } from "../content/
 import { VOCACAO_PADRAO, VOC_POR_ID, subcategoriaDe, vocacaoDe, multDe } from "../content/vocations.js";
 import { Combate } from "./combate.js";
 import { habilidadeDoChefe } from "./chefe-habilidades.js";
-import { registrarResposta, vencido, resumoConceitos, conceitoDe } from "./conceitos.js";
-import { versaoDaPergunta, registrarDistrator as registrarErro, recentes as errosRecentesDoSave, erroRecente, purgar as purgarDistratores } from "./distratores.js";
-import { estadoDaProva } from "./grande-prova.js";
 import { lidosDaHistoria } from "./arcos.js";
 import { atosValidos, reputacoes, ajusteDaCompra } from "./faccoes.js";
 import { guildaValida } from "./guilda.js";
@@ -21,7 +17,7 @@ const RESPAWN_MS = 5 * 60 * 1000;
 const BOSS_RESPAWN_MS = 20 * 60 * 1000;
 const MAX_SKILL_XP = 50;
 const SKILL_STEP = 5;
-const BUFF_NAMES = { speed: "passos rápidos", damage: "dano extra", maxhp: "vida extra", dica: "dica da biblioteca" };
+const BUFF_NAMES = { speed: "passos rápidos", damage: "dano extra", maxhp: "vida extra" };
 // a ordem dos espaços de equipamento, do corpo para os acessórios
 const SLOT_NAMES = { weapon: "arma", helmet: "elmo", armor: "armadura", legs: "pernas", boots: "botas", shield: "escudo", cloak: "capa", ring: "anel", necklace: "colar" };
 // custo em mana de cada runa aprendida; sem carga guardada, é por aqui que ela sai
@@ -54,9 +50,6 @@ function emptyData() {
     builds: [],
     seen: {},
     met: {},
-    conceitos: {},
-    distratores: {},
-    grandeProva: null,
     arcos: [],
     faccoes: [],
     guilda: null,
@@ -169,28 +162,6 @@ function readData() {
         if (typeof entry[field] === "string") saved[field] = entry[field].replace(/[<>\u0000-\u001f]/g, "").slice(0, max);
       }
     }
-    for (const [area, entry] of Object.entries(obj.conceitos || {})) {
-      if (typeof area !== "string" || area.length > 40 || !entry || typeof entry !== "object") continue;
-      data.conceitos[area] = {
-        n: clamp(Number(entry.n) || 0, 0, 5),
-        r: Math.max(0, Math.floor(Number(entry.r) || 0)),
-        w: Math.max(0, Math.floor(Number(entry.w) || 0)),
-        due: Number.isFinite(Number(entry.due)) ? Number(entry.due) : 0,
-      };
-    }
-    for (const [versao, entry] of Object.entries(obj.distratores || {})) {
-      if (!/^[0-9a-f]{8}$/.test(versao) || !entry || typeof entry !== "object") continue;
-      const texto = String(entry.t || "").replace(/[<>\u0000-\u001f]/g, "").trim().slice(0, 160);
-      if (!texto) continue;
-      data.distratores[versao] = {
-        t: texto,
-        n: clamp(Number(entry.n) || 1, 1, 9999),
-        at: Number.isFinite(Number(entry.at)) ? Number(entry.at) : 0,
-      };
-    }
-    purgarDistratores(data.distratores);
-    const prova = estadoDaProva(obj);
-    if (prova) data.grandeProva = { escolha: prova.escolha, at: Number.isFinite(prova.at) ? prova.at : 0 };
     data.arcos = lidosDaHistoria(obj);
     data.faccoes = atosValidos(obj);
     data.guilda = guildaValida(obj.guilda);
@@ -338,8 +309,6 @@ export class RPG {
     const continent = String(monster.continent || "").toLowerCase().slice(0, 12);
     if (continent) entry.continent = continent;
     if (monster.theme) entry.theme = String(monster.theme).replace(/[<>\u0000-\u001f]/g, "").slice(0, 20);
-    const bank = QUESTION_INDEX.get(entry.continent)?.[entry.tier] || [];
-    if (bank.length) entry.sample = bank[entry.count % bank.length].q.slice(0, 90);
     this.data.seen[kind] = entry;
     // conhecer a última espécie da família rende a fraqueza estudada
     this.revisarFamilias();
@@ -735,17 +704,6 @@ export class RPG {
     return out;
   }
 
-  // Consulta da biblioteca: a próxima pergunta da coleta nasce com duas
-  // alternativas erradas riscadas. O selo vale uma vez e some do save ao gastar.
-  dicaGuardadaNaPergunta(q) {
-    if (!q || !Array.isArray(q.options) || !this.buffActive("dica")) return [];
-    const erradas = q.options.map((_, i) => i).filter((i) => i !== q.answer);
-    const eliminadas = shuffle(erradas).slice(0, Math.min(2, erradas.length));
-    delete this.data.buffs.dica;
-    this.save();
-    return eliminadas;
-  }
-
   mountsView() {
     return Object.entries(MOUNTS).map(([id, mount]) => ({
       id,
@@ -884,44 +842,6 @@ export class RPG {
     if (this.data.sub === "baluarte") dano -= 1;
     if (this.data.sub === "barbaro") dano += 2;
     return Math.max(1, Math.round(dano));
-  }
-
-  // ---------- caderno de conceitos ----------
-  registrarConceito(area, acertou, continent = this.duel?.ground?.continent) {
-    if (!this.data.conceitos || typeof this.data.conceitos !== "object") this.data.conceitos = {};
-    return registrarResposta(this.data.conceitos, conceitoDe(area, continent), acertou, now());
-  }
-
-  conceitosResumo() {
-    return resumoConceitos(this.data.conceitos, now());
-  }
-
-  // erro por distrator: guarda a alternativa marcada e a versão da pergunta
-  registrarDistrator(pergunta, indice) {
-    const marcada = pergunta?.options?.[indice];
-    if (typeof marcada !== "string" || !marcada) return null;
-    if (!this.data.distratores || typeof this.data.distratores !== "object") this.data.distratores = {};
-    return registrarErro(this.data.distratores, pergunta, marcada, now());
-  }
-
-  // últimas perguntas erradas, com o texto do banco: o save guarda a versão e
-  // o caderno mostra o enunciado, a alternativa marcada e a resposta certa
-  errosRecentes(limite = 5) {
-    const lista = errosRecentesDoSave(this.data.distratores, limite);
-    if (!lista.length) return [];
-    const banco = new Map();
-    for (const tiers of QUESTION_INDEX.values()) {
-      for (const perguntas of Object.values(tiers)) {
-        for (const q of perguntas) banco.set(versaoDaPergunta(q), q);
-      }
-    }
-    return lista
-      .map((entry) => {
-        const q = banco.get(entry.versao);
-        if (!q) return null;
-        return { q: q.q, marcou: entry.texto, resposta: q.options[q.a], n: entry.n, at: entry.at };
-      })
-      .filter(Boolean);
   }
 
   // ---------- itens ----------
@@ -1150,150 +1070,6 @@ export class RPG {
   }
 
   // ---------- duelo ----------
-  // As salas têm tema. A pergunta que combina com o tema vai para a frente do
-  // baralho; o resto continua no sorteio. Sem tema, é sorteio puro.
-  optionPool(continent, tier, area = "", baseOnly = false) {
-    if (!this.pool) this.pool = new Map();
-    const key = `${continent}:${tier}:${area}:${baseOnly ? "base" : "todos"}`;
-    if (this.pool.has(key)) return this.pool.get(key);
-    const pool = [];
-    const seen = new Set();
-    const bank = QUESTION_INDEX.get(continent) || {};
-    for (const t of [tier, 1, 2, 3]) {
-      for (const q of bank[t] || []) {
-        if (area && q.area !== area) continue;
-        if (baseOnly && q.area) continue;
-        for (const text of q.options) {
-          const clean = String(text).trim();
-          if (!clean || clean.length > 44) continue;
-          const low = clean.toLowerCase();
-          if (seen.has(low)) continue;
-          seen.add(low);
-          pool.push(clean);
-        }
-      }
-    }
-    this.pool.set(key, pool);
-    return pool;
-  }
-
-  // toda pergunta oferece cinco alternativas, A a E: com três o chute acerta
-  // demais. As que faltam vêm do próprio banco do continente, e pergunta
-  // numérica ganha número, não palavra.
-  padOptions(options, answer, continent, tier, area = "", question = "") {
-    const entries = options.map((text, i) => ({ text: String(text).trim(), ok: i === answer }));
-    // pergunta com mais alternativas que o padrão: mantém a certa e corta as
-    // outras, em vez de descartar as opções escritas à mão e inventar duas
-    let escolhidas = entries;
-    if (entries.length > OPTION_COUNT) {
-      escolhidas = [entries[answer], ...shuffle(entries.filter((_, i) => i !== answer)).slice(0, OPTION_COUNT - 1)];
-    }
-    const list = escolhidas.map((e) => e.text);
-    const correct = escolhidas.find((e) => e.ok)?.text || "";
-    const seen = new Set(list.map((s) => s.toLowerCase()));
-    const push = (text) => {
-      const clean = String(text).trim();
-      if (!clean || list.length >= OPTION_COUNT) return;
-      const low = clean.toLowerCase();
-      if (seen.has(low)) return;
-      seen.add(low);
-      list.push(clean);
-    };
-    // a resposta certa também embaralha: com o preenchimento no fim, ela
-    // ficaria sempre em A, B ou C e o jogador aprenderia a ignorar D e E
-    const finalizar = () => {
-      const finalEntries = escolhidas.map((e) => ({ text: e.text, ok: e.ok }));
-      for (const text of list.slice(escolhidas.length)) finalEntries.push({ text, ok: false });
-      const final = shuffle(finalEntries);
-      return { options: final.map((o) => o.text), answer: final.findIndex((o) => o.ok) };
-    };
-    // já tem as cinco escritas à mão: não precisa pescar nem ordenar pool
-    if (list.length >= OPTION_COUNT) return finalizar();
-    const numeric = looksNumeric(correct);
-    if (numeric) for (const n of numericDistractors(correct)) push(n);
-    else for (const variante of variantesProximas(correct, seen)) push(variante);
-    if (list.length >= OPTION_COUNT) return finalizar();
-    // primeiro as alternativas da própria área; para pergunta sem área,
-    // respostas de outras perguntas-base são mais próximas de um enunciado
-    // conceitual do que rótulos de tópico do catálogo
-    if (area) {
-      const areaPool = this.optionPool(continent, tier, area);
-      for (const text of porSemelhanca(areaPool.filter((s) => looksNumeric(s) === numeric), correct, question)) push(text);
-      if (list.length >= OPTION_COUNT) return finalizar();
-      for (const text of porSemelhanca(areaPool, correct, question)) push(text);
-    } else {
-      const basePool = this.optionPool(continent, tier, "", true);
-      for (const text of porSemelhanca(basePool.filter((s) => looksNumeric(s) === numeric), correct, question)) push(text);
-      if (list.length >= OPTION_COUNT) return finalizar();
-      for (const text of porSemelhanca(basePool, correct, question)) push(text);
-    }
-    if (list.length >= OPTION_COUNT) return finalizar();
-    const pool = this.optionPool(continent, tier);
-    for (const text of porSemelhanca(pool.filter((s) => looksNumeric(s) === numeric), correct, question)) push(text);
-    if (list.length >= OPTION_COUNT) return finalizar();
-    for (const text of porSemelhanca(pool, correct, question)) push(text);
-    return finalizar();
-  }
-
-  themeScore(text, hint) {
-    if (!hint) return 0;
-    const body = String(text).toLowerCase();
-    const theme = String(hint).toLowerCase();
-    const words = [theme, ...(THEME_WORDS[theme] || [])];
-    let score = 0;
-    for (const w of words) if (w.length >= 3 && body.includes(w)) score += 3;
-    return score;
-  }
-
-  buildDeck(continent, tiers, hint = "") {
-    const deck = [];
-    for (const tier of tiers) {
-      const bank = QUESTION_INDEX.get(continent)?.[tier] || [];
-      for (const q of bank) {
-        const options = q.options.map((text, i) => ({ text, ok: i === q.a }));
-        const mixed = shuffle(options);
-        const filled = this.padOptions(mixed.map((o) => o.text), mixed.findIndex((o) => o.ok), continent, tier, q.area, q.q);
-        deck.push({
-          q: q.q,
-          version: versaoDaPergunta(q),
-          options: filled.options,
-          answer: filled.answer,
-          why: q.why,
-          area: q.area,
-          tier,
-          score: this.themeScore(`${q.q} ${q.why}`, hint) + (q.deep ? 1 : 0),
-        });
-      }
-    }
-    return shuffle(deck).sort((a, b) => b.score - a.score);
-  }
-
-  duelDeck(continent, tier, hint = "") {
-    const order = tier >= 3 ? [3, 2, 1] : tier === 2 ? [2, 1, 3] : [1, 2, 3];
-    const seen = new Set();
-    const deck = [];
-    for (const t of order) {
-      for (const item of this.buildDeck(continent, [t], hint)) {
-        if (seen.has(item.q)) continue;
-        seen.add(item.q);
-        deck.push(item);
-      }
-    }
-    // conceito vencido volta antes (revisão espaçada) e, dentro do mesmo grupo,
-    // a área mais fraca vem primeiro: o duelo começa onde o domínio é menor.
-    const agora = now();
-    const due = (item) => (item.area && vencido(this.data.conceitos?.[item.area], agora) ? 1 : 0);
-    const dominio = (item) => {
-      if (!item.area) return 3;
-      const n = Number(this.data.conceitos?.[item.area]?.n);
-      return Number.isFinite(n) ? n : 0;
-    };
-    // dentro do mesmo domínio, a pergunta que ele errou nos últimos dias volta
-    // antes: o erro específico também é informação de revisão
-    const erro = (item) => (erroRecente(this.data.distratores?.[item.version], agora) ? 1 : 0);
-    return deck.sort((a, b) => due(b) - due(a) || dominio(a) - dominio(b) || erro(b) - erro(a));
-  }
-
   startDuel(monster, ground, boss = false, partner = null) {
     if (boss ? !this.bossAlive(ground) : !this.monsterAlive(monster.id)) {
       return { ok: false, reason: "Este monstro não está mais aqui." };
@@ -1346,51 +1122,6 @@ export class RPG {
     });
     this.combate.jogador.escudo = this.duel.escudo;
     return { ok: true, duel: this.duel, combate: this.combate };
-  }
-
-  pvpQuestions(continent = "cs") {
-    const pool = QUESTION_INDEX.get(continent) || QUESTION_INDEX.get("cs");
-    if (!pool) return [];
-    const used = new Set();
-    const buckets = {
-      1: shuffle(pool[1] || []),
-      2: shuffle(pool[2] || []),
-      3: shuffle(pool[3] || []),
-    };
-    const all = shuffle([...(pool[1] || []), ...(pool[2] || []), ...(pool[3] || [])]);
-    const pick = (tier) => {
-      const bucket = buckets[tier] || [];
-      while (bucket.length) {
-        const q = bucket.pop();
-        if (!used.has(q.q)) { used.add(q.q); return q; }
-      }
-      while (all.length) {
-        const q = all.pop();
-        if (!used.has(q.q)) { used.add(q.q); return q; }
-      }
-      return null;
-    };
-    const itemBonus = Math.min(2, this.relics());
-    const specs = [[1, 1, 1], [1, 2, 2], [2, 3, 3], [3, 4, 4], [3, 5, 5]];
-    const list = [];
-    for (const [tier, difficulty, base] of specs) {
-      const q = pick(tier);
-      if (!q) continue;
-      const options = q.options.map((text, i) => ({ text, ok: i === q.a }));
-      const mixed = shuffle(options);
-      const filled = this.padOptions(mixed.map((o) => o.text), mixed.findIndex((o) => o.ok), continent, tier, q.area, q.q);
-      list.push({
-        q: q.q,
-        options: filled.options,
-        answer: filled.answer,
-        why: q.why,
-        tier,
-        difficulty,
-        base,
-        damage: base + itemBonus,
-      });
-    }
-    return list;
   }
 
   startTraining(continent, tier, theme = "", monster = null) {
@@ -1488,30 +1219,12 @@ export class RPG {
 
   next() {
     const d = this.duel;
-    if (!d) return null;
-    if (d.phase === "victory" || d.phase === "defeat") {
-      const result = { phase: d.phase, result: d.result, boss: d.boss, monster: d.monster };
-      this.duel = null;
-      this.combate = null;
-      this.save();
-      return result;
-    }
-    if (d.phase !== "feedback") return null;
-    d.feedback = null;
-    d.phase = "question";
-    d.deckIndex++;
-    if (d.deckIndex >= d.deck.length) {
-      d.deck = shuffle(d.deck);
-      d.deckIndex = 0;
-      if (d.deck.length > 1 && d.question && d.deck[0].q === d.question.q) {
-        [d.deck[0], d.deck[1]] = [d.deck[1], d.deck[0]];
-      }
-    }
-    d.question = d.deck[d.deckIndex];
-    d.dicas = 0;
-    d.eliminadas = [];
-    d.revelada = false;
-    return { phase: "question", duel: d };
+    if (!d || (d.phase !== "victory" && d.phase !== "defeat")) return null;
+    const result = { phase: d.phase, result: d.result, boss: d.boss, monster: d.monster };
+    this.duel = null;
+    this.combate = null;
+    this.save();
+    return result;
   }
 
   flee() {

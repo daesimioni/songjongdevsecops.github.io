@@ -12,7 +12,7 @@ import {
 import { creatureAttack } from "../src/content/sprite-kit/creatures.js";
 import { paintKit } from "../src/rendering/sprite-kit/index.js";
 const output = path.resolve(
-  process.argv[2] || "/tmp/learning-valley-sprite-kit",
+  process.argv[2] || "temporarios/sprite-kit",
 );
 await mkdir(output, { recursive: true });
 const manifest = {

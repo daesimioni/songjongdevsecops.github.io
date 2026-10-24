@@ -46,34 +46,6 @@ for (const [continente, tipo] of Object.entries(TEMA_DA_SALA)) {
   assert.ok(["oficina", "biblioteca", "observatorio"].includes(tipo), `tema desconhecido em ${continente}`);
 }
 
-// ---- biblioteca: a próxima pergunta da coleta nasce com duas riscadas ----
-{
-  store.clear();
-  const rpg = new RPG(opcoes);
-  rpg.data.buffs.dica = Date.now() + 60000;
-  const pergunta = rpg.buildDeck("cs", [1])[0];
-  const eliminadas = rpg.dicaGuardadaNaPergunta(pergunta);
-  assert.equal(eliminadas.length, 2, "a dica guardada deveria riscar duas alternativas");
-  assert.ok(eliminadas.every((i) => i !== pergunta.answer), "riscou a alternativa certa");
-  assert.equal(rpg.data.buffs.dica, undefined, "a dica guardada precisa sumir ao ser usada");
-  assert.ok(!rpg.buffView().some((b) => b.id === "dica"), "a dica usada não pode continuar no HUD");
-}
-
-// sem o selo da biblioteca, a pergunta começa limpa
-{
-  store.clear();
-  const rpg = new RPG(opcoes);
-  assert.deepEqual(rpg.dicaGuardadaNaPergunta(rpg.buildDeck("cs", [1])[0]), [], "sem biblioteca não pode riscar alternativa");
-}
-
-// selo vencido não risca nada
-{
-  store.clear();
-  const rpg = new RPG(opcoes);
-  rpg.data.buffs.dica = Date.now() - 1000;
-  assert.deepEqual(rpg.dicaGuardadaNaPergunta(rpg.buildDeck("cs", [1])[0]), [], "dica vencida não vale");
-}
-
 // ---- oficina e observatório: fontes e efeitos ----
 const { varianteDaPeca } = await import("../src/rendering/dungeon-art.js");
 assert.equal(varianteDaPeca("dungeon-cs-arch"), varianteDaPeca("dungeon-cs-arch"), "a variante precisa ser estável");
@@ -97,9 +69,9 @@ const sala = fs.readFileSync(new URL("../src/content/salas-tematicas.js", import
 assert.match(dungeon, /usarPecaTematica\(obj\)/, "a caverna não usa a peça temática");
 assert.match(dungeon, /obj\.kind === "oficina" && |obj\.kind === "oficina"/, "faltou o caso da oficina");
 assert.match(dungeon, /data\.buffs\.damage = Date\.now\(\) \+ 180000/, "a oficina não afia a arma");
-assert.match(dungeon, /data\.buffs\.dica = Date\.now\(\) \+ 600000/, "a biblioteca não guarda a dica");
+assert.match(dungeon, /rpg\.addMana\(rpg\.manaMax\(\)\)/, "a biblioteca não devolve mana");
 assert.match(dungeon, /state\.seen\[i\] = 1/, "o observatório não acende o mapa");
 assert.match(dungeon, /Esta peça já rendeu o que tinha nesta descida/, "peça sem limite por descida");
 assert.match(sala, /interact: true/, "a peça temática nasce sem interação");
 
-console.log("ok peças: oficina afia, biblioteca guarda dica para a coleta, observatório acende a sala do chefe");
+console.log("ok peças: oficina afia, biblioteca devolve mana, observatório acende a sala do chefe");

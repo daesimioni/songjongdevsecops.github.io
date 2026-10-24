@@ -66,16 +66,14 @@ rpg2.data.arcos = ["arco-1", "nao-existe"];
 rpg2.save();
 assert.deepEqual(new RPG().data.arcos, ["arco-1"], "o save aceitou capítulo inexistente");
 
-// ---- o app, o HTML e a wiki ----
+// ---- o app e o HTML ----
 const app = fs.readFileSync(new URL("../src/app/app.js", import.meta.url), "utf8");
 const html = fs.readFileSync(new URL("../index.html", import.meta.url), "utf8");
-const wiki = fs.readFileSync(new URL("../src/ui/wiki.js", import.meta.url), "utf8");
 assert.match(app, /O fio da Iara/, "o diário não tem a seção do fio");
 assert.match(app, /function estadoDaHistoria\(\)/, "o app não calcula o estado dos capítulos");
 assert.match(app, /function registrarLeituraArco\(/, "o app não registra a leitura");
 assert.match(app, /falaAtual\(estadoDaHistoria\(\)\)/, "o guia não fala o capítulo");
 assert.match(app, /ler o capítulo/, "o diário não oferece a leitura");
 assert.match(html, /id="journal"/, "diário ausente no HTML");
-assert.match(wiki, /O fio da Iara/, "a wiki não ganhou a ficha do fio");
 
 console.log(`ok fio da Iara: ${CAPITULOS.length} capítulos, missão e anterior, leitura no save e fala do guia`);

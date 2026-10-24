@@ -27,6 +27,5 @@ assert.ok(combate.includes("vitoria()"), "o motor não fecha a vitória");
 assert.ok(combate.includes("derrota()"), "o motor não fecha a derrota");
 assert.ok(app.includes("combatHud.action(k)"), "o app não manda as teclas para o combate no mundo");
 assert.ok(!app.includes('openModal("duel")'), "o app ainda abre uma arena separada");
-assert.ok(app.includes("openDuel(GUARDIAO, GROUND_ACERVO, true)"), "a Grande Prova não abre o combate");
 assert.ok(app.includes("getAvatar: () => ({ colors: player.colors"), "o combate não recebe o boneco do jogador");
 console.log("ok interface do combate: arena, J/K/L, runas, resultado e a vitória ligada ao app");

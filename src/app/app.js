@@ -19,7 +19,6 @@ import { createSocial } from "../ui/social.js";
 import { criarCaderno } from "../ui/caderno.js";
 import { eNoite } from "../rendering/dia-noite.js";
 import { createBackup } from "../platform/backup.js";
-import { createPvp } from "../ui/pvp.js";
 import { OUTFITS, outfitById, outfitColors } from "../content/outfits.js";
 import { AVATAR_DEFAULT, normalizeAvatar, avatarColors, avatarCode, HAIRS } from "../content/avatar.js";
 import { renderCharacterEditor } from "../ui/character.js";
@@ -37,13 +36,11 @@ import { dataDoJogo, formatarData, formatarHora, eDia } from "../core/calendario
 import { ATUALIZACAO, lerManifesto, guardarRetomada, consumirRetomada, baixarArquivos } from "../platform/atualizacao.js";
 import { RPG } from "../gameplay/rpg.js";
 import { FERRY, precoDoFerry, podePagarFerry, cobrarFerry, faltaDoFerry, nomeDoMaterial, falaDoBarqueiro } from "../gameplay/ferry.js";
-import { ALAS, itensDaAla, filtrarAcervo } from "../gameplay/acervo.js";
-import { DESFECHOS, GUARDIAO, GROUND_ACERVO, registrarDesfecho, estadoDaProva, desfechoPorId } from "../gameplay/grande-prova.js";
 import { estadoDosCapitulos, registrarLeitura, falaAtual, lidosDaHistoria } from "../gameplay/arcos.js";
-import { FACCOES, aplicarAto, atoPorMissao, atosPorDesfecho, reputacoes, reputacao, nivelDaReputacao, falaDaReputacao, faccaoPorId } from "../gameplay/faccoes.js";
+import { FACCOES, aplicarAto, atoPorMissao, reputacoes, reputacao, nivelDaReputacao, falaDaReputacao, faccaoPorId } from "../gameplay/faccoes.js";
 import { BRASOES, LIMITE_MEMBROS, guildaDe, fundarGuilda, recrutar as recrutarGuilda, promover as promoverGuilda, progressoDasMissoes, resgatarMissao, brasaoPorId } from "../gameplay/guilda.js";
 import { VOCACOES } from "../content/vocations.js";
-import { ITEMS, QUESTIONS } from "../content/rpg-data.js";
+import { ITEMS } from "../content/rpg-data.js";
 import { createSheet } from "../ui/sheet.js";
 import { createWorldCombat, combatSpawn } from "../gameplay/combate-mundo.js";
 import { createWorldCombatHud } from "../ui/combate-mundo.js";
@@ -53,9 +50,8 @@ import { createInventoryUI } from "../ui/inventory-ui.js";
 import { createBestiary } from "../ui/bestiary.js";
 import { itemIconElement } from "../rendering/item-art.js";
 import { createDungeon } from "./dungeon.js";
-import { wikiUi } from "../ui/wiki.js";
 import { CONURBATION, DUNGEONS, dungeonById } from "../content/dungeon-data.js";
-import { aplicarReskin } from "../gameplay/reskin.js";
+import { aplicarReskin, nomeDeCriatura } from "../gameplay/reskin.js";
 
 const $ = (id) => document.getElementById(id);
 let dungeon = null;
@@ -146,8 +142,8 @@ const state = {
   lastHp: -1,
   lastHpMax: -1,
   trainingNpc: null,
-  pvpDownUntil: 0,
-  pvpDownTimer: null,
+  downUntil: 0,
+  downTimer: null,
   steps: readJSON(STORAGE.steps, {}),
   stepsOpen: false,
   stepX: SPAWN.x,
@@ -343,10 +339,6 @@ function onWorldCombatFinished(event) {
     quests.report("hunts", event.result.defeated);
     markStep("duel");
   }
-  if (state.duelEvento === "grande-prova" || event.boss && event.ground?.id === GROUND_ACERVO.id) {
-    state.duelEvento = null;
-    if (event.reason === "victory") abrirDesfecho();
-  }
   if (event.reason === "victory") toast(event.training ? "Treino encerrado no mapa." : `+${event.result.xp} XP · ${event.result.defeated} criatura(s).`, 3200);
   updateSpellbar();
 }
@@ -375,19 +367,6 @@ const gatherUi = createGather({
   onClose: () => closeModal("gather"),
 });
 
-const pvpUi = createPvp({
-  rpg,
-  toast,
-  audio,
-  player,
-  getNet: () => state.net,
-  isBusy: () => !!(state.panelOpen || state.chatOpen || dungeon?.isOpen() || (state.modal && state.modal !== "pvp")),
-  signer: (text) => rede.signText(text),
-  verifier: (event, text) => rede.verifyText(event, text),
-  openPanel: () => openModal("pvp"),
-  closePanel: () => closeModal("pvp"),
-  onDown: (ms) => knockDown(ms),
-});
 
 dungeon = createDungeon({
   collisionDebug,
@@ -398,7 +377,6 @@ dungeon = createDungeon({
   onCombatKey: (key) => combatHud.action(key),
   onSheet: () => openSheet(),
   onInventory: () => openInventory(),
-  onWiki: () => openWiki(),
   vitais: () => ({ hp: rpg.hp(), hpMax: rpg.hpMax(), mana: rpg.mana(), manaMax: rpg.manaMax() }),
   placa: () => ({ nome: player.name, cor: player.color }),
   onGather: (ctx) => openGather(ctx.kind, ctx),
@@ -551,10 +529,6 @@ function bootSocial() {
     setName: adoptName,
     toast,
     audio,
-    onChallenge: (peer) => {
-      closeModal("rede");
-      pvpUi.challenge(peer);
-    },
   });
   social.connect();
   rede.init()
@@ -952,9 +926,10 @@ function startTraining(tier) {
   const names = def?.monsters || ["Bicho de Treino"];
   const rooms = (def?.rooms || []).filter((r) => r.kind !== "entrance" && r.kind !== "city");
   const theme = rooms[Math.floor(Math.random() * rooms.length)]?.theme || "";
+  const kind = tier >= 3 ? "golem" : tier === 2 ? "eye" : "slime";
   const monster = {
-    name: names[Math.floor(Math.random() * names.length)],
-    kind: tier >= 3 ? "golem" : tier === 2 ? "eye" : "slime",
+    name: nomeDeCriatura(names[Math.floor(Math.random() * names.length)], kind, def?.id),
+    kind,
     tier,
     level: tier * 3,
   };
@@ -991,7 +966,7 @@ function enterCave(cave) {
 }
 
 // A coleta da superfície olha os tiles vizinhos: árvore dá madeira, água dá
-// peixe. A pergunta é do continente da área; o tier vem do sorteio do achado.
+// peixe. O continente vem da área; o tier vem do sorteio do achado.
 function gatherNearby() {
   const px = Math.floor(player.x);
   const py = Math.floor(player.y);
@@ -1017,15 +992,7 @@ function gatherNearby() {
 
 function gatherContinent() {
   const area = world.areaAt(player.x, player.y);
-  if (area && QUESTIONS[area.continent]) return area.continent;
-  let best = "cs";
-  let bestD = Infinity;
-  for (const a of AREAS) {
-    if (!QUESTIONS[a.continent]) continue;
-    const d = Math.hypot(a.land.cx - player.x, a.land.cy - player.y);
-    if (d < bestD) { bestD = d; best = a.continent; }
-  }
-  return best;
+  return area?.continent || "cs";
 }
 
 function openFarm(ctx) {
@@ -1041,7 +1008,7 @@ function openFarm(ctx) {
   return true;
 }
 
-// prato pronto ou poção: a receita pergunta antes de a forja trabalhar
+// prato pronto ou poção: o golpe certeiro vem antes de a forja trabalhar
 function openCooking(recipe) {
   if (!recipe?.out) return false;
   const continente = player.continentId || "hub";
@@ -1090,7 +1057,7 @@ function entrarNaCasa(house) {
   renderer.snap();
   document.body.classList.add("na-casa");
   state.casaCooldownUntil = performance.now() + 900;
-  toast(`${NOME_CASA[house.tipo] || "casa"} de ${nomeDaArea(house.bioma)}. A mesa estuda, o fogo descansa.`, 4200);
+  toast(`${NOME_CASA[house.tipo] || "casa"} de ${nomeDaArea(house.bioma)}. A mesa guarda mapas, o fogo descansa.`, 4200);
 }
 
 function sairCasa() {
@@ -1114,11 +1081,11 @@ function sairCasa() {
   toast("De volta à rua.", 2200);
 }
 
-function estudarNaCasa() {
+function lerNaCasa() {
   if (!state.casa) return;
   const station = world.stations.find((s) => world.areaAt(s.x, s.y)?.id === state.casa.bioma);
   if (station) openPost(station.post, station);
-  else toast("A mesa está vazia nesta casa.", 2400);
+  else toast("A mesa não guarda nada nesta casa.", 2400);
 }
 
 function descansarNaCasa() {
@@ -1142,7 +1109,7 @@ function interactTarget(target) {
   if (!target) return;
   if (target.kind === "casa") entrarNaCasa(target.obj.casa);
   else if (target.kind === "porta") sairCasa();
-  else if (target.kind === "mesa") estudarNaCasa();
+  else if (target.kind === "mesa") lerNaCasa();
   else if (target.kind === "lareira") descansarNaCasa();
   else if (target.kind === "morador") falarComMorador();
   else if (target.kind === "station") openPost(target.obj.post, target.obj);
@@ -1340,7 +1307,6 @@ function openNpc(npc) {
   if (state.panelOpen) closePanel();
   closeChat();
   state.npc = npc;
-  state.npcFeedback = null;
   state.npcMemory[npc.id] = (state.npcMemory[npc.id] || 0) + 1;
   saveNpcMemory();
   buildNpc(npc);
@@ -1797,12 +1763,12 @@ function showZoneCard(region, first, area = false) {
 function knockDown(ms) {
   stopSprint();
   clearPath();
-  state.pvpDownUntil = performance.now() + ms;
-  document.body.classList.add("pvp-down");
-  clearTimeout(state.pvpDownTimer);
-  state.pvpDownTimer = setTimeout(() => {
-    state.pvpDownUntil = 0;
-    document.body.classList.remove("pvp-down");
+  state.downUntil = performance.now() + ms;
+  document.body.classList.add("down");
+  clearTimeout(state.downTimer);
+  state.downTimer = setTimeout(() => {
+    state.downUntil = 0;
+    document.body.classList.remove("down");
     toast("Você voltou. Ande quando quiser.", 2400);
   }, ms);
 }
@@ -1875,30 +1841,9 @@ function openBestiary() {
   audio.open();
 }
 
-// A wiki é de todos: não depende de descoberta nem de nível. Abre por cima do
-// vale e da caverna, fecha com Esc ou com o mesmo atalho.
-const PAGINAS_CADERNO = new Set(["journal", "sheet", "inventory", "bestiary", "wiki"]);
+const PAGINAS_CADERNO = new Set(["journal", "sheet", "inventory", "bestiary"]);
 
-const CODEX_ABERTO = false;
-function openWiki({ consulta = "", livre = false } = {}) {
-  // O compêndio educativo saiu do jogo; o Codex de fantasia ainda será escrito.
-  if (!livre && !state.started) return;
-  if (!CODEX_ABERTO) { toast("O Codex de Vale Partido ainda está sendo escrito. Use o Bestiário (B) e o Diário (Z).", 3200); return; }
-  if (state.modal === "wiki") { closeModal("wiki"); return; }
-  // outra página do caderno troca de página em vez de barrar
-  if (state.modal && !PAGINAS_CADERNO.has(state.modal)) return;
-  if (!livre) {
-    stopSprint();
-    if (state.panelOpen) closePanel();
-    closeChat();
-  }
-  openModal("wiki");
-  wikiUi.abrir(consulta);
-  if (!livre) audio.open();
-}
-wikiUi.configurar({ abrirPost: (id) => { closeModal("wiki"); openPost(id); }, fechar: () => closeModal("wiki") });
-
-// a capa única dos cinco painéis de leitura; o resto do jogo conversa com ela
+// a capa única dos quatro painéis de leitura; o resto do jogo conversa com ela
 let caderno = null;
 caderno = criarCaderno({
   abrir: (id) => {
@@ -1907,9 +1852,8 @@ caderno = criarCaderno({
     else if (id === "sheet") openSheet();
     else if (id === "inventory") openInventory();
     else if (id === "bestiary") openBestiary();
-    else if (id === "wiki") openWiki();
   },
-  podeAbrir: (id) => state.started || id === "wiki",
+  podeAbrir: () => state.started,
   contagens: () => {
     const missoes = quests.active().length;
     const itens = rpg.inventoryList().length;
@@ -2127,159 +2071,6 @@ function wireTravelFilter() {
   apply();
 }
 
-// Acervo da Biblioteca Afogada: a tela de escolha das três alas e a lista
-// navegável. Conceitos abre a página, Lore abre a wiki e Prática abre o treino.
-let acervoAla = "conceitos";
-function buildBiblioteca() {
-  const lista = $("biblioteca-list");
-  if (!lista) return;
-  const todas = itensDaAla(acervoAla);
-  const filtro = $("biblioteca-filter")?.value || "";
-  const itens = filtrarAcervo(todas, filtro);
-  const ala = ALAS.find((a) => a.id === acervoAla);
-  $("biblioteca-lead").textContent = ala ? `${ala.nome}: ${ala.desc}.` : "";
-  for (const botao of document.querySelectorAll("#biblioteca-alas [data-biblioteca-ala]")) {
-    botao.setAttribute("aria-selected", String(botao.dataset.bibliotecaAla === acervoAla));
-  }
-  lista.textContent = "";
-  for (const item of itens) {
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "travel-item";
-    btn.prepend(travelDot(CONTINENTS[item.continente]?.accent || "#b48cff"));
-    const left = document.createElement("span");
-    const b = document.createElement("b");
-    b.textContent = item.nome;
-    const sub = document.createElement("span");
-    sub.textContent = item.sub;
-    left.append(b, sub);
-    const right = document.createElement("em");
-    right.textContent = item.tipo === "post" ? "ler" : item.tipo === "treino" ? "treinar" : "abrir";
-    btn.append(left, right);
-    btn.addEventListener("click", () => {
-      closeModal("biblioteca");
-      if (item.tipo === "post") openPost(item.post);
-      else if (item.tipo === "treino") openTraining({ id: `acervo-${item.continente}`, continent: item.continente, trainer: true });
-      else openWiki({ consulta: `${item.categoria}:${item.nome}` });
-    });
-    lista.appendChild(btn);
-  }
-  if (acervoAla === "lore") {
-    const repConcilio = reputacoes(rpg.data).concilio;
-    const reservada = todas.at(-1);
-    if (reservada) {
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "travel-item";
-      btn.prepend(travelDot("#9ecbff"));
-      const left = document.createElement("span");
-      const b = document.createElement("b");
-      b.textContent = "A estante reservada";
-      const sub = document.createElement("span");
-      sub.textContent = repConcilio >= 2 ? reservada.nome : "o Concílio abre para aliados (+2)";
-      left.append(b, sub);
-      const right = document.createElement("em");
-      right.textContent = repConcilio >= 2 ? "abrir" : "trancada";
-      btn.append(left, right);
-      btn.disabled = repConcilio < 2;
-      btn.addEventListener("click", () => {
-        if (repConcilio < 2) return;
-        closeModal("biblioteca");
-        if (reservada.tipo === "post") openPost(reservada.post);
-        else openWiki({ consulta: `${reservada.categoria}:${reservada.nome}` });
-      });
-      lista.prepend(btn);
-    }
-  }
-  $("biblioteca-status").textContent = `${itens.length} ${itens.length === 1 ? "entrada" : "entradas"} em ${ala?.nome || "acervo"}`;
-  $("biblioteca-empty").hidden = itens.length !== 0;
-  $("biblioteca-clear").disabled = !filtro;
-  buildBibliotecaProva();
-}
-const ACERVO_ABERTO = false;
-function openBiblioteca() {
-  if (!ACERVO_ABERTO) { toast("O acervo foi selado. O que restou de pé é a Grande Prova, nas ruínas.", 3200); return; }
-  stopSprint();
-  closeChat();
-  if (state.panelOpen) closePanel();
-  if ($("biblioteca-filter")) $("biblioteca-filter").value = "";
-  acervoAla = "conceitos";
-  buildBiblioteca();
-  openModal("biblioteca");
-  audio.open();
-}
-$("biblioteca-alas")?.addEventListener("click", (e) => {
-  const botao = e.target.closest?.("[data-biblioteca-ala]");
-  if (!botao) return;
-  acervoAla = botao.dataset.bibliotecaAla;
-  if ($("biblioteca-filter")) $("biblioteca-filter").value = "";
-  buildBiblioteca();
-  audio.blip();
-});
-$("biblioteca-filter")?.addEventListener("input", buildBiblioteca);
-$("biblioteca-clear")?.addEventListener("click", () => {
-  if ($("biblioteca-filter")) $("biblioteca-filter").value = "";
-  buildBiblioteca();
-  $("biblioteca-filter")?.focus();
-});
-
-function buildBibliotecaProva() {
-  const prova = estadoDaProva(rpg.data);
-  const status = $("biblioteca-prova-status");
-  const botao = $("biblioteca-prova-btn");
-  if (!status || !botao) return;
-  status.textContent = prova
-    ? `A Grande Prova: ${desfechoPorId(prova.escolha)?.nome || "concluída"}. O desfecho está no save.`
-    : "A Grande Prova está aberta: três fases e um desfecho, sem exame nem reprovação.";
-  botao.disabled = !!prova;
-  botao.textContent = prova ? "concluída" : "começar a Grande Prova";
-}
-function iniciarGrandeProva() {
-  if (estadoDaProva(rpg.data)) return;
-  closeModal("biblioteca");
-  state.duelEvento = "grande-prova";
-  state.desfechoPendente = false;
-  openDuel(GUARDIAO, GROUND_ACERVO, true);
-  if (!rpg.duel) {
-    state.duelEvento = null;
-    toast("O guardião do acervo não atende agora.", 3200);
-  }
-}
-function abrirDesfecho() {
-  const body = $("desfecho-body");
-  if (!body) return;
-  body.textContent = "";
-  const estado = estadoDaProva(rpg.data);
-  if (estado) {
-    body.appendChild(el("p", "npc-line", `Desfecho registrado: ${desfechoPorId(estado.escolha)?.nome}.`));
-    openModal("desfecho");
-    return;
-  }
-  const grid = el("div", "training-grid");
-  for (const d of DESFECHOS) {
-    const btn = el("button", "training-card");
-    btn.type = "button";
-    btn.append(el("b", "", d.nome), el("span", "", d.texto));
-    btn.addEventListener("click", () => {
-      const feito = registrarDesfecho(rpg.data, d.id);
-      if (!feito) return;
-      rpg.save();
-      if (!quests.data.titles.includes(feito.titulo)) quests.data.titles.push(feito.titulo);
-      quests.data.title = feito.titulo;
-      quests.save();
-      quests.changed?.();
-      for (const ato of atosPorDesfecho(d.id)) aplicarAtoFaccao(ato);
-      rpg.addItem("pergaminho", 2);
-      closeModal("desfecho");
-      toast(`A Grande Prova: ${feito.nome}. ${feito.texto}`, 5600);
-      audio.chime();
-    });
-    grid.appendChild(btn);
-  }
-  body.appendChild(grid);
-  openModal("desfecho");
-}
-
 function statsDaGuilda() {
   return { questsDone: quests.done().length, chefes: Object.keys(rpg.data.bosses || {}).length };
 }
@@ -2440,7 +2231,6 @@ function openGuilda() {
   audio.open();
 }
 
-$("biblioteca-prova-btn")?.addEventListener("click", iniciarGrandeProva);
 
 function estadoDaHistoria() {
   return estadoDosCapitulos({
@@ -2704,10 +2494,8 @@ const MODAL_FOCUS_BACK = {
   bestiary: "btn-journal",
   sheet: "btn-journal",
   inventory: "btn-journal",
-  wiki: "btn-journal",
   rede: "btn-rede",
   help: "btn-help",
-  pvp: "btn-rede",
   outfits: "btn-journal",
 };
 function restoreFocus(modalName) {
@@ -2726,7 +2514,7 @@ function restoreFocus(modalName) {
     return;
   }
   const hudId = dungeon?.isOpen()
-    ? ({ inventory: "dg-inventory", sheet: "dg-sheet", wiki: "dg-wiki" }[modalName] || "dg-exit")
+    ? ({ inventory: "dg-inventory", sheet: "dg-sheet" }[modalName] || "dg-exit")
     : MODAL_FOCUS_BACK[modalName];
   if (hudId) $(hudId)?.focus({ preventScroll: true });
 }
@@ -2757,8 +2545,7 @@ function closeModal(name) {
   try {
     if (name === "rede") social?.close();
     if (name === "duel") { duelUi?.close(); dungeon?.onDuelClosed(); }
-    if (name === "pvp") pvpUi?.abort();
-    if (name === "npc") state.npc = null;
+      if (name === "npc") state.npc = null;
   } catch (e) {
     console.error("[modal]", e);
   } finally {
@@ -2921,7 +2708,7 @@ function closeChat() {
 
 function interact() {
   if (!state.started || state.panelOpen || state.modal) return;
-  if (performance.now() < state.pvpDownUntil) { toast("Você ainda está desativado.", 2000); return; }
+  if (performance.now() < state.downUntil) { toast("Você ainda está desativado.", 2000); return; }
   clearPath();
   const target = state.nearest;
   if (!target) return;
@@ -2965,7 +2752,7 @@ function findNearest() {
 }
 
 function updatePrompt() {
-  if (!state.started || state.panelOpen || state.modal || state.chatOpen || performance.now() < state.pvpDownUntil) {
+  if (!state.started || state.panelOpen || state.modal || state.chatOpen || performance.now() < state.downUntil) {
     $("prompt").hidden = true;
     return;
   }
@@ -2975,7 +2762,7 @@ function updatePrompt() {
   let label;
   if (near.kind === "casa") label = `entrar na ${NOME_CASA[near.obj.casa.tipo] || "casa"}`;
   else if (near.kind === "porta") label = "sair da casa";
-  else if (near.kind === "mesa") label = "estudar na mesa";
+  else if (near.kind === "mesa") label = "ler na mesa";
   else if (near.kind === "lareira") label = "descansar no fogo";
   else if (near.kind === "morador") label = "conversar com o morador";
   else if (near.kind === "station") label = `abrir ${near.obj.label}`;
@@ -3047,7 +2834,7 @@ function loop(now) {
   try {
     const dt = Math.min(0.05, (now - (loop.last || now)) / 1000);
     loop.last = now;
-    const active = state.started && !document.hidden && !state.panelOpen && !state.modal && !state.chatOpen && now >= state.pvpDownUntil;
+    const active = state.started && !document.hidden && !state.panelOpen && !state.modal && !state.chatOpen && now >= state.downUntil;
     updateBoost(dt, active);
     rpg.tick();
     // o relógio do clima anda sempre, inclusive dentro da caverna e no modo leve
@@ -3156,7 +2943,7 @@ function loop(now) {
     // Com modal, painel ou conversa por cima, o mundo está pausado e coberto:
     // desenhar uma vez basta. Antes o laço redesenhava o mundo inteiro atrás do
     // desfoque do modal, e a mochila aberta derrubava o quadro para 8 fps.
-    const coberto = !!(state.panelOpen || state.modal || state.chatOpen || now < state.pvpDownUntil);
+    const coberto = !!(state.panelOpen || state.modal || state.chatOpen || now < state.downUntil);
     if (!coberto || coberto !== cobertoAntes) {
       renderer.draw(now, player, state.peers, world.npcs, world.cat, player.moving, rpg.data.sub === "rastreador", { hp: rpg.hp(), hpMax: rpg.hpMax(), mana: rpg.mana(), manaMax: rpg.manaMax() }, { interior: state.casa?.cena || null, combat: surfaceCombat.visual });
     }
@@ -3330,8 +3117,6 @@ window.addEventListener("keydown", (e) => {
   // guarda de modal abaixo impediria o fechamento
   if (state.modal === "inventory" && k === "i") { closeModal("inventory"); return; }
   if (state.modal === "bestiary" && k === "b") { closeModal("bestiary"); return; }
-  if (state.modal === "wiki" && k === "h") { closeModal("wiki"); return; }
-  if (k === "h" && !state.modal && !state.panelOpen) { openWiki(); return; }
   if (state.panelOpen || state.modal) return;
   if (dungeon?.isOpen()) return;
   if (combatHud.action(k)) { e.preventDefault(); return; }
@@ -3467,8 +3252,8 @@ function olharLugar(wx, wy, alvo) {
     toast(`${item?.name || "Item"}. ${item?.desc || ""}`, 4200);
   } else if (alvo.kind === "gather") {
     toast(obj.gather === "water"
-      ? "Água funda. Dá peixe para quem responde a pergunta certa."
-      : "Árvore de madeira petrificada. O tronco cede com uma pergunta.", 3600);
+      ? "Água funda. O peixe vem para quem para o marcador na faixa."
+      : "Árvore de madeira petrificada. O tronco cede num golpe certeiro.", 3600);
   } else toast(`${pedaco}`, 3600);
 }
 function abrirMenu(e, wx, wy) {
@@ -3519,7 +3304,7 @@ function abrirMenu(e, wx, wy) {
     const point = alvo.kind === "cave" ? alvo.obj.exit : alvo.obj;
     const d = Math.hypot(point.x - player.x, point.y - player.y);
     const perto = d <= interactionRadius(alvo.kind);
-    const casaAction = {casa:"entrar na casa",porta:"sair da casa",mesa:"estudar na mesa",lareira:"descansar no fogo",morador:"conversar com o morador"}[alvo.kind];
+    const casaAction = {casa:"entrar na casa",porta:"sair da casa",mesa:"ler na mesa",lareira:"descansar no fogo",morador:"conversar com o morador"}[alvo.kind];
     if (perto && casaAction) {
       ctxMenu.appendChild(acaoMenu("…", casaAction, "F", () => interactTarget(alvo)));
     } else if (perto && alvo.kind === "station") {
@@ -3654,7 +3439,7 @@ window.addEventListener("pointerdown", (e) => {
 window.addEventListener("blur", fecharMenu);
 $("world").addEventListener("pointerdown", (e) => {
   if (!state.started || state.panelOpen || state.modal) return;
-  if (performance.now() < state.pvpDownUntil) { toast("Você ainda está desativado.", 2000); return; }
+  if (performance.now() < state.downUntil) { toast("Você ainda está desativado.", 2000); return; }
   if (e.button !== undefined && e.button !== 0) return;
   if (state.chatOpen) closeChat();
   const rect = $("world").getBoundingClientRect();
@@ -3873,8 +3658,6 @@ $("admin-badge").addEventListener("click", openGod);
 $("btn-rede").addEventListener("click", openRede);
 $("btn-journal").addEventListener("click", openJournal);
 $("btn-bestiary").addEventListener("click", openBestiary);
-$("btn-wiki").addEventListener("click", () => openWiki());
-$("dg-wiki").addEventListener("click", () => openWiki());
 $("steps-min")?.addEventListener("click", () => {
   const card = $("steps");
   const aberto = card.classList.toggle("min") === false;
@@ -4248,7 +4031,7 @@ $("update-btn")?.addEventListener("click", aplicarAtualizacao);
   }, { capture: true });
 
   if (new URLSearchParams(location.search).has("debug")) {
-    window.__mundo = { ui: { openNpc, openGather, openTraining, openOutfits, openLook, refreshCombat: () => combatHud.update(performance.now()), renderFrame: () => loop(performance.now()), stopCombat: () => surfaceCombat.stop("escape") }, player, state, world, renderer, audio, quests, rede, backup, rpg, sheetUi, duelUi, dungeon, pvpUi, knockDown, findPath, assets: { cache: cacheDeAssets, total: totalDeAssets }, openPost: (id) => openPost(id), openTravel: (mode) => openTravel(mode), openShop: () => openShop(), openDuel: (mon, ground, boss, partner) => openDuel(mon, ground, boss, partner), openVocacoes: () => openVocacoes(), openWiki: (opcoes) => openWiki(opcoes), openBiblioteca: () => openBiblioteca(), openGuilda: () => openGuilda(), catalog: CATALOG_CONTENT, catalogStones: [...CATALOG_STONES], waystones: WAYSTONES, get social() { return social; } };
+    window.__mundo = { ui: { openNpc, openGather, openTraining, openOutfits, openLook, refreshCombat: () => combatHud.update(performance.now()), renderFrame: () => loop(performance.now()), stopCombat: () => surfaceCombat.stop("escape") }, player, state, world, renderer, audio, quests, rede, backup, rpg, sheetUi, duelUi, dungeon, knockDown, findPath, assets: { cache: cacheDeAssets, total: totalDeAssets }, openPost: (id) => openPost(id), openTravel: (mode) => openTravel(mode), openShop: () => openShop(), openDuel: (mon, ground, boss, partner) => openDuel(mon, ground, boss, partner), openVocacoes: () => openVocacoes(), openGuilda: () => openGuilda(), catalog: CATALOG_CONTENT, catalogStones: [...CATALOG_STONES], waystones: WAYSTONES, get social() { return social; } };
   }
 
   if (voltarAoJogo) {
@@ -4270,7 +4053,4 @@ $("update-btn")?.addEventListener("click", aplicarAtualizacao);
   // a preferência de texto vale já na entrada, antes de existir personagem
   aplicarFonte(saved.fonte);
 
-  // link direto: ?wiki=termo abre a wiki por cima da entrada, sem personagem
-  const wikiParam = new URLSearchParams(location.search).get("wiki");
-  if (wikiParam) openWiki({ consulta: wikiParam === "1" ? "" : wikiParam, livre: true });
 })();

@@ -191,7 +191,7 @@
 .shop-card.owned, .shop-grid .owned { opacity: 0.6; }
 .shop-grid em { font-family: var(--mono); font-size: 12px; font-style: normal; color: var(--mint); }
 .shop-empty { font-family: var(--mono); font-size: 12px; color: var(--muted); }
-@media (max-width: 720px) { .shop-grid { grid-template-columns: 1fr; } }
+@media (max-width: 720px) { .shop-grid { grid-template-columns: 1fr; } .shop-card { width: 100%; } }
 
 .npc-context { color: var(--mint); border-left: 2px solid rgba(97, 244, 192, 0.4); padding-left: 9px; }
 .npc-deep {

@@ -12,7 +12,7 @@ await page.goto(`http://127.0.0.1:${server.address().port}/?debug`, {waitUntil:"
 await page.locator('#intro-skip').click();await page.locator('#intro-name').fill('Viajante');await page.locator('.look-vocation').first().click();await page.locator('#intro-net').uncheck();await page.locator('#intro-form button[type=submit]').click();await page.waitForFunction(()=>document.querySelector('#intro').hidden);await page.waitForTimeout(200);
 // Congela apenas a animação do mundo durante a medição de layout.
 await page.evaluate(()=>{const frame=window.requestAnimationFrame.bind(window);window.requestAnimationFrame=callback=>callback.name === "loop" ? 0 : frame(callback);});
-const output = process.env.UI_OUTPUT || '/tmp/learning-valley-ui';
+const output = process.env.UI_OUTPUT || 'temporarios/audit-ui';
 await mkdir(output,{recursive:true});const results=[];
 const openers={journal:()=>document.querySelector('#btn-journal').click(),sheet:()=>document.querySelector('#btn-sheet').click(),inventory:()=>document.querySelector('#btn-inventory').click(),bestiary:()=>document.querySelector('#btn-bestiary').click(),wiki:()=>window.__mundo.openWiki(),help:()=>document.querySelector('#btn-help').click(),rede:()=>document.querySelector('#btn-rede').click(),shop:()=>{window.__mundo.dungeon.open('dungeon-cs');window.__mundo.openShop()},travel:()=>window.__mundo.openTravel(),vocacoes:()=>window.__mundo.openVocacoes(),biblioteca:()=>window.__mundo.openBiblioteca(),guilda:()=>window.__mundo.openGuilda()};
 Object.assign(openers, {

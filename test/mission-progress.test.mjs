@@ -21,5 +21,5 @@ q.report('hunts',-1); q.report('hunts',NaN);
 assert.equal(q.data.stats.hunts,3);
 rpg.noteMonster({id:'sample-monster',kind:'bat',tier:1,name:'Bit',continent:'cs',theme:'lógica'});
 const saved=new RPG().seenView().find(e=>e.kind==='bat');
-assert.equal(saved.continent,'cs'); assert.equal(saved.theme,'lógica'); assert.ok(saved.sample);
-console.log('ok missões: chefe lê RPG, matilha conta monstros, bestiário preserva tema e exemplo');
+assert.equal(saved.continent,'cs'); assert.equal(saved.theme,'lógica');
+console.log('ok missões: chefe lê RPG, matilha conta monstros e bestiário preserva o tema');

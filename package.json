@@ -5,9 +5,8 @@
   "scripts": {
     "dev": "node tools/serve.mjs",
     "lint": "eslint src tools test eslint.config.js",
-    "check": "npm run lint && npm run check:modules && npm run check:conteudo",
+    "check": "npm run lint && npm run check:modules",
     "check:modules": "node --experimental-vm-modules tools/check-project.mjs",
-    "check:conteudo": "node tools/revisar-conteudo.mjs",
     "test": "node --test --test-concurrency=1 test/*.test.mjs",
     "build": "npm run check && node tools/build.mjs",
     "validate": "npm run check && npm test && npm run art:check && npm run art:references && node tools/build.mjs",
@@ -23,7 +22,7 @@
     "@napi-rs/canvas": "1.0.13",
     "eslint": "10.13.0"
   },
-  "description": "RPG educacional em pixel art para navegadores, publicado no GitHub Pages",
+  "description": "RPG de ação em pixel art de ilhas, ruínas e maré, publicado no GitHub Pages",
   "engines": {
     "node": "^22.13.0 || >=24.0.0"
   }

@@ -20,7 +20,7 @@ for(const house of world.casas) {
   visits++;
  }
 }
-assert.equal(used.size,8);assert.equal(visits,288);
+assert.equal(used.size,8);assert.equal(visits,world.casas.length*4,`${world.casas.length} casas x 4 alvos`);
 const house={},area={name:'Geometria',sub:'formas e medidas'};
 const first=nextResidentLine(house,area);
 assert.match(first,/Geometria/,'primeira conversa apresenta área');
