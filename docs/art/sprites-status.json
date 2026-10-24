@@ -55,10 +55,12 @@
     }
   },
   "completion": {
-    "fullyAdaptedAndReviewedReferences": 0,
-    "fullyAdaptedAndReviewedRecipes": 0,
-    "doneEntries": [],
-    "note": "No completed individual art entries. Inventory/render checks are not artistic completion."
+    "fullyAdaptedAndReviewedReferences": 1,
+    "fullyAdaptedAndReviewedRecipes": 1,
+    "doneEntries": [
+      "arte/magias/02caf32ed36a7856a560"
+    ],
+    "note": "Only entries listed here count as artistically complete; inventory/render checks alone do not count."
   },
   "drafts": [
     {
@@ -128,6 +130,16 @@
         "runtime item/spell mapping"
       ],
       "output": "assets/magic/cure-poison.png"
+    },
+    {
+      "id": "arte/magias/02caf32ed36a7856a560",
+      "archive": "magias.zip",
+      "member": "Magias/Paladin/Arrow Call.png",
+      "status": "library",
+      "location": "feat/arte-autoral-arrow-call: assets/magic/arrow-call.png",
+      "missing": [],
+      "sourceSha256": "113e7d92a63eba08c7e59e109e64383d144ebbdd2baeb3112ef78001a26d0b15",
+      "output": "assets/magic/arrow-call.png"
     }
   ],
   "archives": [

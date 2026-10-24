@@ -1,0 +1,17 @@
+{
+  "id": "arte/magias/02caf32ed36a7856a560",
+  "archive": "magias.zip",
+  "sourceMember": "Magias/Paladin/Arrow Call.png",
+  "sourceSha256": "113e7d92a63eba08c7e59e109e64383d144ebbdd2baeb3112ef78001a26d0b15",
+  "sourceDimensions": [32, 32],
+  "output": "assets/magic/arrow-call.png",
+  "outputSha256": "c7f8eaecfd7f71fa0f558c75de70960448974a500fb7ed33e95ff9bc59b8c232",
+  "outputDimensions": [128, 128],
+  "style": "autoral-pixel-spell",
+  "transparentBackground": true,
+  "review": {
+    "visualInspection": "passed",
+    "runtimeDestination": "future magic library; no current item or spell id in the game catalog"
+  },
+  "status": "library"
+}
