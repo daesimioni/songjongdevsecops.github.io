@@ -39,6 +39,7 @@ assert.match(html, /id="categorias"/, "chips de categoria ausentes");
 assert.match(html, /id="query"/, "busca ausente");
 assert.match(html, /id="motion"/, "controle de animação ausente");
 assert.match(html, /id="collision"/, "controle de colisão ausente");
+assert.match(html, /id="visoes"/, "controle de visões em grade ausente");
 assert.match(html, /src="\.\/src\/app\/sprite-wiki\.js"/, "script da wiki ausente");
 assert.match(html, /voltar ao jogo/, "link de volta ao jogo ausente");
 
@@ -51,6 +52,10 @@ assert.match(js, /requestAnimationFrame\(tick\)/, "wiki sem laço de animação"
 assert.match(js, /IntersectionObserver/, "wiki desenha card fora da tela");
 assert.match(js, /kitBounds\(/, "wiki não enquadra a peça");
 assert.match(js, /kitColliders\(/, "wiki não mostra colisão");
+assert.match(js, /function desenharGrade\(/, "wiki não desenha as oito visões juntas");
+assert.match(js, /const SIGLAS = \[/, "grade sem rótulo de direção");
+assert.match(js, /function baixarPng\(/, "card sem download de PNG");
+assert.match(js, /canvas\.toBlob\(/, "download não gera PNG");
 assert.match(js, /bestiaryModel\(/, "wiki não lista as criaturas do jogo");
 assert.match(js, /drawCreatureArt\(/, "wiki não desenha criatura do jogo");
 assert.match(js, /drawHuman\(/, "wiki não desenha a gente do vale");
