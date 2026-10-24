@@ -85,19 +85,19 @@ g.fillStyle = shade;
 g.fillRect(0, 0, 740, 630);
 g.fillStyle = "#87bda5";
 g.font = "bold 16px sans-serif";
-g.fillText("UM RPG DE EXPLORAÇÃO E APRENDIZADO", 72, 130);
+g.fillText("UM RPG DE ILHAS, RUÍNAS E MARÉ", 72, 130);
 g.fillStyle = "#eee8d5";
 g.font = "bold 76px sans-serif";
-g.fillText("The Learning", 68, 240);
-g.fillText("Valley", 68, 328);
+g.fillText("Vale", 68, 240);
+g.fillText("Partido", 68, 328);
 g.fillStyle = "#ddc18e";
 g.fillRect(72, 365, 68, 3);
 g.font = "26px sans-serif";
 g.fillStyle = "#bfcbd0";
-g.fillText("Cada descoberta abre um novo caminho.", 72, 425);
+g.fillText("Toda ilha guarda uma ruína.", 72, 425);
 g.font = "16px sans-serif";
 g.fillStyle = "#91a6b0";
-g.fillText("EXPLORE  •  APRENDA  •  CONSTRUA SUA HISTÓRIA", 72, 552);
+g.fillText("EXPLORE  •  LUTE  •  VOLTE COM VIDA", 72, 552);
 await writeFile(
   new URL("../assets/og.png", import.meta.url),
   cv.toBuffer("image/png"),

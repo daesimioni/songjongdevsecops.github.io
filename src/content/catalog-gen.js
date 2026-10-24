@@ -1,20 +1,14 @@
-// O gerador do catálogo: transforma catálogo + posições + banco em área,
-// estação, post, caverna, caçada, NPC, missão e pergunta. Sem banco, a área
-// não entra: o teste cobra cobertura, não sobra ilha vazia.
+// O gerador do arquipélago: transforma catálogo + posições em área, estação,
+// página de lore, caverna, caçada, NPC e missão. Sem pergunta, sem banco de
+// estudo: o que sai daqui é só mundo, bicho, gente e trabalho.
 
 import { CATALOG, DISCIPLINES } from "./catalog.js";
 import { CATALOG_AREAS } from "./catalog-layout.js";
-import { BANK } from "./catalog-bank.js";
 import { SECTION_TOPICS } from "./catalog-topics.js";
-import { ICONS, articleOf, epigrafe, labFor, subareaBody, titleCase, trilhas } from "./catalog-text.js";
 import { placeStations } from "./catalog-place.js";
-import { AREA_ITEMS, BIOMES, FAUNA, dungeonIdentity, prepBioma } from "./identity.js";
-import { INTER_TEXT } from "./text/inter.js";
-import { SECAO_TEXT } from "./text/secoes.js";
-import { licaoDe } from "./text/licoes.js";
+import { AREA_ITEMS, BIOMES, FAUNA, dungeonIdentity } from "./identity.js";
 
-// cada área tem um tom próprio dentro da cor da disciplina: 14 ilhas da mesma
-// cor seriam quatorze vezes o mesmo lugar
+// A mesma paleta por disciplina; a ilha troca o tom dentro da família.
 const TINTS = {
   math: ["#b48cff", "#9d7bff", "#c79bff", "#8f6ff0", "#d0a8ff"],
   physics: ["#ff7aa8", "#ff90b5", "#f06a99", "#ffa3c1", "#e85d8c"],
@@ -33,7 +27,17 @@ const TILES = {
   inter: { base: 0, floor: 19, path: 1 },
 };
 
-// enfeite pela pedra da área: o objeto diz de que o chão é feito
+// Estação: o desenho é de objeto de beira de estrada, não de laboratório.
+const ICONES = {
+  math: ["dice", "shape", "clock", "curve", "gate", "wave"],
+  physics: ["wave", "planet", "heat", "gate", "clock", "prism"],
+  chem: ["fire", "tree", "chain", "table", "curve", "dice"],
+  cs: ["gate", "chain", "clock", "table", "shape", "fire"],
+  lingua: ["book", "gate", "tree", "wave", "clock", "shape"],
+  inter: ["book", "gate", "wave", "planet", "chain", "shape"],
+};
+
+// Enfeite pela pedra da área: o objeto diz de que o chão é feito.
 const DECOR_MATERIAL = {
   giz: ["compass", "book"],
   "ardósia": ["book", "quill"],
@@ -53,7 +57,6 @@ const DECOR_MATERIAL = {
   "ébano": ["lamp", "mask"],
 };
 
-// e o padrão do chão dá o terceiro: a área lê como o desenho dela
 const DECOR_PADRAO = {
   waves: ["wave"],
   dots: ["orb"],
@@ -74,82 +77,66 @@ const DECOR = {
   inter: [["book", "orb", "star"], ["crystal", "book", "wave"], ["pillar", "orb", "star"]],
 };
 
-// a pergunta do NPC não pode ter a resposta sempre na letra A
-function quizFor(q, salt) {
-  const correct = q.o[q.a];
-  const base = [correct, q.o[(q.a + 1) % 6], q.o[(q.a + 2) % 6]];
-  const shift = salt % 3;
-  const options = [...base.slice(shift), ...base.slice(0, shift)];
-  return { question: q.q, options, answer: options.indexOf(correct), why: q.why };
+// ------------------------------------------------------------------ nomes
+const hash = (texto) => {
+  let h = 2166136261;
+  for (let i = 0; i < texto.length; i++) h = Math.imul(h ^ texto.charCodeAt(i), 16777619);
+  return h >>> 0;
+};
+const pick = (lista, h) => lista[h % lista.length];
+
+const GENTE = ["Ada", "Bruna", "Ciro", "Dora", "Elias", "Fenna", "Garo", "Hélia", "Ivo", "Jara", "Kael", "Lia", "Mira", "Nilo", "Orla", "Pia", "Quim", "Rui", "Sela", "Tadeu", "Vera", "Yara", "Zeno", "Alma", "Bento", "Cássia"];
+const SOBRENOMES = ["do Cais", "da Maré", "das Ruínas", "do Ferro", "dos Ecos", "da Névoa", "do Bosque", "dos Contos", "do Vento", "da Pedra", "do Fogo", "da Sombra"];
+
+const NOMES_ESTACAO = ["Fonte", "Torre", "Portão", "Ruína", "Farol", "Poço", "Marco", "Altar", "Coreto", "Cais", "Santuário", "Gruta", "Acampamento", "Vigia", "Ossário", "Mirante"];
+const LUGARES = ["da Maré", "do Vento", "dos Ossos", "das Brumas", "do Sal", "da Pedra", "do Eco", "da Cinza", "das Raízes", "do Poente", "do Lodo", "das Velas"];
+
+const ABERTURA = [
+  "O caminho chega sem aviso e o vento muda de lado.",
+  "A maré deixou isto aqui e foi embora sem explicar.",
+  "Quem passou por último não voltou para contar.",
+  "A pedra está quente, como se alguém tivesse acabado de sair.",
+];
+const MEIO = [
+  "Há marcas de gente antiga no chão, e nenhuma casa de pé.",
+  "O lugar guarda um silêncio que não é do vento.",
+  "As paredes foram feitas para durar mais que a história.",
+  "O cheiro de ferro e maresia não sai daqui.",
+];
+const FIM = [
+  "Leve o que der. O resto é do vale.",
+  "Volte antes da maré. Depois, só a maré volta.",
+  "O que ficou embaixo ainda espera.",
+  "Ninguém cobra entrada. Ninguém promete saída.",
+];
+
+const FALAS = [
+  "O mar levou metade do que a gente sabia. A outra metade a gente inventa.",
+  "Se procura trabalho, tem sempre alguém precisando de uma mão.",
+  "Não desça sozinho. O escuro não é gentil.",
+  "O que vale não é o que brilha. É o que volta com você.",
+  "A maré não pergunta se você sabe nadar.",
+];
+
+const ELOGIOS = [
+  { titulo: "Caçador das Ruínas", xp: 38 },
+  { titulo: "Batedor do Vale", xp: 42 },
+  { titulo: "Andarilho da Maré", xp: 36 },
+];
+
+// ------------------------------------------------------------------ gerador
+function loreHtml(area, seed) {
+  const h = hash(`${seed}|lore`);
+  return `<p>${pick(ABERTURA, h)}</p><p>${pick(MEIO, h >>> 4)} Este é um pedaço de ${area ? area.name : "uma ilha sem nome"}.</p><p>${pick(FIM, h >>> 8)}</p>`;
 }
 
-// nomes de quem habita cada arquipélago; ids únicos no mundo
-const KEEPERS = {
-  math: [["gauss", "Gauss"], ["noether", "Noether"], ["cantor", "Cantor"], ["euler", "Euler"], ["riemann", "Riemann"], ["poincare", "Poincaré"], ["ramanujan", "Ramanujan"], ["fibonacci", "Fibonacci"], ["hilbert", "Hilbert"], ["leibniz", "Leibniz"], ["pascal", "Pascal"]],
-  physics: [["hooke", "Hooke"], ["planck", "Planck"], ["bohr", "Bohr"], ["einstein", "Einstein"], ["feynman", "Feynman"], ["maxwell", "Maxwell"], ["kepler", "Kepler"], ["tesla", "Tesla"], ["hawking", "Hawking"], ["fermi", "Fermi"], ["schrodinger", "Schrödinger"], ["heisenberg", "Heisenberg"]],
-  chem: [["dalton", "Dalton"], ["pauling", "Pauling"], ["arrhenius", "Arrhenius"], ["avogadro", "Avogadro"], ["berzelius", "Berzelius"], ["roentgen", "Röntgen"], ["prout", "Prout"], ["leblanc", "Leblanc"], ["wohler", "Wöhler"], ["cannizzaro", "Cannizzaro"], ["ramsay", "Ramsay"]],
-  cs: [["lovelace", "Lovelace"], ["hopper", "Hopper"], ["dijkstra", "Dijkstra"], ["knuth", "Knuth"], ["lamport", "Lamport"], ["tanenbaum", "Tanenbaum"], ["ritchie", "Ritchie"], ["thompson", "Thompson"], ["torvalds", "Torvalds"], ["berners", "Berners-Lee"], ["shamir", "Shamir"], ["cerf", "Cerf"], ["mccarthy", "McCarthy"], ["kahn", "Kahn"]],
-  lingua: [["camoes", "Camões"], ["cecilia", "Cecília"], ["drummond", "Drummond"], ["guimaraes", "Guimarães"], ["clarice", "Clarice"], ["vieira", "Vieira"], ["pessoa", "Pessoa"], ["saramago", "Saramago"], ["bechara", "Bechara"], ["cunha", "Cunha"], ["said", "Said Ali"], ["bosi", "Bosi"], ["coutinho", "Coutinho"]],
-  inter: [["descartes", "Descartes"], ["nash", "Nash"], ["mandelbrot", "Mandelbrot"], ["wiener", "Wiener"], ["mcluhan", "McLuhan"], ["sapir", "Sapir"], ["whorf", "Whorf"], ["vonbertalanffy", "Bertalanffy"], ["kolmogorov", "Kolmogorov"], ["godel", "Gödel"], ["hofstadter", "Hofstadter"]],
-};
+function nomeDeGente(h) {
+  return `${pick(GENTE, h)} ${pick(SOBRENOMES, h >>> 4)}`;
+}
 
-// Quem treina na clareira é outra pessoa, não o guardião da ilha. Antes o
-// instrutor repetia o nome do guardião ("Mestre Hooke" morando com "Hooke"),
-// a mesma figura em dois papéis, em 70 ilhas. Nome de gente comum, sem figura
-// histórica, um por área: 70 nomes em 70 ilhas.
-const MONITORES = {
-  math: [["Bento", "m"], ["Iara", "f"], ["Nilo", "m"], ["Zara", "f"], ["Damião", "m"], ["Cíntia", "f"], ["Omar", "m"], ["Neide", "f"], ["Jonas", "m"]],
-  physics: [["Ciro", "m"], ["Lia", "f"], ["Hugo", "m"], ["Vera", "f"], ["Tadeu", "m"], ["Rosa", "f"], ["Otávio", "m"], ["Bruna", "f"], ["Sérgio", "m"], ["Alice", "f"], ["Murilo", "m"], ["Tânia", "f"]],
-  chem: [["Rui", "m"], ["Jandira", "f"], ["Caio", "m"], ["Esmeralda", "f"], ["Ítalo", "m"], ["Márcia", "f"], ["Elias", "m"], ["Dulce", "f"], ["Vítor", "m"], ["Sônia", "f"], ["Amauri", "m"]],
-  cs: [["Beto", "m"], ["Dora", "f"], ["Fábio", "m"], ["Gilda", "f"], ["Heitor", "m"], ["Ísis", "f"], ["Juca", "m"], ["Kátia", "f"], ["Lino", "m"], ["Mara", "f"], ["Nando", "m"], ["Olívia", "f"], ["Paulo", "m"], ["Rita", "f"]],
-  lingua: [["Afonso", "m"], ["Beatriz", "f"], ["Célio", "m"], ["Dalva", "f"], ["Ester", "f"], ["Firmino", "m"], ["Gentil", "m"], ["Heloísa", "f"], ["Inácio", "m"], ["Joana", "f"], ["Kléber", "m"], ["Lídia", "f"], ["Mauro", "m"]],
-  inter: [["Ari", "m"], ["Bia", "f"], ["Cássio", "m"], ["Débora", "f"], ["Éder", "m"], ["Fátima", "f"], ["Gil", "m"], ["Hilda", "f"], ["Ivo", "m"], ["Laura", "f"], ["Nélson", "m"]],
-};
-
-// o título do instrutor muda com a disciplina, para não haver 70 "Mestre"
-const TITULO_TREINO = {
-  math: ["Monitor", "Monitora"],
-  physics: ["Instrutor", "Instrutora"],
-  chem: ["Técnico", "Técnica"],
-  cs: ["Monitor", "Monitora"],
-  lingua: ["Preceptor", "Preceptora"],
-  inter: ["Guia", "Guia"],
-};
-
-
-
-// O banco de cada área tem três temas, mas as seções têm de 3 a 11 estações e
-// nem sempre na mesma ordem. Antes a pergunta ia para a página de mesmo índice,
-// e em 21 áreas a página ensinava um assunto e cobrava outro. Aqui cada tema
-// procura a estação mais parecida pelo nome e pelos tópicos; o que não achar
-// casa vai para a primeira estação que ainda está sem tema.
-const tokensDoTema = (texto) =>
-  String(texto || "")
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .split(/[^a-z0-9]+/)
-    .filter((w) => w.length > 3);
-
-function atribuirTemas(bank, estacoes) {
-  const alvos = estacoes.map(
-    (e) => new Set([...tokensDoTema(e.nome), ...(e.topicos || []).flatMap(tokensDoTema)]),
-  );
-  const mapa = estacoes.map(() => []);
-  const pendentes = [];
-  bank.forEach((tema, j) => {
-    const tokens = tokensDoTema(tema.name);
-    const pontos = alvos.map((alvo) => tokens.filter((w) => alvo.has(w)).length);
-    const melhor = pontos.indexOf(Math.max(...pontos));
-    if (pontos[melhor] > 0) mapa[melhor].push(j);
-    else pendentes.push(j);
-  });
-  for (const j of pendentes) {
-    let livre = mapa.findIndex((lista) => lista.length === 0);
-    if (livre < 0) livre = mapa.reduce((a, lista, i) => (lista.length < mapa[a].length ? i : a), 0);
-    mapa[livre].push(j);
-  }
-  return mapa;
+function contarEstacoes(area) {
+  const secao = SECTION_TOPICS[area.num];
+  return secao?.subareas?.length || (secao?.topics?.length ? 3 : 2);
 }
 
 export function buildCatalogContent() {
@@ -162,34 +149,26 @@ export function buildCatalogContent() {
   const dungeons = {};
   const grounds = [];
   const quests = [];
-  const questions = [];
   const decor = {};
+  const usadosSitio = new Set();
+  const usadosNome = new Set();
 
   const keeperIndex = {};
   for (const spot of CATALOG_AREAS) {
     const area = CATALOG.find((a) => a.id === spot.id);
-    const bank = BANK[spot.discipline]?.[spot.id];
-    if (!area || !bank) continue;
+    if (!area) continue;
     const discipline = DISCIPLINES[spot.discipline];
     const tiles = TILES[spot.discipline] || TILES.math;
-    const { article, noun } = articleOf(area.name);
-    // a interseção pertence ao continente da primeira disciplina que liga, para
-    // perguntas, caçada e duelo caírem num baralho que existe
     const continent = spot.discipline === "inter"
       ? DISCIPLINES[area.links?.[0] || "math"].continent
       : discipline.continent;
     const order = (keeperIndex[spot.discipline] = (keeperIndex[spot.discipline] || 0) + 1) - 1;
-    const tintList = TINTS[spot.discipline] || TINTS.math;
-    const accent = tintList[order % tintList.length];
-    const [keeperId, keeperName] = (KEEPERS[spot.discipline] || KEEPERS.inter)[order % (KEEPERS[spot.discipline] || KEEPERS.inter).length];
-    const monitores = MONITORES[spot.discipline] || MONITORES.inter;
-    const [monitorNome, monitorGenero] = monitores[order % monitores.length];
-    const tituloTreino = TITULO_TREINO[spot.discipline] || TITULO_TREINO.inter;
-    const monitorTitulo = monitorGenero === "f" ? tituloTreino[1] : tituloTreino[0];
     const bioma = BIOMES[area.id];
     const conjunto = AREA_ITEMS[area.id];
     const fauna = FAUNA[area.id];
     const caverna = dungeonIdentity(area.id);
+    if (!bioma || !conjunto || !caverna) continue;
+    const accent = (TINTS[spot.discipline] || TINTS.math)[order % 5];
 
     areas.push({
       id: area.id,
@@ -206,179 +185,108 @@ export function buildCatalogContent() {
       catalog: true,
     });
 
-    // Enfeite pela pedra e pelo padrão da área, não pela disciplina: dois
-    // lugares de matemática tinham o mesmo compasso, livro e estrela porque o
-    // conjunto vinha da família inteira. Agora a área puxa dois enfeites do
-    // material dela e um do padrão do chão.
     const families = DECOR[spot.discipline] || DECOR.inter;
-    const familia = families[order % families.length];
-    const porMaterial = DECOR_MATERIAL[bioma?.material] || [];
-    const porPadrao = DECOR_PADRAO[bioma?.pattern] || [];
-    const escolhidos = [...new Set([...porMaterial, ...porPadrao, ...familia])].slice(0, 4);
-    decor[area.id] = escolhidos.length ? escolhidos : familia.slice(0, 2);
+    const escolhidos = [...new Set([
+      ...(DECOR_MATERIAL[bioma.material] || []),
+      ...(DECOR_PADRAO[bioma.pattern] || []),
+      ...families[order % families.length],
+    ])].slice(0, 4);
+    decor[area.id] = escolhidos.length ? escolhidos : families[0].slice(0, 2);
 
-    waystones.push({ id: area.id, continent, name: `Farol ${article} ${noun}`, x: spot.waystone.x, y: spot.waystone.y, accent });
+    waystones.push({
+      id: area.id,
+      continent,
+      name: `Farol ${pick(LUGARES, hash(area.id))}`,
+      x: spot.waystone.x,
+      y: spot.waystone.y,
+      accent,
+    });
 
-    // Uma estação por subárea do catálogo. Seção sem subárea (as interseções)
-    // reparte os tópicos em três trilhas, cada uma com a sua página.
-    const secao = SECTION_TOPICS[area.num];
-    const lista = [];
-    if (secao?.subareas?.length) {
-      const posicoes = placeStations(spot.land, secao.subareas.length, [spot.waystone, spot.npc, spot.hunt]);
-      secao.subareas.forEach(([nome, topicos], i) => lista.push({ nome, topicos, bankTopic: null, pos: posicoes[i] }));
-    } else if (secao?.topics?.length) {
-      const grupos = trilhas(secao.topics, 3);
-      const posicoes = placeStations(spot.land, grupos.length, [spot.waystone, spot.npc, spot.hunt]);
-      grupos.forEach((topicos, i) => lista.push({
-        nome: bank[i]?.name || area.short,
-        topicos,
-        bankTopic: bank[i] || bank[0],
-        pos: posicoes[i],
-      }));
-    }
-
-    const temasDasEstacoes = atribuirTemas(bank, lista.map((x) => ({ nome: x.nome, topicos: x.topicos })));
-    lista.forEach((item, i) => {
+    // uma estação por pedaço de seção; o nome nasce do lugar, não do assunto
+    const total = contarEstacoes(area);
+    const posicoes = placeStations(spot.land, total, [spot.waystone, spot.npc, spot.hunt]);
+    for (let i = 0; i < total; i++) {
       const postId = `${area.id}-${i + 1}`;
-      const siteName = titleCase(item.nome);
+      let nome = `${pick(NOMES_ESTACAO, hash(postId))} ${pick(LUGARES, hash(`${postId}|lugar`))}`;
+      for (let tentativa = 0; usadosSitio.has(nome) && tentativa < 8; tentativa++) {
+        nome = `${pick(NOMES_ESTACAO, hash(`${postId}|${tentativa}`))} ${pick(LUGARES, hash(`${postId}|l|${tentativa}`))}`;
+      }
+      usadosSitio.add(nome);
       sites.push({
         id: postId,
         continent,
-        name: siteName,
-        label: siteName,
-        x: item.pos.x,
-        y: item.pos.y,
+        name: nome,
+        label: nome,
+        x: posicoes[i]?.x ?? spot.waystone.x,
+        y: posicoes[i]?.y ?? spot.waystone.y,
         post: postId,
         accent,
-        icon: (ICONS[spot.discipline] || ICONS.inter)[i % 6],
+        icon: (ICONES[spot.discipline] || ICONES.inter)[i % 6],
         minor: true,
         catalog: true,
       });
-      const inter = item.bankTopic ? (SECAO_TEXT[area.num] || INTER_TEXT[area.num]) : null;
-      const indicesDoTema = item.bankTopic ? [] : temasDasEstacoes[i] || [];
-      const tema = item.bankTopic || (indicesDoTema.length ? bank[indicesDoTema[0]] : null);
-      const licao = licaoDe(area.id, item.nome);
-      const corpo = licao
-        ? subareaBody({
-            sectionNum: area.num,
-            sectionName: secao.name,
-            discipline: spot.discipline,
-            name: item.nome,
-            topics: item.topicos,
-            siblings: lista.map((x) => x.nome),
-            catalogId: area.id,
-            licao,
-            bankTopic: tema,
-            perguntas: item.bankTopic
-              ? (item.bankTopic.q ? [item.bankTopic.q] : [])
-              : indicesDoTema.map((j) => bank[j]?.q).filter(Boolean),
-            extra: inter ? { abre: inter.abre, pratica: inter.pratica, erro: inter.erro } : null,
-          })
-        : item.bankTopic
-        ? `<p class="page-epigrafe">${epigrafe(item.nome)}</p>${inter ? `<p>${inter.abre}</p>` : ""}<p>${item.bankTopic.def}</p><ul>${item.bankTopic.keys.map((k) => `<li>${k}</li>`).join("")}</ul><blockquote>${item.bankTopic.mistake}</blockquote><p><strong>Parte ${i + 1} de ${lista.length}.</strong> O caminho desta trilha passa por estas marcas:</p><ul>${item.topicos.map((t) => `<li>${t}</li>`).join("")}</ul>${inter ? `<p><strong>Com as mãos.</strong> ${inter.pratica}</p><p><strong>O passo em falso.</strong> ${inter.erro}</p>` : ""}`
-        : subareaBody({
-            sectionNum: area.num,
-            sectionName: secao.name,
-            discipline: spot.discipline,
-            name: item.nome,
-            topics: item.topicos,
-            siblings: lista.map((x) => x.nome),
-            catalogId: area.id,
-            // a lição escrita transforma o totem em curso; a pergunta da
-            // trilha é a do banco da área, na mesma ordem das estações
-            licao: licaoDe(area.id, item.nome),
-            bankTopic: tema,
-            perguntas: indicesDoTema.map((j) => bank[j]?.q).filter(Boolean),
-          });
       posts[postId] = {
-        kicker: `${discipline.name.toLowerCase()} · ${area.short.toLowerCase()}`,
-        title: siteName,
+        kicker: bioma.name,
+        title: nome,
         date: "2026-10-20",
-        read: "2 min",
-        tags: [discipline.name.toLowerCase(), area.short.toLowerCase()],
+        read: "1 min",
+        tags: ["lore"],
         continent,
-        lab: item.bankTopic
-          ? labFor(`${item.bankTopic.name} ${item.bankTopic.def}`, spot.discipline, i)
-          : labFor(`${item.nome} ${item.topicos.join(" ")}`, spot.discipline, i),
-        body: corpo,
+        lab: null,
+        body: loreHtml(area, postId),
       };
-      // Pergunta de "em qual parte do catálogo isto aparece" não ensina o
-      // assunto: saiu. A página responde pelo texto e pelas três perguntas do
-      // banco da área, que são conceito de verdade.
-    });
+    }
 
-    // as três perguntas do banco continuam no baralho da área, mesmo quando as
-    // estações passaram a ser as subáreas
-    bank.forEach((topic, i) => {
-      questions.push({
-        continent,
-        area: area.id,
-        tier: i + 1,
-        // o banco pode guardar 6 alternativas; o baralho base guarda 3 e o duelo
-        // completa até cinco na hora da pergunta
-        q: {
-          q: topic.q.q,
-          // o banco escreve seis alternativas; o duelo mostra cinco, então o
-          // corte para A-E acontece lá, sem jogar fora as opções escritas
-          options: topic.q.o.slice(),
-          a: topic.q.a,
-          why: topic.q.why,
-        },
-      });
-    });
-
-    const shortWords = bank.map((t) => t.name.split(" ")[0]);
-    // a fala diz o lugar e o assunto: antes 70 treinadores diziam a mesma
-    // frase e 70 guardiões repetiam a mesma linha da caverna
-    const resumo = (texto) => {
-      let frase = String(texto).split(/(?<=\.)\s/)[0].replace(/\.$/, "");
-      if (frase.length > 110) frase = frase.slice(0, 110).replace(/[ ,;:]\S*$/, "");
-      return frase;
-    };
-    // três tópicos podem começar com a mesma palavra ("Geometria, Geometria,
-    // Geometria"): nesse caso a fala usa o nome inteiro de cada tópico
-    const nomesIlha = [...new Set(shortWords)];
-    const listaNomes = nomesIlha.length === shortWords.length ? shortWords : bank.map((t) => resumo(t.name));
+    let nomeGuarda = nomeDeGente(hash(`${area.id}|guarda`));
+    for (let i = 0; usadosNome.has(nomeGuarda) && i < 8; i++) nomeGuarda = nomeDeGente(hash(`${area.id}|guarda|${i}`));
+    usadosNome.add(nomeGuarda);
+    const keeperId = `keeper-${area.id}`;
     npcSpawns.push({ id: keeperId, continent, x: spot.npc.x, y: spot.npc.y, accent });
     npcs[keeperId] = {
-      name: keeperName,
+      name: nomeGuarda,
+      label: pick(["guia da ilha", "gente da maré", "voz do porto", "morador das ruínas"], hash(`${area.id}|label`)),
       lines: [
         `${bioma.name}. Poucos chegam até aqui, e menos ainda param.`,
-        `Os nomes desta ilha: ${listaNomes.join(", ")}. Não são enfeites; são o que se pode aprender.`,
-        `${fauna[0].name} e ${fauna[1].name} rondam por perto. Não os provoque sem resposta.`,
-        `O engano que volta sempre: ${bank[0].mistake}`,
-        `A caverna ${prepBioma(bioma.name)} ${bioma.name} guarda o resto. Desça quando tiver pergunta demais.`,
+        `O caminho segue para ${pick(LUGARES, hash(`${area.id}|sul`))}. Não é longe, mas cobra.`,
+        `${fauna[0].name} e ${fauna[1].name} rondam por perto. Não os provoque sem motivo.`,
+        pick(FALAS, hash(`${area.id}|fala`)),
+        "A caverna guarda o resto. Desça quando tiver coragem.",
       ],
     };
-    npcs[`trainer-${area.id}`] = {
-      name: `${monitorTitulo} ${monitorNome}`,
+
+    let nomeTreino = nomeDeGente(hash(`${area.id}|treino`));
+    for (let i = 0; usadosNome.has(nomeTreino) && i < 8; i++) nomeTreino = nomeDeGente(hash(`${area.id}|treino|${i}`));
+    usadosNome.add(nomeTreino);
+    const trainerId = `trainer-${area.id}`;
+    npcs[trainerId] = {
+      name: nomeTreino,
+      label: "mestre de treino",
       lines: [
-        `A clareira ${prepBioma(bioma.name)} ${bioma.name} é lugar de errar sem sangue.`,
-        `${resumo(bank[0].def)} Comece por aí.`,
-        `Aqui o erro não dói. Lá embaixo ${fauna[0].name} cobra a mesma resposta.`,
+        "A clareira é lugar de errar sem sangue.",
+        "Bata no bicho até ele cair. O treino não cobra vida.",
+        `Lá embaixo ${fauna[0].name} cobra o mesmo golpe.`,
       ],
     };
+
+    const recompensa = pick(ELOGIOS, hash(`${area.id}|xp`));
     quests.push({
       id: `missao-${area.id}`,
       npc: keeperId,
-      giver: keeperName,
-      title: `A pergunta de ${keeperName}`,
-      brief: `${area.sub.charAt(0).toUpperCase() + area.sub.slice(1)}. ${keeperName} espera uma resposta, não uma visita.`,
-      goal: { type: "quiz" },
-      quiz: quizFor(bank[1].q, order),
-      reward: { xp: 38, title: `Aprendiz de ${keeperName}` },
+      giver: nomeGuarda,
+      title: `Caçada em ${bioma.name}`,
+      brief: `Desça às ruínas de ${bioma.name} e derrote 3 criaturas. Volte com o que sobrar.`,
+      goal: { type: "hunts", count: 3 },
+      reward: { xp: recompensa.xp, title: recompensa.titulo },
     });
 
-    // a planta da caverna é semeada pelo id em dungeon-data; aqui só entram
-    // o tema, o bicho e o estilo de túnel
     dungeons[area.id] = {
       continent,
-      name: `Cripta ${article} ${noun}`,
+      name: `Cripta de ${bioma.name}`,
       sub: area.sub,
       material: caverna.material,
       tunnel: ["wide", "split", "zigzag", "cross"][order % 4],
       equipment: [conjunto.weapon.id, conjunto.armor.id, conjunto.helmet.id],
-      boss: `O Guardião ${article} ${noun}`,
+      boss: `O Guardião de ${bioma.name}`,
       rooms: caverna.rooms,
       monsters: caverna.monsters,
       fauna: caverna.fauna,
@@ -389,9 +297,9 @@ export function buildCatalogContent() {
       id: area.id,
       continent,
       accent: bioma.accent,
-      trainerGender: monitorGenero,
+      trainerGender: order % 2 ? "f" : "m",
       dungeon: `dungeon-${area.id}`,
-      name: `Caçada ${article} ${noun}`,
+      name: `Caçada em ${bioma.name}`,
       center: { x: spot.hunt.x, y: spot.hunt.y },
       banner: { x: 0, y: -3 },
       lever: { x: -3, y: 3 },
@@ -406,12 +314,13 @@ export function buildCatalogContent() {
         dx: [-3, 3, 0][i],
         dy: [1, -1, 3][i],
       })),
-      boss: { id: `${area.id}-boss`, name: `O Guardião ${article} ${noun}`, kind: "boss", accent: bioma.accent, dx: 0, dy: 0 },
+      boss: { id: `${area.id}-boss`, name: `O Guardião de ${bioma.name}`, kind: "boss", accent: bioma.accent, dx: 0, dy: 0 },
       keeper: keeperId,
+      trainer: trainerId,
     });
   }
 
-  return { areas, sites, waystones, npcSpawns, posts, npcs, dungeons, grounds, quests, questions, decor };
+  return { areas, sites, waystones, npcSpawns, posts, npcs, dungeons, grounds, quests, decor };
 }
 
 export const CATALOG_CONTENT = buildCatalogContent();

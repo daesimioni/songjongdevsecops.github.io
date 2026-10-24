@@ -1,6 +1,6 @@
-// O caderno do viajante: uma capa só para diário, ficha, mochila, bestiário e
-// wiki. Cada painel continua sendo um modal com o próprio conteúdo; aqui ele
-// ganha a mesma moldura, a mesma navegação e o mesmo lugar na tela.
+// O caderno do viajante: uma capa só para diário, ficha, mochila e bestiário.
+// Cada painel continua sendo um modal com o próprio conteúdo; aqui ele ganha a
+// mesma moldura, a mesma navegação e o mesmo lugar na tela.
 const PAGINAS = [
   { id: "journal", chave: "diario", nome: "Diário", sub: "missões e o que você viu", tecla: "Z", icone: "diario" },
   { id: "sheet", chave: "ficha", nome: "Ficha", sub: "vocação, perícias e companhia", tecla: "C", icone: "ficha" },

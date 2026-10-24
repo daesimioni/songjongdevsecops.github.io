@@ -124,10 +124,9 @@ rpg2.data.guilda = { nome: "", membros: [] };
 rpg2.save();
 assert.equal(new RPG().data.guilda, null, "o save aceitou guilda inválida");
 
-// ---- o app, o HTML e a wiki ----
+// ---- o app e o HTML ----
 const app = fs.readFileSync(new URL("../src/app/app.js", import.meta.url), "utf8");
 const html = fs.readFileSync(new URL("../index.html", import.meta.url), "utf8");
-const wiki = fs.readFileSync(new URL("../src/ui/wiki.js", import.meta.url), "utf8");
 assert.match(app, /function buildGuilda\(/, "o app não monta a sede");
 assert.match(app, /function openGuilda\(/, "o app não abre a sede");
 assert.match(app, /fundarGuilda\(rpg\.data/, "o app não funda a guilda");
@@ -135,6 +134,5 @@ assert.match(app, /recrutarGuilda\(rpg\.data/, "o app não recruta a party");
 assert.match(app, /resgatarMissao\(rpg\.data/, "o app não resgata a missão da sede");
 assert.match(app, /A guilda \$\{guilda\.nome\}/, "o diário não mostra a sede");
 assert.match(html, /id="guilda"/, "o modal da guilda não existe");
-assert.match(wiki, /Guilda e party/, "a wiki não ganhou a ficha da guilda");
 
 console.log(`ok guilda: ${BRASOES.length} brasões, ${LIMITE_MEMBROS} lugares, ${MISSOES_GUILDA.length} missões, save e party`);

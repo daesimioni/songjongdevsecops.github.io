@@ -32,9 +32,8 @@ bestiário, slots, magias, cidades, NPCs), não no grind nem na punição.
 0. [`39-BACKLOG-VERIFICADO.md`](39-BACKLOG-VERIFICADO.md): o mapa único do que
    falta, por onda e esforço, e as decisões abertas do dono.
 1. `00-VISAO.md` a `13-ALMA-DAS-ILHAS.md`: conceito e desenho macro, congelados
-   com banner no topo. `00-VISAO.md` traz a promessa; `01-APRENDIZAGEM.md` é o
-   documento mais importante; `02-COMBATE.md` e `05-MUNDO.md` descrevem as duas
-   metades do jogo.
+   com banner no topo. São história do jogo educativo; `02-COMBATE.md` e
+   `05-MUNDO.md` continuam descrevendo as duas metades do jogo.
 2. `14-LEARNING-VALLEY.md` a `19-REVISAO-GERAL.md`: engenharia atual, com
    números medidos. O `19` é a revisão geral; o `14` fecha a entrada do jogo.
 3. `20-AUDITORIA-PEDIDOS.md` a `38-OITO-DIRECOES.md`: auditorias datadas, com o
@@ -44,12 +43,12 @@ bestiário, slots, magias, cidades, NPCs), não no grind nem na punição.
 
 Os números abaixo são os verificados no `39`, não promessas de conceito:
 
-- 86 áreas, 93 cavernas, 454 estações, 94 faróis e 54 travessias entre ilhas;
-- 887 perguntas de duelo, 561 itens, 40 receitas, 12 encantos e 12 runas;
-- 464 fichas de bestiário, 291 missões, 194 NPCs e 2.311 fichas de wiki;
-- domínio de 0 a 5, revisão espaçada, grafo de pré-requisitos, dicas em escada
-  e erro por distrator no caderno;
-- morte suave, vocações com subcategorias, PvP opt-in e cronômetro desligado;
+- 86 áreas, 93 cavernas, 385 estações, 94 faróis e 54 travessias entre ilhas;
+- nenhuma pergunta no jogo: coleta por barra de precisão, combate de ação no mapa
+  e missão de caçada, coleta, doca ou chefe;
+- 561 itens, 40 receitas, 12 encantos e 12 runas;
+- 464 fichas de bestiário, 291 missões e 194 NPCs; a wiki e o acervo saíram;
+- morte suave, vocações com subcategorias e cronômetro desligado;
 - pixel art 2D, site estático, sem dependência em runtime e sem pay-to-win;
 - mapa grande, ferry pago ao Porto Submerso, elevador de volta, ciclo dia/noite,
   patrulha e perseguição dos bichos.
@@ -57,11 +56,10 @@ Os números abaixo são os verificados no `39`, não promessas de conceito:
 ## 4. Decisões do dono (respondidas em 2026-10-22)
 
 As 13 perguntas do `39` §"Decisões que dependem do dono" foram respondidas pelo
-dono em 2026-10-22; as respostas estão registradas lá e o ciclo atual não tinha
-pendência de código. O plano em execução está em
-[`40-PLANO-EXECUCAO.md`](40-PLANO-EXECUCAO.md): Biblioteca Afogada, Grande Prova,
-fio da Iara, facções e guilda fechados. Reabrir uma resposta é uma decisão nova,
-registrada no 39.
+dono em 2026-10-22. Em 2026-10-23 o jogo virou Vale Partido: biblioteca, acervo,
+Grande Prova, PvP de pergunta, wiki e banco de perguntas saíram do código. O fio
+da Iara, as facções e a guilda continuam. Reabrir uma resposta é uma decisão
+nova, registrada no 39.
 
 ## 5. Como uma ideia entra no jogo
 

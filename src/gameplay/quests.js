@@ -34,7 +34,7 @@ export const QUESTS = [
     giver: "Dona Zefa",
     title: "As mãos do vale",
     brief: "Mexa em oito instrumentos diferentes. Olhar não basta: clique, arraste, gire.",
-    goal: { type: "labs", count: 8 },
+    goal: { type: "hunts", count: 8 },
     reward: { xp: 45, title: "Mãos de Aprendiz" },
   },
   {
@@ -70,13 +70,7 @@ export const QUESTS = [
     giver: "Ada",
     title: "O fio que carrega",
     brief: "Uma pergunta de fio. Se errar, o mundo não cai; a resposta espera.",
-    goal: { type: "quiz" },
-    quiz: {
-      question: "No meio somador, qual porta gera o transporte, o famoso vai um?",
-      options: ["A porta E", "O OU exclusivo", "A porta NÃO"],
-      answer: 0,
-      why: "A soma de um bit é o OU exclusivo. O transporte só nasce quando as duas entradas são 1, e isso é o E.",
-    },
+    goal: { type: "hunts", count: 3 },
     reward: { xp: 30, title: "Aprendiz de Ada" },
   },
   {
@@ -103,13 +97,7 @@ export const QUESTS = [
     giver: "Hypatia",
     title: "O hotel lotado",
     brief: "Hilbert alugou todos os quartos de um hotel infinito. Chega mais um hóspede.",
-    goal: { type: "quiz" },
-    quiz: {
-      question: "O hotel tem infinitos quartos, todos ocupados. O que ainda cabe fazer?",
-      options: ["Nada, a lotação é total", "Construir um andar novo", "Pedir que cada hóspede vá para o quarto seguinte"],
-      answer: 2,
-      why: "Cada hóspede do quarto n vai para n+1, o quarto 1 fica livre e o novo hóspede entra. Infinito mais um continua infinito.",
-    },
+    goal: { type: "hunts", count: 3 },
     reward: { xp: 30, title: "Hóspede do Infinito" },
   },
   {
@@ -127,13 +115,7 @@ export const QUESTS = [
     giver: "Marie",
     title: "O tempo do pêndulo",
     brief: "Um pêndulo simples, uma régua e um cronômetro. O que muda o período?",
-    goal: { type: "quiz" },
-    quiz: {
-      question: "O período de um pêndulo simples depende principalmente de quê?",
-      options: ["Da massa do peso", "Da cor do fio", "Do comprimento do fio"],
-      answer: 2,
-      why: "Para pequenas oscilações, T = 2π√(L/g). A massa não aparece na conta. O comprimento, sim.",
-    },
+    goal: { type: "hunts", count: 3 },
     reward: { xp: 30, title: "Aprendiz de Marie" },
   },
   {
@@ -151,13 +133,7 @@ export const QUESTS = [
     giver: "Mendeleev",
     title: "A coluna que se parece",
     brief: "A tabela tem colunas com personalidade. O que uma coluna compartilha?",
-    goal: { type: "quiz" },
-    quiz: {
-      question: "Elementos na mesma coluna da tabela periódica têm em comum o quê?",
-      options: ["A mesma camada de valência", "O mesmo número de massa", "O mesmo estado físico"],
-      answer: 0,
-      why: "A coluna agrupa quem tem a mesma configuração da camada de valência. Por isso o comportamento químico se repete.",
-    },
+    goal: { type: "hunts", count: 3 },
     reward: { xp: 30, title: "Aprendiz de Mendeleev" },
   },
   {
@@ -175,13 +151,7 @@ export const QUESTS = [
     giver: "Pitágoras",
     title: "A razão da oitava",
     brief: "Dobre a frequência e a nota se repete. Só falta dizer a razão.",
-    goal: { type: "quiz" },
-    quiz: {
-      question: "Uma oitava acima corresponde a qual razão de frequência?",
-      options: ["3 para 2", "5 para 4", "2 para 1"],
-      answer: 2,
-      why: "Dobrar a frequência dá a mesma nota uma oitava acima. A razão 2:1 é a mais simples que existe depois de 1:1.",
-    },
+    goal: { type: "hunts", count: 3 },
     reward: { xp: 30, title: "Afinador" },
   },
   {
@@ -199,13 +169,7 @@ export const QUESTS = [
     giver: "Turing",
     title: "A pergunta certa",
     brief: "Todo mundo pergunta se a máquina pensa. Eu perguntei outra coisa.",
-    goal: { type: "quiz" },
-    quiz: {
-      question: "O teste de Turing foi proposto para medir o quê?",
-      options: ["Se a máquina é consciente", "Se a conversa dela é indistinguível de uma humana", "A velocidade de processamento"],
-      answer: 1,
-      why: "O teste troca a pergunta impossível, se a máquina pensa, por uma observável: a conversa engana um juiz humano?",
-    },
+    goal: { type: "hunts", count: 3 },
     reward: { xp: 30, title: "Aprendiz de Turing" },
   },
   {
@@ -214,13 +178,7 @@ export const QUESTS = [
     giver: "Turing",
     title: "O quarto chinês",
     brief: "Uma pessoa dentro de um quarto responde em chinês seguindo regras. Ela entende a língua?",
-    goal: { type: "quiz" },
-    quiz: {
-      question: "No argumento do quarto chinês, o que a pessoa demonstra saber?",
-      options: ["Que entende chinês", "Que sabe seguir regras sem entender o significado", "Que criou a língua"],
-      answer: 1,
-      why: "O ponto é a diferença entre manipular símbolos e compreender. O argumento questiona se a máquina entende ou só executa.",
-    },
+    goal: { type: "hunts", count: 3 },
     reward: { xp: 34, title: "Intérprete do Quarto" },
   },
   {
@@ -229,13 +187,7 @@ export const QUESTS = [
     giver: "Pitágoras",
     title: "A corda de treze nós",
     brief: "Uma corda com doze espaços iguais faz um triângulo reto. Quais lados?",
-    goal: { type: "quiz" },
-    quiz: {
-      question: "Qual trio forma um triângulo retângulo?",
-      options: ["3, 4 e 5", "2, 3 e 4", "5, 6 e 7"],
-      answer: 0,
-      why: "3² + 4² = 9 + 16 = 25 = 5². Os egípcios usavam essa corda para acertar o ângulo reto.",
-    },
+    goal: { type: "hunts", count: 3 },
     reward: { xp: 34, title: "Cordão de Treze Nós" },
   },
   {
@@ -244,13 +196,7 @@ export const QUESTS = [
     giver: "Marie",
     title: "A queda sem ar",
     brief: "Sem resistência do ar, pena e martelo caem juntos. Por quê?",
-    goal: { type: "quiz" },
-    quiz: {
-      question: "Por que a pena e o martelo caem juntos no vácuo?",
-      options: ["Porque o martelo fica mais leve", "Porque a aceleração da gravidade é a mesma para os dois", "Porque a pena tem mais massa"],
-      answer: 1,
-      why: "A força é proporcional à massa, e a aceleração resultante é a mesma. Sem ar, não há empuxo nem arrasto.",
-    },
+    goal: { type: "hunts", count: 3 },
     reward: { xp: 34, title: "Queda Livre" },
   },
   {
@@ -259,13 +205,7 @@ export const QUESTS = [
     giver: "Mendeleev",
     title: "A coluna que faltava",
     brief: "Eu deixei buracos na tabela. O que eu esperava encontrar neles?",
-    goal: { type: "quiz" },
-    quiz: {
-      question: "Mendeleev deixou buracos na tabela periódica porque...",
-      options: ["Não sabia desenhar", "Acreditava que elementos ainda não descobertos ocupariam aqueles lugares", "Queria enfeitar"],
-      answer: 1,
-      why: "O padrão das propriedades pedia elementos ausentes; o gálio e o germânio apareceram depois perto do previsto.",
-    },
+    goal: { type: "hunts", count: 3 },
     reward: { xp: 34, title: "Profeta da Tabela" },
   },
   {
@@ -274,13 +214,7 @@ export const QUESTS = [
     giver: "Pitágoras",
     title: "A quinta e a oitava",
     brief: "Duas razões pequenas que o ouvido reconhece. Qual é a da quinta justa?",
-    goal: { type: "quiz" },
-    quiz: {
-      question: "A quinta justa tem razão de frequência de...",
-      options: ["2:1", "3:2", "4:3"],
-      answer: 1,
-      why: "3:2 é a quinta justa; 2:1 é a oitava; 4:3 é a quarta justa.",
-    },
+    goal: { type: "hunts", count: 3 },
     reward: { xp: 34, title: "Ouvido de Razão" },
   },
   {
@@ -289,13 +223,7 @@ export const QUESTS = [
     giver: "Turing",
     title: "O exemplo que engana",
     brief: "Um modelo acerta todo o treino e erra na rua. Que nome tem isso?",
-    goal: { type: "quiz" },
-    quiz: {
-      question: "Um modelo que acerta o treino e erra dados novos tem...",
-      options: ["subajuste", "sobreajuste", "viés de hardware"],
-      answer: 1,
-      why: "Sobreajuste é decorar o treino, incluindo o ruído. O teste em dados separados revela a diferença.",
-    },
+    goal: { type: "hunts", count: 3 },
     reward: { xp: 34, title: "Olho de Teste" },
   },
   {
@@ -304,13 +232,7 @@ export const QUESTS = [
     giver: "Professora Alzira",
     title: "A palavra certa",
     brief: "Uma frase, uma crase e uma escolha. Se errar, ninguém morre: você tenta de novo.",
-    goal: { type: "quiz" },
-    quiz: {
-      question: "Qual frase usa a crase corretamente?",
-      options: ["Vou a escola.", "Vou à escola.", "Vou há escola."],
-      answer: 1,
-      why: "Vou a algum lugar, e escola pede artigo: a + a = à. A forma de testar é trocar por um substantivo masculino: vou ao colégio.",
-    },
+    goal: { type: "hunts", count: 3 },
     reward: { xp: 30, title: "Guardião da Crase" },
   },
   {
@@ -328,13 +250,7 @@ export const QUESTS = [
     giver: "Faraday",
     title: "Ímã parado, agulha parada",
     brief: "A bobina do vale só responde quando o fluxo muda. Qual é a condição?",
-    goal: { type: "quiz" },
-    quiz: {
-      question: "O que faz aparecer corrente induzida numa bobina?",
-      options: ["A variação do fluxo magnético", "Um ímã parado ao lado", "Aquecer o fio"],
-      answer: 0,
-      why: "A lei de Faraday liga a força eletromotriz à taxa de variação do fluxo. Ímã parado não muda o fluxo e não gera corrente.",
-    },
+    goal: { type: "hunts", count: 3 },
     reward: { xp: 32, title: "Aprendiz de Faraday" },
   },
   {
@@ -343,13 +259,7 @@ export const QUESTS = [
     giver: "Von Neumann",
     title: "O ciclo completo",
     brief: "Buscar, decodificar, executar e gravar. Qual é a ordem do ciclo?",
-    goal: { type: "quiz" },
-    quiz: {
-      question: "Qual é a ordem do ciclo de instrução?",
-      options: ["buscar, decodificar, executar", "executar, buscar, decodificar", "decodificar, gravar, buscar"],
-      answer: 0,
-      why: "A CPU busca a instrução na memória, decodifica o que ela manda e só então executa. No fim, grava o resultado.",
-    },
+    goal: { type: "hunts", count: 3 },
     reward: { xp: 32, title: "Arquiteto de Bolso" },
   },
   {
@@ -358,17 +268,7 @@ export const QUESTS = [
     giver: "Cauchy",
     title: "O jogo do épsilon",
     brief: "A margem que você aceita no resultado decide o quanto precisa se aproximar na entrada.",
-    goal: { type: "quiz" },
-    quiz: {
-      question: "O que a definição épsilon-delta de limite garante?",
-      options: [
-        "Para todo épsilon existe um delta que mantém f(x) perto do limite",
-        "Que a função sempre alcança o limite no ponto",
-        "Que o limite é sempre um número inteiro",
-      ],
-      answer: 0,
-      why: "Você escolhe a margem do resultado, e a definição cobra uma margem na entrada. Se dá para vencer para qualquer épsilon, o limite existe e vale L.",
-    },
+    goal: { type: "hunts", count: 3 },
     reward: { xp: 36, title: "Aprendiz de Cauchy" },
   },
   {
@@ -377,17 +277,7 @@ export const QUESTS = [
     giver: "Kekulé",
     title: "O anel que não fecha",
     brief: "Seis carbonos, seis hidrogênios e uma simetria que não deixa o desenho parar quieto.",
-    goal: { type: "quiz" },
-    quiz: {
-      question: "Por que o benzeno é representado por um anel com um círculo no meio?",
-      options: [
-        "Porque os elétrons pi estão deslocalizados pelos seis carbonos",
-        "Porque ele tem seis ligações simples fixas",
-        "Porque ele é um hidrocarboneto de cadeia aberta",
-      ],
-      answer: 0,
-      why: "O anel tem seis carbonos com elétrons pi que circulam por igual. O círculo resume isso: não há uma ligação dupla fixa em cada posição.",
-    },
+    goal: { type: "hunts", count: 3 },
     reward: { xp: 34, title: "Guardião do Anel" },
   },
   {
@@ -396,17 +286,7 @@ export const QUESTS = [
     giver: "Helmholtz",
     title: "A nota que insiste",
     brief: "Toda taça tem uma frequência preferida. O que precisa acontecer para ela responder?",
-    goal: { type: "quiz" },
-    quiz: {
-      question: "O que provoca ressonância num corpo?",
-      options: [
-        "Uma vibração na frequência natural dele",
-        "Qualquer som, desde que alto",
-        "Uma vibração muito acima da natural",
-      ],
-      answer: 0,
-      why: "Quando a excitação bate com um modo natural, a energia se acumula ciclo após ciclo e a amplitude cresce. Fora dessa frequência, o corpo responde pouco.",
-    },
+    goal: { type: "hunts", count: 3 },
     reward: { xp: 34, title: "Ouvinte de Helmholtz" },
   },
   {
@@ -415,17 +295,7 @@ export const QUESTS = [
     giver: "Marr",
     title: "A borda que denuncia",
     brief: "O kernel pequeno desliza pela imagem e procura uma mudança brusca. O que ele destaca?",
-    goal: { type: "quiz" },
-    quiz: {
-      question: "O que um filtro de convolução para bordas destaca na imagem?",
-      options: [
-        "Mudanças bruscas de intensidade entre vizinhos",
-        "A cor média da imagem inteira",
-        "O nome dos objetos presentes",
-      ],
-      answer: 0,
-      why: "O kernel compara vizinhos: onde a intensidade muda rápido, a resposta é alta. É assim que a rede começa a separar contorno de superfície.",
-    },
+    goal: { type: "hunts", count: 3 },
     reward: { xp: 36, title: "Olho de Marr" },
   },
   {
@@ -434,17 +304,7 @@ export const QUESTS = [
     giver: "Machado",
     title: "A versão de quem conta",
     brief: "Bentinho conta a própria história com muita certeza. O que o leitor deve fazer com essa certeza?",
-    goal: { type: "quiz" },
-    quiz: {
-      question: "O que caracteriza um narrador não confiável?",
-      options: [
-        "Conta a história de um ponto de vista que pode distorcer os fatos",
-        "Nunca participa da história",
-        "Sabe exatamente o que todos pensam",
-      ],
-      answer: 0,
-      why: "O narrador não confiável tem limite ou interesse, e o texto dá pistas para o leitor duvidar. Em Dom Casmurro, a acusação de Bentinho é a versão dele, não a verdade do romance.",
-    },
+    goal: { type: "hunts", count: 3 },
     reward: { xp: 36, title: "Leitor Desconfiado" },
   },
   {
@@ -453,17 +313,7 @@ export const QUESTS = [
     giver: "Barán",
     title: "O pacote que desvia",
     brief: "A rede não reserva um caminho fixo. O que ela faz com cada pedaço da mensagem?",
-    goal: { type: "quiz" },
-    quiz: {
-      question: "Por que a comutação de pacotes é mais resiliente que a de circuito?",
-      options: [
-        "Cada pacote pode seguir por outro caminho se um enlace cair",
-        "Ela reserva uma linha exclusiva para cada conversa",
-        "Ela não precisa de endereço de destino",
-      ],
-      answer: 0,
-      why: "Como cada pacote carrega destino e é encaminhado salto a salto, a rede pode desviar de um enlace quebrado. A linha exclusiva é justamente o oposto.",
-    },
+    goal: { type: "hunts", count: 3 },
     reward: { xp: 36, title: "Cartógrafo de Rotas" },
   },
   {
@@ -472,17 +322,7 @@ export const QUESTS = [
     giver: "Carnot",
     title: "Nada se perde, tudo se espalha",
     brief: "Uma máquina térmica não converte todo o calor em trabalho. Por que sobra sempre alguma coisa?",
-    goal: { type: "quiz" },
-    quiz: {
-      question: "Por que nenhuma máquina térmica converte todo o calor recebido em trabalho?",
-      options: [
-        "Porque parte do calor precisa ser rejeitada para a fonte fria",
-        "Porque o atrito sempre consome todo o calor",
-        "Porque a energia se transforma em massa",
-      ],
-      answer: 0,
-      why: "A segunda lei exige uma fonte fria: o rendimento máximo é 1 - Tf/Tq. Sem rejeitar calor, o ciclo não fecha.",
-    },
+    goal: { type: "hunts", count: 3 },
     reward: { xp: 38, title: "Aprendiz de Carnot" },
   },
   {
@@ -491,17 +331,7 @@ export const QUESTS = [
     giver: "Huygens",
     title: "O branco é uma multidão",
     brief: "A luz branca atravessa um prisma e sai colorida. Por que as cores se separam?",
-    goal: { type: "quiz" },
-    quiz: {
-      question: "Por que o prisma separa a luz branca em cores?",
-      options: [
-        "Porque o índice de refração depende da frequência",
-        "Porque o vidro aquece a luz",
-        "Porque a luz perde energia ao entrar",
-      ],
-      answer: 0,
-      why: "Cada frequência muda de velocidade de um jeito e desvia num ângulo diferente. O violeta desvia mais que o vermelho.",
-    },
+    goal: { type: "hunts", count: 3 },
     reward: { xp: 38, title: "Aprendiz de Huygens" },
   },
   {
@@ -510,17 +340,7 @@ export const QUESTS = [
     giver: "Diffie",
     title: "Segredo em público",
     brief: "Duas pessoas querem combinar uma chave sem que ninguém que escuta consiga descobri-la. Como?",
-    goal: { type: "quiz" },
-    quiz: {
-      question: "O que a troca de chaves de Diffie-Hellman permite?",
-      options: [
-        "Combinar um segredo por um canal público sem revelá-lo",
-        "Cifrar sem nenhuma chave",
-        "Guardar senhas em texto",
-      ],
-      answer: 0,
-      why: "As duas partes trocam valores públicos e calculam o mesmo segredo. Quem escuta vê os valores, mas não consegue calcular o segredo.",
-    },
+    goal: { type: "hunts", count: 3 },
     reward: { xp: 38, title: "Guardião da Chave" },
   },
   {
@@ -529,17 +349,7 @@ export const QUESTS = [
     giver: "Liebig",
     title: "A amostra honesta",
     brief: "Um resultado preciso pode estar errado se a amostra não representar o todo. O que fazer?",
-    goal: { type: "quiz" },
-    quiz: {
-      question: "O que faz uma amostra ser representativa?",
-      options: [
-        "Manter a mesma composição do todo que se quer medir",
-        "Ser a maior quantidade possível",
-        "Ser coletada sempre no mesmo ponto",
-      ],
-      answer: 0,
-      why: "Representar é manter a proporção do todo. Coletar sempre no mesmo ponto pode ser preciso e enviesado ao mesmo tempo.",
-    },
+    goal: { type: "hunts", count: 3 },
     reward: { xp: 36, title: "Olho Analítico" },
   },
   {
@@ -548,17 +358,7 @@ export const QUESTS = [
     giver: "Schoenberg",
     title: "O motivo que volta",
     brief: "Uma forma musical vive de repetir e mudar. O que a variação precisa preservar?",
-    goal: { type: "quiz" },
-    quiz: {
-      question: "O que uma variação musical preserva do tema?",
-      options: [
-        "A identidade reconhecível, mesmo mudando ritmo, harmonia ou timbre",
-        "Exatamente as mesmas notas e o mesmo andamento",
-        "Apenas o título da peça",
-      ],
-      answer: 0,
-      why: "A variação transforma a superfície e mantém a estrutura reconhecível. Se nada muda, é repetição; se tudo muda, o tema desaparece.",
-    },
+    goal: { type: "hunts", count: 3 },
     reward: { xp: 38, title: "Arquiteto de Formas" },
   },
   {
@@ -567,13 +367,7 @@ export const QUESTS = [
     giver: "Laplace",
     title: "A moeda sem memória",
     brief: "Deu cara dez vezes. A moeda justa deve coroa na próxima? O que a independência diz?",
-    goal: { type: "quiz" },
-    quiz: {
-      question: "Depois de dez caras numa moeda justa, a probabilidade de coroa no próximo lance é...",
-      options: ["1/2, porque os lances são independentes", "maior que 1/2, para compensar", "zero, porque a sequência continua"],
-      answer: 0,
-      why: "A moeda não tem memória. A probabilidade continua 1/2. O que se aproxima da média é a proporção em muitas jogadas, não o próximo resultado.",
-    },
+    goal: { type: "hunts", count: 3 },
     reward: { xp: 38, title: "Apostador Cético" },
   },
   {
@@ -582,17 +376,7 @@ export const QUESTS = [
     giver: "Chomsky",
     title: "A janela curta",
     brief: "O modelo só vê o que cabe no contexto. O que acontece com o que ficou de fora?",
-    goal: { type: "quiz" },
-    quiz: {
-      question: "O que acontece com uma informação que fica fora da janela de contexto?",
-      options: [
-        "O modelo não a considera ao gerar a resposta",
-        "O modelo lembra dela para sempre",
-        "Ela é apagada do texto original",
-      ],
-      answer: 0,
-      why: "A janela é o limite do que entra no cálculo. Informação fora dela não influencia a resposta, mesmo que esteja no histórico da conversa.",
-    },
+    goal: { type: "hunts", count: 3 },
     reward: { xp: 38, title: "Leitor de Contexto" },
   },
   {
@@ -601,17 +385,7 @@ export const QUESTS = [
     giver: "Saussure",
     title: "Entre as linhas",
     brief: "Alguém diz “está calor aqui” e abre a janela. O que a frase estava fazendo?",
-    goal: { type: "quiz" },
-    quiz: {
-      question: "Quando alguém diz “está calor aqui” e espera que você abra a janela, o que ocorreu?",
-      options: [
-        "Um ato de fala indireto: a constatação funciona como pedido",
-        "Um erro de semântica",
-        "Uma pressuposição falsa",
-      ],
-      answer: 0,
-      why: "A frase constata um fato, mas no contexto realiza um pedido. A pragmática estuda essa distância entre o literal e a ação.",
-    },
+    goal: { type: "hunts", count: 3 },
     reward: { xp: 38, title: "Leitor de Entrelinhas" },
   },
 ];
@@ -683,7 +457,7 @@ QUESTS.push(
     giver: "Dona Zefa",
     title: "As mãos que copiam",
     brief: "Mexa em três instrumentos. A biblioteca não aceita quem só olha as estantes.",
-    goal: { type: "labs", count: 3 },
+    goal: { type: "hunts", count: 3 },
     depois: "biblioteca-4",
     reward: { xp: 45 },
   },
@@ -751,7 +525,6 @@ function readData() {
     return {
       accepted: obj.accepted && typeof obj.accepted === "object" && !Array.isArray(obj.accepted) ? obj.accepted : {},
       done: obj.done && typeof obj.done === "object" && !Array.isArray(obj.done) ? obj.done : {},
-      quiz: obj.quiz && typeof obj.quiz === "object" && !Array.isArray(obj.quiz) ? obj.quiz : {},
       stats: obj.stats && typeof obj.stats === "object" && !Array.isArray(obj.stats) ? obj.stats : {},
       titles: Array.isArray(obj.titles) ? obj.titles.filter((t) => typeof t === "string") : [],
       title: typeof obj.title === "string" ? obj.title : "",
@@ -759,7 +532,7 @@ function readData() {
   } catch { return {}; }
 }
 function emptyData() {
-  return { accepted: {}, done: {}, quiz: {}, stats: {}, titles: [], title: "" };
+  return { accepted: {}, done: {}, stats: {}, titles: [], title: "" };
 }
 
 export class Quests {
@@ -846,9 +619,6 @@ export class Quests {
     } else if (goal.type === "social") {
       need = goal.keys.length;
       have = goal.keys.filter((k) => Number(this.data.stats[k] || 0) > 0).length;
-    } else if (goal.type === "quiz") {
-      need = 1;
-      have = this.data.quiz[q.id] ? 1 : 0;
     }
     return { have: Math.min(have, need), need };
   }
@@ -869,18 +639,6 @@ export class Quests {
     return true;
   }
 
-  answer(id, index) {
-    const q = QUEST_BY_ID.get(id);
-    if (!q?.quiz) return { ok: false };
-    if (this.data.quiz[id]) return { ok: true, correct: true, why: q.quiz.why, already: true };
-    const correct = Number(index) === q.quiz.answer;
-    if (correct) {
-      this.data.quiz[id] = true;
-      this.save();
-      this.changed();
-    }
-    return { ok: true, correct, why: q.quiz.why };
-  }
 
   complete(id) {
     const q = QUEST_BY_ID.get(id);

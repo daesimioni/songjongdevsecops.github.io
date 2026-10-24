@@ -126,16 +126,12 @@ assert.equal(falaDaReputacao("porto", 0), "", "o neutro falou");
 assert.match(falaDaReputacao("porto", 3), /Porto Submerso fala bem/);
 assert.match(falaDaReputacao("porto", -3), /não esqueceu/);
 
-// ---- o app, o HTML e a wiki ----
+// ---- o app e o HTML ----
 const app = fs.readFileSync(new URL("../src/app/app.js", import.meta.url), "utf8");
 const html = fs.readFileSync(new URL("../index.html", import.meta.url), "utf8");
-const wiki = fs.readFileSync(new URL("../src/ui/wiki.js", import.meta.url), "utf8");
 assert.match(app, /Facções e reputação/, "o diário não tem o painel das facções");
 assert.match(app, /function aplicarAtoFaccao\(/, "o app não registra o ato");
 assert.match(app, /atoPorMissao\(q\.id\)/, "a missão não move a facção");
-assert.match(app, /atosPorDesfecho\(d\.id\)/, "o desfecho não move as facções");
-assert.match(app, /A estante reservada/, "a porta do Concílio não existe");
 assert.match(app, /O Porto trata você como/, "a loja não fala a reputação");
-assert.match(wiki, /Facções e reputação/, "a wiki não ganhou a ficha das facções");
 
 console.log(`ok facções: ${FACCOES.length} forças, ${ATOS.length} atos, teto ${LIMITE_REPUTACAO}, save, loja e diário`);

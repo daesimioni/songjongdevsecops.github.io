@@ -25,7 +25,7 @@ button:disabled { cursor: not-allowed; }
 .modal-card :is(p, li) { font-size: max(13px, 1em); }
 .modal-card :is(button:not(.inv-slot):not(.look-swatch), summary) { min-height: var(--target); }
 .modal-card :is(button, summary) { line-height: 1.4; }
-.modal-card :is(.quest-brief, .help-note, .npc-text, .training-sub, .wiki-detail, .intro-note, .intro-warn, .intro-saved p) { font-family: var(--sans); font-size: 15px; line-height: 1.65; }
+.modal-card :is(.quest-brief, .help-note, .npc-text, .training-sub, .intro-note, .intro-warn, .intro-saved p) { font-family: var(--sans); font-size: 15px; line-height: 1.65; }
 .modal-card :is(.inv-hint, .best-trait, .best-weak, .quest-foot, .journal-progress, .sheet-bag-text span) { font-size: 13px; }
 .modal-card :is(.inv-sec, .journal-sec, .shop-sec, .look-label) { font-size: 12px; letter-spacing: 0.04em; }
 .modal-card :is(.quest-head, .quest-foot, .shop-troca, .gear-row, .build-row, .sheet-bag-resumo) { flex-wrap: wrap; }
@@ -46,9 +46,7 @@ button:disabled { cursor: not-allowed; }
 .inv-grid { grid-template-columns: repeat(auto-fit, minmax(44px, 1fr)); }
 .inv-grid .inv-slot { min-height: 44px; }
 .inv-slot .item-art { max-width: 90%; max-height: 90%; }
-.wiki-list { max-height: none; overflow: visible; }
-.wiki-detail pre, .panel-body pre { max-width: 100%; overflow-x: auto; }
-.wiki-detail dd { min-width: 0; margin-left: 0; }
+.panel-body pre { max-width: 100%; overflow-x: auto; }
 .rede-modal { max-height: calc(100dvh - 32px); }
 .rede-body { overscroll-behavior: contain; }
 .ctx-menu { max-width: calc(100vw - 16px); max-height: calc(100dvh - 16px); overflow-y: auto; }
@@ -69,7 +67,7 @@ button:disabled { cursor: not-allowed; }
 .enter-inner { padding: 24px; max-width: 100%; }
 /* O aumento atua nas letras, sem zoom geométrico nem redução da janela. */
 html[data-fonte="grande"] :is(.modal-card, .panel) { --text-body: 1.0625rem; }
-html[data-fonte="grande"] :is(.modal-card, .panel) :is(p, li, dd, dt, label, button, input, select, textarea, summary, .wiki-detail, .panel-body) { font-size: max(16px, 1em); }
+html[data-fonte="grande"] :is(.modal-card, .panel) :is(p, li, dd, dt, label, button, input, select, textarea, summary, .panel-body) { font-size: max(16px, 1em); }
 html[data-fonte="grande"] .modal-head h2 { font-size: 19px; }
 @media (max-width: 1280px) and (min-width: 901px) {
   .hud.hud-top { grid-template-columns: minmax(0, 1fr) auto; }
@@ -108,7 +106,6 @@ html[data-fonte="grande"] .modal-head h2 { font-size: 19px; }
   .calendario-baixo { display: none; }
   .quest-track { grid-column: 1; grid-row: 4; max-height: 100px; overflow-y: auto; }
   .qt-title { white-space: normal; }
-  #wiki .book-main { display: block; }
   .rede-modal { height: calc(100dvh - 16px); max-height: calc(100dvh - 16px); }
   .chatbar { width: auto; bottom: max(8px, env(safe-area-inset-bottom)); }
   .chatbar input { font-size: 16px; }
@@ -154,11 +151,6 @@ html[data-fonte="grande"] .modal-head h2 { font-size: 19px; }
   .seq-grid { overflow-x: auto; }
   .periodic-card { flex-wrap: wrap; }
 }
-/* As linhas crescem com o conteúdo; a rolagem pertence à página, não às fichas. */
-#wiki .book-main { grid-template-rows: auto auto auto auto auto; }
-#wiki .wiki-list { min-height: auto; grid-auto-rows: max-content; }
-#wiki .wiki-item { min-height: max-content; }
-#wiki .wiki-detail { max-height: none; overflow: visible; }
 @media (max-width: 900px) {
   .book-nav-list { width: 100%; }
   .book-link { flex: 1 1 0; min-width: 0; padding-inline: 2px; }

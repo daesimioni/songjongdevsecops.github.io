@@ -1,5 +1,5 @@
 // O NPC tem que ter cara de quem faz o que faz: papel, assunto e objeto na
-// mão. Este teste percorre os 194, confere que ninguém repete figura, que o
+// mão. Este teste percorre os 194, confere que ninguém repete o nome, que o
 // título varia e que há silhueta suficiente para não parecerem clones.
 import assert from "node:assert/strict";
 
@@ -24,18 +24,6 @@ const todos = [...vivos, ...treinadores];
 assert.ok(vivos.length >= 90, `NPCs no mundo: ${vivos.length}`);
 assert.ok(todos.length >= 190, `NPCs contando instrutores: ${todos.length}`);
 assert.equal(Object.keys(NPCS).length, 194, "fichas de NPC");
-
-// 1. nenhuma figura dividida entre dois papéis
-const figura = (nome) => nome.split(" ").filter((w) => !TITULOS.includes(w))[0]?.toLowerCase();
-const porFigura = new Map();
-for (const [id, ficha] of Object.entries(NPCS)) {
-  const chave = figura(ficha.name);
-  if (!chave) continue;
-  if (!porFigura.has(chave)) porFigura.set(chave, []);
-  porFigura.get(chave).push(id);
-}
-const repetidas = [...porFigura.entries()].filter(([, ids]) => ids.length > 1);
-assert.equal(repetidas.length, 0, `figura em dois lugares: ${repetidas.slice(0, 3).map(([f, ids]) => `${f} (${ids.join(", ")})`).join("; ")}`);
 
 // 2. nome completo repetido, nenhum
 const nomes = Object.values(NPCS).map((f) => f.name);

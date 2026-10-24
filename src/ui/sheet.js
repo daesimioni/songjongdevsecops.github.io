@@ -386,7 +386,7 @@ export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onOu
       const pode = Object.entries(recipe.need).every(([id, n]) => rpg.itemCount(id) >= n);
       make.addEventListener("click", () => {
         const produto = ITEMS[recipe.out];
-        // comida e poção passam pela pergunta da região antes de sair da forja
+        // comida e poção passam pela barra de precisão antes de sair da forja
         const comida = produto && (produto.heal || produto.mana || produto.buff);
         if (comida && pode && onCooking?.(recipe)) return;
         const res = rpg.craft(recipe.id);
@@ -435,7 +435,7 @@ export function createSheet({ rpg, getLevel, getXp, getTitle, toast, audio, onOu
     destino.appendChild(enchants);
 
     const note = el("p", "sheet-note");
-    note.textContent = "Responder certo nas caçadas sobe a perícia da região, e a perícia aumenta o dano. A caverna dá ferro, erva, cristal e madeira. A forja transforma; a horta devolve; a comida e a poção pedem uma pergunta da região; o bicho da cidade aprende a confiar. Encantamentos ficam.";
+    note.textContent = "Coletar com o golpe na faixa sobe a perícia da região, e a perícia aumenta o dano. A caverna dá ferro, erva, cristal e madeira. A forja transforma; a horta devolve; a comida e a poção pedem o mesmo golpe certeiro; o bicho da cidade aprende a confiar. Encantamentos ficam.";
     destino.appendChild(note);
   }
 

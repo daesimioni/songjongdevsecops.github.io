@@ -1,5 +1,3 @@
-import { QUESTION_INDEX } from "../src/gameplay/question-bank.js";
-const QUESTIONS = Object.fromEntries(QUESTION_INDEX);
 // Conferência mínima do que não depende do navegador: progresso das missões e
 // o filtro que impede conteúdo de fora do jogo de entrar nos canais.
 import assert from "node:assert/strict";
@@ -56,16 +54,6 @@ assert.equal(xp, 24);
 assert.equal(q.title, "Aprendiz do Porto");
 assert.equal(q.isDone("tres-passos"), true);
 assert.equal(q.complete("tres-passos").ok, false, "não conclui duas vezes");
-
-// quiz
-q.accept("vai-um");
-assert.equal(q.answer("vai-um", 1).correct, false);
-assert.equal(q.ready(quest("vai-um")), false);
-assert.equal(q.answer("vai-um", 0).correct, true);
-assert.equal(q.ready(quest("vai-um")), true);
-assert.equal(q.complete("vai-um").ok, true);
-assert.equal(q.title, "Aprendiz de Ada");
-assert.equal(q.answer("vai-um", 0).already, true);
 
 // continente
 q.accept("fios-vivos");
@@ -188,18 +176,6 @@ assert.equal(rpg.hpMax(), hpAntesDoLoot, "item comum não é relíquia");
 assert.equal(xpGanho > 0, true);
 rpg.next();
 assert.equal(rpg.duel, null);
-
-// toda pergunta da coleta/PvP continua com cinco alternativas A-E
-for (const g of GROUNDS) {
-  for (const tier of [1, 2, 3]) {
-    for (const item of rpg.buildDeck(g.continent, [tier], "")) {
-      assert.equal(item.options.length, 5, `pergunta de ${g.continent} tier ${tier} sem cinco alternativas`);
-      assert.equal(new Set(item.options.map((o) => o.toLowerCase())).size, 5, "alternativas repetidas");
-      assert.ok(item.answer >= 0 && item.answer < 5, "resposta fora das alternativas");
-      assert.ok(item.options[item.answer].length > 0, "resposta vazia");
-    }
-  }
-}
 
 // o golpe do bicho tira a vida da vocação, e o golpe do jogador derruba
 const medium = ground.monsters[1];
@@ -782,10 +758,6 @@ rpg.addItem("pocao", 1);
 assert.equal(rpg.craft("cafe").ok, true, "cozinha o café");
 rpg.useItem("cafe");
 assert.equal(rpg.speedMult(), 1.3, "café acelera");
-const deepDeck = rpg.buildDeck("cs", [3], "algoritmos");
-assert.equal(deepDeck.length, QUESTIONS.cs[3].length, "pergunta do fundo entrou no baralho");
-assert.ok(deepDeck[0].q.includes("escalonador"), "tema da sala puxa a pergunta certa");
-
 // fuga sempre arrisca, e o risco cresce com a dificuldade do bicho
 const flee = (tier, boss = false) => rpg.fleeRisk({ tier, boss });
 assert.ok(flee(1) > 0, "fugir do fraco ainda arrisca");
@@ -826,32 +798,4 @@ const trainWin = train.next();
 assert.equal(trainWin.result.training, true, "treino não distribui vitória de caçada");
 assert.deepEqual(trainWin.result.loot, [], "treino não dá loot");
 
-// distrator próximo: a alternativa extra troca uma palavra pela oposta, em
-// vez de pescar uma opção de outro assunto
-const deckMat = rpg.buildDeck("math", [1, 2, 3]);
-const achaQ = (trecho) => deckMat.find((q) => q.q.includes(trecho));
-assert.ok(achaQ("teorema de Cantor").options.includes("Ele é sempre menor que o conjunto original"), "Cantor sem o distrator próximo");
-assert.ok(achaQ("autovalor de uma matriz").options.includes("um escalar que muda a direção do autovetor"), "autovalor sem o distrator próximo");
-const grandes = achaQ("lei dos grandes números");
-assert.ok(grandes.options.includes("a média amostral se afasta da esperada com muitas repetições"), "lei dos grandes números sem o afasta");
-assert.ok(grandes.options.includes("a média amostral se aproxima da esperada com poucas repetições"), "lei dos grandes números sem o poucas");
-const partes = achaQ("Integração por partes");
-assert.ok(partes.options.includes("da regra da soma na derivada"), "integração por partes sem o soma");
-assert.ok(partes.options.includes("da regra do produto na integral"), "integração por partes sem a integral");
-
-// duelo entre jogadores: cinco perguntas, uma por dificuldade, dano crescente
-const pvpCards = rpg.pvpQuestions("cs");
-assert.equal(pvpCards.length, 5, "cinco cartas de duelo");
-assert.deepEqual(pvpCards.map((c) => c.difficulty), [1, 2, 3, 4, 5], "uma por dificuldade");
-assert.deepEqual(pvpCards.map((c) => c.damage), [1, 2, 3, 4, 5], "dano acompanha a dificuldade");
-for (const c of pvpCards) {
-  assert.equal(c.options.length, 5, "cinco alternativas no PvP");
-  assert.ok(c.answer >= 0 && c.answer < 5, "resposta dentro das alternativas");
-  assert.equal(new Set(c.options).size, 5, "sem alternativa repetida");
-  assert.ok(c.q.length >= 4 && c.why.length > 0, "pergunta e explicação vêm juntas");
-}
-const dmgBefore = pvpCards[4].damage;
-rpg.addItem("amuleto", 1);
-assert.ok(rpg.pvpQuestions("cs")[4].damage >= dmgBefore, "item não reduz o dano");
-
-console.log("ok missões, persistência, canais, RPG, interpolação, colisão, caverna, treino, fuga e duelo");
+console.log("ok missões, persistência, canais, RPG, interpolação, colisão, caverna, treino e fuga");
