@@ -140,6 +140,86 @@
       "missing": [],
       "sourceSha256": "113e7d92a63eba08c7e59e109e64383d144ebbdd2baeb3112ef78001a26d0b15",
       "output": "assets/magic/arrow-call.png"
+    },
+    {
+      "id": "arte/magias/9480b482283cd9694e1c",
+      "archive": "magias.zip",
+      "member": "Magias/Paladin/Divine Grenade.png",
+      "status": "library",
+      "location": "feat/arte-autoral-paladin-batch: assets/magic/divine-grenade.png",
+      "missing": [],
+      "sourceSha256": "a660bc688a30cbebc0cb4f85f66fff9d0045b5ba48f1693f2be9f018e4bde887",
+      "output": "assets/magic/divine-grenade.png"
+    },
+    {
+      "id": "arte/magias/cef9548d6a582bab5eae",
+      "archive": "magias.zip",
+      "member": "Magias/Paladin/Divine Caldera.png",
+      "status": "library",
+      "location": "feat/arte-autoral-paladin-batch: assets/magic/divine-caldera.png",
+      "missing": [],
+      "sourceSha256": "001a9048ab7837f222c15fbc15e8f734d1de3ab2d0011eec8f2123ff68edfb23",
+      "output": "assets/magic/divine-caldera.png"
+    },
+    {
+      "id": "arte/magias/3f9e273820e6721abded",
+      "archive": "magias.zip",
+      "member": "Magias/Paladin/Divine Dazzle.png",
+      "status": "library",
+      "location": "feat/arte-autoral-paladin-batch: assets/magic/divine-dazzle.png",
+      "missing": [],
+      "sourceSha256": "d66399127ba18f021aa6aff721264f7c6a8ef8643fad4578c1dd7031827b617f",
+      "output": "assets/magic/divine-dazzle.png"
+    },
+    {
+      "id": "arte/magias/3b457cca6f4efe57ffaf",
+      "archive": "magias.zip",
+      "member": "Magias/Paladin/Cancel Invisibility.png",
+      "status": "library",
+      "location": "feat/arte-autoral-paladin-batch: assets/magic/cancel-invisibility.png",
+      "missing": [],
+      "sourceSha256": "63450b43a29a303854566246e442c0f152b0971c95721f060004a62950f67a2b",
+      "output": "assets/magic/cancel-invisibility.png"
+    },
+    {
+      "id": "arte/magias/287e020b4f810b87840f",
+      "archive": "magias.zip",
+      "member": "Magias/Paladin/Conjure Explosive Arrow.png",
+      "status": "library",
+      "location": "feat/arte-autoral-paladin-batch: assets/magic/conjure-explosive-arrow.png",
+      "missing": [],
+      "sourceSha256": "be889f2f749982dc0c13952f9cf1bb9e4b6849266b4ee4801d0ba0d09b36a4d8",
+      "output": "assets/magic/conjure-explosive-arrow.png"
+    },
+    {
+      "id": "arte/magias/fd8b9a97e7f32e8ce637",
+      "archive": "magias.zip",
+      "member": "Magias/Paladin/Cure Curse.png",
+      "status": "library",
+      "location": "feat/arte-autoral-paladin-batch: assets/magic/cure-curse.png",
+      "missing": [],
+      "sourceSha256": "8f9e06a58f27ff99501b62eefb56512821d1c20d4f6eba875ed16f60a1e6482b",
+      "output": "assets/magic/cure-curse.png"
+    },
+    {
+      "id": "arte/magias/93bfec559f9760dfd433",
+      "archive": "magias.zip",
+      "member": "Magias/Paladin/Conjure Power Bolt.png",
+      "status": "library",
+      "location": "feat/arte-autoral-paladin-batch: assets/magic/conjure-power-bolt.png",
+      "missing": [],
+      "sourceSha256": "5ecffc4e19a42fc87883ded1dc5a50acf3d53cf026a670bb436e41344c631183",
+      "output": "assets/magic/conjure-power-bolt.png"
+    },
+    {
+      "id": "arte/magias/8ca82589250788e71f6a",
+      "archive": "magias.zip",
+      "member": "Magias/Paladin/Magic Rope.png",
+      "status": "library",
+      "location": "feat/arte-autoral-paladin-batch: assets/magic/magic-rope.png",
+      "missing": [],
+      "sourceSha256": "e45b4a25a7ce9174c9eb8ef54b5651c119f826bcbf22fb7fbb9b98cbecae52dc",
+      "output": "assets/magic/magic-rope.png"
     }
   ],
   "archives": [
