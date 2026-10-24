@@ -452,3 +452,46 @@
   #world-combat .combat-runes button { min-width:62px; flex-basis:62px; }
   #dungeon:has(#world-combat:not([hidden])) .dg-fold { display:none; }
 }
+
+/* coleta de ação: barra de precisão no lugar da pergunta */
+.skill-meter {
+  position: relative;
+  height: 38px;
+  margin: 14px 0 10px;
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background:
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px 10%),
+    rgba(5, 8, 20, 0.55);
+}
+.skill-zone {
+  position: absolute;
+  inset-block: 0;
+  border-inline: 1px solid rgba(97, 244, 192, 0.75);
+  background: rgba(97, 244, 192, 0.18);
+}
+.skill-marker {
+  position: absolute;
+  inset-block: -2px;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--amber);
+  box-shadow: 0 0 8px rgba(255, 200, 87, 0.8);
+  transform: translateX(-50%);
+}
+.skill-tentar {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 200, 87, 0.55);
+  border-radius: 7px;
+  background: rgba(255, 200, 87, 0.09);
+  color: var(--amber);
+  font-family: var(--mono);
+  font-size: 12px;
+}
+.skill-tentar:hover { background: rgba(255, 200, 87, 0.16); }
+.skill-tentar:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+.skill-dica { margin: 9px 0 0; font-family: var(--mono); font-size: 11px; line-height: 1.55; color: var(--muted); }
+.skill-dica kbd { color: var(--amber); }

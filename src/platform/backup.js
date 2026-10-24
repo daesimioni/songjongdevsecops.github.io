@@ -82,7 +82,7 @@ export function parseArquivo(texto) {
     return { ok: false, reason: "O arquivo não é um JSON válido." };
   }
   if (!obj || typeof obj !== "object" || obj.v !== 1 || !obj.keys || typeof obj.keys !== "object") {
-    return { ok: false, reason: "O arquivo não é um backup do The Learning Valley." };
+    return { ok: false, reason: "O arquivo não é um backup do Vale Partido." };
   }
   const keys = {};
   for (const nome of KEYS) {

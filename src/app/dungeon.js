@@ -24,6 +24,7 @@ import { drawPetSprite } from "../rendering/pet-art.js";
 import { drawSkiff } from "../rendering/skiff.js";
 import { escalaDaCamera, tilesNaVista, dentroDaVista, caixaNaVista } from "../core/camera.js";
 import { propsDaSala, salasDosVeios } from "../content/salas-tematicas.js";
+import { nomeDeCriatura, nomeDeChefe } from "../gameplay/reskin.js";
 import { nomeDaCacada } from "../content/cacada-clima.js";
 import { ouveOPassoS, direcaoPara, acordaComOPasso } from "../world/audicao.js";
 import { rotaDePatrulha, pontoDaRota } from "../world/patrulha.js";
@@ -209,7 +210,7 @@ export function createDungeon({ rpg, audio, onSheet, onInventory, onWiki, onGath
     const y = post.y;
     return {
       id: creatureId(def, room.id, k),
-      name,
+      name: nomeDeCriatura(name, kind, def.id),
       tier,
       kind,
       // tamanho por bicho: dois "Bytes" não têm o mesmo porte
@@ -329,7 +330,7 @@ export function createDungeon({ rpg, audio, onSheet, onInventory, onWiki, onGath
     const y = room.y + room.h / 2;
     return {
       id: `${def.id}-boss`,
-      name: def.boss,
+      name: nomeDeChefe(def.boss, def.id),
       kind: "boss",
       tier: 4,
       level: 12,

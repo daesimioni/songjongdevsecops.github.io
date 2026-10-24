@@ -23,7 +23,7 @@ export const NET = {
 };
 
 // As chaves internas mantêm o prefixo antigo de propósito: renomear apagaria
-// o progresso de quem já jogava. O nome visível é The Learning Valley.
+// o progresso de quem já jogava. O nome visível é Vale Partido.
 export const STORAGE = {
   cards: "mundo-song:cards:v2",
   xp: "mundo-song:xp:v2",

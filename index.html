@@ -3,20 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
-<title>The Learning Valley</title>
-<meta name="description" content="The Learning Valley: um vale em pixel art onde a magia tem regra. Siga as pedras, desça às cavernas e leve para fora o que acender.">
+<title>Vale Partido</title>
+<meta name="description" content="Vale Partido: um RPG em pixel art de ilhas partidas, ruínas e maré. Explore o arquipélago, desça às cavernas e volte vivo.">
 <meta name="theme-color" content="#070b18">
-<meta property="og:title" content="The Learning Valley">
-<meta property="og:description" content="The Learning Valley: um vale em pixel art onde a magia tem regra. Lógica, fractais, átomos, harmonia, redes neurais e língua portuguesa, com o que se aprende funcionando fora do vale.">
+<meta property="og:title" content="Vale Partido">
+<meta property="og:description" content="Vale Partido: um RPG em pixel art de ilhas partidas, ruínas e maré. Explore, colete, forje e enfrente o que mora no escuro.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://songjongdevsecops.github.io/">
-<meta property="og:site_name" content="The Learning Valley">
+<meta property="og:site_name" content="Vale Partido">
 <meta property="og:image" content="https://songjongdevsecops.github.io/assets/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="The Learning Valley">
-<meta name="twitter:description" content="Um vale em pixel art onde a magia tem regra: siga as pedras, desça às cavernas, leve o que acender.">
+<meta name="twitter:title" content="Vale Partido">
+<meta name="twitter:description" content="Um RPG em pixel art de ilhas partidas, ruínas e maré.">
 <meta name="twitter:image" content="https://songjongdevsecops.github.io/assets/og.png">
 <link rel="canonical" href="https://songjongdevsecops.github.io/">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
@@ -42,8 +42,8 @@
   <header class="hud hud-top">
     <div class="hud-left">
       <div class="brand">
-        <span class="brand-title">THE LEARNING VALLEY</span>
-        <span class="brand-sub">o que o vale guarda</span>
+        <span class="brand-title">VALE PARTIDO</span>
+        <span class="brand-sub">ilhas, ruínas e maré</span>
       </div>
       <div class="hud-vitals" aria-label="vida e mana">
         <div class="vital vital-hp">
@@ -100,7 +100,7 @@
     <button id="btn-bestiary" type="button">Bestiário</button>
     <button id="btn-inventory" type="button">Mochila</button>
     <button id="btn-sheet" type="button">Ficha</button>
-    <button id="btn-wiki" type="button">Wiki</button>
+    <button id="btn-wiki" type="button" hidden>Wiki</button>
   </div>
 
   <div id="zone-card" class="zone-card" hidden aria-live="polite">
@@ -154,7 +154,7 @@
           <button id="dg-sprint" class="dg-exit" type="button" aria-label="ligar ou desligar a nave" aria-pressed="false">turbo <kbd>Espaço</kbd></button>
           <button id="dg-inventory" class="dg-exit" type="button">mochila <kbd>I</kbd></button>
           <button id="dg-sheet" class="dg-exit" type="button">ficha <kbd>C</kbd></button>
-          <button id="dg-wiki" class="dg-exit" type="button">wiki <kbd>H</kbd></button>
+          <button id="dg-wiki" class="dg-exit" type="button" hidden>codex <kbd>H</kbd></button>
           <button id="dg-exit" class="dg-exit" type="button">sair <kbd>Esc</kbd></button>
         </div>
       </div>
@@ -186,7 +186,6 @@
       <h1 id="panel-title"></h1>
       <p id="panel-meta" class="panel-meta"></p>
       <div id="panel-body" class="panel-body"></div>
-      <div id="panel-live" class="panel-live"></div>
       <p class="panel-foot">mexa nas coisas, saia pelo mapa. <button type="button" class="linkish" id="panel-back">voltar ao mundo</button></p>
     </div>
   </aside>
@@ -571,7 +570,7 @@
         <div><kbd>Z</kbd><span>diário</span></div>
         <div><kbd>B</kbd><span>bestiário</span></div>
         <div><kbd>I</kbd><span>mochila</span></div>
-        <div><kbd>H</kbd><span>wiki do vale</span></div>
+        
         <div><kbd>C</kbd><span>ficha</span></div>
         <div><kbd>Esc</kbd><span>fechar</span></div>
       </div>
@@ -588,7 +587,7 @@
       </details>
       <details class="help-section"><summary>Missões, Caderno e Wiki</summary>
         <p class="help-note">Os NPCs têm missões. Aperte <kbd>F</kbd> perto deles para aceitar, responder e entregar. O Diário (<kbd>Z</kbd>) guarda o que está em andamento e quanto falta.</p>
-        <p class="help-note">A <strong>Wiki</strong> (<kbd>H</kbd>) reúne tudo sobre o jogo: 2.332 fichas em 16 abas, das 86 áreas e 93 cavernas aos 351 bichos e chefes, 561 itens, 40 receitas, encantos, 86 relíquias, pets e montarias, 291 missões, 194 NPCs, 454 páginas de curso, 102 trajes, 5 vocações, 33 fichas de sistema e 14 verbetes de história e facções. A busca ignora acento, a ficha mostra o ícone e o que entra no jogo entra na wiki sozinho; ela abre até antes de criar personagem.</p>
+        
         <p class="help-note">A <strong>Ficha</strong> (<kbd>C</kbd>) tem <strong>equipamento</strong> de arma, elmo, armadura, pernas, botas, escudo, anel e colar, e o editor de <strong>trajes</strong>. Complete as cinco estações de uma região para abrir o traje dela. A roupa é a mesma na superfície e na caverna.</p>
         <p class="help-note">O vale tem <strong>86 lugares</strong>: dezesseis antigos e um para cada seção de Matemática, Física, Química, Computação, Língua Portuguesa e das interseções entre elas, cada um com estação, caverna, caçada e missão. Lugares vizinhos se ligam por <strong>ponte</strong>; as interseções descem pelo <strong>túnel da conurbação</strong>, que também leva a qualquer capital descoberta e ao <strong>Porto Submerso</strong>, na camada -2.</p>
       </details>
@@ -599,13 +598,13 @@
         <p class="help-note">Ao lado de cada clareira há uma <strong>boca de caverna</strong>. Lá dentro, o bicho que vê você começa a batalha sozinho, e quanto mais fundo, mais forte. O chão dá ferro, erva, cristal e madeira; a forja da cidade subterrânea faz ferramentas, comida, tocha, chave e bomba. Baú fundo pede chave. <kbd>Esc</kbd> sobe de volta.</p>
       </details>
       <details class="help-section"><summary>Coleta, equipamentos e fabricação</summary>
-        <p class="help-note">A coleta é pergunta. Perto de uma <strong>árvore</strong> você corta madeira, perto da <strong>água</strong> você pesca, no veio da caverna você minera e no canteiro da fazenda você colhe. O achado sorteia o recurso e a dificuldade: mineral raro pede pergunta difícil. Acertar leva o recurso e experiência de perícia; errar deixa o recurso onde está.</p>
+        <p class="help-note">A coleta é ação. Perto de uma <strong>árvore</strong> você corta madeira, perto da <strong>água</strong> você pesca, no veio da caverna você minera e no canteiro da fazenda você colhe. O marcador corre na barra: aperte <kbd>Espaço</kbd> na faixa clara para levar o recurso. O achado raro tem faixa estreita, e o lendário pede duas batidas.</p>
         <p class="help-note">Na cidade subterrânea, a forja abre a Ficha, a mesa grava encantos permanentes, a horta quer semente e o bicho quer ração. Os veios de cristal pedem picareta. A escada do fundo sai na outra boca do continente, e a mestra vende equipamento por material.</p>
       </details>
       <details class="help-section"><summary>Conversa, conta e outros jogadores</summary>
         <p class="help-note"><kbd>Enter</kbd> abre a conversa; com ela aberta, <kbd>Enter</kbd> envia e a conversa continua ali. <kbd>Esc</kbd> fecha.</p>
         <p class="help-note">A <strong>Rede</strong> é a conversa do vale: canais por região, DMs privadas e a lista de quem está por perto. Sua conta é uma chave Nostr criada e guardada neste navegador, sem cadastro e sem servidor central. Só conteúdo marcado pelo jogo aparece ali. Na aba <strong>Pessoas</strong>, monte uma <strong>party</strong> de até oito jogadores.</p>
-        <p class="help-note">Na <strong>Rede</strong> você desafia outro jogador: escolhe uma pergunta de muito fácil a muito difícil e ele responde para se defender. Errar custa compostura, não vida nem item. Quem chega a zero fica dez segundos desativado.</p>
+        
       </details>
       <details class="help-section"><summary>Como o mundo se conecta</summary>
         <p class="help-note">O mundo não depende de servidor: a presença no mapa usa um broker MQTT público por WebSocket e a Rede usa relays Nostr públicos. Se o sinal falhar, o vale continua funcionando sozinho.</p>
@@ -613,31 +612,31 @@
     </div>
   </div>
 
-  <div id="splash" class="splash" role="dialog" aria-modal="true" aria-label="The Learning Valley">
+  <div id="splash" class="splash" role="dialog" aria-modal="true" aria-label="Vale Partido">
     <canvas id="splash-canvas" aria-hidden="true"></canvas>
     <div class="splash-vignette" aria-hidden="true"></div>
     <div class="splash-card">
-      <p class="splash-kicker">um vale onde o impossível tem regra</p>
-      <h1 class="splash-logo"><span>THE</span><b>LEARNING</b><span>VALLEY</span></h1>
-      <p class="splash-tag">Cada pedra acende uma ideia, e a ideia continua funcionando quando você sai.</p>
+      <p class="splash-kicker">um RPG de ilhas, ruínas e maré</p>
+      <h1 class="splash-logo"><span>VALE</span><b>PARTIDO</b></h1>
+      <p class="splash-tag">Toda ilha guarda uma ruína. Toda ruína guarda um caminho.</p>
       <button type="button" id="splash-enter" class="splash-enter">entrar no vale <kbd>Enter</kbd></button>
-      <p class="splash-foot">ande devagar · repare em tudo · leve o que acender</p>
+      <p class="splash-foot">ande sem pressa · explore · volte vivo</p>
     </div>
   </div>
 
   <div id="enter-screen" class="enter-screen" hidden aria-hidden="true">
     <div class="enter-inner">
-      <p class="enter-kicker">the learning valley</p>
-      <div class="enter-logo">THE<br><b>LEARNING</b><br>VALLEY</div>
+      <p class="enter-kicker">vale partido</p>
+      <div class="enter-logo">VALE<br><b>PARTIDO</b></div>
       <p class="enter-sub">o vale está acordando...</p>
     </div>
   </div>
 
   <div id="intro" class="modal intro" role="dialog" aria-modal="true" aria-labelledby="intro-title" inert>
     <div class="intro-card">
-      <p class="intro-eyebrow">the learning valley · 2026</p>
-      <h1 id="intro-title">THE<br>LEARNING VALLEY</h1>
-      <p class="intro-lead">O vale é feito de pedras que guardam ideias, e toda ideia daqui continua funcionando lá fora. Nada é truque. Ande sem pressa: o caminho não está escrito, e cada pedra acende quando você chega perto.</p>
+      <p class="intro-eyebrow">vale partido · 2026</p>
+      <h1 id="intro-title">VALE<br>PARTIDO</h1>
+      <p class="intro-lead">O mar partiu o vale em ilhas, e o que sobrou foram ruínas, feras e gente teimosa. Não há mapa inteiro: há o chão que você pisa e a maré que decide o resto. Escolha um rumo, forje o que der e não confie no que brilha no escuro.</p>
 
       <section id="intro-key-step" class="intro-step">
         <div id="intro-saved" class="intro-saved" hidden>
@@ -658,7 +657,7 @@
         </div>
         <p class="intro-note">A chave é a sua conta: guarda o que você encontrou, o que carrega e a conversa. <strong>Guardar nesta máquina</strong> evita digitar toda vez. Sem chave, o vale continua aberto; a Rede, não.</p>
         <button type="button" id="intro-skip" class="intro-link">entrar sem a Rede, só no mundo</button>
-        <button type="button" id="intro-wiki" class="intro-link">ver a wiki do vale antes de entrar</button>
+        
       </section>
 
       <section id="intro-new-step" class="intro-step" hidden>
@@ -739,7 +738,7 @@
     </div>
   </div>
 
-  <noscript><p class="noscript">O vale precisa de JavaScript para abrir o caminho. O texto das pedras continua aqui, mas sem o mapa.</p></noscript>
+  <noscript><p class="noscript">Vale Partido precisa de JavaScript para abrir o caminho. Sem ele, o mapa e as ruínas ficam fechados.</p></noscript>
 </div>
 <div id="update-banner" class="update-banner" role="status" aria-live="polite" hidden>
     <span id="update-text">Há uma atualização do vale. Você volta no mesmo lugar.</span>

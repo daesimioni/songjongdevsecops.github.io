@@ -1,6 +1,12 @@
-# The Learning Valley: conceito, engenharia e histórico
+# Vale Partido: conceito, engenharia e histórico
 
-Esta pasta tem três camadas, e nenhuma delas substitui o
+Esta pasta guarda o histórico de projeto. Os documentos 00 a 13 descrevem o jogo
+educativo que existiu até outubro de 2026; a partir daí o jogo virou **Vale
+Partido**, um RPG de ação puro, e esses textos ficam como registro, não como
+plano. O estado atual está no [`../../README.md`](../../README.md) e em
+[`../architecture.md`](../architecture.md).
+
+A pasta tem três camadas, e nenhuma delas substitui o
 [`39-BACKLOG-VERIFICADO.md`](39-BACKLOG-VERIFICADO.md):
 
 - **00 a 13, conceito e desenho macro, congelado.** Descrevem a intenção da data
@@ -10,18 +16,16 @@ Esta pasta tem três camadas, e nenhuma delas substitui o
 - **20 a 38, auditorias datadas.** O que foi encontrado e corrigido em cada
   passada. São histórico de trabalho, não pendências.
 
-O estado atual do jogo está no [`../README.md`](../README.md). A lista única de
-pendências verificadas e a de decisões do dono estão no
+A lista única de pendências verificadas e a de decisões do dono estão no
 [`39-BACKLOG-VERIFICADO.md`](39-BACKLOG-VERIFICADO.md).
 
 ## 1. O jogo em uma página
 
-Um arquipélago educativo em pixel art, jogado a pé, com sete disciplinas
-(Computação, Matemática, Física, Química, Música, IA e Língua), duas camadas de
-mundo (superfície e subsolo), cidades conurbadas, bestiário, equipamento,
-magias, ofícios e um motor de aprendizagem por conceito. O combate é a pergunta;
-o mundo responde ao entendimento. A inspiração é o Tibia na estrutura (mundo
-aberto, bestiário, slots, magias, cidades, NPCs), não no grind nem na punição.
+Um arquipélago partido em pixel art, jogado a pé, com oito regiões, duas camadas
+de mundo (superfície e subsolo), cidades conurbadas, bestiário, equipamento,
+magias, ofícios, facções e coleta por golpe certeiro. O combate é ação no mapa,
+sem pergunta nem prova. A inspiração é o Tibia na estrutura (mundo aberto,
+bestiário, slots, magias, cidades, NPCs), não no grind nem na punição.
 
 ## 2. Ordem de leitura
 

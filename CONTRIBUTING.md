@@ -1,4 +1,4 @@
-# Contribuir com The Learning Valley
+# Contribuir com Vale Partido
 
 ## Ambiente e comandos
 

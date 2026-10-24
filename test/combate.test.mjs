@@ -289,23 +289,23 @@ function vencer(rpg, limite = 40) {
   rpg.flee();
 }
 
-// ---- 8. a pergunta saiu do monstro e ficou na coleta ----
+// ---- 8. a pergunta saiu do jogo; a coleta virou golpe de precisão ----
 {
   const duel = fs.readFileSync(new URL("../src/ui/duel.js", import.meta.url), "utf8");
   const combate = fs.readFileSync(new URL("../src/gameplay/combate.js", import.meta.url), "utf8");
   const gather = fs.readFileSync(new URL("../src/ui/gather.js", import.meta.url), "utf8");
   assert.ok(!/question|pergunta|lerPergunta|duel-option|answer\(/.test(duel), "a tela do monstro ainda tem pergunta");
   assert.ok(!/d\.question|question\.options|lerPergunta|rpg\.answer/.test(combate), "o motor do monstro ainda tem pergunta");
-  assert.match(gather, /lerPergunta/, "a coleta perdeu a leitura da pergunta");
-  assert.match(gather, /duelDeck\(/, "a coleta perdeu o baralho adaptativo");
-  assert.match(gather, /registrarConceito/, "a coleta não registra mais o conceito");
+  assert.ok(!/lerPergunta|duelDeck|buildDeck|registrarConceito/.test(gather), "a coleta ainda tem pergunta");
+  assert.match(gather, /skill-meter/, "a coleta não tem a barra de precisão");
+  assert.match(gather, /faixaDoTier/, "a coleta não tem faixa por dificuldade");
   const dungeon = fs.readFileSync(new URL("../src/app/dungeon.js", import.meta.url), "utf8");
   const sheet = fs.readFileSync(new URL("../src/ui/sheet.js", import.meta.url), "utf8");
   const app = fs.readFileSync(new URL("../src/app/app.js", import.meta.url), "utf8");
-  assert.match(dungeon, /onFarm\?\.\(\{ continent: state\.def\.continent/, "a fazenda não pergunta antes de colher");
-  assert.match(sheet, /onCooking\?\.\(recipe\)/, "a cozinha não pergunta antes de fazer comida");
-  assert.match(app, /function openFarm\(/, "o app não abre a pergunta da fazenda");
-  assert.match(app, /function openCooking\(/, "o app não abre a pergunta da cozinha");
+  assert.match(dungeon, /onFarm\?\.\(\{ continent: state\.def\.continent/, "a fazenda não abre a coleta de ação");
+  assert.match(sheet, /onCooking\?\.\(recipe\)/, "a cozinha não abre a coleta de ação");
+  assert.match(app, /function openFarm\(/, "o app não abre a coleta da fazenda");
+  assert.match(app, /function openCooking\(/, "o app não abre a coleta da cozinha");
 }
 
 console.log("ok combate: J/K/L/runas, fases, matilha, treino e 464 criaturas + 93 chefes no mesmo motor");

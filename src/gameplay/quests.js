@@ -62,7 +62,7 @@ export const QUESTS = [
     title: "A volta inteira",
     brief: "Quatrocentas e cinquenta e quatro pedras. Sete regiões. Quando o mapa acabar, o porto ainda estará aqui.",
     goal: { type: "cards", count: 454 },
-    reward: { xp: 150, title: "The Learning Valley" },
+    reward: { xp: 150, title: "Herói do Vale Partido" },
   },
   {
     id: "vai-um",

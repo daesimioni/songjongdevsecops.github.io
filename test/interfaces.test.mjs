@@ -65,7 +65,7 @@ const caderno = fs.readFileSync(new URL("../src/ui/caderno.js", import.meta.url)
 const sheet = fs.readFileSync(new URL("../src/ui/sheet.js", import.meta.url), "utf8");
 const bestiary = fs.readFileSync(new URL("../src/ui/bestiary.js", import.meta.url), "utf8");
 check(/from "\.\.\/ui\/caderno\.js"/.test(app) && /criarCaderno\s*\(/.test(app), "o app não monta o caderno");
-for (const painel of ["journal", "sheet", "inventory", "bestiary", "wiki"]) {
+for (const painel of ["journal", "sheet", "inventory", "bestiary"]) {
   check(new RegExp(`id: "${painel}"`).test(caderno), `o caderno não conhece o painel ${painel}`);
 }
 check(/classList\.add\("book-card"\)/.test(caderno), "o caderno não dá a moldura ao painel");

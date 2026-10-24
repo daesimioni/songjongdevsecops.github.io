@@ -1,6 +1,5 @@
 /* Ordem da cascata preservada; o build reúne os módulos em um arquivo. */
 @import url("./base.css");
-@import url("./learning.css");
 @import url("./social.css");
 @import url("./combat.css");
 @import url("./chat.css");
