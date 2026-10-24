@@ -128,6 +128,16 @@
         "runtime item/spell mapping"
       ],
       "output": "assets/magic/cure-poison.png"
+    },
+    {
+      "id": "arte/magias/316b17d787d80fd674a5",
+      "archive": "magias.zip",
+      "member": "Magias/Paladin/Sharpshooter.png",
+      "status": "library",
+      "location": "feat/arte-autoral-sharpshooter: assets/magic/sharpshooter.png",
+      "missing": [],
+      "sourceSha256": "4744976ab7a8964e022c480a7244e58cd358a159330693a534171bdeb6a643f2",
+      "output": "assets/magic/sharpshooter.png"
     }
   ],
   "archives": [
