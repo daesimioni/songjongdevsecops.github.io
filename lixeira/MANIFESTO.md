@@ -32,3 +32,11 @@ Formato:
 - **Era/contexto:** camada educativa do The Learning Valley: banco de 887 perguntas, 454 páginas de lição, enciclopédia de 2.311 fichas, duelo de pergunta entre jogadores e a Grande Prova da Biblioteca Afogada.
 - **Reverter:** devolver as pastas para `src/`, `css/` e `assets/`; restaurar imports em `app.js`, `content.js`, `rpg-data.js`, `quests.js`, `identity.js` e os testes; os commits anteriores a 2026-10-23 têm o estado íntegro.
 - **Tamanho:** 1,6M de código e conteúdo (o dist caiu de 438 para 424 arquivos só nesta primeira passada; a segunda removeu o texto das lições).
+
+## 2026-10-23 — biblioteca modular interna
+- **Pasta:** `2026-10-23-wiki-de-sprites/`
+- **Origem:** `tools/sprite-library.html` e `tools/sprite-library.mjs` (ferramenta interna)
+- **Motivo:** virou a wiki pública `sprites.html`, com kit, criaturas, gente e itens; a cópia em `tools/` só era acessível pelo disco e usava `a.slug` em vez do id do kit.
+- **Era/contexto:** primeira galeria do kit modular, aberta só por `node tools/serve.mjs` e sem link no jogo.
+- **Reverter:** devolver os dois arquivos para `tools/` e remover o link de `index.html` para `sprites.html`.
+- **Tamanho:** 10K

@@ -7,7 +7,7 @@ export async function build(root = projectRoot) {
   const output = resolve(root, 'dist');
   await rm(output, { recursive:true, force:true });
   await mkdir(output, { recursive:true });
-  for (const entry of ['index.html', 'src', 'assets', 'wasm', 'LICENSE']) {
+  for (const entry of ['index.html', 'sprites.html', 'src', 'assets', 'wasm', 'LICENSE']) {
     await cp(resolve(root,entry), resolve(output,entry), { recursive:true });
   }
   await mkdir(resolve(output,'css'));

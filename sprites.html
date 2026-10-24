@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Wiki de sprites — Vale Partido</title>
+    <meta name="description" content="Todos os sprites do Vale Partido, com visões, estados e animações." />
+    <style>
+      :root {
+        color-scheme: dark;
+        font: 16px/1.45 system-ui, sans-serif;
+        background: #0c1126;
+        color: #e8ddc8;
+      }
+      * { box-sizing: border-box; }
+      [hidden] { display: none !important; }
+      body { margin: 0; }
+      a { color: #ffc857; }
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        padding: 1.1rem clamp(0.8rem, 3vw, 2rem) 0.9rem;
+        background: linear-gradient(180deg, #141a36 90%, rgba(20, 26, 54, 0.92));
+        border-bottom: 1px solid #2b3155;
+      }
+      .topo {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 0.6rem 1rem;
+        margin-bottom: 0.7rem;
+      }
+      h1 {
+        margin: 0;
+        font-family: ui-monospace, monospace;
+        font-size: clamp(1.1rem, 3vw, 1.6rem);
+        letter-spacing: 0.06em;
+        color: #ffc857;
+      }
+      .sub { margin: 0; color: #9fb0c9; max-width: 76ch; }
+      .controles {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem 0.8rem;
+        align-items: center;
+      }
+      label { display: inline-flex; align-items: center; gap: 0.35rem; color: #c9d5e6; }
+      input, select, button {
+        font: inherit;
+        padding: 0.45rem 0.6rem;
+        color: inherit;
+        background: #10162c;
+        border: 1px solid #46507a;
+        border-radius: 6px;
+      }
+      input[type="search"] { width: min(22rem, 78vw); }
+      input[type="checkbox"] { accent-color: #61f4c0; }
+      button { cursor: pointer; }
+      button:hover, button:focus-visible { border-color: #ffc857; }
+      :focus-visible { outline: 3px solid #ffc857; outline-offset: 2px; }
+      #status { margin: 0.55rem 0 0; color: #9fb0c9; font-size: 0.92rem; }
+      nav.abas { display: flex; gap: 0.4rem; padding: 0.65rem 0 0; overflow-x: auto; }
+      nav.abas button {
+        white-space: nowrap;
+        border-radius: 999px;
+        font-family: ui-monospace, monospace;
+        font-size: 0.82rem;
+      }
+      nav.abas button[aria-pressed="true"] {
+        background: #61f4c0;
+        color: #0c1126;
+        border-color: #61f4c0;
+        font-weight: 700;
+      }
+      main {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr));
+        gap: 0.9rem;
+        padding: 1rem clamp(0.8rem, 3vw, 2rem) 4rem;
+      }
+      article {
+        display: flex;
+        flex-direction: column;
+        gap: 0.45rem;
+        padding: 0.8rem;
+        background: #141a33;
+        border: 1px solid #2b3155;
+        border-radius: 8px;
+      }
+      article h2 {
+        margin: 0;
+        font-size: 1rem;
+        font-family: ui-monospace, monospace;
+        color: #e8ddc8;
+      }
+      article .tags { display: flex; flex-wrap: wrap; gap: 0.25rem; }
+      article .tags span {
+        padding: 0.05rem 0.35rem;
+        border: 1px solid #3a436e;
+        border-radius: 3px;
+        font-size: 0.7rem;
+        color: #9fb0c9;
+      }
+      canvas {
+        width: 100%;
+        height: 190px;
+        image-rendering: pixelated;
+        background: repeating-conic-gradient(#10162c 0% 25%, #151c38 0% 50%) 0/16px 16px;
+        border-radius: 4px;
+      }
+      article code {
+        font-size: 0.72rem;
+        color: #8fe3cf;
+        overflow-wrap: anywhere;
+      }
+      article small { color: #9fb0c9; min-height: 1.2em; }
+      .linha { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+      .linha select { flex: 1 1 0; min-width: 0; }
+      .linha button { flex: 0 0 auto; font-size: 0.78rem; }
+      .vazio { padding: 2rem; color: #9fb0c9; }
+      footer { padding: 1rem clamp(0.8rem, 3vw, 2rem) 3rem; color: #9fb0c9; }
+      @media (prefers-reduced-motion: reduce) {
+        * { scroll-behavior: auto !important; }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="topo">
+        <h1>WIKI DE SPRITES</h1>
+        <p class="sub">
+          Todas as peças do jogo em pixels lógicos: cenário, mobília, criatura,
+          ataque, clima e conjuração. Troque a visão, o estado e veja a animação.
+          O contorno verde, quando ligado, mostra colisão e alcance.
+        </p>
+        <a href="./index.html">voltar ao jogo</a>
+      </div>
+      <nav id="modos" class="abas" aria-label="coleções de sprites"></nav>
+      <div class="controles">
+        <label>Buscar <input id="query" type="search" placeholder="Ex.: lobo, porta, fogo" autocomplete="off" /></label>
+        <label>Animar <input id="motion" type="checkbox" /></label>
+        <label id="rotulo-colisao">Colisões e alcance <input id="collision" type="checkbox" /></label>
+        <button id="limpar" type="button">limpar filtros</button>
+      </div>
+      <nav id="categorias" class="abas" aria-label="categorias de sprite"></nav>
+      <p id="status" role="status"></p>
+    </header>
+    <main id="cards"></main>
+    <footer>
+      Os sprites são desenhados pelo próprio jogo, sem atlas externo. A mesma
+      peça que aparece aqui é a que o Vale Partido usa no mapa, na caverna e no
+      combate.
+    </footer>
+    <script type="module" src="./src/app/sprite-wiki.js"></script>
+  </body>
+</html>

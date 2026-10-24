@@ -10,6 +10,7 @@ let server;
 try {
   for (const dir of ['src/core','src/ui','assets','wasm','css']) await mkdir(join(root,dir),{recursive:true});
   await writeFile(join(root,'index.html'),'<link rel="stylesheet" href="css/style.css"><script type="module" src="src/core/example.js"></script>');
+  await writeFile(join(root,'sprites.html'),'<!doctype html><title>sprites</title>');
   await writeFile(join(root,'LICENSE'),'license');
   await writeFile(join(root,'src/core/example.js'),'export const example = 1;');
   await writeFile(join(root,'src/ui/example.js'),'export const ui = 1;');

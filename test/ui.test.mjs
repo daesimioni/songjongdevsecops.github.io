@@ -6,6 +6,7 @@ import path from "node:path";
 
 const root = path.resolve(import.meta.dirname, "..");
 const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
+const htmlSprites = fs.readFileSync(path.join(root, "sprites.html"), "utf8");
 const jsFiles = [];
 function walk(dir) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -21,8 +22,10 @@ const check = (cond, message) => { if (!cond) faults.push(message); };
 
 // ids únicos e todos os alvos existentes
 const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map((m) => m[1]);
-const idSet = new Set(ids);
-check(idSet.size === ids.length, `ids repetidos no index.html: ${ids.filter((id, i) => ids.indexOf(id) !== i).join(", ")}`);
+const idsSprites = [...htmlSprites.matchAll(/\bid="([^"]+)"/g)].map((m) => m[1]);
+const idSet = new Set([...ids, ...idsSprites]);
+check(new Set(ids).size === ids.length, `ids repetidos no index.html: ${ids.filter((id, i) => ids.indexOf(id) !== i).join(", ")}`);
+check(new Set(idsSprites).size === idsSprites.length, `ids repetidos no sprites.html: ${idsSprites.filter((id, i) => idsSprites.indexOf(id) !== i).join(", ")}`);
 
 // ids criados em tempo de execução por módulos (documentados aqui de propósito)
 const dynamicIds = new Set(["rede-msgs", "pvp-timer"]);

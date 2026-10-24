@@ -397,7 +397,8 @@ export function aplicarReskin() {
       if (item.desc) item.desc = limpar(item.desc);
       if (aindaAula.test(`${item.name} ${item.desc || ""}`)) {
         const h = hash(id);
-        item.name = `${pick(["Fragmento", "Ampola", "Pedra", "Selo", "Frasco", "Talismã", "Cristal", "Âmbar"], h)} de ${pick(material, h >>> 4)} ${pick(EPITETO, h >>> 8)}`;
+        const prefixo = item.heal || item.mana || item.use === "food" ? "Frasco" : item.relic ? "Talismã" : pick(["Fragmento", "Pedra", "Selo", "Cristal", "Âmbar"], h);
+        item.name = `${prefixo} de ${pick(material, h >>> 4)} ${pick(EPITETO, h >>> 8)}`;
         item.desc = item.relic
           ? "Uma relíquia tirada das ruínas. +5 de vida máxima."
           : "Um achado de quem desce às ruínas e volta inteiro.";

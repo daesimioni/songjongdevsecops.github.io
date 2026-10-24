@@ -7,7 +7,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-export const CAMINHOS_DA_VERSAO = ["index.html", "css", "src", "assets"];
+export const CAMINHOS_DA_VERSAO = ["index.html", "sprites.html", "css", "src", "assets"];
 
 export function arquivosDaVersao(raiz = process.cwd()) {
   const saida = execFileSync("git", ["ls-files", "-z", "--cached", "--others", "--exclude-standard", "--", ...CAMINHOS_DA_VERSAO], {
