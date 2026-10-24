@@ -60,7 +60,7 @@ function torchGlowSprite() {
 
 // ---------- a caverna em si ----------
 
-export function createDungeon({ rpg, audio, onSheet, onInventory, onWiki, onGather, onFarm, onExit, onKeeper, onConurbation, onElevador, onPortal, onVocacao, isBlocked, onCombatFinished, onCombatKey, vitais = null, placa = null, avatar = {}, look = null, gear = null, getClima = null, collisionDebug = false }) {
+export function createDungeon({ rpg, audio, onSheet, onInventory, onGather, onFarm, onExit, onKeeper, onConurbation, onElevador, onPortal, onVocacao, isBlocked, onCombatFinished, onCombatKey, vitais = null, placa = null, avatar = {}, look = null, gear = null, getClima = null, collisionDebug = false }) {
   const canvas = $("dungeon-canvas");
   const ctx = canvas?.getContext("2d", { alpha: false }) || null;
 
@@ -1098,8 +1098,8 @@ export function createDungeon({ rpg, audio, onSheet, onInventory, onWiki, onGath
   }
 
   // Peça de assinatura da disciplina: cada uma dá uma coisa por descida. A
-  // oficina afia a arma, a biblioteca guarda uma dica para a próxima pergunta
-  // e o observatório acende a sala do chefe no mapa.
+  // oficina afia a arma, a biblioteca devolve mana e o observatório acende a
+  // sala do chefe no mapa.
   function usarPecaTematica(obj) {
     if (obj.used) {
       say("Esta peça já rendeu o que tinha nesta descida. Volte noutra.", 2800);
@@ -1115,10 +1115,10 @@ export function createDungeon({ rpg, audio, onSheet, onInventory, onWiki, onGath
       return;
     }
     if (obj.kind === "biblioteca") {
-      rpg.data.buffs.dica = Date.now() + 600000;
+      rpg.addMana(rpg.manaMax());
       rpg.save();
       obj.used = true;
-      say("A biblioteca abre uma página: a próxima pergunta de coleta vem com duas alternativas riscadas.", 4400);
+      say("A biblioteca devolve o fôlego: a mana volta cheia.", 4400);
       audio.blip();
       updateHud();
       return;
@@ -1990,10 +1990,6 @@ export function createDungeon({ rpg, audio, onSheet, onInventory, onWiki, onGath
     }
     if (k === "i") {
       onInventory?.();
-      return;
-    }
-    if (k === "h") {
-      onWiki?.();
       return;
     }
     if (["w", "a", "s", "d", "arrowup", "arrowdown", "arrowleft", "arrowright"].includes(k)) pararSeguir();

@@ -100,7 +100,6 @@
     <button id="btn-bestiary" type="button">Bestiário</button>
     <button id="btn-inventory" type="button">Mochila</button>
     <button id="btn-sheet" type="button">Ficha</button>
-    <button id="btn-wiki" type="button" hidden>Wiki</button>
   </div>
 
   <div id="zone-card" class="zone-card" hidden aria-live="polite">
@@ -154,7 +153,6 @@
           <button id="dg-sprint" class="dg-exit" type="button" aria-label="ligar ou desligar a nave" aria-pressed="false">turbo <kbd>Espaço</kbd></button>
           <button id="dg-inventory" class="dg-exit" type="button">mochila <kbd>I</kbd></button>
           <button id="dg-sheet" class="dg-exit" type="button">ficha <kbd>C</kbd></button>
-          <button id="dg-wiki" class="dg-exit" type="button" hidden>codex <kbd>H</kbd></button>
           <button id="dg-exit" class="dg-exit" type="button">sair <kbd>Esc</kbd></button>
         </div>
       </div>
@@ -228,34 +226,6 @@
     </div>
   </div>
 
-  <div id="biblioteca" class="modal" role="dialog" aria-modal="true" aria-labelledby="biblioteca-title" hidden>
-    <div class="modal-card">
-      <div class="modal-head">
-        <div>
-          <p class="inv-kicker">a corrente das sete missões abriu a porta</p>
-          <h2 id="biblioteca-title">Acervo da Biblioteca Afogada</h2>
-        </div>
-        <button type="button" class="hud-btn" data-close="biblioteca">fechar <kbd>Esc</kbd></button>
-      </div>
-      <p class="travel-lead" id="biblioteca-lead">As alas guardam o que o vale aprendeu. Escolha uma e o que ler nela.</p>
-      <div id="biblioteca-prova" class="npc-muted">
-        <p class="npc-line" id="biblioteca-prova-status">A Grande Prova está aberta: três fases e um desfecho.</p>
-        <button type="button" id="biblioteca-prova-btn" class="quest-btn">começar a Grande Prova</button>
-      </div>
-      <div id="biblioteca-alas" class="wiki-tabs" role="tablist" aria-label="alas do acervo">
-        <button type="button" class="wiki-tab" data-biblioteca-ala="conceitos" role="tab" aria-selected="true" aria-controls="biblioteca-list">Conceitos</button>
-        <button type="button" class="wiki-tab" data-biblioteca-ala="lore" role="tab" aria-selected="false" aria-controls="biblioteca-list">Lore</button>
-        <button type="button" class="wiki-tab" data-biblioteca-ala="pratica" role="tab" aria-selected="false" aria-controls="biblioteca-list">Prática</button>
-      </div>
-      <div class="search-row">
-        <input id="biblioteca-filter" class="travel-filter" type="search" placeholder="filtrar por nome ou continente" autocomplete="off" aria-label="filtrar o acervo">
-        <button type="button" id="biblioteca-clear" class="hud-btn" disabled>limpar busca</button>
-      </div>
-      <p id="biblioteca-status" class="search-status" role="status"></p>
-      <p id="biblioteca-empty" class="search-empty" hidden>Nenhuma entrada encontrada. Tente outro nome ou limpe a busca.</p>
-      <div id="biblioteca-list" class="travel-list" role="tabpanel"></div>
-    </div>
-  </div>
 
   <div id="guilda" class="modal" role="dialog" aria-modal="true" aria-labelledby="guilda-title" hidden>
     <div class="modal-card">
@@ -271,19 +241,6 @@
     </div>
   </div>
 
-  <div id="desfecho" class="modal" role="dialog" aria-modal="true" aria-labelledby="desfecho-title" hidden>
-    <div class="modal-card">
-      <div class="modal-head">
-        <div>
-          <p class="inv-kicker">o guardião caiu; a porta está aberta</p>
-          <h2 id="desfecho-title">A Grande Prova</h2>
-        </div>
-        <button type="button" class="hud-btn" data-close="desfecho">fechar <kbd>Esc</kbd></button>
-      </div>
-      <p class="travel-lead" id="desfecho-lead">O acervo espera uma escolha. Ela fica no seu save e não pode ser refeita.</p>
-      <div id="desfecho-body"></div>
-    </div>
-  </div>
 
   <div id="npc" class="modal" role="dialog" aria-modal="true" aria-labelledby="npc-title" hidden>
     <div class="modal-card npc-card">
@@ -371,27 +328,6 @@
     </div>
   </div>
 
-  <div id="wiki" class="modal" role="dialog" aria-modal="true" aria-labelledby="wiki-title" hidden>
-    <div class="modal-card wiki-card">
-      <div class="modal-head">
-        <div>
-          <p class="inv-kicker">tudo sobre o vale, aberto para todos</p>
-          <h2 id="wiki-title">Wiki do Vale</h2>
-        </div>
-        <button type="button" class="hud-btn" data-close="wiki">fechar <kbd>Esc</kbd></button>
-      </div>
-      <div class="wiki-tools">
-        <div class="wiki-search-row"><input id="wiki-search" class="travel-filter" type="search" placeholder="Buscar no compêndio…" autocomplete="off" aria-label="Buscar na wiki" aria-controls="wiki-list"><button id="wiki-clear" class="hud-btn" type="button" aria-label="Limpar busca">Limpar</button></div>
-        <div id="wiki-tabs" class="wiki-tabs" role="tablist" aria-label="categorias da wiki"></div>
-      </div>
-      <section id="wiki-intro" class="wiki-intro" aria-label="Bem-vindo à Wiki do Vale"></section>
-      <p id="wiki-resumo" class="wiki-resumo" aria-live="polite"></p>
-      <div id="wiki-list" class="wiki-list" role="tabpanel"></div>
-      <button type="button" id="wiki-more" class="hud-btn wiki-more" aria-controls="wiki-list" hidden>mostrar mais</button>
-      <div id="wiki-detail" class="wiki-detail" hidden></div>
-      <p class="inv-hint">Referência completa do vale. Inclui nomes de chefes e recompensas; respostas e capítulos têm aviso de spoiler. <kbd>H</kbd> abre e fecha.</p>
-    </div>
-  </div>
 
   <div id="outfits" class="modal" role="dialog" aria-modal="true" aria-labelledby="outfits-title" hidden>
     <div class="modal-card outfits-card">
@@ -475,16 +411,6 @@
     </div>
   </div>
 
-  <div id="pvp" class="modal" role="dialog" aria-modal="true" aria-labelledby="pvp-title" hidden>
-    <div class="modal-card pvp-card">
-      <div class="modal-head">
-        <h2 id="pvp-title">Duelo de perguntas</h2>
-        <button type="button" class="hud-btn" data-close="pvp">fechar <kbd>Esc</kbd></button>
-      </div>
-      <p id="pvp-sub" class="pvp-sub" aria-live="polite"></p>
-      <div id="pvp-body"></div>
-    </div>
-  </div>
 
   <div id="duel" class="modal duel-modal" role="dialog" aria-modal="true" aria-labelledby="duel-name" hidden>
     <div class="modal-card duel-card">
@@ -579,17 +505,17 @@
         <span>aumenta o texto dos painéis de leitura no computador e no celular</span>
       </div>
       <details class="help-section" open><summary>Movimentação, celular e mapa</summary>
-        <p class="help-note">No celular, o direcional anda, <strong>A</strong> interage e o <strong>Turbo</strong> liga a nave. Os botões do topo abrem Falar, Rede e o Caderno; o Caderno reúne Diário, Ficha, Mochila, Bestiário e Wiki, e a conversa sobe junto com o teclado. A praça é pública: quem está na mesma sala vê seu apelido, seu boneco e suas mensagens. Use um apelido, não seu nome completo.</p>
+        <p class="help-note">No celular, o direcional anda, <strong>A</strong> interage e o <strong>Turbo</strong> liga a nave. Os botões do topo abrem Falar, Rede e o Caderno; o Caderno reúne Diário, Ficha, Mochila e Bestiário, e a conversa sobe junto com o teclado. A praça é pública: quem está na mesma sala vê seu apelido, seu boneco e suas mensagens. Use um apelido, não seu nome completo.</p>
         <p class="help-note">Clique no chão e o boneco vai até ali, contornando água, parede e árvore. Clique numa estação, num NPC ou numa boca de caverna para chegar perto e interagir. Se a conversa estiver aberta, o clique no mundo fecha a conversa e anda.</p>
         <p class="help-note"><kbd>Espaço</kbd> liga e desliga a nave. No celular, é o botão <strong>Turbo</strong>. A nave encurta a distância, mas não atravessa água: as pontes continuam sendo o caminho. Segure o botão do mouse e arraste pelo chão para o boneco seguir o ponteiro, sem precisar clicar de novo a cada trecho.</p>
         <p class="help-note">As <strong>Pedras do Porto</strong> são os monólitos acesos nas docas. Elas abrem a viagem para os lugares que você já visitou. As pontes também levam a pé.</p>
         <p class="help-note">O <strong>minimapa</strong> mostra a coordenada <kbd>x y z</kbd>: z 0 é a superfície, z -1 o subsolo e z -2 o Porto Submerso. A roda do mouse e os botões <strong>−</strong> e <strong>+</strong> aproximam, arrastar solta o mapa do boneco para espiar outro canto e o botão <strong>mapa</strong> volta a seguir e abre o vale inteiro, um ponto já revelado leva o boneco até lá e o <strong>−</strong> do canto recolhe o mapa para uma fita fina. O botão <strong>⤢</strong> abre o mesmo mapa em tela cheia, e o <kbd>Esc</kbd> volta ao canto. Dentro da caverna o mapa é o da caverna, e recolhe do mesmo jeito.</p>
       </details>
-      <details class="help-section"><summary>Missões, Caderno e Wiki</summary>
-        <p class="help-note">Os NPCs têm missões. Aperte <kbd>F</kbd> perto deles para aceitar, responder e entregar. O Diário (<kbd>Z</kbd>) guarda o que está em andamento e quanto falta.</p>
+      <details class="help-section"><summary>Missões, Caderno e mapa</summary>
+        <p class="help-note">Os NPCs têm missões. Aperte <kbd>F</kbd> perto deles para aceitar e entregar. O Diário (<kbd>Z</kbd>) guarda o que está em andamento e quanto falta.</p>
         
-        <p class="help-note">A <strong>Ficha</strong> (<kbd>C</kbd>) tem <strong>equipamento</strong> de arma, elmo, armadura, pernas, botas, escudo, anel e colar, e o editor de <strong>trajes</strong>. Complete as cinco estações de uma região para abrir o traje dela. A roupa é a mesma na superfície e na caverna.</p>
-        <p class="help-note">O vale tem <strong>86 lugares</strong>: dezesseis antigos e um para cada seção de Matemática, Física, Química, Computação, Língua Portuguesa e das interseções entre elas, cada um com estação, caverna, caçada e missão. Lugares vizinhos se ligam por <strong>ponte</strong>; as interseções descem pelo <strong>túnel da conurbação</strong>, que também leva a qualquer capital descoberta e ao <strong>Porto Submerso</strong>, na camada -2.</p>
+        <p class="help-note">A <strong>Ficha</strong> (<kbd>C</kbd>) tem <strong>equipamento</strong> de arma, elmo, armadura, pernas, botas, escudo, anel e colar, e o editor de <strong>trajes</strong>. Abra as estações de uma região para destravar o traje dela. A roupa é a mesma na superfície e na caverna.</p>
+        <p class="help-note">O vale tem <strong>86 lugares</strong> espalhados por oito regiões, cada um com estação, caverna, caçada e missão. Lugares vizinhos se ligam por <strong>ponte</strong>; as interseções descem pelo <strong>túnel da conurbação</strong>, que também leva a qualquer capital descoberta e ao <strong>Porto Submerso</strong>, na camada -2.</p>
       </details>
       <details class="help-section"><summary>Combate, cavernas e treino</summary>
         <p class="help-note">Na superfície, as clareiras com bandeira têm um <strong>instrutor</strong>. Com ele você treina a luta da caverna em três dificuldades, <strong>com a vida parando em 1 e sem levar item</strong>. A <strong>Ficha</strong> (<kbd>C</kbd>) mostra vida, perícias e mochila; a <strong>mochila</strong> (<kbd>I</kbd>) abre direto, e na caverna também tem botão no topo.</p>

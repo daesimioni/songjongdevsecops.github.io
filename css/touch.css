@@ -5,12 +5,12 @@
   html, body { overscroll-behavior: none; }
   button, .pill, .check, a { touch-action: manipulation; }
   .hud-btn, .pill, .dg-exit, .rede-tab, .chatbar button { min-height: 40px; }
-  .modal-head .hud-btn, .pvp-action, .duel-next, .duel-option, .pvp-option,
+  .modal-head .hud-btn, .duel-next, .duel-option,
   .rede-mini, .training-card, .intro-form .start, .panel-head .hud-btn {
     min-height: 44px;
   }
   .duel-option kbd { display: inline-flex; min-width: 22px; min-height: 22px; }
-  .pvp-option kbd, .intro-controls kbd { display: none; }
+  .intro-controls kbd { display: none; }
   #world, #dungeon-canvas, #touch, .dpad button, .touch-action, .touch-sprint {
     -webkit-touch-callout: none;
     user-select: none;
@@ -81,15 +81,13 @@
   }
   .modal-head h2 { font-size: 12px; }
   .modal-head .hud-btn { min-height: 40px; padding: 0 10px; }
-  .duel-card, .pvp-card { width: 100%; }
+  .duel-card { width: 100%; }
   #duel-name { font-size: clamp(14px, 4.4vw, 18px); }
   .duel-top { gap: 10px; }
-  .duel-option, .pvp-option { padding: 12px; font-size: 13px; min-height: 48px; }
-  .duel-feedback, .duel-hint, .pvp-text, .pvp-note, .pvp-sub, .training-sub { font-size: 12px; }
+  .duel-option { padding: 12px; font-size: 13px; min-height: 48px; }
+  .duel-feedback, .duel-hint, .training-sub { font-size: 12px; }
   .duel-dica { font-size: 12.5px; min-height: 44px; }
   .duel-voz { font-size: 12.5px; min-height: 44px; }
-  .pvp-question { padding: 12px; }
-  .pvp-question b { font-size: 12.5px; }
   .journal-progress { font-size: 12px; }
   .rede-body { padding: 10px; }
   .rede-mini { padding: 0 10px; }

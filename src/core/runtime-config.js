@@ -73,14 +73,14 @@ export const NOSTR = {
   namespace: "mundo-song:v3",
   client: "mundo-song",
   channels: [
-    { id: "geral", name: "Praça do Mundo", sub: "a conversa de todo mundo" },
-    { id: "cs", name: "Computação", sub: "fios, portas e processadores" },
-    { id: "math", name: "Matemática", sub: "formas, infinito e acaso" },
-    { id: "physics", name: "Física", sub: "pêndulos, luz e órbitas" },
-    { id: "chem", name: "Química", sub: "átomos trocando de roupa" },
-    { id: "music", name: "Música", sub: "som organizado em números" },
-    { id: "ai", name: "Inteligência Artificial", sub: "redes, linguagem e limites" },
-    { id: "lingua", name: "Vale da Língua", sub: "português do Brasil, do som à frase" },
+    { id: "geral", name: "Praça do Porto", sub: "a conversa de todo mundo" },
+    { id: "cs", name: "Cidadela de Ferro", sub: "oficinas e máquinas antigas" },
+    { id: "math", name: "Reino das Formas", sub: "pedras que mudam quando ninguém olha" },
+    { id: "physics", name: "Costa dos Ventos", sub: "falésias, marés e tempestades" },
+    { id: "chem", name: "Bosque dos Frascos", sub: "ervas, vapores e alquimia" },
+    { id: "music", name: "Vale dos Ecos", sub: "ruínas que ainda cantam" },
+    { id: "ai", name: "Névoa de Vidro", sub: "olhos que observam no escuro" },
+    { id: "lingua", name: "Costa dos Contos", sub: "arquivos afogados e histórias" },
   ],
 };
 

@@ -1,6 +1,6 @@
 import { readStyles } from "./styles.mjs";
-// Interface pass: alvo de toque mínimo, wiki de uma coluna no celular e loja
-// sem estouro. A sonda de navegador (`cdp-ui-audit.mjs`) mede os 9 painéis; aqui
+// Interface pass: alvo de toque mínimo, painel em uma coluna no celular e loja
+// sem estouro. A sonda de navegador (`cdp-ui-audit.mjs`) mede os painéis; aqui
 // ficam as travas de CSS e a lista de painéis que precisam existir.
 // Roda sem navegador: node test/interfaces.test.mjs
 import assert from "node:assert/strict";
@@ -27,19 +27,17 @@ check(/min-height: 28px/.test(linhaTroca), "botão da troca do mercador abaixo d
 // todo painel interno precisa de contêiner com id e ligação de abertura
 for (const [id, rotulo] of [
   ["inventory", "mochila"], ["bestiary", "bestiário"], ["journal", "diário"],
-  ["sheet", "ficha"], ["help", "ajuda"], ["travel", "viagem"], ["wiki", "wiki"],
+  ["sheet", "ficha"], ["help", "ajuda"], ["travel", "viagem"],
   ["duel", "duelo"], ["shop", "loja"],
 ]) {
   check(new RegExp(`id="${id}"`).test(html), `painel ${rotulo} (#${id}) sumiu do HTML`);
 }
 
-// alvo de toque: as abas da wiki e os botões de ação tinham 24-25 px de altura
-check(/\.wiki-tab \{[^}]*min-height: 28px/.test(css), "aba da wiki abaixo de 28 px");
+// alvo de toque: os botões de ação tinham 24-25 px de altura
 check(/\.item-use \{[^}]*min-height: 28px/.test(css), "botão de ação abaixo de 28 px");
 check(/\.item-use \{[^}]*display: inline-flex/.test(css), "botão de ação sem centralização");
 
-// celular: wiki em uma coluna e card da loja sem estourar
-check(/@media \(max-width: 560px\) \{\s*\.wiki-list \{ grid-template-columns: 1fr; \}/.test(css), "wiki de duas colunas no celular");
+// celular: painel em uma coluna e card da loja sem estourar
 check(/\.shop-card \{ width: 100%; \}/.test(css), "card da loja ainda com largura fixa no celular");
 
 // os ganchos de depuração usados pela sonda continuam existindo
@@ -84,4 +82,4 @@ check(/\.book-card \{[^}]*grid-template-columns: 228px/.test(css), "o caderno n�
 check(/renderChatLog\(true\);\s*\$\("chat-input"\)\.focus\(\)/.test(app), "falar fecha depois de enviar");
 
 assert.equal(problemas.length, 0, `interfaces com ${problemas.length} problema(s):\n- ${problemas.join("\n- ")}`);
-console.log("ok interfaces: caderno de cinco páginas, HUD com dock, missões com um lugar só e 28 px de alvo");
+console.log("ok interfaces: caderno de quatro páginas, HUD com dock, missões com um lugar só e 28 px de alvo");

@@ -23,7 +23,6 @@ for (const [arquivo, alvo] of [
   ["dungeon.js", "drawCreatureArt(ctx, m.kind, m.accent"],
   ["duel.js", "drawCreatureArt(ctx, inimigo.boss ? \"boss\""],
   ["bestiary.js", "drawCreatureArt(ctx, bicho.tipo"],
-  ["wiki.js", "drawCreatureArt(g, icone.kind"],
 ]) {
   const fonte = ler(arquivo);
   check(fonte.includes("drawCreatureArt"), `${arquivo} ainda desenha bicho sem acabamento`);

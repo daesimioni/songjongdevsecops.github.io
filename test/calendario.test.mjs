@@ -79,10 +79,9 @@ assert.equal(faseDoDiaDaHora(18).luz, 0);
 assert.equal(faseDoDiaDaHora(23.9).luz, 0);
 assert.equal(faseDoDiaDaHora(9).luz > 0.5, true, "às 9h o sol está alto");
 
-// ---- o app, o HTML e a wiki ----
+// ---- o app e o HTML ----
 const app = fs.readFileSync(new URL("../src/app/app.js", import.meta.url), "utf8");
 const html = fs.readFileSync(new URL("../index.html", import.meta.url), "utf8");
-const wiki = fs.readFileSync(new URL("../src/ui/wiki.js", import.meta.url), "utf8");
 assert.match(app, /function atualizarCalendario\(/, "o app não atualiza o calendário");
 assert.match(app, /dataDoJogo\(\)/, "o app não lê a data do jogo");
 assert.match(app, /calendario-progresso/, "o app não move a barra do dia");
@@ -92,6 +91,5 @@ assert.match(html, /id="calendario"/, "o calendário não existe no HUD");
 assert.match(html, /id="calendario-data"/, "o calendário não mostra a data");
 assert.match(html, /id="calendario-hora"/, "o calendário não mostra a hora");
 assert.match(html, /id="calendario-fase"/, "o calendário não diz dia ou noite");
-assert.match(wiki, /Tempo e calendário/, "a wiki não ganhou a ficha do tempo");
 
 console.log(`ok calendário: ${data.ano}, 24 minutos por dia, 60x, quatro estações e HUD`);

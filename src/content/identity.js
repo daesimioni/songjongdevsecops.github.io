@@ -412,9 +412,9 @@ const MULHERES = new Set([
 // Sem isso eram 194 bonecos de camisa trocada, e nada dizia o que a pessoa
 // ensinava.
 const ASSUNTO = {
-  math: "matemática", physics: "física", chem: "química", cs: "computação",
-  lingua: "língua", music: "música", ai: "inteligência artificial",
-  inter: "interseção", hub: "porto",
+  math: "das formas", physics: "dos ventos", chem: "dos frascos", cs: "das engrenagens",
+  lingua: "dos contos", music: "dos ecos", ai: "do vidro",
+  inter: "da encruzilhada", hub: "do porto",
 };
 
 export function npcStyle(id, accent, continent = "hub", genderHint = null) {
@@ -440,7 +440,7 @@ export function npcStyle(id, accent, continent = "hub", genderHint = null) {
     subject,
     // a altura muda a silhueta e nada mais: cada um tem seu tamanho
     scale: 0.86 + (h % 4) * 0.02,
-    label: `${roleName} de ${ASSUNTO[subject]}`,
+    label: `${roleName} ${ASSUNTO[subject]}`,
   };
 }
 

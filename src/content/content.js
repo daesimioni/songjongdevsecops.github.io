@@ -1,10 +1,7 @@
-// Os textos do arquipélago. Cada estação do mapa é uma página; o instrumento
-// interativo mora em js/zones/ e é carregado só quando a pessoa abre o painel.
+// Os textos do arquipélago: páginas de lore das estações e as fichas fixas de
+// NPC (o gerador do catálogo completa as duas tabelas).
 
 import { CATALOG_CONTENT } from "./catalog-gen.js";
-import { blocoDeEstudo } from "./catalog-text.js";
-import { LICOES_POST } from "./text/licoes-post.js";
-import { LEGACY_CONTENT } from "./config.js";
 
 export const POSTS = {
   welcome: {
@@ -1098,7 +1095,6 @@ export const POSTS = {
 };
 
 Object.assign(POSTS, CATALOG_CONTENT.posts);
-Object.assign(POSTS, LEGACY_CONTENT.posts);
 
 export const NPCS = {
   guia: {
@@ -1601,10 +1597,3 @@ export const NPCS = {
 };
 
 Object.assign(NPCS, CATALOG_CONTENT.npcs);
-
-// cada pedra antiga recebe o fecho de curso (limite, pergunta, para levar e
-// com as mãos) sem mexer no corpo escrito à mão
-for (const [id, post] of Object.entries(POSTS)) {
-  const licao = LICOES_POST[id];
-  if (licao) post.body += blocoDeEstudo(licao);
-}

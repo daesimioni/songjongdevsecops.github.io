@@ -97,7 +97,6 @@ export const CONTINENTS = {
 import { CATALOG_CONTENT } from "./catalog-gen.js";
 
 import { LEGACY_AREAS } from "./areas.js";
-import { buildLegacyContent } from "./catalog-legacy.js";
 import { BIOMES } from "./identity.js";
 
 export const AREAS = [...LEGACY_AREAS];
@@ -564,15 +563,6 @@ export const NPC_SPAWNS = [
   { id: "diffie", continent: "cs", x: 221, y: 177, accent: "#61f4c0" },
   ...CATALOG_CONTENT.npcSpawns,
 ];
-
-// as subáreas das doze seções antigas entram na ilha que já existe
-export const LEGACY_CONTENT = buildLegacyContent({
-  areas: LEGACY_AREAS,
-  sites: SITES,
-  waystones: WAYSTONES,
-  npcSpawns: NPC_SPAWNS,
-});
-SITES.push(...LEGACY_CONTENT.sites);
 
 export const CAT_SPAWN = { x: 87, y: 61 };
 export const SPAWN = { x: 91, y: 61.2 };
