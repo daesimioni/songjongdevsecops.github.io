@@ -1,5 +1,5 @@
 {
- "versao": "375fbecf61b50c93",
+ "versao": "3a1fb05194dea559",
  "arquivos": [
   "assets/combat/action-vfx-v1.json",
   "assets/combat/action-vfx-v1.png",
@@ -50,8 +50,10 @@
   "css/style.css",
   "css/touch.css",
   "index.html",
+  "sprites.html",
   "src/app/app.js",
   "src/app/dungeon.js",
+  "src/app/sprite-wiki.js",
   "src/app/surface-movement.js",
   "src/content/areas.js",
   "src/content/asset-meta.js",
