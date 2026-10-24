@@ -66,6 +66,15 @@ O jogo é estático: Canvas 2D, ES modules nativos e nenhum runtime de framework
 A presença no mapa usa MQTT público por WebSocket e a conversa usa relays Nostr
 públicos; se o sinal falhar, o vale continua funcionando sozinho.
 
+## Wiki de sprites
+
+Todos os sprites do jogo ficam em [`sprites.html`](sprites.html), em quatro
+coleções: kit modular (515), criaturas do bestiário (464), gente do vale (194) e
+itens (561). A busca funciona em todas; nas duas primeiras dá para trocar as
+oito visões, escolher entre parado e andando e ver a animação. O kit também
+mostra a colisão e o alcance de cada peça. A página usa o mesmo desenho do mapa,
+então o que aparece nela é o que o jogo usa.
+
 ## Documentação
 
 - [Como contribuir](CONTRIBUTING.md)
