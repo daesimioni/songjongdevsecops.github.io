@@ -150,6 +150,86 @@
       "missing": [],
       "sourceSha256": "113e7d92a63eba08c7e59e109e64383d144ebbdd2baeb3112ef78001a26d0b15",
       "output": "assets/magic/arrow-call.png"
+    },
+    {
+      "id": "arte/magias/39771c4f3e68f12896fc",
+      "archive": "magias.zip",
+      "member": "Magias/Paladin/Conjure Arrow.png",
+      "status": "library",
+      "location": "feat/arte-autoral-paladin-batch-3: assets/magic/conjure-arrow.png",
+      "missing": [],
+      "sourceSha256": "63723ca89e0fffbda34f81a7771a1c46f7a4d76ae3c1ca0660a2d9cf6ae56a65",
+      "output": "assets/magic/conjure-arrow.png"
+    },
+    {
+      "id": "arte/magias/334184027399af4590ee",
+      "archive": "magias.zip",
+      "member": "Magias/Paladin/Salvation.png",
+      "status": "library",
+      "location": "feat/arte-autoral-paladin-batch-3: assets/magic/salvation.png",
+      "missing": [],
+      "sourceSha256": "251615a055c45a445cfbf36d6a106adbc24f8b3cadb83baaa24281f7759f1b61",
+      "output": "assets/magic/salvation.png"
+    },
+    {
+      "id": "arte/magias/655806a29c4cf211e55d",
+      "archive": "magias.zip",
+      "member": "Magias/Paladin/Intense Healing.png",
+      "status": "library",
+      "location": "feat/arte-autoral-paladin-batch-3: assets/magic/intense-healing.png",
+      "missing": [],
+      "sourceSha256": "2a553144d3deab0deb06e55e36ed5d34696042032a92b7426b2d38eff773c375",
+      "output": "assets/magic/intense-healing.png"
+    },
+    {
+      "id": "arte/magias/84b10f5bccb694134b3b",
+      "archive": "magias.zip",
+      "member": "Magias/Paladin/Divine Empowerment.png",
+      "status": "library",
+      "location": "feat/arte-autoral-paladin-batch-3: assets/magic/divine-empowerment.png",
+      "missing": [],
+      "sourceSha256": "0519db3066faaed36227c1a43c61f5f0562caec1e8a99c17bad7b89e9b9f2e84",
+      "output": "assets/magic/divine-empowerment.png"
+    },
+    {
+      "id": "arte/magias/9d1dab2a29cb5be093ec",
+      "archive": "magias.zip",
+      "member": "Magias/Paladin/Light Healing.png",
+      "status": "library",
+      "location": "feat/arte-autoral-paladin-batch-3: assets/magic/light-healing.png",
+      "missing": [],
+      "sourceSha256": "8ca53d778b20586c28c3c8d343763dee0773542caa582fd5dbf9d85ac284bf47",
+      "output": "assets/magic/light-healing.png"
+    },
+    {
+      "id": "arte/magias/79a0a40e2a401aa54f34",
+      "archive": "magias.zip",
+      "member": "Magias/Paladin/Divine Missile.png",
+      "status": "library",
+      "location": "feat/arte-autoral-paladin-batch-3: assets/magic/divine-missile.png",
+      "missing": [],
+      "sourceSha256": "288f739c251ca6050987879538ff55ed65c624f8ecf33d888bcc4d899c0e0d70",
+      "output": "assets/magic/divine-missile.png"
+    },
+    {
+      "id": "arte/magias/1ba8edc152885d1817be",
+      "archive": "magias.zip",
+      "member": "Magias/Paladin/Intense Recovery.png",
+      "status": "library",
+      "location": "feat/arte-autoral-paladin-batch-3: assets/magic/intense-recovery.png",
+      "missing": [],
+      "sourceSha256": "8ede8a5fa4b968972be21eb8ec6dff225d627fcd1bc5641260b62f5aab33e307",
+      "output": "assets/magic/intense-recovery.png"
+    },
+    {
+      "id": "arte/magias/b93ef96d0775b87b823b",
+      "archive": "magias.zip",
+      "member": "Magias/Paladin/Avatar of Light.png",
+      "status": "library",
+      "location": "feat/arte-autoral-paladin-batch-3: assets/magic/avatar-of-light.png",
+      "missing": [],
+      "sourceSha256": "2a729b07ce0aab3d4dfdc0a742c71bc9ede48bfbcd84170fcffe6e4bea60892c",
+      "output": "assets/magic/avatar-of-light.png"
     }
   ],
   "archives": [
