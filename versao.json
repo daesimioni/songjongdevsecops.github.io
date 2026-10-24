@@ -1,5 +1,5 @@
 {
- "versao": "c181b134bf3bdf61",
+ "versao": "41f8545f2196dbd1",
  "arquivos": [
   "assets/combat/action-vfx-v1.json",
   "assets/combat/action-vfx-v1.png",
@@ -19,6 +19,8 @@
   "assets/fonts/silkscreen-400-latino.woff2",
   "assets/fonts/silkscreen-700-latino-ext.woff2",
   "assets/fonts/silkscreen-700-latino.woff2",
+  "assets/magic/arrow-call.json",
+  "assets/magic/arrow-call.png",
   "assets/magic/cure-poison.json",
   "assets/magic/cure-poison.png",
   "assets/magic/disintegrate-rune.json",
