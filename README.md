@@ -12,7 +12,7 @@ há o chão que pisa e a maré que decide o resto.
 
 - **86 regiões** ligadas por pontes, túneis e pedras de viagem.
 - **93 cavernas** com salas, tesouros, criaturas e um chefe no fundo.
-- **464 criaturas** e **93 chefes**, com fraquezas, famílias e variantes.
+- **351 criaturas** e **93 chefes**, com fraquezas, famílias e variantes.
 - **561 itens**, equipamento, forja, encantos e receitas.
 - **291 missões** de caçada, coleta, exploração e contrato.
 - **5 vocações** com três subcategorias cada.
@@ -24,6 +24,7 @@ há o chão que pisa e a maré que decide o resto.
 | `WASD` ou setas | andar |
 | clique ou arraste no chão | seguir o ponteiro |
 | `F` | interagir |
+| `Espaço` ou `Enter` | parar o marcador na coleta |
 | `J` | atacar |
 | `K` | segurar a guarda |
 | `L` | esquivar |
