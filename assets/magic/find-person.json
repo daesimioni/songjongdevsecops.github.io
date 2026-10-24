@@ -1,0 +1,14 @@
+{
+  "id": "arte/magias/88ce16c588c75d752a92",
+  "archive": "magias.zip",
+  "sourceMember": "Magias/Paladin/Find Person.png",
+  "sourceSha256": "49219a26a8f1bcbe0ffb701c3900a6bf682d83374a5cdc1eba2d89772c1b8d11",
+  "sourceDimensions": [32, 32],
+  "output": "assets/magic/find-person.png",
+  "outputSha256": "04af1214e538f2b5eeb80c64bd572df0a94ec0acd966bfdc07c30dac1821e384",
+  "outputDimensions": [128, 128],
+  "style": "autoral-pixel-spell",
+  "transparentBackground": true,
+  "review": {"visualInspection": "passed", "runtimeDestination": "future magic library; no current item or spell id in the game catalog"},
+  "status": "library"
+}

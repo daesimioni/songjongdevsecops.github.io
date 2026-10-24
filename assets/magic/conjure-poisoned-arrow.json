@@ -1,0 +1,14 @@
+{
+  "id": "arte/magias/41b3a6f4577fbc98fea4",
+  "archive": "magias.zip",
+  "sourceMembers": ["Magias/Paladin/Conjure Poisoned Arrow.png", "Magias/Paladin/Conjure Royal Star.png"],
+  "sourceSha256": "4cc4c7286fb5e6f13fa367cd69716b7924bbe897e18e93468a07ae5282663ac7",
+  "sourceDimensions": [32, 32],
+  "output": "assets/magic/conjure-poisoned-arrow.png",
+  "outputSha256": "f917edd71460ee51562aa2fd508216557522eeb77777e24c9143fceabe5ff833",
+  "outputDimensions": [128, 128],
+  "style": "autoral-pixel-spell",
+  "transparentBackground": true,
+  "review": {"visualInspection": "passed", "runtimeDestination": "future magic library; two source aliases share this recipe and destination"},
+  "status": "library"
+}

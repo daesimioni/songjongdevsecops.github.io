@@ -1,0 +1,14 @@
+{
+  "id": "arte/magias/eaf0313852b2bd309f0c",
+  "archive": "magias.zip",
+  "sourceMember": "Magias/Paladin/Recovery.png",
+  "sourceSha256": "c21876b9b62d89dd228de687f1fbbabcff00559d3007c2c8f37defbb58bf9080",
+  "sourceDimensions": [32, 32],
+  "output": "assets/magic/recovery.png",
+  "outputSha256": "14e2e5ed37407a948d0ccf1e569c762cb4c4aaa882a6aba03c6c791cb1b21bb8",
+  "outputDimensions": [128, 128],
+  "style": "autoral-pixel-spell",
+  "transparentBackground": true,
+  "review": {"visualInspection": "passed", "runtimeDestination": "future magic library; no current item or spell id in the game catalog"},
+  "status": "library"
+}
