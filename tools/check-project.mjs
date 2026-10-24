@@ -10,10 +10,9 @@ const allowed = {
   rendering: ['rendering', 'content', 'core'],
   platform: ['platform', 'content', 'core'],
   gameplay: ['gameplay', 'platform', 'content', 'core'],
-  learning: ['learning', 'content', 'core'],
   world: ['world', 'content', 'core'],
-  ui: ['ui', 'gameplay', 'platform', 'rendering', 'content', 'core', 'world', 'learning'],
-  app: ['app', 'ui', 'gameplay', 'platform', 'rendering', 'content', 'core', 'world', 'learning'],
+  ui: ['ui', 'gameplay', 'platform', 'rendering', 'content', 'core', 'world'],
+  app: ['app', 'ui', 'gameplay', 'platform', 'rendering', 'content', 'core', 'world'],
 };
 export async function inspectProject(projectRoot = root) {
   const errors = [], modules = new Map(), graph = new Map();
@@ -36,7 +35,7 @@ export async function inspectProject(projectRoot = root) {
   }
   for (const [path, { source, module }] of modules) {
     const deps = [...module.dependencySpecifiers];
-    // Lazy instruments are part of the deployable module graph as well.
+    // Import dinâmico também entra no grafo implantável.
     for (const match of source.matchAll(/\bimport\(\s*['"]([^'"]+)['"]\s*\)/g)) deps.push(match[1]);
     const targets = [];
     for (const specifier of new Set(deps)) {

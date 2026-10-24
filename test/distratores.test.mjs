@@ -1,7 +1,6 @@
 // Erro por distrator: versão estável da pergunta, alternativa marcada no save,
 // prioridade da pergunta errada e caderno com o erro específico.
 import assert from "node:assert/strict";
-import fs from "node:fs";
 import {
   versaoDaPergunta, registrarDistrator, recentes, erroRecente,
   MAX_DISTRATORES, JANELA_RECENTE,
@@ -89,12 +88,5 @@ rpg3.data.conceitos = {};
 rpg3.data.distratores = { [escolhida.version]: { t: "x", n: 1, at: Date.now() } };
 const ordem = rpg3.duelDeck("cs", 1);
 assert.equal(ordem[0].version, escolhida.version, "a pergunta com erro recente deveria vir primeiro");
-
-// ---- a tela mostra a marcada e o caderno ----
-const gather = fs.readFileSync(new URL("../src/ui/gather.js", import.meta.url), "utf8");
-assert.match(gather, /registrarDistrator/, "a coleta não registra o distrator");
-const app = fs.readFileSync(new URL("../src/app/app.js", import.meta.url), "utf8");
-assert.match(app, /Erros recentes/, "o diário não lista os erros recentes");
-assert.match(app, /errosRecentes\(5\)/, "o diário não consulta o caderno de distratores");
 
 console.log(`ok distratores: versão ${versaoDaPergunta(pergunta)}, contagem, janela de ${JANELA_RECENTE / 86400000} dias, teto ${MAX_DISTRATORES}, save, caderno e prioridade`);

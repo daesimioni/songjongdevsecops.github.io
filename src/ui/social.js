@@ -600,15 +600,6 @@ export function createSocial({ rede, backup, quests, player, getPeers, getNet, g
       const sub = p.pubkey ? "com chave" : "sem chave da Rede";
       const row = personRow(p.name || "viajante", sub, p.pubkey || "");
       if (!p.pubkey) row.querySelector("button")?.remove();
-      const duel = el("button", "rede-mini", "desafiar");
-      duel.type = "button";
-      duel.title = "duelo de perguntas, sem perder vida";
-      duel.addEventListener("click", () => {
-        if (!onChallenge) return;
-        onChallenge({ id: p.id, name: p.name, pubkey: p.pubkey || "" });
-        close();
-      });
-      row.appendChild(duel);
       if (p.id !== myNet()?.id) {
         const invite = el("button", "rede-mini", ui.party ? "convidar" : "montar party");
         invite.type = "button";

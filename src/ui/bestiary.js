@@ -4,6 +4,7 @@ import { AREAS, CONTINENTS, CONTINENT_ORDER } from "../content/config.js";
 import { DUNGEONS, dungeonCreatures } from "../content/dungeon-data.js";
 import { MONSTER_LABELS, MONSTER_TRAITS, MONSTER_WEAKNESS, TIERS } from "../content/rpg-data.js";
 import { drawCreatureArt } from "../rendering/creature.js";
+import { nomeDeCriatura, nomeDeChefe } from "../gameplay/reskin.js";
 
 const el = (tag, cls = "", text = "") => {
   const node = document.createElement(tag);
@@ -45,7 +46,10 @@ export function bestiaryModel() {
       nome: def.name,
       area: area?.name || "",
       accent,
-      bichos: dungeonCreatures(def),
+      bichos: dungeonCreatures(def).map((bicho) => ({
+        ...bicho,
+        nome: bicho.chefe ? nomeDeChefe(bicho.nome, def.id) : nomeDeCriatura(bicho.nome, bicho.tipo, def.id),
+      })),
     });
   }
   const continentes = [...grupos.values()].filter((grupo) => grupo.cacadas.length);

@@ -1,8 +1,8 @@
 # Arquitetura do jogo
 
-The Learning Valley é um RPG educacional estático para navegador, com Canvas 2D,
-interface HTML/CSS, conteúdo local e presença/conversa opcionais em rede. Usa ES
-modules nativos: não exige motor, framework, bundler ou servidor de aplicação.
+Vale Partido é um RPG de ação estático para navegador, com Canvas 2D, interface
+HTML/CSS, conteúdo local e presença/conversa opcionais em rede. Usa ES modules
+nativos: não exige motor, framework, bundler ou servidor de aplicação.
 
 ## Responsabilidades
 
@@ -10,13 +10,12 @@ modules nativos: não exige motor, framework, bundler ou servidor de aplicação
 |---|---|
 | `src/app/` | Composição das cenas, estado de sessão e coordenação dos sistemas |
 | `src/core/` | Geometria, movimento, A*, câmera, valores vitais e configuração técnica |
-| `src/gameplay/` | RPG, missões, perguntas, regras de combate e regras das cavernas |
+| `src/gameplay/` | Personagem, missões, combate, coleta, regras das cavernas e reskin do vale |
 | `src/world/` | Geração da superfície, ocupação, exploração e população |
 | `src/rendering/` | Canvas, sprites, materiais, ambiente visual e caches |
 | `src/ui/` | Painéis HTML, fichas, inventário, conversa e navegação por foco |
 | `src/platform/` | Storage, backup, áudio, transporte, interpolação e entrada do navegador |
 | `src/content/` | Catálogo, textos, itens, aparência, mapas e definições temáticas |
-| `src/learning/` | Registro, ciclo de carga e instrumentos interativos |
 | `css/` | Estilos por área da interface, com ordem explícita em `style.css` |
 | `test/` | Testes de regras, integração, persistência e contratos de interface |
 | `tools/` | Análise estrutural, desenvolvimento, build e revisão da arte |
@@ -27,8 +26,8 @@ modules nativos: não exige motor, framework, bundler ou servidor de aplicação
 `core` depende apenas de `core`. `content` pode usar `content` e `core`.
 `rendering` depende desses dois e de módulos de desenho. `platform` pode usar
 conteúdo e configuração, mas não cenas ou UI. `gameplay` pode usar `platform`
-para persistência, além do núcleo e conteúdo. `learning` usa núcleo e conteúdo.
-`ui` compõe os sistemas necessários, sem importar `app`; `app` monta a aplicação.
+para persistência, além do núcleo e conteúdo. `ui` compõe os sistemas
+necessários, sem importar `app`; `app` monta a aplicação.
 
 `world` usa `content/asset-meta.js` e `content/collision-bodies.js` para tamanhos
 e ocupação, sem importar renderização. O desenho lê os mesmos metadados.
@@ -56,9 +55,10 @@ ser resolvidos estaticamente; o registro atual usa literais.
 - `app/surface-movement.js` recebe jogador, mundo e serviços por dependências
   explícitas. Teclado, clique e companheiro usam as mesmas regras sem precisar
   acessar a interface ou persistir dados diretamente.
-- `gameplay/question-bank.js` monta índices independentes. Importar o RPG deixou
-  de acrescentar perguntas diretamente às tabelas compartilhadas de conteúdo.
-- `learning/instruments.js` é o registro de carga sob demanda dos instrumentos.
+- `gameplay/reskin.js` troca os textos de superfície (continentes, áreas,
+  criaturas, itens, páginas, missões e facções) antes de `createWorld()`. Os ids,
+  o save e a geometria continuam os mesmos; nenhum sistema de pergunta chega à
+  superfície do jogo.
 
 ## Estado, saves e recursos
 
@@ -79,8 +79,8 @@ copia somente recursos públicos para `dist/`, reúne o CSS na ordem original e
 inclui `.nojekyll`. A CI valida Node 22 e 24 e anexa o pacote; não faz merge nem
 publica automaticamente.
 
-A suíte inclui verificações do controlador de movimento, isolamento dos bancos
-de perguntas e ferramentas de análise/build/HTTP, além dos testes anteriores.
+A suíte inclui verificações do controlador de movimento, combate, coleta,
+cavernas e ferramentas de análise/build/HTTP, além dos testes anteriores.
 O verificador de estrutura também é testado com import ausente, export inválido,
 ciclo e dependência proibida. Não há cobertura de navegador ponta a ponta na CI;
 os testes de DOM usam doubles. A revisão de pixels usa Canvas nativo como

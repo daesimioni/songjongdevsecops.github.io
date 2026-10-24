@@ -28,7 +28,7 @@ check(/espinha escura entre as páginas/.test(title), "livro sem espinha");
 // ---- texto fora da arte ----
 const tags = (html.match(/class="splash-tag"/g) || []).length;
 check(tags === 1, `splash com ${tags} faixas de texto, esperado 1`);
-check(/Cada pedra acende uma ideia, e a ideia continua funcionando quando você sai\./.test(html), "faixa com texto antigo");
+check(/Toda ilha guarda uma ruína\. Toda ruína guarda um caminho\./.test(html), "faixa com texto antigo");
 check(/margin: auto auto 12px/.test(css), "faixa não está presa no pé");
 check(/background: rgba\(6, 8, 18, 0\.66\)/.test(css), "faixa sem fundo legível");
 check(/\.splash-kicker \{[^}]*font-size: 12px/.test(css), "kicker abaixo do piso de leitura de 12 px");

@@ -6,7 +6,6 @@ const PAGINAS = [
   { id: "sheet", chave: "ficha", nome: "Ficha", sub: "vocação, perícias e companhia", tecla: "C", icone: "ficha" },
   { id: "inventory", chave: "mochila", nome: "Mochila", sub: "itens e equipamento", tecla: "I", icone: "mochila" },
   { id: "bestiary", chave: "bestiario", nome: "Bestiário", sub: "quem vive no vale", tecla: "B", icone: "bicho" },
-  { id: "wiki", chave: "wiki", nome: "Wiki", sub: "o vale inteiro, aberto", tecla: "H", icone: "livro" },
 ];
 
 const ICONES = {

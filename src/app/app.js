@@ -1,11 +1,9 @@
 import { createSurfaceMovement } from "./surface-movement.js";
-import { LIVE } from "../learning/instruments.js";
 import { setArtMotion } from "../rendering/art-style.js";
 import { houseTargets, nextResidentLine } from "../gameplay/house-interactions.js";
 import { readSavedJSON as readJSON } from "../platform/storage.js";
 import { filterGroupedList, focusFirstVisible } from "../ui/search-ui.js";
 import { createUiScope, availableFocusTargets } from "../ui/ui-scope.js";
-import { createInstrumentLoader } from "../learning/instrument-loader.js";
 import { isTextEntry, nativeActivation } from "../platform/input.js";
 import { cacheDeAssets, totalDeAssets } from "../rendering/assets/index.js";
 import { PLAYER_SPEED, PLAYER_W, PLAYER_H, SPRINT_MULT, INTERACT_RADIUS, STORAGE, NET, MAP_W, MAP_H, TILE_KIND as K } from "../core/runtime-config.js";
@@ -38,9 +36,7 @@ import { startTitle } from "../ui/title.js";
 import { dataDoJogo, formatarData, formatarHora, eDia } from "../core/calendario.js";
 import { ATUALIZACAO, lerManifesto, guardarRetomada, consumirRetomada, baixarArquivos } from "../platform/atualizacao.js";
 import { RPG } from "../gameplay/rpg.js";
-import { resumoConceitos, vencido } from "../gameplay/conceitos.js";
 import { FERRY, precoDoFerry, podePagarFerry, cobrarFerry, faltaDoFerry, nomeDoMaterial, falaDoBarqueiro } from "../gameplay/ferry.js";
-import { pontosFracos } from "../gameplay/grafo.js";
 import { ALAS, itensDaAla, filtrarAcervo } from "../gameplay/acervo.js";
 import { DESFECHOS, GUARDIAO, GROUND_ACERVO, registrarDesfecho, estadoDaProva, desfechoPorId } from "../gameplay/grande-prova.js";
 import { estadoDosCapitulos, registrarLeitura, falaAtual, lidosDaHistoria } from "../gameplay/arcos.js";
@@ -59,13 +55,16 @@ import { itemIconElement } from "../rendering/item-art.js";
 import { createDungeon } from "./dungeon.js";
 import { wikiUi } from "../ui/wiki.js";
 import { CONURBATION, DUNGEONS, dungeonById } from "../content/dungeon-data.js";
+import { aplicarReskin } from "../gameplay/reskin.js";
 
 const $ = (id) => document.getElementById(id);
 let dungeon = null;
-const instrumentLoader = createInstrumentLoader({ document, onError: (e) => console.error("[mundo]", e) });
 
 
 
+// O vale deixou de ser uma aula: o reskin troca nomes e textos antes do mundo
+// nascer, preservando ids, geometria e saves.
+aplicarReskin();
 const world = createWorld();
 const chaoPego = new Set();
 const collisionDebug = new URLSearchParams(location.search).has("collisions");
@@ -1232,29 +1231,6 @@ function questCard(q, npc) {
   card.appendChild(bar);
   card.appendChild(el("div", "quest-foot", `${have}/${need}`));
 
-  if (q.quiz && !quests.data.quiz[q.id]) {
-    const box = el("div", "quest-quiz");
-    box.appendChild(el("p", "quest-question", q.quiz.question));
-    q.quiz.options.forEach((opt, i) => {
-      const b = el("button", "quest-option", opt);
-      b.type = "button";
-      b.addEventListener("click", () => {
-        const res = quests.answer(q.id, i);
-        state.npcFeedback = { id: q.id, correct: res.correct, why: res.why };
-        if (res.correct) audio.chime(); else audio.blip();
-        buildNpc(npc);
-      });
-      box.appendChild(b);
-    });
-    card.appendChild(box);
-  }
-
-  const fb = state.npcFeedback;
-  if (fb && fb.id === q.id) {
-    card.appendChild(el("p", `quest-note ${fb.correct ? "good" : "bad"}`,
-      fb.correct ? `certo. ${fb.why}` : "não é essa. Leia de novo e tente outra."));
-  }
-
   const premio = q.reward?.item ? (ITEMS[q.reward.item]?.name || q.reward.item) : "";
   if (premio) card.appendChild(el("p", "quest-note quest-prize", `recompensa: ${premio}`));
   if (quests.ready(q)) {
@@ -1281,7 +1257,7 @@ function questCard(q, npc) {
       buildNpc(npc);
     });
     card.appendChild(btn);
-  } else if (!q.quiz) {
+  } else {
     card.appendChild(el("p", "quest-note", "em andamento."));
   }
   return card;
@@ -1344,14 +1320,6 @@ function buildNpc(npc) {
     const reps = reputacoes(rpg.data);
     const mais = FACCOES.map((f) => ({ f, n: reps[f.id] })).sort((a, b) => Math.abs(b.n) - Math.abs(a.n))[0];
     if (mais?.n) body.appendChild(el("p", "npc-line npc-context", falaDaReputacao(mais.f.id, mais.n)));
-  }
-  // a corrente das sete missões abre o acervo: o guia mostra a porta
-  if (npc.id === "guia" && quests.isDone("biblioteca-7")) {
-    body.appendChild(el("p", "npc-line npc-context", "A Biblioteca Afogada está aberta. As três alas esperam."));
-    const abrir = el("button", "quest-btn", "entrar no acervo");
-    abrir.type = "button";
-    abrir.addEventListener("click", () => { closeModal("npc"); openBiblioteca(); });
-    body.appendChild(abrir);
   }
   const offers = quests.offersFor(npc.id);
   const trancadas = quests.lockedFor(npc.id);
@@ -1596,7 +1564,7 @@ const FIRST_STEPS = [
   { id: "npc", label: "fale com quem mora aqui" },
   { id: "quest", label: "aceite um pedido" },
   { id: "cave", label: "desça a uma caverna" },
-  { id: "duel", label: "vença um guardião de pergunta" },
+  { id: "duel", label: "vença um guardião do vale" },
 ];
 
 function markStep(id) {
@@ -1765,7 +1733,7 @@ function startNet() {
       audio.blip();
       pushChatMessage(peer.name, text, peer.color);
     },
-    onPvp: (peer, msg) => pvpUi.handle(peer, msg),
+    onPvp: () => {},
     onParty: (peer, msg) => social?.partyEvent?.(peer, msg),
     onError: () => {},
   });
@@ -1911,9 +1879,11 @@ function openBestiary() {
 // vale e da caverna, fecha com Esc ou com o mesmo atalho.
 const PAGINAS_CADERNO = new Set(["journal", "sheet", "inventory", "bestiary", "wiki"]);
 
+const CODEX_ABERTO = false;
 function openWiki({ consulta = "", livre = false } = {}) {
-  // livre: abre por cima da tela de entrada, antes de criar personagem
+  // O compêndio educativo saiu do jogo; o Codex de fantasia ainda será escrito.
   if (!livre && !state.started) return;
+  if (!CODEX_ABERTO) { toast("O Codex de Vale Partido ainda está sendo escrito. Use o Bestiário (B) e o Diário (Z).", 3200); return; }
   if (state.modal === "wiki") { closeModal("wiki"); return; }
   // outra página do caderno troca de página em vez de barrar
   if (state.modal && !PAGINAS_CADERNO.has(state.modal)) return;
@@ -1977,58 +1947,8 @@ function buildJournal() {
   list.setAttribute("role", "list");
   const found = openedCount();
   $("journal-progress").textContent =
-    `${found} de ${TOTAL} fragmentos · Nível ${level()} · ${state.xp} XP${quests.title ? ` · título ${quests.title}` : ""}. Cada pedra esconde um fragmento do que o vale sabe.`;
+    `${found} de ${TOTAL} fragmentos · Nível ${level()} · ${state.xp} XP${quests.title ? ` · título ${quests.title}` : ""}. Cada pedra esconde um fragmento da história do vale.`;
   $("journal-progress").setAttribute("aria-live", "polite");
-  // caderno de conceitos: domínio por área e o que já venceu a revisão
-  const conceitos = rpg.data.conceitos || {};
-  const resumo = resumoConceitos(conceitos, Date.now());
-  if (resumo.estudados) {
-    const caderno = document.createElement("details");
-    caderno.className = "journal-area-group";
-    caderno.open = resumo.revisar > 0;
-    const sumario = document.createElement("summary");
-    sumario.textContent = `Caderno de conceitos · ${resumo.revisar} para revisar · ${resumo.dominados} dominados`;
-    caderno.appendChild(sumario);
-    const linhas = Object.entries(conceitos)
-      .map(([area, entry]) => ({ area, entry, nome: AREAS.find((a) => a.id === area)?.name || area }))
-      .sort((a, b) => (Number(a.entry.due) || 0) - (Number(b.entry.due) || 0));
-    for (const { entry, nome } of linhas.slice(0, 40)) {
-      const nivel = Math.max(0, Math.min(5, Number(entry.n) || 0));
-      const linha = document.createElement("div");
-      linha.className = "journal-conceito";
-      linha.textContent = `${nome} · ${"●".repeat(nivel)}${"○".repeat(5 - nivel)} · ${vencido(entry, Date.now()) ? "revisar" : "em dia"}`;
-      caderno.appendChild(linha);
-    }
-    // erro por distrator: o que ele marcou nas últimas perguntas erradas
-    const erros = rpg.errosRecentes(5);
-    if (erros.length) {
-      const titulo = document.createElement("div");
-      titulo.className = "journal-subtitulo";
-      titulo.textContent = "Erros recentes";
-      caderno.appendChild(titulo);
-      for (const erro of erros) {
-        const linha = document.createElement("div");
-        linha.className = "journal-conceito";
-        linha.textContent = `${erro.q} · você marcou: ${erro.marcou || "?"} · resposta: ${erro.resposta}`;
-        caderno.appendChild(linha);
-      }
-    }
-    // grafo de pré-requisitos: áreas em que ele avançou sem o degrau anterior
-    const fracos = pontosFracos(conceitos, { limite: 5 });
-    if (fracos.length) {
-      const titulo = document.createElement("div");
-      titulo.className = "journal-subtitulo";
-      titulo.textContent = "Antes de avançar";
-      caderno.appendChild(titulo);
-      for (const p of fracos) {
-        const linha = document.createElement("div");
-        linha.className = "journal-conceito";
-        linha.textContent = `${p.nome} · você está em ${p.dArea}, mas ${p.nomePre} está em ${p.dPre}; revise antes.`;
-        caderno.appendChild(linha);
-      }
-    }
-    list.appendChild(caderno);
-  }
   // o fio da Iara: sete capítulos, o lido, o aberto e o que falta
   const capitulos = estadoDaHistoria();
   const lidos = capitulos.filter((c) => c.lido).length;
@@ -2276,7 +2196,9 @@ function buildBiblioteca() {
   $("biblioteca-clear").disabled = !filtro;
   buildBibliotecaProva();
 }
+const ACERVO_ABERTO = false;
 function openBiblioteca() {
+  if (!ACERVO_ABERTO) { toast("O acervo foi selado. O que restou de pé é a Grande Prova, nas ruínas.", 3200); return; }
   stopSprint();
   closeChat();
   if (state.panelOpen) closePanel();
@@ -2871,32 +2793,14 @@ async function openPost(id, site) {
 
   $("panel-kicker").textContent = post.kicker || CONTINENTS[post.continent]?.name || "";
   $("panel-title").textContent = post.title;
-  $("panel-meta").textContent =
-    `${post.date.split("-").reverse().join("/")} · ${(post.tags || []).map((t) => `#${t}`).join(" ")}`;
+  $("panel-meta").textContent = post.meta || "fragmento de lore";
   $("panel-body").innerHTML = post.body || "";
-  const live = $("panel-live");
-  live.textContent = "";
   $("panel").hidden = false;
   $("scrim").hidden = false;
   document.querySelector(".panel-scroll").scrollTop = 0;
   uiScope.sync();
   $("panel-close").focus();
   audio.open();
-
-  if (post.lab && LIVE[post.lab]) {
-    const entry = LIVE[post.lab];
-    const loader = typeof entry === "function" ? entry : entry.load;
-    const variant = typeof entry === "function" ? null : entry.variant;
-    state.panelCleanup = () => instrumentLoader.clear();
-    await instrumentLoader.load(live, loader, {
-      audio, toast, reducedMotion,
-      enableSound: () => setSound(true),
-      onOpenZone: (zoneId) => {
-        const c = CONTINENTS[zoneId];
-        if (c) toast(`${c.name}: ${c.sub}`, 2600);
-      },
-    }, variant);
-  }
 }
 
 function closePanel() {
@@ -2909,7 +2813,6 @@ function closePanel() {
   state.currentPost = null;
   $("panel").hidden = true;
   if (!state.modal) $("scrim").hidden = true;
-  $("panel-live").textContent = "";
   audio.close();
   uiScope.sync();
   restoreFocus();
@@ -3410,9 +3313,11 @@ window.addEventListener("keydown", (e) => {
   if (gameActive && ["arrowup", "arrowdown", "arrowleft", "arrowright", " "].includes(k)) e.preventDefault();
   if (!state.started) return;
   if (state.modal === "gather" && gatherUi) {
-    const letter = /^[a-e]$/.test(k) ? k.charCodeAt(0) - 97 : -1;
-    if (letter >= 0) { e.preventDefault(); gatherUi.answer(letter); return; }
-    if (k === "enter" || k === " ") { e.preventDefault(); gatherUi.advance(); return; }
+    if (k === "enter" || k === " ") {
+      e.preventDefault();
+      if (gatherUi.isDone()) gatherUi.advance(); else gatherUi.tentar();
+      return;
+    }
   }
   if (k === "escape") {
     if (ctxMenu && !ctxMenu.hidden) { fecharMenu(); return; }
@@ -3553,7 +3458,7 @@ function olharLugar(wx, wy, alvo) {
   const pedaco = area ? `${area.name}, ${area.biome?.name || area.sub}.` : "Água aberta do arquipélago.";
   if (!alvo) { toast(`${pedaco} ${area?.sub || ""}`, 3600); return; }
   const obj = alvo.obj;
-  if (alvo.kind === "station") toast(`${obj.label}. ${POSTS[obj.post]?.kicker || ""}. Página aberta com um instrumento.`, 3600);
+  if (alvo.kind === "station") toast(`${obj.label}. ${POSTS[obj.post]?.kicker || ""}. O santuário abre uma memória.`, 3600);
   else if (alvo.kind === "npc") toast(`${NPCS[obj.id]?.name || "Alguém"}. ${NPCS[obj.id]?.lines?.[0] || "Mora por aqui."}`, 4200);
   else if (alvo.kind === "cave") toast(`${obj.name}. Uma escada desce para o subsolo.`, 3200);
   else if (alvo.kind === "waystone") toast(`${obj.name}. Leva a qualquer farol já descoberto.`, 3200);
@@ -3966,13 +3871,9 @@ $("btn-sheet").addEventListener("click", openSheet);
 $("btn-inventory").addEventListener("click", openInventory);
 $("admin-badge").addEventListener("click", openGod);
 $("btn-rede").addEventListener("click", openRede);
-$("panel-live").addEventListener("pointerdown", () => {
-  if (state.currentPost) quests.report("lab", state.currentPost);
-}, { passive: true });
 $("btn-journal").addEventListener("click", openJournal);
 $("btn-bestiary").addEventListener("click", openBestiary);
 $("btn-wiki").addEventListener("click", () => openWiki());
-$("intro-wiki")?.addEventListener("click", () => openWiki({ livre: true }));
 $("dg-wiki").addEventListener("click", () => openWiki());
 $("steps-min")?.addEventListener("click", () => {
   const card = $("steps");

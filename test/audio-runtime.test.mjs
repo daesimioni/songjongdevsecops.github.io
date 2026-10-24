@@ -1,7 +1,5 @@
 import assert from 'node:assert/strict';
 import {createAudio} from '../src/platform/audio.js';
-import {makeDocument} from './ui-dom.mjs';
-import {mount} from '../src/learning/zones/music.js';
 globalThis.window = {};
 let audio = createAudio();
 assert.equal(audio.setEnabled(true),false);
@@ -36,22 +34,5 @@ try {
   const muted=starts;tick();
   assert.equal(starts,muted,'som desligado não agenda notas');
   assert.ok(audio.output,'instrumentos têm saída controlada pelo volume geral');
-  const {document}=makeDocument(['gen-canvas','gen-seed','gen-bpm-label','gen-play','gen-new','gen-bpm'],{canvas:true});
-  globalThis.document=document;
-  const root={querySelector:s=>document.getElementById(s.slice(1))};
-  let enabledByInstrument=0,nextNote;
-  const previousTimeout=globalThis.setTimeout,previousClearTimeout=globalThis.clearTimeout;
-  globalThis.setTimeout=fn=>{nextNote=fn;return 1;};globalThis.clearTimeout=()=>{nextNote=null;};
-  let dispose;
-  try {
-    dispose=await mount(root,{audio,enableSound:()=>{enabledByInstrument++;audio.setEnabled(true);}},'generative');
-    document.getElementById('gen-play').handlers.click();
-    assert.equal(enabledByInstrument,1,'gesto explícito liga instrumento');
-    assert.equal(connections.at(-1),audio.output,'notas passam pelo ganho geral');
-    audio.setEnabled(false);
-    const silent=starts;nextNote();
-    assert.equal(starts,silent,'compositor respeita som desligado');
-    assert.equal(enabledByInstrument,1,'timer não religa som sozinho');
-  } finally {dispose?.();globalThis.setTimeout=previousTimeout;globalThis.clearTimeout=previousClearTimeout;}
 
 } finally {audio.stopSequencer();globalThis.setInterval=oldSet;globalThis.clearInterval=oldClear;}

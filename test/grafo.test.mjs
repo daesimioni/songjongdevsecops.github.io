@@ -1,7 +1,6 @@
 // Grafo de pré-requisitos: arestas derivadas da numeração do catálogo, aviso de
 // degrau anterior fraco e contrato do caderno. Roda sem navegador.
 import assert from "node:assert/strict";
-import fs from "node:fs";
 
 const store = new Map();
 globalThis.localStorage = {
@@ -64,11 +63,5 @@ const [areaReal, [preReal]] = [...GRAFO.entries()][0];
 const real = pontosFracos({ [areaReal]: { n: 3 }, [preReal]: { n: 1 } }, { limite: 5 });
 assert.ok(real.some((p) => p.area === areaReal && p.pre === preReal), "o par real não gerou aviso");
 assert.ok(real[0].nome && real[0].nomePre, "o aviso precisa dos nomes");
-
-// ---- o caderno usa a seção ----
-const app = fs.readFileSync(new URL("../src/app/app.js", import.meta.url), "utf8");
-assert.match(app, /from "\.\.\/gameplay\/grafo\.js"/, "o app não importa o grafo");
-assert.match(app, /Antes de avançar/, "o caderno não tem a seção de pré-requisitos");
-assert.match(app, /pontosFracos\(conceitos, \{ limite: 5 \}\)/, "o caderno não consulta as arestas");
 
 console.log(`ok grafo: ${IDENTITY_AREAS.length} áreas em ${grupos.size} grupos, ${GRAFO.size} arestas, aviso "${real[0].nome} depois de ${real[0].nomePre}"`);

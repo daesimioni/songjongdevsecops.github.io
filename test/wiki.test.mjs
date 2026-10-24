@@ -113,27 +113,5 @@ check(linkSolto.categoria === "tudo" && linkSolto.termo === "calculo", "link sol
 const linkInvalido = wiki.separarConsulta("naoexiste:algo");
 check(linkInvalido.categoria === "tudo" && linkInvalido.termo === "naoexiste:algo", "categoria inválida devia virar busca");
 
-// ---- a interface está ligada nos dois lugares ----
-const html = fs.readFileSync(new URL("../index.html", import.meta.url), "utf8");
-const app = fs.readFileSync(new URL("../src/app/app.js", import.meta.url), "utf8");
-const dungeon = fs.readFileSync(new URL("../src/app/dungeon.js", import.meta.url), "utf8");
-check(/id="wiki"/.test(html) && /id="wiki-search"/.test(html) && /id="wiki-list"/.test(html), "modal da wiki ausente no HTML");
-check(/id="btn-wiki"/.test(html) && /id="dg-wiki"/.test(html), "wiki sem botão no HUD do vale ou da caverna");
-check(/from "\.\.\/ui\/wiki\.js"/.test(app), "app.js não importa a wiki");
-check(/function openWiki\(/.test(app), "app.js não define openWiki");
-check(/btn-wiki"\)\.addEventListener\("click", \(\) => openWiki\(\)\)/.test(app), "botão da wiki sem ligação");
-check(/onWiki: \(\) => openWiki\(\)/.test(app), "caverna não recebe onWiki");
-check(/onWiki/.test(dungeon) && /k === "h"/.test(dungeon), "caverna não abre a wiki com H");
-check(/id="intro-wiki"/.test(html) && /intro-wiki/.test(app), "wiki não abre antes de criar personagem");
-check(/get\("wiki"\)/.test(app), "link ?wiki= não abre a wiki");
-check(/separarConsulta/.test(fs.readFileSync(new URL("../src/ui/wiki.js", import.meta.url), "utf8")), "wiki sem parser de link");
-// a ajuda do jogo cita os números da wiki: número velho ali é documento que mente
-const ajudaWiki = (html.match(/A <strong>Wiki<\/strong>[\s\S]*?<\/p>/) || [""])[0];
-check(ajudaWiki.includes(`${indice.length.toLocaleString("pt-BR")} fichas`), "ajuda com contagem de fichas velha");
-check(ajudaWiki.includes(`${contagem.itens} itens`), "ajuda com contagem de itens velha");
-check(ajudaWiki.includes(`${contagem.receitas} receitas`), "ajuda com contagem de receitas velha");
-check(ajudaWiki.includes(`${contagem.criaturas} bichos`), "ajuda com contagem de bichos velha");
-check(/onWiki: \(\) => openWiki\(\)/.test(app), "caverna sem callback da wiki");
-
 assert.equal(problemas.length, 0, `wiki com ${problemas.length} problema(s):\n- ${problemas.slice(0, 12).join("\n- ")}`);
 console.log(`ok wiki: ${indice.length} entradas em ${cats.length} categorias (${contagem.mundo} áreas, ${contagem.cavernas} cavernas, ${contagem.criaturas} criaturas, ${contagem.itens} itens, ${contagem.missoes} missões, ${contagem.npcs} NPCs, ${contagem.paginas} páginas, ${contagem.vocacoes} vocações)`);

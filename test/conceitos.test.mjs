@@ -1,7 +1,6 @@
 // Caderno de conceitos: domínio 0 a 5, revisão espaçada e baralho que prioriza
 // o conceito vencido. Roda sem navegador: node test/conceitos.test.mjs
 import assert from "node:assert/strict";
-import fs from "node:fs";
 import { registrarResposta, vencido, resumoConceitos, NIVEIS } from "../src/gameplay/conceitos.js";
 
 const MIN = 60000;
@@ -43,12 +42,6 @@ assert.ok((rpg.data.conceitos.logic?.r || 0) >= 1, "acerto deveria registrar con
 rpg.save();
 const rpg2 = new RPG();
 assert.ok(rpg2.data.conceitos.logic, "conceito não persistiu no save");
-// a coleta é quem alimenta o caderno agora
-const gather = fs.readFileSync(new URL("../src/ui/gather.js", import.meta.url), "utf8");
-assert.match(gather, /registrarConceito\(q\.area, false, current\.continent\)/, "a coleta não registra o erro");
-assert.match(gather, /registrarConceito\(q\.area, true, current\.continent\)/, "a coleta não registra o acerto");
-assert.match(gather, /duelDeck\(continent, tier\)/, "a coleta não usa o baralho adaptativo");
-
 // baralho prioriza o conceito vencido
 const rpg3 = new RPG();
 const deck = rpg3.duelDeck("cs", 1);
@@ -59,10 +52,5 @@ for (const item of deck) rpg3.data.conceitos[item.area || "cs"] = { n: 3, r: 3, 
 rpg3.data.conceitos[escolhido] = { n: 1, r: 1, w: 0, due: 0 };
 const priorizado = rpg3.duelDeck("cs", 1);
 assert.equal(priorizado[0].area || "cs", escolhido, "conceito vencido deveria vir primeiro");
-
-// a tela do diário anuncia o caderno
-const app = fs.readFileSync(new URL("../src/app/app.js", import.meta.url), "utf8");
-assert.match(app, /Caderno de conceitos/, "diário sem caderno de conceitos");
-assert.match(app, /journal-conceito/, "caderno sem linha de conceito");
 
 console.log(`ok conceitos: domínio 0-${NIVEIS}, revisão espaçada, erro desce, save e baralho priorizam vencidos`);
