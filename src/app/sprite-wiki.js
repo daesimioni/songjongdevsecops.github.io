@@ -41,6 +41,7 @@ const visiveis = new Set();
 const media = window.matchMedia("(prefers-reduced-motion: reduce)");
 $("motion").checked = !media.matches;
 media.addEventListener("change", () => { $("motion").checked = !media.matches; });
+$("visoes").addEventListener("change", sincronizarVisoes);
 
 const observer = new IntersectionObserver((entradas) => {
   for (const e of entradas) {
@@ -152,6 +153,16 @@ $("categorias").addEventListener("click", (e) => {
   montar();
 });
 
+function sincronizarVisoes() {
+  const grade = $("visoes").checked;
+  $("collision").disabled = grade;
+  $("rotulo-colisao").hidden = modo !== "kit" || grade;
+  for (const c of cards) {
+    if (c.direction) { c.direction.disabled = grade; c.direction.hidden = grade; }
+    if (c.state) c.state.disabled = false;
+  }
+}
+
 function sincronizar() {
   for (const b of $("modos").querySelectorAll("button")) {
     b.setAttribute("aria-pressed", String(b.dataset.modo === modo));
@@ -215,6 +226,7 @@ function montar() {
   cards = achados.map((item) => criarCard(item));
   const colecao = COLECOES[modo];
   $("status").textContent = `${cards.length} sprite${cards.length === 1 ? "" : "s"} · ${colecao.nome} · ${colecao.dados.length} na coleção`;
+  sincronizarVisoes();
   url();
 }
 
@@ -279,6 +291,12 @@ function criarCard(item) {
     linha.append(state);
   }
 
+  const baixar = document.createElement("button");
+  baixar.type = "button";
+  baixar.textContent = "baixar PNG";
+  baixar.addEventListener("click", () => baixarPng(item, canvas));
+  linha.append(baixar);
+
   const copiar = document.createElement("button");
   copiar.type = "button";
   copiar.textContent = "copiar id";
@@ -324,12 +342,70 @@ function tick(time) {
     if (c.canvas.width !== LARGURA) { c.canvas.width = LARGURA; c.canvas.height = ALTURA; }
     const g = c.canvas.getContext("2d");
     g.clearRect(0, 0, LARGURA, ALTURA);
-    if (c.item.grupo === "kit") desenharKit(g, c, time);
+    if ($("visoes").checked && c.item.grupo !== "item") desenharGrade(g, c, time);
+    else if (c.item.grupo === "kit") desenharKit(g, c, time);
     else if (c.item.grupo === "criatura") desenharCriatura(g, c, time);
     else if (c.item.grupo === "gente") desenharGente(g, c, time);
     else desenharItem(g, c);
   }
   requestAnimationFrame(tick);
+}
+
+function baixarPng(item, canvas) {
+  if (!canvas.toBlob) return;
+  canvas.toBlob((blob) => {
+    if (!blob) return;
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `${item.id.replace(/[^a-z0-9-]+/gi, "-")}.png`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  }, "image/png");
+}
+
+const SIGLAS = ["S", "O", "L", "N", "SO", "SE", "NO", "NE"];
+
+// Desenha as oito visões lado a lado, com o nome da direção embaixo.
+function desenharGrade(g, c, time) {
+  const colunas = 4;
+  const linhas = 2;
+  const celulaW = LARGURA / colunas;
+  const celulaH = ALTURA / linhas;
+  const visoes = c.item.grupo === "kit" ? (c.item.raw.orientations || [0]) : [0, 1, 2, 3, 4, 5, 6, 7];
+  g.save();
+  g.textAlign = "center";
+  g.textBaseline = "bottom";
+  g.font = "bold 13px ui-monospace, monospace";
+  for (let i = 0; i < visoes.length; i++) {
+    const d = visoes[i];
+    const cx = (i % colunas) * celulaW + celulaW / 2;
+    const cy = Math.floor(i / colunas) * celulaH + celulaH * 0.72;
+    g.save();
+    g.translate(cx, cy);
+    if (c.item.grupo === "kit") {
+      const b = kitBounds(c.item.id, { direction: d, state: c.state?.value });
+      const escala = Math.min(2.6, (celulaW - 14) / Math.max(1, b.w), (celulaH - 34) / Math.max(1, b.h));
+      g.scale(escala, escala);
+      g.imageSmoothingEnabled = false;
+      const anim = kitAnimation(c.item.id, c.state?.value);
+      drawKit(g, c.item.id, 0, 0, {
+        direction: d,
+        state: c.state?.value,
+        tempo: anim.loop && $("motion").checked ? time : 0,
+      });
+    } else if (c.item.grupo === "criatura") {
+      const estado = c.state?.value || "idle";
+      drawCreatureArt(g, c.item.tipo, c.item.accent, time / 1000, 2.2, d, estado === "walk", estado);
+    } else {
+      const { colors, look, scale } = c.item.estilo;
+      drawHuman(g, 0, 0, d, (c.state?.value || "idle") === "walk", time, colors, 2.2 * Math.min(1.3, scale || 1), look);
+    }
+    g.restore();
+    g.fillStyle = "#9fb0c9";
+    g.fillText(SIGLAS[d], cx, cy + 22);
+  }
+  g.restore();
+  c.info.textContent = `${visoes.length} ${visoes.length === 1 ? "visão" : "visões"} em grade · ${c.item.grupo}`;
 }
 
 function desenharKit(g, c, time) {
