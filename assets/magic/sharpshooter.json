@@ -1,0 +1,17 @@
+{
+  "id": "arte/magias/316b17d787d80fd674a5",
+  "archive": "magias.zip",
+  "sourceMember": "Magias/Paladin/Sharpshooter.png",
+  "sourceSha256": "4744976ab7a8964e022c480a7244e58cd358a159330693a534171bdeb6a643f2",
+  "sourceDimensions": [32, 32],
+  "output": "assets/magic/sharpshooter.png",
+  "outputSha256": "bc70b644ea0fe30db0cbbf56dff3ca15aafbd68e4c3c421f5dcd6836aade39c0",
+  "outputDimensions": [128, 128],
+  "style": "autoral-pixel-spell",
+  "transparentBackground": true,
+  "review": {
+    "visualInspection": "passed",
+    "runtimeDestination": "future magic library; no current item or spell id in the game catalog"
+  },
+  "status": "library"
+}
