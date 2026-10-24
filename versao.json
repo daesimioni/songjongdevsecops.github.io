@@ -1,5 +1,5 @@
 {
- "versao": "dd510e91925cc81a",
+ "versao": "375fbecf61b50c93",
  "arquivos": [
   "assets/combat/action-vfx-v1.json",
   "assets/combat/action-vfx-v1.png",
@@ -29,6 +29,8 @@
   "assets/magic/holy-missile-rune.png",
   "assets/magic/paladin-familiar.json",
   "assets/magic/paladin-familiar.png",
+  "assets/magic/sharpshooter.json",
+  "assets/magic/sharpshooter.png",
   "assets/magic/swift-foot.json",
   "assets/magic/swift-foot.png",
   "assets/og.png",
